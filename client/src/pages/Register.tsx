@@ -715,7 +715,7 @@ export default function Register() {
                       className={promoStatus?.valid ? "border-green-500/50 pr-8" : promoStatus?.valid === false ? "border-red-500/50 pr-8" : ""}
                     />
                     {promoValidateQuery.isFetching && (
-                      <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                      <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground text-amber-400" />
                     )}
                     {!promoValidateQuery.isFetching && promoStatus?.valid === true && (
                       <Check className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-green-400" />
@@ -949,7 +949,7 @@ export default function Register() {
                   >
                     {registerMutation.isPending ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
                         Creating...
                       </>
                     ) : (

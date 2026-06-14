@@ -864,7 +864,7 @@ export default function SceneEditor() {
             title={`3 credits × ${scenes?.length || 0} scenes = ${3 * (scenes?.length || 0)} credits total`}
           >
             {bulkGenMutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />
             ) : (
               <Sparkles className="h-4 w-4 mr-1" />
             )}
@@ -893,7 +893,7 @@ export default function SceneEditor() {
             title={`~10–20 credits × ${scenes?.length || 0} scenes (varies by duration)`}
           >
             {bulkVideoMutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />
             ) : (
               <Film className="h-4 w-4 mr-1" />
             )}
@@ -929,7 +929,7 @@ export default function SceneEditor() {
               disabled={exportMutation.isPending}
             >
               {exportMutation.isPending ? (
-                <Loader2 className="h-4 w-4 sm:mr-1 animate-spin" />
+                <Loader2 className="h-4 w-4 sm:mr-1 animate-spin text-amber-400" />
               ) : (
                 <Save className="h-4 w-4 sm:mr-1" />
               )}
@@ -1092,13 +1092,13 @@ export default function SceneEditor() {
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-400/10"
                     onClick={() => videoMutation.mutate({ sceneId: scene.id })}
                     disabled={videoMutation.isPending}>
-                    {videoMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Film className="h-3 w-3 mr-1" />}
+                    {videoMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Film className="h-3 w-3 mr-1" />}
                     Video
                   </Button>
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs"
                     onClick={() => previewMutation.mutate({ sceneId: scene.id })}
                     disabled={previewMutation.isPending}>
-                    {previewMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Eye className="h-3 w-3 mr-1" />}
+                    {previewMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Eye className="h-3 w-3 mr-1" />}
                     Preview
                   </Button>
                   {(scene as any).videoUrl && (
@@ -1176,7 +1176,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.atmosphere ? "rotate-90" : ""}`} />
                   <Sun className="h-3.5 w-3.5 text-amber-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Time, Weather & Atmosphere</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Time, Weather & Atmosphere</span>
                   <span className="text-[10px] text-muted-foreground/60">{[form.timeOfDay, form.weather, form.mood].filter(Boolean).join(" · ") || "defaults"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -1255,7 +1255,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.camera ? "rotate-90" : ""}`} />
                   <Camera className="h-3.5 w-3.5 text-blue-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Camera, Lens & Lighting</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Camera, Lens & Lighting</span>
                   <span className="text-[10px] text-muted-foreground/60">{[form.cameraAngle, form.lighting].filter(Boolean).join(" · ") || "defaults"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -1615,7 +1615,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.location ? "rotate-90" : ""}`} />
                   <MapPin className="h-3.5 w-3.5 text-emerald-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Location & Setting</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Location & Setting</span>
                   <span className="text-[10px] text-muted-foreground/60">{[form.locationType, form.locationCity, form.locationCountry].filter(Boolean).join(", ") || "not set"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -1686,7 +1686,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.characters ? "rotate-90" : ""}`} />
                   <Users className="h-3.5 w-3.5 text-violet-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Characters in Scene</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Characters in Scene</span>
                   <Badge variant="outline" className="text-[10px] h-5">{form.characterIds.length} selected</Badge>
                 </button>
               </CollapsibleTrigger>
@@ -1800,7 +1800,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.extras ? "rotate-90" : ""}`} />
                   <UserPlus className="h-3.5 w-3.5 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Extras / Background Actors</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Extras / Background Actors</span>
                   <Badge variant="outline" className="text-[10px] h-5">{form.extras.length} added</Badge>
                 </button>
               </CollapsibleTrigger>
@@ -1838,7 +1838,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.voiceRoles ? "rotate-90" : ""}`} />
                   <Mic className="h-3.5 w-3.5 text-rose-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Voice-Only Roles</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Voice-Only Roles</span>
                   <Badge variant="outline" className="text-[10px] h-5">{form.voiceRoles.length} added</Badge>
                 </button>
               </CollapsibleTrigger>
@@ -1897,7 +1897,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.dialogue ? "rotate-90" : ""}`} />
                   <MessageSquare className="h-3.5 w-3.5 text-sky-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Dialogue</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Dialogue</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.dialogueText ? `${form.dialogueText.length} chars` : "empty"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -1926,7 +1926,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.soundtrack ? "rotate-90" : ""}`} />
                   <Music className="h-3.5 w-3.5 text-pink-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Soundtrack</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Soundtrack</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.soundtrackId ? "selected" : "none"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -1986,7 +1986,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.vfx ? "rotate-90" : ""}`} />
                   <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">VFX & Post Production</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">VFX & Post Production</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.vfxElements && form.vfxElements !== "none" ? form.vfxElements : "none"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -2024,7 +2024,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.sound ? "rotate-90" : ""}`} />
                   <Volume2 className="h-3.5 w-3.5 text-teal-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Sound Design</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Sound Design</span>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -2079,7 +2079,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.production ? "rotate-90" : ""}`} />
                   <Clapperboard className="h-3.5 w-3.5 text-orange-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Production Details</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Production Details</span>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -2138,7 +2138,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.aiOverride ? "rotate-90" : ""}`} />
                   <Sparkles className="h-3.5 w-3.5 text-purple-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">AI Prompt Override</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">AI Prompt Override</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.aiPromptOverride ? "custom" : "auto"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -2159,7 +2159,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.negativePromptSeed ? "rotate-90" : ""}`} />
                   <Scissors className="h-3.5 w-3.5 text-red-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Negative Prompt & Seed</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Negative Prompt & Seed</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.negativePrompt ? "custom" : "default"}{form.seed !== null ? ` · seed ${form.seed}` : ""}</span>
                 </button>
               </CollapsibleTrigger>
@@ -2192,7 +2192,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.director ? "rotate-90" : ""}`} />
                   <Eye className="h-3.5 w-3.5 text-indigo-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Director's Notes</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Director's Notes</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.directorNotes ? `${form.directorNotes.length} chars` : "empty"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -2232,7 +2232,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.refImages ? "rotate-90" : ""}`} />
                   <ImagePlus className="h-3.5 w-3.5 text-lime-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">Reference Images</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Reference Images</span>
                   <Badge variant="outline" className="text-[10px] h-5">{form.referenceImages.length} uploaded</Badge>
                 </button>
               </CollapsibleTrigger>
@@ -2301,7 +2301,7 @@ export default function SceneEditor() {
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.footage ? "rotate-90" : ""}`} />
                   <Upload className="h-3.5 w-3.5 text-gray-400" />
-                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-500/60">External Footage</span>
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">External Footage</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.externalFootageUrl ? "attached" : "none"}</span>
                 </button>
               </CollapsibleTrigger>
@@ -2369,7 +2369,7 @@ export default function SceneEditor() {
                   <button
                     type="button"
                     onClick={() => setProductionOpen((v) => !v)}
-                    className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1 text-amber-500/60"
+                    className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1 text-amber-400/60"
                   >
                     <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-amber-500" /> Production</span>
                     <span className="text-[10px] text-muted-foreground/60">{productionOpen ? "Hide" : "Show"}</span>
@@ -2417,7 +2417,7 @@ export default function SceneEditor() {
                     disabled={previewMutation.isPending}
                   >
                     {previewMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />
                     ) : (
                       <Sparkles className="h-4 w-4 mr-1" />
                     )}
@@ -2435,7 +2435,7 @@ export default function SceneEditor() {
                     disabled={videoMutation.isPending}
                   >
                     {videoMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />
                     ) : (
                       <Film className="h-4 w-4 mr-1" />
                     )}
@@ -2454,7 +2454,7 @@ export default function SceneEditor() {
                   Cancel
                 </Button>
                 <Button type="submit" size="sm" disabled={isSaving} title="⌘S to save">
-                  {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
+                  {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />}
                   {selectedSceneId ? "Save Changes" : "Create Scene"}
                 </Button>
               </div>

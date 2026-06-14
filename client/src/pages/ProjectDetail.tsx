@@ -603,7 +603,7 @@ export default function ProjectDetail() {
               disabled={quickGenMutation.isPending}
             >
               {quickGenMutation.isPending ? (
-                <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
+                <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />Generating...</>
               ) : project.status === "completed" ? (
                 <><RefreshCw className="h-4 w-4 mr-1" />Re-generate Film</>
               ) : project.status === "failed" ? (
@@ -699,7 +699,7 @@ export default function ProjectDetail() {
                       disabled={quickGenMutation.isPending}
                     >
                       {quickGenMutation.isPending ? (
-                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Retrying…</>
+                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />Retrying…</>
                       ) : (
                         <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Retry Generation</>
                       )}
@@ -725,7 +725,7 @@ export default function ProjectDetail() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="flex items-center gap-3">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <Loader2 className="h-4 w-4 animate-spin text-primary text-amber-400" />
                 <span className="text-sm font-medium">Generating your film...</span>
               </div>
               <Button
@@ -738,7 +738,7 @@ export default function ProjectDetail() {
                 disabled={cancelGenerationMutation.isPending}
               >
                 {cancelGenerationMutation.isPending ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
                 ) : (
                   <StopCircle className="h-3 w-3" />
                 )}
@@ -905,7 +905,7 @@ export default function ProjectDetail() {
                       </div>
                     )}
                     {!project.plotSummary && !project.description && (
-                      <p className="text-sm text-muted-foreground/60 cursor-pointer hover:text-muted-foreground" onClick={() => {
+                      <p className="text-sm text-muted-foreground/60 cursor-pointer hover:" onClick={() => {
                         setDescForm({ description: "", plotSummary: "" });
                         setEditingDescription(true);
                       }}>Click to add description...</p>
@@ -1116,7 +1116,7 @@ export default function ProjectDetail() {
                           }}
                         >
                           {isRegenerating ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
                           ) : (
                             <RefreshCw className="h-3.5 w-3.5" />
                           )}
@@ -1131,7 +1131,7 @@ export default function ProjectDetail() {
                         <Badge className="text-[10px] h-5 bg-red-500/20 text-red-400 border-red-500/30 border capitalize">Failed</Badge>
                       ) : isGenerating ? (
                         <Badge className="text-[10px] h-5 bg-amber-400/20 text-amber-400 border-amber-500/30 border">
-                          <Loader2 className="h-2.5 w-2.5 mr-0.5 animate-spin" />Generating
+                          <Loader2 className="h-2.5 w-2.5 mr-0.5 animate-spin text-amber-400" />Generating
                         </Badge>
                       ) : isCompleted ? (
                         <Badge className="text-[10px] h-5 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 border capitalize">Done</Badge>
@@ -1237,7 +1237,7 @@ export default function ProjectDetail() {
               disabled={trailerMutation.isPending || !scenes?.length}
             >
               {trailerMutation.isPending ? (
-                <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
+                <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />Generating...</>
               ) : (
                 <><Sparkles className="h-4 w-4 mr-1" />Generate Trailer</>
               )}
@@ -2151,7 +2151,7 @@ export default function ProjectDetail() {
                 ) : (
                   <div className="h-20 w-20 rounded-md border border-dashed flex items-center justify-center cursor-pointer hover:border-primary/40 transition-colors shrink-0"
                     onClick={() => fileRef.current?.click()}>
-                    {uploading ? <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
+                    {uploading ? <Loader2 className="h-5 w-5 animate-spin text-muted-foreground text-amber-400" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
                   </div>
                 )}
                 <p className="text-xs text-muted-foreground">JPG, PNG up to 10MB</p>
@@ -2222,7 +2222,7 @@ export default function ProjectDetail() {
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setCharDialogOpen(false)}>Cancel</Button>
               <Button type="submit" size="sm" disabled={createCharMutation.isPending}>
-                {createCharMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
+                {createCharMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />}
                 Add Character
               </Button>
             </div>
@@ -2502,7 +2502,7 @@ export default function ProjectDetail() {
               <Button type="button" variant="ghost" size="sm" onClick={() => setAiCharDialogOpen(false)}>Cancel</Button>
               <Button type="submit" size="sm" disabled={aiCharMutation.isPending}>
                 {aiCharMutation.isPending ? (
-                  <><Loader2 className="h-4 w-4 animate-spin mr-1" />Generating Portrait...</>
+                  <><Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />Generating Portrait...</>
                 ) : (
                   <><Wand2 className="h-4 w-4 mr-1" />Generate Character</>
                 )}
@@ -2550,7 +2550,7 @@ export default function ProjectDetail() {
               <Label className="text-xs text-muted-foreground">Audio File</Label>
               <div className="flex items-center gap-3">
                 <Button type="button" variant="outline" size="sm" onClick={() => audioRef.current?.click()} disabled={audioUploading}>
-                  {audioUploading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload className="h-4 w-4 mr-1" />}
+                  {audioUploading ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : <Upload className="h-4 w-4 mr-1" />}
                   Upload Audio
                 </Button>
                 <p className="text-xs text-muted-foreground">MP3, WAV, OGG up to 16MB</p>
@@ -2628,7 +2628,7 @@ export default function ProjectDetail() {
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setSoundtrackDialogOpen(false)}>Cancel</Button>
               <Button type="submit" size="sm" disabled={createSoundtrackMutation.isPending}>
-                {createSoundtrackMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
+                {createSoundtrackMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />}
                 Add Soundtrack
               </Button>
             </div>
@@ -2709,7 +2709,7 @@ export default function ProjectDetail() {
                 onClick={() => generateFullFilmMutation.mutate({ projectId, ...fullFilmConfig })}
               >
                 {generateFullFilmMutation.isPending ? (
-                  <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Starting...</>
+                  <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" /> Starting...</>
                 ) : (
                   <><Film className="h-3.5 w-3.5 mr-1.5" /> Start Generation</>
                 )}
@@ -2879,7 +2879,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <p className="text-xs text-muted-foreground/60 mt-0.5">The more detail you provide, the better the AI-generated film</p>
         </div>
         <Button size="sm" disabled={!dirty || updateMutation.isPending} onClick={handleSave}>
-          {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}
+          {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" /> : null}
           Save Changes
         </Button>
       </div>
@@ -3027,7 +3027,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       {dirty && (
         <div className="flex justify-end">
           <Button size="sm" onClick={handleSave} disabled={updateMutation.isPending}>
-            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}
+            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" /> : null}
             Save All Story Changes
           </Button>
         </div>
@@ -3058,7 +3058,7 @@ function ReviewsButton({ projectId }: { projectId: number }) {
           </DialogHeader>
           {reviews.isLoading ? (
             <div className="py-8 flex items-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground text-amber-400" />
             </div>
           ) : (reviews.data?.length ?? 0) === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">

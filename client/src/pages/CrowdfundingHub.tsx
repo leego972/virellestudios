@@ -393,7 +393,7 @@ function CrowdfundingHubInner() {
         <CardContent>
           {myCampaignsLoading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-              <Loader2 className="h-4 w-4 animate-spin" /> Loading campaigns…
+              <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> Loading campaigns…
             </div>
           ) : !myCampaigns || myCampaigns.length === 0 ? (
             <div className="text-center py-8 space-y-3">
@@ -483,7 +483,7 @@ function CrowdfundingHubInner() {
                                 onClick={(e) => { e.stopPropagation(); void handleSetupPayouts(campaign); }}
                               >
                                 {isSettingUp
-                                  ? <Loader2 className="w-3 h-3 animate-spin" />
+                                  ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
                                   : <Settings className="w-3 h-3" />
                                 }
                                 {isSettingUp ? "Redirecting…" : "Set up payouts"}
@@ -667,15 +667,15 @@ function CrowdfundingHubInner() {
 
             <div className="grid grid-cols-3 gap-2">
               <Button onClick={() => generate("campaign")} disabled={!!generating || !hasProject} className="gap-2" size="sm">
-                {generating === "campaign" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
+                {generating === "campaign" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Rocket className="h-3 w-3" />}
                 Pitch
               </Button>
               <Button onClick={() => generate("rewards")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
-                {generating === "rewards" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Gift className="h-3 w-3" />}
+                {generating === "rewards" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Gift className="h-3 w-3" />}
                 Rewards
               </Button>
               <Button onClick={() => generate("videoScript")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
-                {generating === "videoScript" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Video className="h-3 w-3" />}
+                {generating === "videoScript" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Video className="h-3 w-3" />}
                 Video
               </Button>
             </div>
@@ -790,7 +790,7 @@ function CrowdfundingHubInner() {
               disabled={creating || !newCampaign.title.trim() || !newCampaign.goalAud}
               onClick={handleCreateCampaign}
             >
-              {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+              {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : <Plus className="w-4 h-4 mr-2" />}
               Create Campaign
             </Button>
           </DialogFooter>
@@ -837,7 +837,7 @@ function CrowdfundingHubInner() {
               disabled={launchMutation.isPending}
               onClick={confirmLaunch}
             >
-              {launchMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4" />}
+              {launchMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : <Rocket className="w-4 h-4" />}
               Go Live
             </Button>
           </DialogFooter>

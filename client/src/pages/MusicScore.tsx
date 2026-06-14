@@ -223,7 +223,7 @@ import { useState } from "react";
                     <div className="flex items-center gap-2 flex-wrap">
                       <Input value={aiStyle} onChange={e => setAiStyle(e.target.value)} placeholder="Score style (e.g. orchestral, minimalist piano, electronic)" className="h-8 text-xs bg-black/30 border-border/40 flex-1 min-w-48" />
                       <Button size="sm" onClick={() => genCues.mutate({ projectId, style: aiStyle, context: aiContext })} disabled={genCues.isPending} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
-                        {genCues.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate Score
+                        {genCues.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate Score
                       </Button>
                     </div>
                     <Input value={aiContext} onChange={e => setAiContext(e.target.value)} placeholder="Additional context for the composer…" className="h-8 text-xs bg-black/30 border-border/40" />
@@ -251,7 +251,7 @@ import { useState } from "react";
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="ghost" onClick={() => setEditForm(null)} className="gap-2 text-xs">Cancel</Button>
                       <Button size="sm" onClick={submitCue} disabled={createCue.isPending} className="gap-2 text-xs" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
-                        {createCue.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}Add Cue
+                        {createCue.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Plus className="h-3.5 w-3.5" />}Add Cue
                       </Button>
                     </div>
                   </div>
@@ -354,10 +354,10 @@ import { useState } from "react";
                 <Textarea value={mixState.notes} onChange={e => setMixState(p=>({...p,notes:e.target.value}))} placeholder="Mix supervisor notes — special instructions, reference mix, delivery format…" className="text-xs bg-black/30 resize-none min-h-[80px] border-border/40" />
                 <div className="flex gap-3">
                   <Button onClick={() => saveMix.mutate({ projectId, ...mixState })} disabled={saveMix.isPending} className="gap-2" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
-                    {saveMix.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Save Mix Settings
+                    {saveMix.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Save className="h-4 w-4" />}Save Mix Settings
                   </Button>
                   <Button variant="outline" onClick={() => exportMix.mutate({ projectId })} disabled={exportMix.isPending} className="gap-2 border-border/40">
-                    {exportMix.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}Export Summary
+                    {exportMix.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Download className="h-4 w-4" />}Export Summary
                   </Button>
                 </div>
               </div>

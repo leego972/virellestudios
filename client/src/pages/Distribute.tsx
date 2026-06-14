@@ -368,7 +368,7 @@ export default function Distribute() {
                       onClick={() => createPromoExport.mutate({ projectId, platform: platform.key })}
                     >
                       {createPromoExport.isPending ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
                       ) : done ? (
                         <RefreshCw className="w-3 h-3" />
                       ) : (
@@ -438,7 +438,7 @@ export default function Distribute() {
                 disabled={generateAssets.isPending}
                 onClick={() => generateAssets.mutate({ projectId })}
               >
-                {generateAssets.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {generateAssets.isPending ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Sparkles className="w-3 h-3" />}
                 {promoStatus?.promoAssetsGenerated ? "Regenerate" : "Generate"}
               </Button>
             </div>
@@ -590,7 +590,7 @@ export default function Distribute() {
               }
             >
               {publishFilmPage.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
               ) : (
                 <Globe className="w-4 h-4" />
               )}
@@ -599,7 +599,7 @@ export default function Distribute() {
 
             {promoStatus?.isPublished && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-sm text-green-600">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-amber-400" />
                 Your film page is live at{" "}
                 <a
                   href={`/films/${promoStatus.slug}`}

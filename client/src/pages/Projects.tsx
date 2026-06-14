@@ -150,7 +150,7 @@ export default function Projects() {
             onClick={() => createDemoMut.mutate()}
           >
             {createDemoMut.isPending
-              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating…</>
+              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />Generating…</>
               : <><Film className="h-4 w-4 mr-1" />Demo Short</>}
           </Button>
       </div>
@@ -339,7 +339,7 @@ export default function Projects() {
                         }`}
                       >
                         {project.status === "generating" && (
-                          <Loader2 className="h-3 w-3 animate-spin inline mr-1" />
+                          <Loader2 className="h-3 w-3 animate-spin inline mr-1 text-amber-400" />
                         )}
                         {project.status}
                       </span>
@@ -431,7 +431,7 @@ export default function Projects() {
                     ""
                   }`}
                 >
-                  {project.status === "generating" && <Loader2 className="h-2.5 w-2.5 animate-spin mr-1" />}
+                  {project.status === "generating" && <Loader2 className="h-2.5 w-2.5 animate-spin mr-1 text-amber-400" />}
                   {project.status}
                 </Badge>
                 <Button
@@ -466,7 +466,7 @@ export default function Projects() {
               onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}
             >
               {deleteMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
               ) : (
                 "Delete"
               )}

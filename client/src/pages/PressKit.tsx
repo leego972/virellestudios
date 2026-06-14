@@ -117,7 +117,7 @@ export default function PressKit() {
               <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
               <Button variant="outline" onClick={copyAll} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
               <Button variant="outline" onClick={() => setEmailDialog({ open: true, recipients: "" })} disabled={emailKit.isPending} className="min-h-[44px]" aria-label="Email press pack">
-                {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
+                {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
               </Button>
               <Button variant="outline" onClick={() => {
                 const url = `${window.location.origin}/projects/${id}/press-kit`;
@@ -197,7 +197,7 @@ export default function PressKit() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setEmailDialog({ open: false, recipients: "" })}>Cancel</Button>
             <Button onClick={submitEmailDialog} disabled={emailKit.isPending}>
-              {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" /> : <Mail className="h-4 w-4 mr-2" aria-hidden="true" />}
+              {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" aria-hidden="true" /> : <Mail className="h-4 w-4 mr-2" aria-hidden="true" />}
               Send
             </Button>
           </DialogFooter>

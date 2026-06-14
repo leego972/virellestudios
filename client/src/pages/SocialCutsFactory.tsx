@@ -249,7 +249,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
           </div>
 
           <Button onClick={generate} disabled={generating} className="gap-2" size="sm">
-            {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            {generating ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
             Generate {FORMATS[format].label} brief
           </Button>
         </CardContent>

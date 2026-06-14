@@ -473,7 +473,7 @@ export default function Collaboration() {
               </Button>
               <Button type="submit" disabled={inviteMutation.isPending}>
                 {inviteMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" />
                 ) : (
                   <UserPlus className="h-4 w-4 mr-2" />
                 )}

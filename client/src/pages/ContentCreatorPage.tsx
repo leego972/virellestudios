@@ -492,7 +492,7 @@ export default function ContentCreatorPage() {
           <StatCard label="Campaigns" value={dashboard.totalCampaigns} icon={<Target className="h-4 w-4" />} color="text-blue-400" />
           <StatCard label="Active" value={dashboard.activeCampaigns} icon={<Zap className="h-4 w-4" />} color="text-emerald-400" />
           <StatCard label="Total Pieces" value={dashboard.totalPieces} icon={<FileText className="h-4 w-4" />} color="text-purple-400" />
-          <StatCard label="Published" value={dashboard.publishedPieces} icon={<CheckCircle className="h-4 w-4" />} color="text-green-400" />
+          <StatCard label="Published" value={dashboard.publishedPieces} icon={<CheckCircle className="h-4 w-4 text-amber-400" />} color="text-green-400" />
           <StatCard label="Scheduled" value={dashboard.scheduledPieces} icon={<Clock className="h-4 w-4" />} color="text-yellow-400" />
           <StatCard label="Impressions" value={dashboard.totalImpressions.toLocaleString()} icon={<TrendingUp className="h-4 w-4" />} color="text-pink-400" />
         </div>

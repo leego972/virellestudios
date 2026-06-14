@@ -317,7 +317,7 @@ export default function BrandOutreach() {
 
             <div className="flex gap-2">
               <Button onClick={generate} disabled={generating || !selected || !hasProject} className="gap-2" size="sm">
-                {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Mail className="h-3 w-3" />}
+                {generating ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Mail className="h-3 w-3" />}
                 Draft email
               </Button>
               {draft && (

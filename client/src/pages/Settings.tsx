@@ -590,7 +590,7 @@ export default function Settings() {
           {/* Save Button */}
           <div className="flex justify-end">
             <Button onClick={handleSaveProfile} disabled={updateProfileMutation.isPending} className="bg-amber-500 hover:bg-amber-600 text-black font-medium">
-              {updateProfileMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              {updateProfileMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : <Save className="h-4 w-4 mr-2" />}
               Save Profile
             </Button>
           </div>
@@ -622,7 +622,7 @@ export default function Settings() {
                 </div>
               </div>
               <Button onClick={handleChangePassword} disabled={changePasswordMutation.isPending || !passwordForm.currentPassword || !passwordForm.newPassword} size="sm">
-                {changePasswordMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
+                {changePasswordMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : <Lock className="h-4 w-4 mr-2" />}
                 Change Password
               </Button>
             </CardContent>
@@ -783,11 +783,11 @@ export default function Settings() {
                 <div className="flex gap-2">
                   <Input type="password" placeholder={configuredKeys['venice' as keyof typeof configuredKeys] ? "••••••••••••••••" : "Paste your Venice AI API key here..."} value={keyInputs['venice'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, venice: e.target.value }))} className="font-mono text-sm" />
                   <Button size="sm" onClick={() => { const v = (keyInputs['venice'] || '').trim(); if (!v) return; setSavingProvider('venice'); saveKeyMutation.mutate({ provider: 'venice' as any, key: v }); }} disabled={!(keyInputs['venice'] || '').trim() || savingProvider === 'venice'}>
-                    {savingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                    {savingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                   </Button>
                   {(keyInputs['venice'] || '').trim() && (
                     <Button size="sm" variant="outline" onClick={() => { setTestingProvider('venice'); testKeyMutation.mutate({ provider: 'venice' as any, key: (keyInputs['venice'] || '').trim() }); }} disabled={testingProvider === 'venice'}>
-                      {testingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
+                      {testingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Test"}
                     </Button>
                   )}
                 </div>
@@ -840,11 +840,11 @@ export default function Settings() {
                       <div className="flex gap-2">
                         <Input type="password" placeholder={isConfigured ? "••••••••••••••••" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
                         <Button size="sm" onClick={() => { if (!inputValue.trim()) return; setSavingProvider(provider.id); saveKeyMutation.mutate({ provider: provider.id, key: inputValue.trim() }); }} disabled={!inputValue.trim() || savingProvider === provider.id}>
-                          {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                          {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                         </Button>
                         {inputValue.trim() && (
                           <Button size="sm" variant="outline" onClick={() => { setTestingProvider(provider.id); testKeyMutation.mutate({ provider: provider.id, key: inputValue.trim() }); }} disabled={testingProvider === provider.id}>
-                            {testingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
+                            {testingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Test"}
                           </Button>
                         )}
                       </div>
@@ -907,11 +907,11 @@ export default function Settings() {
                       <div className="flex gap-2">
                         <Input type="password" placeholder={isConfigured ? "••••••••••••••••" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
                         <Button size="sm" onClick={() => { if (!inputValue.trim()) return; setSavingProvider(provider.id); saveKeyMutation.mutate({ provider: provider.id as any, key: inputValue.trim() }); }} disabled={!inputValue.trim() || savingProvider === provider.id}>
-                          {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                          {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                         </Button>
                         {inputValue.trim() && (
                           <Button size="sm" variant="outline" onClick={() => { setTestingProvider(provider.id); testKeyMutation.mutate({ provider: provider.id as any, key: inputValue.trim() }); }} disabled={testingProvider === provider.id}>
-                            {testingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
+                            {testingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Test"}
                           </Button>
                         )}
                       </div>
@@ -962,7 +962,7 @@ export default function Settings() {
                 <div className="flex gap-2">
                   <Input type="password" placeholder={configuredKeys['google' as keyof typeof configuredKeys] ? "••••••••••••••••" : "Paste your Google Gemini API key here..."} value={keyInputs['google'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, google: e.target.value }))} className="font-mono text-sm" />
                   <Button size="sm" onClick={() => { if (!(keyInputs['google'] || '').trim()) return; setSavingProvider('google'); saveKeyMutation.mutate({ provider: 'google', key: (keyInputs['google'] || '').trim() }); }} disabled={!(keyInputs['google'] || '').trim() || savingProvider === 'google'}>
-                    {savingProvider === 'google' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                    {savingProvider === 'google' ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                   </Button>
                 </div>
                 {configuredKeys['google' as keyof typeof configuredKeys] && (
@@ -1143,7 +1143,7 @@ function BillingTab({ profile }: { profile: any }) {
                 className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
               >
                 {loadingPortal || billingPortalMutation.isPending ? (
-                  <><Loader2 className="h-4 w-4 animate-spin mr-2" />Opening portal...</>
+                  <><Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" />Opening portal...</>
                 ) : (
                   <>Manage Subscription &amp; Billing</>
                 )}
@@ -1318,7 +1318,7 @@ function ActiveTalentLicensesList() {
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
         <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-4 text-center">
-          <Loader2 className="h-5 w-5 text-zinc-600 mx-auto animate-spin" />
+          <Loader2 className="h-5 w-5 text-zinc-600 mx-auto animate-spin text-amber-400" />
         </div>
       </div>
     );
@@ -1458,7 +1458,7 @@ function ConnectedPlatformsTab() {
                           onClick={() => testMutation.mutate({ platform: platform.id })}
                           disabled={testMutation.isPending}
                         >
-                          {testMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                          {testMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <RefreshCw className="h-3 w-3" />}
                           Test
                         </Button>
                         <Button
@@ -1504,7 +1504,7 @@ function ConnectedPlatformsTab() {
                       onClick={() => handleSave(platform.id)}
                       disabled={saveMutation.isPending}
                     >
-                      {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                      {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Save className="h-3 w-3" />}
                       Save Credentials
                     </Button>
                   </div>

@@ -347,7 +347,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
       w.document.close(); w.print();
     };
 
-    if (authLoading) return <div className="min-h-screen flex items-center justify-center" style={{ background:"#07070e" }}><Loader2 className="h-8 w-8 animate-spin" style={{ color:"#D4AF37" }} /></div>;
+    if (authLoading) return <div className="min-h-screen flex items-center justify-center" style={{ background:"#07070e" }}><Loader2 className="h-8 w-8 animate-spin text-amber-400" style={{ color:"#D4AF37" }} /></div>;
     if (!user) { window.location.href = getLoginUrl(); return null; }
 
     return (
@@ -380,7 +380,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
               <Button size="sm" variant="ghost" onClick={exportCSV} className="gap-1.5 h-8 text-xs text-muted-foreground"><Download className="h-3.5 w-3.5" />CSV</Button>
               <Button size="sm" variant="outline" onClick={printBudget} className="gap-1.5 h-8 text-xs border-border/40"><Printer className="h-3.5 w-3.5" />Print</Button>
               <Button size="sm" onClick={save} disabled={!dirty || upsertMut.isPending} className="gap-1.5 h-8 text-xs" style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000", opacity: dirty ? 1 : 0.5 }}>
-                {upsertMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Save
+                {upsertMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Save className="h-3.5 w-3.5" />}Save
               </Button>
             </div>
           </div>
@@ -510,7 +510,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
             <TabsContent value="departments">
               <div className="space-y-2.5">
                 {isLoading ? (
-                  <div className="text-center py-12"><Loader2 className="h-6 w-6 animate-spin inline-block" style={{ color:"#D4AF37" }} /></div>
+                  <div className="text-center py-12"><Loader2 className="h-6 w-6 animate-spin inline-block text-amber-400" style={{ color:"#D4AF37" }} /></div>
                 ) : (
                   <>
                     {Object.entries(breakdown).map(([key, cat]) => (

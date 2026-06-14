@@ -164,7 +164,7 @@ function NLEExportInner() {
             disabled={isExporting}
           >
             {isExporting ? (
-              <><Loader2 className="h-3.5 w-3.5 animate-spin" />Exporting…</>
+              <><Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />Exporting…</>
             ) : exportComplete ? (
               <><CheckCircle2 className="h-3.5 w-3.5" />Download</>
             ) : (

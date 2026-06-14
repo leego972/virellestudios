@@ -56,7 +56,7 @@ function StepIndicator({ current }: { current: number }) {
               ? "bg-amber-500/20 border-2 border-amber-500 text-amber-400"
               : "bg-white/5 border border-white/20 text-white/30"
           }`}>
-            {current > step.id ? <CheckCircle2 className="h-4 w-4" /> : step.id}
+            {current > step.id ? <CheckCircle2 className="h-4 w-4 text-amber-400" /> : step.id}
           </div>
           <span className={`text-xs font-medium hidden sm:block ${
             current >= step.id ? "text-white/70" : "text-white/20"

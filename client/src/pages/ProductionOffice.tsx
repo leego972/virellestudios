@@ -425,7 +425,7 @@ pre{white-space:pre-wrap;font:inherit}
 
           <div className="flex gap-2">
             <Button onClick={generateCallSheet} disabled={generating || stripboard.length === 0} size="sm" className="gap-2">
-              {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+              {generating ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
               Draft call sheet
             </Button>
             {lastCallSheet && (
@@ -557,7 +557,7 @@ Output clean markdown only, no commentary.`;
             </SelectContent>
           </Select>
           <Button onClick={generateDpr} disabled={generating} size="sm" className="gap-2">
-            {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            {generating ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
             Generate wrap report
           </Button>
         </div>
@@ -684,7 +684,7 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
             disabled={!dirty || save.isPending}
             onClick={() => save.mutate({ projectId, items: merged })}
           >
-            {save.isPending ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : null}
+            {save.isPending ? <Loader2 className="h-3 w-3 mr-1 animate-spin text-amber-400" /> : null}
             Save chain of title
           </Button>
         </div>

@@ -273,7 +273,7 @@ function AutofillTab({ projectId }: { projectId: number }) {
         {draft && (
           <div className="space-y-2">
             {Object.entries(draft).map(([k, v]: [string, any]) => (
-              <div key={k}><Label className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">{k.replace(/([A-Z])/g, " $1")}</Label>
+              <div key={k}><Label className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60">{k.replace(/([A-Z])/g, " $1")}</Label>
                 {String(v).length > 80 ? <Textarea value={String(v)} readOnly rows={3} className="text-sm" /> : <Input value={String(v)} readOnly className="text-sm" />}
               </div>
             ))}

@@ -422,9 +422,9 @@ function AICastingInner() {
               disabled={isGenerating || selectedActors.length === 0}
             >
               {isGenerating ? (
-                <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Casting...</>
+                <><Loader2 className="w-4 h-4 mr-1 animate-spin text-amber-400" /> Casting...</>
               ) : (
-                <><CheckCircle2 className="w-4 h-4 mr-1" /> Cast to Project ({selectedActors.length})</>
+                <><CheckCircle2 className="w-4 h-4 mr-1 text-amber-400" /> Cast to Project ({selectedActors.length})</>
               )}
             </Button>
           </div>
@@ -776,9 +776,9 @@ function AICastingInner() {
                   disabled={isGenerating}
                 >
                   {isGenerating ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Casting...</>
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> Casting...</>
                   ) : (
-                    <><CheckCircle2 className="w-4 h-4 mr-2" /> Cast to Project</>
+                    <><CheckCircle2 className="w-4 h-4 mr-2 text-amber-400" /> Cast to Project</>
                   )}
                 </Button>
               </CardContent>

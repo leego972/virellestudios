@@ -170,7 +170,7 @@ export default function PitchLab() {
               </div>
               <div className="flex gap-2">
                 <Button onClick={() => generate(kind)} disabled={generating !== null} className="bg-amber-600 hover:bg-amber-500 text-black min-h-[44px]">
-                  {generating === kind ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
+                  {generating === kind ? <Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> : <Wand2 className="h-4 w-4 mr-2" />}
                   Generate
                 </Button>
                 {lastByKind[kind] && (

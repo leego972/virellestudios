@@ -219,7 +219,7 @@ export default function SeoDashboard() {
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >
             {isRunning ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Optimising...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />Optimising...</>
             ) : (
               <><Zap className="w-4 h-4 mr-2" />Run SEO Optimisation</>
             )}
@@ -418,7 +418,7 @@ export default function SeoDashboard() {
                   disabled={submitIndexNowMutation.isPending}
                 >
                   {submitIndexNowMutation.isPending ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                    <Loader2 className="w-5 h-5 animate-spin text-blue-400 text-amber-400" />
                   ) : (
                     <Globe className="w-5 h-5 text-blue-400" />
                   )}
@@ -737,7 +737,7 @@ export default function SeoDashboard() {
                 disabled={submitIndexNowMutation.isPending}
               >
                 {submitIndexNowMutation.isPending ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</>
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />Submitting...</>
                 ) : (
                   <><Globe className="w-4 h-4 mr-2" />Submit All Pages to IndexNow</>
                 )}

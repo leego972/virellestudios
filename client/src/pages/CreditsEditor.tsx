@@ -64,7 +64,7 @@ export default function CreditsEditor() {
   if (authLoading || projectLoading || creditsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary text-amber-400" />
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function CreditsEditor() {
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
                 <Button onClick={handleAdd} disabled={!newRole.trim() || !newName.trim() || createCredit.isPending}>
-                  {createCredit.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                  {createCredit.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : null}
                   Add
                 </Button>
               </DialogFooter>

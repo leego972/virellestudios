@@ -91,7 +91,7 @@ export default function LocationScout() {
     }
   }
 
-  if (authLoading) return <div className="flex items-center justify-center h-screen"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (authLoading) return <div className="flex items-center justify-center h-screen"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground text-amber-400" /></div>;
   if (!isAuthenticated) { window.location.href = getLoginUrl(); return null; }
 
   const filtered = filterType === "all" ? locations : locations.filter((l: any) => l.locationType === filterType);
@@ -110,7 +110,7 @@ export default function LocationScout() {
             <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Find and manage filming locations for your production</p>
           </div>
           <Button variant="outline" className="shrink-0" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>
-            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2 text-amber-400/70" />}
+            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : <Sparkles className="h-4 w-4 mr-2 text-amber-400/70" />}
             AI Suggest
           </Button>
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -139,7 +139,7 @@ export default function LocationScout() {
                   {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ×</Badge>)}</div>}
                 </div>
                 <Button className="w-full" onClick={() => createMutation.mutate({ projectId, name, address: address || undefined, locationType: locationType || undefined, description: description || undefined, notes: notes || undefined, tags })} disabled={!name || createMutation.isPending}>
-                  {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
                   Add Location
                 </Button>
               </div>
@@ -188,7 +188,7 @@ export default function LocationScout() {
 
         {/* Location Grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>
+          <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground text-amber-400" /></div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <MapPin className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
@@ -235,7 +235,7 @@ export default function LocationScout() {
                       }
                     });
                   }} disabled={generateImageMutation.isPending}>
-                    {generateImageMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Image className="h-3 w-3 mr-1" />}
+                    {generateImageMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1 text-amber-400" /> : <Image className="h-3 w-3 mr-1" />}
                     Generate Reference
                   </Button>
                 </CardContent>

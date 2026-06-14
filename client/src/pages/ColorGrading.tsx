@@ -341,7 +341,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
     };
 
     if (authLoading || projectLoading) {
-      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin" style={{ color: "#D4AF37" }} /></div>;
+      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin text-amber-400" style={{ color: "#D4AF37" }} /></div>;
     }
     if (!user) { window.location.href = getLoginUrl(); return null; }
 
@@ -372,7 +372,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </Button>
               <Button size="sm" variant="ghost" onClick={reset} className="gap-2 h-8 text-xs text-muted-foreground"><RefreshCw className="h-3.5 w-3.5" />Reset</Button>
               <Button size="sm" onClick={() => save()} disabled={updateProject.isPending} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
-                {updateProject.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}Save Grade
+                {updateProject.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Check className="h-3.5 w-3.5" />}Save Grade
               </Button>
             </div>
           </div>
@@ -418,7 +418,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 </div>
                 <div className="flex justify-center pt-2">
                   <Button onClick={() => save()} disabled={updateProject.isPending} className="gap-2 px-8" style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
-                    {updateProject.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}Apply Wheels
+                    {updateProject.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Check className="h-4 w-4" />}Apply Wheels
                   </Button>
                 </div>
               </div>
@@ -488,7 +488,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </div>
               <div className="flex justify-center mt-6">
                 <Button onClick={() => save()} disabled={updateProject.isPending} className="gap-2 px-8" style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
-                  {updateProject.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}Save Primary Grade
+                  {updateProject.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Check className="h-4 w-4" />}Save Primary Grade
                 </Button>
               </div>
             </TabsContent>

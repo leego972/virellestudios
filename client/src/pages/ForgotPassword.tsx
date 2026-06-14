@@ -110,7 +110,7 @@ export default function ForgotPassword() {
                   >
                     {resetMutation.isPending ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
                         Sending...
                       </>
                     ) : (

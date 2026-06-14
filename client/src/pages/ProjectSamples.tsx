@@ -475,7 +475,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
             className="w-full bg-amber-600 hover:bg-amber-700 text-white"
           >
             {uploading ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Uploading...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> Uploading...</>
             ) : (
               <><Upload className="w-4 h-4 mr-2" /> Upload Sample</>
             )}

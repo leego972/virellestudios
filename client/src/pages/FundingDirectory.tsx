@@ -1293,7 +1293,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                   title="10 credits"
                 >
                   {submitMutation.isPending ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Sending...</>
+                    <><Loader2 className="h-4 w-4 animate-spin text-amber-400" /> Sending...</>
                   ) : (
                     <><Send className="h-4 w-4" /> Email & Download <span className="text-[10px] font-medium opacity-80 ml-0.5">10cr</span></>
                   )}

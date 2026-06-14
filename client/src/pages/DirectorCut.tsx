@@ -617,7 +617,7 @@ export default function DirectorCut() {
             onClick={saveChanges}
             disabled={isSaving || !hasUnsavedChanges}
           >
-            {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+            {isSaving ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Save className="w-3 h-3" />}
             {isSaving ? "Saving…" : "Save"}
           </Button>
         </div>
@@ -688,7 +688,7 @@ export default function DirectorCut() {
                   {!activeCut.isLocked && (
                     <Button size="sm" variant="outline" className="h-6 text-xs px-2 shrink-0 border-emerald-500/40 text-emerald-400"
                       onClick={() => lockCutMutation.mutate({ id: activeCut.id })} disabled={lockCutMutation.isPending}>
-                      {lockCutMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3 mr-1" />} Lock
+                      {lockCutMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <CheckCircle2 className="w-3 h-3 mr-1" />} Lock
                     </Button>
                   )}
                   {activeCut.isLocked && (
@@ -699,7 +699,7 @@ export default function DirectorCut() {
                   )}
                   <Button size="sm" variant="outline" className="h-6 text-xs px-2 shrink-0 border-violet-500/40 text-violet-400"
                     onClick={() => compileMutation.mutate({ cutId: activeCut.id })} disabled={compileMutation.isPending}>
-                    {compileMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3 mr-1" />} Compile
+                    {compileMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Download className="w-3 h-3 mr-1" />} Compile
                   </Button>
                   {!activeCut.isLocked && (
                     <Select onValueChange={(v) => { if (activeCutId && v) addSceneToCutMutation.mutate({ cutId: activeCutId, sceneId: parseInt(v) }); }}>
@@ -725,7 +725,7 @@ export default function DirectorCut() {
                 <DialogFooter>
                   <Button variant="ghost" onClick={() => setShowNewCutDialog(false)}>Cancel</Button>
                   <Button onClick={() => createCutMutation.mutate({ projectId, name: newCutTitle })} disabled={createCutMutation.isPending}>
-                    {createCutMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create"}
+                    {createCutMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Create"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -987,7 +987,7 @@ export default function DirectorCut() {
                           }}
                           disabled={generatePreviewMutation.isPending}
                         >
-                          {generatePreviewMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                          {generatePreviewMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Wand2 className="w-3 h-3" />}
                           Regen Preview
                         </Button>
                         <Button
@@ -1067,7 +1067,7 @@ export default function DirectorCut() {
                         onClick={submitRetake}
                         disabled={updateSceneMutation.isPending}
                       >
-                        {updateSceneMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Flag className="w-3 h-3" />}
+                        {updateSceneMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Flag className="w-3 h-3" />}
                         Save Retake Instructions
                       </Button>
                       <Button

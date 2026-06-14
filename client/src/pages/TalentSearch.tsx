@@ -658,7 +658,7 @@ import { useState, useEffect } from "react";
         {unlockSuccess && (
           <div className="bg-green-900/40 border-b border-green-500/30 px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-green-300 text-sm">
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4 text-amber-400" />
               <strong>{unlockSuccess}</strong> has been unlocked and added to your account.
             </div>
             <button onClick={() => setUnlockSuccess(null)} className="text-green-400 hover:text-green-200 text-xs">Dismiss</button>
@@ -1167,7 +1167,7 @@ import { useState, useEffect } from "react";
                     <div className="px-5 py-4 border-b border-white/5">
                       {getEntitlementState(selectedActor) === "plan_included" ? (
                         <div className="flex items-center gap-2 text-green-400">
-                          <CheckCircle2 className="w-4 h-4 shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 shrink-0 text-amber-400" />
                           <p className="text-sm font-medium">Included in your current plan</p>
                         </div>
                       ) : getEntitlementState(selectedActor) === "unlocked" ? (

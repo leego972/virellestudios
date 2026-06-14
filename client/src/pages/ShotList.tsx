@@ -257,7 +257,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
     const statsByStatus = Object.keys(STATUS_CONFIG).reduce((acc, k) => ({ ...acc, [k]: shots.filter(s=>s.status===k).length }), {} as Record<string, number>);
 
     if (authLoading || projectLoading) {
-      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin" style={{ color: "#D4AF37" }} /></div>;
+      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin text-amber-400" style={{ color: "#D4AF37" }} /></div>;
     }
     if (!user) { window.location.href = getLoginUrl(); return null; }
 
@@ -282,7 +282,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline" onClick={exportCSV} disabled={shots.length===0} className="gap-2 h-8 text-xs border-border/50"><Download className="h-3.5 w-3.5" />CSV</Button>
               <Button size="sm" variant="outline" onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending} className="gap-2 h-8 text-xs border-border/50">
-                {generateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate
+                {generateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate
               </Button>
               <Button size="sm" onClick={() => { setEditingShot(null); setShowForm(true); }} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
                 <Plus className="h-3.5 w-3.5" />Add Shot

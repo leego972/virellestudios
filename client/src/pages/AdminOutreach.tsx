@@ -307,7 +307,7 @@ export default function AdminOutreach() {
                 </thead>
                 <tbody>
                   {contactsQuery.isLoading ? (
-                    <tr><td colSpan={8} className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2" />Loading contacts…</td></tr>
+                    <tr><td colSpan={8} className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading contacts…</td></tr>
                   ) : contacts.length === 0 ? (
                     <tr><td colSpan={8} className="text-center py-12 text-muted-foreground">No contacts yet. Add one or import a CSV.</td></tr>
                   ) : contacts.map(c => (
@@ -356,7 +356,7 @@ export default function AdminOutreach() {
           {/* Campaigns list */}
           <div className="space-y-3">
             {campaignsQuery.isLoading ? (
-              <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2" />Loading campaigns…</div>
+              <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading campaigns…</div>
             ) : campaigns.length === 0 ? (
               <Card className="bg-card/50 border-border/50 glass-card">
                 <CardContent className="py-12 text-center text-muted-foreground">
@@ -392,7 +392,7 @@ export default function AdminOutreach() {
                     )}
                     {camp.status === "sending" && (
                       <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
-                        <Loader2 className="h-3 w-3 mr-1 animate-spin" /> Sending…
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin text-amber-400" /> Sending…
                       </Badge>
                     )}
                   </div>
@@ -443,7 +443,7 @@ export default function AdminOutreach() {
               disabled={!addEmail || addContactMutation.isPending}
               className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
             >
-              {addContactMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+              {addContactMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : null}
               Add Contact
             </Button>
           </DialogFooter>
@@ -472,7 +472,7 @@ export default function AdminOutreach() {
               disabled={!bulkText.trim() || bulkImportMutation.isPending}
               className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
             >
-              {bulkImportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload className="h-4 w-4 mr-1" />}
+              {bulkImportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : <Upload className="h-4 w-4 mr-1" />}
               Import
             </Button>
           </DialogFooter>
@@ -535,7 +535,7 @@ export default function AdminOutreach() {
                 {campaignAdPreview ? (
                   <div className="space-y-2">
                     <img src={campaignAdPreview} alt="Ad preview" className="max-h-32 mx-auto rounded-lg object-contain" />
-                    {uploadingAd && <p className="text-xs text-muted-foreground flex items-center justify-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Uploading…</p>}
+                    {uploadingAd && <p className="text-xs text-muted-foreground flex items-center justify-center gap-1"><Loader2 className="h-3 w-3 animate-spin text-amber-400" /> Uploading…</p>}
                     {!uploadingAd && campaignAdUrl && <p className="text-xs text-green-400 flex items-center justify-center gap-1"><CheckCircle2 className="h-3 w-3" /> Uploaded</p>}
                   </div>
                 ) : (
@@ -562,7 +562,7 @@ export default function AdminOutreach() {
               disabled={!campaignName || !campaignSubject || createCampaignMutation.isPending || uploadingAd}
               className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
             >
-              {createCampaignMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+              {createCampaignMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : null}
               Save as Draft
             </Button>
           </DialogFooter>
@@ -588,7 +588,7 @@ export default function AdminOutreach() {
               disabled={sendCampaignMutation.isPending}
               className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
             >
-              {sendCampaignMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
+              {sendCampaignMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : <Send className="h-4 w-4 mr-1" />}
               Send to {activeContacts} Contacts
             </Button>
           </DialogFooter>

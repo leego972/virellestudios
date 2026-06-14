@@ -200,7 +200,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
   }
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground text-amber-400" /></div>;
   }
 
   return (
@@ -330,11 +330,11 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Actions */}
       <div className="flex items-center gap-3 flex-wrap">
         <Button onClick={handleSave} disabled={setMutation.isPending} className="gap-2">
-          {setMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {setMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Save className="h-4 w-4" />}
           Save Vision
         </Button>
         <Button variant="outline" onClick={() => dnaMutation.mutate({ projectId })} disabled={dnaMutation.isPending} className="gap-2">
-          {dnaMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+          {dnaMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Sparkles className="h-4 w-4" />}
           Generate Visual DNA
         </Button>
       </div>
@@ -406,7 +406,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
     onError: e => toast.error(e.message),
   });
 
-  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground text-amber-400" /></div>;
 
   return (
     <div className="space-y-4 max-w-4xl">
@@ -528,7 +528,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
                 })}
                 disabled={!name || createMutation.isPending}
               >
-                {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
                 Add Location
               </Button>
             </DialogFooter>
@@ -583,7 +583,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
                       disabled={enrichMutation.isPending && enrichMutation.variables?.locationId === loc.id}
                     >
                       {enrichMutation.isPending && enrichMutation.variables?.locationId === loc.id
-                        ? <Loader2 className="h-3 w-3 animate-spin" />
+                        ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
                         : <Sparkles className="h-3 w-3" />}
                       Enrich
                     </Button>
@@ -692,7 +692,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
     onError: e => toast.error(e.message),
   });
 
-  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground text-amber-400" /></div>;
 
   return (
     <div className="space-y-4 max-w-4xl">
@@ -746,7 +746,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
                 })}
                 disabled={!vName || createMutation.isPending}
               >
-                {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
                 Register Vehicle
               </Button>
             </DialogFooter>
@@ -794,7 +794,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
                   disabled={promptMutation.isPending && promptMutation.variables?.vehicleId === v.id}
                 >
                   {promptMutation.isPending && promptMutation.variables?.vehicleId === v.id
-                    ? <Loader2 className="h-3 w-3 animate-spin" />
+                    ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
                     : <Sparkles className="h-3 w-3" />}
                   Generate AI Profile
                 </Button>
@@ -955,7 +955,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
         disabled={generateMutation.isPending || !timeOfDay || !weather || !season}
         className="gap-2 w-full sm:w-auto"
       >
-        {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+        {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Wand2 className="h-4 w-4" />}
         Generate Atmosphere
       </Button>
 
@@ -1088,7 +1088,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
 
   if (isLoading) return (
     <div className="flex items-center justify-center py-20">
-      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground text-amber-400" />
     </div>
   );
 
@@ -1210,7 +1210,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                 }}
                 disabled={uploadMutation.isPending || !imageBase64 || !uName.trim()}
               >
-                {uploadMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {uploadMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
                 Upload Garment
               </Button>
             </DialogFooter>
@@ -1289,7 +1289,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                   <Button size="sm" variant="outline"
                     className="flex-1 h-7 text-[11px] gap-1 border-violet-300 text-violet-700 hover:bg-violet-50"
                     onClick={() => analyseMutation.mutate({ itemId: item.id })} disabled={isAnalysing}>
-                    {isAnalysing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                    {isAnalysing ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
                     AI Analyse
                   </Button>
                   <Button size="sm" variant="ghost"
@@ -1466,7 +1466,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
                 generateMutation.mutate({ projectId, sceneName: sceneName.trim(), sceneNumber: sceneNumber.trim() || undefined, scriptText });
               }}
               disabled={generateMutation.isPending}>
-              {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+              {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Wand2 className="h-4 w-4" />}
               Generate Shot List
             </Button>
             <p className="text-xs text-muted-foreground">Uses your Director&apos;s Vision (era, camera, lens, movement style)</p>
@@ -1488,7 +1488,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
                 <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-1"
                   onClick={() => saveMutation.mutate({ projectId, sceneName, sceneNumber: sceneNumber || undefined, shots: generatedShots })}
                   disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                  {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Save className="h-3 w-3" />}
                   Save to Project
                 </Button>
               </div>
@@ -1636,7 +1636,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
   const displayDays = generatedDays.length > 0 ? generatedDays : (days as any[]);
   const isGenerated = generatedDays.length > 0;
 
-  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground text-amber-400" /></div>;
 
   return (
     <div className="space-y-5 max-w-4xl">
@@ -1658,7 +1658,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
           )}
           <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-2"
             onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
-            {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+            {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Wand2 className="h-4 w-4" />}
             {generateMutation.isPending ? "Scheduling..." : "Generate Schedule"}
           </Button>
         </div>
@@ -1674,7 +1674,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
             <Button size="sm" variant="outline" onClick={() => setGeneratedDays([])}>Discard</Button>
             <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-1"
               onClick={() => saveMutation.mutate({ projectId, days: generatedDays })} disabled={saveMutation.isPending}>
-              {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Save className="h-3 w-3" />}
               Save Schedule
             </Button>
           </div>
@@ -1697,7 +1697,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
 
       {generateMutation.isPending && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-violet-500 text-amber-400" />
           <p className="text-sm text-muted-foreground">Analysing locations and scenes...</p>
           <p className="text-xs text-muted-foreground">Optimising for minimal company moves and golden hour windows</p>
         </div>
@@ -1810,14 +1810,14 @@ function ContinuityTab({ projectId }: { projectId: number }) {
         </div>
         <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-2"
           onClick={() => checkMutation.mutate({ projectId })} disabled={checkMutation.isPending}>
-          {checkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+          {checkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Zap className="h-4 w-4" />}
           {checkMutation.isPending ? "Analysing..." : "Run Continuity Check"}
         </Button>
       </div>
 
       {checkMutation.isPending && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-violet-500 text-amber-400" />
           <p className="text-sm text-muted-foreground">Comparing wardrobe eras with location eras...</p>
           <p className="text-xs text-muted-foreground">Checking social class consistency, geographic accuracy...</p>
         </div>
@@ -2066,7 +2066,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
         <div className="lg:col-span-2 space-y-4">
           {/* Quick presets */}
           <Card>
-            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Quick Presets</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60 glass-card">Quick Presets</CardTitle></CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-1.5">
                 {TITLE_PRESETS.map((p, i) => (
@@ -2084,7 +2084,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Background image */}
           <Card>
-            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Background Image</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60 glass-card">Background Image</CardTitle></CardHeader>
             <CardContent className="space-y-2 glass-card">
               <div
                 className={["border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-violet-400 transition-colors",
@@ -2117,7 +2117,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Text content */}
           <Card>
-            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Text Content</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60 glass-card">Text Content</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card">
               <Textarea value={overlayText} onChange={e => setOverlayText(e.target.value)}
                 rows={3} className="text-sm font-mono resize-none"
@@ -2128,7 +2128,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Style options */}
           <Card>
-            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Style</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60 glass-card">Style</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card">
               <FieldGroup label="Text Style">
                 <Select value={textStyle} onValueChange={setTextStyle}>
@@ -2168,7 +2168,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Overlay options */}
           <Card>
-            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Image Effects</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60 glass-card">Image Effects</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card">
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="dimCheck" checked={overlayDim} onChange={e => setOverlayDim(e.target.checked)} className="rounded" />
@@ -2231,7 +2231,7 @@ export default function PreProductionPanel() {
   const { data: constants } = trpc.productionAssets.vision.getConstants.useQuery(undefined, { staleTime: Infinity });
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId && isAuthenticated });
 
-  if (authLoading) return <div className="flex items-center justify-center h-screen"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (authLoading) return <div className="flex items-center justify-center h-screen"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground text-amber-400" /></div>;
   if (!isAuthenticated) { window.location.href = getLoginUrl(); return null; }
 
   return (

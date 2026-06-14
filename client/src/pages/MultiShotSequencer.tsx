@@ -401,7 +401,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
               >
                 {updateSceneMutation.isPending && !generatePreviewMutation.isPending
-                  ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                  ? <Loader2 className="w-4 h-4 mr-1 animate-spin text-amber-400" />
                   : <Zap className="w-4 h-4 mr-1" />}
                 Save Sequence
               </Button>
@@ -412,7 +412,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 disabled={isBusy}
               >
                 {generatePreviewMutation.isPending
-                  ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                  ? <Loader2 className="w-4 h-4 mr-1 animate-spin text-amber-400" />
                   : <ImageIcon className="w-4 h-4 mr-1" />}
                 {generatePreviewMutation.isPending ? "Generating..." : "Generate Preview"}
               </Button>

@@ -1,1 +1,39 @@
-aW1wb3J0IHsgdXNlUGFyYW1zLCBMaW5rIH0gZnJvbSAid291dGVyIjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IHRycGMgfSBmcm9tICJAL2xpYi90cnBjIjsKaW1wb3J0IHsgQXJyb3dMZWZ0LCBQcmludGVyLCBMb2FkZXIyIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKaW1wb3J0IENhbGxTaGVldFZpZXcgZnJvbSAiQC9jb21wb25lbnRzL0NhbGxTaGVldFZpZXciOwoKLyoqIHY2LjYzIOKAlCBQcmludGFibGUgY2FsbCBzaGVldCBwYWdlLiB3aW5kb3cucHJpbnQoKSBvdXRwdXRzIGEgY2xlYW4gUERGLiAqLwpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBDYWxsU2hlZXRQcmludCgpIHsKICBjb25zdCB7IGlkLCBkYXlJZCB9ID0gdXNlUGFyYW1zPHsgaWQ6IHN0cmluZzsgZGF5SWQ6IHN0cmluZyB9PigpOwogIGNvbnN0IHByb2plY3RJZCA9IHBhcnNlSW50KGlkIHx8ICIwIik7CiAgY29uc3Qgc2hvb3REYXlJZCA9IHBhcnNlSW50KGRheUlkIHx8ICIwIik7CiAgY29uc3QgeyBkYXRhLCBpc0xvYWRpbmcgfSA9IHRycGMuY2FsbFNoZWV0LmdldC51c2VRdWVyeSh7IHNob290RGF5SWQgfSwgeyBlbmFibGVkOiAhIXNob290RGF5SWQgfSk7CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIHByaW50OmJnLXdoaXRlIiBzdHlsZT17eyBiYWNrZ3JvdW5kOiIjMDcwNzBlIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9ImJnLXppbmMtOTAwIHRleHQtemluYy0xMDAgcHgtNCBweS0zIHByaW50OmhpZGRlbiI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTV4bCBteC1hdXRvIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBnYXAtMyI+CiAgICAgICAgICA8TGluayBocmVmPXtgL3Byb2plY3RzLyR7cHJvamVjdElkfS9jYWxsLXNoZWV0c2B9PgogICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtNDAwIGhvdmVyOnRleHQtemluYy0xMDAiPgogICAgICAgICAgICAgIDxBcnJvd0xlZnQgY2xhc3NOYW1lPSJ3LTQgaC00IG1yLTEiIC8+IEJhY2sKICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICA8L0xpbms+CiAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiBvbkNsaWNrPXsoKSA9PiB3aW5kb3cucHJpbnQoKX0gY2xhc3NOYW1lPSJiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNTAwIHRleHQtemluYy05NTAiPgogICAgICAgICAgICA8UHJpbnRlciBjbGFzc05hbWU9InctNCBoLTQgbXItMSIgLz4gUHJpbnQgLyBTYXZlIFBERgogICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgICB7aXNMb2FkaW5nID8gKAogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWNlbnRlciBweS0xNiB0ZXh0LXppbmMtNTAwIj48TG9hZGVyMiBjbGFzc05hbWU9InctNiBoLTYgYW5pbWF0ZS1zcGluIGlubGluZSBtci0yIiAvPkxvYWRpbmcgY2FsbCBzaGVldOKApjwvZGl2PgogICAgICApIDogIWRhdGEgPyAoCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtY2VudGVyIHB5LTE2IHRleHQtemluYy01MDAiPlNob290IGRheSBub3QgZm91bmQuPC9kaXY+CiAgICAgICkgOiAoCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InB5LTYgcHJpbnQ6cHktMCI+CiAgICAgICAgICA8Q2FsbFNoZWV0VmlldyBkYXRhPXtkYXRhfSBwcmludE1vZGUgLz4KICAgICAgICA8L2Rpdj4KICAgICAgKX0KICAgIDwvZGl2PgogICk7Cn0K
+import { useParams, Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import { ArrowLeft, Printer, Loader2 } from "lucide-react";
+import CallSheetView from "@/components/CallSheetView";
+
+/** v6.63 — Printable call sheet page. window.print() outputs a clean PDF. */
+export default function CallSheetPrint() {
+  const { id, dayId } = useParams<{ id: string; dayId: string }>();
+  const projectId = parseInt(id || "0");
+  const shootDayId = parseInt(dayId || "0");
+  const { data, isLoading } = trpc.callSheet.get.useQuery({ shootDayId }, { enabled: !!shootDayId });
+
+  return (
+    <div className="min-h-screen print:bg-white" style={{ background:"#07070e" }}>
+      <div className="bg-zinc-900 text-zinc-100 px-4 py-3 print:hidden">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+          <Link href={`/projects/${projectId}/call-sheets`}>
+            <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back
+            </Button>
+          </Link>
+          <Button size="sm" onClick={() => window.print()} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
+            <Printer className="w-4 h-4 mr-1" /> Print / Save PDF
+          </Button>
+        </div>
+      </div>
+      {isLoading ? (
+        <div className="text-center py-16 text-zinc-500"><Loader2 className="w-6 h-6 animate-spin inline mr-2 text-amber-400" />Loading call sheet…</div>
+      ) : !data ? (
+        <div className="text-center py-16 text-zinc-500">Shoot day not found.</div>
+      ) : (
+        <div className="py-6 print:py-0">
+          <CallSheetView data={data} printMode />
+        </div>
+      )}
+    </div>
+  );
+}

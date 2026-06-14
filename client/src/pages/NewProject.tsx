@@ -951,7 +951,7 @@ export default function NewProject() {
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />
                 {submitLabel()}
               </>
             ) : (

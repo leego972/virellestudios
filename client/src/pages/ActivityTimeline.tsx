@@ -57,7 +57,7 @@ export default function ActivityTimeline() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Loading…</div>
+          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />Loading…</div>
         ) : (events as any[]).length === 0 ? (
           <Card className="bg-zinc-950 border-zinc-800 glass-card"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
         ) : (

@@ -718,7 +718,7 @@ export default function ScriptWriter() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary text-amber-400" />
       </div>
     );
   }
@@ -975,7 +975,7 @@ export default function ScriptWriter() {
                   aria-label="Save script"
                 >
                   {(createMutation.isPending || updateMutation.isPending) ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <Loader2 className="h-4 w-4 animate-spin text-amber-400" aria-hidden="true" />
                   ) : (
                     <Save className="h-4 w-4" />
                   )}
@@ -1064,7 +1064,7 @@ export default function ScriptWriter() {
                 disabled={aiLoading}
               >
                 {aiLoading ? (
-                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  <Loader2 className="h-3 w-3 animate-spin mr-1 text-amber-400" />
                 ) : (
                   <BookOpen className="h-3 w-3 mr-1" />
                 )}
@@ -1085,7 +1085,7 @@ export default function ScriptWriter() {
                 disabled={aiLoading}
               >
                 {aiLoading ? (
-                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  <Loader2 className="h-3 w-3 animate-spin mr-1 text-amber-400" />
                 ) : (
                   <Sparkles className="h-3 w-3 mr-1" />
                 )}

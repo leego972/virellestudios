@@ -410,7 +410,7 @@ import { useState } from "react";
                       </div>
                     ))}
                     <Button className="w-full" onClick={handleGenerate} disabled={generating}>
-                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : "Generate Document"}
+                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Generating…</> : "Generate Document"}
                     </Button>
                   </CardContent>
                 </Card>

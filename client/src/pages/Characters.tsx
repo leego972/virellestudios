@@ -646,7 +646,7 @@ export default function Characters() {
                   {/* Results grid */}
                   {personImageSearch.isLoading && (
                     <div className="flex items-center justify-center h-32 text-muted-foreground">
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <Loader2 className="h-5 w-5 animate-spin mr-2 text-amber-400" />
                       <span className="text-sm">Searching Wikimedia Commons…</span>
                     </div>
                   )}
@@ -821,7 +821,7 @@ export default function Characters() {
               >
                 {aiPhotoMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" />
                     Analyzing & Creating...
                   </>
                 ) : (
@@ -836,7 +836,7 @@ export default function Characters() {
             {aiPhotoMutation.isPending && (
               <div className="rounded-lg bg-violet-500/10 border border-violet-500/20 p-4 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-violet-400" />
+                  <Loader2 className="h-4 w-4 animate-spin text-violet-400 text-amber-400" />
                   <span className="text-sm font-medium text-violet-300">AI Processing</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -948,7 +948,7 @@ export default function Characters() {
                     onClick={() => fileRef.current?.click()}
                   >
                     {uploading ? (
-                      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground text-amber-400" />
                     ) : (
                       <Upload className="h-5 w-5 text-muted-foreground" />
                     )}
@@ -1105,7 +1105,7 @@ export default function Characters() {
             <div className="flex justify-end gap-2 pt-2 border-t">
               <Button type="button" variant="ghost" size="sm" onClick={closeDialog}>Cancel</Button>
               <Button type="submit" size="sm" disabled={isSaving}>
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" /> : null}
                 {editingId ? "Save Changes" : "Create Character"}
               </Button>
             </div>
@@ -1371,7 +1371,7 @@ export default function Characters() {
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setAiDialogOpen(false)}>Cancel</Button>
               <Button type="submit" size="sm" disabled={aiGenMutation.isPending}>
-                {aiGenMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin mr-1" />Generating...</> : <><Wand2 className="h-4 w-4 mr-1" />Generate Character</>}
+                {aiGenMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />Generating...</> : <><Wand2 className="h-4 w-4 mr-1" />Generate Character</>}
               </Button>
             </div>
           </form>

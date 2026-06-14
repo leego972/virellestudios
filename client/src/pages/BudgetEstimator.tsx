@@ -68,7 +68,7 @@ function ActualsRow({
             disabled={!valid || setActuals.isPending}
             onClick={() => setActuals.mutate({ budgetId, category: categoryKey, actual: actualNum })}
           >
-            {setActuals.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+            {setActuals.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : "Save"}
           </Button>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function BudgetEstimator() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedBudgetId, setSelectedBudgetId] = useState<number | null>(null);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground text-amber-400" /></div>;
   if (!user) { window.location.href = getLoginUrl(); return null; }
 
   const project = trpc.project.get.useQuery({ id: projectId });
@@ -257,7 +257,7 @@ export default function BudgetEstimator() {
             )}
             <Button size="sm" onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
               {generateMutation.isPending ? (
-                <><Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" /><span className="hidden sm:inline">Analyzing...</span></>
+                <><Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin text-amber-400" /><span className="hidden sm:inline">Analyzing...</span></>
               ) : (
                 <><Sparkles className="h-4 w-4 sm:mr-2" /><span className="hidden sm:inline">Generate Budget</span></>
               )}
@@ -280,7 +280,7 @@ export default function BudgetEstimator() {
           </div>
         ) : generateMutation.isPending && !activeBudget ? (
           <div className="text-center py-24">
-            <Loader2 className="h-12 w-12 mx-auto mb-6 animate-spin text-primary" />
+            <Loader2 className="h-12 w-12 mx-auto mb-6 animate-spin text-primary text-amber-400" />
             <h2 className="text-lg font-semibold mb-2 gradient-text-gold">Analyzing Your Production</h2>
             <p className="text-sm text-muted-foreground">Evaluating scenes, locations, cast, VFX requirements...</p>
           </div>

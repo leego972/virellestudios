@@ -536,7 +536,7 @@ import { useState } from "react";
                           <Textarea value={editingNotes} onChange={e => setEditingNotes(e.target.value)} placeholder="Instructions for AI renderer — timing, blending behavior, scene context, intensity arc…" className="text-xs min-h-[80px] bg-black/30 resize-none border-violet-500/15" />
                           <Button size="sm" className="w-full gap-2 text-xs" style={{ background: "linear-gradient(135deg,#8b5cf6,#7c3aed)" }}
                             onClick={() => updateMutation.mutate({ id: selectedVfx.id, notes: editingNotes })} disabled={updateMutation.isPending}>
-                            {updateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}Save Notes
+                            {updateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : null}Save Notes
                           </Button>
                         </div>
 

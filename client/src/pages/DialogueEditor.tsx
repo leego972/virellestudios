@@ -103,7 +103,7 @@ export default function DialogueEditor() {
   const [aiDirection, setAiDirection] = useState("");
   const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground text-amber-400" /></div>;
   if (!user) { window.location.href = getLoginUrl(); return null; }
 
   const project = trpc.project.get.useQuery({ id: projectId });
@@ -397,7 +397,7 @@ export default function DialogueEditor() {
                           finally { setInferringEmotion(false); }
                         }}
                       >
-                        {inferringEmotion ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
+                        {inferringEmotion ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Zap className="h-3 w-3" />}
                         <span className="ml-1">{inferringEmotion ? "Detecting..." : "AI Detect"}</span>
                       </Button>
                     </TooltipTrigger>
@@ -522,7 +522,7 @@ export default function DialogueEditor() {
                 direction: aiDirection || undefined,
               })}
             >
-              {aiSuggestMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Generating...</> : "Generate Suggestions"}
+              {aiSuggestMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> Generating...</> : "Generate Suggestions"}
             </Button>
 
             {aiSuggestions.length > 0 && (
@@ -571,7 +571,7 @@ export default function DialogueEditor() {
             disabled={!selectedSceneId || aiSceneMutation.isPending}
             onClick={() => aiSceneMutation.mutate({ projectId, sceneId: selectedSceneId! })}
           >
-            {aiSceneMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Generating dialogue...</> : "Generate Full Scene Dialogue"}
+            {aiSceneMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> Generating dialogue...</> : "Generate Full Scene Dialogue"}
           </Button>
         </DialogContent>
       </Dialog>

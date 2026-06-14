@@ -239,7 +239,7 @@ const LocationRecreation: React.FC = () => {
                 
                 {analyzeMutation.isSuccess && !selectedLocationId && (
                   <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-3 text-blue-400">
-                    <CheckCircle className="w-6 h-6" />
+                    <CheckCircle className="w-6 h-6 text-amber-400" />
                     <div>
                       <p className="font-bold">Analysis Underway</p>
                       <p className="text-sm">AI is extracting architectural details from your video.</p>

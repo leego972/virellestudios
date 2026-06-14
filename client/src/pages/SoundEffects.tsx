@@ -617,7 +617,7 @@ import { useState, useRef } from "react";
                     <Button className="w-full gap-2 h-11 font-semibold" style={{ background: "linear-gradient(135deg,#ec4899,#f43f5e)" }}
                       onClick={() => generateMutation.mutate({ projectId, prompt: aiPrompt, durationSeconds: aiDuration, name: aiName || aiPrompt.slice(0,60), category: aiCategory })}
                       disabled={!aiPrompt.trim() || generateMutation.isPending}>
-                      {generateMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin" />Generating…</> : <><Sparkles className="h-4 w-4" />Generate Sound Effect</>}
+                      {generateMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin text-amber-400" />Generating…</> : <><Sparkles className="h-4 w-4" />Generate Sound Effect</>}
                     </Button>
                   </div>
                 </div>
@@ -655,7 +655,7 @@ import { useState, useRef } from "react";
                   onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFileUpload(f); }}
                   onClick={() => fileInputRef.current?.click()}>
                   <div className="h-16 w-16 rounded-2xl bg-pink-500/10 flex items-center justify-center">
-                    {uploading ? <Loader2 className="h-8 w-8 text-pink-400 animate-spin" /> : <Upload className="h-8 w-8 text-pink-400" />}
+                    {uploading ? <Loader2 className="h-8 w-8 text-pink-400 animate-spin text-amber-400" /> : <Upload className="h-8 w-8 text-pink-400" />}
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-semibold">{uploading ? "Uploading…" : "Drop audio file or click to browse"}</p>

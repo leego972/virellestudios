@@ -169,7 +169,7 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
             onClick={() => onApprove(item.id)}
             disabled={isApproving}
           >
-            {isApproving ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <CheckCircle2 className="w-3 h-3 mr-1" />}
+            {isApproving ? <Loader2 className="w-3 h-3 animate-spin mr-1 text-amber-400" /> : <CheckCircle2 className="w-3 h-3 mr-1" />}
             Approve
           </Button>
           <Button
@@ -179,7 +179,7 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
             onClick={() => onReject(item.id)}
             disabled={isRejecting}
           >
-            {isRejecting ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+            {isRejecting ? <Loader2 className="w-3 h-3 animate-spin mr-1 text-amber-400" /> : <XCircle className="w-3 h-3 mr-1" />}
             Reject
           </Button>
         </div>
@@ -312,7 +312,7 @@ export default function AdvertisingDashboard() {
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >
             {isRunning ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Running...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />Running...</>
             ) : (
               <><Zap className="w-4 h-4 mr-2" />Run Ad Cycle</>
             )}
@@ -437,7 +437,7 @@ export default function AdvertisingDashboard() {
                   disabled={isRunning}
                 >
                   {isRunning ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating content...</>
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />Generating content...</>
                   ) : (
                     <><Sparkles className="w-4 h-4 mr-2" />Generate New Ad Content</>
                   )}
@@ -586,7 +586,7 @@ export default function AdvertisingDashboard() {
                   disabled={triggerTikTokMutation.isPending || !tiktok?.isConfigured}
                 >
                   {triggerTikTokMutation.isPending ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Posting...</>
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />Posting...</>
                   ) : (
                     <><Play className="w-4 h-4 mr-2" />Post to TikTok Now</>
                   )}
@@ -624,7 +624,7 @@ export default function AdvertisingDashboard() {
                       disabled={generateVideoMutation.isPending}
                     >
                       {generateVideoMutation.isPending ? (
-                        <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                        <Loader2 className="w-3 h-3 mr-2 animate-spin text-amber-400" />
                       ) : (
                         <Video className="w-3 h-3 mr-2 text-amber-400" />
                       )}

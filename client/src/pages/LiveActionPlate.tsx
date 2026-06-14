@@ -137,9 +137,9 @@ function LiveActionPlateInner() {
             disabled={isProcessing}
           >
             {isProcessing ? (
-              <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Compositing...</>
+              <><Loader2 className="w-4 h-4 mr-1 animate-spin text-amber-400" /> Compositing...</>
             ) : processComplete ? (
-              <><CheckCircle2 className="w-4 h-4 mr-1" /> View Result</>
+              <><CheckCircle2 className="w-4 h-4 mr-1 text-amber-400" /> View Result</>
             ) : (
               <><Layers className="w-4 h-4 mr-1" /> Generate Composite</>
             )}
@@ -176,12 +176,12 @@ function LiveActionPlateInner() {
               >
                 {uploadingPlate ? (
                   <>
-                    <Loader2 className="w-8 h-8 animate-spin" />
+                    <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
                     <span>Uploading plate...</span>
                   </>
                 ) : plateUploaded ? (
                   <>
-                    <CheckCircle2 className="w-8 h-8" />
+                    <CheckCircle2 className="w-8 h-8 text-amber-400" />
                     <span>Plate uploaded successfully</span>
                     <span className="text-xs opacity-60">Click to replace</span>
                   </>

@@ -107,7 +107,7 @@ function ValueProps() {
   return (
     <section className="border-b border-white/10 bg-black py-14 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <p className="text-center text-[11px] font-black uppercase tracking-widest text-amber-500/60 mb-8">
+        <p className="text-center text-[11px] font-black uppercase tracking-widest text-amber-400/60 mb-8">
           Why Lamalo beats describing clothes in your prompt
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -328,7 +328,7 @@ function CustomOrderModal({
                 className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-black font-black text-sm rounded-xl"
               >
                 {isSubmitting ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting to checkout…</>
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> Redirecting to checkout…</>
                 ) : (
                   <><Wand2 className="h-4 w-4 mr-2" /> Order for A$4.99 → Checkout</>
                 )}
@@ -476,7 +476,7 @@ function ItemCard({
             disabled={isBuying}
             className="h-7 px-3 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-black rounded-lg"
           >
-            {isBuying ? <Loader2 className="h-3 w-3 animate-spin" /> : "Buy"}
+            {isBuying ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : "Buy"}
           </Button>
         </div>
       </div>
@@ -532,7 +532,7 @@ function CollectionBlock({
             className="bg-amber-500 hover:bg-amber-400 text-black font-bold h-9 px-4 text-xs"
           >
             {isBuyingCol ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
             ) : (
               `Buy all ${itemCount} — ${bundleLabel}`
             )}

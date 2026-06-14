@@ -166,7 +166,7 @@ import { useState } from "react";
               </div>
               <div className="flex gap-3">
                 <Button className="flex-1" onClick={analyze} disabled={analyzing}>
-                  {analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Analysing…</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage · 5 credits</>}
+                  {analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Analysing…</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage · 5 credits</>}
                 </Button>
                 <Button variant="outline" onClick={showSample}>View Sample</Button>
               </div>
@@ -209,7 +209,7 @@ import { useState } from "react";
               <div className="lg:col-span-2 space-y-4">
                 <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card">Premise Analysis</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.premise}</p></CardContent></Card>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500 gradient-text-gold glass-card"><CheckCircle className="h-4 w-4" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
+                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500 gradient-text-gold glass-card"><CheckCircle className="h-4 w-4 text-amber-400" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
                   <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500 glass-card"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">−</span>{w}</li>)}</ul></CardContent></Card>
                 </div>
                 <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><MessageSquare className="h-4 w-4 text-primary" />Synopsis Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.synopsisNotes}</p></CardContent></Card>

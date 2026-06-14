@@ -855,15 +855,15 @@ function AdPosterMakerInner() {
             </div>
             <div className="w-px h-6 bg-border" />
             <Button variant="outline" size="sm" className="gap-1.5 h-9" onClick={handleGenerateImage} disabled={isGeneratingImage}>
-              {isGeneratingImage ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+              {isGeneratingImage ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Wand2 className="h-3.5 w-3.5" />}
               <span className="hidden sm:inline">AI Artwork</span>
             </Button>
             <Button variant="outline" size="sm" className="gap-1.5 h-9" onClick={handleGenerateCopy} disabled={isGeneratingCopy}>
-              {isGeneratingCopy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+              {isGeneratingCopy ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}
               <span className="hidden sm:inline">AI Copy</span>
             </Button>
             <Button variant="outline" size="sm" className="gap-1.5 h-9" onClick={handleGenerateVideoAd} disabled={isGeneratingVideo}>
-              {isGeneratingVideo ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Video className="h-3.5 w-3.5" />}
+              {isGeneratingVideo ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Video className="h-3.5 w-3.5" />}
               <span className="hidden sm:inline">Video Ad</span>
             </Button>
             <Button size="sm" className="gap-1.5 h-9 bg-primary hover:bg-primary/90" onClick={() => setShowExportDialog(true)}>
@@ -882,7 +882,7 @@ function AdPosterMakerInner() {
             onClick={handleGenerateTaglines}
             disabled={isGeneratingTaglines}
           >
-            {isGeneratingTaglines ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
+            {isGeneratingTaglines ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Zap className="h-3 w-3" />}
             5 Tagline Variants
           </Button>
           <Button
@@ -891,7 +891,7 @@ function AdPosterMakerInner() {
             onClick={handleGenerateBrandKit}
             disabled={isGeneratingBrandKit}
           >
-            {isGeneratingBrandKit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Paintbrush className="h-3 w-3" />}
+            {isGeneratingBrandKit ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Paintbrush className="h-3 w-3" />}
             Brand Kit
           </Button>
           <Button
@@ -1189,7 +1189,7 @@ function AdPosterMakerInner() {
                     className="text-xs" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" className="gap-1.5 text-xs flex-1" onClick={handleGenerateImage} disabled={isGeneratingImage}>
-                      {isGeneratingImage ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                      {isGeneratingImage ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Wand2 className="h-3 w-3" />}
                       Generate with AI
                     </Button>
                     {poster.backgroundImageUrl && (
@@ -1723,7 +1723,7 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
                       onClick={() => handlePublish(platformId)}
                       disabled={publishMutation.isPending}
                     >
-                      {publishMutation.isPending && publishingPlatform === platformId ? <Loader2 className="h-3 w-3 animate-spin" /> : <Megaphone className="h-3 w-3" />}
+                      {publishMutation.isPending && publishingPlatform === platformId ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Megaphone className="h-3 w-3" />}
                       Publish
                     </Button>
                   )}
@@ -1865,7 +1865,7 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
           onClick={() => { if (!filmTitle) { toast.error("Please enter a film title"); return; } generateKitMutation.mutate({ title: filmTitle, genre, logline }); }}
           disabled={generateKitMutation.isPending}
         >
-          {generateKitMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+          {generateKitMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}
           Generate Full Kit
         </Button>
       </div>

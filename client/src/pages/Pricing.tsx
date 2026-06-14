@@ -431,7 +431,7 @@ export default function Pricing() {
                     onClick={() => handleSubscribe(tier.id)}
                     disabled={loadingTier === tier.id}
                   >
-                    {loadingTier === tier.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : tier.primaryCTA}
+                    {loadingTier === tier.id ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : tier.primaryCTA}
                   </Button>
                 </CardFooter>
               </Card>
@@ -574,7 +574,7 @@ export default function Pricing() {
                     onClick={() => handleTopUp(pack.id)}
                     disabled={loadingPack === pack.id}
                   >
-                    {loadingPack === pack.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    {loadingPack === pack.id ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : null}
                     {loadingPack === pack.id ? "Redirecting..." : isLoggedIn ? "Purchase" : "Sign in to Purchase"}
                   </Button>
                 </CardFooter>

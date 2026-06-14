@@ -912,7 +912,7 @@ export default function Landing() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                   {/* Left — copy */}
                   <div className="p-8 md:p-10 flex flex-col justify-center">
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-500/60 mb-3">23 collections · 1,400+ items</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23 collections · 1,400+ items</p>
                     <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight">
                       Menswear. Womenswear. Kids. Sport.<br />
                       <span className="text-amber-400">From 30 cents per item.</span>

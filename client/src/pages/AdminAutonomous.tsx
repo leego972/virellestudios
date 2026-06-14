@@ -265,7 +265,7 @@ export default function AdminAutonomous() {
           </Badge>
           {isRunning && (
             <Badge variant="outline" className="border-amber-500/50 text-amber-400 bg-amber-500/10">
-              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              <Loader2 className="w-3 h-3 mr-1 animate-spin text-amber-400" />
               Running...
             </Badge>
           )}
@@ -433,7 +433,7 @@ export default function AdminAutonomous() {
                 disabled={isSchedulerActive || startSchedulerMutation.isPending}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
-                {startSchedulerMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
+                {startSchedulerMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Play className="w-4 h-4 mr-2" />}
                 Start Scheduler
               </Button>
               <Button
@@ -441,7 +441,7 @@ export default function AdminAutonomous() {
                 disabled={!isSchedulerActive || stopSchedulerMutation.isPending}
                 variant="destructive"
               >
-                {stopSchedulerMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Square className="w-4 h-4 mr-2" />}
+                {stopSchedulerMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Square className="w-4 h-4 mr-2" />}
                 Stop Scheduler
               </Button>
             </CardContent>
@@ -518,7 +518,7 @@ export default function AdminAutonomous() {
                   disabled={isRunning || selectedPlatforms.length === 0}
                   className="bg-amber-600 hover:bg-amber-700"
                 >
-                  {runPipelineMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
+                  {runPipelineMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Play className="w-4 h-4 mr-2" />}
                   Run Now
                 </Button>
               </div>
@@ -543,7 +543,7 @@ export default function AdminAutonomous() {
                   variant="outline"
                   className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
                 >
-                  {runContentMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Image className="w-4 h-4 mr-2" />}
+                  {runContentMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Image className="w-4 h-4 mr-2" />}
                   Create Content
                 </Button>
               </div>
@@ -565,7 +565,7 @@ export default function AdminAutonomous() {
                   variant="outline"
                   className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
                 >
-                  {runMarketingMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Share2 className="w-4 h-4 mr-2" />}
+                  {runMarketingMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Share2 className="w-4 h-4 mr-2" />}
                   Distribute
                 </Button>
               </div>
@@ -587,7 +587,7 @@ export default function AdminAutonomous() {
                   variant="outline"
                   className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
                 >
-                  {runSeoMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
+                  {runSeoMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> : <Search className="w-4 h-4 mr-2" />}
                   Run SEO
                 </Button>
               </div>

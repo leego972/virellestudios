@@ -217,7 +217,7 @@ export default function AdminUsers() {
               onClick={() => { setBetaProvisioning(true); provisionBetaTesterMutation.mutate(); }}
             >
               {provisionBetaTesterMutation.isPending || betaProvisioning
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Provisioning…</>
+                ? <><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Provisioning…</>
                 : <><Zap className="w-4 h-4" /> Provision / Sync Beta Tester</>}
             </Button>
             <p className="text-xs text-muted-foreground mt-2">Studio tier · 50,000 credits · 9,999 bonus generations · all your BYOK keys copied</p>
@@ -630,7 +630,7 @@ export default function AdminUsers() {
               }}
             >
               {adminDeleteMutation.isPending ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Deleting…</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> Deleting…</>
               ) : (
                 <><Trash2 className="w-4 h-4 mr-2" /> Delete Permanently</>
               )}

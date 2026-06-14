@@ -362,7 +362,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                           disabled={generatingFor === c.id}
                           className="h-7 gap-1 text-xs"
                         >
-                          {generatingFor === c.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                          {generatingFor === c.id ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
                           {sides[c.id] ? "Regenerate" : "Draft sides"}
                         </Button>
                       </div>

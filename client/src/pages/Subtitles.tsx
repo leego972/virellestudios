@@ -289,7 +289,7 @@ import { useState } from "react";
                         <SelectContent>{LANGUAGES.map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.name}</SelectItem>)}</SelectContent>
                       </Select>
                       <Button size="sm" className="w-full gap-2" style={{ background: "linear-gradient(135deg,#6366f1,#8b5cf6)" }} onClick={handleGenerateAI} disabled={generating || generateMutation.isPending}>
-                        {(generating || generateMutation.isPending) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                        {(generating || generateMutation.isPending) ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Sparkles className="h-3 w-3" />}
                         Generate from Script
                       </Button>
                     </div>
@@ -307,7 +307,7 @@ import { useState } from "react";
                         <SelectContent>{LANGUAGES.map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.name}</SelectItem>)}</SelectContent>
                       </Select>
                       <Button size="sm" className="w-full gap-2" onClick={() => createMutation.mutate({ projectId, language: newLang, languageName: newLangName, entries: [] })} disabled={createMutation.isPending}>
-                        {createMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                        {createMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Plus className="h-3 w-3" />}
                         Create Empty Track
                       </Button>
                     </div>
@@ -411,7 +411,7 @@ import { useState } from "react";
                       </p>
                     </div>
                     <Button size="sm" onClick={handleGenerateDeafTrack} disabled={generating} className="gap-2 shrink-0" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)" }}>
-                      {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+                      {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Wand2 className="h-3.5 w-3.5" />}
                       AI Generate
                     </Button>
                   </div>

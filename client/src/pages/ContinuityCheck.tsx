@@ -486,7 +486,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
     const loggedScenes = Object.keys(data.notes).length;
 
     if (authLoading || projLoading || scenesLoading) {
-      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin" style={{ color: "#D4AF37" }} /></div>;
+      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><Loader2 className="h-8 w-8 animate-spin text-amber-400" style={{ color: "#D4AF37" }} /></div>;
     }
     if (!user) { window.location.href = getLoginUrl(); return null; }
 
@@ -514,7 +514,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <Button size="sm" variant="ghost" onClick={exportCSV} disabled={data.issues.length === 0} className="gap-2 h-8 text-xs text-muted-foreground"><Download className="h-3.5 w-3.5" />CSV</Button>
               <Button size="sm" variant="outline" onClick={exportTXT} className="gap-2 h-8 text-xs border-border/50"><FileText className="h-3.5 w-3.5" />Report</Button>
               <Button size="sm" onClick={() => aiCheck.mutate({ projectId })} disabled={aiCheck.isPending} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#16a34a,#15803d)" }}>
-                {aiCheck.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}AI Check
+                {aiCheck.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}AI Check
               </Button>
             </div>
           </div>
@@ -612,7 +612,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                     <Sparkles className="h-4 w-4 text-green-400 shrink-0" />
                     <p className="text-xs text-muted-foreground flex-1">Last AI scan: <span className="text-green-400 font-semibold">{lastAiRun}</span> — AI issues replace previous AI scan; manual flags are always preserved.</p>
                     <Button size="sm" variant="ghost" onClick={() => aiCheck.mutate({ projectId })} disabled={aiCheck.isPending} className="gap-1.5 h-7 text-xs text-green-400">
-                      {aiCheck.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}Re-scan
+                      {aiCheck.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <RefreshCw className="h-3 w-3" />}Re-scan
                     </Button>
                   </div>
                 )}
@@ -767,7 +767,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   <Button variant="outline" onClick={exportCSV} disabled={data.issues.length === 0} className="gap-2 border-border/40"><Download className="h-4 w-4" />Export Issues CSV</Button>
                   <Button variant="outline" onClick={exportTXT} className="gap-2 border-border/40"><FileText className="h-4 w-4" />Full Report TXT</Button>
                   <Button onClick={() => aiCheck.mutate({ projectId })} disabled={aiCheck.isPending} className="gap-2 ml-auto" style={{ background: "linear-gradient(135deg,#16a34a,#15803d)" }}>
-                    {aiCheck.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}{lastAiRun ? "Re-run AI Scan" : "Run AI Scan"}
+                    {aiCheck.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Sparkles className="h-4 w-4" />}{lastAiRun ? "Re-run AI Scan" : "Run AI Scan"}
                   </Button>
                 </div>
               </div>

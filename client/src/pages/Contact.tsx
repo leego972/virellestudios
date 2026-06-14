@@ -233,7 +233,7 @@ export default function Contact() {
 
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" />
                     ) : (
                       <Send className="h-4 w-4 mr-2" />
                     )}

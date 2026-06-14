@@ -175,9 +175,9 @@ function VFXSuiteInner() {
               disabled={isProcessing || selectedOps.length === 0}
             >
               {isProcessing ? (
-                <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</>
+                <><Loader2 className="w-4 h-4 mr-1 animate-spin text-amber-400" /> Processing...</>
               ) : processComplete ? (
-                <><CheckCircle2 className="w-4 h-4 mr-1" /> Done</>
+                <><CheckCircle2 className="w-4 h-4 mr-1 text-amber-400" /> Done</>
               ) : (
                 <><Wand2 className="w-4 h-4 mr-1" /> Apply VFX</>
               )}

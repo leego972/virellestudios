@@ -102,7 +102,7 @@ export default function Contacts() {
               <div><label className="text-xs text-zinc-400">Notes</label><Textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={2} className="bg-zinc-900 border-zinc-800 text-sm" /></div>
               <div className="flex gap-2 pt-1">
                 <Button size="sm" disabled={createMut.isPending || updateMut.isPending} onClick={save} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
-                  {(createMut.isPending || updateMut.isPending) && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                  {(createMut.isPending || updateMut.isPending) && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 text-amber-400" />}
                   {editingId ? "Save" : "Create"}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => { setOpen(false); setEditingId(null); }}>Cancel</Button>
@@ -112,7 +112,7 @@ export default function Contacts() {
         )}
 
         {isLoading ? (
-          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Loading…</div>
+          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />Loading…</div>
         ) : (contacts as any[]).length === 0 ? (
           <Card className="bg-zinc-950 border-zinc-800 glass-card">
             <CardContent className="p-8 text-center text-sm text-zinc-500 glass-card">No contacts yet. Add your first crew member above.</CardContent>

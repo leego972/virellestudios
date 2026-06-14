@@ -617,7 +617,7 @@ export default function FeatureTimeline() {
   if (summaryLoading) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <Loader2 className="animate-spin text-zinc-400" size={32} />
+        <Loader2 className="animate-spin text-zinc-400 text-amber-400" size={32} />
       </div>
     );
   }
@@ -876,7 +876,7 @@ export default function FeatureTimeline() {
                 <TabsContent value="timeline" className="flex-1 overflow-hidden m-0">
                   {cutLoading ? (
                     <div className="flex items-center justify-center h-full">
-                      <Loader2 className="animate-spin text-zinc-400" size={24} />
+                      <Loader2 className="animate-spin text-zinc-400 text-amber-400" size={24} />
                     </div>
                   ) : (
                     <ScrollArea className="h-full">

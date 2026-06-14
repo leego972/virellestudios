@@ -115,7 +115,7 @@ import { useState } from "react";
       onError: e => toast.error(e.message),
     });
 
-    if (authLoading) return <div className="flex items-center justify-center h-screen" style={{ background:"#07070e" }}><Loader2 className="animate-spin h-8 w-8" style={{ color:GOLD }} /></div>;
+    if (authLoading) return <div className="flex items-center justify-center h-screen" style={{ background:"#07070e" }}><Loader2 className="animate-spin h-8 w-8 text-amber-400" style={{ color:GOLD }} /></div>;
     if (!isAuthenticated) { window.location.href = getLoginUrl(); return null; }
 
     const filtered = activeFilter === "All" ? items as any[] : (items as any[]).filter(i => i.category === activeFilter);
@@ -170,7 +170,7 @@ import { useState } from "react";
           </div>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-24"><Loader2 className="animate-spin h-8 w-8" style={{ color:GOLD }} /></div>
+            <div className="flex items-center justify-center py-24"><Loader2 className="animate-spin h-8 w-8 text-amber-400" style={{ color:GOLD }} /></div>
           ) : filtered.length === 0 ? (
             <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-24 gap-3" style={{ borderColor:"rgba(255,255,255,0.06)" }}>
               <Grid3x3 className="h-12 w-12 opacity-20" />
@@ -271,7 +271,7 @@ import { useState } from "react";
                       <SelectContent>{CATEGORIES.filter(c=>c!=="All").map(c=><SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                     </Select>
                     <Button className="w-full h-8 text-xs gap-1.5" onClick={() => createMut.mutate({ projectId, type:"text", text, category })} disabled={!text||createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
-                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin" />} Add Note
+                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin text-amber-400" />} Add Note
                     </Button>
                   </>
                 )}
@@ -283,7 +283,7 @@ import { useState } from "react";
                       <Input value={color} onChange={e => setColor(e.target.value)} className="h-8 text-xs font-mono w-28 bg-black/30 border-border/40" placeholder="#c8a97e" />
                     </div>
                     <Button className="w-full h-8 text-xs gap-1.5" onClick={() => createMut.mutate({ projectId, type:"color", colorHex:color, text:color, category:"Colors" })} disabled={createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
-                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin" />} Add Color
+                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin text-amber-400" />} Add Color
                     </Button>
                   </div>
                 )}
@@ -291,7 +291,7 @@ import { useState } from "react";
                   <>
                     <Textarea value={imagePrompt} onChange={e => setImagePrompt(e.target.value)} placeholder="Describe the visual reference… e.g. 'Golden hour on a Brooklyn rooftop, cinematic wide shot'" rows={3} className="text-xs bg-black/30 border-border/40 resize-none" autoCapitalize="sentences" />
                     <Button className="w-full h-8 text-xs gap-1.5" onClick={() => genImageMut.mutate({ prompt:imagePrompt, projectId })} disabled={!imagePrompt||genImageMut.isPending||createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
-                      {(genImageMut.isPending||createMut.isPending)?<Loader2 className="h-3 w-3 animate-spin" />:<Sparkles className="h-3 w-3" />} Generate Image
+                      {(genImageMut.isPending||createMut.isPending)?<Loader2 className="h-3 w-3 animate-spin text-amber-400" />:<Sparkles className="h-3 w-3" />} Generate Image
                     </Button>
                   </>
                 )}
@@ -304,7 +304,7 @@ import { useState } from "react";
                       <SelectContent>{CATEGORIES.filter(c=>c!=="All").map(c=><SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                     </Select>
                     <Button className="w-full h-8 text-xs gap-1.5" onClick={() => createMut.mutate({ projectId, type:"reference", text:`${text}: ${imagePrompt}`, category })} disabled={!text||createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
-                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin" />} Add Reference
+                      {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin text-amber-400" />} Add Reference
                     </Button>
                   </>
                 )}

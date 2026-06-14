@@ -54,14 +54,14 @@ import React, { useState } from "react";
             <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${lastMsg.ok
               ? "bg-green-500/10 text-green-400 border border-green-500/20"
               : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
-              {lastMsg.ok ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+              {lastMsg.ok ? <CheckCircle2 className="h-5 w-5 text-amber-400" /> : <AlertCircle className="h-5 w-5" />}
               <p className="font-medium">{lastMsg.text}</p>
             </div>
           )}
 
           {isAnyLoading && (
             <div className="mb-6 p-4 rounded-lg flex items-center gap-3 bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin text-amber-400" />
               <p className="font-medium">Working...</p>
             </div>
           )}

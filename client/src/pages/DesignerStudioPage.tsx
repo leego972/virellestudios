@@ -482,7 +482,7 @@ export default function DesignerStudioPage() {
                   disabled={onboardMut.isPending}
                   className="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 text-xs h-7"
                 >
-                  {onboardMut.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <><Wallet className="h-3 w-3 mr-1" />Set up</>}
+                  {onboardMut.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <><Wallet className="h-3 w-3 mr-1" />Set up</>}
                 </Button>
               </div>
             )}

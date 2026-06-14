@@ -42,7 +42,7 @@ function SubmissionsPanel() {
     onError: (err) => toast.error(err.message || "Failed to review submission"),
   });
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading submissions...</div>;
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Loading submissions...</div>;
 
   if (!pending?.length) return (
     <div className="text-center py-12 text-neutral-500">
@@ -111,7 +111,7 @@ function AbuseFlagsPanel() {
     onError: (err) => toast.error(err.message || "Failed to action flag"),
   });
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading flags...</div>;
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Loading flags...</div>;
 
   if (!flags?.length) return (
     <div className="text-center py-12 text-neutral-500">
@@ -190,7 +190,7 @@ function ShowcaseCurationPanel() {
     onError: (err) => toast.error(err.message || "Failed to remove flag"),
   });
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading films...</div>;
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Loading films...</div>;
 
   if (!topFilms?.length) return (
     <div className="text-center py-12 text-neutral-500">
@@ -266,7 +266,7 @@ function ConversionFunnelPanel() {
     film_to_create: "Film Page → Create Account",
   };
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading funnel data...</div>;
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Loading funnel data...</div>;
 
   return (
     <div className="space-y-6">
