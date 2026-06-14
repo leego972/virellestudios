@@ -951,7 +951,7 @@ function MarketplaceGrid({
             Virelle Studios · In-House Virtual Fashion Label
           </div>
 
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tighter leading-none mb-3 text-white">
+          <h1 className="text-5xl sm:text-7xl font-black tracking-tighter leading-none mb-3 gradient-text-gold">
             LAMALO
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400">
