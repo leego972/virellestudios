@@ -121,7 +121,7 @@ export default function SidesPage() {
       <div className="sides-page max-w-3xl mx-auto p-8">
         <div className="border-b-2 border-black pb-3 mb-4">
           <div className="flex items-baseline justify-between">
-            <h1 className="text-xl font-bold uppercase tracking-wide">
+            <h1 className="text-xl font-bold uppercase tracking-wide gradient-text-gold">
               {project?.title || "Untitled Project"}
             </h1>
             <span className="text-sm">
