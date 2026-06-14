@@ -703,7 +703,7 @@ export default function ContentCreatorPage() {
               ) : (
                 <Card className="bg-card/50 border-border/50 border-dashed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                    <Sparkles className="h-10 w-10 text-muted-foreground mb-3" />
+                    <Sparkles className="h-10 w-10 text-amber-400/70 mb-3" />
                     <p className="text-sm text-muted-foreground">Generated content will appear here</p>
                     <p className="text-xs text-muted-foreground mt-1">Configure the generator and click Generate</p>
                   </CardContent>

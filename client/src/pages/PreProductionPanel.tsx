@@ -626,7 +626,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <Sparkles className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
+                      <Sparkles className="h-5 w-5 text-amber-400/70 mx-auto mb-2" />
                       <p className="text-xs text-muted-foreground">Click Enrich to generate a full cinematographic analysis including lighting, architecture, costume context, and AI generation prompt.</p>
                     </div>
                   )}
