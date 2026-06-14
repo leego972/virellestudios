@@ -26,13 +26,13 @@ export default function CollaboratorsPage() {
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#08070f 0%,#1a0f2b 100%)", color: "#fff", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
         <Link href={`/projects/${projectId}`} style={{ color: "rgba(255,215,140,.8)", textDecoration: "none", fontSize: ".85rem" }}>← Back to project</Link>
-        <h1 style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C", letterSpacing: ".02em" }}>Collaborators</h1>
+        <h1 className="gradient-text-gold" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C", letterSpacing: ".02em" }}>Collaborators</h1>
         <p style={{ color: "rgba(255,255,255,.6)", marginTop: 0, marginBottom: "1.6rem", fontSize: ".95rem" }}>
           Invite teammates by email. They'll receive an invite link to join this project.
         </p>
 
         <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.2rem 1.3rem", marginBottom: "1.4rem" }}>
-          <h2 style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>Invite by email</h2>
+          <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>Invite by email</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 130px auto", gap: ".5rem", marginTop: ".75rem" }}>
             <input
               type="email"
@@ -62,7 +62,7 @@ export default function CollaboratorsPage() {
         </section>
 
         <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.2rem 1.3rem" }}>
-          <h2 style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>Team</h2>
+          <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>Team</h2>
           {isLoading ? (
             <div style={{ marginTop: ".8rem", color: "rgba(255,255,255,.5)", fontSize: ".9rem" }}>Loading…</div>
           ) : !collaborators || collaborators.length === 0 ? (

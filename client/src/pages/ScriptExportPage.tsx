@@ -1,1 +1,75 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVBhcmFtcywgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IHRycGMgfSBmcm9tICJAL2xpYi90cnBjIjsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFNjcmlwdEV4cG9ydFBhZ2UoKSB7CiAgY29uc3QgeyBpZCB9ID0gdXNlUGFyYW1zPHsgaWQ6IHN0cmluZyB9PigpOwogIGNvbnN0IHByb2plY3RJZCA9IHBhcnNlSW50KGlkIHx8ICIwIiwgMTApOwogIGNvbnN0IGZvdW50YWluUSA9IHRycGMuc2NyaXB0SU8uZXhwb3J0Rm91bnRhaW4udXNlUXVlcnkoeyBwcm9qZWN0SWQgfSwgeyBlbmFibGVkOiBwcm9qZWN0SWQgPiAwIH0pOwogIGNvbnN0IGZkeFEgPSB0cnBjLnNjcmlwdElPLmV4cG9ydEZEWC51c2VRdWVyeSh7IHByb2plY3RJZCB9LCB7IGVuYWJsZWQ6IHByb2plY3RJZCA+IDAgfSk7CiAgY29uc3QgW2NvcGllZCwgc2V0Q29waWVkXSA9IHVzZVN0YXRlPHN0cmluZyB8IG51bGw+KG51bGwpOwoKICBjb25zdCBkb3dubG9hZCA9IChmaWxlbmFtZTogc3RyaW5nLCBjb250ZW50OiBzdHJpbmcsIG1pbWU6IHN0cmluZykgPT4gewogICAgY29uc3QgYmxvYiA9IG5ldyBCbG9iKFtjb250ZW50XSwgeyB0eXBlOiBtaW1lIH0pOwogICAgY29uc3QgdXJsID0gVVJMLmNyZWF0ZU9iamVjdFVSTChibG9iKTsKICAgIGNvbnN0IGEgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJhIik7CiAgICBhLmhyZWYgPSB1cmw7IGEuZG93bmxvYWQgPSBmaWxlbmFtZTsgYS5jbGljaygpOwogICAgc2V0VGltZW91dCgoKSA9PiBVUkwucmV2b2tlT2JqZWN0VVJMKHVybCksIDEwMDApOwogIH07CgogIGNvbnN0IGNvcHkgPSBhc3luYyAobGFiZWw6IHN0cmluZywgdGV4dDogc3RyaW5nKSA9PiB7CiAgICBhd2FpdCBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh0ZXh0KTsKICAgIHNldENvcGllZChsYWJlbCk7CiAgICBzZXRUaW1lb3V0KCgpID0+IHNldENvcGllZChudWxsKSwgMTUwMCk7CiAgfTsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4iIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgIDxkaXYgc3R5bGU9e3sgbWluSGVpZ2h0OiAiMTAwdmgiLCBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDE2MGRlZywjMDgwNzBmIDAlLCMxYTBmMmIgMTAwJSkiLCBjb2xvcjogIiNmZmYiLCBwYWRkaW5nOiAiMnJlbSAxLjVyZW0iIH19PgogICAgICA8ZGl2IHN0eWxlPXt7IG1heFdpZHRoOiA4ODAsIG1hcmdpbjogIjAgYXV0byIgfX0+CiAgICAgICAgPExpbmsgaHJlZj17YC9wcm9qZWN0cy8ke3Byb2plY3RJZH1gfSBzdHlsZT17eyBjb2xvcjogInJnYmEoMjU1LDIxNSwxNDAsLjgpIiwgdGV4dERlY29yYXRpb246ICJub25lIiwgZm9udFNpemU6ICIuODVyZW0iIH19PuKGkCBCYWNrIHRvIHByb2plY3Q8L0xpbms+CiAgICAgICAgPGgxIHN0eWxlPXt7IG1hcmdpbjogIjFyZW0gMCAuMjVyZW0iLCBmb250U2l6ZTogIjEuOHJlbSIsIGNvbG9yOiAiI0ZGRDc4QyIgfX0+RXhwb3J0IHNjcmlwdDwvaDE+CiAgICAgICAgPHAgc3R5bGU9e3sgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC42KSIsIG1hcmdpblRvcDogMCwgbWFyZ2luQm90dG9tOiAiMS42cmVtIiwgZm9udFNpemU6ICIuOTVyZW0iIH19PgogICAgICAgICAgU2VuZCB5b3VyIHNjZW5lcyB0byBpbmR1c3RyeS1zdGFuZGFyZCBmb3JtYXRzLiBGb3VudGFpbiB3b3JrcyBpbiBhbnkgdGV4dCBlZGl0b3I7IEZEWCBvcGVucyBkaXJlY3RseSBpbiBGaW5hbCBEcmFmdC4KICAgICAgICA8L3A+CgogICAgICAgIDxzZWN0aW9uIHN0eWxlPXt7IGJhY2tncm91bmQ6ICJyZ2JhKDgsMTIsMjgsLjU1KSIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyMTUsMTQwLC4xOCkiLCBib3JkZXJSYWRpdXM6IDE0LCBwYWRkaW5nOiAiMS4zcmVtIiwgbWFyZ2luQm90dG9tOiAiMS40cmVtIiB9fT4KICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogImZsZXgiLCBqdXN0aWZ5Q29udGVudDogInNwYWNlLWJldHdlZW4iLCBhbGlnbkl0ZW1zOiAiY2VudGVyIiwgbWFyZ2luQm90dG9tOiAiLjdyZW0iIH19PgogICAgICAgICAgICA8aDIgc3R5bGU9e3sgbWFyZ2luOiAwLCBmb250U2l6ZTogIjFyZW0iLCBjb2xvcjogIiNGRkQ3OEMiIH19PkZvdW50YWluICguZm91bnRhaW4pPC9oMj4KICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAiZmxleCIsIGdhcDogIi40cmVtIiB9fT4KICAgICAgICAgICAgICA8YnV0dG9uIG9uQ2xpY2s9eygpID0+IGZvdW50YWluUS5kYXRhICYmIGNvcHkoImZvdW50YWluIiwgZm91bnRhaW5RLmRhdGEudGV4dCl9IGRpc2FibGVkPXshZm91bnRhaW5RLmRhdGF9IHN0eWxlPXt7IGJhY2tncm91bmQ6ICJyZ2JhKDI1NSwyNTUsMjU1LC4wNikiLCBjb2xvcjogIiNmZmYiLCBib3JkZXI6ICIxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwuMTgpIiwgYm9yZGVyUmFkaXVzOiA2LCBwYWRkaW5nOiAiLjRyZW0gLjhyZW0iLCBmb250U2l6ZTogIi44cmVtIiwgY3Vyc29yOiAicG9pbnRlciIgfX0+CiAgICAgICAgICAgICAgICB7Y29waWVkID09PSAiZm91bnRhaW4iID8gIkNvcGllZCEiIDogIkNvcHkifQogICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17KCkgPT4gZm91bnRhaW5RLmRhdGEgJiYgZG93bmxvYWQoYHByb2plY3QtJHtwcm9qZWN0SWR9LmZvdW50YWluYCwgZm91bnRhaW5RLmRhdGEudGV4dCwgInRleHQvcGxhaW4iKX0gZGlzYWJsZWQ9eyFmb3VudGFpblEuZGF0YX0gc3R5bGU9e3sgYmFja2dyb3VuZDogImxpbmVhci1ncmFkaWVudCgxMzVkZWcsI0ZGRDc4QywjRTBCOTczKSIsIGNvbG9yOiAiIzFhMTIyOCIsIGJvcmRlcjogIm5vbmUiLCBib3JkZXJSYWRpdXM6IDYsIHBhZGRpbmc6ICIuNHJlbSAuOXJlbSIsIGZvbnRTaXplOiAiLjhyZW0iLCBmb250V2VpZ2h0OiA2MDAsIGN1cnNvcjogInBvaW50ZXIiIH19PgogICAgICAgICAgICAgICAgRG93bmxvYWQKICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZm9udFNpemU6ICIuNzhyZW0iLCBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjUpIiwgbWFyZ2luQm90dG9tOiAiLjVyZW0iIH19Pntmb3VudGFpblEuZGF0YSA/IGAke2ZvdW50YWluUS5kYXRhLmNvdW50fSBzY2VuZXNgIDogIkxvYWRpbmfigKYifTwvZGl2PgogICAgICAgICAgPHByZSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSgwLDAsMCwuMzUpIiwgYm9yZGVyOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjEpIiwgYm9yZGVyUmFkaXVzOiA4LCBwYWRkaW5nOiAiLjdyZW0gLjg1cmVtIiwgbWF4SGVpZ2h0OiAyNjAsIG92ZXJmbG93OiAiYXV0byIsIGZvbnRTaXplOiAiLjc1cmVtIiwgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC44NSkiLCB3aGl0ZVNwYWNlOiAicHJlLXdyYXAiIH19PgogICAgICAgICAgICB7Zm91bnRhaW5RLmRhdGEgPyBmb3VudGFpblEuZGF0YS50ZXh0LnNsaWNlKDAsIDQwMDApIHx8ICIoZW1wdHkpIiA6ICLigKYifQogICAgICAgICAgPC9wcmU+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8c2VjdGlvbiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSg4LDEyLDI4LC41NSkiLCBib3JkZXI6ICIxcHggc29saWQgcmdiYSgyNTUsMjE1LDE0MCwuMTgpIiwgYm9yZGVyUmFkaXVzOiAxNCwgcGFkZGluZzogIjEuM3JlbSIgfX0+CiAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICJmbGV4IiwganVzdGlmeUNvbnRlbnQ6ICJzcGFjZS1iZXR3ZWVuIiwgYWxpZ25JdGVtczogImNlbnRlciIsIG1hcmdpbkJvdHRvbTogIi43cmVtIiB9fT4KICAgICAgICAgICAgPGgyIHN0eWxlPXt7IG1hcmdpbjogMCwgZm9udFNpemU6ICIxcmVtIiwgY29sb3I6ICIjRkZENzhDIiB9fT5GaW5hbCBEcmFmdCAoLmZkeCk8L2gyPgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICJmbGV4IiwgZ2FwOiAiLjRyZW0iIH19PgogICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17KCkgPT4gZmR4US5kYXRhICYmIGNvcHkoImZkeCIsIGZkeFEuZGF0YS54bWwpfSBkaXNhYmxlZD17IWZkeFEuZGF0YX0gc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoMjU1LDI1NSwyNTUsLjA2KSIsIGNvbG9yOiAiI2ZmZiIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4xOCkiLCBib3JkZXJSYWRpdXM6IDYsIHBhZGRpbmc6ICIuNHJlbSAuOHJlbSIsIGZvbnRTaXplOiAiLjhyZW0iLCBjdXJzb3I6ICJwb2ludGVyIiB9fT4KICAgICAgICAgICAgICAgIHtjb3BpZWQgPT09ICJmZHgiID8gIkNvcGllZCEiIDogIkNvcHkifQogICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17KCkgPT4gZmR4US5kYXRhICYmIGRvd25sb2FkKGBwcm9qZWN0LSR7cHJvamVjdElkfS5mZHhgLCBmZHhRLmRhdGEueG1sLCAiYXBwbGljYXRpb24veG1sIil9IGRpc2FibGVkPXshZmR4US5kYXRhfSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDEzNWRlZywjRkZENzhDLCNFMEI5NzMpIiwgY29sb3I6ICIjMWExMjI4IiwgYm9yZGVyOiAibm9uZSIsIGJvcmRlclJhZGl1czogNiwgcGFkZGluZzogIi40cmVtIC45cmVtIiwgZm9udFNpemU6ICIuOHJlbSIsIGZvbnRXZWlnaHQ6IDYwMCwgY3Vyc29yOiAicG9pbnRlciIgfX0+CiAgICAgICAgICAgICAgICBEb3dubG9hZAogICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBzdHlsZT17eyBmb250U2l6ZTogIi43OHJlbSIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNSkiLCBtYXJnaW5Cb3R0b206ICIuNXJlbSIgfX0+e2ZkeFEuZGF0YSA/IGAke2ZkeFEuZGF0YS5jb3VudH0gc2NlbmVzYCA6ICJMb2FkaW5n4oCmIn08L2Rpdj4KICAgICAgICAgIDxwcmUgc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoMCwwLDAsLjM1KSIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4xKSIsIGJvcmRlclJhZGl1czogOCwgcGFkZGluZzogIi43cmVtIC44NXJlbSIsIG1heEhlaWdodDogMjYwLCBvdmVyZmxvdzogImF1dG8iLCBmb250U2l6ZTogIi43NXJlbSIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuODUpIiwgd2hpdGVTcGFjZTogInByZS13cmFwIiB9fT4KICAgICAgICAgICAge2ZkeFEuZGF0YSA/IGZkeFEuZGF0YS54bWwuc2xpY2UoMCwgNDAwMCkgfHwgIihlbXB0eSkiIDogIuKApiJ9CiAgICAgICAgICA8L3ByZT4KICAgICAgICA8L3NlY3Rpb24+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+
+export default function ScriptExportPage() {
+  const { id } = useParams<{ id: string }>();
+  const projectId = parseInt(id || "0", 10);
+  const fountainQ = trpc.scriptIO.exportFountain.useQuery({ projectId }, { enabled: projectId > 0 });
+  const fdxQ = trpc.scriptIO.exportFDX.useQuery({ projectId }, { enabled: projectId > 0 });
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const download = (filename: string, content: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const copy = async (label: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  return (
+    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#08070f 0%,#1a0f2b 100%)", color: "#fff", padding: "2rem 1.5rem" }}>
+      <div style={{ maxWidth: 880, margin: "0 auto" }}>
+        <Link href={`/projects/${projectId}`} style={{ color: "rgba(255,215,140,.8)", textDecoration: "none", fontSize: ".85rem" }}>← Back to project</Link>
+        <h1 className="gradient-text-gold" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C" }}>Export script</h1>
+        <p style={{ color: "rgba(255,255,255,.6)", marginTop: 0, marginBottom: "1.6rem", fontSize: ".95rem" }}>
+          Send your scenes to industry-standard formats. Fountain works in any text editor; FDX opens directly in Final Draft.
+        </p>
+
+        <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem", marginBottom: "1.4rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: ".7rem" }}>
+            <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: "1rem", color: "#FFD78C" }}>Fountain (.fountain)</h2>
+            <div style={{ display: "flex", gap: ".4rem" }}>
+              <button onClick={() => fountainQ.data && copy("fountain", fountainQ.data.text)} disabled={!fountainQ.data} style={{ background: "rgba(255,255,255,.06)", color: "#fff", border: "1px solid rgba(255,255,255,.18)", borderRadius: 6, padding: ".4rem .8rem", fontSize: ".8rem", cursor: "pointer" }}>
+                {copied === "fountain" ? "Copied!" : "Copy"}
+              </button>
+              <button onClick={() => fountainQ.data && download(`project-${projectId}.fountain`, fountainQ.data.text, "text/plain")} disabled={!fountainQ.data} style={{ background: "linear-gradient(135deg,#FFD78C,#E0B973)", color: "#1a1228", border: "none", borderRadius: 6, padding: ".4rem .9rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer" }}>
+                Download
+              </button>
+            </div>
+          </div>
+          <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.5)", marginBottom: ".5rem" }}>{fountainQ.data ? `${fountainQ.data.count} scenes` : "Loading…"}</div>
+          <pre style={{ background: "rgba(0,0,0,.35)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".7rem .85rem", maxHeight: 260, overflow: "auto", fontSize: ".75rem", color: "rgba(255,255,255,.85)", whiteSpace: "pre-wrap" }}>
+            {fountainQ.data ? fountainQ.data.text.slice(0, 4000) || "(empty)" : "…"}
+          </pre>
+        </section>
+
+        <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: ".7rem" }}>
+            <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: "1rem", color: "#FFD78C" }}>Final Draft (.fdx)</h2>
+            <div style={{ display: "flex", gap: ".4rem" }}>
+              <button onClick={() => fdxQ.data && copy("fdx", fdxQ.data.xml)} disabled={!fdxQ.data} style={{ background: "rgba(255,255,255,.06)", color: "#fff", border: "1px solid rgba(255,255,255,.18)", borderRadius: 6, padding: ".4rem .8rem", fontSize: ".8rem", cursor: "pointer" }}>
+                {copied === "fdx" ? "Copied!" : "Copy"}
+              </button>
+              <button onClick={() => fdxQ.data && download(`project-${projectId}.fdx`, fdxQ.data.xml, "application/xml")} disabled={!fdxQ.data} style={{ background: "linear-gradient(135deg,#FFD78C,#E0B973)", color: "#1a1228", border: "none", borderRadius: 6, padding: ".4rem .9rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer" }}>
+                Download
+              </button>
+            </div>
+          </div>
+          <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.5)", marginBottom: ".5rem" }}>{fdxQ.data ? `${fdxQ.data.count} scenes` : "Loading…"}</div>
+          <pre style={{ background: "rgba(0,0,0,.35)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".7rem .85rem", maxHeight: 260, overflow: "auto", fontSize: ".75rem", color: "rgba(255,255,255,.85)", whiteSpace: "pre-wrap" }}>
+            {fdxQ.data ? fdxQ.data.xml.slice(0, 4000) || "(empty)" : "…"}
+          </pre>
+        </section>
+      </div>
+    </div>
+    </div>
+  );
+}

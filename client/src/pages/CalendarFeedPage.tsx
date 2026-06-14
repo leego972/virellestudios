@@ -1,1 +1,93 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVBhcmFtcywgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IHRycGMgfSBmcm9tICJAL2xpYi90cnBjIjsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIENhbGVuZGFyRmVlZFBhZ2UoKSB7CiAgY29uc3QgeyBpZCB9ID0gdXNlUGFyYW1zPHsgaWQ6IHN0cmluZyB9PigpOwogIGNvbnN0IHByb2plY3RJZCA9IHBhcnNlSW50KGlkIHx8ICIwIiwgMTApOwogIGNvbnN0IHsgZGF0YSwgaXNMb2FkaW5nIH0gPSB0cnBjLnNjcmlwdElPLmlDYWxVcmwudXNlUXVlcnkoeyBwcm9qZWN0SWQgfSwgeyBlbmFibGVkOiBwcm9qZWN0SWQgPiAwIH0pOwogIGNvbnN0IFtjb3BpZWQsIHNldENvcGllZF0gPSB1c2VTdGF0ZTxzdHJpbmcgfCBudWxsPihudWxsKTsKCiAgY29uc3QgY29weSA9IGFzeW5jIChsYWJlbDogc3RyaW5nLCB0ZXh0OiBzdHJpbmcpID0+IHsKICAgIGF3YWl0IG5hdmlnYXRvci5jbGlwYm9hcmQud3JpdGVUZXh0KHRleHQpOwogICAgc2V0Q29waWVkKGxhYmVsKTsKICAgIHNldFRpbWVvdXQoKCkgPT4gc2V0Q29waWVkKG51bGwpLCAxNTAwKTsKICB9OwoKICBjb25zdCBmdWxsVXJsID0gZGF0YSA/IChkYXRhLnVybCB8fCBgJHt3aW5kb3cubG9jYXRpb24ub3JpZ2lufSR7ZGF0YS5wYXRofWApIDogIiI7CiAgY29uc3Qgd2ViY2FsVXJsID0gZGF0YSA/IChkYXRhLndlYmNhbCAmJiBkYXRhLndlYmNhbC5zdGFydHNXaXRoKCJ3ZWJjYWw6IikgPyBkYXRhLndlYmNhbCA6IGZ1bGxVcmwucmVwbGFjZSgvXmh0dHBzPzovLCAid2ViY2FsOiIpKSA6ICIiOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgPGRpdiBzdHlsZT17eyBtaW5IZWlnaHQ6ICIxMDB2aCIsIGJhY2tncm91bmQ6ICJsaW5lYXItZ3JhZGllbnQoMTYwZGVnLCMwODA3MGYgMCUsIzFhMGYyYiAxMDAlKSIsIGNvbG9yOiAiI2ZmZiIsIHBhZGRpbmc6ICIycmVtIDEuNXJlbSIgfX0+CiAgICAgIDxkaXYgc3R5bGU9e3sgbWF4V2lkdGg6IDc2MCwgbWFyZ2luOiAiMCBhdXRvIiB9fT4KICAgICAgICA8TGluayBocmVmPXtgL3Byb2plY3RzLyR7cHJvamVjdElkfWB9IHN0eWxlPXt7IGNvbG9yOiAicmdiYSgyNTUsMjE1LDE0MCwuOCkiLCB0ZXh0RGVjb3JhdGlvbjogIm5vbmUiLCBmb250U2l6ZTogIi44NXJlbSIgfX0+4oaQIEJhY2sgdG8gcHJvamVjdDwvTGluaz4KICAgICAgICA8aDEgc3R5bGU9e3sgbWFyZ2luOiAiMXJlbSAwIC4yNXJlbSIsIGZvbnRTaXplOiAiMS44cmVtIiwgY29sb3I6ICIjRkZENzhDIiB9fT5DYWxlbmRhciBmZWVkPC9oMT4KICAgICAgICA8cCBzdHlsZT17eyBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjYpIiwgbWFyZ2luVG9wOiAwLCBtYXJnaW5Cb3R0b206ICIxLjZyZW0iLCBmb250U2l6ZTogIi45NXJlbSIgfX0+CiAgICAgICAgICBTdWJzY3JpYmUgdG8geW91ciBzaG9vdCBzY2hlZHVsZSBmcm9tIGFueSBjYWxlbmRhciBhcHAuIFRoZSBmZWVkIHVwZGF0ZXMgYXV0b21hdGljYWxseSBhcyB5b3UgYWRqdXN0IHNob290IGRheXMsIGNhbGwgdGltZXMsIGFuZCBsb2NhdGlvbnMuCiAgICAgICAgPC9wPgoKICAgICAgICB7aXNMb2FkaW5nID8gKAogICAgICAgICAgPGRpdiBzdHlsZT17eyBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjUpIiB9fT5HZW5lcmF0aW5nIGZlZWQgVVJM4oCmPC9kaXY+CiAgICAgICAgKSA6ICFkYXRhID8gKAogICAgICAgICAgPGRpdiBzdHlsZT17eyBjb2xvcjogIiNmY2E1YTUiIH19PkZlZWQgdW5hdmFpbGFibGUuPC9kaXY+CiAgICAgICAgKSA6ICgKICAgICAgICAgIDw+CiAgICAgICAgICAgIDxzZWN0aW9uIHN0eWxlPXt7IGJhY2tncm91bmQ6ICJyZ2JhKDgsMTIsMjgsLjU1KSIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyMTUsMTQwLC4xOCkiLCBib3JkZXJSYWRpdXM6IDE0LCBwYWRkaW5nOiAiMS4zcmVtIiwgbWFyZ2luQm90dG9tOiAiMS4ycmVtIiB9fT4KICAgICAgICAgICAgICA8aDIgc3R5bGU9e3sgbWFyZ2luOiAwLCBmb250U2l6ZTogIi45NXJlbSIsIGNvbG9yOiAiI0ZGRDc4QyIsIHRleHRUcmFuc2Zvcm06ICJ1cHBlcmNhc2UiLCBsZXR0ZXJTcGFjaW5nOiAiLjA1ZW0iIH19PlN1YnNjcmliZSBVUkw8L2gyPgogICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogImdyaWQiLCBncmlkVGVtcGxhdGVDb2x1bW5zOiAiMWZyIGF1dG8iLCBnYXA6ICIuNXJlbSIsIG1hcmdpblRvcDogIi43NXJlbSIgfX0+CiAgICAgICAgICAgICAgICA8Y29kZSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSgwLDAsMCwuNCkiLCBib3JkZXI6ICIxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwuMTIpIiwgYm9yZGVyUmFkaXVzOiA4LCBwYWRkaW5nOiAiLjU1cmVtIC43NXJlbSIsIGZvbnRTaXplOiAiLjhyZW0iLCBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjkpIiwgb3ZlcmZsb3c6ICJhdXRvIiwgd2hpdGVTcGFjZTogIm5vd3JhcCIgfX0+e2Z1bGxVcmx9PC9jb2RlPgogICAgICAgICAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPXsoKSA9PiBjb3B5KCJodHRwcyIsIGZ1bGxVcmwpfSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDEzNWRlZywjRkZENzhDLCNFMEI5NzMpIiwgY29sb3I6ICIjMWExMjI4IiwgYm9yZGVyOiAibm9uZSIsIGJvcmRlclJhZGl1czogOCwgcGFkZGluZzogIi41NXJlbSAxcmVtIiwgZm9udFNpemU6ICIuODVyZW0iLCBmb250V2VpZ2h0OiA2MDAsIGN1cnNvcjogInBvaW50ZXIiIH19PgogICAgICAgICAgICAgICAgICB7Y29waWVkID09PSAiaHR0cHMiID8gIkNvcGllZCEiIDogIkNvcHkifQogICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAiZ3JpZCIsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICIxZnIgYXV0byIsIGdhcDogIi41cmVtIiwgbWFyZ2luVG9wOiAiLjVyZW0iIH19PgogICAgICAgICAgICAgICAgPGNvZGUgc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoMCwwLDAsLjQpIiwgYm9yZGVyOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjEyKSIsIGJvcmRlclJhZGl1czogOCwgcGFkZGluZzogIi41NXJlbSAuNzVyZW0iLCBmb250U2l6ZTogIi44cmVtIiwgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC45KSIsIG92ZXJmbG93OiAiYXV0byIsIHdoaXRlU3BhY2U6ICJub3dyYXAiIH19Pnt3ZWJjYWxVcmx9PC9jb2RlPgogICAgICAgICAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPXsoKSA9PiBjb3B5KCJ3ZWJjYWwiLCB3ZWJjYWxVcmwpfSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSgyNTUsMjU1LDI1NSwuMDgpIiwgY29sb3I6ICIjZmZmIiwgYm9yZGVyOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjIpIiwgYm9yZGVyUmFkaXVzOiA4LCBwYWRkaW5nOiAiLjU1cmVtIDFyZW0iLCBmb250U2l6ZTogIi44NXJlbSIsIGN1cnNvcjogInBvaW50ZXIiIH19PgogICAgICAgICAgICAgICAgICB7Y29waWVkID09PSAid2ViY2FsIiA/ICJDb3BpZWQhIiA6ICJDb3B5In0KICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxhIGhyZWY9e2Z1bGxVcmx9IGRvd25sb2FkIHN0eWxlPXt7IGRpc3BsYXk6ICJpbmxpbmUtYmxvY2siLCBtYXJnaW5Ub3A6ICIuOHJlbSIsIGNvbG9yOiAiI0ZGRDc4QyIsIGZvbnRTaXplOiAiLjgycmVtIiwgdGV4dERlY29yYXRpb246ICJ1bmRlcmxpbmUiIH19PgogICAgICAgICAgICAgICAgT3IgZG93bmxvYWQgdGhlIC5pY3MgZmlsZSBkaXJlY3RseQogICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICAgICAgPHNlY3Rpb24gc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoOCwxMiwyOCwuNTUpIiwgYm9yZGVyOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDIxNSwxNDAsLjE4KSIsIGJvcmRlclJhZGl1czogMTQsIHBhZGRpbmc6ICIxLjNyZW0iIH19PgogICAgICAgICAgICAgIDxoMiBzdHlsZT17eyBtYXJnaW46IDAsIGZvbnRTaXplOiAiLjk1cmVtIiwgY29sb3I6ICIjRkZENzhDIiwgdGV4dFRyYW5zZm9ybTogInVwcGVyY2FzZSIsIGxldHRlclNwYWNpbmc6ICIuMDVlbSIgfX0+SG93IHRvIHN1YnNjcmliZTwvaDI+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAiZ3JpZCIsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICIxZnIgMWZyIiwgZ2FwOiAiLjc1cmVtIiwgbWFyZ2luVG9wOiAiLjc1cmVtIiB9fT4KICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgcGFkZGluZzogIi43cmVtIC44NXJlbSIsIGJhY2tncm91bmQ6ICJyZ2JhKDI1NSwyNTUsMjU1LC4wMikiLCBib3JkZXJSYWRpdXM6IDggfX0+CiAgICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9e3sgY29sb3I6ICIjZmZmIiwgZm9udFNpemU6ICIuODhyZW0iIH19PkFwcGxlIENhbGVuZGFyPC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPXt7IG1hcmdpbjogIi4zcmVtIDAgMCIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNikiLCBmb250U2l6ZTogIi43OHJlbSIsIGxpbmVIZWlnaHQ6IDEuNDUgfX0+CiAgICAgICAgICAgICAgICAgICAgRmlsZSDihpIgTmV3IENhbGVuZGFyIFN1YnNjcmlwdGlvbiDihpIgcGFzdGUgdGhlIHdlYmNhbDovLyBVUkwgYWJvdmUuCiAgICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBwYWRkaW5nOiAiLjdyZW0gLjg1cmVtIiwgYmFja2dyb3VuZDogInJnYmEoMjU1LDI1NSwyNTUsLjAyKSIsIGJvcmRlclJhZGl1czogOCB9fT4KICAgICAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT17eyBjb2xvcjogIiNmZmYiLCBmb250U2l6ZTogIi44OHJlbSIgfX0+R29vZ2xlIENhbGVuZGFyPC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPXt7IG1hcmdpbjogIi4zcmVtIDAgMCIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNikiLCBmb250U2l6ZTogIi43OHJlbSIsIGxpbmVIZWlnaHQ6IDEuNDUgfX0+CiAgICAgICAgICAgICAgICAgICAgT3RoZXIgY2FsZW5kYXJzIOKGkiArIOKGkiBGcm9tIFVSTCDihpIgcGFzdGUgdGhlIGh0dHBzOi8vIFVSTCBhYm92ZS4KICAgICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IHBhZGRpbmc6ICIuN3JlbSAuODVyZW0iLCBiYWNrZ3JvdW5kOiAicmdiYSgyNTUsMjU1LDI1NSwuMDIpIiwgYm9yZGVyUmFkaXVzOiA4IH19PgogICAgICAgICAgICAgICAgICA8c3Ryb25nIHN0eWxlPXt7IGNvbG9yOiAiI2ZmZiIsIGZvbnRTaXplOiAiLjg4cmVtIiB9fT5PdXRsb29rPC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPXt7IG1hcmdpbjogIi4zcmVtIDAgMCIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNikiLCBmb250U2l6ZTogIi43OHJlbSIsIGxpbmVIZWlnaHQ6IDEuNDUgfX0+CiAgICAgICAgICAgICAgICAgICAgQWRkIENhbGVuZGFyIOKGkiBTdWJzY3JpYmUgZnJvbSB3ZWIg4oaSIHBhc3RlIHRoZSBodHRwczovLyBVUkwuCiAgICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBwYWRkaW5nOiAiLjdyZW0gLjg1cmVtIiwgYmFja2dyb3VuZDogInJnYmEoMjU1LDI1NSwyNTUsLjAyKSIsIGJvcmRlclJhZGl1czogOCB9fT4KICAgICAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT17eyBjb2xvcjogIiNmZmYiLCBmb250U2l6ZTogIi44OHJlbSIgfX0+aVBob25lIChtb2JpbGUpPC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPXt7IG1hcmdpbjogIi4zcmVtIDAgMCIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNikiLCBmb250U2l6ZTogIi43OHJlbSIsIGxpbmVIZWlnaHQ6IDEuNDUgfX0+CiAgICAgICAgICAgICAgICAgICAgVGFwIHRoZSB3ZWJjYWw6Ly8gVVJMIG9uIHlvdXIgcGhvbmUg4oCUIGlPUyBwcm9tcHRzIHRvIHN1YnNjcmliZS4KICAgICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPHAgc3R5bGU9e3sgbWFyZ2luOiAiMXJlbSAwIDAiLCBmb250U2l6ZTogIi43NXJlbSIsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNDUpIiB9fT4KICAgICAgICAgICAgICAgIFRyZWF0IHRoaXMgVVJMIGFzIGEgc2VjcmV0IOKAlCBhbnlvbmUgd2l0aCBpdCBjYW4gcmVhZCB5b3VyIHNob290IGRheXMuIFJlLWRlcGxveSB3aXRoIGEgcm90YXRlZCBzZXNzaW9uIGtleSB0byBpbnZhbGlkYXRlLgogICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgPC9zZWN0aW9uPgogICAgICAgICAgPC8+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICAgIDwvZGl2PgogICk7Cn0K
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+
+export default function CalendarFeedPage() {
+  const { id } = useParams<{ id: string }>();
+  const projectId = parseInt(id || "0", 10);
+  const { data, isLoading } = trpc.scriptIO.iCalUrl.useQuery({ projectId }, { enabled: projectId > 0 });
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copy = async (label: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  const fullUrl = data ? (data.url || `${window.location.origin}${data.path}`) : "";
+  const webcalUrl = data ? (data.webcal && data.webcal.startsWith("webcal:") ? data.webcal : fullUrl.replace(/^https?:/, "webcal:")) : "";
+
+  return (
+    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#08070f 0%,#1a0f2b 100%)", color: "#fff", padding: "2rem 1.5rem" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <Link href={`/projects/${projectId}`} style={{ color: "rgba(255,215,140,.8)", textDecoration: "none", fontSize: ".85rem" }}>← Back to project</Link>
+        <h1 className="gradient-text-gold" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C" }}>Calendar feed</h1>
+        <p style={{ color: "rgba(255,255,255,.6)", marginTop: 0, marginBottom: "1.6rem", fontSize: ".95rem" }}>
+          Subscribe to your shoot schedule from any calendar app. The feed updates automatically as you adjust shoot days, call times, and locations.
+        </p>
+
+        {isLoading ? (
+          <div style={{ color: "rgba(255,255,255,.5)" }}>Generating feed URL…</div>
+        ) : !data ? (
+          <div style={{ color: "#fca5a5" }}>Feed unavailable.</div>
+        ) : (
+          <>
+            <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem", marginBottom: "1.2rem" }}>
+              <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>Subscribe URL</h2>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: ".5rem", marginTop: ".75rem" }}>
+                <code style={{ background: "rgba(0,0,0,.4)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, padding: ".55rem .75rem", fontSize: ".8rem", color: "rgba(255,255,255,.9)", overflow: "auto", whiteSpace: "nowrap" }}>{fullUrl}</code>
+                <button onClick={() => copy("https", fullUrl)} style={{ background: "linear-gradient(135deg,#FFD78C,#E0B973)", color: "#1a1228", border: "none", borderRadius: 8, padding: ".55rem 1rem", fontSize: ".85rem", fontWeight: 600, cursor: "pointer" }}>
+                  {copied === "https" ? "Copied!" : "Copy"}
+                </button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: ".5rem", marginTop: ".5rem" }}>
+                <code style={{ background: "rgba(0,0,0,.4)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, padding: ".55rem .75rem", fontSize: ".8rem", color: "rgba(255,255,255,.9)", overflow: "auto", whiteSpace: "nowrap" }}>{webcalUrl}</code>
+                <button onClick={() => copy("webcal", webcalUrl)} style={{ background: "rgba(255,255,255,.08)", color: "#fff", border: "1px solid rgba(255,255,255,.2)", borderRadius: 8, padding: ".55rem 1rem", fontSize: ".85rem", cursor: "pointer" }}>
+                  {copied === "webcal" ? "Copied!" : "Copy"}
+                </button>
+              </div>
+              <a href={fullUrl} download style={{ display: "inline-block", marginTop: ".8rem", color: "#FFD78C", fontSize: ".82rem", textDecoration: "underline" }}>
+                Or download the .ics file directly
+              </a>
+            </section>
+
+            <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem" }}>
+              <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: ".95rem", color: "#FFD78C", textTransform: "uppercase", letterSpacing: ".05em" }}>How to subscribe</h2>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".75rem", marginTop: ".75rem" }}>
+                <div style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.02)", borderRadius: 8 }}>
+                  <strong style={{ color: "#fff", fontSize: ".88rem" }}>Apple Calendar</strong>
+                  <p style={{ margin: ".3rem 0 0", color: "rgba(255,255,255,.6)", fontSize: ".78rem", lineHeight: 1.45 }}>
+                    File → New Calendar Subscription → paste the webcal:// URL above.
+                  </p>
+                </div>
+                <div style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.02)", borderRadius: 8 }}>
+                  <strong style={{ color: "#fff", fontSize: ".88rem" }}>Google Calendar</strong>
+                  <p style={{ margin: ".3rem 0 0", color: "rgba(255,255,255,.6)", fontSize: ".78rem", lineHeight: 1.45 }}>
+                    Other calendars → + → From URL → paste the https:// URL above.
+                  </p>
+                </div>
+                <div style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.02)", borderRadius: 8 }}>
+                  <strong style={{ color: "#fff", fontSize: ".88rem" }}>Outlook</strong>
+                  <p style={{ margin: ".3rem 0 0", color: "rgba(255,255,255,.6)", fontSize: ".78rem", lineHeight: 1.45 }}>
+                    Add Calendar → Subscribe from web → paste the https:// URL.
+                  </p>
+                </div>
+                <div style={{ padding: ".7rem .85rem", background: "rgba(255,255,255,.02)", borderRadius: 8 }}>
+                  <strong style={{ color: "#fff", fontSize: ".88rem" }}>iPhone (mobile)</strong>
+                  <p style={{ margin: ".3rem 0 0", color: "rgba(255,255,255,.6)", fontSize: ".78rem", lineHeight: 1.45 }}>
+                    Tap the webcal:// URL on your phone — iOS prompts to subscribe.
+                  </p>
+                </div>
+              </div>
+              <p style={{ margin: "1rem 0 0", fontSize: ".75rem", color: "rgba(255,255,255,.45)" }}>
+                Treat this URL as a secret — anyone with it can read your shoot days. Re-deploy with a rotated session key to invalidate.
+              </p>
+            </section>
+          </>
+        )}
+      </div>
+    </div>
+    </div>
+  );
+}

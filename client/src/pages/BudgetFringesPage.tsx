@@ -1,1 +1,181 @@
-aW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSwgdXNlTWVtbyB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgdXNlUGFyYW1zLCBMaW5rIH0gZnJvbSAid291dGVyIjsKaW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwoKaW50ZXJmYWNlIEZyaW5nZSB7IGxhYmVsOiBzdHJpbmc7IHBjdDogbnVtYmVyOyBhcHBsaWVzVG86IHN0cmluZ1tdOyB9Cgpjb25zdCBERUZBVUxUX0ZSSU5HRVM6IEZyaW5nZVtdID0gWwogIHsgbGFiZWw6ICJQYXlyb2xsIHRheGVzIChGSUNBICsgc3RhdGUpIiwgcGN0OiA4LjUsIGFwcGxpZXNUbzogWyJjYXN0IiwgImNyZXciXSB9LAogIHsgbGFiZWw6ICJXb3JrZXJzIGNvbXAiLCBwY3Q6IDMuMiwgYXBwbGllc1RvOiBbImNhc3QiLCAiY3JldyJdIH0sCiAgeyBsYWJlbDogIkhlYWx0aCAmIHdlbGZhcmUiLCBwY3Q6IDYuMCwgYXBwbGllc1RvOiBbImNyZXciXSB9LAogIHsgbGFiZWw6ICJQZW5zaW9uICYgdmFjYXRpb24iLCBwY3Q6IDguMCwgYXBwbGllc1RvOiBbImNyZXciXSB9LAogIHsgbGFiZWw6ICJFcXVpcG1lbnQgcmVudGFsIHRheCIsIHBjdDogOC44NzUsIGFwcGxpZXNUbzogWyJlcXVpcG1lbnQiXSB9LApdOwoKZnVuY3Rpb24gY2F0ZWdvcnlNYXRjaGVzKGNhdEtleTogc3RyaW5nLCBsYWJlbDogc3RyaW5nLCBhcHBsaWVzVG86IHN0cmluZ1tdKTogYm9vbGVhbiB7CiAgY29uc3QgayA9IChjYXRLZXkgKyAiICIgKyBsYWJlbCkudG9Mb3dlckNhc2UoKTsKICByZXR1cm4gYXBwbGllc1RvLnNvbWUoKHRhZykgPT4gay5pbmNsdWRlcyh0YWcpKTsKfQoKZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gQnVkZ2V0RnJpbmdlc1BhZ2UoKSB7CiAgY29uc3QgeyBpZCB9ID0gdXNlUGFyYW1zPHsgaWQ6IHN0cmluZyB9PigpOwogIGNvbnN0IHByb2plY3RJZCA9IHBhcnNlSW50KGlkIHx8ICIwIiwgMTApOwogIGNvbnN0IHV0aWxzID0gdHJwYy51c2VVdGlscygpOwogIGNvbnN0IHsgZGF0YTogYnVkZ2V0cywgaXNMb2FkaW5nIH0gPSB0cnBjLmJ1ZGdldC5saXN0LnVzZVF1ZXJ5KHsgcHJvamVjdElkIH0sIHsgZW5hYmxlZDogcHJvamVjdElkID4gMCB9KTsKICBjb25zdCB1cHNlcnRNdXQgPSB0cnBjLmJ1ZGdldE1hbnVhbC51cHNlcnQudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoKSA9PiB7IHV0aWxzLmJ1ZGdldC5saXN0LmludmFsaWRhdGUoeyBwcm9qZWN0SWQgfSk7IHNldFNhdmVkKHRydWUpOyBzZXRUaW1lb3V0KCgpID0+IHNldFNhdmVkKGZhbHNlKSwgMTUwMCk7IH0sCiAgfSk7CgogIGNvbnN0IGJ1ZGdldCA9IGJ1ZGdldHMgJiYgYnVkZ2V0cy5sZW5ndGggPiAwID8gKGJ1ZGdldHNbMF0gYXMgYW55KSA6IG51bGw7CiAgY29uc3QgYnJlYWtkb3duID0gdXNlTWVtbygoKSA9PiB7CiAgICB0cnkgeyByZXR1cm4gYnVkZ2V0Py5icmVha2Rvd24gPyAodHlwZW9mIGJ1ZGdldC5icmVha2Rvd24gPT09ICJzdHJpbmciID8gSlNPTi5wYXJzZShidWRnZXQuYnJlYWtkb3duKSA6IGJ1ZGdldC5icmVha2Rvd24pIDoge307IH0KICAgIGNhdGNoIHsgcmV0dXJuIHt9OyB9CiAgfSwgW2J1ZGdldF0pOwoKICBjb25zdCBbZnJpbmdlcywgc2V0RnJpbmdlc10gPSB1c2VTdGF0ZTxGcmluZ2VbXT4oREVGQVVMVF9GUklOR0VTKTsKICBjb25zdCBbc2F2ZWQsIHNldFNhdmVkXSA9IHVzZVN0YXRlKGZhbHNlKTsKCiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGlmIChicmVha2Rvd24gJiYgYnJlYWtkb3duLl9mcmluZ2VzICYmIEFycmF5LmlzQXJyYXkoYnJlYWtkb3duLl9mcmluZ2VzKSkgewogICAgICBzZXRGcmluZ2VzKGJyZWFrZG93bi5fZnJpbmdlcyBhcyBGcmluZ2VbXSk7CiAgICB9CiAgfSwgW2JyZWFrZG93bl0pOwoKICAvLyBDb21wdXRlIGZyaW5nZWQgdG90YWxzCiAgY29uc3QgY29tcHV0ZWQgPSB1c2VNZW1vKCgpID0+IHsKICAgIGNvbnN0IHJvd3M6IEFycmF5PHsga2V5OiBzdHJpbmc7IGxhYmVsOiBzdHJpbmc7IGVzdGltYXRlOiBudW1iZXI7IGZyaW5nZTogbnVtYmVyOyBmcmluZ2VkVG90YWw6IG51bWJlcjsgbWF0Y2hlZDogc3RyaW5nW10gfT4gPSBbXTsKICAgIGxldCBncmFuZEJhc2UgPSAwLCBncmFuZEZyaW5nZSA9IDA7CiAgICBmb3IgKGNvbnN0IFtrZXksIHZhbF0gb2YgT2JqZWN0LmVudHJpZXMoYnJlYWtkb3duIHx8IHt9KSkgewogICAgICBpZiAoa2V5LnN0YXJ0c1dpdGgoIl8iKSkgY29udGludWU7CiAgICAgIGNvbnN0IHY6IGFueSA9IHZhbDsKICAgICAgaWYgKHR5cGVvZiB2Py5lc3RpbWF0ZSAhPT0gIm51bWJlciIpIGNvbnRpbnVlOwogICAgICBsZXQgdG90YWxQY3QgPSAwOwogICAgICBjb25zdCBtYXRjaGVkOiBzdHJpbmdbXSA9IFtdOwogICAgICBmb3IgKGNvbnN0IGYgb2YgZnJpbmdlcykgewogICAgICAgIGlmIChjYXRlZ29yeU1hdGNoZXMoa2V5LCB2LmxhYmVsIHx8ICIiLCBmLmFwcGxpZXNUbykpIHsKICAgICAgICAgIHRvdGFsUGN0ICs9IGYucGN0OwogICAgICAgICAgbWF0Y2hlZC5wdXNoKGAke2YubGFiZWx9ICgke2YucGN0fSUpYCk7CiAgICAgICAgfQogICAgICB9CiAgICAgIGNvbnN0IGZyaW5nZUFtdCA9IHYuZXN0aW1hdGUgKiAodG90YWxQY3QgLyAxMDApOwogICAgICByb3dzLnB1c2goeyBrZXksIGxhYmVsOiB2LmxhYmVsIHx8IGtleSwgZXN0aW1hdGU6IHYuZXN0aW1hdGUsIGZyaW5nZTogZnJpbmdlQW10LCBmcmluZ2VkVG90YWw6IHYuZXN0aW1hdGUgKyBmcmluZ2VBbXQsIG1hdGNoZWQgfSk7CiAgICAgIGdyYW5kQmFzZSArPSB2LmVzdGltYXRlOwogICAgICBncmFuZEZyaW5nZSArPSBmcmluZ2VBbXQ7CiAgICB9CiAgICByZXR1cm4geyByb3dzLCBncmFuZEJhc2UsIGdyYW5kRnJpbmdlLCBncmFuZFRvdGFsOiBncmFuZEJhc2UgKyBncmFuZEZyaW5nZSB9OwogIH0sIFticmVha2Rvd24sIGZyaW5nZXNdKTsKCiAgY29uc3QgY3VycmVuY3kgPSBidWRnZXQ/LmN1cnJlbmN5IHx8ICJVU0QiOwogIGNvbnN0IGZtdCA9IChuOiBudW1iZXIpID0+IG5ldyBJbnRsLk51bWJlckZvcm1hdCh1bmRlZmluZWQsIHsgc3R5bGU6ICJjdXJyZW5jeSIsIGN1cnJlbmN5LCBtYXhpbXVtRnJhY3Rpb25EaWdpdHM6IDAgfSkuZm9ybWF0KG4pOwoKICBjb25zdCB1cGRhdGVGcmluZ2UgPSAoaTogbnVtYmVyLCBwYXRjaDogUGFydGlhbDxGcmluZ2U+KSA9PiB7CiAgICBzZXRGcmluZ2VzKChhcnIpID0+IGFyci5tYXAoKGYsIGlkeCkgPT4gaWR4ID09PSBpID8geyAuLi5mLCAuLi5wYXRjaCB9IDogZikpOwogIH07CiAgY29uc3QgcmVtb3ZlRnJpbmdlID0gKGk6IG51bWJlcikgPT4gc2V0RnJpbmdlcygoYXJyKSA9PiBhcnIuZmlsdGVyKChfLCBpZHgpID0+IGlkeCAhPT0gaSkpOwogIGNvbnN0IGFkZEZyaW5nZSA9ICgpID0+IHNldEZyaW5nZXMoKGFycikgPT4gWy4uLmFyciwgeyBsYWJlbDogIkN1c3RvbSBmcmluZ2UiLCBwY3Q6IDUsIGFwcGxpZXNUbzogWyJjcmV3Il0gfV0pOwoKICBjb25zdCBzYXZlRnJpbmdlcyA9ICgpID0+IHsKICAgIGNvbnN0IG5leHQgPSB7IC4uLmJyZWFrZG93biwgX2ZyaW5nZXM6IGZyaW5nZXMgfTsKICAgIHVwc2VydE11dC5tdXRhdGUoeyBwcm9qZWN0SWQsIGN1cnJlbmN5LCBicmVha2Rvd246IG5leHQgYXMgYW55IH0pOwogIH07CgogIHJldHVybiAoCiAgICA8ZGl2IHN0eWxlPXt7IG1pbkhlaWdodDogIjEwMHZoIiwgYmFja2dyb3VuZDogImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiwgY29sb3I6ICIjZmZmIiwgcGFkZGluZzogIjJyZW0gMS41cmVtIiB9fT4KICAgICAgPGRpdiBzdHlsZT17eyBtYXhXaWR0aDogMTAwMCwgbWFyZ2luOiAiMCBhdXRvIiB9fT4KICAgICAgICA8TGluayBocmVmPXtgL3Byb2plY3RzLyR7cHJvamVjdElkfWB9IHN0eWxlPXt7IGNvbG9yOiAicmdiYSgyNTUsMjE1LDE0MCwuOCkiLCB0ZXh0RGVjb3JhdGlvbjogIm5vbmUiLCBmb250U2l6ZTogIi44NXJlbSIgfX0+4oaQIEJhY2sgdG8gcHJvamVjdDwvTGluaz4KICAgICAgICA8aDEgc3R5bGU9e3sgbWFyZ2luOiAiMXJlbSAwIC4yNXJlbSIsIGZvbnRTaXplOiAiMS44cmVtIiwgY29sb3I6ICIjRkZENzhDIiB9fT5GcmluZ2VzICYgbG9hZGVkIGxhYm9yPC9oMT4KICAgICAgICA8cCBzdHlsZT17eyBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjYpIiwgbWFyZ2luVG9wOiAwLCBtYXJnaW5Cb3R0b206ICIxLjZyZW0iLCBmb250U2l6ZTogIi45NXJlbSIgfX0+CiAgICAgICAgICBMYXllciBwYXlyb2xsIHRheGVzLCB1bmlvbiBiZW5lZml0cywgYW5kIHJlbnRhbCB0YXhlcyBvbiB0b3Agb2YgeW91ciBidWRnZXQgY2F0ZWdvcmllcy4gQ2F0ZWdvcmllcyBhcmUgbWF0Y2hlZCBieSB0YWcgKGNhc3QsIGNyZXcsIGVxdWlwbWVudCkuCiAgICAgICAgPC9wPgoKICAgICAgICB7aXNMb2FkaW5nID8gKAogICAgICAgICAgPGRpdiBzdHlsZT17eyBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjUpIiB9fT5Mb2FkaW5nIGJ1ZGdldOKApjwvZGl2PgogICAgICAgICkgOiAhYnVkZ2V0ID8gKAogICAgICAgICAgPGRpdiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSgyNDUsMTU4LDExLC4xKSIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI0NSwxNTgsMTEsLjMpIiwgYm9yZGVyUmFkaXVzOiAxMCwgcGFkZGluZzogIjFyZW0gMS4ycmVtIiwgY29sb3I6ICIjZmRlNjhhIiB9fT4KICAgICAgICAgICAgTm8gYnVkZ2V0IHlldCBmb3IgdGhpcyBwcm9qZWN0LiBDcmVhdGUgb3IgZ2VuZXJhdGUgYSBidWRnZXQgZmlyc3QgdG8gYXBwbHkgZnJpbmdlcy4KICAgICAgICAgIDwvZGl2PgogICAgICAgICkgOiAoCiAgICAgICAgICA8PgogICAgICAgICAgICA8c2VjdGlvbiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAicmdiYSg4LDEyLDI4LC41NSkiLCBib3JkZXI6ICIxcHggc29saWQgcmdiYSgyNTUsMjE1LDE0MCwuMTgpIiwgYm9yZGVyUmFkaXVzOiAxNCwgcGFkZGluZzogIjEuM3JlbSIsIG1hcmdpbkJvdHRvbTogIjEuNHJlbSIgfX0+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAiZmxleCIsIGp1c3RpZnlDb250ZW50OiAic3BhY2UtYmV0d2VlbiIsIGFsaWduSXRlbXM6ICJjZW50ZXIiLCBtYXJnaW5Cb3R0b206ICIuN3JlbSIgfX0+CiAgICAgICAgICAgICAgICA8aDIgc3R5bGU9e3sgbWFyZ2luOiAwLCBmb250U2l6ZTogIjFyZW0iLCBjb2xvcjogIiNGRkQ3OEMiIH19PkZyaW5nZSByYXRlczwvaDI+CiAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICJmbGV4IiwgZ2FwOiAiLjRyZW0iIH19PgogICAgICAgICAgICAgICAgICA8YnV0dG9uIG9uQ2xpY2s9e2FkZEZyaW5nZX0gc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoMjU1LDI1NSwyNTUsLjA2KSIsIGNvbG9yOiAiI2ZmZiIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4xOCkiLCBib3JkZXJSYWRpdXM6IDYsIHBhZGRpbmc6ICIuM3JlbSAuN3JlbSIsIGZvbnRTaXplOiAiLjc4cmVtIiwgY3Vyc29yOiAicG9pbnRlciIgfX0+KyBBZGQgZnJpbmdlPC9idXR0b24+CiAgICAgICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17c2F2ZUZyaW5nZXN9IGRpc2FibGVkPXt1cHNlcnRNdXQuaXNQZW5kaW5nfSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDEzNWRlZywjRkZENzhDLCNFMEI5NzMpIiwgY29sb3I6ICIjMWExMjI4IiwgYm9yZGVyOiAibm9uZSIsIGJvcmRlclJhZGl1czogNiwgcGFkZGluZzogIi4zcmVtIC45cmVtIiwgZm9udFNpemU6ICIuNzhyZW0iLCBmb250V2VpZ2h0OiA2MDAsIGN1cnNvcjogInBvaW50ZXIiIH19PgogICAgICAgICAgICAgICAgICAgIHt1cHNlcnRNdXQuaXNQZW5kaW5nID8gIlNhdmluZ+KApiIgOiBzYXZlZCA/ICJTYXZlZCDinJMiIDogIlNhdmUgZnJpbmdlcyJ9CiAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPHRhYmxlIHN0eWxlPXt7IHdpZHRoOiAiMTAwJSIsIGJvcmRlckNvbGxhcHNlOiAiY29sbGFwc2UiLCBmb250U2l6ZTogIi44MnJlbSIgfX0+CiAgICAgICAgICAgICAgICA8dGhlYWQ+CiAgICAgICAgICAgICAgICAgIDx0ciBzdHlsZT17eyBib3JkZXJCb3R0b206ICIxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwuMSkiLCBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjU1KSIgfX0+CiAgICAgICAgICAgICAgICAgICAgPHRoIHN0eWxlPXt7IHRleHRBbGlnbjogImxlZnQiLCBwYWRkaW5nOiAiLjVyZW0gLjRyZW0iLCBmb250V2VpZ2h0OiA1MDAgfX0+TGFiZWw8L3RoPgogICAgICAgICAgICAgICAgICAgIDx0aCBzdHlsZT17eyB0ZXh0QWxpZ246ICJsZWZ0IiwgcGFkZGluZzogIi41cmVtIC40cmVtIiwgZm9udFdlaWdodDogNTAwIH19PiU8L3RoPgogICAgICAgICAgICAgICAgICAgIDx0aCBzdHlsZT17eyB0ZXh0QWxpZ246ICJsZWZ0IiwgcGFkZGluZzogIi41cmVtIC40cmVtIiwgZm9udFdlaWdodDogNTAwIH19PkFwcGxpZXMgdG8gKHRhZ3MsIGNvbW1hLXNlcGFyYXRlZCk8L3RoPgogICAgICAgICAgICAgICAgICAgIDx0aCBzdHlsZT17eyB3aWR0aDogMzIgfX0+PC90aD4KICAgICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgIDwvdGhlYWQ+CiAgICAgICAgICAgICAgICA8dGJvZHk+CiAgICAgICAgICAgICAgICAgIHtmcmluZ2VzLm1hcCgoZiwgaSkgPT4gKAogICAgICAgICAgICAgICAgICAgIDx0ciBrZXk9e2l9IHN0eWxlPXt7IGJvcmRlckJvdHRvbTogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4wNSkiIH19PgogICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPXt7IHBhZGRpbmc6ICIuNHJlbSAuNHJlbSIgfX0+CiAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCB2YWx1ZT17Zi5sYWJlbH0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGVGcmluZ2UoaSwgeyBsYWJlbDogZS50YXJnZXQudmFsdWUgfSl9IHN0eWxlPXt7IHdpZHRoOiAiMTAwJSIsIGJhY2tncm91bmQ6ICJ0cmFuc3BhcmVudCIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4xKSIsIGJvcmRlclJhZGl1czogNCwgY29sb3I6ICIjZmZmIiwgcGFkZGluZzogIi4zcmVtIC40cmVtIiwgZm9udFNpemU6ICIuOHJlbSIgfX0gLz4KICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi40cmVtIC40cmVtIiwgd2lkdGg6IDgwIH19PgogICAgICAgICAgICAgICAgICAgICAgICA8aW5wdXQgdHlwZT0ibnVtYmVyIiBzdGVwPSIwLjAxIiB2YWx1ZT17Zi5wY3R9IG9uQ2hhbmdlPXsoZSkgPT4gdXBkYXRlRnJpbmdlKGksIHsgcGN0OiBwYXJzZUZsb2F0KGUudGFyZ2V0LnZhbHVlKSB8fCAwIH0pfSBzdHlsZT17eyB3aWR0aDogIjEwMCUiLCBiYWNrZ3JvdW5kOiAidHJhbnNwYXJlbnQiLCBib3JkZXI6ICIxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwuMSkiLCBib3JkZXJSYWRpdXM6IDQsIGNvbG9yOiAiI2ZmZiIsIHBhZGRpbmc6ICIuM3JlbSAuNHJlbSIsIGZvbnRTaXplOiAiLjhyZW0iIH19IC8+CiAgICAgICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPXt7IHBhZGRpbmc6ICIuNHJlbSAuNHJlbSIgfX0+CiAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCB2YWx1ZT17Zi5hcHBsaWVzVG8uam9pbigiLCAiKX0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGVGcmluZ2UoaSwgeyBhcHBsaWVzVG86IGUudGFyZ2V0LnZhbHVlLnNwbGl0KCIsIikubWFwKChzKSA9PiBzLnRyaW0oKS50b0xvd2VyQ2FzZSgpKS5maWx0ZXIoQm9vbGVhbikgfSl9IHN0eWxlPXt7IHdpZHRoOiAiMTAwJSIsIGJhY2tncm91bmQ6ICJ0cmFuc3BhcmVudCIsIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LC4xKSIsIGJvcmRlclJhZGl1czogNCwgY29sb3I6ICIjZmZmIiwgcGFkZGluZzogIi4zcmVtIC40cmVtIiwgZm9udFNpemU6ICIuOHJlbSIgfX0gcGxhY2Vob2xkZXI9ImNhc3QsIGNyZXcsIGVxdWlwbWVudCIgLz4KICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17KCkgPT4gcmVtb3ZlRnJpbmdlKGkpfSBzdHlsZT17eyBiYWNrZ3JvdW5kOiAidHJhbnNwYXJlbnQiLCBjb2xvcjogInJnYmEoMjM5LDY4LDY4LC43KSIsIGJvcmRlcjogIm5vbmUiLCBjdXJzb3I6ICJwb2ludGVyIiwgZm9udFNpemU6ICIxcmVtIiB9fSB0aXRsZT0iUmVtb3ZlIj7DlzwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgIDwvdGJvZHk+CiAgICAgICAgICAgICAgPC90YWJsZT4KICAgICAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICAgICAgPHNlY3Rpb24gc3R5bGU9e3sgYmFja2dyb3VuZDogInJnYmEoOCwxMiwyOCwuNTUpIiwgYm9yZGVyOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDIxNSwxNDAsLjE4KSIsIGJvcmRlclJhZGl1czogMTQsIHBhZGRpbmc6ICIxLjNyZW0iIH19PgogICAgICAgICAgICAgIDxoMiBzdHlsZT17eyBtYXJnaW46IDAsIGZvbnRTaXplOiAiMXJlbSIsIGNvbG9yOiAiI0ZGRDc4QyIgfX0+TG9hZGVkIGJ1ZGdldCBwcmV2aWV3PC9oMj4KICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRTaXplOiAiLjc4cmVtIiwgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC41KSIsIG1hcmdpblRvcDogIi4xNXJlbSIsIG1hcmdpbkJvdHRvbTogIi43cmVtIiB9fT5DdXJyZW5jeToge2N1cnJlbmN5fTwvZGl2PgogICAgICAgICAgICAgIDx0YWJsZSBzdHlsZT17eyB3aWR0aDogIjEwMCUiLCBib3JkZXJDb2xsYXBzZTogImNvbGxhcHNlIiwgZm9udFNpemU6ICIuODNyZW0iIH19PgogICAgICAgICAgICAgICAgPHRoZWFkPgogICAgICAgICAgICAgICAgICA8dHIgc3R5bGU9e3sgYm9yZGVyQm90dG9tOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjEpIiwgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC41NSkiIH19PgogICAgICAgICAgICAgICAgICAgIDx0aCBzdHlsZT17eyB0ZXh0QWxpZ246ICJsZWZ0IiwgcGFkZGluZzogIi41cmVtIC40cmVtIiwgZm9udFdlaWdodDogNTAwIH19PkNhdGVnb3J5PC90aD4KICAgICAgICAgICAgICAgICAgICA8dGggc3R5bGU9e3sgdGV4dEFsaWduOiAicmlnaHQiLCBwYWRkaW5nOiAiLjVyZW0gLjRyZW0iLCBmb250V2VpZ2h0OiA1MDAgfX0+QmFzZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoIHN0eWxlPXt7IHRleHRBbGlnbjogInJpZ2h0IiwgcGFkZGluZzogIi41cmVtIC40cmVtIiwgZm9udFdlaWdodDogNTAwIH19PkZyaW5nZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoIHN0eWxlPXt7IHRleHRBbGlnbjogInJpZ2h0IiwgcGFkZGluZzogIi41cmVtIC40cmVtIiwgZm9udFdlaWdodDogNTAwIH19PkxvYWRlZCB0b3RhbDwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoIHN0eWxlPXt7IHRleHRBbGlnbjogImxlZnQiLCBwYWRkaW5nOiAiLjVyZW0gLjRyZW0iLCBmb250V2VpZ2h0OiA1MDAsIGNvbG9yOiAicmdiYSgyNTUsMjU1LDI1NSwuNCkiIH19PkFwcGxpZWQ8L3RoPgogICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgPC90aGVhZD4KICAgICAgICAgICAgICAgIDx0Ym9keT4KICAgICAgICAgICAgICAgICAge2NvbXB1dGVkLnJvd3MubGVuZ3RoID09PSAwID8gKAogICAgICAgICAgICAgICAgICAgIDx0cj48dGQgY29sU3Bhbj17NX0gc3R5bGU9e3sgcGFkZGluZzogIjFyZW0gLjRyZW0iLCBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjUpIiB9fT5ObyBzcGVuZGFibGUgY2F0ZWdvcmllcyBpbiB0aGlzIGJ1ZGdldCB5ZXQuPC90ZD48L3RyPgogICAgICAgICAgICAgICAgICApIDogY29tcHV0ZWQucm93cy5tYXAoKHIpID0+ICgKICAgICAgICAgICAgICAgICAgICA8dHIga2V5PXtyLmtleX0gc3R5bGU9e3sgYm9yZGVyQm90dG9tOiAiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjA1KSIgfX0+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi41cmVtIC40cmVtIiwgY29sb3I6ICIjZmZmIiB9fT57ci5sYWJlbH08L3RkPgogICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPXt7IHBhZGRpbmc6ICIuNXJlbSAuNHJlbSIsIHRleHRBbGlnbjogInJpZ2h0IiwgY29sb3I6ICJyZ2JhKDI1NSwyNTUsMjU1LC44NSkiIH19PntmbXQoci5lc3RpbWF0ZSl9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT17eyBwYWRkaW5nOiAiLjVyZW0gLjRyZW0iLCB0ZXh0QWxpZ246ICJyaWdodCIsIGNvbG9yOiByLmZyaW5nZSA+IDAgPyAiI0ZGRDc4QyIgOiAicmdiYSgyNTUsMjU1LDI1NSwuNCkiIH19PntmbXQoci5mcmluZ2UpfTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi41cmVtIC40cmVtIiwgdGV4dEFsaWduOiAicmlnaHQiLCBjb2xvcjogIiNmZmYiLCBmb250V2VpZ2h0OiA2MDAgfX0+e2ZtdChyLmZyaW5nZWRUb3RhbCl9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT17eyBwYWRkaW5nOiAiLjVyZW0gLjRyZW0iLCBjb2xvcjogInJnYmEoMjU1LDI1NSwyNTUsLjQ1KSIsIGZvbnRTaXplOiAiLjcycmVtIiB9fT57ci5tYXRjaGVkLmpvaW4oIiArICIpIHx8ICLigJQifTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICA8L3Rib2R5PgogICAgICAgICAgICAgICAgPHRmb290PgogICAgICAgICAgICAgICAgICA8dHIgc3R5bGU9e3sgYm9yZGVyVG9wOiAiMnB4IHNvbGlkIHJnYmEoMjU1LDIxNSwxNDAsLjMpIiB9fT4KICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi43cmVtIC40cmVtIiwgY29sb3I6ICIjRkZENzhDIiwgZm9udFdlaWdodDogNjAwIH19PkdyYW5kIHRvdGFsPC90ZD4KICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi43cmVtIC40cmVtIiwgdGV4dEFsaWduOiAicmlnaHQiLCBjb2xvcjogIiNmZmYiIH19PntmbXQoY29tcHV0ZWQuZ3JhbmRCYXNlKX08L3RkPgogICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT17eyBwYWRkaW5nOiAiLjdyZW0gLjRyZW0iLCB0ZXh0QWxpZ246ICJyaWdodCIsIGNvbG9yOiAiI0ZGRDc4QyIgfX0+e2ZtdChjb21wdXRlZC5ncmFuZEZyaW5nZSl9PC90ZD4KICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9e3sgcGFkZGluZzogIi43cmVtIC40cmVtIiwgdGV4dEFsaWduOiAicmlnaHQiLCBjb2xvcjogIiNGRkQ3OEMiLCBmb250V2VpZ2h0OiA3MDAsIGZvbnRTaXplOiAiLjk1cmVtIiB9fT57Zm10KGNvbXB1dGVkLmdyYW5kVG90YWwpfTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPHRkPjwvdGQ+CiAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICA8L3Rmb290PgogICAgICAgICAgICAgIDwvdGFibGU+CiAgICAgICAgICAgIDwvc2VjdGlvbj4KICAgICAgICAgIDwvPgogICAgICAgICl9CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQo=
+import { useEffect, useState, useMemo } from "react";
+import { useParams, Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+
+interface Fringe { label: string; pct: number; appliesTo: string[]; }
+
+const DEFAULT_FRINGES: Fringe[] = [
+  { label: "Payroll taxes (FICA + state)", pct: 8.5, appliesTo: ["cast", "crew"] },
+  { label: "Workers comp", pct: 3.2, appliesTo: ["cast", "crew"] },
+  { label: "Health & welfare", pct: 6.0, appliesTo: ["crew"] },
+  { label: "Pension & vacation", pct: 8.0, appliesTo: ["crew"] },
+  { label: "Equipment rental tax", pct: 8.875, appliesTo: ["equipment"] },
+];
+
+function categoryMatches(catKey: string, label: string, appliesTo: string[]): boolean {
+  const k = (catKey + " " + label).toLowerCase();
+  return appliesTo.some((tag) => k.includes(tag));
+}
+
+export default function BudgetFringesPage() {
+  const { id } = useParams<{ id: string }>();
+  const projectId = parseInt(id || "0", 10);
+  const utils = trpc.useUtils();
+  const { data: budgets, isLoading } = trpc.budget.list.useQuery({ projectId }, { enabled: projectId > 0 });
+  const upsertMut = trpc.budgetManual.upsert.useMutation({
+    onSuccess: () => { utils.budget.list.invalidate({ projectId }); setSaved(true); setTimeout(() => setSaved(false), 1500); },
+  });
+
+  const budget = budgets && budgets.length > 0 ? (budgets[0] as any) : null;
+  const breakdown = useMemo(() => {
+    try { return budget?.breakdown ? (typeof budget.breakdown === "string" ? JSON.parse(budget.breakdown) : budget.breakdown) : {}; }
+    catch { return {}; }
+  }, [budget]);
+
+  const [fringes, setFringes] = useState<Fringe[]>(DEFAULT_FRINGES);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (breakdown && breakdown._fringes && Array.isArray(breakdown._fringes)) {
+      setFringes(breakdown._fringes as Fringe[]);
+    }
+  }, [breakdown]);
+
+  // Compute fringed totals
+  const computed = useMemo(() => {
+    const rows: Array<{ key: string; label: string; estimate: number; fringe: number; fringedTotal: number; matched: string[] }> = [];
+    let grandBase = 0, grandFringe = 0;
+    for (const [key, val] of Object.entries(breakdown || {})) {
+      if (key.startsWith("_")) continue;
+      const v: any = val;
+      if (typeof v?.estimate !== "number") continue;
+      let totalPct = 0;
+      const matched: string[] = [];
+      for (const f of fringes) {
+        if (categoryMatches(key, v.label || "", f.appliesTo)) {
+          totalPct += f.pct;
+          matched.push(`${f.label} (${f.pct}%)`);
+        }
+      }
+      const fringeAmt = v.estimate * (totalPct / 100);
+      rows.push({ key, label: v.label || key, estimate: v.estimate, fringe: fringeAmt, fringedTotal: v.estimate + fringeAmt, matched });
+      grandBase += v.estimate;
+      grandFringe += fringeAmt;
+    }
+    return { rows, grandBase, grandFringe, grandTotal: grandBase + grandFringe };
+  }, [breakdown, fringes]);
+
+  const currency = budget?.currency || "USD";
+  const fmt = (n: number) => new Intl.NumberFormat(undefined, { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
+
+  const updateFringe = (i: number, patch: Partial<Fringe>) => {
+    setFringes((arr) => arr.map((f, idx) => idx === i ? { ...f, ...patch } : f));
+  };
+  const removeFringe = (i: number) => setFringes((arr) => arr.filter((_, idx) => idx !== i));
+  const addFringe = () => setFringes((arr) => [...arr, { label: "Custom fringe", pct: 5, appliesTo: ["crew"] }]);
+
+  const saveFringes = () => {
+    const next = { ...breakdown, _fringes: fringes };
+    upsertMut.mutate({ projectId, currency, breakdown: next as any });
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)", color: "#fff", padding: "2rem 1.5rem" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <Link href={`/projects/${projectId}`} style={{ color: "rgba(255,215,140,.8)", textDecoration: "none", fontSize: ".85rem" }}>← Back to project</Link>
+        <h1 className="gradient-text-gold" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C" }}>Fringes & loaded labor</h1>
+        <p style={{ color: "rgba(255,255,255,.6)", marginTop: 0, marginBottom: "1.6rem", fontSize: ".95rem" }}>
+          Layer payroll taxes, union benefits, and rental taxes on top of your budget categories. Categories are matched by tag (cast, crew, equipment).
+        </p>
+
+        {isLoading ? (
+          <div style={{ color: "rgba(255,255,255,.5)" }}>Loading budget…</div>
+        ) : !budget ? (
+          <div style={{ background: "rgba(245,158,11,.1)", border: "1px solid rgba(245,158,11,.3)", borderRadius: 10, padding: "1rem 1.2rem", color: "#fde68a" }}>
+            No budget yet for this project. Create or generate a budget first to apply fringes.
+          </div>
+        ) : (
+          <>
+            <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem", marginBottom: "1.4rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: ".7rem" }}>
+                <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: "1rem", color: "#FFD78C" }}>Fringe rates</h2>
+                <div style={{ display: "flex", gap: ".4rem" }}>
+                  <button onClick={addFringe} style={{ background: "rgba(255,255,255,.06)", color: "#fff", border: "1px solid rgba(255,255,255,.18)", borderRadius: 6, padding: ".3rem .7rem", fontSize: ".78rem", cursor: "pointer" }}>+ Add fringe</button>
+                  <button onClick={saveFringes} disabled={upsertMut.isPending} style={{ background: "linear-gradient(135deg,#FFD78C,#E0B973)", color: "#1a1228", border: "none", borderRadius: 6, padding: ".3rem .9rem", fontSize: ".78rem", fontWeight: 600, cursor: "pointer" }}>
+                    {upsertMut.isPending ? "Saving…" : saved ? "Saved ✓" : "Save fringes"}
+                  </button>
+                </div>
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".82rem" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.55)" }}>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Label</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>%</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Applies to (tags, comma-separated)</th>
+                    <th style={{ width: 32 }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fringes.map((f, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+                      <td style={{ padding: ".4rem .4rem" }}>
+                        <input value={f.label} onChange={(e) => updateFringe(i, { label: e.target.value })} style={{ width: "100%", background: "transparent", border: "1px solid rgba(255,255,255,.1)", borderRadius: 4, color: "#fff", padding: ".3rem .4rem", fontSize: ".8rem" }} />
+                      </td>
+                      <td style={{ padding: ".4rem .4rem", width: 80 }}>
+                        <input type="number" step="0.01" value={f.pct} onChange={(e) => updateFringe(i, { pct: parseFloat(e.target.value) || 0 })} style={{ width: "100%", background: "transparent", border: "1px solid rgba(255,255,255,.1)", borderRadius: 4, color: "#fff", padding: ".3rem .4rem", fontSize: ".8rem" }} />
+                      </td>
+                      <td style={{ padding: ".4rem .4rem" }}>
+                        <input value={f.appliesTo.join(", ")} onChange={(e) => updateFringe(i, { appliesTo: e.target.value.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean) })} style={{ width: "100%", background: "transparent", border: "1px solid rgba(255,255,255,.1)", borderRadius: 4, color: "#fff", padding: ".3rem .4rem", fontSize: ".8rem" }} placeholder="cast, crew, equipment" />
+                      </td>
+                      <td>
+                        <button onClick={() => removeFringe(i)} style={{ background: "transparent", color: "rgba(239,68,68,.7)", border: "none", cursor: "pointer", fontSize: "1rem" }} title="Remove">×</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+
+            <section style={{ background: "rgba(8,12,28,.55)", border: "1px solid rgba(255,215,140,.18)", borderRadius: 14, padding: "1.3rem" }}>
+              <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: "1rem", color: "#FFD78C" }}>Loaded budget preview</h2>
+              <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.5)", marginTop: ".15rem", marginBottom: ".7rem" }}>Currency: {currency}</div>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".83rem" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.55)" }}>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Category</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Base</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Fringe</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Loaded total</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500, color: "rgba(255,255,255,.4)" }}>Applied</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {computed.rows.length === 0 ? (
+                    <tr><td colSpan={5} style={{ padding: "1rem .4rem", color: "rgba(255,255,255,.5)" }}>No spendable categories in this budget yet.</td></tr>
+                  ) : computed.rows.map((r) => (
+                    <tr key={r.key} style={{ borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+                      <td style={{ padding: ".5rem .4rem", color: "#fff" }}>{r.label}</td>
+                      <td style={{ padding: ".5rem .4rem", textAlign: "right", color: "rgba(255,255,255,.85)" }}>{fmt(r.estimate)}</td>
+                      <td style={{ padding: ".5rem .4rem", textAlign: "right", color: r.fringe > 0 ? "#FFD78C" : "rgba(255,255,255,.4)" }}>{fmt(r.fringe)}</td>
+                      <td style={{ padding: ".5rem .4rem", textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmt(r.fringedTotal)}</td>
+                      <td style={{ padding: ".5rem .4rem", color: "rgba(255,255,255,.45)", fontSize: ".72rem" }}>{r.matched.join(" + ") || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr style={{ borderTop: "2px solid rgba(255,215,140,.3)" }}>
+                    <td style={{ padding: ".7rem .4rem", color: "#FFD78C", fontWeight: 600 }}>Grand total</td>
+                    <td style={{ padding: ".7rem .4rem", textAlign: "right", color: "#fff" }}>{fmt(computed.grandBase)}</td>
+                    <td style={{ padding: ".7rem .4rem", textAlign: "right", color: "#FFD78C" }}>{fmt(computed.grandFringe)}</td>
+                    <td style={{ padding: ".7rem .4rem", textAlign: "right", color: "#FFD78C", fontWeight: 700, fontSize: ".95rem" }}>{fmt(computed.grandTotal)}</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </section>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
