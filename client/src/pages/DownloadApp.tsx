@@ -23,25 +23,25 @@ function getApiBase() {
 }
 
 const MOBILE_FEATURES = [
-  { icon: "ð¬", label: "Director Chat", desc: "AI creative guidance on the go" },
-  { icon: "ð", label: "Script Writer", desc: "Write screenplays from your phone" },
-  { icon: "ð¥", label: "Video Generation", desc: "Generate AI video clips anywhere" },
-  { icon: "ð¼ï¸", label: "Storyboard", desc: "Visual planning in your pocket" },
-  { icon: "ð°", label: "Budget Estimator", desc: "Track production costs on set" },
-  { icon: "ð", label: "Continuity Checker", desc: "Catch script errors instantly" },
-  { icon: "ð¤", label: "Team Collaboration", desc: "Manage your crew from anywhere" },
-  { icon: "ð", label: "Shot List", desc: "Reference your shots on location" },
+  { icon: "Ã°ÂÂÂ¬", label: "Director Chat", desc: "AI creative guidance on the go" },
+  { icon: "Ã°ÂÂÂ", label: "Script Writer", desc: "Write screenplays from your phone" },
+  { icon: "Ã°ÂÂÂ¥", label: "Video Generation", desc: "Generate AI video clips anywhere" },
+  { icon: "Ã°ÂÂÂ¼Ã¯Â¸Â", label: "Storyboard", desc: "Visual planning in your pocket" },
+  { icon: "Ã°ÂÂÂ°", label: "Budget Estimator", desc: "Track production costs on set" },
+  { icon: "Ã°ÂÂÂ", label: "Continuity Checker", desc: "Catch script errors instantly" },
+  { icon: "Ã°ÂÂ¤Â", label: "Team Collaboration", desc: "Manage your crew from anywhere" },
+  { icon: "Ã°ÂÂÂ", label: "Shot List", desc: "Reference your shots on location" },
 ];
 
 const DESKTOP_FEATURES = [
-  { icon: "ð¥ï¸", label: "Native Window", desc: "Dedicated app, no browser tab to lose" },
-  { icon: "ð", label: "Auto-Updates", desc: "Always on the latest version" },
-  { icon: "ð", label: "System Tray", desc: "Quick access to projects from the menu bar" },
-  { icon: "ð", label: "Deep Links", desc: "Stripe checkout returns directly to the app" },
-  { icon: "ð", label: "File System", desc: "Native file access for exports" },
-  { icon: "â¨ï¸", label: "Keyboard Shortcuts", desc: "Full desktop keyboard support" },
-  { icon: "ð", label: "Offline Mode", desc: "Browse projects without internet" },
-  { icon: "ð¨", label: "Full Screen", desc: "Immersive full-screen filmmaking" },
+  { icon: "Ã°ÂÂÂ¥Ã¯Â¸Â", label: "Native Window", desc: "Dedicated app, no browser tab to lose" },
+  { icon: "Ã°ÂÂÂ", label: "Auto-Updates", desc: "Always on the latest version" },
+  { icon: "Ã°ÂÂÂ", label: "System Tray", desc: "Quick access to projects from the menu bar" },
+  { icon: "Ã°ÂÂÂ", label: "Deep Links", desc: "Stripe checkout returns directly to the app" },
+  { icon: "Ã°ÂÂÂ", label: "File System", desc: "Native file access for exports" },
+  { icon: "Ã¢ÂÂ¨Ã¯Â¸Â", label: "Keyboard Shortcuts", desc: "Full desktop keyboard support" },
+  { icon: "Ã°ÂÂÂ", label: "Offline Mode", desc: "Browse projects without internet" },
+  { icon: "Ã°ÂÂÂ¨", label: "Full Screen", desc: "Immersive full-screen filmmaking" },
 ];
 
 export default function DownloadApp() {
@@ -97,36 +97,36 @@ export default function DownloadApp() {
     if (desktopAvail.mac) parts.push("Mac");
     if (desktopAvail.win) parts.push("Windows");
     if (desktopAvail.linux) parts.push("Linux");
-    return parts.join(" Â· ");
+    return parts.join(" ÃÂ· ");
   }, [links, desktopAvail]);
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
 
-      {/* ââ Hero ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Hero Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-black to-purple-900/20" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
           <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 px-4 py-1.5 text-sm">
-            ð± {heroBadge}
+            Ã°ÂÂÂ± {heroBadge}
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-tight gradient-text-gold">
             Virelle Studios
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>
           <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
-            Every AI filmmaking tool â Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more â available on iOS today, with Android and desktop apps coming soon. One subscription. All platforms.
+            Every AI filmmaking tool Ã¢ÂÂ Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more Ã¢ÂÂ available on iOS today, with Android and desktop apps coming soon. One subscription. All platforms.
           </p>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-20">
 
-        {/* ââ Mobile Downloads ââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Mobile Downloads Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section>
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">ð± Mobile App</h2>
-            <p className="text-gray-400">iOS available now â Android coming soon</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">Ã°ÂÂÂ± Mobile App</h2>
+            <p className="text-gray-400">iOS available now Ã¢ÂÂ Android coming soon</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
@@ -141,7 +141,7 @@ export default function DownloadApp() {
                   title={androidReady ? "Download Android APK" : "Android app coming soon"}
                   className={`group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] ${
                     androidReady
-                      ? "bg-primary text-primary-foreground border-amber-400/40 hover:bg-amber-500/90 hover:scale-105 cursor-pointer"
+                      ? "bg-amber-500 text-black border-amber-400/40 hover:bg-amber-500/90 hover:scale-105 cursor-pointer"
                       : "bg-white/5 text-white/60 border-white/15 cursor-not-allowed"
                   } disabled:opacity-60`}
                 >
@@ -153,7 +153,7 @@ export default function DownloadApp() {
                     <div className="text-xs opacity-70">{androidReady ? "Get it on" : "Status"}</div>
                     <div className="text-lg font-bold leading-tight">Android</div>
                     <div className="text-xs opacity-70">
-                      {androidReady ? `v${links?.android?.version ?? "1.0.0"} Â· APK` : "Coming soon"}
+                      {androidReady ? `v${links?.android?.version ?? "1.0.0"} ÃÂ· APK` : "Coming soon"}
                     </div>
                   </div>
                 </button>
@@ -175,7 +175,7 @@ export default function DownloadApp() {
               <div className="text-left">
                 <div className="text-xs opacity-70">Download on the</div>
                 <div className="text-lg font-bold leading-tight">App Store</div>
-                <div className="text-xs opacity-60">v{links?.ios?.version ?? "1.0.0"} Â· iOS</div>
+                <div className="text-xs opacity-60">v{links?.ios?.version ?? "1.0.0"} ÃÂ· iOS</div>
               </div>
             </button>
           </div>
@@ -184,7 +184,7 @@ export default function DownloadApp() {
           <div className="flex justify-center mt-4">
             {pwaInstalled ? (
               <div className="flex items-center gap-2 text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-xl px-6 py-3 font-semibold">
-                <span>â</span> App installed â find it on your home screen
+                <span>Ã¢ÂÂ</span> App installed Ã¢ÂÂ find it on your home screen
               </div>
             ) : pwaPrompt ? (
               <button
@@ -218,21 +218,21 @@ export default function DownloadApp() {
           </div>
         </section>
 
-        {/* ââ Desktop Downloads ââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Desktop Downloads Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section>
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">ð¥ï¸ Desktop App</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">Ã°ÂÂÂ¥Ã¯Â¸Â Desktop App</h2>
             <p className="text-gray-400">
               {links?.desktop?.available
-                ? "macOS, Windows & Linux â native performance"
-                : "Native desktop apps â coming soon"}
+                ? "macOS, Windows & Linux Ã¢ÂÂ native performance"
+                : "Native desktop apps Ã¢ÂÂ coming soon"}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             {(["mac", "win", "linux"] as const).map(platform => {
               const label = platform === "mac" ? "macOS" : platform === "win" ? "Windows" : "Linux";
-              const emoji = platform === "mac" ? "ð" : platform === "win" ? "ðª" : "ð§";
+              const emoji = platform === "mac" ? "Ã°ÂÂÂ" : platform === "win" ? "Ã°ÂÂªÂ" : "Ã°ÂÂÂ§";
               const url = links?.desktop?.[platform] ?? null;
               const ready = !!desktopAvail[platform] && !!url;
               return (
@@ -249,7 +249,7 @@ export default function DownloadApp() {
                   } disabled:opacity-60`}
                 >
                   <span className="text-xl">{emoji}</span>
-                  {ready ? `Download for ${label}` : `${label} â Coming Soon`}
+                  {ready ? `Download for ${label}` : `${label} Ã¢ÂÂ Coming Soon`}
                   {ready && (
                     <span className="text-xs opacity-50 ml-1">v{links?.desktop?.version ?? "1.0.0"}</span>
                   )}
@@ -269,28 +269,28 @@ export default function DownloadApp() {
           </div>
         </section>
 
-        {/* ââ Parity callout ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Parity callout Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <div className="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20 rounded-3xl p-6 sm:p-8 text-center">
-          <div className="text-4xl mb-4">ð</div>
+          <div className="text-4xl mb-4">Ã°ÂÂÂ</div>
           <h2 className="text-xl sm:text-2xl font-bold mb-3 gradient-text-gold">One Subscription. All Platforms.</h2>
           <p className="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
-            Your Virelle subscription works across web, mobile, and desktop. Credits, projects, and settings sync automatically. New features added to the platform appear everywhere â no app update required.
+            Your Virelle subscription works across web, mobile, and desktop. Credits, projects, and settings sync automatically. New features added to the platform appear everywhere Ã¢ÂÂ no app update required.
           </p>
         </div>
 
-        {/* ââ Referral / CTA ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Referral / CTA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         {user ? (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center">
-            <div className="text-3xl mb-3">ð</div>
+            <div className="text-3xl mb-3">Ã°ÂÂÂ</div>
             <h3 className="text-xl font-bold mb-2">Share with Your Crew</h3>
             <p className="text-gray-400 mb-6 text-sm sm:text-base">
-              Share your referral link â you both earn bonus credits when they sign up.
+              Share your referral link Ã¢ÂÂ you both earn bonus credits when they sign up.
             </p>
             <button
               onClick={copyReferral}
               className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 py-3 rounded-xl transition-colors"
             >
-              {copied ? "â Copied!" : "Copy Referral Link"}
+              {copied ? "Ã¢ÂÂ Copied!" : "Copy Referral Link"}
             </button>
           </div>
         ) : (
@@ -300,7 +300,7 @@ export default function DownloadApp() {
               onClick={() => setLocation("/register")}
               className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 py-3 rounded-xl text-lg"
             >
-              Create Account â It's Free
+              Create Account Ã¢ÂÂ It's Free
             </Button>
           </div>
         )}

@@ -32,18 +32,18 @@ import { useState } from "react";
     title: "Sample Analysis",
     genre: "Drama/Thriller",
     format: "Feature",
-    logline: "A disgraced detective must solve her daughter's disappearance in 48 hours â or become the prime suspect.",
+    logline: "A disgraced detective must solve her daughter's disappearance in 48 hours Ã¢ÂÂ or become the prime suspect.",
     premise: "Strong high-concept hook with clear ticking clock. The dual-threat structure (solve it or be blamed) creates compelling dramatic irony. Premise is commercially viable in the current streaming landscape.",
     scores: { premise: 82, structure: 74, characters: 88, dialogue: 79, pacing: 71, originality: 68, marketability: 85 },
     recommendation: "Consider",
     synopsisNotes: "Three-act structure is present but the second act midpoint feels underdeveloped. The protagonist's arc from disgraced detective to self-redemption is earned but telegraphed early.",
-    strengths: ["Compelling central protagonist with a clear internal flaw", "High commercial concept with existing audience appetite", "Strong dialogue â voice is consistent throughout", "Emotional stakes are clear from page one"],
-    weaknesses: ["Second act loses momentum between pages 55â80", "Antagonist motivation is underwritten", "Resolution arrives slightly too easily â earned catharsis is missing", "Some expository scenes could be dramatised rather than stated"],
+    strengths: ["Compelling central protagonist with a clear internal flaw", "High commercial concept with existing audience appetite", "Strong dialogue Ã¢ÂÂ voice is consistent throughout", "Emotional stakes are clear from page one"],
+    weaknesses: ["Second act loses momentum between pages 55Ã¢ÂÂ80", "Antagonist motivation is underwritten", "Resolution arrives slightly too easily Ã¢ÂÂ earned catharsis is missing", "Some expository scenes could be dramatised rather than stated"],
     notes: "This script shows a writer with strong instincts for character and dialogue. With a focused rewrite on the second act and antagonist development, this could move to a Recommend.",
   };
 
   function ScoreBar({ label, value }: { label: string; value: number }) {
-    const color = value >= 80 ? "bg-green-500" : value >= 65 ? "bg-primary" : "bg-amber-500";
+    const color = value >= 80 ? "bg-green-500" : value >= 65 ? "bg-amber-500" : "bg-amber-500";
     return (
       <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-5xl mx-auto space-y-1 px-4 py-6">
@@ -69,7 +69,7 @@ import { useState } from "react";
     const analyzeMutation = trpc.coverage.analyze.useMutation({
       onSuccess: (data) => {
         setReport(data as CoverageReport);
-        toast.success("Coverage report generated â 5 credits deducted");
+        toast.success("Coverage report generated Ã¢ÂÂ 5 credits deducted");
       },
       onError: (err) => {
         toast.error("Analysis failed: " + err.message);
@@ -78,7 +78,7 @@ import { useState } from "react";
 
     const analyze = () => {
       if (!scriptText.trim() || scriptText.trim().length < 500) { toast.error("Please paste at least 500 characters of script text"); return; }
-      if (!apiKey.trim()) { toast.error("Add your OpenAI or Anthropic API key in Settings â API Keys, or paste it temporarily above"); return; }
+      if (!apiKey.trim()) { toast.error("Add your OpenAI or Anthropic API key in Settings Ã¢ÂÂ API Keys, or paste it temporarily above"); return; }
       analyzeMutation.mutate({ scriptText, title: scriptTitle || undefined, genre: genre || undefined, format, byokKey: apiKey });
     };
 
@@ -107,10 +107,10 @@ import { useState } from "react";
   ${report.synopsisNotes}
 
   STRENGTHS
-  ${report.strengths.map(s => `â¢ ${s}`).join("\n")}
+  ${report.strengths.map(s => `Ã¢ÂÂ¢ ${s}`).join("\n")}
 
   WEAKNESSES
-  ${report.weaknesses.map(w => `â¢ ${w}`).join("\n")}
+  ${report.weaknesses.map(w => `Ã¢ÂÂ¢ ${w}`).join("\n")}
 
   READER NOTES
   ${report.notes}
@@ -132,12 +132,12 @@ import { useState } from "react";
             <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><FileSearch className="h-6 w-6 text-amber-400" /> Script Coverage</h1>
-              <p className="text-sm text-muted-foreground">AI-powered script analysis â logline, scores, strengths, and a professional reader's report</p>
+              <p className="text-sm text-muted-foreground">AI-powered script analysis Ã¢ÂÂ logline, scores, strengths, and a professional reader's report</p>
             </div>
           </div>
           <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
             <Coins className="h-3 w-3 text-amber-500" />
-            5 credits per analysis Â· {generationsLimit - generationsUsed} remaining
+            5 credits per analysis ÃÂ· {generationsLimit - generationsUsed} remaining
           </Badge>
         </div>
 
@@ -149,13 +149,13 @@ import { useState } from "react";
                 <CardContent className="space-y-4 glass-card">
                   <div className="space-y-1.5"><Label>Title</Label><Input placeholder="Untitled Script" value={scriptTitle} onChange={e => setScriptTitle(e.target.value)} /></div>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5"><Label>Genre</Label><Input placeholder="Drama, Thrillerâ¦" value={genre} onChange={e => setGenre(e.target.value)} /></div>
+                    <div className="space-y-1.5"><Label>Genre</Label><Input placeholder="Drama, ThrillerÃ¢ÂÂ¦" value={genre} onChange={e => setGenre(e.target.value)} /></div>
                     <div className="space-y-1.5"><Label>Format</Label><Select value={format} onValueChange={setFormat}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Feature","Short Film","TV Pilot","Web Series Episode","Documentary"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent></Select></div>
                   </div>
                   <div className="space-y-1.5">
                     <Label>OpenAI or Anthropic API Key (BYOK)</Label>
-                    <Input type="password" placeholder="sk-â¦ or sk-ant-â¦" value={apiKey} onChange={e => setApiKey(e.target.value)} />
-                    <p className="text-[10px] text-muted-foreground">Your key is sent to Virelle's server for this analysis only and never stored. Manage keys permanently in Settings â API Keys.</p>
+                    <Input type="password" placeholder="sk-Ã¢ÂÂ¦ or sk-ant-Ã¢ÂÂ¦" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                    <p className="text-[10px] text-muted-foreground">Your key is sent to Virelle's server for this analysis only and never stored. Manage keys permanently in Settings Ã¢ÂÂ API Keys.</p>
                   </div>
                 </CardContent>
               </Card>
@@ -166,7 +166,7 @@ import { useState } from "react";
               </div>
               <div className="flex gap-3">
                 <Button className="flex-1" onClick={analyze} disabled={analyzing}>
-                  {analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Analysingâ¦</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage Â· 5 credits</>}
+                  {analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />AnalysingÃ¢ÂÂ¦</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage ÃÂ· 5 credits</>}
                 </Button>
                 <Button variant="outline" onClick={showSample}>View Sample</Button>
               </div>
@@ -175,7 +175,7 @@ import { useState } from "react";
               <FileSearch className="h-12 w-12 text-muted-foreground/30 mb-4" />
               <p className="font-medium">Your coverage report will appear here</p>
               <p className="text-sm text-muted-foreground mt-1">Paste your script and click Generate Coverage, or view a sample report to see what to expect.</p>
-              <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1"><Coins className="h-3 w-3 text-amber-500" />5 credits per analysis â uses your BYOK key</p>
+              <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1"><Coins className="h-3 w-3 text-amber-500" />5 credits per analysis Ã¢ÂÂ uses your BYOK key</p>
             </Card>
           </div>
         ) : (
@@ -186,7 +186,7 @@ import { useState } from "react";
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <Badge variant="outline">{report.genre}</Badge>
                   <Badge variant="outline">{report.format}</Badge>
-                  <Badge className={`${report.recommendation === "Recommend" ? "bg-green-500" : report.recommendation === "Consider" ? "bg-primary" : "bg-destructive"} text-white`}>{report.recommendation}</Badge>
+                  <Badge className={`${report.recommendation === "Recommend" ? "bg-green-500" : report.recommendation === "Consider" ? "bg-amber-500" : "bg-destructive"} text-white`}>{report.recommendation}</Badge>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -210,7 +210,7 @@ import { useState } from "react";
                 <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card">Premise Analysis</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.premise}</p></CardContent></Card>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500 gradient-text-gold glass-card"><CheckCircle className="h-4 w-4 text-amber-400" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
-                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500 glass-card"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">â</span>{w}</li>)}</ul></CardContent></Card>
+                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500 glass-card"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">Ã¢ÂÂ</span>{w}</li>)}</ul></CardContent></Card>
                 </div>
                 <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><MessageSquare className="h-4 w-4 text-amber-400" />Synopsis Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.synopsisNotes}</p></CardContent></Card>
                 <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><Star className="h-4 w-4 text-amber-400" />Reader Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.notes}</p></CardContent></Card>
