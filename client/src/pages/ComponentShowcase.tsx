@@ -433,7 +433,7 @@ export default function ComponentsShowcase() {
                   </Select>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
+                  <Checkbox id="terms" className="data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-600" />
                   <Label htmlFor="terms">Accept terms and conditions</Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -444,11 +444,11 @@ export default function ComponentsShowcase() {
                   <Label>Radio Group</Label>
                   <RadioGroup defaultValue="option-one">
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-one" id="option-one" />
+                      <RadioGroupItem value="option-one" id="option-one" className="text-amber-500 border-amber-500/50 data-[state=checked]:bg-amber-500" />
                       <Label htmlFor="option-one">Option One</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-two" id="option-two" />
+                      <RadioGroupItem value="option-two" id="option-two" className="text-amber-500 border-amber-500/50 data-[state=checked]:bg-amber-500" />
                       <Label htmlFor="option-two">Option Two</Label>
                     </div>
                   </RadioGroup>
