@@ -11,7 +11,7 @@ export default function IPPolicy() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
       <GoldWatermarkLaunch />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
@@ -23,7 +23,7 @@ export default function IPPolicy() {
             <Shield className="w-7 h-7 text-amber-500" />
           </div>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
+            <h1 className="text-3xl sm:text-4xl font-bold gradient-text-gold">
               Intellectual Property &amp; DMCA Policy
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">
@@ -36,7 +36,7 @@ export default function IPPolicy() {
 
           {/* 1. Ownership of Platform Content */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <Copyright className="w-5 h-5 text-amber-400" />
               1. Ownership of Platform &amp; Generated Content
             </h2>
@@ -65,7 +65,7 @@ export default function IPPolicy() {
 
           {/* 2. Content Watermarking */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <Lock className="w-5 h-5 text-amber-400" />
               2. Content Watermarking &amp; Provenance Metadata
             </h2>
@@ -85,7 +85,7 @@ export default function IPPolicy() {
 
           {/* 3. Prohibited Uses */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <AlertTriangle className="w-5 h-5 text-amber-400" />
               3. Prohibited Uses &amp; Content Theft
             </h2>
@@ -104,7 +104,7 @@ export default function IPPolicy() {
 
           {/* 4. DMCA Takedown */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <FileText className="w-5 h-5 text-amber-400" />
               4. DMCA Takedown Procedure
             </h2>
@@ -115,7 +115,7 @@ export default function IPPolicy() {
               infringes your copyright, you may submit a written takedown notice to our designated
               DMCA agent.
             </p>
-            <h3 className="text-base font-semibold text-foreground mt-5 mb-2">
+            <h3 className="text-base font-semibold mt-5 mb-2 gradient-text-gold">
               Required Elements of a DMCA Notice
             </h3>
             <p>Your notice must include all of the following:</p>
@@ -161,7 +161,7 @@ export default function IPPolicy() {
                 We aim to respond to valid DMCA notices within 3 business days.
               </p>
             </div>
-            <h3 className="text-base font-semibold text-foreground mt-6 mb-2">Counter-Notice</h3>
+            <h3 className="text-base font-semibold mt-6 mb-2 gradient-text-gold">Counter-Notice</h3>
             <p>
               If you believe your content was removed in error, you may submit a counter-notice to{" "}
               <a href={`mailto:${DMCA_EMAIL}`} className="text-amber-400 hover:text-amber-300 underline">
@@ -180,7 +180,7 @@ export default function IPPolicy() {
 
           {/* 5. Repeat Infringers */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <AlertTriangle className="w-5 h-5 text-amber-400" />
               5. Repeat Infringer Policy
             </h2>
@@ -194,7 +194,7 @@ export default function IPPolicy() {
 
           {/* 6. Trade Marks */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <Shield className="w-5 h-5 text-amber-400" />
               6. Trade Marks
             </h2>
@@ -208,7 +208,7 @@ export default function IPPolicy() {
 
           {/* 7. Enforcement */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <Lock className="w-5 h-5 text-amber-400" />
               7. Enforcement &amp; Legal Action
             </h2>
@@ -227,7 +227,7 @@ export default function IPPolicy() {
 
           {/* 8. Contact */}
           <section>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2 mb-3 gradient-text-gold">
               <Mail className="w-5 h-5 text-amber-400" />
               8. Contact
             </h2>

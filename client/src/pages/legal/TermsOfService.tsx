@@ -8,7 +8,7 @@ export default function TermsOfService() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative">
+    <div className="min-h-screen bg-background text-foreground relative" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
       <GoldWatermarkLaunch />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
@@ -20,7 +20,7 @@ export default function TermsOfService() {
             <Shield className="h-6 w-6 text-amber-500" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
+            <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Terms of Service</h1>
             <p className="text-muted-foreground text-sm mt-0.5">
               Last updated: March 2026 &mdash; Effective immediately upon account creation
             </p>
@@ -51,7 +51,7 @@ export default function TermsOfService() {
 
           {/* 1. Acceptance */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <FileText className="w-4 h-4 text-amber-400" />
               1. Acceptance of Terms
             </h2>
@@ -75,7 +75,7 @@ export default function TermsOfService() {
 
           {/* 2. Description of Service */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Film className="w-4 h-4 text-amber-400" />
               2. Description of Service
             </h2>
@@ -104,7 +104,7 @@ export default function TermsOfService() {
                 everything you create on this platform.
               </p>
             </div>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <User className="w-4 h-4 text-amber-400" />
               3. Director Responsibility &amp; Content Liability
             </h2>
@@ -132,7 +132,7 @@ export default function TermsOfService() {
 
           {/* 4. Identity & Likeness */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <User className="w-4 h-4 text-amber-400" />
               4. Identity, Likeness &amp; Biometric Data — Director&rsquo;s Sole Responsibility
             </h2>
@@ -185,7 +185,7 @@ export default function TermsOfService() {
 
           {/* 5. Location & Place */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <MapPin className="w-4 h-4 text-amber-400" />
               5. Locations, Places &amp; Real-World Depictions — Director&rsquo;s Sole Responsibility
             </h2>
@@ -224,7 +224,7 @@ export default function TermsOfService() {
 
           {/* 6. Prohibited Content */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <AlertTriangle className="w-4 h-4 text-amber-400" />
               6. Prohibited Content — Zero Tolerance
             </h2>
@@ -267,7 +267,7 @@ export default function TermsOfService() {
 
           {/* 7. Copyright & IP */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Copyright className="w-4 h-4 text-amber-400" />
               7. Copyright &amp; Intellectual Property
             </h2>
@@ -289,7 +289,7 @@ export default function TermsOfService() {
 
           {/* 8. Limitation of Liability */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Scale className="w-4 h-4 text-amber-400" />
               8. Limitation of Liability
             </h2>
@@ -325,7 +325,7 @@ export default function TermsOfService() {
 
           {/* 9. Indemnification */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Shield className="w-4 h-4 text-amber-400" />
               9. Indemnification
             </h2>
@@ -347,7 +347,7 @@ export default function TermsOfService() {
 
           {/* 10. Content Moderation */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <AlertTriangle className="w-4 h-4 text-amber-400" />
               10. Content Moderation &amp; Account Suspension
             </h2>
@@ -363,7 +363,7 @@ export default function TermsOfService() {
 
           {/* 11. Credits & Refunds */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <CreditCard className="w-4 h-4 text-amber-400" />
               11. Credits, Subscriptions &amp; Refunds
             </h2>
@@ -386,7 +386,7 @@ export default function TermsOfService() {
 
           {/* 12. Error Reporting */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <FileText className="w-4 h-4 text-amber-400" />
               12. Error Reporting &amp; Technical Support
             </h2>
@@ -404,7 +404,7 @@ export default function TermsOfService() {
 
           {/* 13. Governing Law */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Scale className="w-4 h-4 text-amber-400" />
               13. Governing Law
             </h2>
@@ -418,7 +418,7 @@ export default function TermsOfService() {
 
           {/* 14. Changes */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <FileText className="w-4 h-4 text-amber-400" />
               14. Changes to Terms
             </h2>
@@ -431,7 +431,7 @@ export default function TermsOfService() {
 
           {/* 15. Contact */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Mail className="w-4 h-4 text-amber-400" />
               15. Contact
             </h2>
@@ -465,7 +465,7 @@ export default function TermsOfService() {
 
           {/* Signature Cast Licensing */}
           <section>
-            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
               <Film className="w-4 h-4 text-amber-400" />
               Signature Cast — Licensing &amp; Prohibited Use
             </h2>
