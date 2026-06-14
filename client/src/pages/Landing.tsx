@@ -500,9 +500,9 @@ export default function Landing() {
               </h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5">
+              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                 <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
-                <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                   <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
                     <Film className="h-7 w-7 text-amber-400" />
                   </div>
@@ -521,9 +521,9 @@ export default function Landing() {
                   <p className="text-xs font-semibold text-amber-400">Perfect for: Indie filmmakers, content creators, YouTube channels</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5">
+              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                 <div className="h-1.5 bg-gradient-to-r from-purple-400 to-violet-500" />
-                <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
                     <Sparkles className="h-7 w-7 text-purple-400 text-amber-400 gold-glow" />
                   </div>
@@ -727,7 +727,7 @@ export default function Landing() {
                 { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
                 <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
-                  <CardContent className="p-6 glass-card shadow-lg shadow-amber-500/5">
+                  <CardContent className="p-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                     <h3 className="text-xl font-bold mb-2 gradient-text-gold">{plan.tier}</h3>
                     <div className="mb-1">
                       <span className="text-3xl font-black gradient-text-gold">{plan.price}</span>
@@ -793,7 +793,7 @@ export default function Landing() {
                 </svg>
                 <div className="text-left">
                   <p className="text-[10px] text-white/50 uppercase tracking-widest">Download on the</p>
-                  <p className="text-lg font-bold leading-tight gradient-text-gold">App Store</p>
+                  <p className="text-lg font-bold text-white leading-tight">App Store</p>
                 </div>
               </button>
               <button
@@ -805,7 +805,7 @@ export default function Landing() {
                 </svg>
                 <div className="text-left">
                   <p className="text-[10px] text-white/50 uppercase tracking-widest">Get it on</p>
-                  <p className="text-lg font-bold leading-tight gradient-text-gold">Google Play</p>
+                  <p className="text-lg font-bold text-white leading-tight">Google Play</p>
                 </div>
               </button>
             </div>
@@ -1014,12 +1014,12 @@ export default function Landing() {
                     Founding Partner Price
                   </div>
                   <div className="flex items-end justify-center gap-3 mt-2 mb-3">
-                    <span className="/25 text-2xl line-through font-bold gradient-text-gold">A$299</span>
+                    <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
                   {foundingStatus?.foundingActive === false ? (
                       <span className="text-6xl font-black leading-none gradient-text-gold">A$299</span>
                     ) : (
                       <>
-                        <span className="/25 text-2xl line-through font-bold gradient-text-gold">A$299</span>
+                        <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
                         <span className="text-amber-400 text-6xl font-black leading-none">A$150</span>
                       </>
                     )}
