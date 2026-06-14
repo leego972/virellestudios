@@ -467,7 +467,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   <stat.icon className={`h-3.5 w-3.5 ${stat.color} ${"spin" in stat && stat.spin ? "animate-spin" : ""}`} />
                   <span className="text-xs text-muted-foreground">{stat.label}</span>
                 </div>
-                {isLoading ? <Skeleton className="h-7 w-10" /> : <span className="text-2xl font-bold">{stat.value}</span>}
+                {isLoading ? <Skeleton className="h-7 w-10" /> : <span className="stat-number">{stat.value}</span>}
               </CardContent>
             </Card>
           ))}
@@ -481,7 +481,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <div>
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div>
-              <h2 className="text-lg font-semibold tracking-tight">Film Production Pipeline</h2>
+              <h2 className="text-lg font-semibold tracking-tight gradient-text-gold">Film Production Pipeline</h2>
               <p className="text-xs text-muted-foreground mt-0.5">Every tool in your studio — from concept to distribution</p>
             </div>
             <div className="flex items-center gap-3">
@@ -562,7 +562,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row items-center gap-2">
-                    <Button size="sm" onClick={() => setLocation("/projects/new")} className="gap-1.5"><Plus className="h-3.5 w-3.5" />Create Your First Film</Button>
+                    <Button size="sm" onClick={() => setLocation("/projects/new")} className="gap-1.5" style={{background:"linear-gradient(135deg,#D4AF37,#b8960c)",color:"#000",fontWeight:600}}><Plus className="h-3.5 w-3.5" />Create Your First Film</Button>
                     <Button size="sm" variant="ghost" onClick={() => setLocation("/showcase")} className="gap-1.5 text-muted-foreground"><PlayCircle className="h-3.5 w-3.5" />Watch the Showrunner</Button>
                   </div>
                 </CardContent>
@@ -570,7 +570,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             ) : (
               <div className="space-y-3">
                 {inProgressProjects.map((project) => (
-                  <Card key={project.id} className="cursor-pointer hover:border-primary/40 transition-all hover:shadow-sm bg-card/60" onClick={() => setLocation(`/projects/${project.id}`)}>
+                  <Card key={project.id} className="cursor-pointer hover:border-amber-400/40 transition-all hover:shadow-sm bg-card/60" onClick={() => setLocation(`/projects/${project.id}`)}>
                     <CardContent className="p-3 flex items-center gap-3">
                       {(project as any).posterUrl ? (
                         <div className="h-14 w-24 rounded-lg overflow-hidden shrink-0 bg-muted">
