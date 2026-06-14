@@ -338,7 +338,7 @@ import { useState, useEffect, useCallback } from "react";
               </Button>
               <Button size="sm" onClick={saveToProject} disabled={saveOpeningSequence.isPending}
                 className="gap-2" style={{ background: "linear-gradient(135deg, #D4AF37, #F5C842)", color: "#000" }}>
-                {updateProject.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {saveOpeningSequence.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save to Project
               </Button>
             </div>
