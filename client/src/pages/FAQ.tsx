@@ -46,7 +46,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does each credit cost in real terms?",
-        a: "On the Amateur tier ($5,000/year, 250 credits/month), each credit is worth approximately $1.67. On the Industry tier ($25,000/year, 10,000 credits/month), each credit is worth $0.21. Credit packs range from $2.50 to $5 per credit depending on pack size.",
+        a: "On the Indie plan (A$149/mo · ~$97 USD, 500 credits/month), each credit costs approximately A$0.30 (~$0.20 USD). On the Industry plan (A$1,490/mo · ~$965 USD, 6,000 credits/month), each credit costs approximately A$0.25 (~$0.16 USD). All plans include a 7-day free trial.",
       },
       {
         q: "Do unused credits roll over?",
