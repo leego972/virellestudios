@@ -88,7 +88,7 @@ export default function PressKit() {
         </Link>
         <div>
           <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 · Release & Promote</div>
-          <h1 className="font-serif text-3xl flex items-center gap-2"><FileText className="h-6 w-6 text-amber-400" /> Press Kit Builder</h1>
+          <h1 className="font-serif text-3xl flex items-center gap-2 gradient-text-gold"><FileText className="h-6 w-6 text-amber-400" /> Press Kit Builder</h1>
         </div>
       </div>
 
