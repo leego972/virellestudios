@@ -202,7 +202,7 @@ export default function HowItWorks() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold mb-4">The Production Pipeline</h2>
+            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">The Production Pipeline</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">Six stages from concept to finished film. You control the pace — move through stages in sequence or jump back to refine any step.</p>
           </div>
           <div className="space-y-8">
@@ -261,7 +261,7 @@ export default function HowItWorks() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold mb-3">Three Ways to Direct</h2>
+            <h2 className="text-2xl font-bold mb-3 gradient-text-gold">Three Ways to Direct</h2>
             <p className="text-foreground/60">Choose how much creative control you hand to the AI — or keep it all yourself.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -292,7 +292,7 @@ export default function HowItWorks() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What You Receive</h2>
+            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">What You Receive</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">Every project produces a full suite of production-ready assets — not just video clips.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -316,7 +316,7 @@ export default function HowItWorks() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Ownership & Rights</h2>
+            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Ownership & Rights</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">Clear, simple policies on what you own and what you can do with it.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -375,7 +375,7 @@ export default function HowItWorks() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center border-t border-border/40">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">Ready to start your first film?</h2>
+          <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Ready to start your first film?</h2>
           <p className="text-foreground/60 mb-8">Choose a plan, connect your API keys, and generate your first scene in under 10 minutes.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12" onClick={() => setLocation("/register")}>

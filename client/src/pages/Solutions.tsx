@@ -181,7 +181,7 @@ export default function Solutions() {
                     </div>
                     <span className={`text-xs font-semibold uppercase tracking-widest ${colors.text}`}>{seg.subtitle}</span>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-4">{seg.title}</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 gradient-text-gold">{seg.title}</h2>
                   <p className="text-foreground/70 leading-relaxed mb-6">{seg.description}</p>
 
                   <div className="space-y-2.5 mb-6">
@@ -259,7 +259,7 @@ export default function Solutions() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">Not sure which plan fits your workflow?</h2>
+          <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Not sure which plan fits your workflow?</h2>
           <p className="text-foreground/60 mb-8">Talk to us. We'll help you find the right tier and workflow for your specific production needs.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12" onClick={() => setLocation("/pricing")}>
