@@ -80,6 +80,7 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
+const Press = lazy(() => import("./pages/Press"));
 
 // New public pages — lazy loaded
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
@@ -269,6 +270,7 @@ function Router() {
       <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
+      <Route path="/press">{() => <LazyPage><Press /></LazyPage>}</Route>
       <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/dmca">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
