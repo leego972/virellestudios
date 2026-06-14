@@ -55,7 +55,7 @@ export default function FilmPage() {
     { enabled: !!slug }
   );
 
-  // Phase 2: Related films from the showcase (no input ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ slice client-side)
+  // Phase 2: Related films from the showcase (no input — slice client-side)
   const { data: relatedFilmsRaw } = trpc.distribute.getShowcase.useQuery(
     undefined,
     { enabled: !!filmPage }
@@ -78,12 +78,12 @@ export default function FilmPage() {
   useEffect(() => {
     if (!filmPage) return;
     const fp = filmPage as any;
-    const title = fp.title || "Film ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ VirElle Studios";
+    const title = fp.title || "Film — VirElle Studios";
     const description = fp.description || `Watch "${title}" on VirElle Studios`;
     const image = fp.thumbnailUrl || "https://virellestudios.com/og-default.jpg";
     const url = window.location.href;
 
-    document.title = `${title} ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ VirElle Studios`;
+    document.title = `${title} — VirElle Studios`;
     setMeta("name", "description", description);
 
     // Open Graph
@@ -194,7 +194,7 @@ export default function FilmPage() {
       {!fp.isPublic && (
         <div className="sticky top-0 z-50 flex items-center justify-center gap-2 bg-amber-500 text-black text-sm font-semibold py-2 px-4">
           <span>Preview Mode</span>
-          <Badge className="bg-black text-amber-400 text-xs">Draft ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ not yet public</Badge>
+          <Badge className="bg-black text-amber-400 text-xs">Draft — not yet public</Badge>
           <Link href={`/projects/${fp.projectId}/distribute`}>
             <Button size="sm" variant="ghost" className="h-6 text-xs text-black hover:bg-amber-600">
               Edit Page
@@ -203,7 +203,7 @@ export default function FilmPage() {
         </div>
       )}
 
-      {/* ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ HERO ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */}
+      {/* ── HERO ── */}
       <div className="relative w-full min-h-[55vh] md:min-h-[70vh] overflow-hidden bg-zinc-950">
         {/* Background image with parallax-style blur */}
         {fp.thumbnailUrl && (
@@ -258,7 +258,7 @@ export default function FilmPage() {
             <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1.5">
               <Clock className="w-3 h-3" />
               {formatDuration(fp.movieDuration)}
-              <span className="mx-1">ÃÂÃÂÃÂÃÂ·</span>
+              <span className="mx-1">·</span>
               <Sparkles className="w-3 h-3" />
               AI-Generated
             </div>
@@ -307,7 +307,7 @@ export default function FilmPage() {
         </div>
       </div>
 
-      {/* ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ CONTENT ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */}
+      {/* ── CONTENT ── */}
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12 space-y-10">
 
         {/* Description */}
@@ -329,7 +329,7 @@ export default function FilmPage() {
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-base">{fp.creatorName}</p>
-              <p className="text-xs text-zinc-500">Filmmaker ÃÂÃÂÃÂÃÂ· VirElle Studios</p>
+              <p className="text-xs text-zinc-500">Filmmaker · VirElle Studios</p>
             </div>
             {fp.creatorSlug && (
               <Link href={`/creators/${fp.creatorSlug}`}>
@@ -421,7 +421,7 @@ export default function FilmPage() {
 
         <Separator className="bg-zinc-800" />
 
-        {/* ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Traffic Loop: Related Films ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */}
+        {/* ── Traffic Loop: Related Films ── */}
         {relatedFilms.filter((f: any) => f.slug !== slug).length > 0 && (
           <div>
             <h2 className="text-lg font-semibold mb-4 text-amber-400 gradient-text-gold">More Films</h2>
@@ -459,14 +459,14 @@ export default function FilmPage() {
           </div>
         )}
 
-        {/* ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Traffic Loop: Create your own CTA ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */}
+        {/* ── Traffic Loop: Create your own CTA ── */}
         <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 sm:p-8 text-center space-y-4">
           <div className="flex items-center justify-center gap-2 text-amber-400 font-semibold">
             <Sparkles className="w-5 h-5" />
             Create your own AI film
           </div>
           <p className="text-zinc-400 text-sm max-w-md mx-auto">
-            This film was made entirely with VirElle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI-powered filmmaking from script to screen.
+            This film was made entirely with VirElle Studios — AI-powered filmmaking from script to screen.
             Start your own project today.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -496,7 +496,7 @@ export default function FilmPage() {
 
         {/* Footer branding */}
         <div className="flex items-center justify-between text-xs text-zinc-700 pt-2">
-          <span>Made with VirElle Studios ÃÂÃÂÃÂÃÂ· AI-Generated Cinema</span>
+          <span>Made with VirElle Studios · AI-Generated Cinema</span>
           <a
             href="https://virellestudios.com"
             target="_blank"
@@ -522,7 +522,7 @@ export default function FilmPage() {
         />
       )}
 
-      {/* MediaPlayer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ opens when Watch Film or a scene video is clicked */}
+      {/* MediaPlayer — opens when Watch Film or a scene video is clicked */}
       {activeMedia && (
         <MediaPlayer
           movie={activeMedia}
