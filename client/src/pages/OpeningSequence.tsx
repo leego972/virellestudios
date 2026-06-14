@@ -382,8 +382,8 @@ import { useState, useEffect, useCallback } from "react";
                       <div className="lg:hidden text-[10px] text-muted-foreground">{t.label}</div>
                       <Plus className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 absolute right-2 top-2 transition-opacity" />
                     </button>
-                  );
       </>
+                  );
                 })}
               </div>
 

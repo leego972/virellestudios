@@ -1268,6 +1268,6 @@ export default function ScriptWriter() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
-  );
     </>
+  );
 }

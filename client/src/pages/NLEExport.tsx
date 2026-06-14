@@ -286,7 +286,6 @@ function NLEExportInner() {
         )}
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
-    </div>
     </>
   );
 }

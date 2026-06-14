@@ -116,7 +116,6 @@ export default function PitchLab() {
           <CardTitle className="gradient-text-gold">Project Brief</CardTitle>
           </CardHeader>
           <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>
-        </CardDescription>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>Format</Label>

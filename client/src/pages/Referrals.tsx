@@ -322,9 +322,9 @@ export default function Referrals() {
                   </div>
                   {isCompleted && <Check className="h-4 w-4 text-green-400 shrink-0" />}
                   {isNext && <ChevronRight className="h-4 w-4 text-amber-400 shrink-0" />}
+                </div>
               );
             })}
-                </div>
           </div>
         </CardContent>
       </Card>

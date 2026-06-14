@@ -898,7 +898,7 @@ export default function ComponentsShowcase() {
               </TabsList>
               <TabsContent value="account">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
                     <CardTitle className="gradient-text-gold">Account</CardTitle>
                     <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Make changes to your account here.

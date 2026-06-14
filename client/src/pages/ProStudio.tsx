@@ -154,7 +154,6 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4">
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.length === 0 ? (
             <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded Ã¢ÂÂ open a project with scenes to begin a Pro Studio session.</p>

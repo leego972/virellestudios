@@ -584,6 +584,8 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
         </div>
         <NextStageCTA projectId={projectId} currentStage="colorGrading" />
       </div>
+      </div>
+      </div>
       </>
     );
   }
