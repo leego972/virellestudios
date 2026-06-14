@@ -126,7 +126,7 @@ import { useState } from "react";
               </div>
               <div className="space-y-1.5">
                 <Label>Content *</Label>
-                <Textarea className="h-32" placeholder="Share your experience, ask a question, or start a discussionÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" value={newBody} onChange={e => setNewBody(e.target.value)} />
+                <Textarea className="h-32 focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="Share your experience, ask a question, or start a discussionÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" value={newBody} onChange={e => setNewBody(e.target.value)} />
                 <p className="text-[10px] text-muted-foreground">{newBody.length} characters (min 20)</p>
               </div>
             </div>

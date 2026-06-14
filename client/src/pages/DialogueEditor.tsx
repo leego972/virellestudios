@@ -359,7 +359,7 @@ export default function DialogueEditor() {
                 <Input value={characterName} onChange={(e) => setCharacterName(e.target.value)} placeholder="Character name" autoCapitalize="words" autoCorrect="off" enterKeyHint="next" />
               )}
               {characterName === "__custom__" && (
-                <Input className="mt-2" value="" onChange={(e) => setCharacterName(e.target.value)} placeholder="Enter character name" />
+                <Input className="mt-2 focus:ring-amber-500/30 focus:border-amber-500/50" value="" onChange={(e) => setCharacterName(e.target.value)} placeholder="Enter character name" />
               )}
             </div>
             <div>

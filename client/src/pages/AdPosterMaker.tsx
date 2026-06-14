@@ -1508,7 +1508,7 @@ function AdPosterMakerInner() {
           <div className="space-y-4">
             <div>
               <Label>URL to encode</Label>
-              <Input className="mt-1" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+              <Input className="mt-1 focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             {qrUrl && (
               <div className="flex flex-col items-center gap-3">
@@ -1676,7 +1676,7 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
       <div>
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Caption / Post Text</Label>
         <Textarea
-          className="mt-1.5 text-xs resize-none"
+          className="mt-1.5 text-xs resize-none focus:ring-amber-500/30 focus:border-amber-500/50"
           rows={3}
           placeholder="Write your post caption here..."
           value={publishCaption}
@@ -1849,15 +1849,15 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
       <div className="space-y-2">
         <div>
           <Label className="text-xs">Film Title</Label>
-          <Input className="mt-1 h-8 text-xs" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+          <Input className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Genre</Label>
-          <Input className="mt-1 h-8 text-xs" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+          <Input className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Logline (optional)</Label>
-          <Textarea className="mt-1 text-xs resize-none" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+          <Textarea className="mt-1 text-xs resize-none focus:ring-amber-500/30 focus:border-amber-500/50" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
         </div>
         <Button
           size="sm"

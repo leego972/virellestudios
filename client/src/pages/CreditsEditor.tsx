@@ -123,7 +123,7 @@ export default function CreditsEditor() {
                     </SelectContent>
                   </Select>
                   <Input
-                    className="mt-2"
+                    className="mt-2 focus:ring-amber-500/30 focus:border-amber-500/50"
                     placeholder="Or type a custom role..."
                     value={newRole}
                     onChange={e => setNewRole(e.target.value)}

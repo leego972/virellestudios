@@ -161,7 +161,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Paste Your Script</CardTitle></CardHeader>
               <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <p className="text-xs text-muted-foreground">Use standard screenplay format: character names in ALL CAPS on their own line, followed by dialogue on the next line. Scene headings start with INT. or EXT.</p>
-                <Textarea className="h-72 font-mono text-xs" value={scriptText} onChange={e => setScriptText(e.target.value)} placeholder="INT. LOCATION - TIME\n\nACTION DESCRIPTION\n\nCHARACTER NAME\nDialogue text here." />
+                <Textarea className="h-72 font-mono text-xs focus:ring-amber-500/30 focus:border-amber-500/50" value={scriptText} onChange={e => setScriptText(e.target.value)} placeholder="INT. LOCATION - TIME\n\nACTION DESCRIPTION\n\nCHARACTER NAME\nDialogue text here." />
                 <Button onClick={parseAndProceed} className="w-full"><Wand2 className="h-4 w-4 mr-2" />Parse Script & Assign Voices</Button>
               </CardContent>
             </Card>

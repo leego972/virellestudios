@@ -1483,7 +1483,7 @@ function ConnectedPlatformsTab() {
                     <div>
                       <Label className="text-xs">Display Name (optional)</Label>
                       <Input
-                        className="mt-1 h-8 text-xs"
+                        className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50"
                         placeholder={`e.g. @${platform.name.toLowerCase()}page`}
                         value={formValues.displayName || ""}
                         onChange={(e) => setFormValues((v) => ({ ...v, displayName: e.target.value }))} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
@@ -1492,7 +1492,7 @@ function ConnectedPlatformsTab() {
                       <div key={field.key}>
                         <Label className="text-xs">{field.label}</Label>
                         <Input
-                          className="mt-1 h-8 text-xs font-mono"
+                          className="mt-1 h-8 text-xs font-mono focus:ring-amber-500/30 focus:border-amber-500/50"
                           type={field.secret ? "password" : "text"}
                           placeholder={field.placeholder}
                           value={formValues[field.key] || ""}

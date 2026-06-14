@@ -161,7 +161,7 @@ import { useState } from "react";
               </Card>
               <div className="space-y-1.5">
                 <Label>Paste Script Text (minimum 500 characters)</Label>
-                <Textarea className="h-48 font-mono text-xs" placeholder={"FADE IN:\n\nINT. DETECTIVE'S OFFICE - NIGHT\n\nPaste your script or excerpt here..."} value={scriptText} onChange={e => setScriptText(e.target.value)} />
+                <Textarea className="h-48 font-mono text-xs focus:ring-amber-500/30 focus:border-amber-500/50" placeholder={"FADE IN:\n\nINT. DETECTIVE'S OFFICE - NIGHT\n\nPaste your script or excerpt here..."} value={scriptText} onChange={e => setScriptText(e.target.value)} />
                 <p className="text-xs text-muted-foreground">{scriptText.length.toLocaleString()} characters</p>
               </div>
               <div className="flex gap-3">

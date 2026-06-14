@@ -933,7 +933,7 @@ function CrowdfundingHubInner() {
                           <div className="col-span-2">
                             <Label className="text-[10px] text-muted-foreground uppercase">Tier Title</Label>
                             <Input
-                              className="h-8 text-sm"
+                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
                               value={reward.title}
                               onChange={e => updateRewardMutation.mutate({ id: reward.id, title: e.target.value })}
                             />
@@ -941,7 +941,7 @@ function CrowdfundingHubInner() {
                           <div>
                             <Label className="text-[10px] text-muted-foreground uppercase">Amount (AUD)</Label>
                             <Input
-                              className="h-8 text-sm"
+                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
                               type="number"
                               value={reward.amountCents / 100}
                               onChange={e => updateRewardMutation.mutate({ id: reward.id, amountCents: Math.round(parseFloat(e.target.value) * 100) })}
@@ -950,7 +950,7 @@ function CrowdfundingHubInner() {
                           <div>
                             <Label className="text-[10px] text-muted-foreground uppercase">Limit (Optional)</Label>
                             <Input
-                              className="h-8 text-sm"
+                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
                               type="number"
                               value={reward.limitCount || ""}
                               onChange={e => updateRewardMutation.mutate({ id: reward.id, limitCount: e.target.value ? parseInt(e.target.value) : null })}
@@ -969,7 +969,7 @@ function CrowdfundingHubInner() {
                       <div>
                         <Label className="text-[10px] text-muted-foreground uppercase">Description</Label>
                         <Textarea
-                          className="text-xs"
+                          className="text-xs focus:ring-amber-500/30 focus:border-amber-500/50"
                           rows={2}
                           value={reward.description || ""}
                           onChange={e => updateRewardMutation.mutate({ id: reward.id, description: e.target.value })}
