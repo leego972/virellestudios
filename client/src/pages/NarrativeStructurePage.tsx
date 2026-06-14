@@ -153,7 +153,7 @@ import { useState } from "react";
           <div>
             <Label className="text-xs">Visual Notes</Label>
             <Textarea value={current.visualNotes ?? ""} onChange={e => set("visualNotes", e.target.value)}
-              placeholder="Any additional visual direction to enforce across all scenesÃÂ¢ÃÂÃÂ¦" rows={2} />
+              placeholder="Any additional visual direction to enforce across all scenes…" rows={2} />
           </div>
           <Button size="sm" onClick={() => upsertMut?.mutate?.({ projectId, ...(form ?? current) })}>
             <Lock className="w-3 h-3 mr-1" />Lock Visual DNA
