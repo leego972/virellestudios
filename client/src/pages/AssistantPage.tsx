@@ -29,7 +29,7 @@ import { useState, useEffect } from "react";
     };
 
     return (
-      <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden relative" style={{ background:"linear-gradient(135deg, #080600 0%, #0c0900 50%, #080600 100%)" }}>
 
         {/* ── White mask face — large ambient background, eyes react to voice state ── */}
         <div
