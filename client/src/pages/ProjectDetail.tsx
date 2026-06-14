@@ -3087,10 +3087,5 @@ function ReviewsButton({ projectId }: { projectId: number }) {
         </DialogContent>
       </Dialog>
     </>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
   );
 }
