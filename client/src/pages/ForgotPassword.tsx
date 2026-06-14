@@ -1,1 +1,133 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IExpbmsgfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IExhYmVsIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2xhYmVsIjsKaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmREZXNjcmlwdGlvbiwgQ2FyZEZvb3RlciwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CmltcG9ydCB7IEZpbG0sIExvYWRlcjIsIEFycm93TGVmdCwgTWFpbCB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCBMZWVnb0Zvb3RlckxhdW5jaCBmcm9tICJAL2NvbXBvbmVudHMvTGVlZ29Gb290ZXJMYXVuY2giOwppbXBvcnQgR29sZFdhdGVybWFya0xhdW5jaCBmcm9tICJAL2NvbXBvbmVudHMvR29sZFdhdGVybWFya0xhdW5jaCI7CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBGb3Jnb3RQYXNzd29yZCgpIHsKICBjb25zdCBbZW1haWwsIHNldEVtYWlsXSA9IHVzZVN0YXRlKCIiKTsKICBjb25zdCBbc3VibWl0dGVkLCBzZXRTdWJtaXR0ZWRdID0gdXNlU3RhdGUoZmFsc2UpOwoKICBjb25zdCByZXNldE11dGF0aW9uID0gdHJwYy5hdXRoLnJlcXVlc3RQYXNzd29yZFJlc2V0LnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKGRhdGEpID0+IHsKICAgICAgc2V0U3VibWl0dGVkKHRydWUpOwogICAgICB0b2FzdC5zdWNjZXNzKGRhdGEubWVzc2FnZSk7CiAgICB9LAogICAgb25FcnJvcjogKGVycikgPT4gewogICAgICB0b2FzdC5lcnJvcihlcnIubWVzc2FnZSB8fCAiV2UgY291bGRuJ3Qgc2VuZCB0aGUgcmVzZXQgZW1haWwgcmlnaHQgbm93LiBQbGVhc2UgdHJ5IGFnYWluIGluIGEgbW9tZW50LiIpOwogICAgfSwKICB9KTsKCiAgY29uc3QgaGFuZGxlU3VibWl0ID0gKGU6IFJlYWN0LkZvcm1FdmVudCkgPT4gewogICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgaWYgKCFlbWFpbCkgewogICAgICB0b2FzdC5lcnJvcigiUGxlYXNlIGVudGVyIHlvdXIgZW1haWwiKTsKICAgICAgcmV0dXJuOwogICAgfQogICAgcmVzZXRNdXRhdGlvbi5tdXRhdGUoeyBlbWFpbCwgb3JpZ2luOiB3aW5kb3cubG9jYXRpb24ub3JpZ2luIH0pOwogIH07CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHAtNCByZWxhdGl2ZSIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8R29sZFdhdGVybWFya0xhdW5jaCAvPgogICAgICA8ZGl2IGNsYXNzTmFtZT0idy1mdWxsIG1heC13LW1kIHNwYWNlLXktOCByZWxhdGl2ZSB6LTEwIj4KICAgICAgICB7LyogTG9nbyAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LWNvbCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctMTQgaC0xNCByb3VuZGVkLTJ4bCBiZy1ncmFkaWVudC10by1iciBmcm9tLWFtYmVyLTUwMCB0by1hbWJlci03MDAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hhZG93LWxnIHNoYWRvdy1hbWJlci01MDAvMjAiPgogICAgICAgICAgICA8RmlsbSBjbGFzc05hbWU9InctNyBoLTcgdGV4dC13aGl0ZSIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtY2VudGVyIj4KICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtZm9yZWdyb3VuZCB0cmFja2luZy10aWdodCI+VmlyZWxsZSBTdHVkaW9zPC9oMT4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0xIj5BSS1wb3dlcmVkIGZpbG0gcHJvZHVjdGlvbjwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1ib3JkZXIvNTAgYmctY2FyZC84MCBiYWNrZHJvcC1ibHVyLXNtIHNoYWRvdy14bCI+CiAgICAgICAgICB7c3VibWl0dGVkID8gKAogICAgICAgICAgICA8PgogICAgICAgICAgICAgIDxDYXJkSGVhZGVyIGNsYXNzTmFtZT0ic3BhY2UteS0xIHBiLTQgdGV4dC1jZW50ZXIiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im14LWF1dG8gdy0xMiBoLTEyIHJvdW5kZWQtZnVsbCBiZy1hbWJlci01MDAvMTAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgbWItMiI+CiAgICAgICAgICAgICAgICAgIDxNYWlsIGNsYXNzTmFtZT0idy02IGgtNiB0ZXh0LWFtYmVyLTUwMCIgLz4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQteGwiPkNoZWNrIHlvdXIgZW1haWw8L0NhcmRUaXRsZT4KICAgICAgICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICAgICAgICAgIElmIGFuIGFjY291bnQgd2l0aCA8c3BhbiBjbGFzc05hbWU9ImZvbnQtbWVkaXVtIHRleHQtZm9yZWdyb3VuZCI+e2VtYWlsfTwvc3Bhbj4gZXhpc3RzLCAKICAgICAgICAgICAgICAgICAgeW91J2xsIHJlY2VpdmUgYSBwYXNzd29yZCByZXNldCBsaW5rIHNob3J0bHkuCiAgICAgICAgICAgICAgICA8L0NhcmREZXNjcmlwdGlvbj4KICAgICAgICAgICAgICA8L0NhcmRIZWFkZXI+CiAgICAgICAgICAgICAgPENhcmRGb290ZXIgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIGdhcC00IHB0LTIiPgogICAgICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgICAgICB2YXJpYW50PSJvdXRsaW5lIgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCIKICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4geyBzZXRTdWJtaXR0ZWQoZmFsc2UpOyBzZXRFbWFpbCgiIik7IH19CiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIFRyeSBhIGRpZmZlcmVudCBlbWFpbAogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8TGluayBocmVmPSIvbG9naW4iIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWFtYmVyLTUwMCBob3Zlcjp0ZXh0LWFtYmVyLTQwMCBmb250LW1lZGl1bSB0ZXh0LWNlbnRlciI+CiAgICAgICAgICAgICAgICAgIDxBcnJvd0xlZnQgY2xhc3NOYW1lPSJ3LTMgaC0zIGlubGluZSBtci0xIiAvPgogICAgICAgICAgICAgICAgICBCYWNrIHRvIHNpZ24gaW4KICAgICAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgICA8L0NhcmRGb290ZXI+CiAgICAgICAgICAgIDwvPgogICAgICAgICAgKSA6ICgKICAgICAgICAgICAgPD4KICAgICAgICAgICAgICA8Q2FyZEhlYWRlciBjbGFzc05hbWU9InNwYWNlLXktMSBwYi00Ij4KICAgICAgICAgICAgICAgIDxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LXhsIj5Gb3Jnb3QgcGFzc3dvcmQ8L0NhcmRUaXRsZT4KICAgICAgICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24+RW50ZXIgeW91ciBlbWFpbCBhbmQgd2UnbGwgc2VuZCB5b3UgYSByZXNldCBsaW5rPC9DYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgICAgIDxmb3JtIG9uU3VibWl0PXtoYW5kbGVTdWJtaXR9PgogICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgICAgICAgICAgPExhYmVsIGh0bWxGb3I9ImVtYWlsIj5FbWFpbDwvTGFiZWw+CiAgICAgICAgICAgICAgICAgICAgPElucHV0CiAgICAgICAgICAgICAgICAgICAgICBpZD0iZW1haWwiCiAgICAgICAgICAgICAgICAgICAgICB0eXBlPSJlbWFpbCIKICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJ5b3VAZXhhbXBsZS5jb20iCiAgICAgICAgICAgICAgICAgICAgICB2YWx1ZT17ZW1haWx9CiAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldEVtYWlsKGUudGFyZ2V0LnZhbHVlKX0KICAgICAgICAgICAgICAgICAgICAgIGF1dG9Db21wbGV0ZT0iZW1haWwiCiAgICAgICAgICAgICAgICAgICAgICBhdXRvQ2FwaXRhbGl6ZT0ibm9uZSIKICAgICAgICAgICAgICAgICAgICAgIGF1dG9Db3JyZWN0PSJvZmYiCiAgICAgICAgICAgICAgICAgICAgICBzcGVsbENoZWNrPXtmYWxzZX0KICAgICAgICAgICAgICAgICAgICAgIGlucHV0TW9kZT0iZW1haWwiCiAgICAgICAgICAgICAgICAgICAgICBlbnRlcktleUhpbnQ9InNlbmQiCiAgICAgICAgICAgICAgICAgICAgICBhdXRvRm9jdXMKICAgICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtyZXNldE11dGF0aW9uLmlzUGVuZGluZ30KICAgICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgICA8Q2FyZEZvb3RlciBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgZ2FwLTQgcHQtMiI+CiAgICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgICB0eXBlPSJzdWJtaXQiCiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctYW1iZXItNjAwIGhvdmVyOmJnLWFtYmVyLTcwMCB0ZXh0LXdoaXRlIgogICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtyZXNldE11dGF0aW9uLmlzUGVuZGluZ30KICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgIHtyZXNldE11dGF0aW9uLmlzUGVuZGluZyA/ICgKICAgICAgICAgICAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgICAgICAgICAgIDxMb2FkZXIyIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIGFuaW1hdGUtc3BpbiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgU2VuZGluZy4uLgogICAgICAgICAgICAgICAgICAgICAgPC8+CiAgICAgICAgICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICAgICAgICAgICJTZW5kIHJlc2V0IGxpbmsiCiAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9sb2dpbiIgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtYW1iZXItNTAwIGhvdmVyOnRleHQtYW1iZXItNDAwIGZvbnQtbWVkaXVtIHRleHQtY2VudGVyIj4KICAgICAgICAgICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0idy0zIGgtMyBpbmxpbmUgbXItMSIgLz4KICAgICAgICAgICAgICAgICAgICBCYWNrIHRvIHNpZ24gaW4KICAgICAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICAgICAgPC9DYXJkRm9vdGVyPgogICAgICAgICAgICAgIDwvZm9ybT4KICAgICAgICAgICAgPC8+CiAgICAgICAgICApfQogICAgICAgIDwvQ2FyZD4KICAgICAgPC9kaXY+CiAgICAgIDxMZWVnb0Zvb3RlckxhdW5jaCAvPgogICAgPC9kaXY+CiAgKTsKfQo=
+import { useState } from "react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Film, Loader2, ArrowLeft, Mail } from "lucide-react";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+
+export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const resetMutation = trpc.auth.requestPasswordReset.useMutation({
+    onSuccess: (data) => {
+      setSubmitted(true);
+      toast.success(data.message);
+    },
+    onError: (err) => {
+      toast.error(err.message || "We couldn't send the reset email right now. Please try again in a moment.");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+    resetMutation.mutate({ email, origin: window.location.origin });
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <GoldWatermarkLaunch />
+      <div className="w-full max-w-md space-y-8 relative z-10">
+        {/* Logo */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <Film className="w-7 h-7 text-white" />
+          </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold tracking-tight gradient-text-gold">Virelle Studios</h1>
+            <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
+          </div>
+        </div>
+
+        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
+          {submitted ? (
+            <>
+              <CardHeader className="space-y-1 pb-4 text-center">
+                <div className="mx-auto w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-2">
+                  <Mail className="w-6 h-6 text-amber-500" />
+                </div>
+                <CardTitle className="text-xl">Check your email</CardTitle>
+                <CardDescription>
+                  If an account with <span className="font-medium text-foreground">{email}</span> exists, 
+                  you'll receive a password reset link shortly.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter className="flex flex-col gap-4 pt-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => { setSubmitted(false); setEmail(""); }}
+                >
+                  Try a different email
+                </Button>
+                <Link href="/login" className="text-sm text-amber-500 hover:text-amber-400 font-medium text-center">
+                  <ArrowLeft className="w-3 h-3 inline mr-1" />
+                  Back to sign in
+                </Link>
+              </CardFooter>
+            </>
+          ) : (
+            <>
+              <CardHeader className="space-y-1 pb-4">
+                <CardTitle className="text-xl">Forgot password</CardTitle>
+                <CardDescription>Enter your email and we'll send you a reset link</CardDescription>
+              </CardHeader>
+              <form onSubmit={handleSubmit}>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      inputMode="email"
+                      enterKeyHint="send"
+                      autoFocus
+                      disabled={resetMutation.isPending}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-col gap-4 pt-2">
+                  <Button
+                    type="submit"
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                    disabled={resetMutation.isPending}
+                  >
+                    {resetMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      "Send reset link"
+                    )}
+                  </Button>
+                  <Link href="/login" className="text-sm text-amber-500 hover:text-amber-400 font-medium text-center">
+                    <ArrowLeft className="w-3 h-3 inline mr-1" />
+                    Back to sign in
+                  </Link>
+                </CardFooter>
+              </form>
+            </>
+          )}
+        </Card>
+      </div>
+      <LeegoFooterLaunch />
+    </div>
+  );
+}
