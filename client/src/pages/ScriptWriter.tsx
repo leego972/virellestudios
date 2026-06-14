@@ -1162,7 +1162,7 @@ export default function ScriptWriter() {
             <Card className="bg-card border border-border shadow-lg min-h-[800px] p-8 md:p-12 font-mono text-sm leading-relaxed">
               {/* Title page header */}
               <div className="text-center mb-8 pb-6 border-b border-border/50">
-                <h1 className="text-xl font-bold uppercase tracking-widest">{title || "Untitled"}</h1>
+                <h1 className="text-xl font-bold uppercase tracking-widest gradient-text-gold">{title || "Untitled"}</h1>
                 {project && (
                   <p className="text-xs text-muted-foreground mt-1">
                     {project.genre} | {project.rating} | {project.duration || 90} min
