@@ -211,13 +211,12 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
         })}
       </div>
 
-      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+      <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
         <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base gradient-text-gold">Brief inputs</CardTitle>
           <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
             Pulling from {sortedScenes.length} scene{sortedScenes.length === 1 ? "" : "s"} of{" "}
             <span className="font-medium">{project?.title || "your project"}</span>.
-          </Card>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

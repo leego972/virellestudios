@@ -900,9 +900,8 @@ export default function ComponentsShowcase() {
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
                   <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
                     <CardTitle className="gradient-text-gold">Account</CardTitle>
-                    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Make changes to your account here.
-                    </Card>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">

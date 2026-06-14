@@ -256,13 +256,12 @@ pre{white-space:pre-wrap;font:inherit}
       </div>
 
       {/* Schedule controls */}
-      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+      <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
         <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
           <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
             {sortedScenes.length} scenes ÃÂ· estimated total runtime{" "}
             {fmtDuration(sortedScenes.reduce((acc: number, s: any) => acc + (s.duration || 0), 0))}.
-          </Card>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-3">

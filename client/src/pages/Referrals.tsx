@@ -311,7 +311,6 @@ export default function Referrals() {
                       {isCompleted && (
                         <Badge className="bg-green-600/20 text-green-400 border-green-500/30 text-xs">Earned</Badge>
                       )}
-          </div>
                       {isNext && (
                         <Badge className="bg-amber-600/20 text-amber-400 border-amber-500/30 text-xs">Next</Badge>
                       )}
@@ -325,6 +324,7 @@ export default function Referrals() {
                   {isNext && <ChevronRight className="h-4 w-4 text-amber-400 shrink-0" />}
               );
             })}
+                </div>
           </div>
         </CardContent>
       </Card>

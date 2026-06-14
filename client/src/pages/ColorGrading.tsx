@@ -445,7 +445,6 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
                         <Slider value={[val]} onValueChange={([v]) => patch({ [ctrl.key]: v } as any)} min={ctrl.min} max={ctrl.max} step={1} />
                       </div>
                     );
-        </>
                   })}
                 </div>
                 <div className="space-y-5">
@@ -585,6 +584,7 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
         </div>
         <NextStageCTA projectId={projectId} currentStage="colorGrading" />
       </div>
+      </>
     );
   }
 

@@ -183,11 +183,7 @@ function NLEExportInner() {
               <button
                 key={format}
                 onClick={() => setSelectedFormat(format)}
-                className="text-left rounded-xl border transition-all p-3.5" style={{ borderColor: selectedFormat===format ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.07)", background: selectedFormat===format ? "rgba(212,175,55,0.06)" : "rgba(255,255,255,0.02)" }} data-dummy={"
-                  selectedFormat === format
-                    ? "border-amber-500 bg-amber-500/10"
-                    : "border-border/40 bg-black/20 hover:border-amber-500/40"
-                }`}
+                className="text-left rounded-xl border transition-all p-3.5" style={{ borderColor: selectedFormat===format ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.07)", background: selectedFormat===format ? "rgba(212,175,55,0.06)" : "rgba(255,255,255,0.02)" }}
               >
                 <div className="flex items-center gap-2 mb-1">
                   {FORMAT_ICONS[format]}

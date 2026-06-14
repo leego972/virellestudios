@@ -390,7 +390,7 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="group cursor-pointer hover:border-amber-400/40 transition-colors focus-visible:ring-2" style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10}}ble:ring-amber-400 focus-visible:outline-none"
+              className="group cursor-pointer hover:border-amber-400/40 transition-colors focus-visible:ring-2" style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10}}
               onClick={() => setLocation(`/projects/${project.id}`)}
               role="button"
               tabIndex={0}
