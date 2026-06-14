@@ -165,7 +165,7 @@ import { useRoute, useLocation } from "wouter";
                     </Badge>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight">{campaign.title}</h1>
+                <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">{campaign.title}</h1>
                 {campaign.tagline && <p className="text-lg text-muted-foreground">{campaign.tagline}</p>}
               </div>
 
