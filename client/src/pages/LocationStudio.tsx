@@ -30,7 +30,7 @@ import { useState } from "react";
     const generate = trpc.locationStudio.generateLocation.useMutation({
       onSuccess(data) {
         const entry: GeneratedLocation = {
-          imageUrl: data.imageUrl,
+          imageUrl: data.imageUrl ?? "",
           description: data.description,
           id: Date.now().toString(),
         };
