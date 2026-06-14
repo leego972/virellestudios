@@ -124,7 +124,7 @@ function TimelineClip({
     <div
       className={`relative flex-shrink-0 group cursor-pointer select-none transition-all
         ${scene.isDisabled ? "opacity-30" : "opacity-100"}
-        ${isSelected ? "ring-2 ring-primary ring-offset-1 ring-offset-black" : "hover:ring-1 hover:ring-white/20"}
+        ${isSelected ? "ring-2 ring-amber-400 ring-offset-1 ring-offset-black" : "hover:ring-1 hover:ring-white/20"}
       `}
       style={{ width: `${widthPx}px` }}
       onClick={onSelect}

@@ -310,7 +310,7 @@ function TemplatePicker({
               onClick={() => setSelected(selected?.id === t.id ? null : t)}
               className={`text-left p-3 rounded-lg border transition-all ${
                 selected?.id === t.id
-                  ? "border-primary bg-primary/10 ring-1 ring-primary"
+                  ? "border-primary bg-primary/10 ring-1 ring-amber-400"
                   : "border-border hover:border-primary/50 hover:bg-accent/50"
               }`}
             >
@@ -520,7 +520,7 @@ function ImportSceneModal({
                   onClick={() => setPosition(pos)}
                   className={`p-3 rounded-lg border text-sm transition-all ${
                     position === pos
-                      ? "border-primary bg-primary/10 ring-1 ring-primary"
+                      ? "border-primary bg-primary/10 ring-1 ring-amber-400"
                       : "border-border hover:border-primary/50"
                   }`}
                 >

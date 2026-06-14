@@ -59,7 +59,7 @@ function ActualsRow({
             value={val}
             onChange={(e) => setVal(e.target.value)}
             placeholder="0"
-            className="w-28 h-7 px-2 rounded-md border border-border bg-background text-right text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-28 h-7 px-2 rounded-md border border-border bg-background text-right text-xs focus:outline-none focus:ring-1 focus:ring-amber-400"
           />
           <Button
             size="sm"

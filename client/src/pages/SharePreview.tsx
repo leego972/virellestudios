@@ -54,14 +54,14 @@ function ReviewerCommentBox({
           placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value.slice(0, 60))}
-          className="flex-1 h-8 px-2 rounded-md border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+          className="flex-1 h-8 px-2 rounded-md border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-amber-400"
         />
         <input
           type="text"
           placeholder="Timecode (e.g. 00:42)"
           value={tc}
           onChange={(e) => setTc(e.target.value.slice(0, 24))}
-          className="w-32 h-8 px-2 rounded-md border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary"
+          className="w-32 h-8 px-2 rounded-md border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-amber-400"
         />
       </div>
       <textarea
@@ -69,7 +69,7 @@ function ReviewerCommentBox({
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, 2000))}
         rows={2}
-        className="w-full px-2 py-1.5 rounded-md border border-border bg-background text-xs resize-y min-h-[60px] focus:outline-none focus:ring-1 focus:ring-primary"
+        className="w-full px-2 py-1.5 rounded-md border border-border bg-background text-xs resize-y min-h-[60px] focus:outline-none focus:ring-1 focus:ring-amber-400"
       />
       <div className="flex justify-end mt-2">
         <button

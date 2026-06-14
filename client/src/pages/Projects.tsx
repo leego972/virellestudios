@@ -272,7 +272,7 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="group cursor-pointer transition-all relative focus-visible:ring-2 focus-visible:ring-primary" style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12}} style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:"12px"}} onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(212,175,55,0.3)";e.currentTarget.style.background="rgba(255,255,255,0.04)"}} onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.background="rgba(255,255,255,0.025)"}}
+              className="group cursor-pointer transition-all relative focus-visible:ring-2 focus-visible:ring-amber-400" style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12}} style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:"12px"}} onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(212,175,55,0.3)";e.currentTarget.style.background="rgba(255,255,255,0.04)"}} onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.background="rgba(255,255,255,0.025)"}}
               onClick={() => setLocation(`/projects/${project.id}`)}
               role="button"
               tabIndex={0}
@@ -392,7 +392,7 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="group cursor-pointer hover:border-amber-400/40 transition-colors focus-visible:ring-2" style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10}}ble:ring-primary focus-visible:outline-none"
+              className="group cursor-pointer hover:border-amber-400/40 transition-colors focus-visible:ring-2" style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10}}ble:ring-amber-400 focus-visible:outline-none"
               onClick={() => setLocation(`/projects/${project.id}`)}
               role="button"
               tabIndex={0}
