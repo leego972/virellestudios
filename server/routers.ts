@@ -3702,13 +3702,13 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               code: "FORBIDDEN",
               message: "No LLM key configured. Go to Settings → API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
             });
-          });
-        }
+          }
 
         const apiKey =
           provider === "venice" ? (userKeys.veniceKey || (isAdminChat ? ENV.veniceApiKey : ""))
           : provider === "openai" ? (userKeys.openaiKey || (isAdminChat ? ENV.openaiApiKey : ""))
           : provider === "anthropic" ? userKeys.anthropicKey!
+          : provider === "groq" ? ENV.groqApiKey
           : userKeys.googleAiKey!;
 
         // Build the system prompt for Virelle
