@@ -85,70 +85,58 @@ import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // Navigation grouped by production pipeline logic
 const menuGroups = [
-  {
-    label: "Studio",
-    items: [
-      { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
-      { icon: Film, label: "Projects", path: "/projects" },
-      { icon: Clapperboard, label: "My Movies", path: "/movies" },
-      { icon: Tv, label: "Series Bible", path: "/series" },
-    ],
-  },
-  {
-    label: "Cast & Talent",
-    items: [
-      { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
-      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
-      { icon: Search, label: "Talent Search", path: "/talent-search" },
-    ],
-  },
-  {
-    label: "Create",
-    items: [
-      { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
-      { icon: PenTool, label: "Content Creator", path: "/content-creator" },
-      { icon: Wand2, label: "Campaign Manager", path: "/campaigns" },
-      { icon: PlaySquare, label: "Project Samples", path: "/samples" },
-    ],
-  },
-  {
-    label: "Distribute",
-    items: [
-      { icon: Globe, label: "Film Showcase", path: "/showcase" },
-      { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
-      { icon: Calendar, label: "Festival Tracker", path: "/festivals" },
-      { icon: Shirt, label: "Wardrobe Marketplace", path: "/wardrobe-marketplace" },
-      { icon: TrendingUp, label: "Browse Campaigns", path: "/crowdfund/browse" },
-    ],
-  },
-  {
-    label: "Resources",
-    items: [
-      { icon: DollarSign, label: "Funding Directory", path: "/funding" },
-      { icon: Rocket, label: "Crowdfunding Hub", path: "/crowdfunding" },
-      { icon: Zap, label: "Pro Funding Match", path: "/funding-pro" },
-      { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
-        { icon: Users, label: "Community", path: "/community" },
-      { icon: BookOpen, label: "Blog", path: "/blog" },
-        { icon: BarChart3, label: "Film Comps", path: "/film-comps" },
-        { icon: FileText, label: "Legal Docs", path: "/legal-docs" },
-        { icon: Calculator, label: "Tax Incentives", path: "/tax-incentives" },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
-      { icon: CreditCard, label: "Subscription", path: "/pricing", hollywoodKey: "subscription_plans" as ToolIconKey },
-      { icon: Coins, label: "Credits & History", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
-      { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
-      { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
-      { icon: Store, label: "Designer Studio", path: "/designer/studio" },
-      { icon: Smartphone, label: "Download App", path: "/download" },
-      { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
-    ],
-  },
-];
+    {
+      label: "My Films",
+      items: [
+        { icon: Film, label: "Projects", path: "/projects" },
+        { icon: Clapperboard, label: "My Movies", path: "/movies" },
+        { icon: Tv, label: "Series", path: "/series" },
+        { icon: MessageSquare, label: "Director's AI", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
+      ],
+    },
+    {
+      label: "Cast & Talent",
+      items: [
+        { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
+        { icon: Star, label: "Signature Cast", path: "/signature-cast" },
+        { icon: Search, label: "Talent Search", path: "/talent-search" },
+      ],
+    },
+    {
+      label: "Marketing & Release",
+      items: [
+        { icon: Megaphone, label: "Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
+        { icon: PenTool, label: "Content Creator", path: "/content-creator" },
+        { icon: Globe, label: "Film Showcase", path: "/showcase" },
+        { icon: Calendar, label: "Festival Tracker", path: "/festivals" },
+        { icon: Wand2, label: "Campaigns", path: "/campaigns" },
+      ],
+    },
+    {
+      label: "Funding",
+      items: [
+        { icon: DollarSign, label: "Funding Directory", path: "/funding" },
+        { icon: Rocket, label: "Crowdfunding", path: "/crowdfunding" },
+        { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
+      ],
+    },
+    {
+      label: "Marketplace",
+      items: [
+        { icon: ShoppingBag, label: "Asset Market", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
+        { icon: Shirt, label: "Wardrobe", path: "/wardrobe-marketplace" },
+      ],
+    },
+    {
+      label: "Account",
+      items: [
+        { icon: CreditCard, label: "Subscription", path: "/pricing", hollywoodKey: "subscription_plans" as ToolIconKey },
+        { icon: Coins, label: "Credits", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
+        { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
+        { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
+      ],
+    },
+  ];
 
 // Flat list for backward compatibility
 const menuItems = menuGroups.flatMap((g) => g.items);
@@ -396,7 +384,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <img src="/icons/icon.svg" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
@@ -508,7 +496,7 @@ function DashboardLayoutContent({
               </a>
             )}
             {/* Leego branding Ã¢ÂÂ tap to pulse to ~2cm for 2s, then shrink back */}
-            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
+            <div className="flex justify-center items-center py-2 group-data-[collapsible=icon]:px-0">
               <LeegoLogo
                 className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
               />
@@ -642,7 +630,7 @@ function DashboardLayoutContent({
           <div data-mobile-header className="flex border-b h-auto min-h-[4rem] items-center justify-between px-3 sticky top-0 z-40 shrink-0" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
-              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
+              <img src="/icons/icon.svg" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
               <span className="text-base font-bold truncate">Virelle Studios</span>
             </div>
             {switchable && (
@@ -713,7 +701,7 @@ function DashboardLayoutContent({
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              src="/icons/icon.svg"
               alt=""
               className="hidden dark:block w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.055]"
               style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
@@ -721,14 +709,18 @@ function DashboardLayoutContent({
             />
             {/* Light mode: very faint golden logo */}
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              src="/icons/icon.svg"
               alt=""
               className="block dark:hidden w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.06]"
               style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
               draggable={false}
             />
           </div>
-          <div className="flex-1 relative z-10">{children}</div>
+          {/* Gold watermark — non-interactive, centered in content area */}
+            <div className="fixed inset-0 flex items-center justify-center pointer-events-none select-none" style={{ zIndex: 0, left: 'var(--sidebar-width, 240px)' }}>
+              <img src="/icons/icon.svg" alt="" className="w-72 h-72 opacity-[0.05] dark:opacity-[0.06]" style={{ filter: 'sepia(1) saturate(4) hue-rotate(5deg) brightness(1.2)' }} draggable={false} />
+            </div>
+            <div className="flex-1 relative z-10">{children}</div>
           <LeegoFooter />
         </main>
       </SidebarInset>
