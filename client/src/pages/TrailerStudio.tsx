@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { NextStageCTA } from "@/components/NextStageCTA";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
+import StudioOpener from "@/components/StudioOpener";
 
 // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Trailer Types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 const TRAILER_TYPES = [
@@ -132,6 +133,8 @@ function TrailerStudioInner() {
   const [overallPacing, setOverallPacing] = useState<"standard" | "slow" | "fast">("standard");
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "2.39:1" | "4:3" | "9:16">("16:9");
   const [generatedResult, setGeneratedResult] = useState<any>(null);
+    const [showOpener, setShowOpener] = useState(false);
+    const [pendingResult, setPendingResult] = useState<any>(null);
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const isMobile = useIsMobile();
   const [mobileConfigOpen, setMobileConfigOpen] = useState(false);
@@ -812,7 +815,24 @@ function TrailerStudioInner() {
 }
 
 export default function TrailerStudio() {
-  return (
+  if (showOpener) {
+      return (
+        <StudioOpener
+          mode="film"
+          skippable
+          onComplete={() => {
+            setShowOpener(false);
+            if (pendingResult) {
+              setGeneratedResult(pendingResult);
+              setPendingResult(null);
+              toast.success("Trailer generated successfully!");
+            }
+          }}
+        />
+      );
+    }
+
+    return (
     <SubscriptionGate
       feature="Trailer Studio"
       featureKey="canUseTrailerGeneration"
