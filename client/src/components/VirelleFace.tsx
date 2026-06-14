@@ -1,12 +1,11 @@
 import React from 'react';
 
   // Eye socket positions — calibrated to virelle-face.png (viewBox 0 0 100 133)
-  // Beret covers top ~45% of image. White mask face starts below.
-  // Eye sockets sit at ~65% from top → cy = 0.65 × 133 ≈ 86
-  // Horizontal: left ~38%, right ~62% of width
+  // cy:73 = ~55% from top of portrait (below beret, in the actual eye socket area)
+  // cx 41/59 = closer together than previous 38/62
   const GEO = {
-    leftEye:  { cx: 38, cy: 86, rx: 2.8, ry: 2.0 },
-    rightEye: { cx: 62, cy: 86, rx: 2.8, ry: 2.0 },
+    leftEye:  { cx: 41, cy: 73, rx: 2.6, ry: 1.9 },
+    rightEye: { cx: 59, cy: 73, rx: 2.6, ry: 1.9 },
   };
 
   type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
@@ -40,11 +39,11 @@ import React from 'react';
     const isActive = effectiveState === 'listening' || effectiveState === 'thinking' || effectiveState === 'speaking';
     const color = EYE_COLOR[effectiveState];
 
-    const eyeOpacity = isActive ? Math.min(0.80 + v * 0.20, 1.0) : 0.65;
-    const eyeScale   = isActive ? 1 + v * 0.10 : 0.95;
+    const eyeOpacity = isActive ? Math.min(0.80 + v * 0.20, 1.0) : 0.70;
+    const eyeScale   = isActive ? 1 + v * 0.10 : 1.0;
 
     const mkGrad = (id: string, cx: number, cy: number, rx: number) => (
-      <radialGradient key={id} id={id} cx={cx} cy={cy} r={rx * 2.2} gradientUnits="userSpaceOnUse">
+      <radialGradient key={id} id={id} cx={cx} cy={cy} r={rx * 2.4} gradientUnits="userSpaceOnUse">
         <stop offset="0%"   stopColor={color.core}  stopOpacity={eyeOpacity} />
         <stop offset="35%"  stopColor={color.mid}   stopOpacity={eyeOpacity * 0.80} />
         <stop offset="70%"  stopColor={color.outer} stopOpacity={eyeOpacity * 0.30} />
@@ -65,17 +64,7 @@ import React from 'react';
           transition: 'filter 0.6s ease',
         }}>
 
-          {/* Gold ambient glow behind the mask */}
-          <div style={{
-            position: 'absolute',
-            inset: '-20%',
-            background: 'radial-gradient(ellipse 65% 55% at 50% 48%, rgba(201,168,76,0.32) 0%, rgba(180,130,40,0.14) 48%, transparent 72%)',
-            filter: 'blur(22px)',
-            zIndex: 0,
-            pointerEvents: 'none',
-          }} />
-
-          {/* Mask image — mix-blend-mode:screen removes the black background */}
+          {/* Mask image */}
           <img
             src="/virelle-face.png"
             alt=""
@@ -90,11 +79,10 @@ import React from 'react';
               userSelect: 'none',
               pointerEvents: 'none',
               display: 'block',
-              mixBlendMode: 'screen',
             }}
           />
 
-          {/* Eye glows — SVG overlaid on the portrait face */}
+          {/* Eye glows */}
           <svg
             viewBox="0 0 100 133"
             preserveAspectRatio="xMidYMid meet"
@@ -112,7 +100,6 @@ import React from 'react';
               {mkGrad(`${uid}-l`, GEO.leftEye.cx,  GEO.leftEye.cy,  GEO.leftEye.rx)}
               {mkGrad(`${uid}-r`, GEO.rightEye.cx, GEO.rightEye.cy, GEO.rightEye.rx)}
             </defs>
-
             <ellipse
               cx={GEO.leftEye.cx}
               cy={GEO.leftEye.cy}
