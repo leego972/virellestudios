@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ACTOR REGISTRY (mirrors server signatureCast.ts) ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ─── ACTOR REGISTRY (mirrors server signatureCast.ts) ──────────────────────
 const ACTOR_REGISTRY = [
   { id: "julian-vance",    name: "Julian Vance",        tier: "flagship", commercialEligible: true,  featured: true,  retired: false, restricted: false },
   { id: "elena-rostova",   name: "Elena Rostova",       tier: "flagship", commercialEligible: true,  featured: true,  retired: false, restricted: false },
@@ -121,10 +121,10 @@ export default function AdminSignatureCast() {
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Total Unlocks", value: analytics?.totalUnlocks ?? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: Unlock, color: "text-amber-400" },
-            { label: "Revenue (AUD)", value: analytics?.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(0)}` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: DollarSign, color: "text-emerald-400" },
-            { label: "Active Licenses", value: entitlements?.length ?? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: CheckCircle2, color: "text-blue-400" },
-            { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: TrendingUp, color: "text-purple-400" },
+            { label: "Total Unlocks", value: analytics?.totalUnlocks ?? "—", icon: Unlock, color: "text-amber-400" },
+            { label: "Revenue (AUD)", value: analytics?.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(0)}` : "—", icon: DollarSign, color: "text-emerald-400" },
+            { label: "Active Licenses", value: entitlements?.length ?? "—", icon: CheckCircle2, color: "text-blue-400" },
+            { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "—", icon: TrendingUp, color: "text-purple-400" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="border-amber-500/20 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -146,11 +146,11 @@ export default function AdminSignatureCast() {
             <TabsTrigger value="analytics" className="text-sm data-[state=active]:text-amber-400">Analytics</TabsTrigger>
           </TabsList>
 
-          {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ACTOR CONFIG TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
+          {/* ── ACTOR CONFIG TAB ── */}
           <TabsContent value="actors" className="mt-4">
             <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Actor Registry ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
+                <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
               <CardContent>
                 {/* Portrait Generation */}
@@ -266,8 +266,8 @@ export default function AdminSignatureCast() {
                               {actor.restricted && <Badge className="bg-red-500/10 text-red-400 border border-red-500/20 text-xs"><AlertTriangle className="w-2.5 h-2.5 mr-1" />Restricted</Badge>}
                             </div>
                             <p className="text-xs text-zinc-500 mt-0.5">
-                              {actor.commercialEligible ? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Commercial eligible" : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Non-commercial only"}
-                              {" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· "}ID: {actor.id}
+                              {actor.commercialEligible ? "✓ Commercial eligible" : "✗ Non-commercial only"}
+                              {" · "}ID: {actor.id}
                             </p>
                           </div>
                           <Button
@@ -296,7 +296,7 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ PRICING TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
+          {/* ── PRICING TAB ── */}
           <TabsContent value="pricing" className="mt-4">
             <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -328,7 +328,7 @@ export default function AdminSignatureCast() {
                 <div className="mt-4 p-3 rounded-lg bg-zinc-800/50 border border-amber-500/20/50">
                   <p className="text-xs text-zinc-400">
                     <strong className="text-white">Commercial = Creator + A$79 add-on.</strong>{" "}
-                    Episodic = Creator ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 4. Prices are configured in{" "}
+                    Episodic = Creator × 4. Prices are configured in{" "}
                     <code className="text-amber-400">server/_core/signatureCast.ts</code> and provisioned to Stripe on server boot.
                   </p>
                 </div>
@@ -345,7 +345,7 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ACTIVE LICENSES TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
+          {/* ── ACTIVE LICENSES TAB ── */}
           <TabsContent value="entitlements" className="mt-4">
             <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 flex flex-row items-center justify-between glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -392,12 +392,12 @@ export default function AdminSignatureCast() {
                                 {e.licenseType}
                               </Badge>
                             </td>
-                            <td className="py-2 text-zinc-500">{e.projectId ?? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}</td>
+                            <td className="py-2 text-zinc-500">{e.projectId ?? "—"}</td>
                             <td className="py-2 text-right text-white font-mono">
-                              {e.amountPaidAud ? `A$${(e.amountPaidAud / 100).toFixed(2)}` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}
+                              {e.amountPaidAud ? `A$${(e.amountPaidAud / 100).toFixed(2)}` : "—"}
                             </td>
                             <td className="py-2 text-right text-zinc-500">
-                              {e.createdAt ? new Date(e.createdAt).toLocaleDateString() : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}
+                              {e.createdAt ? new Date(e.createdAt).toLocaleDateString() : "—"}
                             </td>
                           </tr>
                         ))}
@@ -409,7 +409,7 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ANALYTICS TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
+          {/* ── ANALYTICS TAB ── */}
           <TabsContent value="analytics" className="mt-4">
             <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -419,7 +419,7 @@ export default function AdminSignatureCast() {
                 {!analytics ? (
                   <div className="text-center py-8 text-zinc-500">
                     <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Analytics loadingÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</p>
+                    <p className="text-sm">Analytics loading…</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -430,7 +430,7 @@ export default function AdminSignatureCast() {
                         { label: "Checkouts Started", value: analytics.checkoutsStarted ?? 0 },
                         { label: "Checkouts Completed", value: analytics.checkoutsCompleted ?? 0 },
                         { label: "Total Revenue (AUD)", value: analytics.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(2)}` : "A$0" },
-                        { label: "Avg License Value", value: analytics.avgLicenseValue ? `A$${(analytics.avgLicenseValue / 100).toFixed(2)}` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
+                        { label: "Avg License Value", value: analytics.avgLicenseValue ? `A$${(analytics.avgLicenseValue / 100).toFixed(2)}` : "—" },
                       ].map(({ label, value }) => (
                         <div key={label} className="p-3 rounded-lg bg-zinc-900/50 border border-amber-500/20">
                           <p className="text-xs text-zinc-500">{label}</p>
