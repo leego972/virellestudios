@@ -102,7 +102,7 @@ import { useState, useRef } from "react";
     const [file, setFile] = useState<File | null>(null);
     const [cloning, setCloning] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
-    const cloneVoice = trpc.character.cloneVoice.useMutation();
+    const cloneVoice = trpc.auth.cloneVoice.useMutation();
 
     async function handleClone() {
       if (!file) { toast.error("Upload a voice sample first (30+ seconds)"); return; }
