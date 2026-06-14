@@ -9,7 +9,7 @@ import { SubscriptionGate } from "./components/SubscriptionGate";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
-// âââ Lazy-loaded pages (code splitting) âââ
+// ─── Lazy-loaded pages (code splitting) ───
 // Core pages loaded eagerly for instant navigation
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -26,12 +26,12 @@ import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import CommandPaletteGlobal from "./components/CommandPaletteGlobal";
 import KeyboardShortcutsHelp from "./components/KeyboardShortcutsHelp";
 
-// Dashboard pages â lazy loaded
+// Dashboard pages — lazy loaded
 const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NewProject = lazy(() => import("./pages/NewProject"));
 const Characters = lazy(() => import("./pages/Characters"));
-// v6.77 â Per-project brand allow/block list
+// v6.77 — Per-project brand allow/block list
 const ProjectBrands = lazy(() => import("./pages/ProjectBrands"));
 const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
 const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
@@ -43,11 +43,11 @@ const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
 const Movies = lazy(() => import("./pages/Movies"));
 const AssistantPage = lazy(() => import("./pages/AssistantPage"));
-// v6.68 â Phase 2 / Phase 5 / Phase 10 surfaces.
+// v6.68 — Phase 2 / Phase 5 / Phase 10 surfaces.
 const ProjectCommandCenterPage = lazy(() => import("./pages/ProjectCommandCenterPage"));
 const BYOKControlCenterPage = lazy(() => import("./pages/BYOKControlCenterPage"));
 const PitchDeckPage = lazy(() => import("./pages/PitchDeckPage"));
-// v6.69 â Phase 3 / Phase 8 surfaces.
+// v6.69 — Phase 3 / Phase 8 surfaces.
 const ScriptBreakdownWizardPage = lazy(() => import("./pages/ScriptBreakdownWizardPage"));
 const AwaitingReviewPage = lazy(() => import("./pages/AwaitingReviewPage"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
@@ -62,39 +62,39 @@ const AdminSignatureCast = lazy(() => import("./pages/AdminSignatureCast"));
 const AdvertisingDashboard = lazy(() => import("./pages/AdvertisingDashboard"));
 const SeoDashboard = lazy(() => import("./pages/SeoDashboard"));
 
-// Auth pages â lazy loaded (less frequently visited)
+// Auth pages — lazy loaded (less frequently visited)
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 
-// Public pages â lazy loaded
+// Public pages — lazy loaded
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Showcase = lazy(() => import("./pages/Showcase"));
 const SharePreview = lazy(() => import("./pages/SharePreview"));
 
-// Legal pages â lazy loaded
+// Legal pages — lazy loaded
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
 
-// New public pages â lazy loaded
+// New public pages — lazy loaded
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const About = lazy(() => import("./pages/About"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Solutions = lazy(() => import("./pages/Solutions"));
 
-// Dashboard feature pages â lazy loaded
+// Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
 const CreditsPage = lazy(() => import("./pages/Credits"));
 const ProjectSamples = lazy(() => import("./pages/ProjectSamples"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
 
-// Full-screen tool pages â lazy loaded (Pro features, heavy components)
+// Full-screen tool pages — lazy loaded (Pro features, heavy components)
 const ScriptWriter = lazy(() => import("./pages/ScriptWriter"));
 const Storyboard = lazy(() => import("./pages/Storyboard"));
 const CreditsEditor = lazy(() => import("./pages/CreditsEditor"));
@@ -135,7 +135,7 @@ const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
 const ProStudio = lazy(() => import("./pages/ProStudio"));
 const ProStudioOps = lazy(() => import("./pages/ProStudioOps"));
 const SocialCutsFactory = lazy(() => import("./pages/SocialCutsFactory"));
-// v6.63 â Production Spine
+// v6.63 — Production Spine
 const Schedule = lazy(() => import("./pages/Schedule"));
 const DayOutOfDays = lazy(() => import("./pages/DayOutOfDays"));
 const CallSheets = lazy(() => import("./pages/CallSheets"));
@@ -143,7 +143,7 @@ const CallSheetPrint = lazy(() => import("./pages/CallSheetPrint"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const BudgetTracker = lazy(() => import("./pages/Budget"));
 const ActivityTimeline = lazy(() => import("./pages/ActivityTimeline"));
-// v6.64 â Pro Studio additions
+// v6.64 — Pro Studio additions
 const Collaborators = lazy(() => import("./pages/CollaboratorsPage"));
 const ScriptImport = lazy(() => import("./pages/ScriptImportPage"));
 const ScriptExport = lazy(() => import("./pages/ScriptExportPage"));
@@ -180,7 +180,7 @@ const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage
   const AudioMixer = lazy(() => import("./pages/AudioMixer"));
   const AccessibilityStudio = lazy(() => import("./pages/AccessibilityStudio"));
   const LocationStudio = lazy(() => import("./pages/LocationStudio"));
-// âââ Loading fallback âââ
+// ─── Loading fallback ───
 function PageLoader() {
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -192,7 +192,7 @@ function PageLoader() {
   );
 }
 
-// âââ Suspense wrapper for lazy components with local error recovery âââ
+// ─── Suspense wrapper for lazy components with local error recovery ───
 function LazyPage({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary>
@@ -201,11 +201,11 @@ function LazyPage({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Gated page wrappers â show upgrade prompt if user's subscription doesn't include the feature
+// Gated page wrappers — show upgrade prompt if user's subscription doesn't include the feature
 // Tier key reference (3 public tiers):
-//   indie        = Indie        (500 credits)    â screenplay, characters, shot list
-//   amateur      = Creator      (2,000 credits)  â + video gen, voice acting, film score, export
-//   independent  = Industry     (6,000 credits)  â + VFX, multi-shot, NLE export, AI casting, collaboration
+//   indie        = Indie        (500 credits)    — screenplay, characters, shot list
+//   amateur      = Creator      (2,000 credits)  — + video gen, voice acting, film score, export
+//   independent  = Industry     (6,000 credits)  — + VFX, multi-shot, NLE export, AI casting, collaboration
 // requiredTier values match the first tier where the canUse* flag is true in TIER_LIMITS (subscription.ts)
 function GatedScriptWriter() { return <LazyPage><SubscriptionGate feature="Script Writer" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptWriter /></SubscriptionGate></LazyPage>; }
 function GatedStoryboard() { return <LazyPage><SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="amateur"><Storyboard /></SubscriptionGate></LazyPage>; }
@@ -316,7 +316,7 @@ function Router() {
       <Route path="/projects/:projectId/feature-timeline" component={GatedFeatureTimeline} />
       <Route path="/projects/:projectId/trailer-studio" component={GatedTrailerStudio} />
       <Route path="/projects/:projectId/tv-commercial" component={GatedTVCommercial} />
-      {/* v6.63 â Printable call sheet (full-screen, no dashboard chrome) */}
+      {/* v6.63 — Printable call sheet (full-screen, no dashboard chrome) */}
       <Route path="/projects/:id/call-sheets/:dayId">{() => <LazyPage><CallSheetPrint /></LazyPage>}</Route>
 
       {/* Dashboard layout pages */}
@@ -329,16 +329,16 @@ function Router() {
               <Route path="/projects">{() => <Projects />}</Route>
               <Route path="/projects/new">{() => <NewProject />}</Route>
               <Route path="/projects/:id">{() => <ProjectDetail />}</Route>
-              {/* v6.68 â Project Command Center, BYOK, Pitch Deck */}
+              {/* v6.68 — Project Command Center, BYOK, Pitch Deck */}
               <Route path="/projects/:id/command-center">{() => <LazyPage><ProjectCommandCenterPage /></LazyPage>}</Route>
               <Route path="/projects/:projectId/pitch-deck">{() => <LazyPage><PitchDeckPage /></LazyPage>}</Route>
               <Route path="/settings/byok">{() => <LazyPage><BYOKControlCenterPage /></LazyPage>}</Route>
-              {/* v6.69 â Script breakdown wizard + Awaiting review queue */}
+              {/* v6.69 — Script breakdown wizard + Awaiting review queue */}
               <Route path="/projects/:projectId/brands">{() => <LazyPage><ProjectBrands /></LazyPage>}</Route>
-              {/* v6.77 â Designer Wardrobe (umbrella library) */}
+              {/* v6.77 — Designer Wardrobe (umbrella library) */}
               <Route path="/designer-wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
               <Route path="/projects/:projectId/wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
-              {/* v7.0 â Designer Studio (auth-required dashboard page) */}
+              {/* v7.0 — Designer Studio (auth-required dashboard page) */}
               <Route path="/designer/studio">{() => <LazyPage><DesignerStudioPage /></LazyPage>}</Route>
                 <Route path="/wardrobe-inventory">{() => <LazyPage><UserInventoryPage /></LazyPage>}</Route>
       <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
@@ -384,14 +384,14 @@ function Router() {
               <Route path="/projects/:projectId/locations/recreate">{() => <LazyPage><LocationRecreation /></LazyPage>}</Route>
               <Route path="/wardrobe-marketplace">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
               <Route path="/wardrobe-marketplace/designer/:id">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
-              {/* v6.63 â Production Spine */}
+              {/* v6.63 — Production Spine */}
               <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>
               <Route path="/projects/:id/day-out-of-days">{() => <LazyPage><DayOutOfDays /></LazyPage>}</Route>
               <Route path="/projects/:id/call-sheets">{() => <LazyPage><CallSheets /></LazyPage>}</Route>
               <Route path="/projects/:id/contacts">{() => <LazyPage><Contacts /></LazyPage>}</Route>
               <Route path="/projects/:id/budget-tracker">{() => <LazyPage><BudgetTracker /></LazyPage>}</Route>
               <Route path="/projects/:id/activity">{() => <LazyPage><ActivityTimeline /></LazyPage>}</Route>
-              {/* v6.64 â Collaboration, script i/o, calendar, audit, fringes, versioning */}
+              {/* v6.64 — Collaboration, script i/o, calendar, audit, fringes, versioning */}
               <Route path="/projects/:id/collaborators">{() => <LazyPage><Collaborators /></LazyPage>}</Route>
               <Route path="/projects/:id/script-import">{() => <LazyPage><ScriptImport /></LazyPage>}</Route>
               <Route path="/projects/:id/script-export">{() => <LazyPage><ScriptExport /></LazyPage>}</Route>
@@ -404,7 +404,7 @@ function Router() {
               <Route path="/projects/:id/daily-report">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/daily-report/:dayId">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/auto-recap">{() => <LazyPage><AutoRecap /></LazyPage>}</Route>
-                {/* ââ New competitive-gap features ââ */}
+                {/* ── New competitive-gap features ── */}
                 <Route path="/projects/:id/music-score" component={GatedMusicScore} />
                 <Route path="/projects/:id/opening-sequence" component={GatedOpeningSequence} />
                 <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
@@ -435,7 +435,7 @@ function Router() {
 }
 
 function App() {
-  // Global IP protection â disables right-click on media, drag-save, and screenshot shortcuts
+  // Global IP protection — disables right-click on media, drag-save, and screenshot shortcuts
   useContentProtection();
   return (
     <ErrorBoundary>
