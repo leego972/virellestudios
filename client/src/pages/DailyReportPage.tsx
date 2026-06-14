@@ -130,7 +130,7 @@ export default function DailyReportPage() {
       </div>
       <div className="dpr-page max-w-4xl mx-auto p-8">
         <div className="border-b-2 border-black pb-3 mb-4 flex items-baseline justify-between">
-          <h1 className="text-xl font-bold uppercase tracking-wide">
+          <h1 className="text-xl font-bold uppercase tracking-wide gradient-text-gold">
             DAILY PRODUCTION REPORT
           </h1>
           <span className="text-sm">
