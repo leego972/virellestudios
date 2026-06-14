@@ -10,7 +10,7 @@ import { ArrowLeft, Plus, Users, Trash2, Loader2, Mail, Phone, Edit2 } from "luc
 
 const DEPARTMENTS = ["Camera", "Sound", "Grip", "Electric", "Art", "Wardrobe", "Hair/Makeup", "Production", "Stunts", "VFX", "Post", "Other"];
 
-/** v6.63 — Crew & contacts directory page. */
+/** v6.63 â Crew & contacts directory page. */
 export default function Contacts() {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id || "0");
@@ -87,11 +87,11 @@ export default function Contacts() {
             <CardContent className="space-y-3 glass-card">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
-                <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st AD…" className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st ADâ¦" className="bg-zinc-900 border-zinc-800" /></div>
                 <div>
                   <label className="text-xs text-zinc-400">Department</label>
                   <select value={form.department} onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))} className="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-sm">
-                    <option value="">—</option>
+                    <option value="">â</option>
                     {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
                 </div>
@@ -112,7 +112,7 @@ export default function Contacts() {
         )}
 
         {isLoading ? (
-          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />Loading…</div>
+          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />Loadingâ¦</div>
         ) : (contacts as any[]).length === 0 ? (
           <Card className="bg-zinc-950 border-zinc-800 glass-card">
             <CardContent className="p-8 text-center text-sm text-zinc-500 glass-card">No contacts yet. Add your first crew member above.</CardContent>
@@ -129,10 +129,10 @@ export default function Contacts() {
                     </thead>
                     <tbody>
                       {list.map((c) => (
-                        <tr key={c.id} className="border-t border-zinc-800 hover:bg-zinc-900/40">
+                        <tr key={c.id} className="border-t border-zinc-800 hover:bg-amber-500/10/40">
                           <td className="px-3 py-2 font-medium">{c.name}</td>
-                          <td className="px-3 py-2 text-zinc-300">{c.role || "—"}</td>
-                          <td className="px-3 py-2 font-mono text-xs">{c.callTimeOverride || "—"}</td>
+                          <td className="px-3 py-2 text-zinc-300">{c.role || "â"}</td>
+                          <td className="px-3 py-2 font-mono text-xs">{c.callTimeOverride || "â"}</td>
                           <td className="px-3 py-2 text-xs space-y-0.5">
                             {c.email && <div className="flex items-center gap-1 text-zinc-300"><Mail className="w-3 h-3" /><a href={`mailto:${c.email}`} className="hover:text-amber-400">{c.email}</a></div>}
                             {c.phone && <div className="flex items-center gap-1 text-zinc-300"><Phone className="w-3 h-3" /><a href={`tel:${c.phone}`} className="hover:text-amber-400">{c.phone}</a></div>}

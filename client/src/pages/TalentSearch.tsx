@@ -41,7 +41,7 @@ import { useState, useEffect } from "react";
   import { trpc } from "@/lib/trpc";
   import { toast } from "sonner";
 
-  // ─── Pricing constants (mirrors server config) ──────────────────────────────
+  // âââ Pricing constants (mirrors server config) ââââââââââââââââââââââââââââââ
   const BASE_PRICE: Record<string, number> = { standard: 15, premium: 39, flagship: 99 };
   const COMMERCIAL_ADDON = 79;
   const EPISODIC_MULTIPLIER = 4;
@@ -53,9 +53,9 @@ import { useState, useEffect } from "react";
     return base;
   }
 
-  // ─── Actor roster ─────────────────────────────────────────────────────────
+  // âââ Actor roster âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const SIGNATURE_CAST = [
-    // ── MALE LEADS ──────────────────────────────────────────────────────────
+    // ââ MALE LEADS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "julian-vance",
       name: "Julian Vance",
@@ -63,9 +63,9 @@ import { useState, useEffect } from "react";
       category: "Male Lead",
       archetype: "The Dangerous Romantic",
       nationality: "British-Australian",
-      age: "32–42",
+      age: "32â42",
       build: "Lean, 6'1\"",
-      hair: "Dark, worn longer — swept or loose",
+      hair: "Dark, worn longer â swept or loose",
       eyes: "Grey-green",
       voice: "Low, measured. Capable of warmth and menace in the same sentence.",
       mannerisms: "Stillness before action. A habit of turning glasses or objects in his hands when thinking.",
@@ -89,7 +89,7 @@ import { useState, useEffect } from "react";
       category: "Male Lead",
       archetype: "The Immovable Force",
       nationality: "British-Ghanaian",
-      age: "35–50",
+      age: "35â50",
       build: "Powerfully built, 6'3\"",
       hair: "Cropped, close",
       eyes: "Dark brown",
@@ -115,7 +115,7 @@ import { useState, useEffect } from "react";
       category: "Male Lead",
       archetype: "The Quiet Predator",
       nationality: "Japanese-American",
-      age: "28–40",
+      age: "28â40",
       build: "Lean, precise. 5'11\"",
       hair: "Black, structured",
       eyes: "Dark, very still",
@@ -141,7 +141,7 @@ import { useState, useEffect } from "react";
       category: "Male Lead",
       archetype: "The Reluctant Hero",
       nationality: "British-Ghanaian",
-      age: "30–45",
+      age: "30â45",
       build: "Athletic, grounded. 6'0\"",
       hair: "Natural, mid-fade",
       eyes: "Warm brown",
@@ -167,8 +167,8 @@ import { useState, useEffect } from "react";
       category: "Male Lead",
       archetype: "The Ordinary Man in Extraordinary Trouble",
       nationality: "Australian",
-      age: "35–48",
-      build: "Average build. The kind of person you'd forget in a crowd — intentionally.",
+      age: "35â48",
+      build: "Average build. The kind of person you'd forget in a crowd â intentionally.",
       hair: "Light brown, slightly unkempt",
       eyes: "Blue-grey, worried",
       voice: "Middle-register Australian. Goes higher under stress.",
@@ -186,7 +186,7 @@ import { useState, useEffect } from "react";
       gradient: "from-slate-700/30 via-zinc-900 to-zinc-950",
       initials: "DC",
     },
-    // ── FEMALE LEADS ─────────────────────────────────────────────────────────
+    // ââ FEMALE LEADS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "elena-rostova",
       name: "Elena Rostova",
@@ -194,15 +194,15 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Cold Architect",
       nationality: "Russian-British",
-      age: "28–42",
+      age: "28â42",
       build: "Tall, composed. 5'10\"",
-      hair: "Platinum blonde, severe — always intentional",
+      hair: "Platinum blonde, severe â always intentional",
       eyes: "Ice blue",
       voice: "Low, precise. Eastern European undertone. Words chosen like weapons.",
       mannerisms: "Doesn't touch people unless it means something. Looks at the room before she looks at you.",
       emotionalRange: "Controlled threat, clinical detachment, rare and devastating vulnerability, contempt worn like armour",
       technicalNotes: "Exceptional in high-contrast architectural lighting. Works in both wide and extreme close-up.",
-      signatureScenes: ["The board meeting takeover", "When she finally smiles — and it's worse", "The moment she decides"],
+      signatureScenes: ["The board meeting takeover", "When she finally smiles â and it's worse", "The moment she decides"],
       genres: ["Thriller", "Crime", "Prestige Drama"],
       hook: "Precise, composed, and quietly devastating. The most dangerous person in any room.",
       whyCast: "Exceptional for villain-adjacent leads, power dynamics, and psychological tension. Flagship-tier screen presence.",
@@ -220,9 +220,9 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Warm Weapon",
       nationality: "Spanish-Australian",
-      age: "25–38",
+      age: "25â38",
       build: "Graceful, expressive. 5'7\"",
-      hair: "Dark, wavy — often loose",
+      hair: "Dark, wavy â often loose",
       eyes: "Warm brown",
       voice: "Rich and musical. Laughter that sounds real. Crying that destroys you.",
       mannerisms: "Talks with her hands. Gravitates physically toward people she's reading.",
@@ -246,7 +246,7 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Quiet Storm",
       nationality: "French-Senegalese",
-      age: "28–40",
+      age: "28â40",
       build: "Slender, composed. 5'8\"",
       hair: "Natural, cropped or wrapped",
       eyes: "Deep brown, watchful",
@@ -272,14 +272,14 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Precise One",
       nationality: "Japanese",
-      age: "25–38",
+      age: "25â38",
       build: "Slim, exact. 5'5\"",
-      hair: "Black, straight — cut with geometric precision",
+      hair: "Black, straight â cut with geometric precision",
       eyes: "Dark, very focused",
       voice: "Quiet but resonant. Syllables placed deliberately.",
       mannerisms: "Tilts her head when processing. Doesn't repeat herself.",
       emotionalRange: "Intellectual intensity, restrained grief, dry precision, the rare full-disclosure moment",
-      technicalNotes: "Works best in clean, minimalist lighting. Strong in static locked shots — movement is purposeful.",
+      technicalNotes: "Works best in clean, minimalist lighting. Strong in static locked shots â movement is purposeful.",
       signatureScenes: ["The diagnosis/reveal delivered without emotion", "Two people in a room who both know too much", "The walk away"],
       genres: ["Noir", "Thriller", "Drama"],
       hook: "Controlled, exact, and quietly magnetic. Every gesture is intentional.",
@@ -298,10 +298,10 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Neighbourhood Oracle",
       nationality: "Australian",
-      age: "55–70",
+      age: "55â70",
       build: "Stout, unhurried. Occupies space without apology.",
       hair: "Silver, often pinned or loosely tied",
-      eyes: "Sharp hazel — doesn't miss a thing",
+      eyes: "Sharp hazel â doesn't miss a thing",
       voice: "Warm Australian. A laugh that comes from the gut. Cutting when she chooses.",
       mannerisms: "Offers food when she's uncomfortable. Asks questions she already knows the answer to.",
       emotionalRange: "Wry wisdom, fierce love, sudden sadness, barely-contained suspicion",
@@ -324,7 +324,7 @@ import { useState, useEffect } from "react";
       category: "Female Lead",
       archetype: "The Perfect Surface",
       nationality: "Australian",
-      age: "35–48",
+      age: "35â48",
       build: "Immaculate posture. 5'8\"",
       hair: "Honey blonde, styled to look effortless",
       eyes: "Green, unreadable",
@@ -343,7 +343,7 @@ import { useState, useEffect } from "react";
       gradient: "from-teal-900/30 via-zinc-900 to-zinc-950",
       initials: "CV",
     },
-    // ── CHARACTER ACTORS ──────────────────────────────────────────────────────
+    // ââ CHARACTER ACTORS ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "viktor-vale",
       name: "Viktor Vale",
@@ -351,7 +351,7 @@ import { useState, useEffect } from "react";
       category: "Character Actor",
       archetype: "The Patriarch Who Owns the Room",
       nationality: "Serbian-Australian",
-      age: "50–65",
+      age: "50â65",
       build: "Heavy-set, deliberate. Commands physical presence without standing.",
       hair: "Silver-grey, swept back",
       eyes: "Dark brown, appraising",
@@ -377,7 +377,7 @@ import { useState, useEffect } from "react";
       category: "Character Actor",
       archetype: "The Charismatic Patriarch",
       nationality: "Lebanese-Australian",
-      age: "50–65",
+      age: "50â65",
       build: "Broad, vital. Fills a doorframe with warmth.",
       hair: "Black shot with grey, full and expressive",
       eyes: "Warm dark brown",
@@ -403,10 +403,10 @@ import { useState, useEffect } from "react";
       category: "Character Actor",
       archetype: "The Final Word",
       nationality: "Ukrainian-Australian",
-      age: "40–55",
+      age: "40â55",
       build: "Imposing, broad. Every inch suggesting consequence.",
       hair: "Shaved, or very close cropped",
-      eyes: "Pale blue — cold",
+      eyes: "Pale blue â cold",
       voice: "Low, sparse. The accent appears when it needs to.",
       mannerisms: "Economy of movement. Doesn't gesture. Presence does the work.",
       emotionalRange: "Silent menace, professional distance, a loyalty earned over decades, one moment of something human",
@@ -429,7 +429,7 @@ import { useState, useEffect } from "react";
       category: "Character Actor",
       archetype: "The Smooth First Contact",
       nationality: "Ukrainian-Australian",
-      age: "35–48",
+      age: "35â48",
       build: "Medium build. Moves easily; doesn't loom.",
       hair: "Light brown, casually maintained",
       eyes: "Grey, reading you",
@@ -448,7 +448,7 @@ import { useState, useEffect } from "react";
       gradient: "from-slate-600/30 via-zinc-900 to-zinc-950",
       initials: "LS",
     },
-    // ── TWIN UNIT ─────────────────────────────────────────────────────────────
+    // ââ TWIN UNIT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "gallagher-twins",
       name: "The Gallagher Twins",
@@ -456,13 +456,13 @@ import { useState, useEffect } from "react";
       category: "Twin Unit",
       archetype: "The Mirror Problem",
       nationality: "Irish-Australian",
-      age: "25–35",
+      age: "25â35",
       build: "Same frame. Different energy entirely.",
-      hair: "Auburn, but styled differently — that's the first clue",
-      eyes: "Hazel — the tell is in what they do with them",
+      hair: "Auburn, but styled differently â that's the first clue",
+      eyes: "Hazel â the tell is in what they do with them",
       voice: "Nearly identical accent. Different rhythm; one talks to fill space, one talks to close exits.",
       mannerisms: "One mirrors people unconsciously. The other does it deliberately.",
-      emotionalRange: "Identical faces carrying completely opposite souls — the dramatic engine is the gap between them",
+      emotionalRange: "Identical faces carrying completely opposite souls â the dramatic engine is the gap between them",
       technicalNotes: "Require split framing or precise staging. Coverage must be planned for matching; wardrobe codes them.",
       signatureScenes: ["The scene where you're not sure which one it is", "The revelation that there are two", "The confrontation between them"],
       genres: ["Thriller", "Crime", "Dark Comedy"],
@@ -480,7 +480,7 @@ import { useState, useEffect } from "react";
   type Actor = typeof SIGNATURE_CAST[number];
   type LicenseType = "creator" | "commercial" | "episodic";
 
-  // ─── Plan → tier access (mirrors server) ─────────────────────────────────
+  // âââ Plan â tier access (mirrors server) âââââââââââââââââââââââââââââââââ
   const PLAN_CAST_ACCESS: Record<string, string[]> = {
     none:        [],
     indie:       ["standard"],
@@ -496,12 +496,12 @@ import { useState, useEffect } from "react";
   const GENRES = ["All", "Crime Thriller", "Prestige Drama", "Romance", "Action", "Noir", "Dark Comedy", "Thriller"];
 
   const LICENSE_OPTIONS: { type: LicenseType; label: string; description: string }[] = [
-    { type: "creator",    label: "Creator License",    description: "One public creator release — indie film, YouTube, festival submission, or social release." },
+    { type: "creator",    label: "Creator License",    description: "One public creator release â indie film, YouTube, festival submission, or social release." },
     { type: "commercial", label: "Commercial License",  description: "Ads, branded content, client campaigns, or any monetized commercial project." },
     { type: "episodic",   label: "Episodic License",    description: "Recurring use across multiple episodes or installments of the same series." },
   ];
 
-  // ─── Accent colour helpers ─────────────────────────────────────────────────
+  // âââ Accent colour helpers âââââââââââââââââââââââââââââââââââââââââââââââââ
   const ACCENT_CLASSES: Record<string, { ring: string; bg: string; text: string; border: string }> = {
     amber:  { ring: "ring-amber-500/40",  bg: "bg-amber-500/15",  text: "text-amber-300",  border: "border-amber-500/30" },
     emerald:{ ring: "ring-emerald-500/40",bg: "bg-emerald-500/15",text: "text-emerald-300",border: "border-emerald-500/30" },
@@ -537,7 +537,7 @@ import { useState, useEffect } from "react";
     return <Badge className="bg-zinc-700/50 text-zinc-400 border border-zinc-600/30 text-xs">Standard</Badge>;
   }
 
-  // Actor portrait — photorealistic with gradient fallback
+  // Actor portrait â photorealistic with gradient fallback
   function ActorPortrait({ actor, size = "card", variant = "master" }: { actor: Actor; size?: "card" | "dialog"; variant?: "master" | "neutral" | "warm" | "intense" }) {
     const accent = getAccent(actor.accentColor);
     const isCard = size === "card";
@@ -576,14 +576,14 @@ import { useState, useEffect } from "react";
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [unlockSuccess, setUnlockSuccess] = useState<string | null>(null);
 
-    // ── Real server entitlement check ────────────────────────────────────────
+    // ââ Real server entitlement check ââââââââââââââââââââââââââââââââââââââââ
     const actorsQuery = trpc.signatureCast.listActors.useQuery(undefined, {
       retry: false,
       staleTime: 60_000,
     });
     const serverEntitlements = actorsQuery.data ?? [];
 
-    // ── Stripe checkout mutation ──────────────────────────────────────────────
+    // ââ Stripe checkout mutation ââââââââââââââââââââââââââââââââââââââââââââââ
     const checkoutMutation = trpc.signatureCast.createUnlockCheckout.useMutation({
       onSuccess: (data) => {
         if (data.url) window.location.href = data.url;
@@ -594,7 +594,7 @@ import { useState, useEffect } from "react";
       },
     });
 
-    // ── Handle Stripe return URL ──────────────────────────────────────────────
+    // ââ Handle Stripe return URL ââââââââââââââââââââââââââââââââââââââââââââââ
     useEffect(() => {
       const params = new URLSearchParams(searchString);
       if (params.get("unlock_success") === "1") {
@@ -654,7 +654,7 @@ import { useState, useEffect } from "react";
 
     return (
       <div className="min-h-screen bg-zinc-950 text-white">
-        {/* ── Unlock success banner ──────────────────────────────────────────── */}
+        {/* ââ Unlock success banner ââââââââââââââââââââââââââââââââââââââââââââ */}
         {unlockSuccess && (
           <div className="bg-green-900/40 border-b border-green-500/30 px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-green-300 text-sm">
@@ -675,7 +675,7 @@ import { useState, useEffect } from "react";
                   <h1 className="text-xl font-bold gradient-text-gold">Virelle Signature Cast</h1>
                 </div>
                 <p className="text-sm text-zinc-500">
-                  {SIGNATURE_CAST.length} premium digital actors · Continuity-tuned · Promo-ready
+                  {SIGNATURE_CAST.length} premium digital actors Â· Continuity-tuned Â· Promo-ready
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -698,7 +698,7 @@ import { useState, useEffect } from "react";
               <div className="mb-3 flex items-center gap-2 text-xs">
                 {actorsQuery.isLoading ? (
                   <span className="flex items-center gap-1.5 text-zinc-600">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />Loading your access level…
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />Loading your access levelâ¦
                   </span>
                 ) : planAccess.length > 0 ? (
                   <span className="flex items-center gap-1.5 text-green-400">
@@ -720,7 +720,7 @@ import { useState, useEffect } from "react";
             <div className="flex flex-wrap gap-3">
               <div className="relative flex-1 min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                <Input placeholder="Search by name, archetype, nationality, or vibe…"
+                <Input placeholder="Search by name, archetype, nationality, or vibeâ¦"
                   value={search} onChange={(e) => setSearch(e.target.value)}
                   className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-amber-500/50" />
               </div>
@@ -811,7 +811,7 @@ import { useState, useEffect } from "react";
                     <div className="p-4 space-y-2">
                       <div>
                         <h3 className="font-semibold text-sm">{actor.name}</h3>
-                        <p className="text-xs text-zinc-500">{actor.nationality} · {actor.age}</p>
+                        <p className="text-xs text-zinc-500">{actor.nationality} Â· {actor.age}</p>
                       </div>
                       <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
                       <div className="flex flex-wrap gap-1">
@@ -826,9 +826,9 @@ import { useState, useEffect } from "react";
                             Cast Now
                           </Button>
                         ) : (
-                          <Button size="sm" className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold h-7 border border-white/10"
+                          <Button size="sm" className="flex-1 bg-zinc-800 hover:bg-amber-500/10 text-white text-xs font-semibold h-7 border border-white/10"
                             onClick={(e) => { e.stopPropagation(); setUnlockActor(actor); setSelectedLicense("creator"); }}>
-                            <Lock className="w-3 h-3 mr-1" />Unlock — A${basePrice}
+                            <Lock className="w-3 h-3 mr-1" />Unlock â A${basePrice}
                           </Button>
                         )}
                         <Button size="sm" variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2"
@@ -855,7 +855,7 @@ import { useState, useEffect } from "react";
           )}
         </div>
 
-        {/* ── UNLOCK MODAL ─────────────────────────────────────────────────────── */}
+        {/* ââ UNLOCK MODAL âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         {unlockActor && (
           <Dialog open={!!unlockActor} onOpenChange={() => { setUnlockActor(null); setIsCheckingOut(false); }}>
             <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg">
@@ -914,7 +914,7 @@ import { useState, useEffect } from "react";
                           </div>
                           <p className="text-xs text-zinc-500">{opt.description}</p>
                           {opt.type === "commercial" && <p className="text-xs text-zinc-600 mt-1">Base A${BASE_PRICE[unlockActor.tier]} + A$79 commercial add-on</p>}
-                          {opt.type === "episodic" && <p className="text-xs text-zinc-600 mt-1">4× single-project price</p>}
+                          {opt.type === "episodic" && <p className="text-xs text-zinc-600 mt-1">4Ã single-project price</p>}
                         </button>
                       );
                     })}
@@ -931,7 +931,7 @@ import { useState, useEffect } from "react";
                     <CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />Sensual, romantic, and mature dramatic scenes (prestige standard)
                   </div>
                   <div className="flex items-start gap-2 text-xs text-zinc-500">
-                    <XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />Pornography, explicit sex acts, adult-industry use — strictly prohibited
+                    <XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />Pornography, explicit sex acts, adult-industry use â strictly prohibited
                   </div>
                 </div>
 
@@ -945,7 +945,7 @@ import { useState, useEffect } from "react";
                     <Button className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
                       onClick={handleUnlockCheckout} disabled={isCheckingOut}>
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      {isCheckingOut ? "Opening checkout…" : `License for Project — A$${getPrice(unlockActor.tier, selectedLicense)}`}
+                      {isCheckingOut ? "Opening checkoutâ¦" : `License for Project â A$${getPrice(unlockActor.tier, selectedLicense)}`}
                     </Button>
                     <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5"
                       onClick={() => { setUnlockActor(null); setIsCheckingOut(false); }}>
@@ -961,12 +961,12 @@ import { useState, useEffect } from "react";
           </Dialog>
         )}
 
-        {/* ── ACTOR PROFILE DIALOG — Hollywood Casting Card ───────────────── */}
+        {/* ââ ACTOR PROFILE DIALOG â Hollywood Casting Card âââââââââââââââââ */}
         {selectedActor && (
           <Dialog open={!!selectedActor} onOpenChange={() => setSelectedActor(null)}>
             <DialogContent className="bg-zinc-950 border border-white/8 text-white max-w-4xl max-h-[95vh] overflow-y-auto p-0">
 
-              {/* ── Hero Section: Portrait + Identity Banner ── */}
+              {/* ââ Hero Section: Portrait + Identity Banner ââ */}
               <div className="relative">
                 {/* Hero Portrait */}
                 <div className="aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden bg-zinc-900">
@@ -1004,15 +1004,15 @@ import { useState, useEffect } from "react";
                 </div>
               </div>
 
-              {/* ── Body Content ── */}
+              {/* ââ Body Content ââ */}
               <div className="px-6 pb-8 space-y-7 mt-2">
 
-                {/* ── HOOK / Logline ── */}
+                {/* ââ HOOK / Logline ââ */}
                 <p className={`text-lg text-zinc-100 leading-relaxed font-light border-l-2 ${selectedAccent?.text ? "border-current" : "border-amber-500"} pl-4 ${selectedAccent?.text ?? ""}`}>
                   {selectedActor.hook}
                 </p>
 
-                {/* ── PHYSICAL IDENTITY ── */}
+                {/* ââ PHYSICAL IDENTITY ââ */}
                 <div>
                   <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Physical Identity</h3>
                   <div className={`rounded-xl border ${selectedAccent?.border ?? "border-white/8"} ${selectedAccent?.bg ?? "bg-white/3"} p-5 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4`}>
@@ -1031,7 +1031,7 @@ import { useState, useEffect } from "react";
                   </div>
                 </div>
 
-                {/* ── SCREEN PRESENCE / PERFORMANCE PROFILE ── */}
+                {/* ââ SCREEN PRESENCE / PERFORMANCE PROFILE ââ */}
                 <div>
                   <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Screen Presence</h3>
                   <div className="space-y-3">
@@ -1068,14 +1068,14 @@ import { useState, useEffect } from "react";
                   </div>
                 </div>
 
-                {/* ── SIGNATURE SCENES ── */}
+                {/* ââ SIGNATURE SCENES ââ */}
                 {selectedActor.signatureScenes?.length > 0 && (
                   <div>
                     <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Signature Scenes</h3>
                     <div className="space-y-2">
                       {(selectedActor.signatureScenes as string[]).map((scene: string) => (
                         <div key={scene} className="flex items-start gap-3 rounded-lg bg-zinc-900/40 border border-white/5 px-4 py-2.5">
-                          <span className={`text-lg ${selectedAccent?.text ?? "text-amber-400"} leading-none mt-0.5`}>›</span>
+                          <span className={`text-lg ${selectedAccent?.text ?? "text-amber-400"} leading-none mt-0.5`}>âº</span>
                           <p className="text-sm text-zinc-300">{scene}</p>
                         </div>
                       ))}
@@ -1083,7 +1083,7 @@ import { useState, useEffect } from "react";
                   </div>
                 )}
 
-                {/* ── GENRES + BEST FOR ── */}
+                {/* ââ GENRES + BEST FOR ââ */}
                 <div>
                   <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Genres & Best Used For</h3>
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -1098,7 +1098,7 @@ import { useState, useEffect } from "react";
                   </div>
                 </div>
 
-                {/* ── CHEMISTRY / PAIRINGS ── */}
+                {/* ââ CHEMISTRY / PAIRINGS ââ */}
                 {selectedActor.chemistry?.length > 0 && (
                   <div>
                     <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Casting Chemistry</h3>
@@ -1124,7 +1124,7 @@ import { useState, useEffect } from "react";
                   </div>
                 )}
 
-                {/* ── IDENTITY CONSISTENCY NOTE ── */}
+                {/* ââ IDENTITY CONSISTENCY NOTE ââ */}
                 <div className={`rounded-xl border ${selectedAccent?.border ?? "border-amber-500/20"} ${selectedAccent?.bg ?? "bg-amber-500/5"} p-4`}>
                   <div className="flex items-center gap-2 mb-2">
                     <Star className={`w-4 h-4 ${selectedAccent?.text ?? "text-amber-400"}`} />
@@ -1132,12 +1132,12 @@ import { useState, useEffect } from "react";
                   </div>
                   <p className="text-sm text-zinc-400 leading-relaxed">
                     <span className="text-zinc-200 font-medium">{selectedActor.name}</span> maintains a persistent photorealistic identity across every production.
-                    Character names, roles, and costumes may change — the actor's face, build, and physical signature remain locked.
+                    Character names, roles, and costumes may change â the actor's face, build, and physical signature remain locked.
                     This enables coherent multi-scene and series-level casting with no continuity drift.
                   </p>
                 </div>
 
-                {/* ── SUPPORTING PORTRAIT GALLERY ── */}
+                {/* ââ SUPPORTING PORTRAIT GALLERY ââ */}
                 {selectedActor.tier === "flagship" && (
                   <div>
                     <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Expression Portfolio</h3>
@@ -1147,7 +1147,7 @@ import { useState, useEffect } from "react";
                           <div className="aspect-[3/4] rounded-lg overflow-hidden bg-zinc-900 border border-white/5">
                             <img
                               src={`/portraits/${selectedActor.id}/${variant}.png`}
-                              alt={`${selectedActor.name} — ${variant}`}
+                              alt={`${selectedActor.name} â ${variant}`}
                               className="w-full h-full object-cover object-top"
                               onError={(e) => { (e.target as HTMLImageElement).parentElement!.classList.add('hidden'); }}
                             />
@@ -1159,7 +1159,7 @@ import { useState, useEffect } from "react";
                   </div>
                 )}
 
-                {/* ── LICENSING / ACCESS ── */}
+                {/* ââ LICENSING / ACCESS ââ */}
                 <div>
                   <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Access & Licensing</h3>
                   <div className="rounded-xl border border-white/8 bg-zinc-900/50 overflow-hidden">
@@ -1173,12 +1173,12 @@ import { useState, useEffect } from "react";
                       ) : getEntitlementState(selectedActor) === "unlocked" ? (
                         <div className="flex items-center gap-2 text-amber-400">
                           <Star className="w-4 h-4 shrink-0" />
-                          <p className="text-sm font-medium">Individually unlocked — ready to cast</p>
+                          <p className="text-sm font-medium">Individually unlocked â ready to cast</p>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 text-zinc-400">
                           <Lock className="w-4 h-4 shrink-0" />
-                          <p className="text-sm">Requires unlock · from <span className="text-white font-semibold">A${BASE_PRICE[selectedActor.tier]}</span></p>
+                          <p className="text-sm">Requires unlock Â· from <span className="text-white font-semibold">A${BASE_PRICE[selectedActor.tier]}</span></p>
                         </div>
                       )}
                     </div>
@@ -1207,7 +1207,7 @@ import { useState, useEffect } from "react";
                   </div>
                 </div>
 
-                {/* ── CTA BUTTONS ── */}
+                {/* ââ CTA BUTTONS ââ */}
                 <div className="flex gap-3 pt-1">
                   {getEntitlementState(selectedActor) === "plan_included" || getEntitlementState(selectedActor) === "unlocked" ? (
                     <Button className={`flex-1 ${selectedAccent?.text === "text-amber-400" || !selectedAccent ? "bg-amber-500 hover:bg-amber-400 text-black" : "bg-white hover:bg-zinc-100 text-black"} font-semibold`}
@@ -1218,7 +1218,7 @@ import { useState, useEffect } from "react";
                     <Button className="flex-1 bg-[#D4AF37] hover:bg-[#b8960c] text-black font-semibold"
                       onClick={() => { setUnlockActor(selectedActor); setSelectedActor(null); setSelectedLicense("creator"); }}>
                       <ShoppingCart className="mr-2 w-4 h-4" />
-                      Unlock Actor — from A${BASE_PRICE[selectedActor.tier]}
+                      Unlock Actor â from A${BASE_PRICE[selectedActor.tier]}
                     </Button>
                   )}
                   <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 gap-2"

@@ -1,7 +1,7 @@
-// v6.68 Phase 5 — BYOK Provider Control Center.
+// v6.68 Phase 5 â BYOK Provider Control Center.
 // Lets users see which providers they've configured, validate keys, and pick
 // their preferred video / LLM provider plus how aggressively to fall back to
-// platform credits. The page never displays raw key strings — only masked
+// platform credits. The page never displays raw key strings â only masked
 // "configured / not configured / valid / invalid" status from the server.
 
 import { useEffect, useState } from "react";
@@ -21,17 +21,17 @@ const VIDEO_PROVIDERS = [
 const LLM_PROVIDERS = ["openai", "anthropic", "google", "venice"] as const;
 
 const ALL_PROVIDERS: { id: string; label: string; capability: string; keyUrl?: string; required?: boolean }[] = [
-  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice", keyUrl: "https://platform.openai.com/api-keys" },
+  { id: "openai", label: "OpenAI", capability: "LLM â¢ image â¢ video â¢ voice", keyUrl: "https://platform.openai.com/api-keys" },
   { id: "anthropic", label: "Anthropic Claude", capability: "LLM", keyUrl: "https://console.anthropic.com/settings/keys" },
-  { id: "google", label: "Google AI Studio", capability: "LLM • Veo 3 video", keyUrl: "https://aistudio.google.com/apikey" },
+  { id: "google", label: "Google AI Studio", capability: "LLM â¢ Veo 3 video", keyUrl: "https://aistudio.google.com/apikey" },
   { id: "venice", label: "Venice AI", capability: "LLM (privacy-focused)", keyUrl: "https://venice.ai/settings/api" },
   { id: "runway", label: "Runway", capability: "Video (premium quality)", keyUrl: "https://app.runwayml.com/settings" },
-  { id: "replicate", label: "Replicate", capability: "Video • image", keyUrl: "https://replicate.com/account/api-tokens" },
-  { id: "fal", label: "fal.ai", capability: "Video • image (cheapest, recommended)", keyUrl: "https://fal.ai/dashboard/keys" },
+  { id: "replicate", label: "Replicate", capability: "Video â¢ image", keyUrl: "https://replicate.com/account/api-tokens" },
+  { id: "fal", label: "fal.ai", capability: "Video â¢ image (cheapest, recommended)", keyUrl: "https://fal.ai/dashboard/keys" },
   { id: "luma", label: "Luma Dream Machine", capability: "Video", keyUrl: "https://lumalabs.ai/dream-machine/api" },
   { id: "byteplus", label: "BytePlus SeedDance", capability: "Video", keyUrl: "https://console.byteplus.com/" },
-  { id: "huggingface", label: "Hugging Face", capability: "Video • image (free tier)", keyUrl: "https://huggingface.co/settings/tokens" },
-  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX — required for all sound", keyUrl: "https://elevenlabs.io/app/settings/api-keys", required: true },
+  { id: "huggingface", label: "Hugging Face", capability: "Video â¢ image (free tier)", keyUrl: "https://huggingface.co/settings/tokens" },
+  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX â required for all sound", keyUrl: "https://elevenlabs.io/app/settings/api-keys", required: true },
   { id: "suno", label: "Suno", capability: "Music scores", keyUrl: "https://app.suno.ai/account" },
   { id: "did", label: "D-ID", capability: "Auslan sign-language interpreter overlay", keyUrl: "https://studio.d-id.com/account-settings" },
 ];
@@ -47,13 +47,13 @@ export default function BYOKControlCenterPage() {
 
   const [preferredVideo, setPreferredVideo] = useState<string>("");
   const [preferredLlm, setPreferredLlm] = useState<string>("");
-  // v6.69 repair — values match the persisted spec
+  // v6.69 repair â values match the persisted spec
   // (credits_only | byok_only | byok_with_consent | byok_with_auto_fallback).
   type FallbackMode = "credits_only" | "byok_only" | "byok_with_consent" | "byok_with_auto_fallback";
   const [fallbackMode, setFallbackMode] = useState<FallbackMode>("byok_with_consent");
 
   const status: any = statusQ.data ?? {};
-  // v6.69 repair — hydrate the saved fallback mode once it loads.
+  // v6.69 repair â hydrate the saved fallback mode once it loads.
   useEffect(() => {
     const saved = (status?.byokFallbackMode ?? null) as FallbackMode | null;
     if (saved && saved !== fallbackMode) setFallbackMode(saved);
@@ -72,7 +72,7 @@ export default function BYOKControlCenterPage() {
           <p className="text-zinc-400 text-sm mt-1">
             See which AI providers you have configured and choose how Virelle
             generates your scenes. Your keys are never shown back to your
-            browser — only their status.
+            browser â only their status.
           </p>
         </header>
 
@@ -80,7 +80,7 @@ export default function BYOKControlCenterPage() {
           <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">
             Configured providers
           </h2>
-          {statusQ.isLoading && <div className="text-sm text-zinc-500">Loading…</div>}
+          {statusQ.isLoading && <div className="text-sm text-zinc-500">Loadingâ¦</div>}
           <ul className="space-y-2">
             {ALL_PROVIDERS.map((p) => {
               const s = providers[p.id] ?? "not_configured";
@@ -101,7 +101,7 @@ export default function BYOKControlCenterPage() {
                     {s !== "not_configured" && (
                       <button
                         onClick={() => testMut.mutate({ provider: p.id })}
-                        className="text-xs bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded"
+                        className="text-xs bg-zinc-800 hover:bg-amber-500/10 px-2.5 py-1 rounded"
                         disabled={testMut.isPending}
                       >
                         Test
@@ -114,7 +114,7 @@ export default function BYOKControlCenterPage() {
                         rel="noopener noreferrer"
                         className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2 whitespace-nowrap"
                       >
-                        Get key →
+                        Get key â
                       </a>
                     )}
                   </div>
@@ -129,7 +129,7 @@ export default function BYOKControlCenterPage() {
             </div>
           )}
           <p className="mt-4 text-xs text-zinc-500">
-            To add or change a key, open the Settings page → API keys. Keys are
+            To add or change a key, open the Settings page â API keys. Keys are
             stored encrypted at rest and never returned to the browser.
             <strong className="text-zinc-300"> ElevenLabs is required</strong> for all voice and sound generation.
           </p>
@@ -181,7 +181,7 @@ export default function BYOKControlCenterPage() {
             onChange={(e) => setFallbackMode(e.target.value as FallbackMode)}
             className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
           >
-            <option value="byok_only">Use my key only — never fall back</option>
+            <option value="byok_only">Use my key only â never fall back</option>
             <option value="byok_with_consent">
               Try my key first, then ask before using Virelle credits
             </option>
@@ -202,7 +202,7 @@ export default function BYOKControlCenterPage() {
             disabled={updateMut.isPending}
             className="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium disabled:opacity-50"
           >
-            {updateMut.isPending ? "Saving…" : "Save preferences"}
+            {updateMut.isPending ? "Savingâ¦" : "Save preferences"}
           </button>
           {updateMut.isSuccess && (
             <div className="text-xs text-emerald-300 mt-2">Preferences saved.</div>
