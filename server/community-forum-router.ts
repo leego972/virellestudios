@@ -103,7 +103,7 @@ import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
           const posts = Array.isArray(rows[0]) ? rows[0] : rows;
           return { posts };
         } catch (e) {
-          logger.error("forum listPosts error:", e);
+          logger.error("forum listPosts error:", { err: String(e) });
           return { posts: [] };
         }
       }),
