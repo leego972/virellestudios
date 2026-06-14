@@ -185,7 +185,7 @@ export default function BillingSuccess() {
         {!mobileRedirecting && (
           <p className="text-xs text-zinc-600">
             Redirecting to your dashboard in{" "}
-            <span className="text-zinc-400 font-medium">{countdown}s</span>
+            <span className="text-amber-400/60 font-medium">{countdown}s</span>
             {" "}Ã¢ÂÂ{" "}
             <button
               className="text-amber-500 hover:text-amber-400 underline"

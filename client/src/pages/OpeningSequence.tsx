@@ -22,7 +22,7 @@ import { useState, useEffect, useCallback } from "react";
 
   const ELEMENT_TYPES = [
     { id: "star_wars_crawl", label: "Star Wars Crawl", icon: Star, description: "Iconic scrolling yellow text on black", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20", defaultDuration: 12 },
-    { id: "title_card", label: "Title Card", icon: Type, description: "Full-screen film title display", color: "text-white", bg: "bg-zinc-500/10", border: "border-zinc-500/20", defaultDuration: 5 },
+    { id: "title_card", label: "Title Card", icon: Type, description: "Full-screen film title display", color: "text-white", bg: "bg-zinc-500/10", border: "border-amber-500/20/20", defaultDuration: 5 },
     { id: "chapter_marker", label: "Chapter Marker", icon: LayoutTemplate, description: 'PART I ÃÂÃÂ· CHAPTER 3 ÃÂÃÂ· ACT TWO', color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20", defaultDuration: 4 },
     { id: "narrator_vo", label: "Narrator V.O.", icon: Mic, description: "Opening narrator voiceover script", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20", defaultDuration: 20 },
     { id: "studio_logo", label: "Studio Ident", icon: Building2, description: "Production company logo ident", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", defaultDuration: 4 },

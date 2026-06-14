@@ -201,7 +201,7 @@ export default function BlogArticle() {
           </div>
         )}
 
-        <hr className="border-white/10 mb-8" />
+        <hr className="border-white/10 mb-8 border-amber-500/20" />
 
         {/* Content */}
         <div

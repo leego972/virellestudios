@@ -638,7 +638,7 @@ import { useState } from "react";
             <div className="mt-12 flex flex-wrap gap-6 justify-center text-sm text-zinc-500">
               <span><span className="text-amber-400 font-semibold">{flagshipActors.length}</span> Flagship Stars</span>
               <span><span className="text-purple-400 font-semibold">{premiumActors.length}</span> Premium Cast</span>
-              <span><span className="text-zinc-400 font-semibold">{standardActors.length}</span> Standard Cast</span>
+              <span><span className="text-amber-400/60 font-semibold">{standardActors.length}</span> Standard Cast</span>
               <span><span className="text-white font-semibold">+</span> Original characters</span>
             </div>
           </div>
