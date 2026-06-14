@@ -20,7 +20,7 @@ import { useState } from "react";
   } from "lucide-react";
   import { SubscriptionGate } from "@/components/SubscriptionGate";
 
-  // ─── Constants ──────────────────────────────────────────────────────────────
+  // âââ Constants ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const CUE_TYPES = [
     { id: "underscore",    label: "Underscore",    color: "text-blue-400",   bg: "bg-blue-500/10",   dot: "#60a5fa" },
@@ -35,19 +35,19 @@ import { useState } from "react";
   const FOLEY_STATUSES = ["pending","approved","recorded","mixed"] as const;
   const CUEQ_STATUSES  = ["draft","spotting","recording","mixed","final","licensed"] as const;
   const MOODS = ["Tense","Dramatic","Hopeful","Melancholic","Triumphant","Mysterious","Romantic","Comedic","Action","Ambient","Horror","Inspirational"];
-  const TEMPOS = ["Very Slow (< 60 BPM)","Slow (60–80 BPM)","Moderate (80–100 BPM)","Upbeat (100–120 BPM)","Fast (120–140 BPM)","Very Fast (> 140 BPM)"];
+  const TEMPOS = ["Very Slow (< 60 BPM)","Slow (60â80 BPM)","Moderate (80â100 BPM)","Upbeat (100â120 BPM)","Fast (120â140 BPM)","Very Fast (> 140 BPM)"];
   const SYNC_PLATFORMS = [
-    { name: "Artlist",        desc: "Unlimited sync · annual sub",                    url: "https://artlist.io",                   price: "$200–$500/yr",    best: "Online & Social" },
-    { name: "Musicbed",       desc: "Per-licence · premium film catalogue",           url: "https://www.musicbed.com",              price: "$10–$500/track",  best: "Film & Commercial" },
-    { name: "Epidemic Sound", desc: "YouTube/Twitch/podcasts · clear rights",         url: "https://www.epidemicsound.com",         price: "$15–$50/mo",      best: "YouTube & Streaming" },
-    { name: "Soundstripe",    desc: "Unlimited sub · indie film focus",               url: "https://www.soundstripe.com",           price: "$16/mo",          best: "Indie Film" },
-    { name: "Pond5",          desc: "Per-track · large catalogue",                    url: "https://www.pond5.com",                 price: "$10–$2000/track", best: "Feature Film" },
+    { name: "Artlist",        desc: "Unlimited sync Â· annual sub",                    url: "https://artlist.io",                   price: "$200â$500/yr",    best: "Online & Social" },
+    { name: "Musicbed",       desc: "Per-licence Â· premium film catalogue",           url: "https://www.musicbed.com",              price: "$10â$500/track",  best: "Film & Commercial" },
+    { name: "Epidemic Sound", desc: "YouTube/Twitch/podcasts Â· clear rights",         url: "https://www.epidemicsound.com",         price: "$15â$50/mo",      best: "YouTube & Streaming" },
+    { name: "Soundstripe",    desc: "Unlimited sub Â· indie film focus",               url: "https://www.soundstripe.com",           price: "$16/mo",          best: "Indie Film" },
+    { name: "Pond5",          desc: "Per-track Â· large catalogue",                    url: "https://www.pond5.com",                 price: "$10â$2000/track", best: "Feature Film" },
     { name: "MOJO (Musicbed)","desc": "One-time theatrical / festival / broadcast",   url: "https://www.musicbed.com/mojo",         price: "Custom quote",    best: "Theatrical / Festival" },
-    { name: "PremiumBeat",    desc: "Subscription or per-track · Shutterstock brand", url: "https://www.premiumbeat.com",           price: "$49–$199/track",  best: "Commercial & Brand" },
+    { name: "PremiumBeat",    desc: "Subscription or per-track Â· Shutterstock brand", url: "https://www.premiumbeat.com",           price: "$49â$199/track",  best: "Commercial & Brand" },
     { name: "Motion Array",   desc: "All-in-one assets + music subscription",         url: "https://motionarray.com",               price: "$29/mo",          best: "Motion Design" },
   ];
 
-  // ─── Extras stored in notes JSON ───────────────────────────────────────────
+  // âââ Extras stored in notes JSON âââââââââââââââââââââââââââââââââââââââââââ
   interface CueExtras {
     mood: string; tempoBpm: number; musicalKey: string;
     instrumentation: string; composerNote: string; syncLicense: string;
@@ -64,7 +64,7 @@ import { useState } from "react";
   }
   function serializeCueExtras(e: CueExtras): string { return JSON.stringify(e); }
 
-  // ─── Sub-components ─────────────────────────────────────────────────────────
+  // âââ Sub-components âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   function CueTypeBadge({ type }: { type: string }) {
     const t = CUE_TYPES.find(c => c.id === type) || CUE_TYPES[0];
@@ -87,7 +87,7 @@ import { useState } from "react";
     return <span className={`text-[9px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${colors[status] || "bg-gray-500/15 text-gray-400"}`}>{status}</span>;
   }
 
-  // ─── Main component ──────────────────────────────────────────────────────────
+  // âââ Main component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   function MusicScoreInner() {
     const params   = useParams<{ id: string }>();
@@ -103,13 +103,13 @@ import { useState } from "react";
     const [aiContext,   setAiContext]    = useState("");
     const [extraEdits,  setExtraEdits]  = useState<Record<number, Partial<CueExtras>>>({});
 
-    // ── Queries ──
+    // ââ Queries ââ
     const { data: cues,     isLoading: cuesLoading }  = trpc.filmPost.listScoreCues.useQuery({ projectId }, { enabled: !!projectId });
     const { data: adrList,  isLoading: adrLoading }   = trpc.filmPost.listAdrTracks.useQuery({ projectId }, { enabled: !!projectId });
     const { data: foleyList,isLoading: foleyLoading }  = trpc.filmPost.listFoleyTracks.useQuery({ projectId }, { enabled: !!projectId });
     const { data: mixSettings }                        = trpc.filmPost.getMixSettings.useQuery({ projectId }, { enabled: !!projectId });
 
-    // ── Mutations ──
+    // ââ Mutations ââ
     const createCue  = trpc.filmPost.createScoreCue.useMutation({ onSuccess: () => { toast.success("Cue added"); utils.filmPost.listScoreCues.invalidate(); setEditForm(null); }, onError: e => toast.error(e.message) });
     const updateCue  = trpc.filmPost.updateScoreCue.useMutation({ onSuccess: () => utils.filmPost.listScoreCues.invalidate(), onError: e => toast.error(e.message) });
     const deleteCue  = trpc.filmPost.deleteScoreCue.useMutation({ onSuccess: () => { toast.success("Cue removed"); utils.filmPost.listScoreCues.invalidate(); }, onError: e => toast.error(e.message) });
@@ -147,7 +147,7 @@ import { useState } from "react";
       toast.success("Cue sheet exported as CSV");
     };
 
-    // ── New cue form helpers ──
+    // ââ New cue form helpers ââ
     const openNewCue = () => {
       const num = allCues.length ? `${Math.floor((allCues.length)/3)+1}M${(allCues.length%3)+1}` : "1M1";
       setEditForm({ cueNumber: num, title: "", cueType: "underscore", description: "", volume: 0.7, fadeIn: 0, fadeOut: 2, duration: 60 });
@@ -161,7 +161,7 @@ import { useState } from "react";
     const [mixState, setMixState] = useState({ dialogueBus: 0.9, musicBus: 0.7, effectsBus: 0.75, masterVolume: 0.85, reverbRoom: "medium" as const, compressionRatio: 2, noiseReduction: false, notes: "" });
     // Load mix state from server
     if (mixSettings && !mixState.notes && mixSettings.dialogueBus) {
-      // Already loaded — just show values
+      // Already loaded â just show values
     }
 
     return (
@@ -178,12 +178,12 @@ import { useState } from "react";
                 </div>
                 <div>
                   <div className="font-bold text-sm">Music Score Studio</div>
-                  <div className="text-[10px] text-muted-foreground">{allCues.length} cues · {(totalDuration/60).toFixed(1)} min scored · {(adrList||[]).length} ADR · {(foleyList||[]).length} Foley</div>
+                  <div className="text-[10px] text-muted-foreground">{allCues.length} cues Â· {(totalDuration/60).toFixed(1)} min scored Â· {(adrList||[]).length} ADR Â· {(foleyList||[]).length} Foley</div>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={exportCueSheet} className="gap-2 h-8 text-xs border-border/50"><FileText className="h-3.5 w-3.5" />Cue Sheet CSV</Button>
+              <Button size="sm" variant="outline" onClick={exportCueSheet} className="gap-2 h-8 text-xs border-border/50 hover:border-amber-500/50 hover:text-amber-400"><FileText className="h-3.5 w-3.5" />Cue Sheet CSV</Button>
               <Button size="sm" onClick={openNewCue} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}><Plus className="h-3.5 w-3.5" />Add Cue</Button>
             </div>
           </div>
@@ -213,7 +213,7 @@ import { useState } from "react";
               <TabsTrigger value="sync"    className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><ExternalLink className="h-3.5 w-3.5" />Sync Library</TabsTrigger>
             </TabsList>
 
-            {/* ══ SCORE CUES ══ */}
+            {/* ââ SCORE CUES ââ */}
             <TabsContent value="cues">
               <div className="space-y-3">
                 {/* AI Generate */}
@@ -226,7 +226,7 @@ import { useState } from "react";
                         {genCues.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate Score
                       </Button>
                     </div>
-                    <Input value={aiContext} onChange={e => setAiContext(e.target.value)} placeholder="Additional context for the composer…" className="h-8 text-xs bg-black/30 border-border/40" />
+                    <Input value={aiContext} onChange={e => setAiContext(e.target.value)} placeholder="Additional context for the composerâ¦" className="h-8 text-xs bg-black/30 border-border/40" />
                   </div>
                 </div>
 
@@ -239,15 +239,15 @@ import { useState } from "react";
                       <div className="space-y-1.5 col-span-2"><Label className="text-xs text-muted-foreground">Cue Title</Label><Input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. The Arrival" className="h-8 text-xs bg-black/30" /></div>
                       <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Type</Label><Select value={editForm.cueType} onValueChange={v => setEditForm(p => ({ ...p, cueType: v }))}><SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger><SelectContent>{CUE_TYPES.map(t => <SelectItem key={t.id} value={t.id} className="text-xs"><span className={t.color}>{t.label}</span></SelectItem>)}</SelectContent></Select></div>
                     </div>
-                    <Textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} placeholder="Emotional direction and what the music should achieve in this scene…" className="text-xs bg-black/30 resize-none min-h-[60px] border-border/40" />
+                    <Textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} placeholder="Emotional direction and what the music should achieve in this sceneâ¦" className="text-xs bg-black/30 resize-none min-h-[60px] border-border/40" />
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Mood</Label><Select value={editExtras.mood} onValueChange={v => setEditExtras(p=>({...p,mood:v}))}><SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger><SelectContent>{MOODS.map(m=><SelectItem key={m} value={m} className="text-xs">{m}</SelectItem>)}</SelectContent></Select></div>
                       <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Tempo (BPM)</Label><Input type="number" value={editExtras.tempoBpm} onChange={e => setEditExtras(p=>({...p,tempoBpm:parseInt(e.target.value)||90}))} className="h-8 text-xs bg-black/30 font-mono" /></div>
                       <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Key</Label><Input value={editExtras.musicalKey} onChange={e => setEditExtras(p=>({...p,musicalKey:e.target.value}))} placeholder="C minor" className="h-8 text-xs bg-black/30" /></div>
                       <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Duration (s)</Label><Input type="number" value={editForm.duration} onChange={e => setEditForm(p=>({...p,duration:parseInt(e.target.value)||60}))} className="h-8 text-xs bg-black/30 font-mono" /></div>
                     </div>
-                    <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Instrumentation</Label><Input value={editExtras.instrumentation} onChange={e => setEditExtras(p=>({...p,instrumentation:e.target.value}))} placeholder="e.g. Full orchestra, strings and piano, solo cello…" className="h-8 text-xs bg-black/30" /></div>
-                    <Textarea value={editExtras.composerNote} onChange={e => setEditExtras(p=>({...p,composerNote:e.target.value}))} placeholder="Composer notes — reference tracks, temp music inspiration, specific techniques…" className="text-xs bg-black/30 resize-none min-h-[60px] border-border/40" />
+                    <div className="space-y-1.5"><Label className="text-xs text-muted-foreground">Instrumentation</Label><Input value={editExtras.instrumentation} onChange={e => setEditExtras(p=>({...p,instrumentation:e.target.value}))} placeholder="e.g. Full orchestra, strings and piano, solo celloâ¦" className="h-8 text-xs bg-black/30" /></div>
+                    <Textarea value={editExtras.composerNote} onChange={e => setEditExtras(p=>({...p,composerNote:e.target.value}))} placeholder="Composer notes â reference tracks, temp music inspiration, specific techniquesâ¦" className="text-xs bg-black/30 resize-none min-h-[60px] border-border/40" />
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="ghost" onClick={() => setEditForm(null)} className="gap-2 text-xs">Cancel</Button>
                       <Button size="sm" onClick={submitCue} disabled={createCue.isPending} className="gap-2 text-xs" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
@@ -265,7 +265,7 @@ import { useState } from "react";
                     <Music className="h-12 w-12 text-violet-400 opacity-30" />
                     <div className="text-center"><p className="text-sm font-semibold">No score cues yet</p><p className="text-xs text-muted-foreground mt-1">Add cues manually or let AI generate a full cue sheet</p></div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={openNewCue} className="gap-2 text-xs border-border/40"><Plus className="h-3.5 w-3.5" />Add Cue</Button>
+                      <Button size="sm" variant="outline" onClick={openNewCue} className="gap-2 text-xs border-border/40 hover:border-amber-500/50 hover:text-amber-400"><Plus className="h-3.5 w-3.5" />Add Cue</Button>
                       <Button size="sm" onClick={() => genCues.mutate({ projectId, style: aiStyle })} disabled={genCues.isPending} className="gap-2 text-xs" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
                         <Sparkles className="h-3.5 w-3.5" />AI Generate
                       </Button>
@@ -284,10 +284,10 @@ import { useState } from "react";
                         <div key={cue.id} className="rounded-xl border overflow-hidden transition-all" style={{ borderColor: isExpanded ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.07)", background: isExpanded ? "rgba(124,58,237,0.04)" : "rgba(255,255,255,0.02)" }}>
                           <div className="grid items-center px-4 py-3 gap-2 cursor-pointer" style={{ gridTemplateColumns: "72px 1fr 150px 120px 80px 32px" }} onClick={() => setExpandedCue(isExpanded ? null : cue.id)}>
                             <span className="text-xs font-mono font-bold text-violet-400">{cue.cueNumber}</span>
-                            <div><p className="text-xs font-semibold truncate">{cue.title}</p><p className="text-[10px] text-muted-foreground truncate">{cue.description?.slice(0,60) || "—"}</p></div>
+                            <div><p className="text-xs font-semibold truncate">{cue.title}</p><p className="text-[10px] text-muted-foreground truncate">{cue.description?.slice(0,60) || "â"}</p></div>
                             <div className="flex flex-col gap-1"><CueTypeBadge type={cue.cueType} /><StatusPill status={ex.cueStatus} /></div>
-                            <div className="text-[10px] text-muted-foreground space-y-0.5"><div>{ex.mood}</div><div className="font-mono">{ex.tempoBpm} BPM · {ex.musicalKey}</div></div>
-                            <div className="text-[10px] font-mono text-muted-foreground">{cue.duration ? `${cue.duration}s` : "—"}</div>
+                            <div className="text-[10px] text-muted-foreground space-y-0.5"><div>{ex.mood}</div><div className="font-mono">{ex.tempoBpm} BPM Â· {ex.musicalKey}</div></div>
+                            <div className="text-[10px] font-mono text-muted-foreground">{cue.duration ? `${cue.duration}s` : "â"}</div>
                             <div className="flex justify-end">{isExpanded ? <ChevronUp className="h-4 w-4 text-violet-400" /> : <ChevronDown className="h-4 w-4 text-muted-foreground/50" />}</div>
                           </div>
                           {isExpanded && (
@@ -298,7 +298,7 @@ import { useState } from "react";
                                 <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Tempo (BPM)</Label><Input type="number" value={ex.tempoBpm} onChange={e => saveExtras(cue, { tempoBpm: parseInt(e.target.value)||90 })} className="h-8 text-xs bg-black/30 font-mono border-border/40" /></div>
                                 <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Musical Key</Label><Input value={ex.musicalKey} onChange={e => saveExtras(cue, { musicalKey: e.target.value })} placeholder="C minor" className="h-8 text-xs bg-black/30 border-border/40" /></div>
                               </div>
-                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Instrumentation</Label><Input value={ex.instrumentation} onChange={e => saveExtras(cue, { instrumentation: e.target.value })} placeholder="Full orchestra · strings · brass · solo oboe…" className="h-8 text-xs bg-black/30 border-border/40" /></div>
+                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Instrumentation</Label><Input value={ex.instrumentation} onChange={e => saveExtras(cue, { instrumentation: e.target.value })} placeholder="Full orchestra Â· strings Â· brass Â· solo oboeâ¦" className="h-8 text-xs bg-black/30 border-border/40" /></div>
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Volume</Label><span className="text-[10px] font-mono text-violet-400">{Math.round((cue.volume||0.7)*100)}%</span></div>
@@ -309,8 +309,8 @@ import { useState } from "react";
                                   <Input type="number" value={cue.duration||""} onChange={e => updateCue.mutate({ id: cue.id, duration: parseFloat(e.target.value)||undefined })} className="h-8 text-xs bg-black/30 font-mono border-border/40" />
                                 </div>
                               </div>
-                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Composer Notes</Label><Textarea value={ex.composerNote} onChange={e => saveExtras(cue, { composerNote: e.target.value })} placeholder="Reference tracks, temp music, specific emotional direction, technical requirements…" className="text-xs bg-black/30 resize-none min-h-[70px] border-violet-500/10" /></div>
-                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sync License Notes</Label><Input value={ex.syncLicense} onChange={e => saveExtras(cue, { syncLicense: e.target.value })} placeholder="Source music title, publisher, licence status, MFN clause…" className="h-8 text-xs bg-black/30 border-border/40" /></div>
+                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Composer Notes</Label><Textarea value={ex.composerNote} onChange={e => saveExtras(cue, { composerNote: e.target.value })} placeholder="Reference tracks, temp music, specific emotional direction, technical requirementsâ¦" className="text-xs bg-black/30 resize-none min-h-[70px] border-violet-500/10" /></div>
+                              <div className="space-y-1.5"><Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sync License Notes</Label><Input value={ex.syncLicense} onChange={e => saveExtras(cue, { syncLicense: e.target.value })} placeholder="Source music title, publisher, licence status, MFN clauseâ¦" className="h-8 text-xs bg-black/30 border-border/40" /></div>
                               <div className="flex justify-end"><button onClick={() => deleteCue.mutate({ id: cue.id })} className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg border border-transparent hover:border-red-500/20 hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all"><Trash2 className="h-3.5 w-3.5" />Remove Cue</button></div>
                             </div>
                           )}
@@ -322,7 +322,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══ MIX SETTINGS ══ */}
+            {/* ââ MIX SETTINGS ââ */}
             <TabsContent value="mix">
               <div className="max-w-2xl space-y-6">
                 <div className="rounded-xl border px-4 py-3 flex items-center gap-3" style={{ borderColor: "rgba(124,58,237,0.2)", background: "rgba(124,58,237,0.04)" }}>
@@ -351,7 +351,7 @@ import { useState } from "react";
                   <div><p className="text-xs font-semibold">Noise Reduction</p><p className="text-[10px] text-muted-foreground">Apply AI-based noise removal to dialogue tracks</p></div>
                   <Switch checked={mixState.noiseReduction} onCheckedChange={v => setMixState(p=>({...p,noiseReduction:v}))} />
                 </div>
-                <Textarea value={mixState.notes} onChange={e => setMixState(p=>({...p,notes:e.target.value}))} placeholder="Mix supervisor notes — special instructions, reference mix, delivery format…" className="text-xs bg-black/30 resize-none min-h-[80px] border-border/40" />
+                <Textarea value={mixState.notes} onChange={e => setMixState(p=>({...p,notes:e.target.value}))} placeholder="Mix supervisor notes â special instructions, reference mix, delivery formatâ¦" className="text-xs bg-black/30 resize-none min-h-[80px] border-border/40" />
                 <div className="flex gap-3">
                   <Button onClick={() => saveMix.mutate({ projectId, ...mixState })} disabled={saveMix.isPending} className="gap-2" style={{ background: "linear-gradient(135deg,#1d4ed8,#7c3aed)" }}>
                     {saveMix.isPending ? <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> : <Save className="h-4 w-4" />}Save Mix Settings
@@ -363,13 +363,13 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══ ADR ══ */}
+            {/* ââ ADR ââ */}
             <TabsContent value="adr">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div><p className="text-sm font-semibold">ADR / Dialogue Replacement</p><p className="text-xs text-muted-foreground mt-0.5">Automated Dialogue Replacement tracks for post-sync recording</p></div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => genAdr.mutate({ projectId })} disabled={genAdr.isPending} className="gap-2 text-xs border-border/40"><Sparkles className="h-3.5 w-3.5" />{genAdr.isPending ? "Generating…" : "AI Suggest"}</Button>
+                    <Button size="sm" variant="outline" onClick={() => genAdr.mutate({ projectId })} disabled={genAdr.isPending} className="gap-2 text-xs border-border/40"><Sparkles className="h-3.5 w-3.5" />{genAdr.isPending ? "Generatingâ¦" : "AI Suggest"}</Button>
                   </div>
                 </div>
                 {adrLoading ? <div className="h-20 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} /> : (adrList||[]).length === 0 ? (
@@ -385,11 +385,11 @@ import { useState } from "react";
                       <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
                         {(adrList||[]).map((t: any) => (
                           <tr key={t.id} className="hover:bg-white/[0.015]">
-                            <td className="px-3 py-2.5 font-semibold">{t.characterName || "—"}</td>
-                            <td className="px-3 py-2.5 text-muted-foreground max-w-[200px] truncate">{t.dialogueLine || "—"}</td>
+                            <td className="px-3 py-2.5 font-semibold">{t.characterName || "â"}</td>
+                            <td className="px-3 py-2.5 text-muted-foreground max-w-[200px] truncate">{t.dialogueLine || "â"}</td>
                             <td className="px-3 py-2.5"><span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded-full">{t.trackType || "dialogue"}</span></td>
                             <td className="px-3 py-2.5"><StatusPill status={t.status || "pending"} /></td>
-                            <td className="px-3 py-2.5 text-muted-foreground max-w-[150px] truncate">{t.notes || "—"}</td>
+                            <td className="px-3 py-2.5 text-muted-foreground max-w-[150px] truncate">{t.notes || "â"}</td>
                             <td className="px-3 py-2.5"><button onClick={() => deleteAdr.mutate({ id: t.id })} className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all"><Trash2 className="h-3.5 w-3.5" /></button></td>
                           </tr>
                         ))}
@@ -400,12 +400,12 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══ FOLEY ══ */}
+            {/* ââ FOLEY ââ */}
             <TabsContent value="foley">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div><p className="text-sm font-semibold">Foley Track Sheet</p><p className="text-xs text-muted-foreground mt-0.5">Footsteps, cloth, props, impacts, environmental sounds for post-sync recording</p></div>
-                  <Button size="sm" variant="outline" onClick={() => genFoley.mutate({ projectId })} disabled={genFoley.isPending} className="gap-2 text-xs border-border/40"><Sparkles className="h-3.5 w-3.5" />{genFoley.isPending ? "Generating…" : "AI Suggest Foley"}</Button>
+                  <Button size="sm" variant="outline" onClick={() => genFoley.mutate({ projectId })} disabled={genFoley.isPending} className="gap-2 text-xs border-border/40"><Sparkles className="h-3.5 w-3.5" />{genFoley.isPending ? "Generatingâ¦" : "AI Suggest Foley"}</Button>
                 </div>
                 {foleyLoading ? <div className="h-20 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} /> : (foleyList||[]).length === 0 ? (
                   <div className="rounded-xl border-2 border-dashed flex flex-col items-center py-16 gap-3" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
@@ -421,7 +421,7 @@ import { useState } from "react";
                           <div className="flex-1 min-w-0"><p className="text-xs font-semibold truncate">{t.name}</p><span className="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded-full">{t.foleyType}</span></div>
                           <button onClick={() => deleteFoley.mutate({ id: t.id })} className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>
                         </div>
-                        <p className="text-[10px] text-muted-foreground leading-relaxed">{t.description || "—"}</p>
+                        <p className="text-[10px] text-muted-foreground leading-relaxed">{t.description || "â"}</p>
                         <StatusPill status={t.status || "pending"} />
                       </div>
                     ))}
@@ -430,7 +430,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══ SYNC LIBRARY ══ */}
+            {/* ââ SYNC LIBRARY ââ */}
             <TabsContent value="sync">
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground">Recommended sync licensing platforms for independent and theatrical film. Compare pricing models and choose the right partner for your distribution plan.</p>

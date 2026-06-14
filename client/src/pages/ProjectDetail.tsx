@@ -324,13 +324,13 @@ export default function ProjectDetail() {
       utils.project.get.invalidate({ id: projectId });
       utils.scene.listByProject.invalidate({ projectId });
       utils.generation.listJobs.invalidate({ projectId });
-      toast.success("Film generation started! This runs in the background ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ check back in a few minutes.");
+      toast.success("Film generation started! This runs in the background ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in a few minutes.");
     },
     onError: (err) => toast.error(err.message),
   });
 
 
-  // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Generate Full Feature Film (60-90 min) ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+  // ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Generate Full Feature Film (60-90 min) ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
   const [fullFilmDialogOpen, setFullFilmDialogOpen] = React.useState(false);
   const [fullFilmConfig, setFullFilmConfig] = React.useState({
     targetDurationMinutes: project?.duration || 90,
@@ -341,7 +341,7 @@ export default function ProjectDetail() {
   });
   const generateFullFilmMutation = trpc.generation.generateFullFilm.useMutation({
     onSuccess: () => {
-      toast.success("ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¬ Full film generation started! This will take some time ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ you'll be notified when complete.");
+      toast.success("ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ Full film generation started! This will take some time ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ you'll be notified when complete.");
       utils.project.get.invalidate({ id: projectId });
       setFullFilmDialogOpen(false);
     },
@@ -395,7 +395,7 @@ export default function ProjectDetail() {
     onSuccess: (result: any) => {
       utils.scene.listByProject.invalidate({ projectId });
       if (result?.status === "generating") {
-        toast.success("Scene regeneration started ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ check back in 2ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ5 minutes.");
+        toast.success("Scene regeneration started ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in 2ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ5 minutes.");
       } else {
         toast.success("Scene video generation queued.");
       }
@@ -485,11 +485,11 @@ export default function ProjectDetail() {
             <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
               {project.mode === "quick" ? <Zap className="h-3 w-3" /> : <Layers className="h-3 w-3" />}
               <span className="capitalize">{project.mode}</span>
-              {project.rating && <><span>ÃÂÃÂÃÂÃÂ·</span><span>{project.rating}</span></>}
-              {project.genre && <><span>ÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
+              {project.rating && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.rating}</span></>}
+              {project.genre && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
               {editingDuration ? (
                 <span className="flex items-center gap-1">
-                  <span>ÃÂÃÂÃÂÃÂ·</span>
+                  <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                   <input
                     type="number"
                     min={1}
@@ -522,16 +522,16 @@ export default function ProjectDetail() {
                 <>
                   {project.duration && (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to edit duration" onClick={() => { setDurationInput(String(project.duration)); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂ·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   )}
                   {!project.duration && scenes?.length ? (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂ·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   ) : !project.duration ? (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors text-muted-foreground" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂ·</span> Set duration ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> Set duration ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   ) : null}
                 </>
@@ -547,7 +547,7 @@ export default function ProjectDetail() {
             onClick={async () => {
               try {
                 const reviewerName = window.prompt(
-                  "Reviewer name (optional)\n\nFor watermarked screeners ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
+                  "Reviewer name (optional)\n\nFor watermarked screeners ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
                   "",
                 ) || "";
                 const res = await utils.client.project.getShareLink.query({ id: project.id });
@@ -559,7 +559,7 @@ export default function ProjectDetail() {
                 toast.success(
                   reviewerName.trim()
                     ? `Watermarked screener link copied for "${reviewerName.trim()}"`
-                    : "Review link copied ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ paste it to share with producers, friends or collaborators.",
+                    : "Review link copied ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ paste it to share with producers, friends or collaborators.",
                 );
               } catch (e: any) {
                 toast.error(e?.message || "Could not generate share link");
@@ -595,7 +595,7 @@ export default function ProjectDetail() {
                 if (project.status === "completed") {
                   setRegenConfirmOpen(true);
                 } else {
-                  // draft OR failed ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ kick off generation immediately (no confirm needed ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                  // draft OR failed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ kick off generation immediately (no confirm needed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                   // a failed run has no output to overwrite, and a draft has nothing to lose).
                   quickGenMutation.mutate({ projectId: project.id });
                 }
@@ -617,7 +617,7 @@ export default function ProjectDetail() {
       </div>
 
       {/* Generation Progress */}
-      {/* Generation Error Banner ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ surfaces the ACTUAL backend error message instead of a
+      {/* Generation Error Banner ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces the ACTUAL backend error message instead of a
           generic "recharge your API keys" template (which was misleading users who had valid,
           funded API keys: the real failure could be a model error, timeout, image-URL issue,
           provider outage, etc.). The actionable hint now lives below in muted text so users
@@ -628,7 +628,7 @@ export default function ProjectDetail() {
         // Detect the most common failure modes and tailor the guidance.
         // The platform's shared LLM key occasionally hits quota; when this happens the
         // generic message "recharge your API keys" was confusing because the user's OWN
-        // video key (e.g. fal.ai) is fine ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ it's the script-generation step that died.
+        // video key (e.g. fal.ai) is fine ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ it's the script-generation step that died.
         const lower = rawMsg.toLowerCase();
         const isNoVideoKey = lower.startsWith("no_video_key") || lower.includes("no_video_key:");
         const isLLMExhausted = !isNoVideoKey && (lower.includes("llm fallback invoke failed")
@@ -645,22 +645,22 @@ export default function ProjectDetail() {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-red-400 break-words">
                     {isNoVideoKey ? "Add a video-generation API key to continue"
-                      : isLLMExhausted ? "Script generation paused ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI text quota reached"
+                      : isLLMExhausted ? "Script generation paused ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI text quota reached"
                       : isProviderFailed ? "Your video provider rejected every attempt"
                       : "Video generation failed"}
                   </p>
                   {isNoVideoKey ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ add a key once and you can generate as many films as your provider's credits allow.
+                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ add a key once and you can generate as many films as your provider's credits allow.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ API Keys</a> and connect at least one of:
+                        Open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and connect at least one of:
                         <span className="block mt-1.5 ml-2 leading-relaxed">
-                          ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">fal.ai</span> ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ cheapest, ~$0.40/clip (recommended)<br/>
-                          ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Runway</span> ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ best quality, ~$0.05ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ0.10/sec<br/>
-                          ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Hugging Face</span> ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ free tier (300 req/hr)<br/>
-                          ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Luma ÃÂÃÂÃÂÃÂ· Replicate ÃÂÃÂÃÂÃÂ· Google Veo 3</span> ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ alternatives
+                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">fal.ai</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cheapest, ~$0.40/clip (recommended)<br/>
+                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Runway</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ best quality, ~$0.05ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ0.10/sec<br/>
+                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Hugging Face</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ free tier (300 req/hr)<br/>
+                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Luma ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Replicate ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google Veo 3</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ alternatives
                         </span>
                         Once saved, return here and tap <span className="font-medium text-foreground">Re-generate Film</span>.
                       </p>
@@ -668,10 +668,10 @@ export default function ProjectDetail() {
                   ) : isLLMExhausted ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ that's still fine.
+                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ that's still fine.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the shared cap usually clears within the hour.
+                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the shared cap usually clears within the hour.
                       </p>
                     </>
                   ) : isVideoQuota ? (
@@ -685,12 +685,12 @@ export default function ProjectDetail() {
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ API Keys</a>), this is usually a temporary provider issue ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
+                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a>), this is usually a temporary provider issue ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
                       </p>
                     </>
                   )}
 
-                  {/* Inline action buttons ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ always present so the user is never stranded */}
+                  {/* Inline action buttons ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ always present so the user is never stranded */}
                   <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-500/20">
                     <Button
                       size="sm"
@@ -699,7 +699,7 @@ export default function ProjectDetail() {
                       disabled={quickGenMutation.isPending}
                     >
                       {quickGenMutation.isPending ? (
-                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />RetryingÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦</>
+                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />RetryingÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</>
                       ) : (
                         <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Retry Generation</>
                       )}
@@ -707,7 +707,7 @@ export default function ProjectDetail() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-8 border-red-500/40 text-red-300 hover:bg-red-500/10"
+                      className="h-8 border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() => setLocation("/settings")}
                     >
                       Open API Keys
@@ -731,7 +731,7 @@ export default function ProjectDetail() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-7 text-xs border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500 hover:text-red-300 gap-1.5 shrink-0"
+                className="h-7 text-xs border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500 hover:text-red-300 gap-1.5 shrink-0 hover:border-amber-500/50 hover:text-amber-400"
                 onClick={() => {
                   setStopGenConfirmOpen(true);
                 }}
@@ -755,7 +755,7 @@ export default function ProjectDetail() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-amber-500/15 [&>*]:data-[state=active]:border-amber-400/40 [&>*]:data-[state=active]:text-amber-400">
-          {/* Pipeline order: Overview ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Story ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Characters ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Scenes ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Soundtrack ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Trailer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Export ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Tools */}
+          {/* Pipeline order: Overview ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Characters ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Scenes ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Soundtrack ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Trailer ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Export ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tools */}
           <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Clapperboard className="h-3 w-3 hidden sm:inline" />Journey
           </TabsTrigger>
@@ -784,7 +784,7 @@ export default function ProjectDetail() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Journey Tab ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the unified filmmaker pipeline */}
+        {/* Journey Tab ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the unified filmmaker pipeline */}
         <TabsContent value="journey" className="space-y-4">
           <ProjectJourneyNav
             projectId={projectId}
@@ -824,7 +824,7 @@ export default function ProjectDetail() {
                       <Film className="h-10 w-10 text-muted-foreground/30" />
                     </div>
                   )}
-                  {/* Play button overlay ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ show when full film or scene videos exist */}
+                  {/* Play button overlay ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ show when full film or scene videos exist */}
                   {(fullFilmItem || scenePlaylist.length > 0) && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
                       <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
@@ -994,7 +994,7 @@ export default function ProjectDetail() {
                       <div className="flex items-center gap-1 mt-0.5">
                         {attrs.aiGenerated && <Badge variant="secondary" className="text-[10px] px-1 py-0">AI</Badge>}
                         <p className="text-xs text-muted-foreground truncate">
-                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" ÃÂÃÂÃÂÃÂ· ")}
+                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                         </p>
                       </div>
                       <button
@@ -1074,15 +1074,15 @@ export default function ProjectDetail() {
 
                     {scenes && scenes.length > 0 && (
                       <span className="absolute top-2 left-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
-                        {scenes.length} scenes ÃÂÃÂÃÂÃÂ· ~{Math.round(scenes.length * 1.5)} min est.
+                        {scenes.length} scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ~{Math.round(scenes.length * 1.5)} min est.
                       </span>
                     )}                        <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂ· ")}
+                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                       </p>
                       {isFailed && (
-                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ click Retry to regenerate this scene</p>
+                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ click Retry to regenerate this scene</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
@@ -1189,7 +1189,7 @@ export default function ProjectDetail() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{track.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂ· ")}
+                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -1409,7 +1409,7 @@ export default function ProjectDetail() {
                   <div>
                     <p className="text-sm font-medium">Auslan Sign Language Interpreter</p>
                     <p className="text-xs text-muted-foreground">
-                      AI-generated signing interpreter in a circle overlay ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ optional, requires a D-ID API key in your BYOK settings
+                      AI-generated signing interpreter in a circle overlay ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ optional, requires a D-ID API key in your BYOK settings
                     </p>
                   </div>
                   <Switch
@@ -1420,7 +1420,7 @@ export default function ProjectDetail() {
                   />
                 </div>
 
-                {/* Auslan position ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ only shown when Auslan is enabled */}
+                {/* Auslan position ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ only shown when Auslan is enabled */}
                 {(project as any)?.auslanEnabled && (
                   <div className="flex items-center gap-4 pl-1">
                     <Label className="text-xs text-muted-foreground shrink-0">Interpreter position</Label>
@@ -1500,7 +1500,7 @@ export default function ProjectDetail() {
         {/* Tools Tab Content */}
         <TabsContent value="tools" className="space-y-6">
 
-          {/* v6.63 ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Production Spine */}
+          {/* v6.63 ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Production Spine */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="h-px flex-1 bg-border/40" />
@@ -1515,7 +1515,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Schedule & Strip Board</p>
-                    <p className="text-xs text-muted-foreground">Shoot days ÃÂÃÂÃÂÃÂ· scene assignment ÃÂÃÂÃÂÃÂ· ordering</p>
+                    <p className="text-xs text-muted-foreground">Shoot days ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· scene assignment ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ordering</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1548,7 +1548,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Crew & Contacts</p>
-                    <p className="text-xs text-muted-foreground">Department directory ÃÂÃÂÃÂÃÂ· call overrides</p>
+                    <p className="text-xs text-muted-foreground">Department directory ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· call overrides</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1559,7 +1559,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget</p>
-                    <p className="text-xs text-muted-foreground">Estimate vs actual ÃÂÃÂÃÂÃÂ· category tracking</p>
+                    <p className="text-xs text-muted-foreground">Estimate vs actual ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· category tracking</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1570,7 +1570,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Activity Timeline</p>
-                    <p className="text-xs text-muted-foreground">Approvals ÃÂÃÂÃÂÃÂ· changes ÃÂÃÂÃÂÃÂ· audit trail</p>
+                    <p className="text-xs text-muted-foreground">Approvals ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· changes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· audit trail</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1581,7 +1581,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Collaborators</p>
-                    <p className="text-xs text-muted-foreground">Invite ÃÂÃÂÃÂÃÂ· roles ÃÂÃÂÃÂÃÂ· permissions</p>
+                    <p className="text-xs text-muted-foreground">Invite ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· roles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· permissions</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1592,7 +1592,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Approval Chain</p>
-                    <p className="text-xs text-muted-foreground">Cryptographic audit ÃÂÃÂÃÂÃÂ· sha256</p>
+                    <p className="text-xs text-muted-foreground">Cryptographic audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· sha256</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1603,7 +1603,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Import</p>
-                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂ· Final Draft FDX</p>
+                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Final Draft FDX</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1614,7 +1614,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Export</p>
-                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂ· FDX downloads</p>
+                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· FDX downloads</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1625,7 +1625,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Calendar Feed</p>
-                    <p className="text-xs text-muted-foreground">iCal ÃÂÃÂÃÂÃÂ· Google ÃÂÃÂÃÂÃÂ· Apple subscribe</p>
+                    <p className="text-xs text-muted-foreground">iCal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Apple subscribe</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1636,7 +1636,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget Fringes</p>
-                    <p className="text-xs text-muted-foreground">Union ÃÂÃÂÃÂÃÂ· payroll ÃÂÃÂÃÂÃÂ· taxes</p>
+                    <p className="text-xs text-muted-foreground">Union ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· payroll ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· taxes</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1647,7 +1647,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Asset Versions</p>
-                    <p className="text-xs text-muted-foreground">Stack ÃÂÃÂÃÂÃÂ· diff ÃÂÃÂÃÂÃÂ· revert</p>
+                    <p className="text-xs text-muted-foreground">Stack ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· diff ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· revert</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1669,7 +1669,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Daily Production Report</p>
-                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR ÃÂÃÂÃÂÃÂ· signatures</p>
+                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· signatures</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1713,7 +1713,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Director's Pre-Production Panel</p>
-                    <p className="text-xs text-muted-foreground">Vision ÃÂÃÂÃÂÃÂ· Locations ÃÂÃÂÃÂÃÂ· Vehicles ÃÂÃÂÃÂÃÂ· Atmosphere</p>
+                    <p className="text-xs text-muted-foreground">Vision ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Locations ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Vehicles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Atmosphere</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1777,7 +1777,7 @@ export default function ProjectDetail() {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Generate all {scenes?.length || 0} scenes automatically ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ dialogue, cinematics, soundtrack, full assembly
+                    Generate all {scenes?.length || 0} scenes automatically ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ dialogue, cinematics, soundtrack, full assembly
                   </p>
                 </div>
                 <div className="text-xs text-muted-foreground text-right shrink-0">
@@ -1848,7 +1848,7 @@ export default function ProjectDetail() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-amber-400">Director's Cut</p>
-                  <p className="text-xs text-muted-foreground">Timeline editor ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ trim, reorder &amp; retake scenes</p>
+                  <p className="text-xs text-muted-foreground">Timeline editor ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ trim, reorder &amp; retake scenes</p>
                 </div>
               </CardContent>
             </Card>
@@ -1892,7 +1892,7 @@ export default function ProjectDetail() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">Subtitles & Translation</p>
-                  <p className="text-xs text-muted-foreground">130+ languages ÃÂÃÂÃÂÃÂ· AI generation & translation</p>
+                  <p className="text-xs text-muted-foreground">130+ languages ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· AI generation & translation</p>
                 </div>
               </CardContent>
             </Card>
@@ -1903,7 +1903,7 @@ export default function ProjectDetail() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">Film Post-Production</p>
-                  <p className="text-xs text-muted-foreground">ADR ÃÂÃÂÃÂÃÂ· Foley ÃÂÃÂÃÂÃÂ· Score ÃÂÃÂÃÂÃÂ· Mix ÃÂÃÂÃÂÃÂ· SFX library</p>
+                  <p className="text-xs text-muted-foreground">ADR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Foley ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Score ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Mix ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· SFX library</p>
                 </div>
               </CardContent>
             </Card>
@@ -1914,7 +1914,7 @@ export default function ProjectDetail() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">Visual Effects</p>
-                  <p className="text-xs text-muted-foreground">VFX library ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ explosions, weather, magic & more</p>
+                  <p className="text-xs text-muted-foreground">VFX library ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ explosions, weather, magic & more</p>
                 </div>
               </CardContent>
             </Card>
@@ -2023,7 +2023,7 @@ export default function ProjectDetail() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-amber-400">Pro Studio Controls</p>
-                  <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂ· Voice/likeness rights ÃÂÃÂÃÂÃÂ· C2PA provenance ÃÂÃÂÃÂÃÂ· Render economics</p>
+                  <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice/likeness rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA provenance ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
                 </div>
                 <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
               </CardContent>
@@ -2043,7 +2043,7 @@ export default function ProjectDetail() {
                   <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-amber-400">Pro Studio</p>
-                    <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂ· Voice rights ÃÂÃÂÃÂÃÂ· C2PA ÃÂÃÂÃÂÃÂ· Render economics</p>
+                    <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
                   </div>
                   <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
                 </CardContent>
@@ -2053,7 +2053,7 @@ export default function ProjectDetail() {
                   <div className="h-10 w-10 rounded-lg bg-violet-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-violet-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-violet-400">Studio Operations</p>
-                    <p className="text-xs text-muted-foreground">Frame reviews ÃÂÃÂÃÂÃÂ· Color ÃÂÃÂÃÂÃÂ· Versions ÃÂÃÂÃÂÃÂ· Render queue ÃÂÃÂÃÂÃÂ· Deliverables ÃÂÃÂÃÂÃÂ· Clearances ÃÂÃÂÃÂÃÂ· Distribution ÃÂÃÂÃÂÃÂ· Audit ÃÂÃÂÃÂÃÂ· Proxies ÃÂÃÂÃÂÃÂ· Cuts</p>
+                    <p className="text-xs text-muted-foreground">Frame reviews ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Color ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render queue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Deliverables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Clearances ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Distribution ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Proxies ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Cuts</p>
                   </div>
                   <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-[10px]">OPS</Badge>
                 </CardContent>
@@ -2681,10 +2681,10 @@ export default function ProjectDetail() {
             
             <div className="space-y-2">
               {[
-                ['generateDialogue', 'Generate Voice Acting & Dialogue', 'ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂ¸ÃÂÃÂ'],
-                ['generateSoundtrack', 'Generate AI Film Score', 'ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂµ'],
-                ['useCharacterConsistency', 'Character Consistency (LoRA)', 'ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤'],
-                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', 'ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ'],
+                ['generateDialogue', 'Generate Voice Acting & Dialogue', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ'],
+                ['generateSoundtrack', 'Generate AI Film Score', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµ'],
+                ['useCharacterConsistency', 'Character Consistency (LoRA)', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤'],
+                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ'],
               ].map(([key, label, emoji]) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -2699,7 +2699,7 @@ export default function ProjectDetail() {
             </div>
             
             <div className="flex gap-2 pt-2">
-              <Button variant="outline" size="sm" className="flex-1" onClick={() => setFullFilmDialogOpen(false)}>
+              <Button variant="outline" size="sm" className="flex-1 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setFullFilmDialogOpen(false)}>
                 Cancel
               </Button>
               <Button
@@ -2718,8 +2718,8 @@ export default function ProjectDetail() {
           </div>
         </DialogContent>
       </Dialog>
-      {/* Professional Media Player ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ scene preview */}
-      {/* Professional Media Player ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ scene preview */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
       {activeVideoMovie && !showFullFilm && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2750,7 +2750,7 @@ export default function ProjectDetail() {
         </ErrorBoundary>
       )}
 
-      {/* Professional Media Player ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ full stitched film */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ full stitched film */}
       {showFullFilm && fullFilmItem && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2834,7 +2834,7 @@ export default function ProjectDetail() {
     </div>
   );
 }
-// ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Story Editor Component ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story Editor Component ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
 function StoryEditor({ project, updateMutation }: { project: any; updateMutation: any }) {
   const [mainPlot, setMainPlot] = useState(project.mainPlot || "");
   const [sidePlots, setSidePlots] = useState(project.sidePlots || "");
@@ -2951,7 +2951,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Main Plot</Label>
             <Textarea
-              placeholder="Describe the main storyline in detail ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the central conflict, protagonist's journey, and how events unfold..."
+              placeholder="Describe the main storyline in detail ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict, protagonist's journey, and how events unfold..."
               value={mainPlot}
               onChange={(e) => mark(setMainPlot)(e.target.value)}
               className="bg-background/50 min-h-[120px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -2959,7 +2959,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Side Plots / Subplots</Label>
             <Textarea
-              placeholder="Secondary storylines ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ romance, rivalry, mystery, parallel journeys..."
+              placeholder="Secondary storylines ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ romance, rivalry, mystery, parallel journeys..."
               value={sidePlots}
               onChange={(e) => mark(setSidePlots)(e.target.value)}
               className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3000,7 +3000,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Opening Scene</Label>
             <Textarea
-              placeholder="How does the film begin? The first thing the audience sees ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ set the tone, introduce the world..."
+              placeholder="How does the film begin? The first thing the audience sees ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ set the tone, introduce the world..."
               value={openingScene}
               onChange={(e) => mark(setOpeningScene)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3008,7 +3008,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Climax</Label>
             <Textarea
-              placeholder="The peak of tension ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the central conflict comes to a head. What happens? Who is involved?"
+              placeholder="The peak of tension ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict comes to a head. What happens? Who is involved?"
               value={climax}
               onChange={(e) => mark(setClimax)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3037,7 +3037,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
 }
 
 /**
- * Reviews inbox ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ surfaces public reviewer comments left on shared
+ * Reviews inbox ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces public reviewer comments left on shared
  * screener links. Producers / directors see them grouped by reviewer
  * with optional scene + timecode references.
  */

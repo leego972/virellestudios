@@ -541,7 +541,7 @@ export default function ComponentsShowcase() {
                         variant="outline"
                         role="combobox"
                         aria-expanded={openCombobox}
-                        className="w-full justify-between"
+                        className="w-full justify-between hover:border-amber-500/50 hover:text-amber-400"
                       >
                         {selectedFramework
                           ? [
@@ -1158,7 +1158,7 @@ export default function ComponentsShowcase() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-semibold gradient-text-gold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ created and maintained by
+                          The React Framework ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ created and maintained by
                           @vercel.
                         </p>
                       </div>

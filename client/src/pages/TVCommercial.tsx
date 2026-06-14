@@ -16,31 +16,31 @@ import {
   Mic, MessageSquare, ShoppingCart, Phone, ExternalLink, Hash
 } from "lucide-react";
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Platform Presets Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Platform Presets ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 const PLATFORMS = [
-  { id: "broadcast-tv", label: "Broadcast TV", icon: Monitor, aspect: "16:9", description: "Network/cable television Ã¢ÂÂ NTSC/PAL broadcast standards", durations: [15, 30, 60], maxFileSize: "2GB" },
-  { id: "streaming", label: "Streaming", icon: Tv, aspect: "16:9", description: "Netflix, Hulu, Disney+, Amazon Ã¢ÂÂ pre-roll and mid-roll", durations: [15, 30, 60, 90], maxFileSize: "4GB" },
+  { id: "broadcast-tv", label: "Broadcast TV", icon: Monitor, aspect: "16:9", description: "Network/cable television ÃÂ¢ÃÂÃÂ NTSC/PAL broadcast standards", durations: [15, 30, 60], maxFileSize: "2GB" },
+  { id: "streaming", label: "Streaming", icon: Tv, aspect: "16:9", description: "Netflix, Hulu, Disney+, Amazon ÃÂ¢ÃÂÃÂ pre-roll and mid-roll", durations: [15, 30, 60, 90], maxFileSize: "4GB" },
   { id: "youtube", label: "YouTube", icon: Play, aspect: "16:9", description: "YouTube pre-roll, mid-roll, bumper ads", durations: [6, 15, 30, 60], maxFileSize: "256GB" },
-  { id: "instagram", label: "Instagram", icon: ImageIcon, aspect: "1:1", description: "Feed, Stories, Reels Ã¢ÂÂ square and vertical formats", durations: [15, 30, 60], maxFileSize: "650MB" },
+  { id: "instagram", label: "Instagram", icon: ImageIcon, aspect: "1:1", description: "Feed, Stories, Reels ÃÂ¢ÃÂÃÂ square and vertical formats", durations: [15, 30, 60], maxFileSize: "650MB" },
   { id: "tiktok", label: "TikTok", icon: Smartphone, aspect: "9:16", description: "In-feed ads, TopView, branded effects", durations: [15, 30, 60], maxFileSize: "500MB" },
-  { id: "facebook", label: "Facebook", icon: Globe, aspect: "16:9", description: "Feed ads, in-stream, Stories Ã¢ÂÂ auto-play optimized", durations: [15, 30, 60], maxFileSize: "4GB" },
-  { id: "cinema", label: "Cinema Pre-Roll", icon: Film, aspect: "2.39:1", description: "Theater pre-show advertising Ã¢ÂÂ DCP format ready", durations: [30, 60, 90, 120], maxFileSize: "10GB" },
-  { id: "connected-tv", label: "Connected TV (CTV)", icon: Tv, aspect: "16:9", description: "Roku, Apple TV, Fire TV Ã¢ÂÂ non-skippable premium", durations: [15, 30, 60], maxFileSize: "2GB" },
+  { id: "facebook", label: "Facebook", icon: Globe, aspect: "16:9", description: "Feed ads, in-stream, Stories ÃÂ¢ÃÂÃÂ auto-play optimized", durations: [15, 30, 60], maxFileSize: "4GB" },
+  { id: "cinema", label: "Cinema Pre-Roll", icon: Film, aspect: "2.39:1", description: "Theater pre-show advertising ÃÂ¢ÃÂÃÂ DCP format ready", durations: [30, 60, 90, 120], maxFileSize: "10GB" },
+  { id: "connected-tv", label: "Connected TV (CTV)", icon: Tv, aspect: "16:9", description: "Roku, Apple TV, Fire TV ÃÂ¢ÃÂÃÂ non-skippable premium", durations: [15, 30, 60], maxFileSize: "2GB" },
 ] as const;
 
 type PlatformId = typeof PLATFORMS[number]["id"];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Commercial Formats Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Commercial Formats ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 const DURATIONS = [
-  { seconds: 6, label: "6s Bumper", description: "YouTube bumper ad Ã¢ÂÂ single message, maximum impact" },
-  { seconds: 15, label: "15s Spot", description: "Standard short spot Ã¢ÂÂ hook + sell + CTA" },
-  { seconds: 30, label: "30s Spot", description: "Industry standard Ã¢ÂÂ full narrative arc with CTA" },
-  { seconds: 60, label: "60s Spot", description: "Premium long-form Ã¢ÂÂ story-driven with emotional payoff" },
-  { seconds: 90, label: "90s Extended", description: "Super Bowl / cinema Ã¢ÂÂ cinematic mini-film" },
-  { seconds: 120, label: "2min Brand Film", description: "Brand storytelling Ã¢ÂÂ documentary or narrative style" },
+  { seconds: 6, label: "6s Bumper", description: "YouTube bumper ad ÃÂ¢ÃÂÃÂ single message, maximum impact" },
+  { seconds: 15, label: "15s Spot", description: "Standard short spot ÃÂ¢ÃÂÃÂ hook + sell + CTA" },
+  { seconds: 30, label: "30s Spot", description: "Industry standard ÃÂ¢ÃÂÃÂ full narrative arc with CTA" },
+  { seconds: 60, label: "60s Spot", description: "Premium long-form ÃÂ¢ÃÂÃÂ story-driven with emotional payoff" },
+  { seconds: 90, label: "90s Extended", description: "Super Bowl / cinema ÃÂ¢ÃÂÃÂ cinematic mini-film" },
+  { seconds: 120, label: "2min Brand Film", description: "Brand storytelling ÃÂ¢ÃÂÃÂ documentary or narrative style" },
 ];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Commercial Styles Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Commercial Styles ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 const COMMERCIAL_STYLES = [
   { id: "cinematic", label: "Cinematic", description: "Film-quality visuals, dramatic lighting, epic score" },
   { id: "documentary", label: "Documentary", description: "Real-world feel, handheld, natural lighting, authentic" },
@@ -54,7 +54,7 @@ const COMMERCIAL_STYLES = [
   { id: "testimonial", label: "Testimonial", description: "Real people, interview-style, trust-building, social proof" },
 ];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ CTA Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ CTA Types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 const CTA_TYPES = [
   { id: "visit-website", label: "Visit Website", icon: ExternalLink },
   { id: "call-now", label: "Call Now", icon: Phone },
@@ -68,7 +68,7 @@ const CTA_TYPES = [
   { id: "streaming-now", label: "Streaming Now", icon: Tv },
 ];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Shot Structure Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Shot Structure ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 interface CommercialShot {
   id: string;
   label: string;
@@ -92,7 +92,7 @@ function getDefaultShots(durationSec: number): CommercialShot[] {
   }
   if (durationSec <= 15) {
     return [
-      { id: `shot-${Date.now()}-1`, label: "Hook", description: "Attention-grabbing opening Ã¢ÂÂ 2 seconds to capture", durationSec: 3, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "impact", soundEffect: "", sceneId: null, transition: "cut" },
+      { id: `shot-${Date.now()}-1`, label: "Hook", description: "Attention-grabbing opening ÃÂ¢ÃÂÃÂ 2 seconds to capture", durationSec: 3, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "impact", soundEffect: "", sceneId: null, transition: "cut" },
       { id: `shot-${Date.now()}-2`, label: "Problem/Desire", description: "Show the need or aspiration", durationSec: 4, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "emotional", soundEffect: "", sceneId: null, transition: "cut" },
       { id: `shot-${Date.now()}-3`, label: "Solution", description: "Reveal the product/film as the answer", durationSec: 4, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "uplifting", soundEffect: "", sceneId: null, transition: "dissolve" },
       { id: `shot-${Date.now()}-4`, label: "CTA + Logo", description: "Clear call to action with branding", durationSec: 4, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "resolve", soundEffect: "stinger", sceneId: null, transition: "fade-black" },
@@ -114,9 +114,9 @@ function getDefaultShots(durationSec: number): CommercialShot[] {
     { id: `shot-${Date.now()}-2`, label: "World Building", description: "Establish the setting, tone, and visual language", durationSec: 8, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "atmospheric", soundEffect: "", sceneId: null, transition: "dissolve" },
     { id: `shot-${Date.now()}-3`, label: "Character Intro", description: "Meet the protagonist or brand personality", durationSec: 8, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "emotional", soundEffect: "", sceneId: null, transition: "cut" },
     { id: `shot-${Date.now()}-4`, label: "The Challenge", description: "Present the conflict, problem, or aspiration", durationSec: 8, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "tension", soundEffect: "", sceneId: null, transition: "cut" },
-    { id: `shot-${Date.now()}-5`, label: "Rising Action", description: "Build momentum Ã¢ÂÂ montage of key moments", durationSec: 10, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "driving", soundEffect: "", sceneId: null, transition: "whip" },
-    { id: `shot-${Date.now()}-6`, label: "Climax", description: "The peak moment Ã¢ÂÂ maximum emotional impact", durationSec: 8, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "epic", soundEffect: "bass-drop", sceneId: null, transition: "cut" },
-    { id: `shot-${Date.now()}-7`, label: "Resolution", description: "Emotional payoff Ã¢ÂÂ the brand promise fulfilled", durationSec: 6, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "hopeful", soundEffect: "", sceneId: null, transition: "dissolve" },
+    { id: `shot-${Date.now()}-5`, label: "Rising Action", description: "Build momentum ÃÂ¢ÃÂÃÂ montage of key moments", durationSec: 10, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "driving", soundEffect: "", sceneId: null, transition: "whip" },
+    { id: `shot-${Date.now()}-6`, label: "Climax", description: "The peak moment ÃÂ¢ÃÂÃÂ maximum emotional impact", durationSec: 8, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "epic", soundEffect: "bass-drop", sceneId: null, transition: "cut" },
+    { id: `shot-${Date.now()}-7`, label: "Resolution", description: "Emotional payoff ÃÂ¢ÃÂÃÂ the brand promise fulfilled", durationSec: 6, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "hopeful", soundEffect: "", sceneId: null, transition: "dissolve" },
     { id: `shot-${Date.now()}-8`, label: "End Card", description: "Logo, tagline, CTA, hashtag, URL", durationSec: 7, visualDescription: "", voiceoverText: "", onScreenText: "", musicMood: "resolve", soundEffect: "stinger", sceneId: null, transition: "fade-black" },
   ];
 }
@@ -126,7 +126,7 @@ export default function TVCommercial() {
   const projectId = Number(params.projectId);
   const [, setLocation] = useLocation();
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Data Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Data ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
   const aiScriptMutation = trpc.dialogue.aiSuggest.useMutation({
@@ -134,7 +134,7 @@ export default function TVCommercial() {
       if (data?.suggestions) {
         setShots(prev => prev.map((s, i) => ({
           ...s,
-          voiceoverText: data.suggestions[i] || s.voiceoverText || `[${s.label} Ã¢ÂÂ ${s.description}]`,
+          voiceoverText: data.suggestions[i] || s.voiceoverText || `[${s.label} ÃÂ¢ÃÂÃÂ ${s.description}]`,
         })));
         toast.success("AI script generated for all shots");
       }
@@ -150,14 +150,14 @@ export default function TVCommercial() {
   });
   const generateCommercialMutation = trpc.generation.generateTrailer.useMutation({
     onSuccess: () => {
-      toast.success("Commercial generation started Ã¢ÂÂ check your project for the output");
+      toast.success("Commercial generation started ÃÂ¢ÃÂÃÂ check your project for the output");
     },
     onError: (err) => {
       toast.error(err.message || "Failed to generate commercial");
     },
   });
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ State Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ State ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const [platform, setPlatform] = useState<PlatformId>("broadcast-tv");
   const [duration, setDuration] = useState(30);
   const [style, setStyle] = useState("cinematic");
@@ -186,7 +186,7 @@ export default function TVCommercial() {
     }
   }, [project]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Platform Change Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Platform Change ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const handlePlatformChange = (id: PlatformId) => {
     setPlatform(id);
     const p = PLATFORMS.find(p => p.id === id);
@@ -195,14 +195,14 @@ export default function TVCommercial() {
     }
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Duration Change Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Duration Change ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const handleDurationChange = (sec: number) => {
     setDuration(sec);
     setShots(getDefaultShots(sec));
     setSelectedShotId(null);
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Shot Management Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Shot Management ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const selectedShot = shots.find(s => s.id === selectedShotId);
 
   const updateShot = (id: string, updates: Partial<CommercialShot>) => {
@@ -244,7 +244,7 @@ export default function TVCommercial() {
     });
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Auto-assign scenes Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Auto-assign scenes ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const autoAssignScenes = () => {
     if (!scenes?.length) return toast.error("No scenes available");
     const sorted = [...scenes].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
@@ -255,7 +255,7 @@ export default function TVCommercial() {
     toast.success("Scenes auto-assigned to shots");
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ AI Script Generator Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ AI Script Generator ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const generateAIScript = () => {
     if (!projectId) { toast.error("No project found"); return; }
     setAiScriptLoading(true);
@@ -274,12 +274,12 @@ export default function TVCommercial() {
         else vo = s.description || s.label;
         return { ...s, voiceoverText: vo };
       }));
-      toast.success("Voiceover script generated for each shot Ã¢ÂÂ refine the text as needed");
+      toast.success("Voiceover script generated for each shot ÃÂ¢ÃÂÃÂ refine the text as needed");
       setAiScriptLoading(false);
     }, 600);
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Computed Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Computed ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   const totalDuration = shots.reduce((sum, s) => sum + s.durationSec, 0);
   const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${(sec % 60).toString().padStart(2, "0")}`;
   const currentPlatform = PLATFORMS.find(p => p.id === platform);
@@ -301,7 +301,7 @@ export default function TVCommercial() {
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Header Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <div className="border-b sticky top-0 z-40" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
         <div className="flex items-center justify-between px-4 py-3 gap-2 overflow-hidden">
           <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
@@ -314,20 +314,20 @@ export default function TVCommercial() {
                 <span className="truncate">TV Commercial</span>
               </h1>
               <p className="text-[10px] md:text-xs text-muted-foreground truncate">
-                {project?.title || "Loading..."} Ã¢ÂÂ {currentPlatform?.label} ÃÂ· {duration}s ÃÂ· {shots.length} shots
+                {project?.title || "Loading..."} ÃÂ¢ÃÂÃÂ {currentPlatform?.label} ÃÂÃÂ· {duration}s ÃÂÃÂ· {shots.length} shots
               </p>
             </div>
           </div>
           <div className="flex items-center gap-1 md:gap-2 shrink-0">
             {isMobile && (
-              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setMobileConfigOpen(true)}>
+              <Button variant="outline" size="sm" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => setMobileConfigOpen(true)}>
                 <Settings2 className="h-3 w-3" />
               </Button>
             )}
-            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex" onClick={autoAssignScenes}>
+            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400" onClick={autoAssignScenes}>
               <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
-            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={generateAIScript} disabled={aiScriptLoading}>
+            <Button variant="outline" size="sm" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={generateAIScript} disabled={aiScriptLoading}>
               {aiScriptLoading ? <RotateCcw className="h-3 w-3 animate-spin" /> : <MessageSquare className="h-3 w-3" />}
               <span className="hidden sm:inline ml-1">AI Script</span>
             </Button>
@@ -356,7 +356,7 @@ export default function TVCommercial() {
       </div>
 
       <div className="flex h-[calc(100vh-57px)]">
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Left Panel: Platform & Format (desktop) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Left Panel: Platform & Format (desktop) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {!isMobile && (
         <div className="w-80 border-r border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {/* Platform Selector */}
@@ -433,7 +433,7 @@ export default function TVCommercial() {
         </div>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Center: Shot Storyboard Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Center: Shot Storyboard ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="flex-1 overflow-y-auto p-2 md:p-4 min-w-0">
           {/* Tabs */}
           <div className="flex gap-1 mb-4 border-b border-border pb-2">
@@ -468,8 +468,8 @@ export default function TVCommercial() {
               {Math.abs(totalDuration - duration) > 2 && (
                 <div className={`mb-3 p-2 rounded border text-xs ${totalDuration > duration ? "border-red-500/30 bg-red-500/5 text-red-400" : "border-amber-500/30 bg-amber-500/5 text-amber-400"}`}>
                   {totalDuration > duration
-                    ? `Over target by ${totalDuration - duration}s Ã¢ÂÂ trim shots to fit ${duration}s format`
-                    : `Under target by ${duration - totalDuration}s Ã¢ÂÂ add shots or extend durations`
+                    ? `Over target by ${totalDuration - duration}s ÃÂ¢ÃÂÃÂ trim shots to fit ${duration}s format`
+                    : `Under target by ${duration - totalDuration}s ÃÂ¢ÃÂÃÂ add shots or extend durations`
                   }
                 </div>
               )}
@@ -478,7 +478,7 @@ export default function TVCommercial() {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
                   <Layers className="h-4 w-4 text-blue-500" />
-                  Shots ({shots.length}) ÃÂ· {formatTime(totalDuration)}
+                  Shots ({shots.length}) ÃÂÃÂ· {formatTime(totalDuration)}
                 </h3>
                 <Button variant="outline" size="sm" onClick={addShot}>
                   <Plus className="h-3 w-3 mr-1" />Add Shot
@@ -521,7 +521,7 @@ export default function TVCommercial() {
                         {shot.voiceoverText && <p className="text-[10px] text-blue-400 truncate mt-0.5">VO: "{shot.voiceoverText}"</p>}
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-[9px] text-muted-foreground">{shot.musicMood}</span>
-                          <span className="text-[9px] text-muted-foreground">Ã¢ÂÂ {shot.transition}</span>
+                          <span className="text-[9px] text-muted-foreground">ÃÂ¢ÃÂÃÂ {shot.transition}</span>
                           {shot.onScreenText && <span className="text-[9px] text-amber-400">TEXT</span>}
                         </div>
                       </div>
@@ -542,7 +542,7 @@ export default function TVCommercial() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold gradient-text-gold">Full Script</h3>
-                <div className="text-xs text-muted-foreground">{wordCount} words ÃÂ· ~{estimatedReadTime}s read time / {duration}s target</div>
+                <div className="text-xs text-muted-foreground">{wordCount} words ÃÂÃÂ· ~{estimatedReadTime}s read time / {duration}s target</div>
               </div>
 
               {/* Voiceover Style */}
@@ -672,7 +672,7 @@ export default function TVCommercial() {
           )}
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Right Panel: Shot Inspector (desktop) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Right Panel: Shot Inspector (desktop) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         {!isMobile && (
         <div className="w-80 border-l border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {selectedShot ? (
@@ -706,7 +706,7 @@ export default function TVCommercial() {
                   onChange={e => updateShot(selectedShot.id, { sceneId: e.target.value ? Number(e.target.value) : null })}
                   className="mt-1 w-full h-8 text-sm bg-background border border-border rounded px-2"
                 >
-                  <option value="">Ã¢ÂÂ None Ã¢ÂÂ</option>
+                  <option value="">ÃÂ¢ÃÂÃÂ None ÃÂ¢ÃÂÃÂ</option>
                   {scenes?.map(s => (
                     <option key={s.id} value={s.id}>{s.title || `Scene ${s.id}`}</option>
                   ))}
@@ -767,7 +767,7 @@ export default function TVCommercial() {
         )}
       </div>
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Mobile Config Sheet Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Config Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {isMobile && (
         <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
           <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
@@ -813,7 +813,7 @@ export default function TVCommercial() {
         </Sheet>
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Mobile Shot Inspector Sheet Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Shot Inspector Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {isMobile && (
         <Sheet open={mobileShotOpen} onOpenChange={setMobileShotOpen}>
           <SheetContent side="bottom" className="h-[70vh] p-0">
