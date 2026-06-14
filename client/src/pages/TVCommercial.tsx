@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import {
 import StudioOpener from "@/components/StudioOpener";
+import {
   ArrowLeft, Sparkles, Tv, Play, Pause, Plus, Trash2, GripVertical,
   Type, Music, Volume2, Clock, Megaphone, Wand2, Eye, Download,
   Layers, Zap, Settings2, RotateCcw, Copy, Target, Palette, Globe,
