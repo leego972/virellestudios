@@ -83,8 +83,8 @@ export default function AutoRecapPage() {
     { recapId: generatedRecapId! },
     {
       enabled: !!generatedRecapId,
-      // v6.67 Ã¢ÂÂ live status polling per upgrade-kit Phase 4 UX.
-      // v6.71 Ã¢ÂÂ Stop polling on every terminal state, including the new
+      // v6.67 ÃÂ¢ÃÂÃÂ live status polling per upgrade-kit Phase 4 UX.
+      // v6.71 ÃÂ¢ÃÂÃÂ Stop polling on every terminal state, including the new
       // honest "outline_completed" / "render_completed".
       refetchInterval: (q) => {
         const status = (q.state.data as any)?.recap?.status;
@@ -98,14 +98,14 @@ export default function AutoRecapPage() {
     onSuccess: () => existingRecaps.refetch(),
   });
 
-  // v6.71 Ã¢ÂÂ Render the final MP4 from a completed outline. The mutation
+  // v6.71 ÃÂ¢ÃÂÃÂ Render the final MP4 from a completed outline. The mutation
   // returns immediately with status: "render_pending"; the polling above
   // picks up the worker's progress.
   const renderMp4Mut = trpc.recap.renderMp4.useMutation({
     onSuccess: () => recapDetail.refetch(),
   });
 
-  // v6.72 Ã¢ÂÂ Cancel an in-flight MP4 render. Refunds the reservation and
+  // v6.72 ÃÂ¢ÃÂÃÂ Cancel an in-flight MP4 render. Refunds the reservation and
   // flips the recap back to outline_completed. Does not abort the underlying
   // ffmpeg process (the worker is fire-and-forget) but the safeFail path is
   // idempotent so the late finish/fail does no harm.
@@ -140,7 +140,7 @@ export default function AutoRecapPage() {
       <div className="max-w-5xl mx-auto space-y-6">
         <div>
           <Link href={`/projects/${projectId}`}>
-            <a className="text-sm text-zinc-400 hover:text-zinc-200">Ã¢ÂÂ Back to project</a>
+            <a className="text-sm text-zinc-400 hover:text-zinc-200">ÃÂ¢ÃÂÃÂ Back to project</a>
           </Link>
           <h1 className="text-2xl font-bold mt-2 gradient-text-gold">Auto Recap</h1>
           <p className="text-sm text-zinc-400 mt-1">
@@ -157,7 +157,7 @@ export default function AutoRecapPage() {
         )}
 
         {isEpisodic && episodes.length < 2 && (
-          <div className="border border-zinc-700 bg-zinc-900/40 rounded-lg p-4 text-sm text-zinc-300">
+          <div className="border border-zinc-700 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 text-sm text-zinc-300">
             You need at least two rendered film-type episodes in this project before you can
             generate a recap. Render the next episode and one previous episode first.
           </div>
@@ -179,7 +179,7 @@ export default function AutoRecapPage() {
                   }}
                   className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm"
                 >
-                  <option value="">Pick an episodeÃ¢ÂÂ¦</option>
+                  <option value="">Pick an episodeÃÂ¢ÃÂÃÂ¦</option>
                   {episodes.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.title}
@@ -192,7 +192,7 @@ export default function AutoRecapPage() {
                 <label className="block text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                   Source episodes (recap material)
                 </label>
-                <div className="space-y-1 max-h-56 overflow-auto border border-zinc-800 rounded p-2 bg-zinc-900/40">
+                <div className="space-y-1 max-h-56 overflow-auto border border-zinc-800 rounded p-2 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40">
                   {episodes
                     .filter((m) => m.id !== targetMovieId)
                     .map((m) => (
@@ -302,7 +302,7 @@ export default function AutoRecapPage() {
             </section>
 
             <section className="space-y-4">
-              <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-4">
+              <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
                 <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                   Estimate
                 </div>
@@ -311,7 +311,7 @@ export default function AutoRecapPage() {
                     Pick a target and at least one source episode to see the cost.
                   </div>
                 ) : estimate.isLoading ? (
-                  <div className="text-sm text-zinc-500">CalculatingÃ¢ÂÂ¦</div>
+                  <div className="text-sm text-zinc-500">CalculatingÃÂ¢ÃÂÃÂ¦</div>
                 ) : estimate.data ? (
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between font-semibold text-base">
@@ -347,7 +347,7 @@ export default function AutoRecapPage() {
                   !estimateInput ||
                   !estimate.data?.hasEnoughCredits ||
                   generateMut.isPending ||
-                  // v6.70 Ã¢ÂÂ A recap is "settled" when it is in any terminal
+                  // v6.70 ÃÂ¢ÃÂÃÂ A recap is "settled" when it is in any terminal
                   // state (legacy "completed", honest "outline_completed",
                   // future "render_completed", or "failed"). Block while a
                   // generate is mid-flight.
@@ -356,7 +356,7 @@ export default function AutoRecapPage() {
                 onClick={handleGenerate}
                 className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-medium py-2.5 rounded transition-colors"
               >
-                {generateMut.isPending ? "GeneratingÃ¢ÂÂ¦" : "Generate Auto Recap"}
+                {generateMut.isPending ? "GeneratingÃÂ¢ÃÂÃÂ¦" : "Generate Auto Recap"}
               </button>
 
               {generateMut.error && (
@@ -366,13 +366,13 @@ export default function AutoRecapPage() {
               )}
 
               {recapDetail.data && (
-                <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-4 space-y-3">
+                <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="text-xs uppercase tracking-wider text-amber-400/60">
                       Recap #{recapDetail.data.recap.id}
                     </div>
                     {(() => {
-                      // v6.70 Ã¢ÂÂ Honest status labels. We do NOT render a
+                      // v6.70 ÃÂ¢ÃÂÃÂ Honest status labels. We do NOT render a
                       // final MP4 yet; the success state is "outline ready".
                       // Only show "Final recap video ready" when the recap
                       // actually has a downloadable asset.
@@ -388,9 +388,9 @@ export default function AutoRecapPage() {
                         label = "Recap outline ready";
                         cls = "bg-amber-500/20 text-amber-300";
                       } else if (s === "render_pending") {
-                        // v6.71 Ã¢ÂÂ render_pending is now the live MP4 render
+                        // v6.71 ÃÂ¢ÃÂÃÂ render_pending is now the live MP4 render
                         // state, not the outline-saving state.
-                        label = "Rendering MP4Ã¢ÂÂ¦";
+                        label = "Rendering MP4ÃÂ¢ÃÂÃÂ¦";
                         cls = "bg-amber-500/20 text-amber-300";
                       } else if (s === "failed") {
                         label = "Failed";
@@ -417,7 +417,7 @@ export default function AutoRecapPage() {
                       <ol className="space-y-1 mt-2">
                         {recapDetail.data.segments.map((seg) => (
                           <li key={seg.id} className="text-xs text-zinc-300 border-l-2 border-amber-500/40 pl-2">
-                            <span className="text-zinc-500">[{seg.startTimeSeconds.toFixed(1)}s Ã¢ÂÂ {seg.endTimeSeconds.toFixed(1)}s]</span>{" "}
+                            <span className="text-zinc-500">[{seg.startTimeSeconds.toFixed(1)}s ÃÂ¢ÃÂÃÂ {seg.endTimeSeconds.toFixed(1)}s]</span>{" "}
                             {seg.reason}
                             {seg.caption && (
                               <div className="text-zinc-500 italic">"{seg.caption}"</div>
@@ -438,7 +438,7 @@ export default function AutoRecapPage() {
                     </div>
                   )}
                   {(() => {
-                    // v6.70 Ã¢ÂÂ Show the attach + render controls for every
+                    // v6.70 ÃÂ¢ÃÂÃÂ Show the attach + render controls for every
                     // terminal success state (legacy "completed" + honest
                     // "outline_completed" + "render_completed"). Also show
                     // a live "rendering" indicator while render_pending.
@@ -451,21 +451,21 @@ export default function AutoRecapPage() {
                     const canRender = !hasAsset && !isRendering && (s === "outline_completed" || s === "completed");
                     return (
                       <div className="pt-3 border-t border-zinc-800 space-y-2">
-                        {/* v6.70/v6.71 Ã¢ÂÂ Honest disclaimer when no MP4 exists yet. */}
+                        {/* v6.70/v6.71 ÃÂ¢ÃÂÃÂ Honest disclaimer when no MP4 exists yet. */}
                         {!hasAsset && !isRendering && (
                           <div className="text-[11px] text-zinc-500">
                             Preview from source segments. The recap outline (beat list + voiceover script) is saved.
                             Click "Render final MP4" to cut, stitch, and export the final video.
                           </div>
                         )}
-                        {/* v6.71 Ã¢ÂÂ Live rendering indicator while the worker runs. */}
-                        {/* v6.72 Ã¢ÂÂ Adds a Cancel button that refunds credits
+                        {/* v6.71 ÃÂ¢ÃÂÃÂ Live rendering indicator while the worker runs. */}
+                        {/* v6.72 ÃÂ¢ÃÂÃÂ Adds a Cancel button that refunds credits
                             and flips the recap back to outline_completed. */}
                         {isRendering && (
                           <div className="space-y-2">
                             <div className="text-xs text-amber-300 flex items-center gap-2">
                               <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse" />
-                              Rendering final MP4Ã¢ÂÂ¦ (the page will refresh automatically)
+                              Rendering final MP4ÃÂ¢ÃÂÃÂ¦ (the page will refresh automatically)
                             </div>
                             <button
                               onClick={() => {
@@ -476,14 +476,14 @@ export default function AutoRecapPage() {
                               disabled={cancelRenderMut.isPending}
                               className="text-xs bg-zinc-800 hover:bg-amber-500/10 disabled:opacity-50 px-3 py-1.5 rounded text-zinc-200"
                             >
-                              {cancelRenderMut.isPending ? "CancellingÃ¢ÂÂ¦" : "Cancel render"}
+                              {cancelRenderMut.isPending ? "CancellingÃÂ¢ÃÂÃÂ¦" : "Cancel render"}
                             </button>
                             {cancelRenderMut.error && (
                               <div className="text-xs text-red-300">{cancelRenderMut.error.message}</div>
                             )}
                           </div>
                         )}
-                        {/* v6.71 Ã¢ÂÂ Render final MP4 button. Only available
+                        {/* v6.71 ÃÂ¢ÃÂÃÂ Render final MP4 button. Only available
                             when the outline is settled and no asset exists. */}
                         {canRender && (
                           <button
@@ -491,15 +491,15 @@ export default function AutoRecapPage() {
                             disabled={renderMp4Mut.isPending}
                             className="text-xs bg-amber-500 hover:bg-amber-400 disabled:bg-zinc-700 disabled:text-zinc-500 px-3 py-1.5 rounded text-black font-medium"
                           >
-                            {renderMp4Mut.isPending ? "Starting renderÃ¢ÂÂ¦" : "Render final MP4"}
+                            {renderMp4Mut.isPending ? "Starting renderÃÂ¢ÃÂÃÂ¦" : "Render final MP4"}
                           </button>
                         )}
-                        {/* v6.71 Ã¢ÂÂ Surface render-mutation errors (insufficient
+                        {/* v6.71 ÃÂ¢ÃÂÃÂ Surface render-mutation errors (insufficient
                             credits, bad state, dispatch failure, etc.). */}
                         {renderMp4Mut.error && (
                           <div className="text-xs text-red-300">{renderMp4Mut.error.message}</div>
                         )}
-                        {/* v6.70 Ã¢ÂÂ Only render a download button when an actual file exists. */}
+                        {/* v6.70 ÃÂ¢ÃÂÃÂ Only render a download button when an actual file exists. */}
                         {hasAsset && (recapDetail.data.recap as any).fileUrl && (
                           <a
                             href={(recapDetail.data.recap as any).fileUrl}
@@ -521,7 +521,7 @@ export default function AutoRecapPage() {
                             disabled={attachMut.isPending}
                             className="text-xs bg-zinc-800 hover:bg-amber-500/10 px-3 py-1.5 rounded text-zinc-200 disabled:opacity-50"
                           >
-                            {attachMut.isPending ? "AttachingÃ¢ÂÂ¦" : "Attach to episode intro"}
+                            {attachMut.isPending ? "AttachingÃÂ¢ÃÂÃÂ¦" : "Attach to episode intro"}
                           </button>
                         ) : null}
                       </div>
@@ -531,14 +531,14 @@ export default function AutoRecapPage() {
               )}
 
               {existingRecaps.data && existingRecaps.data.length > 0 && (
-                <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-4">
+                <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
                   <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                     Earlier recaps for this episode
                   </div>
                   <ul className="space-y-1 text-xs text-zinc-300">
                     {existingRecaps.data.map((r) => (
                       <li key={r.id} className="flex justify-between">
-                        <span>#{r.id} ÃÂ· {r.lengthSeconds}s ÃÂ· {r.style}</span>
+                        <span>#{r.id} ÃÂÃÂ· {r.lengthSeconds}s ÃÂÃÂ· {r.style}</span>
                         <span className="text-zinc-500">{r.status}</span>
                       </li>
                     ))}
