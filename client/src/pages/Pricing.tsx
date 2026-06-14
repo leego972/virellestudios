@@ -250,6 +250,13 @@ export default function Pricing() {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+  const formatUSD = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   const handleSubscribe = async (tierId: string) => {
     if (!isLoggedIn) {
@@ -410,6 +417,7 @@ export default function Pricing() {
                     <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
                   </div>
+                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial included</p>
                   <div className="mt-2 flex items-center gap-2 text-sm font-medium text-amber-400">
                     <Coins className="w-4 h-4" />
                     {tier.credits.toLocaleString()} credits/mo included
