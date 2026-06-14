@@ -73,7 +73,7 @@ export default function AdminOutreach() {
 
   const utils = trpc.useUtils();
 
-  // âââ Contacts âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Contacts Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const [contactSearch, setContactSearch] = useState("");
   const contactsQuery = trpc.mailingList.listContacts.useQuery({ search: contactSearch }, { retry: false });
   const contacts: Contact[] = (contactsQuery.data as any) ?? [];
@@ -98,7 +98,7 @@ export default function AdminOutreach() {
     onError: (err: any) => toast.error(err.message || "Failed to delete contact"),
   });
 
-  // âââ Add contact form ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Add contact form Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const [addOpen, setAddOpen] = useState(false);
   const [addEmail, setAddEmail] = useState("");
   const [addName, setAddName] = useState("");
@@ -107,7 +107,7 @@ export default function AdminOutreach() {
   const [addTags, setAddTags] = useState("");
   const resetAddForm = () => { setAddEmail(""); setAddName(""); setAddCompany(""); setAddRole(""); setAddTags(""); };
 
-  // âââ Bulk import âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Bulk import Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkText, setBulkText] = useState("");
   const csvInputRef = useRef<HTMLInputElement>(null);
@@ -130,7 +130,7 @@ export default function AdminOutreach() {
     bulkImportMutation.mutate({ raw: bulkText });
   }
 
-  // âââ Campaigns âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Campaigns Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const campaignsQuery = trpc.mailingList.listCampaigns.useQuery(undefined, { retry: false });
   const campaigns: Campaign[] = (campaignsQuery.data as any) ?? [];
 
@@ -148,7 +148,7 @@ export default function AdminOutreach() {
     onError: (err: any) => toast.error(err.message || "Failed to send campaign"),
   });
 
-  // âââ Campaign form ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Campaign form Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const [campaignOpen, setCampaignOpen] = useState(false);
   const [campaignName, setCampaignName] = useState("");
   const [campaignSubject, setCampaignSubject] = useState("");
@@ -167,7 +167,7 @@ export default function AdminOutreach() {
   const [confirmSendId, setConfirmSendId] = useState<number | null>(null);
   const [previewCampaignId, setPreviewCampaignId] = useState<number | null>(null);
 
-  // âââ Ad upload ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Ad upload Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const uploadAdMutation = trpc.mailingList.uploadAdImage.useMutation({
     onSuccess: (data: any) => {
       setCampaignAdUrl(data.url);
@@ -234,7 +234,7 @@ export default function AdminOutreach() {
           { label: "Campaigns Sent", value: campaigns.filter(c => c.status === "sent").length, icon: Send, color: "text-amber-400" },
           { label: "Emails Delivered", value: campaigns.reduce((a, c) => a + (c.sentCount || 0), 0), icon: Mail, color: "text-purple-400" },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+          <Card key={stat.label} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-card flex items-center justify-center flex-shrink-0">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
@@ -258,13 +258,13 @@ export default function AdminOutreach() {
           </TabsTrigger>
         </TabsList>
 
-        {/* ââ CONTACTS TAB ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ CONTACTS TAB Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="contacts" className="space-y-4 mt-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, email, company, or tagâ¦"
+                placeholder="Search by name, email, company, or tagÃ¢ÂÂ¦"
                 className="pl-9"
                 value={contactSearch}
                 onChange={e => setContactSearch(e.target.value)}
@@ -286,11 +286,11 @@ export default function AdminOutreach() {
 
           {/* CSV format hint */}
           <p className="text-[11px] text-muted-foreground">
-            CSV format: <code className="bg-muted px-1 rounded">email, name, company, role, tags</code> â only email is required. One per line for bulk paste.
+            CSV format: <code className="bg-muted px-1 rounded">email, name, company, role, tags</code> Ã¢ÂÂ only email is required. One per line for bulk paste.
           </p>
 
           {/* Contacts table */}
-          <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -307,19 +307,19 @@ export default function AdminOutreach() {
                 </thead>
                 <tbody>
                   {contactsQuery.isLoading ? (
-                    <tr><td colSpan={8} className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading contactsâ¦</td></tr>
+                    <tr><td colSpan={8} className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading contactsÃ¢ÂÂ¦</td></tr>
                   ) : contacts.length === 0 ? (
                     <tr><td colSpan={8} className="text-center py-12 text-muted-foreground">No contacts yet. Add one or import a CSV.</td></tr>
                   ) : contacts.map(c => (
                     <tr key={c.id} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs text-foreground/80">{c.email}</td>
-                      <td className="px-4 py-3 text-foreground/80">{c.name ?? "â"}</td>
-                      <td className="px-4 py-3 text-foreground/60">{c.company ?? "â"}</td>
-                      <td className="px-4 py-3 text-foreground/60">{c.role ?? "â"}</td>
+                      <td className="px-4 py-3 text-foreground/80">{c.name ?? "Ã¢ÂÂ"}</td>
+                      <td className="px-4 py-3 text-foreground/60">{c.company ?? "Ã¢ÂÂ"}</td>
+                      <td className="px-4 py-3 text-foreground/60">{c.role ?? "Ã¢ÂÂ"}</td>
                       <td className="px-4 py-3">
                         {c.tags ? c.tags.split(",").map(t => (
                           <Badge key={t} variant="outline" className="text-[10px] mr-1 mb-0.5">{t.trim()}</Badge>
-                        )) : "â"}
+                        )) : "Ã¢ÂÂ"}
                       </td>
                       <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                       <td className="px-4 py-3 text-[11px] text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</td>
@@ -342,7 +342,7 @@ export default function AdminOutreach() {
           </Card>
         </TabsContent>
 
-        {/* ââ CAMPAIGNS TAB ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ CAMPAIGNS TAB Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="campaigns" className="space-y-4 mt-4">
           <div className="flex justify-between items-center">
             <p className="text-sm text-muted-foreground">
@@ -356,15 +356,15 @@ export default function AdminOutreach() {
           {/* Campaigns list */}
           <div className="space-y-3">
             {campaignsQuery.isLoading ? (
-              <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading campaignsâ¦</div>
+              <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2 text-amber-400" />Loading campaignsÃ¢ÂÂ¦</div>
             ) : campaigns.length === 0 ? (
-              <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+              <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="py-12 text-center text-muted-foreground">
                   No campaigns yet. Create one and push to your list.
                 </CardContent>
               </Card>
             ) : campaigns.map(camp => (
-              <Card key={camp.id} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+              <Card key={camp.id} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -392,7 +392,7 @@ export default function AdminOutreach() {
                     )}
                     {camp.status === "sending" && (
                       <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
-                        <Loader2 className="h-3 w-3 mr-1 animate-spin text-amber-400" /> Sendingâ¦
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin text-amber-400" /> SendingÃ¢ÂÂ¦
                       </Badge>
                     )}
                   </div>
@@ -403,7 +403,7 @@ export default function AdminOutreach() {
         </TabsContent>
       </Tabs>
 
-      {/* ââ ADD CONTACT DIALOG ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ ADD CONTACT DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -428,7 +428,7 @@ export default function AdminOutreach() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="add-role">Role</Label>
-                <Input id="add-role" placeholder="Director, Producerâ¦" value={addRole} onChange={e => setAddRole(e.target.value)} className="mt-1" />
+                <Input id="add-role" placeholder="Director, ProducerÃ¢ÂÂ¦" value={addRole} onChange={e => setAddRole(e.target.value)} className="mt-1" />
               </div>
               <div>
                 <Label htmlFor="add-tags">Tags</Label>
@@ -450,13 +450,13 @@ export default function AdminOutreach() {
         </DialogContent>
       </Dialog>
 
-      {/* ââ BULK IMPORT DIALOG ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ BULK IMPORT DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Bulk Import Contacts</DialogTitle>
             <DialogDescription>
-              Paste emails or CSV data below. Format: <code className="bg-muted px-1 rounded text-xs">email, name, company, role, tags</code> â one per line. Only email is required.
+              Paste emails or CSV data below. Format: <code className="bg-muted px-1 rounded text-xs">email, name, company, role, tags</code> Ã¢ÂÂ one per line. Only email is required.
             </DialogDescription>
           </DialogHeader>
           <Textarea
@@ -479,7 +479,7 @@ export default function AdminOutreach() {
         </DialogContent>
       </Dialog>
 
-      {/* ââ CREATE CAMPAIGN DIALOG ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ CREATE CAMPAIGN DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={campaignOpen} onOpenChange={setCampaignOpen}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
@@ -491,7 +491,7 @@ export default function AdminOutreach() {
           <div className="space-y-4">
             <div>
               <Label>Campaign Name (internal)</Label>
-              <Input placeholder="Founder Outreach â March 2026" value={campaignName} onChange={e => setCampaignName(e.target.value)} className="mt-1" />
+              <Input placeholder="Founder Outreach Ã¢ÂÂ March 2026" value={campaignName} onChange={e => setCampaignName(e.target.value)} className="mt-1" />
             </div>
             <div>
               <Label>Email Subject Line</Label>
@@ -514,7 +514,7 @@ export default function AdminOutreach() {
               <div>
                 <Label>Custom HTML</Label>
                 <Textarea
-                  placeholder="Paste your full HTML email hereâ¦"
+                  placeholder="Paste your full HTML email hereÃ¢ÂÂ¦"
                   className="h-32 font-mono text-xs mt-1"
                   value={campaignCustomHtml}
                   onChange={e => setCampaignCustomHtml(e.target.value)}
@@ -535,14 +535,14 @@ export default function AdminOutreach() {
                 {campaignAdPreview ? (
                   <div className="space-y-2">
                     <img src={campaignAdPreview} alt="Ad preview" className="max-h-32 mx-auto rounded-lg object-contain" />
-                    {uploadingAd && <p className="text-xs text-muted-foreground flex items-center justify-center gap-1"><Loader2 className="h-3 w-3 animate-spin text-amber-400" /> Uploadingâ¦</p>}
+                    {uploadingAd && <p className="text-xs text-muted-foreground flex items-center justify-center gap-1"><Loader2 className="h-3 w-3 animate-spin text-amber-400" /> UploadingÃ¢ÂÂ¦</p>}
                     {!uploadingAd && campaignAdUrl && <p className="text-xs text-green-400 flex items-center justify-center gap-1"><CheckCircle2 className="h-3 w-3" /> Uploaded</p>}
                   </div>
                 ) : (
                   <div className="space-y-2">
                     <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto" />
                     <p className="text-sm text-muted-foreground">Click to upload ad image</p>
-                    <p className="text-[11px] text-muted-foreground">JPG, PNG, GIF â max 5MB</p>
+                    <p className="text-[11px] text-muted-foreground">JPG, PNG, GIF Ã¢ÂÂ max 5MB</p>
                   </div>
                 )}
               </div>
@@ -569,7 +569,7 @@ export default function AdminOutreach() {
         </DialogContent>
       </Dialog>
 
-      {/* ââ CONFIRM SEND DIALOG ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ CONFIRM SEND DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={confirmSendId !== null} onOpenChange={() => setConfirmSendId(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>

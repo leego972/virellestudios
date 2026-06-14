@@ -200,8 +200,8 @@ import { useRoute, useLocation } from "wouter";
               )}
 
               {/* About the model */}
-              <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5">
-                <CardContent className="pt-4 pb-4 glass-card shadow-lg shadow-amber-500/5">
+              <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardContent className="pt-4 pb-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex gap-3">
                     {campaign.fundingModel === "all_or_nothing" ? (
                       <Target className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
@@ -233,7 +233,7 @@ import { useRoute, useLocation } from "wouter";
               )}
             </div>
 
-            {/* Sidebar ÃÂ¢ÃÂÃÂ Rewards + Back */}
+            {/* Sidebar ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Rewards + Back */}
             <div className="space-y-4">
               {/* Reward tiers */}
               {rewards.length > 0 && (
@@ -248,7 +248,7 @@ import { useRoute, useLocation } from "wouter";
                         onClick={() => !isFull && setSelectedReward(isSelected ? null : reward.id)}
                         className={`cursor-pointer transition-all ${isFull ? "opacity-50 cursor-not-allowed" : ""} ${isSelected ? "border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/50" : "hover:border-amber-500/40"}`}
                       >
-                        <CardContent className="pt-4 pb-4 space-y-2 glass-card shadow-lg shadow-amber-500/5">
+                        <CardContent className="pt-4 pb-4 space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-amber-400">{fmtAud(reward.amountCents)}</span>
                             {isSelected && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
@@ -273,7 +273,7 @@ import { useRoute, useLocation } from "wouter";
 
               {/* Custom amount */}
               <Card>
-                <CardContent className="pt-4 pb-4 space-y-3 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="pt-4 pb-4 space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <p className="text-sm font-semibold">{selectedReward ? "Or enter a different amount" : "Back this project"}</p>
                   <div className="flex items-center gap-2 rounded-md border px-3 py-1.5 bg-background focus-within:ring-1 ring-amber-500">
                     <span className="text-muted-foreground text-sm">A$</span>
@@ -296,20 +296,20 @@ import { useRoute, useLocation } from "wouter";
                       onClick={handleBack}
                     >
                       {backing ? (
-                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃÂ¢ÃÂÃÂ¦</span>
+                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦</span>
                       ) : (
                         <span className="flex items-center gap-2"><Heart className="w-4 h-4" />Back this project</span>
                       )}
                     </Button>
                   ) : (
                     <Button className="w-full" variant="outline" disabled>
-                      {campaign.status === "funded" ? "ÃÂ°ÃÂÃÂÃÂ Funded ÃÂ¢ÃÂÃÂ Campaign Closed" : "Campaign Ended"}
+                      {campaign.status === "funded" ? "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ Funded ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Campaign Closed" : "Campaign Ended"}
                     </Button>
                   )}
 
                   {isActive && (
                     <p className="text-xs text-center text-muted-foreground">
-                      Virelle charges a 7% platform fee ÃÂÃÂ· Powered by Stripe
+                      Virelle charges a 7% platform fee ÃÂÃÂÃÂÃÂ· Powered by Stripe
                     </p>
                   )}
                 </CardContent>

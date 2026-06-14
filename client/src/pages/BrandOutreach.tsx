@@ -52,7 +52,7 @@ function buildPrompt(b: BriefState, projectTitle: string, brand: any) {
   return `Write a personalized cold-outreach email to a brand partnerships contact about an integration in our project.
 
 Project: "${projectTitle}"
-Format: ${b.format} Â· Genre: ${b.genre}
+Format: ${b.format} ÃÂ· Genre: ${b.genre}
 Audience: ${b.audience}
 
 Brand: ${brand?.organization || "[brand]"}
@@ -62,7 +62,7 @@ Why this brand fits the story: ${b.brandFit}
 Integration idea: ${b.integrationIdea}
 The ask (e.g. $25k cash + product, or in-kind only): ${b.ask}
 
-Constraints: â¤180 words, conversational but precise, lead with the brand-relevant story beat (not us), include 1 specific integration moment, end with a clear next step (15-min call). No emojis, no buzzwords. Subject line on the first line.`;
+Constraints: Ã¢ÂÂ¤180 words, conversational but precise, lead with the brand-relevant story beat (not us), include 1 specific integration moment, end with a clear next step (15-min call). No emojis, no buzzwords. Subject line on the first line.`;
 }
 
 export default function BrandOutreach() {
@@ -187,20 +187,20 @@ export default function BrandOutreach() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Brand Outreach Desk</h1>
         <p className="text-muted-foreground mt-1">
-          {brands.length} brand & sponsor desks Â· pitch tailored cold emails for product placement, integrations, and co-marketing.
+          {brands.length} brand & sponsor desks ÃÂ· pitch tailored cold emails for product placement, integrations, and co-marketing.
         </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Brands */}
-        <Card className="lg:col-span-1 glass-card shadow-lg shadow-amber-500/5">
+        <Card className="lg:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardHeader>
-            <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Brands & Sponsor Desks</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Brands & Sponsor Desks</CardTitle>
             <CardDescription>Pick one to draft outreach.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
+          <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <Input
-              placeholder="Search brandsâ¦"
+              placeholder="Search brandsÃ¢ÂÂ¦"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -221,7 +221,7 @@ export default function BrandOutreach() {
                       <div className="min-w-0">
                         <div className="font-medium text-sm truncate">{p.organization}</div>
                         <div className="text-xs text-muted-foreground truncate">
-                          {p.country}{p.type ? ` Â· ${p.type}` : ""}
+                          {p.country}{p.type ? ` ÃÂ· ${p.type}` : ""}
                         </div>
                       </div>
                       {p.website && (
@@ -254,9 +254,9 @@ export default function BrandOutreach() {
         </Card>
 
         {/* AI outreach drafter */}
-        <Card className="lg:col-span-2 glass-card shadow-lg shadow-amber-500/5">
+        <Card className="lg:col-span-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <Sparkles className="h-4 w-4" /> Outreach Drafter
             </CardTitle>
             <CardDescription>
@@ -265,7 +265,7 @@ export default function BrandOutreach() {
                 : "Pick a brand on the left to start."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
+          <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <div className="grid md:grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Contact name (optional)</Label>

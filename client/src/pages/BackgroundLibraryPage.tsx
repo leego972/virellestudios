@@ -58,7 +58,7 @@ import { useState } from "react";
         <div>
           <Label>Description / Visual Lock</Label>
           <Textarea value={form.description} onChange={e => set("description", e.target.value)}
-            placeholder="Describe exactly how this must look every time it appearsâ¦" rows={3} />
+            placeholder="Describe exactly how this must look every time it appearsÃ¢ÂÂ¦" rows={3} />
         </div>
         {isVehicle && (
           <>
@@ -70,7 +70,7 @@ import { useState } from "react";
         <div>
           <Label>AI Style Notes (injected into every scene)</Label>
           <Textarea value={form.styleNotes} onChange={e => set("styleNotes", e.target.value)}
-            placeholder="Prompt fragment to inject so this background looks identical every timeâ¦" rows={2} />
+            placeholder="Prompt fragment to inject so this background looks identical every timeÃ¢ÂÂ¦" rows={2} />
         </div>
         <div className="flex gap-2 pt-2">
           <Button onClick={() => onSave(form)} className="flex-1">Save</Button>
@@ -137,19 +137,19 @@ import { useState } from "react";
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((bg: any) => (
-              <Card key={bg.id} className="relative group glass-card shadow-lg shadow-amber-500/5">
-                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
+              <Card key={bg.id} className="relative group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">
                         {TYPE_ICONS[bg.backgroundType as BgType] ?? <MapPin className="w-4 h-4 text-amber-400/70" />}
                       </span>
-                      <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{bg.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{bg.name}</CardTitle>
                     </div>
                     <Badge variant="secondary">{TYPE_LABELS[bg.backgroundType as BgType] ?? bg.backgroundType}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   {bg.description && <p className="text-sm text-muted-foreground line-clamp-3">{bg.description}</p>}
                   {(bg.vehicleMake || bg.vehicleModel || bg.vehicleColor) && (
                     <p className="text-xs font-mono bg-muted px-2 py-1 rounded">

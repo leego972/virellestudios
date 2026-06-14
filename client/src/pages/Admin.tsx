@@ -78,8 +78,8 @@ import React, { useState } from "react";
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Shirt className="h-5 w-5 text-amber-400" />Seed Marketplace</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Shirt className="h-5 w-5 text-amber-400" />Seed Marketplace</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed all 28+ Lamalo Fashion collections and wardrobe items.</p>
                 <Button onClick={() => seedMarketplace.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -88,8 +88,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><DollarSign className="h-5 w-5 text-amber-400" />Seed Funding Sources</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><DollarSign className="h-5 w-5 text-amber-400" />Seed Funding Sources</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed all 30+ funding sources including grants and investment options.</p>
                 <Button onClick={() => seedFunding.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -98,8 +98,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Rocket className="h-5 w-5 text-amber-400" />Seed Crowdfunding</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Rocket className="h-5 w-5 text-amber-400" />Seed Crowdfunding</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed sample active crowdfunding campaigns.</p>
                 <Button onClick={() => seedCrowdfunding.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -108,8 +108,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Shirt className="h-5 w-5 text-purple-400" />Seed Executive Wardrobe</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Shirt className="h-5 w-5 text-purple-400" />Seed Executive Wardrobe</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed premium executive & luxury fashion collections.</p>
                 <Button onClick={() => seedExecutive.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -118,8 +118,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Star className="h-5 w-5 text-amber-400" />Seed Master Collections</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Star className="h-5 w-5 text-amber-400" />Seed Master Collections</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed master wardrobe collections.</p>
                 <Button onClick={() => seedMaster.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -128,8 +128,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Users className="h-5 w-5 text-blue-400" />Seed Signature Cast</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Users className="h-5 w-5 text-blue-400" />Seed Signature Cast</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed signature & diverse cast profiles.</p>
                 <Button onClick={() => seedSignatureCast.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -138,8 +138,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Shield className="h-5 w-5 text-green-400" />Seed Uniforms</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Shield className="h-5 w-5 text-green-400" />Seed Uniforms</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed uniform collections.</p>
                 <Button onClick={() => seedUniforms.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -148,8 +148,8 @@ import React, { useState } from "react";
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Users className="h-5 w-5 text-amber-400" />Beta Accounts</CardTitle></CardHeader>
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Users className="h-5 w-5 text-amber-400" />Beta Accounts</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Create beta tester accounts.</p>
                 <Button onClick={() => createBeta.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
@@ -161,7 +161,7 @@ import React, { useState } from "react";
 
           <div className="mt-6">
             <Button
-              onClick={() => { if (confirm("Seed everything â marketplace, funding, and campaigns?")) seedEverything.mutate(); }}
+              onClick={() => { if (confirm("Seed everything Ã¢ÂÂ marketplace, funding, and campaigns?")) seedEverything.mutate(); }}
               disabled={isAnyLoading}
               className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold py-3"
             >
