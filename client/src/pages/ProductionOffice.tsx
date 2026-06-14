@@ -388,11 +388,11 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* AI call sheet */}
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4" /> AI Call Sheet
           </CardTitle>
-          <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Pick a day and generate a print-ready one-pager.</CardDescription>
+          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Pick a day and generate a print-ready one-pager.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-3 gap-3">
