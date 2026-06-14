@@ -5,21 +5,21 @@ import { ArrowLeft, Lock } from "lucide-react";
 export default function PrivacyPolicy() {
   const [, setLocation] = useLocation();
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-[#07070e] via-[#0c0b18] to-[#07070a]  bg-background text-foreground" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Home
         </Button>
         <div className="flex items-center gap-3 mb-2">
           <Lock className="h-6 w-6 text-amber-400" />
-          <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Privacy Policy</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer text-gold-shimmer">Privacy Policy</h1>
         </div>
         <p className="text-muted-foreground text-sm mb-10">Last updated: March 2026 · Effective immediately</p>
 
         <div className="prose prose-invert max-w-none space-y-8 text-sm leading-relaxed">
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">1. Information We Collect</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">1. Information We Collect</h2>
             <p className="text-muted-foreground mb-3">We collect the following categories of information:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">Account information:</strong> Name, email address, password (hashed), professional role, company name.</li>
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">2. How We Use Your Information</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">2. How We Use Your Information</h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>To provide, maintain, and improve the Platform</li>
               <li>To process payments and manage subscriptions</li>
@@ -44,14 +44,14 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">3. Content Moderation and Safety</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">3. Content Moderation and Safety</h2>
             <p className="text-muted-foreground">
               We operate automated content moderation systems that analyse inputs and generated content for policy violations. In cases of suspected violations, content and associated user data may be reviewed by our safety team. In cases of CSAM or serious illegal content, we are legally obligated to report to relevant authorities including NCMEC and law enforcement, and will share necessary user data to comply with these obligations.
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">4. Data Sharing</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">4. Data Sharing</h2>
             <p className="text-muted-foreground mb-3">We do not sell your personal data. We share data only with:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">AI providers:</strong> Your prompts and reference images are sent to third-party AI services (OpenAI, Runway ML, ElevenLabs, etc.) to generate content. These providers have their own privacy policies.</li>
@@ -62,21 +62,21 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">5. Data Retention</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">5. Data Retention</h2>
             <p className="text-muted-foreground">
               We retain your account data for as long as your account is active. Generated content is retained according to your subscription plan. You may request deletion of your account and associated data by contacting <a href="mailto:studiosvirelle@gmail.com" className="text-amber-400 hover:underline">studiosvirelle@gmail.com</a>. Note that we may retain certain data as required by law or for legitimate safety purposes.
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">6. Security</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">6. Security</h2>
             <p className="text-muted-foreground">
               We implement industry-standard security measures including encrypted connections (TLS), hashed passwords (bcrypt), encrypted API key storage (AES-256), rate limiting, and fraud detection. However, no system is completely secure and we cannot guarantee absolute security.
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">7. Your Rights</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">7. Your Rights</h2>
             <p className="text-muted-foreground mb-3">Depending on your jurisdiction, you may have the right to:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Access the personal data we hold about you</li>
@@ -91,7 +91,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-3 gradient-text-gold">8. Contact</h2>
+            <h2 className="text-lg font-semibold mb-3 gradient-text-gold gradient-text-gold">8. Contact</h2>
             <p className="text-muted-foreground">
               For privacy-related inquiries: <a href="mailto:studiosvirelle@gmail.com" className="text-amber-400 hover:underline">studiosvirelle@gmail.com</a><br />For legal matters: <a href="mailto:studiosvirelle@gmail.com" className="text-amber-400 hover:underline">studiosvirelle@gmail.com</a><br />For support: <a href="mailto:studiosvirelle@gmail.com" className="text-amber-400 hover:underline">studiosvirelle@gmail.com</a>
             </p>

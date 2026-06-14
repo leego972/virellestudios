@@ -117,17 +117,17 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </span>
             )}
             {scene.locationType && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
                 <MapPin style={{ width: 8, height: 8 }} />{scene.locationType}
               </span>
             )}
             {scene.weather && scene.weather !== "clear" && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
                 <Cloud style={{ width: 8, height: 8 }} />{scene.weather}
               </span>
             )}
             {scene.colorGrading && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
                 <Palette style={{ width: 8, height: 8 }} />{scene.colorGrading}
               </span>
             )}
@@ -160,7 +160,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
     return (
       <>
-        <div className="flex gap-4 p-3 rounded-xl border cursor-pointer transition-all hover:border-yellow-500/20"
+        <div className="flex gap-4 p-3 rounded-xl border cursor-pointer transition-all hover:border-yellow-500/20 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow"
           style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}
           onClick={onNavigate}>
 
@@ -195,19 +195,19 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <span className="text-[9px] text-muted-foreground/40 flex items-center gap-1">
                 <Clock style={{ width: 9, height: 9 }} />{formatTime(scene.duration || 30)}
               </span>
-              {scene.intExt && <span className="text-[9px] px-1.5 py-0.5 rounded glass-card/5 text-muted-foreground/50">{scene.intExt}</span>}
+              {scene.intExt && <span className="text-[9px] px-1.5 py-0.5 rounded glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.intExt}</span>}
             </div>
             <p className="text-[11px] text-muted-foreground/60 line-clamp-2 leading-relaxed">{scene.description || "No description"}</p>
             <div className="flex flex-wrap gap-1 pt-0.5">
               {scene.timeOfDay && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5" style={{ color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow" style={{ color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
                   {scene.timeOfDay}
                 </span>
               )}
-              {scene.locationType && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">{scene.locationType}</span>}
-              {scene.weather && scene.weather !== "clear" && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">{scene.weather}</span>}
+              {scene.locationType && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.locationType}</span>}
+              {scene.weather && scene.weather !== "clear" && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.weather}</span>}
               {(scene.characterIds as number[] || []).length > 0 && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/40 truncate max-w-[200px]">
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/40 truncate max-w-[200px] hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
                   {(scene.characterIds as number[]).map((id: number) => getCharName(id)).join(", ")}
                 </span>
               )}
@@ -342,7 +342,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 { label: "With Video", val: withVideo },
                 { label: "Boarded",    val: withThumb },
               ].map((s, i) => (
-                <div key={i} className="rounded-xl border px-3 py-2.5" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
+                <div key={i} className="rounded-xl border px-3 py-2.5 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
                   <div className="text-[9px] text-muted-foreground uppercase tracking-wider">{s.label}</div>
                   <div className="text-lg font-bold mt-0.5" style={{ color: "#D4AF37" }}>{s.val}</div>
                 </div>
