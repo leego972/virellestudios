@@ -58,7 +58,7 @@ import { useState } from "react";
         <div>
           <Label>Description / Visual Lock</Label>
           <Textarea value={form.description} onChange={e => set("description", e.target.value)}
-            placeholder="Describe exactly how this must look every time it appearsÃ¢ÂÂ¦" rows={3} />
+            placeholder="Describe exactly how this must look every time it appears…" rows={3} />
         </div>
         {isVehicle && (
           <>
@@ -70,7 +70,7 @@ import { useState } from "react";
         <div>
           <Label>AI Style Notes (injected into every scene)</Label>
           <Textarea value={form.styleNotes} onChange={e => set("styleNotes", e.target.value)}
-            placeholder="Prompt fragment to inject so this background looks identical every timeÃ¢ÂÂ¦" rows={2} />
+            placeholder="Prompt fragment to inject so this background looks identical every time…" rows={2} />
         </div>
         <div className="flex gap-2 pt-2">
           <Button onClick={() => onSave(form)} className="flex-1">Save</Button>
