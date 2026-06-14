@@ -262,7 +262,7 @@ export default function FAQ() {
                   const Icon = activeSection.icon;
                   return <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><Icon className="h-4 w-4 text-amber-400" /></div>;
                 })()}
-                <h2 className="text-xl font-bold">{activeSection.label}</h2>
+                <h2 className="text-xl font-bold gradient-text-gold">{activeSection.label}</h2>
               </div>
               <div className="rounded-xl border border-border/50 bg-card/40 px-6">
                 {activeSection.questions.map((item) => (
@@ -277,7 +277,7 @@ export default function FAQ() {
       {/* Still have questions */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/40">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-3">Still have questions?</h2>
+          <h2 className="text-2xl font-bold mb-3 gradient-text-gold">Still have questions?</h2>
           <p className="text-foreground/60 mb-6">Our team is available to answer any questions about the platform, pricing, or your specific production needs.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12" onClick={() => setLocation("/contact")}>

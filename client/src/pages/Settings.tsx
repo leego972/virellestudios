@@ -752,7 +752,7 @@ export default function Settings() {
 
           {/* Language Model (LLM) API Key — Venice */}
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
               <Sparkles className="w-5 h-5 text-violet-400" />
               Language Model (LLM) API Key
             </h2>
@@ -804,7 +804,7 @@ export default function Settings() {
 
           {/* API Key Cards */}
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
               <Video className="w-5 h-5 text-amber-500" />
               Video Provider API Keys
             </h2>
@@ -870,7 +870,7 @@ export default function Settings() {
 
           {/* Voice & Music API Keys */}
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
               <Sparkles className="w-5 h-5 text-pink-500" />
               Voice & Music API Keys
             </h2>
@@ -931,7 +931,7 @@ export default function Settings() {
 
           {/* Nano Banana Image Generation */}
           <div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
               <span className="text-xl">🍌</span>
               Nano Banana Image Generation
             </h2>

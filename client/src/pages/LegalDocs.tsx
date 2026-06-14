@@ -370,7 +370,7 @@ import { useState } from "react";
           <div className="space-y-6">
             {categories.map(cat => (
               <div key={cat}>
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{cat}</h2>
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">{cat}</h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {TEMPLATES.filter(t => t.category === cat).map(t => (
                     <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group" onClick={() => handleSelect(t)}>

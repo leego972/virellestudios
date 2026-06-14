@@ -891,7 +891,7 @@ function UnlockModal({
       <div className="bg-zinc-900 border border-zinc-700/60 rounded-xl max-w-md w-full p-6 space-y-5">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-bold text-white">{actor.name}</h2>
+            <h2 className="text-lg font-bold text-white gradient-text-gold">{actor.name}</h2>
             <p className="text-xs text-amber-400/80 mt-0.5">{actor.archetype} — <TierBadge tier={actor.tier} /></p>
           </div>
           <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>

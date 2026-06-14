@@ -125,7 +125,7 @@ export default function DownloadApp() {
         {/* ── Mobile Downloads ──────────────────────────────────────────────────── */}
         <section>
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3">📱 Mobile App</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">📱 Mobile App</h2>
             <p className="text-gray-400">iOS available now — Android coming soon</p>
           </div>
 
@@ -221,7 +221,7 @@ export default function DownloadApp() {
         {/* ── Desktop Downloads ──────────────────────────────────────────────────── */}
         <section>
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3">🖥️ Desktop App</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text-gold">🖥️ Desktop App</h2>
             <p className="text-gray-400">
               {links?.desktop?.available
                 ? "macOS, Windows & Linux — native performance"
@@ -272,7 +272,7 @@ export default function DownloadApp() {
         {/* ── Parity callout ────────────────────────────────────────────────────── */}
         <div className="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20 rounded-3xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">🔄</div>
-          <h2 className="text-xl sm:text-2xl font-bold mb-3">One Subscription. All Platforms.</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 gradient-text-gold">One Subscription. All Platforms.</h2>
           <p className="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
             Your Virelle subscription works across web, mobile, and desktop. Credits, projects, and settings sync automatically. New features added to the platform appear everywhere — no app update required.
           </p>

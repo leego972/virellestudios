@@ -127,7 +127,7 @@ export default function BlogArticle() {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
         <BookOpen className="h-12 w-12 text-white/20" />
-        <h2 className="text-xl font-semibold">Article not found</h2>
+        <h2 className="text-xl font-semibold gradient-text-gold">Article not found</h2>
         <Link href="/blog">
           <Button variant="ghost" className="text-amber-400">
             <ArrowLeft className="h-4 w-4 mr-2" />

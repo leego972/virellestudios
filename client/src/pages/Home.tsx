@@ -426,7 +426,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">Continue your film</p>
-                  <h2 className="text-lg font-semibold truncate mt-0.5">{p.title}</h2>
+                  <h2 className="text-lg font-semibold truncate mt-0.5 gradient-text-gold">{p.title}</h2>
                   <p className="text-xs text-muted-foreground mt-0.5">Stage {currentStage} of 8 — {cur.title}</p>
                 </div>
                 <Link href={next.hrefFor(p.id)}><Button className="min-h-[40px] gap-2 whitespace-nowrap">{currentStage === 8 ? "Plan release" : `Continue → Stage ${next.number}`}</Button></Link>
@@ -544,7 +544,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold">Continue Filming</h2>
+              <h2 className="text-base font-semibold gradient-text-gold">Continue Filming</h2>
               <Button variant="ghost" size="sm" className="text-xs text-muted-foreground gap-1" onClick={() => setLocation("/projects")}>View all <ArrowRight className="h-3 w-3" /></Button>
             </div>
             {isLoading ? (
@@ -605,7 +605,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             {recentCompleted.length > 0 && (
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Recent Completions</h2>
+                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide gradient-text-gold">Recent Completions</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {recentCompleted.map((p) => (
@@ -632,7 +632,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
           {/* Activity Feed */}
           <div>
-            <h2 className="text-base font-semibold mb-4">Recent Activity</h2>
+            <h2 className="text-base font-semibold mb-4 gradient-text-gold">Recent Activity</h2>
             {activityItems.length === 0 ? (
               <p className="text-xs text-muted-foreground">No recent activity</p>
             ) : (

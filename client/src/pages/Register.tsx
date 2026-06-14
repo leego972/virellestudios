@@ -401,7 +401,7 @@ export default function Register() {
                 <Check className="w-8 h-8 text-amber-500" />
               </div>
               <div className="space-y-1">
-                <h2 className="text-2xl font-bold text-foreground">Welcome to Virelle Studios!</h2>
+                <h2 className="text-2xl font-bold text-foreground gradient-text-gold">Welcome to Virelle Studios!</h2>
                 <p className="text-sm text-muted-foreground">
                   Account created. Now connect your AI providers to start generating.
                 </p>

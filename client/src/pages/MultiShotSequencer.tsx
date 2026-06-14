@@ -575,7 +575,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
           {/* Right: Shot List */}
           <div className="col-span-2 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-muted-foreground">Shot Sequence</h2>
+              <h2 className="text-sm font-medium text-muted-foreground gradient-text-gold">Shot Sequence</h2>
               <Button
                 variant="outline" size="sm"
                 onClick={addShot}

@@ -157,7 +157,7 @@ export default function PitchDeckPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-3">{title}</h2>
+      <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-3 gradient-text-gold">{title}</h2>
       {children}
     </section>
   );

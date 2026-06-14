@@ -501,7 +501,7 @@ export default function DesignerStudioPage() {
         {/* Collections */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-black tracking-tight flex items-center gap-2">
+            <h2 className="text-lg font-black tracking-tight flex items-center gap-2 gradient-text-gold">
               <Package className="h-5 w-5 text-amber-400" />
               Your Collections
             </h2>

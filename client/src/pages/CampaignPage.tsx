@@ -94,7 +94,7 @@ import { useRoute, useLocation } from "wouter";
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-3">
           <Film className="w-12 h-12 text-muted-foreground mx-auto" />
-          <h2 className="text-xl font-semibold">Campaign not found</h2>
+          <h2 className="text-xl font-semibold gradient-text-gold">Campaign not found</h2>
           <Button variant="outline" onClick={() => navigate("/crowdfund/browse")}>Browse Campaigns</Button>
         </div>
       </div>

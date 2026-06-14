@@ -265,7 +265,7 @@ export default function AssetMarketplace() {
         {category !== "wardrobes" && category !== "funding" && category !== "all" && (
           <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
             <Lock className="w-12 h-12 mx-auto mb-4 text-white/20" />
-            <h2 className="text-xl font-bold mb-2">Marketplace Expansion</h2>
+            <h2 className="text-xl font-bold mb-2 gradient-text-gold">Marketplace Expansion</h2>
             <p className="text-white/40 max-w-md mx-auto text-sm">
               We're currently seeding the {category} marketplace. These professional assets will be available for production soon.
             </p>
@@ -282,7 +282,7 @@ export default function AssetMarketplace() {
         {filteredAssets.length === 0 && !isLoading && (category === "all" || category === "wardrobes" || category === "funding") && (
           <div className="text-center py-20">
             <Search className="w-12 h-12 mx-auto mb-4 text-white/10" />
-            <h2 className="text-lg font-medium text-white/40">No items found</h2>
+            <h2 className="text-lg font-medium text-white/40 gradient-text-gold">No items found</h2>
             <p className="text-sm text-white/20">Try adjusting your search or category filters.</p>
           </div>
         )}

@@ -261,7 +261,7 @@ export default function SharePreview() {
         )}
 
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">Scenes</h2>
+          <h2 className="text-lg font-semibold gradient-text-gold">Scenes</h2>
           <span className="text-xs text-muted-foreground">
             {completed} of {scenes.length} ready
           </span>

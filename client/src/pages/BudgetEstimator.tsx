@@ -270,7 +270,7 @@ export default function BudgetEstimator() {
         {!activeBudget && !generateMutation.isPending ? (
           <div className="text-center py-24">
             <DollarSign className="h-16 w-16 mx-auto mb-6 text-muted-foreground/30" />
-            <h2 className="text-xl font-semibold mb-2">No Budget Estimates Yet</h2>
+            <h2 className="text-xl font-semibold mb-2 gradient-text-gold">No Budget Estimates Yet</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               AI will analyze your scenes, characters, locations, and effects to generate a realistic Hollywood production budget breakdown.
             </p>
@@ -281,7 +281,7 @@ export default function BudgetEstimator() {
         ) : generateMutation.isPending && !activeBudget ? (
           <div className="text-center py-24">
             <Loader2 className="h-12 w-12 mx-auto mb-6 animate-spin text-primary" />
-            <h2 className="text-lg font-semibold mb-2">Analyzing Your Production</h2>
+            <h2 className="text-lg font-semibold mb-2 gradient-text-gold">Analyzing Your Production</h2>
             <p className="text-sm text-muted-foreground">Evaluating scenes, locations, cast, VFX requirements...</p>
           </div>
         ) : activeBudget && breakdown ? (

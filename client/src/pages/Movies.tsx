@@ -793,7 +793,7 @@ export default function Movies() {
               {/* Movie Folders */}
               {filteredFolderNames.length > 0 && (
                 <div>
-                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">
                     Movie Folders
                   </h2>
                   {viewMode === "grid" ? (
@@ -932,7 +932,7 @@ export default function Movies() {
               {/* Top-Level Films (no folder) */}
               {filteredTopLevel.length > 0 && (
                 <div>
-                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">
                     {folderNames.length > 0 ? "Standalone" : "All Movies"}
                   </h2>
                   {viewMode === "grid" ? (

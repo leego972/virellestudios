@@ -315,7 +315,7 @@ export default function DesignerRegisterPage() {
               <div className="space-y-4">
                 <div className="text-center mb-2">
                   <CreditCard className="h-9 w-9 text-amber-400 mx-auto mb-3" />
-                  <h2 className="text-xl font-black mb-1">Choose Your Plan</h2>
+                  <h2 className="text-xl font-black mb-1 gradient-text-gold">Choose Your Plan</h2>
                   <p className="text-white/50 text-sm">Unlock the marketplace, or bundle with Virelle filmmaker tools.</p>
                 </div>
 
@@ -391,7 +391,7 @@ export default function DesignerRegisterPage() {
             <div className="bg-white/3 border border-white/10 rounded-2xl p-6 space-y-5 text-center">
               <Wallet className="h-10 w-10 text-amber-400 mx-auto" />
               <div>
-                <h2 className="text-xl font-black mb-2">Set Up Your Payouts</h2>
+                <h2 className="text-xl font-black mb-2 gradient-text-gold">Set Up Your Payouts</h2>
                 <p className="text-white/50 text-sm leading-relaxed">
                   Connect a bank account via Stripe so lease payments land directly in your account.
                   This takes about 3 minutes.
@@ -420,7 +420,7 @@ export default function DesignerRegisterPage() {
                 <Sparkles className="h-8 w-8 text-amber-400" />
               </div>
               <div>
-                <h2 className="text-2xl font-black mb-2">You're a Virelle Designer!</h2>
+                <h2 className="text-2xl font-black mb-2 gradient-text-gold">You're a Virelle Designer!</h2>
                 <p className="text-white/50 text-sm">
                   Your designer studio is ready. Start adding items, pricing collections,
                   and publishing to the marketplace.

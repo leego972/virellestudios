@@ -207,7 +207,7 @@ function CustomOrderModal({
               <Wand2 className="h-4.5 w-4.5 text-amber-400" />
             </div>
             <div>
-              <h2 className="text-base font-black text-white">Order Custom Item</h2>
+              <h2 className="text-base font-black text-white gradient-text-gold">Order Custom Item</h2>
               <p className="text-[11px] text-white/35">AI-generated · Permanently yours · A$4.99</p>
             </div>
           </div>
@@ -768,7 +768,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
 
         {/* Collections */}
         <div>
-          <h2 className="text-lg font-black tracking-tight mb-5 flex items-center gap-2">
+          <h2 className="text-lg font-black tracking-tight mb-5 flex items-center gap-2 gradient-text-gold">
             <Package className="h-5 w-5 text-amber-400" />
             Collections
             <span className="text-sm font-normal text-white/30 ml-1">({collections.length})</span>
@@ -1001,7 +1001,7 @@ function MarketplaceGrid({
             <Wand2 className="h-8 w-8 text-amber-400" />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-lg font-black text-white mb-1">
+            <h2 className="text-lg font-black text-white mb-1 gradient-text-gold">
               Order Custom AI Items — A$4.99 each
             </h2>
             <p className="text-sm text-white/50 leading-relaxed max-w-2xl">
@@ -1055,7 +1055,7 @@ function MarketplaceGrid({
       {/* Designer grid */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-black tracking-tight text-white">
+          <h2 className="text-lg font-black tracking-tight text-white gradient-text-gold">
             {search ? `Results for "${search}"` : "All Designers"}
           </h2>
           <span className="text-xs text-white/30">{sorted.length} designers</span>
@@ -1109,7 +1109,7 @@ function MarketplaceGrid({
       <section className="border-t border-white/10 bg-white/[0.01] py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <Building2 className="h-10 w-10 text-amber-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-black tracking-tight mb-3 text-white">List your designs here.</h2>
+          <h2 className="text-2xl font-black tracking-tight mb-3 text-white gradient-text-gold">List your designs here.</h2>
           <p className="text-white/50 text-sm mb-2 leading-relaxed">
             Upload your collection and every item goes through Costume Lock optimisation — reference
             prompt calibration, colour separation, and scene continuity integration. Your customers

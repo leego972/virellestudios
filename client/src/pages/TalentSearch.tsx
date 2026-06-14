@@ -993,7 +993,7 @@ import { useState, useEffect } from "react";
                           </Badge>
                         )}
                       </div>
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tight">{selectedActor.name}</h2>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tight gradient-text-gold">{selectedActor.name}</h2>
                       <p className={`text-sm mt-1.5 font-medium tracking-wide ${selectedAccent?.text ?? "text-zinc-400"}`}>{selectedActor.archetype}</p>
                     </div>
                     <div className="text-right shrink-0">

@@ -139,7 +139,7 @@ export default function DailyReportPage() {
         </div>
 
         <div className="dpr-section mb-4">
-          <h2 className="dpr-label mb-2">Production</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Production</h2>
           <table className="dpr-table">
             <tbody>
               <tr>
@@ -161,7 +161,7 @@ export default function DailyReportPage() {
         </div>
 
         <div className="dpr-section mb-4">
-          <h2 className="dpr-label mb-2">Scenes Scheduled ({dayScenes.length})</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Scenes Scheduled ({dayScenes.length})</h2>
           {dayScenes.length === 0 ? (
             <div className="italic text-zinc-600 text-sm">No scenes scheduled for this day.</div>
           ) : (
@@ -196,7 +196,7 @@ export default function DailyReportPage() {
         </div>
 
         <div className="dpr-section mb-4">
-          <h2 className="dpr-label mb-2">Page Count</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Page Count</h2>
           <table className="dpr-table">
             <thead>
               <tr>
@@ -216,7 +216,7 @@ export default function DailyReportPage() {
         </div>
 
         <div className="dpr-section mb-4">
-          <h2 className="dpr-label mb-2">Crew on Set</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Crew on Set</h2>
           {(crew as any[]).length === 0 ? (
             <div className="italic text-zinc-600 text-sm">No crew listed.</div>
           ) : (
@@ -244,14 +244,14 @@ export default function DailyReportPage() {
         </div>
 
         <div className="dpr-section mb-4">
-          <h2 className="dpr-label mb-2">Meal Breaks / Notes</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Meal Breaks / Notes</h2>
           <div style={{ minHeight: 80, border: "1px solid #999", padding: 6 }}>
             {day?.generalNotes || ""}
           </div>
         </div>
 
         <div className="dpr-section mt-6">
-          <h2 className="dpr-label mb-2">Signatures</h2>
+          <h2 className="dpr-label mb-2 gradient-text-gold">Signatures</h2>
           <table className="dpr-table">
             <tbody>
               <tr>

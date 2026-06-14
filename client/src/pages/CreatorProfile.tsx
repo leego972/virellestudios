@@ -191,7 +191,7 @@ export default function CreatorProfile() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
             <Film className="w-5 h-5" style={{ color: "#d4af37" }} />
-            <h2 className="text-lg font-semibold text-white">Films</h2>
+            <h2 className="text-lg font-semibold text-white gradient-text-gold">Films</h2>
             <span className="text-xs text-neutral-500">({films.length})</span>
           </div>
 
@@ -239,7 +239,7 @@ export default function CreatorProfile() {
             <div className="h-px bg-neutral-800 mb-8" />
             <div className="flex items-center gap-2 mb-6">
               <Layers className="w-5 h-5" style={{ color: "#d4af37" }} />
-              <h2 className="text-lg font-semibold text-white">Collections</h2>
+              <h2 className="text-lg font-semibold text-white gradient-text-gold">Collections</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {collections.map((col: any) => (

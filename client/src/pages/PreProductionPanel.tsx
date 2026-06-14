@@ -1097,7 +1097,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-sm font-semibold flex items-center gap-2">
+          <h2 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Camera className="h-4 w-4 text-violet-500" />Wardrobe Library
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -1421,7 +1421,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold flex items-center gap-2">
+          <h2 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Film className="h-4 w-4 text-violet-500" />Shot List Generator
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -1642,7 +1642,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
     <div className="space-y-5 max-w-4xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-sm font-semibold flex items-center gap-2">
+          <h2 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <CalendarDays className="h-4 w-4 text-violet-500" />Shooting Schedule
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -1801,7 +1801,7 @@ function ContinuityTab({ projectId }: { projectId: number }) {
     <div className="space-y-5 max-w-3xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-sm font-semibold flex items-center gap-2">
+          <h2 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Eye className="h-4 w-4 text-violet-500" />Continuity Checker
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -2053,7 +2053,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
   return (
     <div className="space-y-5 max-w-5xl">
       <div>
-        <h2 className="text-sm font-semibold flex items-center gap-2">
+        <h2 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
           <Star className="h-4 w-4 text-violet-500" />Title Card Creator
         </h2>
         <p className="text-xs text-muted-foreground mt-0.5">

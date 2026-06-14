@@ -77,7 +77,7 @@ export default function BYOKControlCenterPage() {
         </header>
 
         <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
-          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">
             Configured providers
           </h2>
           {statusQ.isLoading && <div className="text-sm text-zinc-500">Loading…</div>}
@@ -139,7 +139,7 @@ export default function BYOKControlCenterPage() {
         </section>
 
         <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
-          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">
             Preferences
           </h2>
 

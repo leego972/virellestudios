@@ -150,7 +150,7 @@ export default function LocationScout() {
         {/* AI Suggestions */}
         {suggestMutation.data?.locations && (
           <div className="mb-8">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary" /> AI Suggested Locations</h2>
+            <h2 className="text-lg font-medium mb-4 flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-primary" /> AI Suggested Locations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {suggestMutation.data.locations.map((loc: any, i: number) => (
                 <Card key={i} className="border-primary/20 bg-primary/5">

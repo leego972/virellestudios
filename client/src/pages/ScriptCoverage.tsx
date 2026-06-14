@@ -182,7 +182,7 @@ import { useState } from "react";
           <div className="space-y-5">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <h2 className="text-xl font-bold">{report.title}</h2>
+                <h2 className="text-xl font-bold gradient-text-gold">{report.title}</h2>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <Badge variant="outline">{report.genre}</Badge>
                   <Badge variant="outline">{report.format}</Badge>

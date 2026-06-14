@@ -313,7 +313,7 @@ export default function FilmPage() {
         {/* Description */}
         {fp.description && (
           <div>
-            <h2 className="text-lg font-semibold mb-3 text-amber-400">About this film</h2>
+            <h2 className="text-lg font-semibold mb-3 text-amber-400 gradient-text-gold">About this film</h2>
             <p className="text-zinc-300 leading-relaxed text-base">{fp.description}</p>
           </div>
         )}
@@ -345,7 +345,7 @@ export default function FilmPage() {
         {/* Credits table */}
         {Object.keys(credits).length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold mb-3 text-amber-400">Credits</h2>
+            <h2 className="text-lg font-semibold mb-3 text-amber-400 gradient-text-gold">Credits</h2>
             <div className="rounded-xl border border-zinc-800 overflow-hidden">
               {Object.entries(credits).map(([role, name], i) => (
                 <div
@@ -365,7 +365,7 @@ export default function FilmPage() {
         {/* Scenes / Episode list */}
         {scenes.length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 text-amber-400">
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 text-amber-400 gradient-text-gold">
               <Layers className="w-4 h-4" />
               Scenes
               <Badge variant="secondary" className="text-xs">{scenes.length}</Badge>
@@ -424,7 +424,7 @@ export default function FilmPage() {
         {/* ── Traffic Loop: Related Films ── */}
         {relatedFilms.filter((f: any) => f.slug !== slug).length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold mb-4 text-amber-400">More Films</h2>
+            <h2 className="text-lg font-semibold mb-4 text-amber-400 gradient-text-gold">More Films</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {relatedFilms
                 .filter((f: any) => f.slug !== slug)

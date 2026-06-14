@@ -136,38 +136,38 @@ export default function PressKit() {
             </div>
             {kit.synopsisShort && (
               <section className="mb-4">
-                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Logline / Short Synopsis</h2>
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Logline / Short Synopsis</h2>
                 <p className="text-sm leading-relaxed">{kit.synopsisShort}</p>
               </section>
             )}
             {kit.synopsisLong && (
               <section className="mb-4">
-                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Synopsis</h2>
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Synopsis</h2>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{kit.synopsisLong}</p>
               </section>
             )}
             {(characters?.length ?? 0) > 0 && (
               <section className="mb-4">
-                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Characters</h2>
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Characters</h2>
                 <ul className="text-sm pl-5 list-disc">
                   {(characters ?? []).slice(0, 8).map((c: any) => (<li key={c.id}><strong>{c.name}</strong>{c.description ? ` — ${c.description}` : ""}</li>))}
                 </ul>
               </section>
             )}
             {kit.directorBio && (
-              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Director's Bio</h2><p className="text-sm leading-relaxed whitespace-pre-wrap">{kit.directorBio}</p></section>
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Director's Bio</h2><p className="text-sm leading-relaxed whitespace-pre-wrap">{kit.directorBio}</p></section>
             )}
             {kit.technicalSpecs && (
-              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Technical Specs</h2><p className="text-sm whitespace-pre-wrap">{kit.technicalSpecs}</p></section>
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Technical Specs</h2><p className="text-sm whitespace-pre-wrap">{kit.technicalSpecs}</p></section>
             )}
             {kit.festivals && (
-              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Festivals & Selections</h2><p className="text-sm whitespace-pre-wrap">{kit.festivals}</p></section>
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Festivals & Selections</h2><p className="text-sm whitespace-pre-wrap">{kit.festivals}</p></section>
             )}
             {kit.awards && (
-              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Awards</h2><p className="text-sm whitespace-pre-wrap">{kit.awards}</p></section>
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Awards</h2><p className="text-sm whitespace-pre-wrap">{kit.awards}</p></section>
             )}
             {kit.pressQuotes && (
-              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Press</h2><p className="text-sm italic whitespace-pre-wrap">{kit.pressQuotes}</p></section>
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1 gradient-text-gold">Press</h2><p className="text-sm italic whitespace-pre-wrap">{kit.pressQuotes}</p></section>
             )}
             <section className="border-t pt-3 mt-6 text-xs">
               <strong>{kit.productionCompany}</strong> {kit.contactEmail && <>· <a href={`mailto:${kit.contactEmail}`}>{kit.contactEmail}</a></>}

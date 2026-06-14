@@ -156,7 +156,7 @@ export default function SidesPage() {
             return (
               <div key={s.id} className="scene-block mb-6">
                 <div className="border-b border-black/30 pb-1 mb-2 flex items-baseline justify-between">
-                  <h2 className="text-base font-bold uppercase">
+                  <h2 className="text-base font-bold uppercase gradient-text-gold">
                     {i + 1}. {s.title || `Scene ${s.orderIndex + 1}`}
                   </h2>
                   <span className="text-xs">

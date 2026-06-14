@@ -126,7 +126,7 @@ export default function BillingSuccess() {
         {/* What's next (web only) */}
         {!mobileRedirecting && (
           <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">What's next</h2>
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider gradient-text-gold">What's next</h2>
             {isTopUp ? (
               <ul className="space-y-3 text-sm text-zinc-300">
                 <li className="flex items-start gap-3">

@@ -211,7 +211,7 @@ export default function ProjectCommandCenterPage() {
                 <ElementsPanel projectId={projectId} />
               </div>
               <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5 flex flex-col">
-                <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">Quick actions</h2>
+                <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">Quick actions</h2>
                 <Link
                   href={`/projects/${projectId}/script-breakdown`}
                   className="text-sm text-amber-300 hover:underline mb-2"
@@ -260,7 +260,7 @@ export default function ProjectCommandCenterPage() {
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
-      <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">{title}</h2>
+      <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">{title}</h2>
       <div className="space-y-1.5">{children}</div>
     </section>
   );

@@ -153,7 +153,7 @@
           {/* Collections */}
           {collections.length > 0 && (
             <section>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2 gradient-text-gold">
                 <Package className="h-4 w-4" />
                 Leased Collections ({collections.length})
               </h2>
@@ -200,7 +200,7 @@
           {/* Individual Items */}
           {items.length > 0 && (
             <section>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2 gradient-text-gold">
                 <Shirt className="h-4 w-4" />
                 Leased Items ({items.length})
               </h2>

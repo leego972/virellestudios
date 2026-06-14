@@ -647,7 +647,7 @@ import { useState } from "react";
         {/* ── TWO PATHS ────────────────────────────────────────────────────── */}
         <section className="border-b border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
-            <h2 className="text-3xl font-bold text-center mb-3">Two ways to build your cast.</h2>
+            <h2 className="text-3xl font-bold text-center mb-3 gradient-text-gold">Two ways to build your cast.</h2>
             <p className="text-zinc-400 text-center mb-12 max-w-xl mx-auto">
               Create the cast before you create the film.
             </p>
@@ -723,7 +723,7 @@ import { useState } from "react";
         {/* ── WHY VIRELLE STARS ────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why cast a Virelle Star?</h2>
+            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Why cast a Virelle Star?</h2>
             <p className="text-zinc-400 max-w-xl mx-auto">
               Building a character from scratch takes time, prompt refinement, and still produces inconsistent results. Virelle Stars are already built — and they hold.
             </p>
@@ -751,7 +751,7 @@ import { useState } from "react";
               <Badge className="mb-4 bg-amber-500/10 text-amber-300 border border-amber-500/20">
                 <Crown className="w-3 h-3 mr-1" />Flagship Stars
               </Badge>
-              <h2 className="text-3xl font-bold mb-4">The headline cast</h2>
+              <h2 className="text-3xl font-bold mb-4 gradient-text-gold">The headline cast</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
                 Four breakout leads built for prestige drama, crime, and high-stakes romance — with full Character DNA and production-ready profiles.
               </p>
@@ -826,7 +826,7 @@ import { useState } from "react";
               <Badge className="mb-4 bg-purple-500/10 text-purple-300 border border-purple-500/20">
                 <Sparkles className="w-3 h-3 mr-1" />Premium Cast
               </Badge>
-              <h2 className="text-3xl font-bold mb-4">Supporting leads and character actors</h2>
+              <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Supporting leads and character actors</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
                 Seven premium cast members covering noir, drama, crime ensemble, psychological thriller, and the Gallagher Twins — the cast's most technically demanding unit.
               </p>
@@ -875,7 +875,7 @@ import { useState } from "react";
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Film className="w-4 h-4 text-zinc-400" />
-                <h2 className="text-xl font-bold">Featured in Next Door</h2>
+                <h2 className="text-xl font-bold gradient-text-gold">Featured in Next Door</h2>
               </div>
               <p className="text-sm text-zinc-500">The standard-tier ensemble from Virelle's debut suburban-noir series.</p>
             </div>
@@ -913,7 +913,7 @@ import { useState } from "react";
               <Badge className="mb-4 bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
                 <Film className="w-3 h-3 mr-1" />The Showrunner Collection
               </Badge>
-              <h2 className="text-3xl font-bold mb-4">Creator, executive, comic, noir, and tech-thriller archetypes</h2>
+              <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Creator, executive, comic, noir, and tech-thriller archetypes</h2>
               <p className="text-zinc-400 max-w-2xl mx-auto">
                 A cinematic set designed for proof trailers, AI short films, pitch packages, creator dramas, sci-fi noir, and fast-moving production showcases.
               </p>
@@ -1174,7 +1174,7 @@ import { useState } from "react";
         <section className="border-y border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Chemistry pairings</h2>
+              <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Chemistry pairings</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
                 Not just individual actors — screen-tested combinations. Cast these pairs together to unlock the full dynamic.
               </p>
@@ -1202,7 +1202,7 @@ import { useState } from "react";
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
               <Fingerprint className="w-5 h-5 text-amber-400" />
-              <h2 className="text-3xl font-bold">What is Character DNA?</h2>
+              <h2 className="text-3xl font-bold gradient-text-gold">What is Character DNA?</h2>
             </div>
             <p className="text-zinc-400 max-w-2xl mx-auto">
               Character DNA is the structured production profile that keeps a digital performer usable across a project. It gives the story engine and generation workflow consistent reference points instead of treating every scene like a fresh prompt.
@@ -1227,7 +1227,7 @@ import { useState } from "react";
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 mb-4">
                 <GitBranch className="w-5 h-5 text-amber-400" />
-                <h2 className="text-3xl font-bold">How Digital Cast fits the Virelle workflow.</h2>
+                <h2 className="text-3xl font-bold gradient-text-gold">How Digital Cast fits the Virelle workflow.</h2>
               </div>
               <p className="text-zinc-400 max-w-xl mx-auto">
                 Digital Cast connects story planning with generation. Build characters once, then carry them through the production workflow.
@@ -1255,7 +1255,7 @@ import { useState } from "react";
         {/* ── USE CASES ────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Built for real production use.</h2>
+            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Built for real production use.</h2>
             <p className="text-zinc-400 max-w-xl mx-auto">
               Digital Cast is the character layer for every format a modern production touches.
             </p>
@@ -1307,7 +1307,7 @@ import { useState } from "react";
 
         {/* ── CTA ──────────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to build your cast?</h2>
+          <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Ready to build your cast?</h2>
           <p className="text-zinc-400 max-w-lg mx-auto mb-8">
             Create original characters, browse Signature Cast talent, and carry your cast through the full production workflow — scripts, scenes, trailers, and beyond.
           </p>

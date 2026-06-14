@@ -308,7 +308,7 @@ export default function ContentCreatorPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-yellow-400 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold mb-1">Admin Access Required</h2>
+          <h2 className="text-lg font-semibold mb-1 gradient-text-gold">Admin Access Required</h2>
           <p className="text-muted-foreground text-sm">The Content Creator is available to administrators only.</p>
         </div>
       </div>
@@ -842,7 +842,7 @@ export default function ContentCreatorPage() {
         {/* ─── Campaigns Tab ──────────────────────────────────────────────────── */}
         <TabsContent value="campaigns" className="space-y-4 mt-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Content Campaigns</h2>
+            <h2 className="text-sm font-semibold gradient-text-gold">Content Campaigns</h2>
             <Button size="sm" onClick={() => setShowCreateCampaign(true)}>
               <Plus className="h-4 w-4 mr-1" /> New Campaign
             </Button>

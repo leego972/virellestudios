@@ -874,7 +874,7 @@ export default function Characters() {
                 )}
                 <div className="p-6 space-y-4">
                   {!selectedChar.photoUrl && (
-                    <h2 className="text-xl font-bold">{selectedChar.name}</h2>
+                    <h2 className="text-xl font-bold gradient-text-gold">{selectedChar.name}</h2>
                   )}
                   {selectedChar.description && (
                     <p className="text-sm text-muted-foreground leading-relaxed">{selectedChar.description}</p>
