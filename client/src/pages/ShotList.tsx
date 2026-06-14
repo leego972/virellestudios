@@ -504,7 +504,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             </TabsContent>
           </Tabs>
         </div>
-        <NextStageCTA projectId={projectId} currentStage="shotList" />
+        <NextStageCTA projectId={projectId} currentStage={4} />
       </div>
     );
   }

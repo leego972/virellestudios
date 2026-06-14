@@ -7,7 +7,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   import { Separator } from "@/components/ui/separator";
   import { trpc } from "@/lib/trpc";
   import { useParams, useLocation } from "wouter";
-  import { Loader2, ArrowLeft, Palette, Check, Eye, EyeOff, Download, RefreshCw, Sparkles, Sun, Contrast, Droplets, Zap, Monitor, BarChart3 } from "lucide-react";
+  import { Loader2, ArrowLeft, Palette, Check, Eye, EyeOff, Download, RefreshCw, Sparkles, Sun, Droplets, Zap, Monitor, BarChart3 } from "lucide-react";
   import { useState, useEffect, useRef } from "react";
   import { getLoginUrl } from "@/const";
   import { toast } from "sonner";

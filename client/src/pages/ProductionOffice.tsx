@@ -257,7 +257,7 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* Schedule controls */}
         <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
           <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
             {sortedScenes.length} scenes ÃÂ· estimated total runtime{" "}
@@ -289,12 +289,12 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* Stripboard */}
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Calendar className="h-4 w-4" /> Stripboard
           </CardTitle>
         </CardHeader>
-        <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+        <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {stripboard.map((day) => (
               <div key={day.day} className="border rounded-lg p-3 space-y-2 bg-muted/20">
@@ -343,7 +343,7 @@ pre{white-space:pre-wrap;font:inherit}
       {/* Day-out-of-days */}
       {dood.length > 0 && (
         <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-          <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+          <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Users className="h-4 w-4" /> Day-out-of-days
             </CardTitle>
@@ -388,7 +388,7 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* AI call sheet */}
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4" /> AI Call Sheet
           </CardTitle>

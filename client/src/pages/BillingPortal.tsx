@@ -1,1 +1,62 @@
-LyoqCiAqIEJpbGxpbmdQb3J0YWwudHN4CiAqCiAqIEF1dG8tcmVkaXJlY3QgcGFnZSB0aGF0IGNyZWF0ZXMgYSBTdHJpcGUgYmlsbGluZyBwb3J0YWwgc2Vzc2lvbiBhbmQKICogaW1tZWRpYXRlbHkgcmVkaXJlY3RzIHRoZSB1c2VyIHRvIGl0LgogKgogKiBVc2VkIGJ5IHRoZSBtb2JpbGUgYXBwIHZpYToKICogICBodHRwczovL3ZpcmVsbGVzdHVkaW9zLmNvbS9iaWxsaW5nL3BvcnRhbD9zb3VyY2U9bW9iaWxlCiAqCiAqIFRoZSBTdHJpcGUgcG9ydGFsIHJldHVybl91cmwgaXMgc2V0IHRvOgogKiAgIC0gdmlyZWxsZTovL2JpbGxpbmcvY2FsbGJhY2sgICh3aGVuIHNvdXJjZT1tb2JpbGUpCiAqICAgLSAvc2V0dGluZ3M/dGFiPWJpbGxpbmcgICAgICAgKHdlYikKICovCmltcG9ydCB7IHVzZUVmZmVjdCwgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IExvYWRlcjIgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IHVzZUxvY2F0aW9uIH0gZnJvbSAid291dGVyIjsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEJpbGxpbmdQb3J0YWwoKSB7CiAgY29uc3QgWywgc2V0TG9jYXRpb25dID0gdXNlTG9jYXRpb24oKTsKICBjb25zdCBbZXJyb3IsIHNldEVycm9yXSA9IHVzZVN0YXRlPHN0cmluZyB8IG51bGw+KG51bGwpOwoKICBjb25zdCBwYXJhbXMgPSBuZXcgVVJMU2VhcmNoUGFyYW1zKHdpbmRvdy5sb2NhdGlvbi5zZWFyY2gpOwogIGNvbnN0IGlzTW9iaWxlID0gcGFyYW1zLmdldCgic291cmNlIikgPT09ICJtb2JpbGUiOwoKICBjb25zdCBwb3J0YWxNdXRhdGlvbiA9IHRycGMuc3Vic2NyaXB0aW9uLmNyZWF0ZUJpbGxpbmdQb3J0YWwudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoZGF0YSkgPT4gewogICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IGRhdGEudXJsOwogICAgfSwKICAgIG9uRXJyb3I6IChlKSA9PiB7CiAgICAgIHNldEVycm9yKGUubWVzc2FnZSB8fCAiQ291bGQgbm90IG9wZW4gYmlsbGluZyBwb3J0YWwuIFBsZWFzZSB0cnkgYWdhaW4uIik7CiAgICB9LAogIH0pOwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgY29uc3QgcmV0dXJuVXJsID0gaXNNb2JpbGUKICAgICAgPyAidmlyZWxsZTovL2JpbGxpbmcvY2FsbGJhY2s/c3Vic2NyaXB0aW9uPXBvcnRhbF9yZXR1cm4iCiAgICAgIDogYCR7d2luZG93LmxvY2F0aW9uLm9yaWdpbn0vc2V0dGluZ3M/dGFiPWJpbGxpbmdgOwogICAgcG9ydGFsTXV0YXRpb24ubXV0YXRlKHsgcmV0dXJuVXJsIH0pOwogIH0sIFtdKTsKCiAgaWYgKGVycm9yKSB7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGdhcC00IHRleHQtY2VudGVyIHB4LTYiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtcmVkLTQwMCBmb250LXNlbWlib2xkIj57ZXJyb3J9PC9wPgogICAgICAgIDxidXR0b24KICAgICAgICAgIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgdW5kZXJsaW5lIHRleHQtc20iCiAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBpc01vYmlsZSA/IHdpbmRvdy5jbG9zZSgpIDogc2V0TG9jYXRpb24oIi9zZXR0aW5ncz90YWI9YmlsbGluZyIpfQogICAgICAgID4KICAgICAgICAgIHtpc01vYmlsZSA/ICJDbG9zZSB0aGlzIHBhZ2UiIDogIkJhY2sgdG8gU2V0dGluZ3MifQogICAgICAgIDwvYnV0dG9uPgogICAgICA8L2Rpdj4KICAgICk7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBiZy16aW5jLTk1MCBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtNCB0ZXh0LWNlbnRlciBweC02Ij4KICAgICAgPExvYWRlcjIgY2xhc3NOYW1lPSJ3LTggaC04IHRleHQtYW1iZXItNDAwIGFuaW1hdGUtc3BpbiIgLz4KICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtMzAwIHRleHQtYmFzZSI+T3BlbmluZyBiaWxsaW5nIHBvcnRhbOKApjwvcD4KICAgIDwvZGl2PgogICk7Cn0K
+/**
+ * BillingPortal.tsx
+ *
+ * Auto-redirect page that creates a Stripe billing portal session and
+ * immediately redirects the user to it.
+ *
+ * Used by the mobile app via:
+ *   https://virellestudios.com/billing/portal?source=mobile
+ *
+ * The Stripe portal return_url is set to:
+ *   - virelle://billing/callback  (when source=mobile)
+ *   - /settings?tab=billing       (web)
+ */
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
+
+export default function BillingPortal() {
+  const [, setLocation] = useLocation();
+  const [error, setError] = useState<string | null>(null);
+
+  const params = new URLSearchParams(window.location.search);
+  const isMobile = params.get("source") === "mobile";
+
+  const portalMutation = trpc.subscription.createBillingPortal.useMutation({
+    onSuccess: (data) => {
+      window.location.href = data.url;
+    },
+    onError: (e) => {
+      setError(e.message || "Could not open billing portal. Please try again.");
+    },
+  });
+
+  useEffect(() => {
+    const returnUrl = isMobile
+      ? "virelle://billing/callback?subscription=portal_return"
+      : `${window.location.origin}/settings?tab=billing`;
+    portalMutation.mutate({ returnUrl });
+  }, []);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-6" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        <p className="text-red-400 font-semibold">{error}</p>
+        <button
+          className="text-amber-400 underline text-sm"
+          onClick={() => isMobile ? window.close() : setLocation("/settings?tab=billing")}
+        >
+          {isMobile ? "Close this page" : "Back to Settings"}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4 text-center px-6">
+      <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
+      <p className="text-zinc-300 text-base">Opening billing portalâ¦</p>
+    </div>
+  );
+}

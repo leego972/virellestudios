@@ -828,7 +828,7 @@ export default function SeoDashboard() {
                     {isKilled ? "SEO is currently DISABLED" : "SEO is currently ACTIVE"}
                   </p>
                 </div>
-                <Switch className="data-[state=checked]:bg-amber-500"
+                <Switch
                   checked={!isKilled}
                   onCheckedChange={(checked) => {
                     killSwitchMutation.mutate({ action: checked ? "activate" : "deactivate" });

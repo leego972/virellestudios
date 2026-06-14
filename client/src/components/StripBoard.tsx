@@ -1,1 +1,181 @@
-aW1wb3J0IHsgdXNlTWVtbyB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IHRycGMgfSBmcm9tICJAL2xpYi90cnBjIjsKaW1wb3J0IHsgdG9hc3QgfSBmcm9tICJzb25uZXIiOwppbXBvcnQgeyBDYWxlbmRhciwgTWFwUGluLCBDbG9jaywgQXJyb3dSaWdodCwgQXJyb3dMZWZ0LCBYIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCmludGVyZmFjZSBTY2VuZSB7CiAgaWQ6IG51bWJlcjsKICB0aXRsZT86IHN0cmluZyB8IG51bGw7CiAgc2NlbmVOdW1iZXI/OiBudW1iZXIgfCBudWxsOwogIGRlc2NyaXB0aW9uPzogc3RyaW5nIHwgbnVsbDsKICBpbnRFeHQ/OiBzdHJpbmcgfCBudWxsOwogIHRpbWVPZkRheT86IHN0cmluZyB8IG51bGw7CiAgbG9jYXRpb24/OiBzdHJpbmcgfCBudWxsOwogIGNoYXJhY3Rlcklkcz86IG51bWJlcltdIHwgbnVsbDsKICBzaG9vdERheUlkPzogbnVtYmVyIHwgbnVsbDsKICBzaG9vdE9yZGVyPzogbnVtYmVyIHwgbnVsbDsKICBhcHByb3ZhbFN0YXR1cz86IHN0cmluZyB8IG51bGw7Cn0KaW50ZXJmYWNlIFNob290RGF5IHsKICBpZDogbnVtYmVyOwogIGRheU51bWJlcjogbnVtYmVyOwogIHNob290RGF0ZT86IHN0cmluZyB8IERhdGUgfCBudWxsOwogIGNhbGxUaW1lPzogc3RyaW5nIHwgbnVsbDsKICB3cmFwVGltZT86IHN0cmluZyB8IG51bGw7CiAgbG9jYXRpb25JZD86IG51bWJlciB8IG51bGw7Cn0KCmludGVyZmFjZSBQcm9wcyB7CiAgcHJvamVjdElkOiBudW1iZXI7CiAgc2NlbmVzOiBTY2VuZVtdOwogIGRheXM6IFNob290RGF5W107CiAgbG9jYXRpb25zPzogQXJyYXk8eyBpZDogbnVtYmVyOyBuYW1lOiBzdHJpbmcgfT47Cn0KCi8qKgogKiB2Ni42MyDigJQgU3RyaXAgYm9hcmQ6IGNsYXNzaWMgZmlsbS1wcm9kdWN0aW9uIHNjaGVkdWxpbmcgdmlldy4gRWFjaCBzaG9vdAogKiBkYXkgaXMgYSBjb2x1bW4gd2l0aCBpdHMgc2NlbmVzIHN0YWNrZWQgYXMgY29sb3JlZCAic3RyaXBzIiAoY29sb3IgYnkKICogSU5UL0VYVCkuIFVuc2NoZWR1bGVkIHNjZW5lcyBzaXQgaW4gYSBzaWRlYmFyOyBjbGljayBhcnJvd3MgdG8gYXNzaWduIC8KICogdW5hc3NpZ24gLyByZW9yZGVyLiAoRHJhZy1kcm9wIGlzIGludGVudGlvbmFsbHkgYXZvaWRlZCB0byBrZWVwIHRoaW5ncwogKiBrZXlib2FyZC1hY2Nlc3NpYmxlIGFuZCBzbmFwcHkgb24gbW9iaWxlLikKICovCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFN0cmlwQm9hcmQoeyBwcm9qZWN0SWQsIHNjZW5lcywgZGF5cywgbG9jYXRpb25zID0gW10gfTogUHJvcHMpIHsKICBjb25zdCB1dGlscyA9IHRycGMudXNlVXRpbHMoKTsKICBjb25zdCBhc3NpZ25NdXQgPSB0cnBjLnNob290RGF5LmFzc2lnblNjZW5lLnVzZU11dGF0aW9uKCk7CiAgY29uc3QgbG9jQnlJZCA9IHVzZU1lbW8oKCkgPT4gbmV3IE1hcChsb2NhdGlvbnMubWFwKChsKSA9PiBbbC5pZCwgbC5uYW1lXSkpLCBbbG9jYXRpb25zXSk7CgogIGNvbnN0IHVuc2NoZWR1bGVkID0gc2NlbmVzLmZpbHRlcigocykgPT4gIXMuc2hvb3REYXlJZCk7CiAgY29uc3QgYnlEYXkgPSB1c2VNZW1vKCgpID0+IHsKICAgIGNvbnN0IG1hcCA9IG5ldyBNYXA8bnVtYmVyLCBTY2VuZVtdPigpOwogICAgZm9yIChjb25zdCBkIG9mIGRheXMpIG1hcC5zZXQoZC5pZCwgW10pOwogICAgZm9yIChjb25zdCBzIG9mIHNjZW5lcykgewogICAgICBpZiAocy5zaG9vdERheUlkICYmIG1hcC5oYXMocy5zaG9vdERheUlkKSkgbWFwLmdldChzLnNob290RGF5SWQpIS5wdXNoKHMpOwogICAgfQogICAgZm9yIChjb25zdCBhcnIgb2YgbWFwLnZhbHVlcygpKSBhcnIuc29ydCgoYSwgYikgPT4gKGEuc2hvb3RPcmRlciB8fCAwKSAtIChiLnNob290T3JkZXIgfHwgMCkpOwogICAgcmV0dXJuIG1hcDsKICB9LCBbc2NlbmVzLCBkYXlzXSk7CgogIGFzeW5jIGZ1bmN0aW9uIGFzc2lnbihzY2VuZUlkOiBudW1iZXIsIGRheUlkOiBudW1iZXIgfCBudWxsLCBvcmRlciA9IDApIHsKICAgIHRyeSB7CiAgICAgIGF3YWl0IGFzc2lnbk11dC5tdXRhdGVBc3luYyh7IHNjZW5lSWQsIHNob290RGF5SWQ6IGRheUlkLCBzaG9vdE9yZGVyOiBvcmRlciB9KTsKICAgICAgYXdhaXQgdXRpbHMuc2NlbmUubGlzdEJ5UHJvamVjdC5pbnZhbGlkYXRlKCk7CiAgICAgIGF3YWl0IHV0aWxzLnNob290RGF5Lmxpc3QuaW52YWxpZGF0ZSgpOwogICAgfSBjYXRjaCAoZTogYW55KSB7IHRvYXN0LmVycm9yKGU/Lm1lc3NhZ2UgfHwgIkZhaWxlZCIpOyB9CiAgfQoKICBmdW5jdGlvbiBzdHJpcENvbG9yKHM6IFNjZW5lKSB7CiAgICBjb25zdCBpZSA9IChzLmludEV4dCB8fCAiIikudG9VcHBlckNhc2UoKTsKICAgIGNvbnN0IHRvZCA9IChzLnRpbWVPZkRheSB8fCAiIikudG9Mb3dlckNhc2UoKTsKICAgIGlmIChpZS5pbmNsdWRlcygiRVhUIikgJiYgdG9kLmluY2x1ZGVzKCJuaWdodCIpKSByZXR1cm4gImJnLWluZGlnby05MDAvNjAgYm9yZGVyLWluZGlnby03MDAiOwogICAgaWYgKGllLmluY2x1ZGVzKCJFWFQiKSkgcmV0dXJuICJiZy1hbWJlci05MDAvNDAgYm9yZGVyLWFtYmVyLTcwMCI7CiAgICBpZiAodG9kLmluY2x1ZGVzKCJuaWdodCIpKSByZXR1cm4gImJnLWJsdWUtOTAwLzUwIGJvcmRlci1ibHVlLTcwMCI7CiAgICByZXR1cm4gImJnLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpXS82MCBib3JkZXItemluYy03MDAiOwogIH0KCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIGxnOmdyaWQtY29scy1bMjgwcHhfMWZyXSBnYXAtNCI+CiAgICAgIHsvKiBVbnNjaGVkdWxlZCBjb2x1bW4gKi99CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy1bIzA3MDcwZV0gYm9yZGVyIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gcm91bmRlZC1sZyBwLTMgaC1maXQgbGc6bWF4LWgtWzcwdmhdIGxnOm92ZXJmbG93LWF1dG8iPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciB0ZXh0LXppbmMtNDAwIGZvbnQtc2VtaWJvbGQgbWItMiI+CiAgICAgICAgICBVbnNjaGVkdWxlZCDCtyB7dW5zY2hlZHVsZWQubGVuZ3RofQogICAgICAgIDwvZGl2PgogICAgICAgIHt1bnNjaGVkdWxlZC5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNTAwIGl0YWxpYyBweS0yIj5BbGwgc2NlbmVzIHNjaGVkdWxlZC48L2Rpdj4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAge3Vuc2NoZWR1bGVkLm1hcCgocykgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXtzLmlkfSBjbGFzc05hbWU9e2BwLTIgcm91bmRlZCBib3JkZXIgJHtzdHJpcENvbG9yKHMpfSB0ZXh0LXhzYH0+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBqdXN0aWZ5LWJldHdlZW4gZ2FwLTIiPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC16aW5jLTMwMCI+I3tzLnNjZW5lTnVtYmVyIHx8IHMuaWR9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtemluYy0xMDAgdHJ1bmNhdGUiPntzLnRpdGxlIHx8IHMuZGVzY3JpcHRpb24/LnNsaWNlKDAsIDYwKSB8fCAiVW50aXRsZWQifTwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB0ZXh0LXppbmMtNDAwIG10LTAuNSI+CiAgICAgICAgICAgICAgICAgICAgICB7cy5pbnRFeHQgfHwgIuKAlCJ9IMK3IHtzLnRpbWVPZkRheSB8fCAi4oCUIn0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIHtkYXlzLmxlbmd0aCA+IDAgJiYgKAogICAgICAgICAgICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgICAgICAgICAgIGRlZmF1bHRWYWx1ZT0iIgogICAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IHYgPSBOdW1iZXIoZS50YXJnZXQudmFsdWUpOwogICAgICAgICAgICAgICAgICAgICAgICBpZiAodikgYXNzaWduKHMuaWQsIHYsIGJ5RGF5LmdldCh2KT8ubGVuZ3RoIHx8IDApOwogICAgICAgICAgICAgICAgICAgICAgfX0KICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYmctW3JnYmEoMjU1LDI1NSwyNTUsMC4wMildIGJvcmRlciBib3JkZXItemluYy03MDAgcm91bmRlZCB0ZXh0LVsxMHB4XSBweC0xIHB5LTAuNSIKICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPuKGkiBEYXnigKY8L29wdGlvbj4KICAgICAgICAgICAgICAgICAgICAgIHtkYXlzLm1hcCgoZCkgPT4gKAogICAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIGtleT17ZC5pZH0gdmFsdWU9e2QuaWR9PkRheSB7ZC5kYXlOdW1iZXJ9PC9vcHRpb24+CiAgICAgICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgICAgICA8L3NlbGVjdD4KICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CiAgICAgIDwvZGl2PgoKICAgICAgey8qIERheSBjb2x1bW5zICovfQogICAgICA8ZGl2IGNsYXNzTmFtZT0ib3ZlcmZsb3cteC1hdXRvIj4KICAgICAgICB7ZGF5cy5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LXppbmMtNTAwIGl0YWxpYyBib3JkZXIgYm9yZGVyLWRhc2hlZCBib3JkZXItW3JnYmEoMjU1LDI1NSwyNTUsMC4wNyldIHJvdW5kZWQgcC04IHRleHQtY2VudGVyIj4KICAgICAgICAgICAgTm8gc2hvb3QgZGF5cyB5ZXQuIENsaWNrIDxzcGFuIGNsYXNzTmFtZT0idGV4dC16aW5jLTMwMCI+QWRkIGRheTwvc3Bhbj4gYWJvdmUgdG8gY3JlYXRlIG9uZS4KICAgICAgICAgIDwvZGl2PgogICAgICAgICkgOiAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBnYXAtMyBwYi0yIG1pbi13LW1pbiI+CiAgICAgICAgICAgIHtkYXlzLm1hcCgoZCkgPT4gewogICAgICAgICAgICAgIGNvbnN0IGRheVNjZW5lcyA9IGJ5RGF5LmdldChkLmlkKSB8fCBbXTsKICAgICAgICAgICAgICBjb25zdCBkYXRlTGFiZWwgPSBkLnNob290RGF0ZSA/IG5ldyBEYXRlKGQuc2hvb3REYXRlIGFzIGFueSkudG9Mb2NhbGVEYXRlU3RyaW5nKHVuZGVmaW5lZCwgeyB3ZWVrZGF5OiAic2hvcnQiLCBtb250aDogInNob3J0IiwgZGF5OiAibnVtZXJpYyIgfSkgOiAiVW5zY2hlZHVsZWQgZGF0ZSI7CiAgICAgICAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgICAgIDxkaXYga2V5PXtkLmlkfSBjbGFzc05hbWU9ImJnLVsjMDcwNzBlXSBib3JkZXIgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSByb3VuZGVkLWxnIHAtMyB3LVsyNjBweF0gZmxleC1zaHJpbmstMCBsZzptYXgtaC1bNzB2aF0gbGc6b3ZlcmZsb3ctYXV0byI+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYi0yIj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEuNSB0ZXh0LWFtYmVyLTUwMCBmb250LXNlbWlib2xkIj4KICAgICAgICAgICAgICAgICAgICAgIDxDYWxlbmRhciBjbGFzc05hbWU9InctMy41IGgtMy41IiAvPgogICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXNtIj5EYXkge2QuZGF5TnVtYmVyfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1bMTFweF0gdGV4dC16aW5jLTQwMCBtdC0wLjUiPntkYXRlTGFiZWx9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtemluYy01MDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgbXQtMC41Ij4KICAgICAgICAgICAgICAgICAgICAgIHtkLmNhbGxUaW1lICYmIDxzcGFuIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTAuNSI+PENsb2NrIGNsYXNzTmFtZT0idy0yLjUgaC0yLjUiIC8+e2QuY2FsbFRpbWV9PC9zcGFuPn0KICAgICAgICAgICAgICAgICAgICAgIHtkLmxvY2F0aW9uSWQgJiYgbG9jQnlJZC5oYXMoZC5sb2NhdGlvbklkKSAmJiA8c3BhbiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0wLjUiPjxNYXBQaW4gY2xhc3NOYW1lPSJ3LTIuNSBoLTIuNSIgLz57bG9jQnlJZC5nZXQoZC5sb2NhdGlvbklkKX08L3NwYW4+fQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAge2RheVNjZW5lcy5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzExcHhdIHRleHQtemluYy01MDAgaXRhbGljIHB5LTIgdGV4dC1jZW50ZXIiPk5vIHNjZW5lcyBhc3NpZ25lZDwvZGl2PgogICAgICAgICAgICAgICAgICApIDogKAogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+CiAgICAgICAgICAgICAgICAgICAgICB7ZGF5U2NlbmVzLm1hcCgocywgaSkgPT4gKAogICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGtleT17cy5pZH0gY2xhc3NOYW1lPXtgcC0yIHJvdW5kZWQgYm9yZGVyICR7c3RyaXBDb2xvcihzKX0gdGV4dC14c2B9PgogICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGp1c3RpZnktYmV0d2VlbiBnYXAtMS41Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgbWluLXctMCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC16aW5jLTMwMCI+I3tzLnNjZW5lTnVtYmVyIHx8IHMuaWR9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtMTAwIHRydW5jYXRlIj57cy50aXRsZSB8fCBzLmRlc2NyaXB0aW9uPy5zbGljZSgwLCA2MCkgfHwgIlVudGl0bGVkIn08L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtemluYy00MDAgbXQtMC41Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB7cy5pbnRFeHQgfHwgIuKAlCJ9IMK3IHtzLnRpbWVPZkRheSB8fCAi4oCUIn0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIGdhcC0wLjUiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIG9uQ2xpY2s9eygpID0+IGFzc2lnbihzLmlkLCBkLmlkLCBNYXRoLm1heCgwLCBpIC0gMSkpfSBkaXNhYmxlZD17aSA9PT0gMH0gY2xhc3NOYW1lPSJ0ZXh0LXppbmMtNTAwIGhvdmVyOnRleHQtemluYy0yMDAgZGlzYWJsZWQ6b3BhY2l0eS0zMCIgYXJpYS1sYWJlbD0iTW92ZSB1cCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEFycm93TGVmdCBjbGFzc05hbWU9InctMyBoLTMgLXJvdGF0ZS05MCIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gb25DbGljaz17KCkgPT4gYXNzaWduKHMuaWQsIGQuaWQsIGkgKyAxKX0gZGlzYWJsZWQ9e2kgPT09IGRheVNjZW5lcy5sZW5ndGggLSAxfSBjbGFzc05hbWU9InRleHQtemluYy01MDAgaG92ZXI6dGV4dC16aW5jLTIwMCBkaXNhYmxlZDpvcGFjaXR5LTMwIiBhcmlhLWxhYmVsPSJNb3ZlIGRvd24iPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxBcnJvd1JpZ2h0IGNsYXNzTmFtZT0idy0zIGgtMyByb3RhdGUtOTAiIC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIG9uQ2xpY2s9eygpID0+IGFzc2lnbihzLmlkLCBudWxsLCAwKX0gY2xhc3NOYW1lPSJ0ZXh0LXJlZC00MDAgaG92ZXI6dGV4dC1yZWQtMzAwIiBhcmlhLWxhYmVsPSJVbmFzc2lnbiI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPFggY2xhc3NOYW1lPSJ3LTMgaC0zIiAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgKTsKICAgICAgICAgICAgfSl9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQogICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICk7Cn0K
+import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { Calendar, MapPin, Clock, ArrowRight, ArrowLeft, X } from "lucide-react";
+
+interface Scene {
+  id: number;
+  title?: string | null;
+  sceneNumber?: number | null;
+  description?: string | null;
+  intExt?: string | null;
+  timeOfDay?: string | null;
+  location?: string | null;
+  characterIds?: number[] | null;
+  shootDayId?: number | null;
+  shootOrder?: number | null;
+  approvalStatus?: string | null;
+}
+interface ShootDay {
+  id: number;
+  dayNumber: number;
+  shootDate?: string | Date | null;
+  callTime?: string | null;
+  wrapTime?: string | null;
+  locationId?: number | null;
+}
+
+interface Props {
+  projectId: number;
+  scenes: Scene[];
+  days: ShootDay[];
+  locations?: Array<{ id: number; name: string }>;
+}
+
+/**
+ * v6.63 â Strip board: classic film-production scheduling view. Each shoot
+ * day is a column with its scenes stacked as colored "strips" (color by
+ * INT/EXT). Unscheduled scenes sit in a sidebar; click arrows to assign /
+ * unassign / reorder. (Drag-drop is intentionally avoided to keep things
+ * keyboard-accessible and snappy on mobile.)
+ */
+export default function StripBoard({ projectId, scenes, days, locations = [] }: Props) {
+  const utils = trpc.useUtils();
+  const assignMut = trpc.shootDay.assignScene.useMutation();
+  const locById = useMemo(() => new Map(locations.map((l) => [l.id, l.name])), [locations]);
+
+  const unscheduled = scenes.filter((s) => !s.shootDayId);
+  const byDay = useMemo(() => {
+    const map = new Map<number, Scene[]>();
+    for (const d of days) map.set(d.id, []);
+    for (const s of scenes) {
+      if (s.shootDayId && map.has(s.shootDayId)) map.get(s.shootDayId)!.push(s);
+    }
+    for (const arr of map.values()) arr.sort((a, b) => (a.shootOrder || 0) - (b.shootOrder || 0));
+    return map;
+  }, [scenes, days]);
+
+  async function assign(sceneId: number, dayId: number | null, order = 0) {
+    try {
+      await assignMut.mutateAsync({ sceneId, shootDayId: dayId, shootOrder: order });
+      await utils.scene.listByProject.invalidate();
+      await utils.shootDay.list.invalidate();
+    } catch (e: any) { toast.error(e?.message || "Failed"); }
+  }
+
+  function stripColor(s: Scene) {
+    const ie = (s.intExt || "").toUpperCase();
+    const tod = (s.timeOfDay || "").toLowerCase();
+    if (ie.includes("EXT") && tod.includes("night")) return "bg-indigo-900/60 border-indigo-700";
+    if (ie.includes("EXT")) return "bg-amber-900/40 border-amber-700";
+    if (tod.includes("night")) return "bg-blue-900/50 border-blue-700";
+    return "bg-[rgba(255,255,255,0.04)]/60 border-zinc-700";
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+      {/* Unscheduled column */}
+      <div className="bg-[#07070e] border border-[rgba(255,255,255,0.07)] rounded-lg p-3 h-fit lg:max-h-[70vh] lg:overflow-auto">
+        <div className="text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-2">
+          Unscheduled Â· {unscheduled.length}
+        </div>
+        {unscheduled.length === 0 ? (
+          <div className="text-xs text-zinc-500 italic py-2">All scenes scheduled.</div>
+        ) : (
+          <div className="space-y-1.5">
+            {unscheduled.map((s) => (
+              <div key={s.id} className={`p-2 rounded border ${stripColor(s)} text-xs`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono text-zinc-300">#{s.sceneNumber || s.id}</div>
+                    <div className="text-zinc-100 truncate">{s.title || s.description?.slice(0, 60) || "Untitled"}</div>
+                    <div className="text-[10px] text-zinc-400 mt-0.5">
+                      {s.intExt || "â"} Â· {s.timeOfDay || "â"}
+                    </div>
+                  </div>
+                  {days.length > 0 && (
+                    <select
+                      defaultValue=""
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (v) assign(s.id, v, byDay.get(v)?.length || 0);
+                      }}
+                      className="bg-[rgba(255,255,255,0.02)] border border-zinc-700 rounded text-[10px] px-1 py-0.5"
+                    >
+                      <option value="">â Dayâ¦</option>
+                      {days.map((d) => (
+                        <option key={d.id} value={d.id}>Day {d.dayNumber}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Day columns */}
+      <div className="overflow-x-auto">
+        {days.length === 0 ? (
+          <div className="text-sm text-zinc-500 italic border border-dashed border-[rgba(255,255,255,0.07)] rounded p-8 text-center">
+            No shoot days yet. Click <span className="text-zinc-300">Add day</span> above to create one.
+          </div>
+        ) : (
+          <div className="flex gap-3 pb-2 min-w-min">
+            {days.map((d) => {
+              const dayScenes = byDay.get(d.id) || [];
+              const dateLabel = d.shootDate ? new Date(d.shootDate as any).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) : "Unscheduled date";
+              return (
+                <div key={d.id} className="bg-[#07070e] border border-[rgba(255,255,255,0.07)] rounded-lg p-3 w-[260px] flex-shrink-0 lg:max-h-[70vh] lg:overflow-auto">
+                  <div className="mb-2">
+                    <div className="flex items-center gap-1.5 text-amber-500 font-semibold">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span className="text-sm">Day {d.dayNumber}</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-400 mt-0.5">{dateLabel}</div>
+                    <div className="text-[10px] text-zinc-500 flex items-center gap-2 mt-0.5">
+                      {d.callTime && <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{d.callTime}</span>}
+                      {d.locationId && locById.has(d.locationId) && <span className="flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" />{locById.get(d.locationId)}</span>}
+                    </div>
+                  </div>
+                  {dayScenes.length === 0 ? (
+                    <div className="text-[11px] text-zinc-500 italic py-2 text-center">No scenes assigned</div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {dayScenes.map((s, i) => (
+                        <div key={s.id} className={`p-2 rounded border ${stripColor(s)} text-xs`}>
+                          <div className="flex items-start justify-between gap-1.5">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-mono text-zinc-300">#{s.sceneNumber || s.id}</div>
+                              <div className="text-zinc-100 truncate">{s.title || s.description?.slice(0, 60) || "Untitled"}</div>
+                              <div className="text-[10px] text-zinc-400 mt-0.5">
+                                {s.intExt || "â"} Â· {s.timeOfDay || "â"}
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                              <button onClick={() => assign(s.id, d.id, Math.max(0, i - 1))} disabled={i === 0} className="text-zinc-500 hover:text-zinc-200 disabled:opacity-30" aria-label="Move up">
+                                <ArrowLeft className="w-3 h-3 -rotate-90" />
+                              </button>
+                              <button onClick={() => assign(s.id, d.id, i + 1)} disabled={i === dayScenes.length - 1} className="text-zinc-500 hover:text-zinc-200 disabled:opacity-30" aria-label="Move down">
+                                <ArrowRight className="w-3 h-3 rotate-90" />
+                              </button>
+                              <button onClick={() => assign(s.id, null, 0)} className="text-red-400 hover:text-red-300" aria-label="Unassign">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,1 +1,46 @@
-aW1wb3J0IHsgU2tlbGV0b24gfSBmcm9tICcuL3VpL3NrZWxldG9uJzsKCmV4cG9ydCBmdW5jdGlvbiBEYXNoYm9hcmRMYXlvdXRTa2VsZXRvbigpIHsKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImZsZXggbWluLWgtc2NyZWVuIGJnLVsjMDcwNzBlXSI+CiAgICAgIHsvKiBTaWRlYmFyIHNrZWxldG9uICovfQogICAgICA8ZGl2IGNsYXNzTmFtZT0idy1bMjgwcHhdIGJvcmRlci1yIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gYmctWyMwNzA3MGVdIHAtNCBzcGFjZS15LTYiPgogICAgICAgIHsvKiBMb2dvIGFyZWEgKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIHB4LTIiPgogICAgICAgICAgPFNrZWxldG9uIGNsYXNzTmFtZT0iaC04IHctOCByb3VuZGVkLW1kIiAvPgogICAgICAgICAgPFNrZWxldG9uIGNsYXNzTmFtZT0iaC00IHctMjQiIC8+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBNZW51IGl0ZW1zICovfQogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTIgcHgtMiI+CiAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTEwIHctZnVsbCByb3VuZGVkLWxnIiAvPgogICAgICAgICAgPFNrZWxldG9uIGNsYXNzTmFtZT0iaC0xMCB3LWZ1bGwgcm91bmRlZC1sZyIgLz4KICAgICAgICAgIDxTa2VsZXRvbiBjbGFzc05hbWU9ImgtMTAgdy1mdWxsIHJvdW5kZWQtbGciIC8+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBVc2VyIHByb2ZpbGUgYXJlYSBhdCBib3R0b20gKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImFic29sdXRlIGJvdHRvbS00IGxlZnQtNCByaWdodC00Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBweC0xIj4KICAgICAgICAgICAgPFNrZWxldG9uIGNsYXNzTmFtZT0iaC05IHctOSByb3VuZGVkLWZ1bGwiIC8+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgc3BhY2UteS0yIj4KICAgICAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTMgdy0yMCIgLz4KICAgICAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTIgdy0zMiIgLz4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CgogICAgICB7LyogTWFpbiBjb250ZW50IHNrZWxldG9uICovfQogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIHAtNCBzcGFjZS15LTQiPgogICAgICAgIHsvKiBDb250ZW50IGJsb2NrcyAqL30KICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTEyIHctNDggcm91bmRlZC1sZyIgLz4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBnYXAtNCBtZDpncmlkLWNvbHMtMiBsZzpncmlkLWNvbHMtMyI+CiAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTMyIHJvdW5kZWQteGwiIC8+CiAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTMyIHJvdW5kZWQteGwiIC8+CiAgICAgICAgICA8U2tlbGV0b24gY2xhc3NOYW1lPSJoLTMyIHJvdW5kZWQteGwiIC8+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPFNrZWxldG9uIGNsYXNzTmFtZT0iaC02NCByb3VuZGVkLXhsIiAvPgogICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICk7Cn0K
+import { Skeleton } from './ui/skeleton';
+
+export function DashboardLayoutSkeleton() {
+  return (
+    <div className="flex min-h-screen bg-[#07070e]">
+      {/* Sidebar skeleton */}
+      <div className="w-[280px] border-r border-[rgba(255,255,255,0.07)] bg-[#07070e] p-4 space-y-6">
+        {/* Logo area */}
+        <div className="flex items-center gap-3 px-2">
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+
+        {/* Menu items */}
+        <div className="space-y-2 px-2">
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+        </div>
+
+        {/* User profile area at bottom */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="flex items-center gap-3 px-1">
+            <Skeleton className="h-9 w-9 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-2 w-32" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content skeleton */}
+      <div className="flex-1 p-4 space-y-4">
+        {/* Content blocks */}
+        <Skeleton className="h-12 w-48 rounded-lg" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
+        </div>
+        <Skeleton className="h-64 rounded-xl" />
+      </div>
+    </div>
+  );
+}

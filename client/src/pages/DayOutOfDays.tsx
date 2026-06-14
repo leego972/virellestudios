@@ -1,1 +1,81 @@
-aW1wb3J0IHsgdXNlUGFyYW1zLCB1c2VMb2NhdGlvbiB9IGZyb20gIndvdXRlciI7CiAgaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CiAgaW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwogIGltcG9ydCB7IEFycm93TGVmdCwgR3JpZDN4MywgQ2FsZW5kYXIsIFVzZXJzLCBDbGFwcGVyYm9hcmQgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwogIGltcG9ydCBEYXlPZkRheXNHcmlkIGZyb20gIkAvY29tcG9uZW50cy9EYXlPZkRheXNHcmlkIjsKCiAgY29uc3QgR09MRCA9ICIjRDRBRjM3IjsKCiAgZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRGF5T3V0T2ZEYXlzKCkgewogICAgY29uc3QgeyBpZCB9ID0gdXNlUGFyYW1zPHsgaWQ6IHN0cmluZyB9PigpOwogICAgY29uc3QgcHJvamVjdElkID0gcGFyc2VJbnQoaWQgfHwgIjAiKTsKICAgIGNvbnN0IFssIG5hdmlnYXRlXSA9IHVzZUxvY2F0aW9uKCk7CgogICAgY29uc3QgeyBkYXRhOiBwcm9qZWN0ICAgIH0gPSB0cnBjLnByb2plY3QuZ2V0LnVzZVF1ZXJ5KHsgaWQ6IHByb2plY3RJZCB9LCB7IGVuYWJsZWQ6ICEhcHJvamVjdElkIH0pOwogICAgY29uc3QgeyBkYXRhOiBkYXlzICAgID0gW119ID0gdHJwYy5zaG9vdERheS5saXN0LnVzZVF1ZXJ5KHsgcHJvamVjdElkIH0sIHsgZW5hYmxlZDogISFwcm9qZWN0SWQgfSk7CiAgICBjb25zdCB7IGRhdGE6IHNjZW5lcyAgPSBbXX0gPSB0cnBjLnNjZW5lLmxpc3RCeVByb2plY3QudXNlUXVlcnkoeyBwcm9qZWN0SWQgfSwgeyBlbmFibGVkOiAhIXByb2plY3RJZCB9KTsKICAgIGNvbnN0IHsgZGF0YTogY2hhcmFjdGVycz0gW119ID0gdHJwYy5jaGFyYWN0ZXIubGlzdEJ5UHJvamVjdC51c2VRdWVyeSh7IHByb2plY3RJZCB9LCB7IGVuYWJsZWQ6ICEhcHJvamVjdElkIH0pOwoKICAgIGNvbnN0IGRheXNBcnIgID0gZGF5cyAgICAgIGFzIGFueVtdOwogICAgY29uc3Qgc2NlbmVzQXJyID0gc2NlbmVzICAgYXMgYW55W107CiAgICBjb25zdCBjaGFyc0FyciAgPSBjaGFyYWN0ZXJzIGFzIGFueVtdOwoKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4iIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgICB7LyogSGVhZGVyICovfQogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItYiBzdGlja3kgdG9wLTAgei0yMCIgc3R5bGU9e3sgYm9yZGVyQ29sb3I6InJnYmEoMjU1LDI1NSwyNTUsMC4wNykiLCBiYWNrZ3JvdW5kOiJyZ2JhKDcsNywxNCwwLjk3KSIsIGJhY2tkcm9wRmlsdGVyOiJibHVyKDI0cHgpIiB9fT4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy03eGwgbXgtYXV0byBweC00IHB5LTMgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIGdhcC0zIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgb25DbGljaz17KCkgPT4gbmF2aWdhdGUoYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc2NoZWR1bGVgKX0gY2xhc3NOYW1lPSJnYXAtMiB0ZXh0LW11dGVkLWZvcmVncm91bmQgaC04Ij48QXJyb3dMZWZ0IGNsYXNzTmFtZT0iaC00IHctNCIgLz5TY2hlZHVsZTwvQnV0dG9uPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJoLTUgdy1weCBiZy1ib3JkZXIvNDAiIC8+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yLjUiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImgtOSB3LTkgcm91bmRlZC14bCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaHJpbmstMCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjRDRBRjM3LCNiODk2MGMpIiB9fT4KICAgICAgICAgICAgICAgICAgPEdyaWQzeDMgY2xhc3NOYW1lPSJ0ZXh0LWJsYWNrIiBzdHlsZT17eyB3aWR0aDoxOCwgaGVpZ2h0OjE4IH19IC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb250LWJvbGQgdGV4dC1zbSI+e3Byb2plY3Q/LnRpdGxlfSDigJQgRGF5LU91dC1vZi1EYXlzPC9kaXY+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB0ZXh0LW11dGVkLWZvcmVncm91bmQiPkNhc3Qgd29ya2luZyAvIGhvbGQgZ3JpZCBhY3Jvc3MgdGhlIGVudGlyZSBzaG9vdDwvZGl2PgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiB2YXJpYW50PSJvdXRsaW5lIiBvbkNsaWNrPXsoKSA9PiBuYXZpZ2F0ZShgL3Byb2plY3RzLyR7cHJvamVjdElkfS9jYWxsLXNoZWV0c2ApfSBjbGFzc05hbWU9ImgtOCB0ZXh0LXhzIGdhcC0xLjUgYm9yZGVyLWJvcmRlci80MCI+CiAgICAgICAgICAgICAgPENhbGVuZGFyIHN0eWxlPXt7IHdpZHRoOjEyLCBoZWlnaHQ6MTIgfX0gLz5DYWxsIFNoZWV0cwogICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctN3hsIG14LWF1dG8gcHgtNCBweS01IHNwYWNlLXktNCI+CiAgICAgICAgICB7LyogU3RhdHMgKi99CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMyBnYXAtMi41Ij4KICAgICAgICAgICAge1sKICAgICAgICAgICAgICB7IGxhYmVsOiJTaG9vdCBEYXlzIiwgIHZhbDpTdHJpbmcoZGF5c0Fyci5sZW5ndGgpLCAgY29sb3I6R09MRCAgICAgICAgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiJDaGFyYWN0ZXJzIiwgIHZhbDpTdHJpbmcoY2hhcnNBcnIubGVuZ3RoKSwgY29sb3I6IiNmNDcyYjYiICAgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiJTY2VuZXMiLCAgICAgIHZhbDpTdHJpbmcoc2NlbmVzQXJyLmxlbmd0aCksY29sb3I6IiM2MGE1ZmEiICAgfSwKICAgICAgICAgICAgXS5tYXAoKHMsaSkgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXtpfSBjbGFzc05hbWU9InJvdW5kZWQteGwgYm9yZGVyIHB4LTMgcHktMi41IiBzdHlsZT17eyBib3JkZXJDb2xvcjoicmdiYSgyNTUsMjU1LDI1NSwwLjA3KSIsIGJhY2tncm91bmQ6InJnYmEoMjU1LDI1NSwyNTUsMC4wMikiIH19PgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzlweF0gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciI+e3MubGFiZWx9PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14bCBmb250LWJvbGQgbXQtMC41IiBzdHlsZT17eyBjb2xvcjpzLmNvbG9yIH19PntzLnZhbH08L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKSl9CiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICB7LyogRE9PRCBHcmlkIGNvbXBvbmVudCAqL30KICAgICAgICAgIHtkYXlzQXJyLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InJvdW5kZWQtMnhsIGJvcmRlci0yIGJvcmRlci1kYXNoZWQgZmxleCBmbGV4LWNvbCBpdGVtcy1jZW50ZXIgcHktMjQgZ2FwLTMiIHN0eWxlPXt7IGJvcmRlckNvbG9yOiJyZ2JhKDI1NSwyNTUsMjU1LDAuMDYpIiB9fT4KICAgICAgICAgICAgICA8VXNlcnMgY2xhc3NOYW1lPSJoLTEyIHctMTIgb3BhY2l0eS0yMCIgLz4KICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1tZWRpdW0iPk5vIHNob290IGRheXMgeWV0PC9wPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgdGV4dC1jZW50ZXIgbWF4LXcteHMiPkFkZCBzaG9vdCBkYXlzIG9uIHRoZSBTY2hlZHVsZSBwYWdlLCB0aGVuIHRoZSBEYXktT3V0LW9mLURheXMgZ3JpZCB3aWxsIHBvcHVsYXRlIGF1dG9tYXRpY2FsbHkuPC9wPgogICAgICAgICAgICAgIDxCdXR0b24gc2l6ZT0ic20iIG9uQ2xpY2s9eygpID0+IG5hdmlnYXRlKGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3NjaGVkdWxlYCl9IGNsYXNzTmFtZT0ibXQtMiBnYXAtMS41IHRleHQteHMiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsI0Q0QUYzNywjYjg5NjBjKSIsIGNvbG9yOiIjMDAwIiB9fT4KICAgICAgICAgICAgICAgIDxDYWxlbmRhciBzdHlsZT17eyB3aWR0aDoxMiwgaGVpZ2h0OjEyIH19IC8+T3BlbiBTY2hlZHVsZQogICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICkgOiAoCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyb3VuZGVkLTJ4bCBib3JkZXIgb3ZlcmZsb3ctaGlkZGVuIiBzdHlsZT17eyBib3JkZXJDb2xvcjoicmdiYSgyNTUsMjU1LDI1NSwwLjA3KSIgfX0+CiAgICAgICAgICAgICAgPERheU9mRGF5c0dyaWQgc2NlbmVzPXtzY2VuZXNBcnJ9IGRheXM9e2RheXNBcnJ9IGNoYXJhY3RlcnM9e2NoYXJzQXJyfSAvPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICl9CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgKTsKICB9CiAg
+import { useParams, useLocation } from "wouter";
+  import { Button } from "@/components/ui/button";
+  import { trpc } from "@/lib/trpc";
+  import { ArrowLeft, Grid3x3, Calendar, Users, Clapperboard } from "lucide-react";
+  import DayOfDaysGrid from "@/components/DayOfDaysGrid";
+
+  const GOLD = "#D4AF37";
+
+  export default function DayOutOfDays() {
+    const { id } = useParams<{ id: string }>();
+    const projectId = parseInt(id || "0");
+    const [, navigate] = useLocation();
+
+    const { data: project    } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
+    const { data: days    = []} = trpc.shootDay.list.useQuery({ projectId }, { enabled: !!projectId });
+    const { data: scenes  = []} = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+    const { data: characters= []} = trpc.character.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+
+    const daysArr  = days      as any[];
+    const scenesArr = scenes   as any[];
+    const charsArr  = characters as any[];
+
+    return (
+      <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        {/* Header */}
+        <div className="border-b sticky top-0 z-20" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" onClick={() => navigate(`/projects/${projectId}/schedule`)} className="gap-2 text-muted-foreground h-8"><ArrowLeft className="h-4 w-4" />Schedule</Button>
+              <div className="h-5 w-px bg-border/40" />
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0" style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)" }}>
+                  <Grid3x3 className="text-black" style={{ width:18, height:18 }} />
+                </div>
+                <div>
+                  <div className="font-bold text-sm">{project?.title} â Day-Out-of-Days</div>
+                  <div className="text-[10px] text-muted-foreground">Cast working / hold grid across the entire shoot</div>
+                </div>
+              </div>
+            </div>
+            <Button size="sm" variant="outline" onClick={() => navigate(`/projects/${projectId}/call-sheets`)} className="h-8 text-xs gap-1.5 border-border/40">
+              <Calendar style={{ width:12, height:12 }} />Call Sheets
+            </Button>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 py-5 space-y-4">
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-2.5">
+            {[
+              { label:"Shoot Days",  val:String(daysArr.length),  color:GOLD        },
+              { label:"Characters",  val:String(charsArr.length), color:"#f472b6"   },
+              { label:"Scenes",      val:String(scenesArr.length),color:"#60a5fa"   },
+            ].map((s,i) => (
+              <div key={i} className="rounded-xl border px-3 py-2.5" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
+                <div className="text-[9px] text-muted-foreground uppercase tracking-wider">{s.label}</div>
+                <div className="text-xl font-bold mt-0.5" style={{ color:s.color }}>{s.val}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* DOOD Grid component */}
+          {daysArr.length === 0 ? (
+            <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-24 gap-3" style={{ borderColor:"rgba(255,255,255,0.06)" }}>
+              <Users className="h-12 w-12 opacity-20" />
+              <p className="text-sm font-medium">No shoot days yet</p>
+              <p className="text-xs text-muted-foreground text-center max-w-xs">Add shoot days on the Schedule page, then the Day-Out-of-Days grid will populate automatically.</p>
+              <Button size="sm" onClick={() => navigate(`/projects/${projectId}/schedule`)} className="mt-2 gap-1.5 text-xs" style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
+                <Calendar style={{ width:12, height:12 }} />Open Schedule
+              </Button>
+            </div>
+          ) : (
+            <div className="rounded-2xl border overflow-hidden" style={{ borderColor:"rgba(255,255,255,0.07)" }}>
+              <DayOfDaysGrid scenes={scenesArr} days={daysArr} characters={charsArr} />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  

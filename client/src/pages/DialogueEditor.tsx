@@ -275,7 +275,7 @@ export default function DialogueEditor() {
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+              <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <ScrollArea className="h-[calc(100vh-18rem)]">
                   {conversationView.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground">

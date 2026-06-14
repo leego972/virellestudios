@@ -460,6 +460,6 @@ import { useState } from "react";
   }
 
   export default function MusicScore() {
-    return <SubscriptionGate feature="canUseMusicScore"><MusicScoreInner /></SubscriptionGate>;
+    return <SubscriptionGate feature="canUseMusicScore" featureKey="canUseMusicScore" requiredTier="indie"><MusicScoreInner /></SubscriptionGate>;
   }
   

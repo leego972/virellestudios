@@ -282,7 +282,7 @@ import { useState } from "react";
                       <input type="color" value={color} onChange={e => setColor(e.target.value)} className="h-8 w-14 rounded cursor-pointer bg-transparent border-0" />
                       <Input value={color} onChange={e => setColor(e.target.value)} className="h-8 text-xs font-mono w-28 bg-black/30 border-border/40" placeholder="#c8a97e" />
                     </div>
-                    <Button className="w-full h-8 text-xs gap-1.5" onClick={() => createMut.mutate({ projectId, type:"color", colorHex:color, text:color, category:"Colors" })} disabled={createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
+                    <Button className="w-full h-8 text-xs gap-1.5" onClick={() => createMut.mutate({ projectId, type:"color", text:color, category:"Colors" })} disabled={createMut.isPending} style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
                       {createMut.isPending&&<Loader2 className="h-3 w-3 animate-spin text-amber-400" />} Add Color
                     </Button>
                   </div>

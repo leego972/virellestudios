@@ -212,7 +212,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       </div>
 
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base gradient-text-gold">Brief inputs</CardTitle>
           <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
             Pulling from {sortedScenes.length} scene{sortedScenes.length === 1 ? "" : "s"} of{" "}
@@ -265,7 +265,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
               <Copy className="h-3 w-3" /> Copy
             </Button>
           </CardHeader>
-          <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+          <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{lastBrief}</pre>
           </CardContent>
         </Card>

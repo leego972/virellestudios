@@ -898,7 +898,7 @@ export default function ComponentsShowcase() {
               </TabsList>
               <TabsContent value="account">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Account</CardTitle>
                     <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Make changes to your account here.
@@ -917,7 +917,7 @@ export default function ComponentsShowcase() {
               </TabsContent>
               <TabsContent value="password">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Password</CardTitle>
                     <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Change your password here.
@@ -940,13 +940,13 @@ export default function ComponentsShowcase() {
               </TabsContent>
               <TabsContent value="settings">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Settings</CardTitle>
                     <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Manage your settings here.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <p className="text-sm text-muted-foreground">
                       Settings content goes here.
                     </p>
@@ -988,7 +988,7 @@ export default function ComponentsShowcase() {
             <h3 className="text-2xl font-semibold gradient-text-gold">Collapsible</h3>
             <Collapsible>
               <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" className="w-full justify-between">
                       <CardTitle className="gradient-text-gold">@peduarte starred 3 repositories</CardTitle>
@@ -996,7 +996,7 @@ export default function ComponentsShowcase() {
                   </CollapsibleTrigger>
                 </CardHeader>
                 <CollapsibleContent>
-                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className="space-y-2">
                       <div className="rounded-md border px-4 py-3 font-mono text-sm">
                         @radix-ui/primitives

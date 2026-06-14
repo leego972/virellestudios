@@ -394,7 +394,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   <p className="text-sm font-semibold" style={{ color: "#D4AF37" }}>{sc.title || "Scene Preview"}</p>
                   <button onClick={() => setVideoPreviewSceneId(null)} className="text-muted-foreground hover:text-white text-xs px-3 py-1.5 rounded border border-border/40">Close</button>
                 </div>
-                <MediaPlayer src={(sc as any).videoUrl} poster={sc.thumbnailUrl || undefined} />
+                <MediaPlayer {...({src:(sc as any).videoUrl,poster:sc.thumbnailUrl||undefined} as any)} />
               </div>
             </div>
           ) : null;
