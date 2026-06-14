@@ -74,7 +74,7 @@ interface ChatMessage {
   toolBadges?: ToolBadge[];
 }
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Preset edit commands Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ─── Preset edit commands ───
 const EDIT_PRESETS = [
   { label: "Fix grammar", command: "Fix all grammar and spelling errors", icon: "abc" },
   { label: "Shorter", command: "Make it significantly shorter and more concise", icon: "min" },
@@ -83,7 +83,7 @@ const EDIT_PRESETS = [
   { label: "Simplify", command: "Simplify the language to be clearer and easier to understand", icon: "sim" },
 ] as const;
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Slash commands Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ─── Slash commands ───
 const SLASH_COMMANDS = [
   { cmd: "/new", desc: "Start a new conversation" },
   { cmd: "/clear", desc: "Clear chat history" },
@@ -128,7 +128,7 @@ function ActionBadges({ actions }: { actions: ActionBadge[] }) {
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Word-level diff Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ─── Word-level diff ───
 interface DiffSegment {
   type: "equal" | "added" | "removed";
   text: string;
@@ -190,7 +190,7 @@ function DiffView({ oldText, newText }: { oldText: string; newText: string }) {
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Animated voice waveform Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ─── Animated voice waveform ───
 function VoiceWaveform({ active, color = "#f59e0b" }: { active: boolean; color?: string }) {
   return (
     <div className="flex items-center gap-[3px] h-8">
@@ -248,7 +248,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   // Non-reactive ref for use inside async callbacks (avoids stale closure)
   const voiceModeRef = useRef(false);
   const voiceModeStateRef = useRef<VoiceModeState>("inactive");
-  // VAD (Voice Activity Detection) refs Ã¢ÂÂ Titan-style auto-stop on silence
+  // VAD (Voice Activity Detection) refs — Titan-style auto-stop on silence
   const vadAnalyserRef = useRef<AnalyserNode | null>(null);
   const vadRafRef = useRef<number | null>(null);
   const vadSilenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -277,7 +277,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   // Ref to handleSend so the voice path can call it without forward reference
   const handleSendRef = useRef<(overrideText?: string) => void>(() => {});
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Web Speech API (free, on-device transcription) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Web Speech API (free, on-device transcription) ───
   // Runs in parallel with MediaRecorder. If it returns a transcript before the
   // recorder stops, we use it directly and skip the server Whisper roundtrip,
   // which means voice works even when OpenAI quota is exhausted. iOS Safari 14.5+
@@ -321,7 +321,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatPanelRef = useRef<HTMLDivElement>(null);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Floating window state Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Floating window state ───
   // isMinimized: collapses to a pill but stays active in background
   const [isMinimized, setIsMinimized] = useState(false);
   // dragPos: absolute {left, top} position; null = default bottom-right corner
@@ -330,7 +330,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     { dragging: false, startX: 0, startY: 0, origLeft: 0, origTop: 0 }
   );
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ tRPC mutations Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── tRPC mutations ───
   const utils = trpc.useUtils();
 
   const { data: history, isLoading: historyLoading } = trpc.directorChat.history.useQuery(
@@ -359,7 +359,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   // Navigation hook for AI-triggered navigation
   const [, setLocation] = useLocation();
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ SSE-based send with tool-calling Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── SSE-based send with tool-calling ───
   const sendViaSSE = useCallback(async (
     messages: Array<{ role: string; content: string }>,
     projectContext?: string
@@ -406,7 +406,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         sseRef.current = null;
         setIsSending(false);
         setLocalMessages((prev) => prev.filter((m) => m.content !== "__loading__"));
-        toast.error("Your message didn't reach the Director Ã¢ÂÂ please try again.");
+        toast.error("Your message didn't reach the Director — please try again.");
       }
     };
 
@@ -483,7 +483,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         setIsSending(false);
         es.close();
         sseRef.current = null;
-        // In voice mode Ã¢ÂÂ auto-speak the response
+        // In voice mode — auto-speak the response
         if (voiceModeRef.current) {
           speakTextViaHttpRef.current(finalText).catch(() => {
             if (voiceModeRef.current) {
@@ -541,7 +541,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         }
         setVoiceState("idle");
         setInput((prev) => prev ? prev + " " + data.text.trim() : data.text.trim());
-        toast.success("Voice transcribed Ã¢ÂÂ review and send");
+        toast.success("Voice transcribed — review and send");
         setTimeout(() => textareaRef.current?.focus(), 100);
       } else {
         setVoiceState("idle");
@@ -581,7 +581,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     },
   });
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Scroll to bottom with ResizeObserver Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Scroll to bottom with ResizeObserver ───
   const scrollToBottom = useCallback((force = false) => {
     if (!scrollRef.current) return;
     if (force || !userScrolledUp) {
@@ -621,7 +621,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
   useEffect(() => { voiceModeStateRef.current = voiceModeState; }, [voiceModeState]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ iOS Safari: lock panel to visual viewport so keyboard doesn't jump the UI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── iOS Safari: lock panel to visual viewport so keyboard doesn't jump the UI ───
   // When the iOS soft keyboard opens, window.innerHeight stays the same but
   // visualViewport.height shrinks. We drive the panel height from the visual viewport
   // so the chat panel compresses naturally rather than being pushed off-screen.
@@ -651,7 +651,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     };
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Draggable window: mouse + touch drag on the header Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Draggable window: mouse + touch drag on the header ───
   const startDrag = useCallback((clientX: number, clientY: number) => {
     if (window.innerWidth < 640) return; // no drag on mobile
     const panel = chatPanelRef.current;
@@ -704,7 +704,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     };
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Sync history to local messages Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Sync history to local messages ───
   useEffect(() => {
     if (history && localMessages.length === 0) {
       setLocalMessages(history.map((m) => ({
@@ -715,7 +715,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     }
   }, [history]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Cleanup on unmount Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Cleanup on unmount ───
   useEffect(() => {
     return () => {
       if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
@@ -731,7 +731,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     };
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Strip markdown for TTS (Titan-style) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Strip markdown for TTS (Titan-style) ───
   const stripMarkdown = useCallback((text: string): string => {
     return text
       .replace(/```[\s\S]*?```/g, '') // code blocks
@@ -750,14 +750,14 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       .trim();
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ AudioContext TTS (Safari iOS safe Ã¢ÂÂ Titan pattern) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── AudioContext TTS (Safari iOS safe — Titan pattern) ───
   const stopSpeaking = useCallback(() => {
     try { audioSourceRef.current?.stop(); } catch (_) {}
     audioSourceRef.current = null;
     setIsSpeaking(false);
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Lip-sync helpers Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Lip-sync helpers ───
   const stopLipSync = useCallback(() => {
     lipAnalyserRef.current = null;
     if (lipRafRef.current) { cancelAnimationFrame(lipRafRef.current); lipRafRef.current = null; }
@@ -860,7 +860,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     speakTextViaHttp(text).catch(() => {});
   }, [isSpeaking, stopSpeaking, speakTextViaHttp]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Full-screen Voice Mode Ã¢ÂÂ Titan-style with VAD Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Full-screen Voice Mode — Titan-style with VAD ───
   // Use a ref so the function can call itself recursively without stale closures
   const startVoiceModeRecordingRef = useRef<() => Promise<void>>(() => Promise.resolve());
   const startVoiceModeRecording = useCallback(async () => {
@@ -898,7 +898,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
           const blob = new Blob(voiceModeChunksRef.current, { type: mimeType });
           if (blob.size < 500) {
-            // Too short Ã¢ÂÂ restart listening
+            // Too short — restart listening
             setVoiceModeState("listening");
             voiceModeStateRef.current = "listening";
             startVoiceModeRecordingRef.current();
@@ -909,7 +909,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           voiceModeStateRef.current = "thinking";
           setVoiceModeTranscript("Transcribing...");
 
-          // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Prefer Web Speech API result if we got one Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+          // ─── Prefer Web Speech API result if we got one ───
           // Stop the recognizer and give it a brief moment to flush its final result.
           if (webSpeechRef.current) {
             try { webSpeechRef.current.stop(); } catch {}
@@ -946,7 +946,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
                     // slash commands, attachments, state cleanup, isSpeaking stop, etc.
                     handleSendRef.current(data.text.trim());
                   } else {
-                    setVoiceModeTranscript("Didn't catch that Ã¢ÂÂ try again");
+                    setVoiceModeTranscript("Didn't catch that — try again");
                     setVoiceModeState("listening");
                     voiceModeStateRef.current = "listening";
                     startVoiceModeRecordingRef.current();
@@ -954,7 +954,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
                 },
                 onError: () => {
                   if (!voiceModeRef.current) return;
-                  setVoiceModeTranscript("Transcription failed Ã¢ÂÂ try again");
+                  setVoiceModeTranscript("Transcription failed — try again");
                   setVoiceModeState("listening");
                   voiceModeStateRef.current = "listening";
                   startVoiceModeRecordingRef.current();
@@ -963,7 +963,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             );
           } catch {
             if (!voiceModeRef.current) return;
-            setVoiceModeTranscript("Transcription failed Ã¢ÂÂ try again");
+            setVoiceModeTranscript("Transcription failed — try again");
             setVoiceModeState("listening");
             voiceModeStateRef.current = "listening";
             startVoiceModeRecordingRef.current();
@@ -976,9 +976,9 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         setVmRecordingDuration(0);
         vmRecordingTimerRef.current = setInterval(() => setVmRecordingDuration((p) => p + 1), 1000);
 
-        // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Web Speech API: start in PARALLEL with MediaRecorder Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+        // ─── Web Speech API: start in PARALLEL with MediaRecorder ───
         // Free, on-device, no quota. If it returns a transcript first, we use it
-        // and skip the uploadÃ¢ÂÂWhisper roundtrip. Failures are silent (we still have MediaRecorder).
+        // and skip the upload→Whisper roundtrip. Failures are silent (we still have MediaRecorder).
         webSpeechTextRef.current = "";
         webSpeechRef.current = null;
         if (webSpeechSupported) {
@@ -1002,7 +1002,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             };
             recog.onerror = (e: any) => {
               console.warn("[Voice] Web Speech error:", e?.error || e);
-              // Don't clear webSpeechTextRef Ã¢ÂÂ partial text may still be usable
+              // Don't clear webSpeechTextRef — partial text may still be usable
             };
             recog.onend = () => { /* recognition session ended naturally */ };
             webSpeechRef.current = recog;
@@ -1013,7 +1013,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           }
         }
 
-        // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ VAD: Titan-style auto-stop on silence Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+        // ─── VAD: Titan-style auto-stop on silence ───
         vadHasSpokenRef.current = false;
         try {
           if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
@@ -1088,7 +1088,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
     setVmRecordingDuration(0);
     if (voiceModeRef.current) { setVoiceModeState("thinking"); voiceModeStateRef.current = "thinking"; }
-    // Note: webSpeechRef is intentionally NOT stopped here Ã¢ÂÂ recorder.onstop will read
+    // Note: webSpeechRef is intentionally NOT stopped here — recorder.onstop will read
     // its accumulated transcript and stop it then. Stopping it here would race the read.
     const recorder = voiceModeRecorderRef.current;
     if (recorder && recorder.state !== "inactive") {
@@ -1143,7 +1143,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     setVmRecordingDuration(0);
   }, [stopSpeaking]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Standard voice recording (inline, for dictation/edit) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Standard voice recording (inline, for dictation/edit) ───
   const startRecordingInternal = useCallback(async (isEditMode: boolean) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -1213,7 +1213,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     toast.info("Recording cancelled");
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Edit Preview Actions Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Edit Preview Actions ───
   const acceptEdit = useCallback(() => {
     const newEntry: EditHistoryEntry = {
       id: editIdCounter + 1,
@@ -1236,7 +1236,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     setShowEditPreview(false);
     setPreviewText("");
     setPreEditText("");
-    toast.info("Edit rejected Ã¢ÂÂ original text kept");
+    toast.info("Edit rejected — original text kept");
   }, []);
 
   const undoLastEdit = useCallback(() => {
@@ -1262,15 +1262,15 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     }
   }, [editHistory]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Copy message Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Copy message ───
   const copyMessage = useCallback((text: string, idx: number) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedIdx(idx);
       setTimeout(() => setCopiedIdx(null), 1500);
-    }).catch(() => toast.error("Couldn't copy to clipboard Ã¢ÂÂ try selecting the text manually."));
+    }).catch(() => toast.error("Couldn't copy to clipboard — try selecting the text manually."));
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Regenerate last response Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Regenerate last response ───
   const regenerateLastResponse = useCallback(() => {
     const msgs = localMessages.filter((m) => m.role !== "system");
     const lastUserIdx = [...msgs].reverse().findIndex((m) => m.role === "user");
@@ -1293,7 +1293,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     void sendViaSSE(allMsgs, projectCtx);
   }, [localMessages, sendViaSSE, projectId]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Preset Edit Commands Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Preset Edit Commands ───
   const applyPreset = useCallback((command: string, label: string) => {
     if (!input.trim()) { toast.info("Type or dictate some text first, then use presets to refine it"); return; }
     setActivePreset(label);
@@ -1304,7 +1304,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     voiceEditMutation.mutate({ currentText: input, editCommand: command });
   }, [input, voiceEditMutation]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Auto-resize textarea Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Auto-resize textarea ───
   const handleTextareaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setInput(val);
@@ -1321,7 +1321,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     }
   }, []);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ File upload Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── File upload ───
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -1343,7 +1343,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     finally { setIsUploading(false); if (fileInputRef.current) fileInputRef.current.value = ""; }
   }, [projectId, uploadMutation]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Send message Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Send message ───
   const handleSend = useCallback((overrideText?: string) => {
     const trimmed = (overrideText ?? input).trim();
     if (!trimmed && attachments.length === 0) return;
@@ -1359,7 +1359,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
     const attachNames = attachments.map((a) => a.name).join(", ");
     const messageContent = trimmed
-      ? attachments.length > 0 ? `${trimmed}\n\nÃ°ÂÂÂ ${attachNames}` : trimmed
+      ? attachments.length > 0 ? `${trimmed}\n\n📎 ${attachNames}` : trimmed
       : `[Shared files: ${attachNames}]`;
 
     setLocalMessages((prev) => [
@@ -1394,7 +1394,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     }
   }, [handleSend, showSlashMenu]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Keyboard shortcuts Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Keyboard shortcuts ───
   const isRecording = voiceState === "recording" || voiceState === "recording_edit";
 
   useEffect(() => {
@@ -1429,7 +1429,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     editHistory.length, isSending, closeVoiceMode,
   ]);
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Helpers Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ─── Helpers ───
   const formatDuration = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -1462,7 +1462,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
   return (
     <>
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Floating trigger pill Ã¢ÂÂ only visible when chat is fully closed Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ─── Floating trigger pill — only visible when chat is fully closed ─── */}
       {!isOpen && (
         <button
           onClick={() => { setIsOpen(true); setIsMinimized(false); }}
@@ -1479,7 +1479,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         </button>
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Minimized pill Ã¢ÂÂ visible when open but minimized Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ─── Minimized pill — visible when open but minimized ─── */}
       {isOpen && isMinimized && (
         <button
           onClick={() => setIsMinimized(false)}
@@ -1512,7 +1512,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
 
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Full-screen Voice Mode Overlay Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ─── Full-screen Voice Mode Overlay ─── */}
       {!hideVoiceOverlay && voiceModeActive && (
         <div
           className="fixed inset-0 z-[60] flex flex-col items-center justify-center select-none"
@@ -1532,7 +1532,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             Virelle
           </p>
 
-          {/* Face Ã¢ÂÂ 300 ÃÂ 300 container */}
+          {/* Face — 300 × 300 container */}
           <div style={{ position: 'relative', width: 300, height: 300, flexShrink: 0 }}>
             <VirelleFace volume={lipVolume} speaking={voiceModeState === 'speaking'} state={voiceModeState} />
           </div>
@@ -1582,7 +1582,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         </div>
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Chat panel Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ─── Chat panel ─── */}
       <div
         ref={chatPanelRef}
         className={cn(
@@ -1606,7 +1606,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           ),
         }}
       >
-        {/* Header Ã¢ÂÂ draggable on desktop */}
+        {/* Header — draggable on desktop */}
         <div
           className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0 sm:cursor-grab sm:active:cursor-grabbing select-none"
           onMouseDown={(e) => { if (e.button === 0) startDrag(e.clientX, e.clientY); }}
@@ -1619,9 +1619,9 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             <div>
               <h3 className="font-semibold text-sm gradient-text-gold">Director's Assistant</h3>
               <p className="text-xs text-muted-foreground">
-                {voiceModeActive && voiceModeState === "listening" && <span className="text-amber-400">ListeningÃ¢ÂÂ¦</span>}
-                {voiceModeActive && voiceModeState === "thinking" && <span className="text-blue-400">ThinkingÃ¢ÂÂ¦</span>}
-                {voiceModeActive && voiceModeState === "speaking" && <span className="text-emerald-400">SpeakingÃ¢ÂÂ¦</span>}
+                {voiceModeActive && voiceModeState === "listening" && <span className="text-amber-400">Listening…</span>}
+                {voiceModeActive && voiceModeState === "thinking" && <span className="text-blue-400">Thinking…</span>}
+                {voiceModeActive && voiceModeState === "speaking" && <span className="text-emerald-400">Speaking…</span>}
                 {(!voiceModeActive || voiceModeState === "inactive") && "Virelle, your AI co-director"}
               </p>
             </div>
@@ -1659,7 +1659,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             >
               <Trash2 className="size-4 text-muted-foreground" aria-hidden="true" />
             </Button>
-            {/* Minimize Ã¢ÂÂ collapses to pill, stays active */}
+            {/* Minimize — collapses to pill, stays active */}
             <Button
               variant="ghost"
               size="icon"
@@ -1780,7 +1780,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
                         <div className="flex items-center gap-2">
                           <Loader2 className="size-3.5 animate-spin text-amber-500 shrink-0" />
                           <span className="text-xs text-muted-foreground italic">
-                            {msg.toolBadges?.some(b => b.status === "pending") ? "ExecutingÃ¢ÂÂ¦" : "ThinkingÃ¢ÂÂ¦"}
+                            {msg.toolBadges?.some(b => b.status === "pending") ? "Executing…" : "Thinking…"}
                           </span>
                         </div>
                         {msg.toolBadges && msg.toolBadges.length > 0 && (
@@ -1913,7 +1913,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         )}
         </div>
 
-        {/* Voice recording overlay Ã¢ÂÂ dictation mode (red) */}
+        {/* Voice recording overlay — dictation mode (red) */}
         {voiceState === "recording" && (
           <div className="px-4 py-3 border-t bg-red-500/5 border-red-500/20 shrink-0">
             <div className="flex items-center justify-between">
@@ -1937,7 +1937,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           </div>
         )}
 
-        {/* Voice recording overlay Ã¢ÂÂ edit mode (violet) */}
+        {/* Voice recording overlay — edit mode (violet) */}
         {voiceState === "recording_edit" && (
           <div className="px-4 py-3 border-t bg-violet-500/5 border-violet-500/20 shrink-0">
             <div className="flex items-center justify-between">
@@ -2013,7 +2013,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             </div>
             <div className="flex items-center justify-between">
               <p className="text-[10px] text-muted-foreground">
-                <kbd className="px-1 py-0.5 rounded bg-[#07070e] border border-border text-[10px] font-mono">A</kbd> accept{" ÃÂ· "}
+                <kbd className="px-1 py-0.5 rounded bg-[#07070e] border border-border text-[10px] font-mono">A</kbd> accept{" · "}
                 <kbd className="px-1 py-0.5 rounded bg-[#07070e] border border-border text-[10px] font-mono">Esc</kbd> reject
               </p>
               <div className="flex items-center gap-2">
@@ -2127,7 +2127,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           </div>
         )}
 
-        {/* Scroll to bottom Ã¢ÂÂ appears when user has scrolled up */}
+        {/* Scroll to bottom — appears when user has scrolled up */}
         {userScrolledUp && (
           <button
             onClick={() => { setUserScrolledUp(false); scrollToBottom(true); }}
@@ -2138,7 +2138,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           </button>
         )}
 
-        {/* Input area Ã¢ÂÂ wide, comfortable, Titan-style */}
+        {/* Input area — wide, comfortable, Titan-style */}
         <div className="border-t bg-[#07070e]/80 backdrop-blur-sm px-3 pt-3 pb-2 sm:rounded-b-2xl shrink-0">
           <input
             ref={fileInputRef}
@@ -2149,7 +2149,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             onChange={handleFileSelect}
           />
 
-          {/* Wide text input Ã¢ÂÂ full width */}
+          {/* Wide text input — full width */}
           <div className={cn(
             "relative rounded-2xl border transition-all",
             showEditPreview ? "border-violet-500/40 bg-violet-500/5" : "border-border/60 bg-[#07070e] focus-within:border-amber-500/50"
@@ -2177,7 +2177,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
               enterKeyHint="send"
               disabled={isSending || voiceState === "transcribing" || voiceState === "applying_edit" || showEditPreview}
             />
-            {/* Send button Ã¢ÂÂ inside the textarea, bottom-right */}
+            {/* Send button — inside the textarea, bottom-right */}
             <button
               className={cn(
                 "absolute bottom-2.5 right-2.5 size-9 rounded-xl flex items-center justify-center transition-all",
@@ -2193,7 +2193,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             </button>
           </div>
 
-          {/* Action icon row Ã¢ÂÂ below the textarea */}
+          {/* Action icon row — below the textarea */}
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-0.5">
               {/* Attach */}
@@ -2207,20 +2207,20 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
                 {isUploading ? <Loader2 className="size-4 animate-spin" /> : <Paperclip className="size-4" />}
               </button>
 
-              {/* Voice edit (pencil) Ã¢ÂÂ only when there's text */}
+              {/* Voice edit (pencil) — only when there's text */}
               {hasInputText && voiceState === "idle" && (
                 <button
                   className="p-2 rounded-xl text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all active:scale-95 disabled:opacity-40"
                   onClick={startEditRecording}
                   disabled={isSending || showEditPreview}
-                  title="Voice edit Ã¢ÂÂ speak to edit (V)"
+                  title="Voice edit — speak to edit (V)"
                   style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
                 >
                   <Pencil className="size-4" />
                 </button>
               )}
 
-              {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Talk button Ã¢ÂÂ tap to speak, AI speaks back Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+              {/* ─── Talk button — tap to speak, AI speaks back ─── */}
               <button
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all active:scale-95 disabled:opacity-40 relative",
@@ -2289,8 +2289,8 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             {/* Right side: hint text */}
             <p className="text-[10px] text-muted-foreground/60 pr-1 hidden sm:block">
               {hasInputText && voiceState === "idle"
-                ? "V voice-edit ÃÂ· R read back"
-                : "V to speak ÃÂ· / commands"}
+                ? "V voice-edit · R read back"
+                : "V to speak · / commands"}
             </p>
             {/* Mobile: recording duration */}
             {isRecording && recordingDuration > 0 && (
