@@ -407,7 +407,7 @@ export default function AdminOutreach() {
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Contact</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Add Contact</DialogTitle>
             <DialogDescription>Add a single contact to your outreach list.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -454,7 +454,7 @@ export default function AdminOutreach() {
       <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Bulk Import Contacts</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Bulk Import Contacts</DialogTitle>
             <DialogDescription>
               Paste emails or CSV data below. Format: <code className="bg-muted px-1 rounded text-xs">email, name, company, role, tags</code> — one per line. Only email is required.
             </DialogDescription>
@@ -483,7 +483,7 @@ export default function AdminOutreach() {
       <Dialog open={campaignOpen} onOpenChange={setCampaignOpen}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
-            <DialogTitle>New Campaign</DialogTitle>
+            <DialogTitle className="gradient-text-gold">New Campaign</DialogTitle>
             <DialogDescription>
               Build your email campaign. Choose a template, optionally upload an ad image, then save as draft and push to your full list.
             </DialogDescription>

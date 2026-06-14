@@ -2493,7 +2493,7 @@ export default function SceneEditor() {
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete scene?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Delete scene?</AlertDialogTitle>
             <AlertDialogDescription>This scene will be permanently removed.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -2512,7 +2512,7 @@ export default function SceneEditor() {
       <AlertDialog open={bulkVideoConfirmOpen} onOpenChange={setBulkVideoConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Generate videos for all {scenes?.length} scenes?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Generate videos for all {scenes?.length} scenes?</AlertDialogTitle>
             <AlertDialogDescription>
               This will use approximately <strong>{10 * (scenes?.length ?? 0)}–{20 * (scenes?.length ?? 0)} credits</strong> (exact cost varies by scene duration). Each scene is billed individually as it generates.
             </AlertDialogDescription>

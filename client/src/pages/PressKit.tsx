@@ -95,7 +95,7 @@ export default function PressKit() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-1">
         <Card className="print:hidden">
           <CardHeader>
-            <CardTitle>EPK Inputs</CardTitle>
+            <CardTitle className="gradient-text-gold">EPK Inputs</CardTitle>
             <CardDescription>Fill in the fields. Preview updates live. Export, print, or paste into your distribution emails.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -180,7 +180,7 @@ export default function PressKit() {
       <Dialog open={emailDialog.open} onOpenChange={(o) => setEmailDialog((s) => ({ ...s, open: o }))}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Email Press Pack</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Email Press Pack</DialogTitle>
             <DialogDescription>Enter one or more email addresses, separated by commas.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">

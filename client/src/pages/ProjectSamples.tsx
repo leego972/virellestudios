@@ -629,7 +629,7 @@ export default function ProjectSamples() {
       <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this sample?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Delete this sample?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently remove the sample video and cannot be undone.
             </AlertDialogDescription>

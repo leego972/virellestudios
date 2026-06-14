@@ -899,7 +899,7 @@ export default function ComponentsShowcase() {
               <TabsContent value="account">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Account</CardTitle>
+                    <CardTitle className="gradient-text-gold">Account</CardTitle>
                     <CardDescription>
                       Make changes to your account here.
                     </CardDescription>
@@ -918,7 +918,7 @@ export default function ComponentsShowcase() {
               <TabsContent value="password">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Password</CardTitle>
+                    <CardTitle className="gradient-text-gold">Password</CardTitle>
                     <CardDescription>
                       Change your password here.
                     </CardDescription>
@@ -941,7 +941,7 @@ export default function ComponentsShowcase() {
               <TabsContent value="settings">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Settings</CardTitle>
+                    <CardTitle className="gradient-text-gold">Settings</CardTitle>
                     <CardDescription>
                       Manage your settings here.
                     </CardDescription>
@@ -991,7 +991,7 @@ export default function ComponentsShowcase() {
                 <CardHeader>
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" className="w-full justify-between">
-                      <CardTitle>@peduarte starred 3 repositories</CardTitle>
+                      <CardTitle className="gradient-text-gold">@peduarte starred 3 repositories</CardTitle>
                     </Button>
                   </CollapsibleTrigger>
                 </CardHeader>
@@ -1026,7 +1026,7 @@ export default function ComponentsShowcase() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Test Input</DialogTitle>
+                        <DialogTitle className="gradient-text-gold">Test Input</DialogTitle>
                         <DialogDescription>
                           Enter some text below. Press Enter to submit (IME composition supported).
                         </DialogDescription>

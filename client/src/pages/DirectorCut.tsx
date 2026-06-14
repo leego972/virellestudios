@@ -719,7 +719,7 @@ export default function DirectorCut() {
             {/* New Cut Dialog */}
             <Dialog open={showNewCutDialog} onOpenChange={setShowNewCutDialog}>
               <DialogContent className="bg-zinc-900 border-white/10 text-white">
-                <DialogHeader><DialogTitle>Create New Cut</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle className="gradient-text-gold">Create New Cut</DialogTitle></DialogHeader>
                 <Label className="text-xs text-zinc-400">Cut name</Label>
                 <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-white/10" placeholder="Director's Cut v2" />
                 <DialogFooter>

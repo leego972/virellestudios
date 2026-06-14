@@ -2774,7 +2774,7 @@ export default function ProjectDetail() {
       <AlertDialog open={regenConfirmOpen} onOpenChange={setRegenConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Re-generate film?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Re-generate film?</AlertDialogTitle>
             <AlertDialogDescription>
               This will overwrite all existing scenes and videos. Any manual edits to scenes will be lost. This action uses <strong>10 credits</strong>.
             </AlertDialogDescription>
@@ -2795,7 +2795,7 @@ export default function ProjectDetail() {
       <AlertDialog open={stopGenConfirmOpen} onOpenChange={setStopGenConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Stop generation?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Stop generation?</AlertDialogTitle>
             <AlertDialogDescription>
               Scenes created so far will be kept, but the AI will stop generating new ones.
             </AlertDialogDescription>
@@ -2816,7 +2816,7 @@ export default function ProjectDetail() {
       <AlertDialog open={duplicateConfirmOpen} onOpenChange={setDuplicateConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Duplicate project?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Duplicate project?</AlertDialogTitle>
             <AlertDialogDescription>
               A copy will be created with all settings, characters, and scenes. Videos are not copied.
             </AlertDialogDescription>
@@ -3054,7 +3054,7 @@ function ReviewsButton({ projectId }: { projectId: number }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Screener feedback</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Screener feedback</DialogTitle>
           </DialogHeader>
           {reviews.isLoading ? (
             <div className="py-8 flex items-center justify-center">

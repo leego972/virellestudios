@@ -136,7 +136,7 @@ function EmbedWidget({ title }: { title: string }) {
       <Dialog open={showEmbed} onOpenChange={setShowEmbed}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Embeddable Ad Widget</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Embeddable Ad Widget</DialogTitle>
             <DialogDescription>Copy this code to embed this ad on any website</DialogDescription>
           </DialogHeader>
           <div className="mt-4 space-y-3">
@@ -283,7 +283,7 @@ export default function CampaignManager() {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create Advertising Campaign</DialogTitle>
+                <DialogTitle className="gradient-text-gold">Create Advertising Campaign</DialogTitle>
                 <DialogDescription>
                   Set up an automated ad campaign across free film & art platforms
                 </DialogDescription>
@@ -475,7 +475,7 @@ export default function CampaignManager() {
                     <CardHeader>
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <div>
-                          <CardTitle>{selectedCampaign.name}</CardTitle>
+                          <CardTitle className="gradient-text-gold">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
                             {selectedCampaign.contentType.replace(/_/g, " ")} · {selectedCampaign.schedule}
                           </CardDescription>
@@ -733,7 +733,7 @@ export default function CampaignManager() {
           <Dialog open={showContentDialog} onOpenChange={setShowContentDialog}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Generated Ad Content</DialogTitle>
+                <DialogTitle className="gradient-text-gold">Generated Ad Content</DialogTitle>
                 <DialogDescription>
                   {previewContent && `For ${platforms.find((p: any) => p.id === previewContent.platformId)?.name || previewContent.platformId}`}
                 </DialogDescription>

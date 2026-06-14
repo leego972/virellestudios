@@ -811,7 +811,7 @@ export default function ContentCreatorPage() {
           <Dialog open={scheduleDialogPieceId !== null} onOpenChange={() => setScheduleDialogPieceId(null)}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Schedule Content</DialogTitle>
+                <DialogTitle className="gradient-text-gold">Schedule Content</DialogTitle>
                 <DialogDescription>Choose when to publish this piece</DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
@@ -852,7 +852,7 @@ export default function ContentCreatorPage() {
           <Dialog open={showCreateCampaign} onOpenChange={setShowCreateCampaign}>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>Create Content Campaign</DialogTitle>
+                <DialogTitle className="gradient-text-gold">Create Content Campaign</DialogTitle>
                 <DialogDescription>Set up a multi-platform content campaign with AI strategy</DialogDescription>
               </DialogHeader>
               <div className="space-y-3">

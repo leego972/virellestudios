@@ -264,7 +264,7 @@ export default function ProjectBrands() {
       <Dialog open={open} onOpenChange={(o) => (o ? setOpen(o) : closeDialog())}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit brand" : "Add brand"}</DialogTitle>
+            <DialogTitle className="gradient-text-gold">{editingId ? "Edit brand" : "Add brand"}</DialogTitle>
             <DialogDescription className="text-zinc-400">
               The AI reads this list whenever it draws a scene, trailer frame,
               poster, or storyboard panel for this project.

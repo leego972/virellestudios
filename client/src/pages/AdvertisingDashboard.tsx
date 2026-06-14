@@ -268,7 +268,7 @@ export default function AdvertisingDashboard() {
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
             </div>
-            <CardTitle>Access Denied</CardTitle>
+            <CardTitle className="gradient-text-gold">Access Denied</CardTitle>
             <CardDescription>Admin privileges required to access the Advertising Dashboard.</CardDescription>
           </CardHeader>
         </Card>

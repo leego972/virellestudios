@@ -772,7 +772,7 @@ function LocksTab({ projectId }: { projectId: number }) {
       <Dialog open={!!lockDialog} onOpenChange={(o) => { if (!o) setLockDialog(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Lock scene "{lockDialog?.label}"</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Lock scene "{lockDialog?.label}"</DialogTitle>
             <DialogDescription>Provide a reason — this is recorded in the audit log and shown next to the lock.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -872,7 +872,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
       <Dialog open={!!rejectDialog} onOpenChange={(o) => { if (!o) setRejectDialog(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject as {rejectDialog?.role}</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Reject as {rejectDialog?.role}</DialogTitle>
             <DialogDescription>Add a rejection reason for "{rejectDialog?.label}". This is recorded in the audit log.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">

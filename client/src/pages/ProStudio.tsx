@@ -272,7 +272,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>Voice / Likeness Consent</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle className="gradient-text-gold">Voice / Likeness Consent</DialogTitle></DialogHeader>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Signed By (full legal name)</Label>

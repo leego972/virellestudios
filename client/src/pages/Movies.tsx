@@ -1010,7 +1010,7 @@ export default function Movies() {
       <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this movie?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Delete this movie?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently remove the movie file and cannot be undone.
             </AlertDialogDescription>

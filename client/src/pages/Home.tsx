@@ -679,7 +679,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete project?</AlertDialogTitle>
+              <AlertDialogTitle className="gradient-text-gold">Delete project?</AlertDialogTitle>
               <AlertDialogDescription>This will permanently delete the project and all its scenes. This action cannot be undone.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -693,7 +693,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <AlertDialog open={showNeedsProjectAlert} onOpenChange={setShowNeedsProjectAlert}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Select a project first</AlertDialogTitle>
+              <AlertDialogTitle className="gradient-text-gold">Select a project first</AlertDialogTitle>
               <AlertDialogDescription>This tool requires an active project. Select a project from the dropdown in the pipeline header, or create a new one.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

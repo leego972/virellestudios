@@ -440,7 +440,7 @@ export default function Collaboration() {
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Invite Team Member</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Invite Team Member</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleInvite} className="space-y-4">
             <div>
@@ -488,7 +488,7 @@ export default function Collaboration() {
       <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Invite Link Generated</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Invite Link Generated</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
@@ -516,7 +516,7 @@ export default function Collaboration() {
       <AlertDialog open={removeConfirmId !== null} onOpenChange={() => setRemoveConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove team member?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Remove team member?</AlertDialogTitle>
             <AlertDialogDescription>
               This person will lose access to the project immediately.
             </AlertDialogDescription>

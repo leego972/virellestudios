@@ -118,7 +118,7 @@ export default function LocationScout() {
               <Button><Plus className="h-4 w-4 mr-2" /> Add Location</Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
-              <DialogHeader><DialogTitle>Add Location</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle className="gradient-text-gold">Add Location</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-2">
                 <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Central Park, NYC" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
                 <div><Label>Type</Label>

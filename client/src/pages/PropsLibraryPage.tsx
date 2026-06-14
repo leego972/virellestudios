@@ -91,7 +91,7 @@ import { useState } from "react";
               <Button><Plus className="w-4 h-4 mr-2" />Add Prop</Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
-              <DialogHeader><DialogTitle>New Hero Prop</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle className="gradient-text-gold">New Hero Prop</DialogTitle></DialogHeader>
               <PropForm onSave={v => createMut?.mutate?.({ projectId, ...v })} onClose={() => setOpen(false)} />
             </DialogContent>
           </Dialog>
@@ -150,7 +150,7 @@ import { useState } from "react";
 
         <Dialog open={!!editing} onOpenChange={v => !v && setEditing(null)}>
           <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>Edit Prop</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle className="gradient-text-gold">Edit Prop</DialogTitle></DialogHeader>
             {editing && (
               <PropForm
                 initial={editing}

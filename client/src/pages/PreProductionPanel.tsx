@@ -417,7 +417,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
             <Button size="sm" className="gap-2"><Plus className="h-4 w-4" />Add Location</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>Register Filming Location</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle className="gradient-text-gold">Register Filming Location</DialogTitle></DialogHeader>
             <div className="space-y-4 py-2">
               <div className="col-span-2">
                 <FieldGroup label="Location Name *">
@@ -703,7 +703,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
             <Button size="sm" className="gap-2"><Plus className="h-4 w-4" />Register Vehicle</Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>Register Production Vehicle</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle className="gradient-text-gold">Register Production Vehicle</DialogTitle></DialogHeader>
             <div className="space-y-3 py-2">
               <FieldGroup label="Label / Name *">
                 <Input value={vName} onChange={e => setVName(e.target.value)} placeholder='e.g. "Hero Car", "Police Cruiser #2"' />

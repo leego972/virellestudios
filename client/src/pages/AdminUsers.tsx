@@ -119,7 +119,7 @@ export default function AdminUsers() {
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
             </div>
-            <CardTitle>Access Denied</CardTitle>
+            <CardTitle className="gradient-text-gold">Access Denied</CardTitle>
             <CardDescription>You need admin privileges to access this page.</CardDescription>
           </CardHeader>
         </Card>
@@ -249,7 +249,7 @@ export default function AdminUsers() {
           ) : usersQuery.error ? (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="text-center">
-                <CardTitle>Error</CardTitle>
+                <CardTitle className="gradient-text-gold">Error</CardTitle>
                 <CardDescription>{usersQuery.error.message}</CardDescription>
               </CardHeader>
             </Card>

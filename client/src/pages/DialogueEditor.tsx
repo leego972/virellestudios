@@ -340,7 +340,7 @@ export default function DialogueEditor() {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add Dialogue Line</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Add Dialogue Line</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>

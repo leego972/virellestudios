@@ -912,7 +912,7 @@ export default function DesignerWardrobePage() {
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
-            <DialogTitle>{profile ? "Edit designer profile" : "Set up your designer profile"}</DialogTitle>
+            <DialogTitle className="gradient-text-gold">{profile ? "Edit designer profile" : "Set up your designer profile"}</DialogTitle>
             <DialogDescription className="text-zinc-400">
               Your profile is the byline on collections and items you publish to
               the wardrobe library.
@@ -1038,7 +1038,7 @@ export default function DesignerWardrobePage() {
       <Dialog open={collectionOpen} onOpenChange={setCollectionOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
-            <DialogTitle>New collection</DialogTitle>
+            <DialogTitle className="gradient-text-gold">New collection</DialogTitle>
             <DialogDescription className="text-zinc-400">
               Group wardrobe into a season, a film's costume set, a shopfront
               capsule, or a textile catalogue.
@@ -1178,7 +1178,7 @@ export default function DesignerWardrobePage() {
       <Dialog open={itemOpen} onOpenChange={setItemOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add wardrobe item</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Add wardrobe item</DialogTitle>
             <DialogDescription className="text-zinc-400">
               Anything a director might dress a character, set, or extra with —
               from a couture gown to a single hat to a roll of fabric.
@@ -1380,7 +1380,7 @@ export default function DesignerWardrobePage() {
       <Dialog open={attachOpen} onOpenChange={setAttachOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
-            <DialogTitle>Attach to project</DialogTitle>
+            <DialogTitle className="gradient-text-gold">Attach to project</DialogTitle>
             <DialogDescription className="text-zinc-400">
               Where should the AI use <span className="text-amber-300">{attachItem?.name}</span>?
             </DialogDescription>

@@ -1382,7 +1382,7 @@ export default function Characters() {
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete character?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Delete character?</AlertDialogTitle>
             <AlertDialogDescription>
               This character will be permanently removed from your library.
             </AlertDialogDescription>

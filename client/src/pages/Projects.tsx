@@ -454,7 +454,7 @@ export default function Projects() {
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete project?</AlertDialogTitle>
+            <AlertDialogTitle className="gradient-text-gold">Delete project?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete this project and all its scenes, characters, and generated content.
             </AlertDialogDescription>

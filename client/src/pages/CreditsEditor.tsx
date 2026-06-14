@@ -109,7 +109,7 @@ export default function CreditsEditor() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add Credit</DialogTitle>
+                <DialogTitle className="gradient-text-gold">Add Credit</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
