@@ -45,7 +45,6 @@ import { useState } from "react";
   function ScoreBar({ label, value }: { label: string; value: number }) {
     const color = value >= 80 ? "bg-green-500" : value >= 65 ? "bg-amber-500" : "bg-amber-500";
     return (
-      <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-5xl mx-auto space-y-1 px-4 py-6">
         <div className="flex justify-between text-xs"><span className="text-muted-foreground">{label}</span><span className="font-medium">{value}/100</span></div>
         <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${value}%` }} /></div>
@@ -219,7 +218,6 @@ import { useState } from "react";
           </div>
         )}
           </div>
-  </div>
   </div>
   );
 }

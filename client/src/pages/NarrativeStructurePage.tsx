@@ -23,7 +23,6 @@ import { useState } from "react";
         episodeTitle:      initial?.episodeTitle      ?? "",
       });
       return (
-        <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="space-y-4 max-w-7xl mx-auto px-4 py-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -271,6 +270,5 @@ import { useState } from "react";
           </DialogContent>
         </Dialog>
           </div>
-  </div>
   );
 }

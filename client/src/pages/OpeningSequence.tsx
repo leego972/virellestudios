@@ -307,7 +307,6 @@ import { useState, useEffect, useCallback } from "react";
     const totalDuration = elements.reduce((s, e) => s + e.duration, 0);
 
     return (
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%)" }}>
         {/* Cinematic header */}
         <div className="border-b" style={{ borderColor: "rgba(212,175,55,0.15)", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(20px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
@@ -649,5 +648,4 @@ import { useState, useEffect, useCallback } from "react";
     );
   }
  
-  </div>
   </div> 

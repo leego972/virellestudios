@@ -109,7 +109,6 @@ import { useState } from "react";
     if (activeSeries && !editingSeries) {
       const totalEps = activeSeries.seasons.reduce((t, s) => t + s.episodes.length, 0);
       return (
-        <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-5xl mx-auto space-y-6 py-6">
           <div className="flex items-center gap-3 flex-wrap">
             <Button variant="ghost" size="sm" onClick={() => setActiveSeries(null)}><ChevronRight className="h-4 w-4 rotate-180 mr-1" />All Series</Button>
@@ -248,6 +247,5 @@ import { useState } from "react";
           })}
         </div>
           </div>
-  </div>
   );
 }
