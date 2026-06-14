@@ -652,7 +652,7 @@ export default function Movies() {
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 gradient-text-gold">
                 <Clapperboard className="h-6 w-6 text-primary" />
                 My Movies
               </h1>
