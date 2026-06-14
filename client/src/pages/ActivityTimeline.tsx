@@ -1,1 +1,90 @@
-aW1wb3J0IHsgdXNlUGFyYW1zLCBMaW5rIH0gZnJvbSAid291dGVyIjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IENhcmQsIENhcmRDb250ZW50IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEFycm93TGVmdCwgQWN0aXZpdHksIExvYWRlcjIsIENoZWNrQ2lyY2xlMiwgQWxlcnRUcmlhbmdsZSwgQ2FsZW5kYXIsIFVzZXJzLCBGaWxlVGV4dCwgRG9sbGFyU2lnbiwgTGlzdENoZWNrcywgRWRpdDMgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwoKY29uc3QgSUNPTlM6IFJlY29yZDxzdHJpbmcsIGFueT4gPSB7CiAgInNjZW5lLmFwcHJvdmFsLnNldCI6IENoZWNrQ2lyY2xlMiwKICAibW92aWUuYXBwcm92YWwuc2V0IjogQ2hlY2tDaXJjbGUyLAogICJzY2VuZS5zaG90bGlzdC51cGRhdGUiOiBMaXN0Q2hlY2tzLAogICJzY2VuZS5zaG9vdGRheS5hc3NpZ24iOiBDYWxlbmRhciwKICAic2hvb3RkYXkuY3JlYXRlIjogQ2FsZW5kYXIsCiAgInNob290ZGF5LnVwZGF0ZSI6IENhbGVuZGFyLAogICJzaG9vdGRheS5kZWxldGUiOiBDYWxlbmRhciwKICAiY3Jldy5jcmVhdGUiOiBVc2VycywKICAiY3Jldy5kZWxldGUiOiBVc2VycywKICAiYnVkZ2V0LnVwZGF0ZSI6IERvbGxhclNpZ24sCn07CgpmdW5jdGlvbiBkZXNjcmliZShlOiBhbnkpOiBzdHJpbmcgewogIGNvbnN0IHAgPSBlLnBheWxvYWQgfHwge307CiAgc3dpdGNoIChlLmV2ZW50VHlwZSkgewogICAgY2FzZSAic2NlbmUuYXBwcm92YWwuc2V0IjogcmV0dXJuIGBNYXJrZWQgc2NlbmUgJHtwLnNjZW5lSWQgPz8gIiJ9IGFzICR7cC5zdGF0dXN9JHtwLm5vdGUgPyBgIOKAlCAiJHtwLm5vdGV9ImAgOiAiIn1gOwogICAgY2FzZSAibW92aWUuYXBwcm92YWwuc2V0IjogcmV0dXJuIGBNYXJrZWQgY3V0ICR7cC5tb3ZpZUlkID8/ICIifSBhcyAke3Auc3RhdHVzfSR7cC5ub3RlID8gYCDigJQgIiR7cC5ub3RlfSJgIDogIiJ9YDsKICAgIGNhc2UgInNjZW5lLnNob3RsaXN0LnVwZGF0ZSI6IHJldHVybiBgVXBkYXRlZCBzaG90IGxpc3Qgb24gc2NlbmUgJHtwLnNjZW5lSWQgPz8gIiJ9ICgke3AuY291bnR9IHNob3RzKWA7CiAgICBjYXNlICJzY2VuZS5zaG9vdGRheS5hc3NpZ24iOiByZXR1cm4gcC5zaG9vdERheUlkID8gYEFzc2lnbmVkIHNjZW5lICR7cC5zY2VuZUlkfSB0byBkYXkgJHtwLnNob290RGF5SWR9YCA6IGBVbnNjaGVkdWxlZCBzY2VuZSAke3Auc2NlbmVJZH1gOwogICAgY2FzZSAic2hvb3RkYXkuY3JlYXRlIjogcmV0dXJuIGBDcmVhdGVkIHNob290IGRheSAke3AuZGF5TnVtYmVyID8/IHAuZGF5SWQgPz8gIiJ9YDsKICAgIGNhc2UgInNob290ZGF5LnVwZGF0ZSI6IHJldHVybiBgVXBkYXRlZCBzaG9vdCBkYXkgJHtwLmRheUlkID8/ICIifWA7CiAgICBjYXNlICJzaG9vdGRheS5kZWxldGUiOiByZXR1cm4gYERlbGV0ZWQgc2hvb3QgZGF5ICR7cC5kYXlJZCA/PyAiIn1gOwogICAgY2FzZSAiY3Jldy5jcmVhdGUiOiByZXR1cm4gYEFkZGVkIGNyZXcgY29udGFjdCAiJHtwLm5hbWUgPz8gIiJ9ImA7CiAgICBjYXNlICJjcmV3LmRlbGV0ZSI6IHJldHVybiBgUmVtb3ZlZCBjcmV3IGNvbnRhY3QgJHtwLmlkID8/ICIifWA7CiAgICBjYXNlICJidWRnZXQudXBkYXRlIjogcmV0dXJuIGBVcGRhdGVkIGJ1ZGdldCDigJQgdG90YWwgJHtwLmN1cnJlbmN5fSAke3AudG90YWxFc3RpbWF0ZX1gOwogICAgZGVmYXVsdDogcmV0dXJuIGUuZXZlbnRUeXBlOwogIH0KfQoKLyoqIHY2LjYzIOKAlCBQcm9qZWN0IGFjdGl2aXR5IHRpbWVsaW5lLiBBcHBlbmQtb25seSBhdWRpdCBmZWVkLiAqLwpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBBY3Rpdml0eVRpbWVsaW5lKCkgewogIGNvbnN0IHsgaWQgfSA9IHVzZVBhcmFtczx7IGlkOiBzdHJpbmcgfT4oKTsKICBjb25zdCBwcm9qZWN0SWQgPSBwYXJzZUludChpZCB8fCAiMCIpOwogIGNvbnN0IHsgZGF0YTogcHJvamVjdCB9ID0gdHJwYy5wcm9qZWN0LmdldC51c2VRdWVyeSh7IGlkOiBwcm9qZWN0SWQgfSwgeyBlbmFibGVkOiAhIXByb2plY3RJZCB9KTsKICBjb25zdCB7IGRhdGE6IGV2ZW50cyA9IFtdLCBpc0xvYWRpbmcgfSA9IHRycGMuYWN0aXZpdHkubGlzdC51c2VRdWVyeSh7IHByb2plY3RJZCwgbGltaXQ6IDIwMCB9LCB7IGVuYWJsZWQ6ICEhcHJvamVjdElkIH0pOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiB0ZXh0LXppbmMtMTAwIHAtNCBtZDpwLTYiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTN4bCBteC1hdXRvIHNwYWNlLXktNCI+CiAgICAgICAgPGRpdj4KICAgICAgICAgIDxMaW5rIGhyZWY9e2AvcHJvamVjdHMvJHtwcm9qZWN0SWR9YH0+CiAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0iZ2hvc3QiIHNpemU9InNtIiBjbGFzc05hbWU9InRleHQtemluYy00MDAgaG92ZXI6dGV4dC16aW5jLTEwMCI+CiAgICAgICAgICAgICAgPEFycm93TGVmdCBjbGFzc05hbWU9InctNCBoLTQgbXItMSIgLz4gQmFjayB0byBwcm9qZWN0CiAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgPC9MaW5rPgogICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIG10LTEiPgogICAgICAgICAgICA8QWN0aXZpdHkgY2xhc3NOYW1lPSJ3LTYgaC02IHRleHQtYW1iZXItNTAwIiAvPiBBY3Rpdml0eQogICAgICAgICAgPC9oMT4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LXppbmMtNDAwIj57cHJvamVjdD8udGl0bGUgfHwgIuKAlCJ9IMK3IGxhc3QgMjAwIGV2ZW50cy48L3A+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHtpc0xvYWRpbmcgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMTIgdGV4dC16aW5jLTUwMCI+PExvYWRlcjIgY2xhc3NOYW1lPSJ3LTUgaC01IGFuaW1hdGUtc3BpbiBpbmxpbmUgbXItMiIgLz5Mb2FkaW5n4oCmPC9kaXY+CiAgICAgICAgKSA6IChldmVudHMgYXMgYW55W10pLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgIDxDYXJkIGNsYXNzTmFtZT0iYmctemluYy05NTAgYm9yZGVyLXppbmMtODAwIj48Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJwLTggdGV4dC1jZW50ZXIgdGV4dC1zbSB0ZXh0LXppbmMtNTAwIj5ObyBhY3Rpdml0eSB5ZXQuIEFwcHJvdmFscywgc2NoZWR1bGUgY2hhbmdlcywgYW5kIGNyZXcgdXBkYXRlcyB3aWxsIHNob3cgdXAgaGVyZS48L0NhcmRDb250ZW50PjwvQ2FyZD4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgIHsoZXZlbnRzIGFzIGFueVtdKS5tYXAoKGUpID0+IHsKICAgICAgICAgICAgICBjb25zdCBJY29uID0gSUNPTlNbZS5ldmVudFR5cGVdIHx8IEVkaXQzOwogICAgICAgICAgICAgIGNvbnN0IGlzQXBwcm92ZSA9IGUuZXZlbnRUeXBlLmVuZHNXaXRoKCJhcHByb3ZhbC5zZXQiKTsKICAgICAgICAgICAgICBjb25zdCBzdGF0dXMgPSBlLnBheWxvYWQ/LnN0YXR1czsKICAgICAgICAgICAgICByZXR1cm4gKAogICAgICAgICAgICAgICAgPENhcmQga2V5PXtlLmlkfSBjbGFzc05hbWU9ImJnLXppbmMtOTUwIGJvcmRlci16aW5jLTgwMCI+CiAgICAgICAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtMyBmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0zIj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT17YGZsZXgtc2hyaW5rLTAgbXQtMC41ICR7aXNBcHByb3ZlICYmIHN0YXR1cyA9PT0gImFwcHJvdmVkIiA/ICJ0ZXh0LWVtZXJhbGQtNDAwIiA6IGlzQXBwcm92ZSAmJiBzdGF0dXMgPT09ICJjaGFuZ2VzX3JlcXVlc3RlZCIgPyAidGV4dC1hbWJlci00MDAiIDogInRleHQtemluYy01MDAifWB9PgogICAgICAgICAgICAgICAgICAgICAge2lzQXBwcm92ZSAmJiBzdGF0dXMgPT09ICJjaGFuZ2VzX3JlcXVlc3RlZCIgPyA8QWxlcnRUcmlhbmdsZSBjbGFzc05hbWU9InctNCBoLTQiIC8+IDogPEljb24gY2xhc3NOYW1lPSJ3LTQgaC00IiAvPn0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtc20gdGV4dC16aW5jLTEwMCI+e2Rlc2NyaWJlKGUpfTwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTUwMCBtdC0wLjUiPgogICAgICAgICAgICAgICAgICAgICAgICB7ZS5hY3RvciB8fCAiVXNlciJ9IMK3IHtuZXcgRGF0ZShlLmNyZWF0ZWRBdCkudG9Mb2NhbGVTdHJpbmcoKX0KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICAgICk7CiAgICAgICAgICAgIH0pfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useParams, Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
+import { ArrowLeft, Activity, Loader2, CheckCircle2, AlertTriangle, Calendar, Users, FileText, DollarSign, ListChecks, Edit3 } from "lucide-react";
+
+const ICONS: Record<string, any> = {
+  "scene.approval.set": CheckCircle2,
+  "movie.approval.set": CheckCircle2,
+  "scene.shotlist.update": ListChecks,
+  "scene.shootday.assign": Calendar,
+  "shootday.create": Calendar,
+  "shootday.update": Calendar,
+  "shootday.delete": Calendar,
+  "crew.create": Users,
+  "crew.delete": Users,
+  "budget.update": DollarSign,
+};
+
+function describe(e: any): string {
+  const p = e.payload || {};
+  switch (e.eventType) {
+    case "scene.approval.set": return `Marked scene ${p.sceneId ?? ""} as ${p.status}${p.note ? ` — "${p.note}"` : ""}`;
+    case "movie.approval.set": return `Marked cut ${p.movieId ?? ""} as ${p.status}${p.note ? ` — "${p.note}"` : ""}`;
+    case "scene.shotlist.update": return `Updated shot list on scene ${p.sceneId ?? ""} (${p.count} shots)`;
+    case "scene.shootday.assign": return p.shootDayId ? `Assigned scene ${p.sceneId} to day ${p.shootDayId}` : `Unscheduled scene ${p.sceneId}`;
+    case "shootday.create": return `Created shoot day ${p.dayNumber ?? p.dayId ?? ""}`;
+    case "shootday.update": return `Updated shoot day ${p.dayId ?? ""}`;
+    case "shootday.delete": return `Deleted shoot day ${p.dayId ?? ""}`;
+    case "crew.create": return `Added crew contact "${p.name ?? ""}"`;
+    case "crew.delete": return `Removed crew contact ${p.id ?? ""}`;
+    case "budget.update": return `Updated budget — total ${p.currency} ${p.totalEstimate}`;
+    default: return e.eventType;
+  }
+}
+
+/** v6.63 — Project activity timeline. Append-only audit feed. */
+export default function ActivityTimeline() {
+  const { id } = useParams<{ id: string }>();
+  const projectId = parseInt(id || "0");
+  const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
+  const { data: events = [], isLoading } = trpc.activity.list.useQuery({ projectId, limit: 200 }, { enabled: !!projectId });
+
+  return (
+    <div className="min-h-screen text-zinc-100 p-4 md:p-6" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-3xl mx-auto space-y-4">
+        <div>
+          <Link href={`/projects/${projectId}`}>
+            <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back to project
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 gradient-text-gold">
+            <Activity className="w-6 h-6 text-amber-500" /> Activity
+          </h1>
+          <p className="text-sm text-zinc-400">{project?.title || "—"} · last 200 events.</p>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Loading…</div>
+        ) : (events as any[]).length === 0 ? (
+          <Card className="bg-zinc-950 border-zinc-800"><CardContent className="p-8 text-center text-sm text-zinc-500">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
+        ) : (
+          <div className="space-y-2">
+            {(events as any[]).map((e) => {
+              const Icon = ICONS[e.eventType] || Edit3;
+              const isApprove = e.eventType.endsWith("approval.set");
+              const status = e.payload?.status;
+              return (
+                <Card key={e.id} className="bg-zinc-950 border-zinc-800">
+                  <CardContent className="p-3 flex items-start gap-3">
+                    <div className={`flex-shrink-0 mt-0.5 ${isApprove && status === "approved" ? "text-emerald-400" : isApprove && status === "changes_requested" ? "text-amber-400" : "text-zinc-500"}`}>
+                      {isApprove && status === "changes_requested" ? <AlertTriangle className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-zinc-100">{describe(e)}</div>
+                      <div className="text-xs text-zinc-500 mt-0.5">
+                        {e.actor || "User"} · {new Date(e.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
