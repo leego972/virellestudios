@@ -1,1 +1,52 @@
-Ly8gdjYuNjkgUGhhc2UgOCDigJQgQXdhaXRpbmcgUmV2aWV3IHN1cmZhY2UuCi8vCi8vIExpc3RzIGV2ZXJ5IHNjZW5lIGFjcm9zcyB0aGUgdXNlcidzIHByb2plY3RzIHdob3NlIGFwcHJvdmFsU3RhdHVzIGlzCi8vICJwZW5kaW5nX3JldmlldyIgc28gcmV2aWV3ZXJzIGRvbid0IGhhdmUgdG8gZHJpbGwgaW50byBlYWNoIHByb2plY3QgdG8gZmluZAovLyB0aGVpciBxdWV1ZS4gUHVyZSByZWFkLgoKaW1wb3J0IHsgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IHRycGMgfSBmcm9tICIuLi9saWIvdHJwYyI7CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBBd2FpdGluZ1Jldmlld1BhZ2UoKSB7CiAgY29uc3QgcSA9IHRycGMucmV2aWV3Lmxpc3RBd2FpdGluZy51c2VRdWVyeSgpOwogIGNvbnN0IGl0ZW1zOiBhbnlbXSA9IChxLmRhdGEgYXMgYW55KSA/PyBbXTsKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBwYi0xMCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgPGRpdiBjbGFzc05hbWU9ImNvbnRhaW5lciBteC1hdXRvIHB4LTQgcHktNiBtYXgtdy01eGwiPgogICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTJ4bCBmb250LXNlbWlib2xkIHRleHQtemluYy0xMDAgbWItMSI+QXdhaXRpbmcgeW91ciByZXZpZXc8L2gxPgogICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC16aW5jLTQwMCBtYi00Ij4KICAgICAgICBTY2VuZXMgYWNyb3NzIGFsbCBvZiB5b3VyIHByb2plY3RzIHRoYXQgYXJlIHJlYWR5IGZvciByZXZpZXcuIE9wZW4gYQogICAgICAgIHNjZW5lIHRvIGFwcHJvdmUgb3Igc2VuZCBpdCBiYWNrIHdpdGggbm90ZXMuCiAgICAgIDwvcD4KICAgICAge3EuaXNMb2FkaW5nID8gKAogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtemluYy00MDAiPkxvYWRpbmfigKY8L2Rpdj4KICAgICAgKSA6IHEuZXJyb3IgPyAoCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtc20gdGV4dC1yb3NlLTMwMCI+e3EuZXJyb3IubWVzc2FnZX08L2Rpdj4KICAgICAgKSA6IGl0ZW1zLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYmctemluYy05MDAvNjAgYm9yZGVyIGJvcmRlci16aW5jLTgwMCByb3VuZGVkIHAtNiB0ZXh0LWNlbnRlciB0ZXh0LXNtIHRleHQtemluYy00MDAiPgogICAgICAgICAgWW91J3JlIGFsbCBjYXVnaHQgdXAuIE5vdGhpbmcgaXMgd2FpdGluZyBmb3IgcmV2aWV3LgogICAgICAgIDwvZGl2PgogICAgICApIDogKAogICAgICAgIDx1bCBjbGFzc05hbWU9ImJnLXppbmMtOTAwLzYwIGJvcmRlciBib3JkZXItemluYy04MDAgcm91bmRlZCBkaXZpZGUteSBkaXZpZGUtemluYy04MDAiPgogICAgICAgICAge2l0ZW1zLm1hcCgoaXQpID0+ICgKICAgICAgICAgICAgPGxpIGtleT17aXQuaWR9IGNsYXNzTmFtZT0icC0zIGhvdmVyOmJnLXppbmMtOTAwIj4KICAgICAgICAgICAgICA8TGluayBocmVmPXtgL3Byb2plY3RzLyR7aXQucHJvamVjdElkfS9zY2VuZXNgfT4KICAgICAgICAgICAgICAgIDxhIGNsYXNzTmFtZT0iYmxvY2siPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNTAwIj4KICAgICAgICAgICAgICAgICAgICB7aXQucHJvamVjdFRpdGxlID8/IGBQcm9qZWN0ICMke2l0LnByb2plY3RJZH1gfSDCtyBTY2VuZSB7aXQuc2NlbmVOdW1iZXIgPz8gaXQuaWR9CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LXppbmMtMTAwIGZvbnQtbWVkaXVtIHRydW5jYXRlIj4KICAgICAgICAgICAgICAgICAgICB7aXQudGl0bGUgPz8gIlVudGl0bGVkIHNjZW5lIn0KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIHtpdC5kZXNjcmlwdGlvbiAmJiAoCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTQwMCBsaW5lLWNsYW1wLTIiPntpdC5kZXNjcmlwdGlvbn08L2Rpdj4KICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICA8L0xpbms+CiAgICAgICAgICAgIDwvbGk+CiAgICAgICAgICApKX0KICAgICAgICA8L3VsPgogICAgICApfQogICAgICAgIDwvZGl2PgogICk7Cn0K
+// v6.69 Phase 8 — Awaiting Review surface.
+//
+// Lists every scene across the user's projects whose approvalStatus is
+// "pending_review" so reviewers don't have to drill into each project to find
+// their queue. Pure read.
+
+import { Link } from "wouter";
+import { trpc } from "../lib/trpc";
+
+export default function AwaitingReviewPage() {
+  const q = trpc.review.listAwaiting.useQuery();
+  const items: any[] = (q.data as any) ?? [];
+  return (
+    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div className="container mx-auto px-4 py-6 max-w-5xl">
+      <h1 className="text-2xl font-semibold mb-1 gradient-text-gold">Awaiting your review</h1>
+      <p className="text-sm text-zinc-400 mb-4">
+        Scenes across all of your projects that are ready for review. Open a
+        scene to approve or send it back with notes.
+      </p>
+      {q.isLoading ? (
+        <div className="text-sm text-zinc-400">Loading…</div>
+      ) : q.error ? (
+        <div className="text-sm text-rose-300">{q.error.message}</div>
+      ) : items.length === 0 ? (
+        <div className="bg-zinc-900/60 border border-zinc-800 rounded p-6 text-center text-sm text-zinc-400">
+          You're all caught up. Nothing is waiting for review.
+        </div>
+      ) : (
+        <ul className="bg-zinc-900/60 border border-zinc-800 rounded divide-y divide-zinc-800">
+          {items.map((it) => (
+            <li key={it.id} className="p-3 hover:bg-zinc-900">
+              <Link href={`/projects/${it.projectId}/scenes`}>
+                <a className="block">
+                  <div className="text-xs text-zinc-500">
+                    {it.projectTitle ?? `Project #${it.projectId}`} · Scene {it.sceneNumber ?? it.id}
+                  </div>
+                  <div className="text-sm text-zinc-100 font-medium truncate">
+                    {it.title ?? "Untitled scene"}
+                  </div>
+                  {it.description && (
+                    <div className="text-xs text-zinc-400 line-clamp-2">{it.description}</div>
+                  )}
+                </a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+        </div>
+  );
+}
