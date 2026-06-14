@@ -772,7 +772,7 @@ export default function TVCommercial() {
         <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
           <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
             <SheetHeader className="px-4 py-3 border-b">
-              <SheetTitle className="text-sm flex items-center gap-2"><Settings2 className="h-4 w-4 text-blue-500" /> Platform & Format</SheetTitle>
+              <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Settings2 className="h-4 w-4 text-blue-500" /> Platform & Format</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto h-[calc(100vh-60px)] p-4 space-y-4">
               <div>
@@ -818,7 +818,7 @@ export default function TVCommercial() {
         <Sheet open={mobileShotOpen} onOpenChange={setMobileShotOpen}>
           <SheetContent side="bottom" className="h-[70vh] p-0">
             <SheetHeader className="px-4 py-3 border-b">
-              <SheetTitle className="text-sm flex items-center gap-2"><Layers className="h-4 w-4 text-blue-500" /> {selectedShot?.label || "Shot Inspector"}</SheetTitle>
+              <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Layers className="h-4 w-4 text-blue-500" /> {selectedShot?.label || "Shot Inspector"}</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto h-[calc(70vh-60px)] p-4 space-y-4">
               {selectedShot && (

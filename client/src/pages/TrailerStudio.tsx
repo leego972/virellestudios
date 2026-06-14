@@ -709,7 +709,7 @@ function TrailerStudioInner() {
         <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
           <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
             <SheetHeader className="px-4 py-3 border-b">
-              <SheetTitle className="text-sm flex items-center gap-2"><Settings2 className="h-4 w-4 text-amber-500" /> Trailer Config</SheetTitle>
+              <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Settings2 className="h-4 w-4 text-amber-500" /> Trailer Config</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto h-[calc(100vh-60px)] p-4 space-y-4">
               <div>
@@ -760,7 +760,7 @@ function TrailerStudioInner() {
         <Sheet open={mobileBeatOpen} onOpenChange={setMobileBeatOpen}>
           <SheetContent side="bottom" className="h-[70vh] p-0">
             <SheetHeader className="px-4 py-3 border-b">
-              <SheetTitle className="text-sm flex items-center gap-2"><Layers className="h-4 w-4 text-amber-500" /> {selectedBeat?.label || "Beat Inspector"}</SheetTitle>
+              <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Layers className="h-4 w-4 text-amber-500" /> {selectedBeat?.label || "Beat Inspector"}</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto h-[calc(70vh-60px)] p-4 space-y-4">
               {selectedBeat && (

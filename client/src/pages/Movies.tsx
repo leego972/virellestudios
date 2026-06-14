@@ -833,7 +833,7 @@ export default function Movies() {
                               )}
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                               <div className="absolute bottom-3 left-3 right-3">
-                                <h3 className="font-semibold text-lg truncate">
+                                <h3 className="font-semibold text-lg truncate gradient-text-gold">
                                   {folderName}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">

@@ -363,7 +363,7 @@ const LocationRecreation: React.FC = () => {
           </div>
 
           <div className="bg-blue-600/10 p-8 rounded-3xl border border-blue-500/20">
-            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2 gradient-text-gold">
               <AlertCircle className="text-blue-400" />
               Pro Tip
             </h3>

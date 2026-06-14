@@ -137,7 +137,7 @@ import { useLocation } from "wouter";
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
               <Film className="w-16 h-16 text-muted-foreground/40" />
-              <h3 className="text-lg font-semibold">No active campaigns yet</h3>
+              <h3 className="text-lg font-semibold gradient-text-gold">No active campaigns yet</h3>
               <p className="text-muted-foreground text-sm max-w-sm">Be the first to launch a campaign and fund your film through the Virelle community.</p>
               {user && (
                 <Button className="bg-amber-500 hover:bg-amber-400 text-black font-semibold" onClick={() => navigate("/crowdfunding")}>

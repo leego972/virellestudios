@@ -585,7 +585,7 @@ import { useState, useRef } from "react";
                       <Wand2 className="h-6 w-6 text-pink-400" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-base">AI Sound Effect Generator</h3>
+                      <h3 className="font-bold text-base gradient-text-gold">AI Sound Effect Generator</h3>
                       <p className="text-xs text-muted-foreground">Powered by ElevenLabs Sound Generation · Up to 30 seconds</p>
                     </div>
                   </div>

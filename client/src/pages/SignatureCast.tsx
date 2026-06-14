@@ -658,7 +658,7 @@ import { useState } from "react";
                   <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-zinc-400" />
                   </div>
-                  <h3 className="text-lg font-semibold">Create Your Own Cast</h3>
+                  <h3 className="text-lg font-semibold gradient-text-gold">Create Your Own Cast</h3>
                 </div>
                 <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
                   Build original characters for your film from scratch. Define their look, personality, wardrobe, voice direction, backstory, emotional range, and scene role before generation begins.

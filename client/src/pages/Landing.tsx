@@ -426,7 +426,7 @@ export default function Landing() {
                     <span className={`text-${s.color}-400 font-black text-lg`}>{s.step}</span>
                   </div>
                   <div className={`inline-block px-2.5 py-1 rounded-full bg-${s.color}-500/10 text-${s.color}-400 text-[11px] font-bold mb-3 uppercase tracking-wider`}>{s.time}</div>
-                  <h3 className="text-base font-bold mb-2">{s.title}</h3>
+                  <h3 className="text-base font-bold mb-2 gradient-text-gold">{s.title}</h3>
                   <p className="text-xs text-white/60 leading-relaxed">{s.desc}</p>
                 </div>
               ))}
@@ -691,7 +691,7 @@ export default function Landing() {
                 ].map(card => (
                   <div key={card.type} className={`rounded-2xl border ${card.border} bg-white/[0.02] p-7 ${card.ring ? "ring-1 ring-amber-500/10" : ""}`}>
                     <div className="flex items-center justify-between mb-5">
-                      <h3 className="text-base font-bold">{card.type}</h3>
+                      <h3 className="text-base font-bold gradient-text-gold">{card.type}</h3>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/60 bg-amber-500/5 border border-amber-500/15 px-2 py-0.5 rounded-full">{card.tag}</span>
                     </div>
                     <ul className="space-y-2.5">
@@ -898,7 +898,7 @@ export default function Landing() {
                     }`}
                   >
                     <div className="text-3xl mb-4">{p.icon}</div>
-                    <h3 className="text-base font-bold mb-3">{p.title}</h3>
+                    <h3 className="text-base font-bold mb-3 gradient-text-gold">{p.title}</h3>
                     <p className="text-sm text-white/50 leading-relaxed">{p.body}</p>
                   </div>
                 ))}
