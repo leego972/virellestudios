@@ -52,7 +52,7 @@ export default function DailyReportPage() {
     [dayScenes]
   );
   const totalPages = useMemo(() => {
-    // Industry rule of thumb: 1 page â 1 minute of screen time.
+    // Industry rule of thumb: 1 page ≈ 1 minute of screen time.
     const minutes = totalDurationSec / 60;
     return Math.round(minutes * 8) / 8; // eighths of a page
   }, [totalDurationSec]);
@@ -63,13 +63,13 @@ export default function DailyReportPage() {
       <div className="min-h-screen text-zinc-100 p-4 md:p-6 print:hidden" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
         <div className="max-w-5xl mx-auto space-y-4">
           <Link href={`/projects/${projectId}`}>
-            <a className="text-sm text-zinc-400 hover:text-zinc-200">â Back to project</a>
+            <a className="text-sm text-zinc-400 hover:text-zinc-200">← Back to project</a>
           </Link>
-          <h1 className="text-2xl font-bold text-gold-shimmer">Daily Production Report â pick a day</h1>
+          <h1 className="text-2xl font-bold text-gold-shimmer">Daily Production Report — pick a day</h1>
           <p className="text-sm text-zinc-400">
             The Daily Production Report (DPR) is the wrap-of-day summary the AD signs every
             night. It captures call/wrap, scenes shot, page count completed, weather, and
-            location. Pick a day below â your browser's print dialog will produce a clean PDF.
+            location. Pick a day below — your browser's print dialog will produce a clean PDF.
           </p>
           {days.length === 0 ? (
             <div className="text-zinc-500 italic">
@@ -119,7 +119,7 @@ export default function DailyReportPage() {
       `}</style>
       <div className="no-print bg-zinc-900 text-zinc-100 p-3 flex items-center gap-4 sticky top-0 z-10">
         <Link href={`/projects/${projectId}/daily-report`}>
-          <a className="text-sm text-zinc-400 hover:text-zinc-200">â Pick another day</a>
+          <a className="text-sm text-zinc-400 hover:text-zinc-200">← Pick another day</a>
         </Link>
         <button
           onClick={() => window.print()}
@@ -143,18 +143,18 @@ export default function DailyReportPage() {
           <table className="dpr-table">
             <tbody>
               <tr>
-                <td><span className="dpr-label">Project</span><div className="dpr-value">{project?.title || "â"}</div></td>
-                <td><span className="dpr-label">Date</span><div className="dpr-value">{day?.shootDate ? new Date(day.shootDate).toLocaleDateString() : "â"}</div></td>
-                <td><span className="dpr-label">Call Time</span><div className="dpr-value">{day?.callTime || "â"}</div></td>
-                <td><span className="dpr-label">Wrap Time</span><div className="dpr-value">{day?.wrapTime || "â"}</div></td>
+                <td><span className="dpr-label">Project</span><div className="dpr-value">{project?.title || "—"}</div></td>
+                <td><span className="dpr-label">Date</span><div className="dpr-value">{day?.shootDate ? new Date(day.shootDate).toLocaleDateString() : "—"}</div></td>
+                <td><span className="dpr-label">Call Time</span><div className="dpr-value">{day?.callTime || "—"}</div></td>
+                <td><span className="dpr-label">Wrap Time</span><div className="dpr-value">{day?.wrapTime || "—"}</div></td>
               </tr>
               <tr>
-                <td colSpan={2}><span className="dpr-label">Location</span><div className="dpr-value">{location ? (location as any).name : "â"}</div></td>
-                <td colSpan={2}><span className="dpr-label">Weather</span><div className="dpr-value">{day?.weatherNote || "â"}</div></td>
+                <td colSpan={2}><span className="dpr-label">Location</span><div className="dpr-value">{location ? (location as any).name : "—"}</div></td>
+                <td colSpan={2}><span className="dpr-label">Weather</span><div className="dpr-value">{day?.weatherNote || "—"}</div></td>
               </tr>
               <tr>
-                <td colSpan={2}><span className="dpr-label">Hospital</span><div className="dpr-value">{day?.hospitalInfo || "â"}</div></td>
-                <td colSpan={2}><span className="dpr-label">Parking</span><div className="dpr-value">{day?.parkingInfo || "â"}</div></td>
+                <td colSpan={2}><span className="dpr-label">Hospital</span><div className="dpr-value">{day?.hospitalInfo || "—"}</div></td>
+                <td colSpan={2}><span className="dpr-label">Parking</span><div className="dpr-value">{day?.parkingInfo || "—"}</div></td>
               </tr>
             </tbody>
           </table>
@@ -183,8 +183,8 @@ export default function DailyReportPage() {
                     <tr key={s.id}>
                       <td>{i + 1}</td>
                       <td>{s.title || `Scene ${s.orderIndex + 1}`}</td>
-                      <td>{s.locationType || "â"}</td>
-                      <td>{s.timeOfDay || "â"}</td>
+                      <td>{s.locationType || "—"}</td>
+                      <td>{s.timeOfDay || "—"}</td>
                       <td>{pages.toFixed(2)}</td>
                       <td>____________</td>
                     </tr>
@@ -233,7 +233,7 @@ export default function DailyReportPage() {
                 {(crew as any[]).map((c: any) => (
                   <tr key={c.id}>
                     <td>{c.name}</td>
-                    <td>{c.role || c.department || "â"}</td>
+                    <td>{c.role || c.department || "—"}</td>
                     <td>____________</td>
                     <td>____________</td>
                   </tr>
