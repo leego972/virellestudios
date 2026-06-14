@@ -28,9 +28,25 @@ import SiteHead from "@/components/SiteHead";
     return (
       <div className="min-h-screen bg-black text-white">
         <SiteHead
-          title="Press & Media — Virelle Studios"
-          description="Verified facts, logos, and media resources for journalists and researchers covering Virelle Studios AI film production platform."
-        />
+            title="Press & Media — Virelle Studios"
+            description="Verified facts, logos, and media resources for journalists and researchers covering Virelle Studios AI film production platform."
+            jsonLd={{
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Virelle Studios",
+              "url": "https://virelle.life",
+              "logo": "https://virelle.life/virelle-logo-square.png",
+              "foundingDate": "2025",
+              "description": "AI film production platform — screenplay, scene generation, voice acting, sound, subtitles, funding directory, and distribution in one workflow.",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "Press Inquiries",
+                "email": "press@virelle.life"
+              },
+              "applicationCategory": "MultimediaApplication",
+              "operatingSystem": "Web, iOS, Android"
+            }}
+          />
 
         {/* Header */}
         <div className="border-b border-amber-500/20 bg-black/80">
