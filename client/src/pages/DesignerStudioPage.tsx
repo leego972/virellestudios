@@ -430,7 +430,7 @@ export default function DesignerStudioPage() {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-black tracking-tight truncate">{profile?.brandName ?? "My Brand"}</h1>
+            <h1 className="text-xl font-black tracking-tight truncate gradient-text-gold">{profile?.brandName ?? "My Brand"}</h1>
             {profile?.displayName && <p className="text-sm text-white/50">{profile.displayName}</p>}
           </div>
           <Button
