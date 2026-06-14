@@ -452,7 +452,7 @@ export default function Projects() {
       )}
 
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="glass-dark">
           <AlertDialogHeader>
             <AlertDialogTitle className="gradient-text-gold">Delete project?</AlertDialogTitle>
             <AlertDialogDescription>
