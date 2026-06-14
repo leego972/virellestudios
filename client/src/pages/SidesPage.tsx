@@ -60,7 +60,7 @@ export default function SidesPage() {
           <Link href={`/projects/${projectId}`}>
             <a className="text-sm text-zinc-400 hover:text-zinc-200">â Back to project</a>
           </Link>
-          <h1 className="text-2xl font-bold gradient-text-gold">Sides â pick a shoot day</h1>
+          <h1 className="text-2xl font-bold text-gold-shimmer">Sides â pick a shoot day</h1>
           <p className="text-sm text-zinc-400">
             Sides are the printed pages handed to actors and crew at call time. They contain only
             the scenes scheduled for that day. Pick a day below, then your browser's print dialog
@@ -121,7 +121,7 @@ export default function SidesPage() {
       <div className="sides-page max-w-3xl mx-auto p-8">
         <div className="border-b-2 border-black pb-3 mb-4">
           <div className="flex items-baseline justify-between">
-            <h1 className="text-xl font-bold uppercase tracking-wide gradient-text-gold">
+            <h1 className="text-xl font-bold uppercase tracking-wide text-gold-shimmer">
               {project?.title || "Untitled Project"}
             </h1>
             <span className="text-sm">

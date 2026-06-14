@@ -181,7 +181,7 @@ export default function HowItWorks() {
             <Clapperboard className="h-3.5 w-3.5" />
             From concept to finished film
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 gradient-text-gold">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-gold-shimmer">
             How Virelle{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               Works

@@ -77,7 +77,7 @@ import { useState, useMemo } from "react";
       <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><BarChart3 className="h-6 w-6 text-amber-400" />Film Comps & Market Analytics</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><BarChart3 className="h-6 w-6 text-amber-400" />Film Comps & Market Analytics</h1>
           <p className="text-sm text-muted-foreground mt-1">Comparable films to benchmark your project's commercial potential and find your distribution path.</p>
         </div>
 

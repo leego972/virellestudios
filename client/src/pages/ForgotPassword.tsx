@@ -43,7 +43,7 @@ export default function ForgotPassword() {
             <Film className="w-7 h-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight gradient-text-gold">Virelle Studios</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gold-shimmer">Virelle Studios</h1>
             <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
           </div>
         </div>

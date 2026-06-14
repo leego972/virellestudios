@@ -19,7 +19,7 @@ export default function NotFound() {
       <div className="max-w-xl w-full text-center space-y-6 relative z-10">
         <div className="text-[120px] leading-none font-bold bg-gradient-to-br from-violet-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">404</div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Scene not found</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">Scene not found</h1>
           <p className="text-muted-foreground text-sm">We couldn't locate <code className="px-1.5 py-0.5 rounded bg-muted text-xs">{pathname}</code>. The page may have moved, been renamed, or never existed.</p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">

@@ -131,7 +131,7 @@ import { useState } from "react";
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><FileSearch className="h-6 w-6 text-amber-400" /> Script Coverage</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><FileSearch className="h-6 w-6 text-amber-400" /> Script Coverage</h1>
               <p className="text-sm text-muted-foreground">AI-powered script analysis ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ logline, scores, strengths, and a professional reader's report</p>
             </div>
           </div>

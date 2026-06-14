@@ -249,7 +249,7 @@ pre{white-space:pre-wrap;font:inherit}
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Production Office</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Production Office</h1>
         <p className="text-muted-foreground mt-1">
           Stripboard, day-out-of-days, and AI call-sheet generator for{" "}
           <span className="font-medium">{project?.title || "your project"}</span>.

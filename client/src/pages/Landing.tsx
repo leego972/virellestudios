@@ -196,7 +196,7 @@ export default function Landing() {
               Professional AI Film Orchestration
             </div>
 
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 gradient-text-gold">
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 text-gold-shimmer">
               CONCEPT TO <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">CINEMATIC REALITY.</span>
             </h1>

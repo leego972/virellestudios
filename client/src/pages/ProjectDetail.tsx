@@ -481,7 +481,7 @@ export default function ProjectDetail() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight truncate gradient-text-gold">{project.title}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight truncate text-gold-shimmer">{project.title}</h1>
             <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
               {project.mode === "quick" ? <Zap className="h-3 w-3" /> : <Layers className="h-3 w-3" />}
               <span className="capitalize">{project.mode}</span>

@@ -106,7 +106,7 @@ export default function LocationScout() {
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight gradient-text-gold">Location Scout</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gold-shimmer">Location Scout</h1>
             <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Find and manage filming locations for your production</p>
           </div>
           <Button variant="outline" className="shrink-0 hover:border-amber-500/50 hover:text-amber-400" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>

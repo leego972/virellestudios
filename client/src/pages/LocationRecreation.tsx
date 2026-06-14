@@ -118,7 +118,7 @@ const LocationRecreation: React.FC = () => {
     <div className="max-w-6xl mx-auto p-8 text-white min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="flex items-center justify-between mb-8 border-b border-amber-500/20 pb-6">
         <div>
-          <h1 className="text-4xl font-bold tracking-tighter flex items-center gap-3 gradient-text-gold">
+          <h1 className="text-4xl font-bold tracking-tighter flex items-center gap-3 text-gold-shimmer">
             <MapPin className="text-blue-500 w-10 h-10" />
             LOCATION RECREATION
           </h1>

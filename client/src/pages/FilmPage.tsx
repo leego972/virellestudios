@@ -130,7 +130,7 @@ export default function FilmPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white gap-4 px-4">
         <Film className="w-16 h-16 text-zinc-700" />
-        <h1 className="text-2xl font-bold gradient-text-gold">Film Not Found</h1>
+        <h1 className="text-2xl font-bold text-gold-shimmer">Film Not Found</h1>
         <p className="text-zinc-500 text-sm text-center">This film page doesn't exist or hasn't been published yet.</p>
         <Link href="/showcase">
           <Button variant="outline" className="gap-2 hover:border-amber-500/50 hover:text-amber-400">
@@ -245,7 +245,7 @@ export default function FilmPage() {
               ))}
             </div>
           )}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold drop-shadow-2xl leading-tight gradient-text-gold">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold drop-shadow-2xl leading-tight text-gold-shimmer">
             {fp.title}
           </h1>
           {fp.showCreatorName && fp.creatorName && (

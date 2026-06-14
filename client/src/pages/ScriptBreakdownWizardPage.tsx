@@ -172,7 +172,7 @@ export default function ScriptBreakdownWizardPage() {
         <Link href={`/projects/${projectId}/command-center`}>
           <a className="text-sm text-amber-300 hover:underline">Ã¢ÂÂ Command Center</a>
         </Link>
-        <h1 className="text-2xl font-semibold gradient-text-gold">Script-to-Scene Breakdown</h1>
+        <h1 className="text-2xl font-semibold text-gold-shimmer">Script-to-Scene Breakdown</h1>
       </div>
 
       <ol className="flex gap-2 text-xs text-zinc-400 mb-6">

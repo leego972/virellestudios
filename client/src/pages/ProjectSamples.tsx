@@ -548,7 +548,7 @@ export default function ProjectSamples() {
               <div className="w-10 h-10 rounded-xl bg-amber-600/20 flex items-center justify-center">
                 <Film className="w-5 h-5 text-amber-500" />
               </div>
-              <h1 className="text-2xl font-bold gradient-text-gold">Project Samples</h1>
+              <h1 className="text-2xl font-bold text-gold-shimmer">Project Samples</h1>
             </div>
             <p className="text-muted-foreground">
               {isAdmin

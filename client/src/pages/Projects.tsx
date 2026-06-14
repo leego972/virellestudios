@@ -135,7 +135,7 @@ export default function Projects() {
       <SiteHead title="Projects" description="Manage all your AI film productions in one place ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Projects</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">Projects</h1>
           <p className="text-muted-foreground text-sm mt-1">
             {projects ? `${projects.length} project${projects.length !== 1 ? "s" : ""}` : "All your film productions"}
           </p>

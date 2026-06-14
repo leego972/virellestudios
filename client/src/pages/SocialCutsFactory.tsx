@@ -179,7 +179,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Social Cuts Factory</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Social Cuts Factory</h1>
         <p className="text-muted-foreground mt-1">
           Generate platform-ready cut briefs from your scenes ÃÂ¢ÃÂÃÂ vertical for TikTok/Reels, square for IG, horizontal for YouTube.
         </p>

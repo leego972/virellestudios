@@ -1483,7 +1483,7 @@ export default function FundingDirectory() {
           >
             <ArrowLeft className="h-4 w-4" /> Home
           </button>
-          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2 text-gold-shimmer">
             <DollarSign className="h-6 w-6 text-amber-500" />
             Global Film Funding Directory
           </h1>

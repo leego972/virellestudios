@@ -341,7 +341,7 @@ export default function Pricing() {
           <Badge variant="outline" className="mb-4 border-amber-500/50 text-amber-400 px-4 py-1">
             Virelle Studios Membership
           </Badge>
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 gradient-text-gold">
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 text-gold-shimmer">
             Professional AI <span className="text-amber-400">Film Production</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

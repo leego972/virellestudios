@@ -156,7 +156,7 @@ export default function ProjectBrands() {
 
         <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-2 gradient-text-gold">
+            <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-2 text-gold-shimmer">
               <Tag className="w-7 h-7 text-amber-400" />
               Brands
               {projectQ.data?.title ? (

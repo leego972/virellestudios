@@ -114,7 +114,7 @@ import { useState } from "react";
           <div className="flex items-center gap-3 flex-wrap">
             <Button variant="ghost" size="sm" onClick={() => setActiveSeries(null)}><ChevronRight className="h-4 w-4 rotate-180 mr-1" />All Series</Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold truncate gradient-text-gold">{activeSeries.title}</h1>
+              <h1 className="text-2xl font-bold truncate text-gold-shimmer">{activeSeries.title}</h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap"><Badge variant="outline">{activeSeries.format}</Badge><Badge variant="outline">{activeSeries.genre}</Badge><span className="text-xs text-muted-foreground">{activeSeries.seasons.length} season{activeSeries.seasons.length !== 1 ? "s" : ""} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {totalEps} episode{totalEps !== 1 ? "s" : ""}</span></div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setEditingSeries(activeSeries)}><Edit2 className="h-3.5 w-3.5 mr-1" />Edit Bible</Button>
@@ -203,7 +203,7 @@ import { useState } from "react";
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="flex items-center gap-3">
             {series.length > 0 && <Button variant="ghost" size="icon" onClick={() => { setEditingSeries(null); setActiveSeries(activeSeries); }}><ChevronRight className="h-4 w-4 rotate-180" /></Button>}
-            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Tv className="h-6 w-6 text-amber-400" />{isNew ? "New Series Bible" : "Edit Series Bible"}</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Tv className="h-6 w-6 text-amber-400" />{isNew ? "New Series Bible" : "Edit Series Bible"}</h1>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2 space-y-1.5"><Label>Series Title *</Label><Input placeholder="My Series Title" value={form.title} onChange={e => setEditingSeries(p => ({ ...(p ?? form), title: e.target.value }))} /></div>
@@ -226,7 +226,7 @@ import { useState } from "react";
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Tv className="h-6 w-6 text-amber-400" />Series Bible</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Tv className="h-6 w-6 text-amber-400" />Series Bible</h1>
           <Button onClick={() => setEditingSeries({ ...DEFAULT_SERIES, id: Date.now().toString(), seasons: [{ id: Date.now().toString(), number: 1, arc: "", episodes: [] }] })}><Plus className="h-4 w-4 mr-2" />New Series</Button>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

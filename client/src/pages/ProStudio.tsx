@@ -34,7 +34,7 @@ export default function ProStudio() {
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold gradient-text-gold">Pro Studio</h1>
+          <h1 className="text-2xl font-bold text-gold-shimmer">Pro Studio</h1>
           <p className="text-xs text-muted-foreground">Studio-grade controls: visual identity, version control, AI rights, provenance, render economics.</p>
         </div>
       </div>

@@ -2243,7 +2243,7 @@ export default function PreProductionPanel() {
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-base sm:text-lg font-semibold truncate flex items-center gap-2 gradient-text-gold">
+            <h1 className="text-base sm:text-lg font-semibold truncate flex items-center gap-2 text-gold-shimmer">
               <Clapperboard className="h-5 w-5 text-amber-500 shrink-0" />
               Director's Pre-Production Panel
             </h1>

@@ -636,7 +636,7 @@ export default function Movies() {
                 <ChevronLeft className="h-4 w-4" />
                 Back to My Movies
               </Button>
-              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 gradient-text-gold">
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-gold-shimmer">
                 <FolderOpen className="h-6 w-6 text-amber-400" />
                 {activeFolder}
               </h1>
@@ -652,7 +652,7 @@ export default function Movies() {
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 gradient-text-gold">
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-gold-shimmer">
                 <Clapperboard className="h-6 w-6 text-amber-400" />
                 My Movies
               </h1>

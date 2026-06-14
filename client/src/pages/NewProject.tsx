@@ -189,7 +189,7 @@ export default function NewProject() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">New Project</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">New Project</h1>
           <p className="text-muted-foreground text-sm mt-0.5">
             Set up your film production
           </p>

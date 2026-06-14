@@ -83,7 +83,7 @@ export default function ProStudioOps() {
       <div className="flex items-center gap-3 mb-6">
         <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold gradient-text-gold">Studio Operations</h1>
+          <h1 className="text-2xl font-bold text-gold-shimmer">Studio Operations</h1>
           <p className="text-xs text-muted-foreground">Pro production workflow ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· live multi-user collab ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· server-enforced render budget ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· NLE shortcuts (press ?)</p>
         </div>
         <PresenceBar projectId={projectId} tab={activeTab} />

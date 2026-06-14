@@ -99,7 +99,7 @@ export default function Referrals() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 gradient-text-gold">
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gold-shimmer">
           <HollywoodIcon tool="referrals" size={36} />
           Refer &amp; Earn
         </h1>

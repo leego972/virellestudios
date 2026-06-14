@@ -608,7 +608,7 @@ import { useState } from "react";
             <Badge className="mb-6 bg-amber-500/10 text-amber-300 border border-amber-500/20 text-sm px-4 py-1.5">
               Virelle Digital Cast
             </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight gradient-text-gold">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight text-gold-shimmer">
               Build Your Digital Cast{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">
                 Before You Shoot.
@@ -638,7 +638,7 @@ import { useState } from "react";
             <div className="mt-12 flex flex-wrap gap-6 justify-center text-sm text-zinc-500">
               <span><span className="text-amber-400 font-semibold">{flagshipActors.length}</span> Flagship Stars</span>
               <span><span className="text-purple-400 font-semibold">{premiumActors.length}</span> Premium Cast</span>
-              <span><span className="text-amber-400/60 font-semibold">{standardActors.length}</span> Standard Cast</span>
+              <span><span className="text-zinc-400 font-semibold">{standardActors.length}</span> Standard Cast</span>
               <span><span className="text-white font-semibold">+</span> Original characters</span>
             </div>
           </div>

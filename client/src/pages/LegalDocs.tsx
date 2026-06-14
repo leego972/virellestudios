@@ -362,7 +362,7 @@ import { useState } from "react";
       <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><FileText className="h-6 w-6 text-amber-400" /> Legal Document Generator</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><FileText className="h-6 w-6 text-amber-400" /> Legal Document Generator</h1>
           <p className="text-sm text-muted-foreground mt-1">Production-ready legal templates. Fill in the fields, then copy or download. Always have a qualified attorney review before signing.</p>
         </div>
 

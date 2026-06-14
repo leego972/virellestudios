@@ -496,7 +496,7 @@ export default function Register() {
             />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight gradient-text-gold">Join Virelle Studios</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gold-shimmer">Join Virelle Studios</h1>
             <p className="text-sm text-muted-foreground mt-1">Create Hollywood grade productions with AI</p>
           </div>
         </div>

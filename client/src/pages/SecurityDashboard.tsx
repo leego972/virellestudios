@@ -125,7 +125,7 @@ export default function SecurityDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <ShieldAlert className="w-6 h-6 text-red-500" />
             Security Dashboard
           </h1>

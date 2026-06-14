@@ -88,7 +88,7 @@ export default function PressKit() {
         </Link>
         <div>
           <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 ÃÂ· Release & Promote</div>
-          <h1 className="font-serif text-3xl flex items-center gap-2 gradient-text-gold"><FileText className="h-6 w-6 text-amber-400" /> Press Kit Builder</h1>
+          <h1 className="font-serif text-3xl flex items-center gap-2 text-gold-shimmer"><FileText className="h-6 w-6 text-amber-400" /> Press Kit Builder</h1>
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export default function PressKit() {
           <CardContent className="p-8 prose max-w-none glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <div className="space-y-1 mb-6">
               <div className="text-xs uppercase tracking-widest text-amber-700">Electronic Press Kit</div>
-              <h1 className="text-3xl font-serif !mb-1 gradient-text-gold">{project?.title || "Untitled Project"}</h1>
+              <h1 className="text-3xl font-serif !mb-1 text-gold-shimmer">{project?.title || "Untitled Project"}</h1>
               {kit.tagline && <p className="text-lg italic !mt-0">{kit.tagline}</p>}
             </div>
             {kit.synopsisShort && (

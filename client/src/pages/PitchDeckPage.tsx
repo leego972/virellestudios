@@ -44,7 +44,7 @@ export default function PitchDeckPage() {
               <div className="text-xs uppercase tracking-[0.3em] text-amber-700">
                 Virelle Studios
               </div>
-              <h1 className="text-5xl font-semibold mt-3 gradient-text-gold">{d.title}</h1>
+              <h1 className="text-5xl font-semibold mt-3 text-gold-shimmer">{d.title}</h1>
               {d.logline && (
                 <p className="mt-4 text-lg text-zinc-600 italic max-w-2xl mx-auto">
                   {d.logline}

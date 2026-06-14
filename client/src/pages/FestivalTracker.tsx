@@ -126,7 +126,7 @@ export default function FestivalTracker() {
         </Link>
         <div>
           <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 ÃÂ· Release & Promote</div>
-          <h1 className="font-serif text-3xl flex items-center gap-2 gradient-text-gold"><Trophy className="h-6 w-6 text-amber-400" /> Festival Tracker</h1>
+          <h1 className="font-serif text-3xl flex items-center gap-2 text-gold-shimmer"><Trophy className="h-6 w-6 text-amber-400" /> Festival Tracker</h1>
           <p className="text-sm text-muted-foreground">Curated directory of {FESTIVALS.length} festivals worldwide. Tracking saved on this device.</p>
         </div>
       </div>

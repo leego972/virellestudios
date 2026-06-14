@@ -36,7 +36,7 @@ export default function FundingProMatch() {
       <SiteHead title="Funding Ã¢ÂÂ Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
       <div className="flex items-center gap-3">
         <Button size="sm" variant="ghost" onClick={() => setLocation("/funding")}><ArrowLeft className="h-4 w-4 mr-1.5" />Back to Directory</Button>
-        <h1 className="text-2xl font-bold gradient-text-gold">Funding Ã¢ÂÂ Pro Match & Tracker</h1>
+        <h1 className="text-2xl font-bold text-gold-shimmer">Funding Ã¢ÂÂ Pro Match & Tracker</h1>
         <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/40">v4</Badge>
       </div>
 
