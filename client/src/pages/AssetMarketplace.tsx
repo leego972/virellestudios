@@ -189,7 +189,16 @@ export default function AssetMarketplace() {
               <Card key={asset.id} className="border-amber-500/20 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
-                    <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img
+                        src={asset.imageUrl}
+                        alt={asset.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).onerror = null;
+                          (e.currentTarget as HTMLImageElement).src = `https://image.pollinations.ai/prompt/${encodeURIComponent(`cinematic product photo of ${asset.name}, professional studio lighting, dramatic dark background, ultra-detailed 8K, fashion editorial`)}&width=512&height=512&nologo=true&model=flux`;
+                        }}
+                      />
                   ) : asset.category === "funding" ? (
                     <div className="w-full h-full flex items-center justify-center opacity-20">
                       <DollarSign className="w-12 h-12" />
