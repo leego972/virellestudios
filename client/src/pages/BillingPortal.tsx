@@ -56,7 +56,7 @@ export default function BillingPortal() {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4 text-center px-6">
       <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-      <p className="text-zinc-300 text-base">Opening billing portalâ¦</p>
+      <p className="text-zinc-300 text-base">Opening billing portal…</p>
     </div>
   );
 }
