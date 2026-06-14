@@ -89,7 +89,7 @@ export default function About() {
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <SiteHead
           title="About Virelle Studios"
-          description="Learn how Virelle Studios is building the world's most powerful AI film production platform — from script to screen in one unified studio."
+          description="Founded in 2025, Virelle Studios is an AI film production platform built for working filmmakers — complete production pipeline from screenplay to export in one studio."
           jsonLd={{
             "@context": "https://schema.org",
             "@type": "Organization",
@@ -111,6 +111,7 @@ export default function About() {
           </button>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => setLocation("/how-it-works")}>How It Works</Button>
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/press")}>Press</Button>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/pricing")}>Pricing</Button>
             <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold" onClick={() => setLocation("/register")}>
               Get Started
