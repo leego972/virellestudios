@@ -1,5 +1,5 @@
 /**
- * Feature Timeline â Persistent versioned cut editor for feature-length films
+ * Feature Timeline Ã¢ÂÂ Persistent versioned cut editor for feature-length films
  *
  * Capabilities:
  * - Create / duplicate / delete versioned cuts
@@ -38,7 +38,7 @@ import {
   Save, Eye, BarChart3,
 } from "lucide-react";
 
-// âââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 interface CutScene {
   id: number;
@@ -75,7 +75,7 @@ interface ActGroup {
   orderIndex: number;
 }
 
-// âââ Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Helpers Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function formatDuration(seconds: number): string {
   if (!seconds || seconds <= 0) return "0:00";
@@ -109,7 +109,7 @@ const ACT_COLORS = [
   "#ef4444", "#06b6d4", "#84cc16", "#f97316", "#6366f1",
 ];
 
-// âââ Scene Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Scene Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function SceneCard({
   cs,
@@ -148,7 +148,7 @@ function SceneCard({
         {/* Position / reorder */}
         <div className="flex flex-col items-center gap-0.5 w-7 shrink-0">
           <span className="font-mono text-[10px] text-zinc-500 leading-none">
-            {isExcluded ? "â" : String(index + 1).padStart(2, "0")}
+            {isExcluded ? "Ã¢ÂÂ" : String(index + 1).padStart(2, "0")}
           </span>
           {!isLocked && (
             <div className="flex flex-col gap-0.5 mt-0.5">
@@ -285,7 +285,7 @@ function SceneCard({
   );
 }
 
-// âââ Act Group Panel ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Act Group Panel Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function ActGroupPanel({
   actGroups,
@@ -307,7 +307,7 @@ function ActGroupPanel({
   const includedScenes = cutScenes.filter((cs) => cs.isIncluded);
 
   if (actGroups.length === 0) {
-    // No act groups â render flat list
+    // No act groups Ã¢ÂÂ render flat list
     return (
       <div className="space-y-2">
         {cutScenes.map((cs, idx) => {
@@ -426,7 +426,7 @@ function ActGroupPanel({
   );
 }
 
-// âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 export default function FeatureTimeline() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -636,7 +636,7 @@ export default function FeatureTimeline() {
               <Layers size={16} className="text-amber-500" />
               <span className="font-semibold text-sm text-zinc-100">Feature Timeline</span>
               {summary?.project?.title && (
-                <span className="text-xs text-zinc-500">â {summary.project.title}</span>
+                <span className="text-xs text-zinc-500">Ã¢ÂÂ {summary.project.title}</span>
               )}
             </div>
           </div>
@@ -647,7 +647,7 @@ export default function FeatureTimeline() {
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-950/40 border border-blue-800/40">
                 <Loader2 size={12} className="animate-spin text-blue-400" />
                 <span className="text-xs text-blue-400">{compileJob.currentStep || "Compiling..."}</span>
-                <span className="font-mono text-xs text-blue-300">{compileJob.progress}%</span>
+                <span className="font-mono text-xs text-amber-300">{compileJob.progress}%</span>
               </div>
             )}
             {compileJob?.status === "completed" && (
@@ -681,7 +681,7 @@ export default function FeatureTimeline() {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar â cut list */}
+        {/* Left sidebar Ã¢ÂÂ cut list */}
         <aside className="w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 flex flex-col">
           <div className="p-3 border-b border-zinc-800">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Cuts</p>
@@ -692,7 +692,7 @@ export default function FeatureTimeline() {
                 <div className="text-center py-6">
                   <Layers size={24} className="text-zinc-700 mx-auto mb-2" />
                   <p className="text-xs font-medium text-zinc-400">No cuts yet</p>
-                  <p className="text-[11px] text-zinc-600 mt-0.5 leading-snug px-2">A cut is a saved version of your edit â name your first one to start.</p>
+                  <p className="text-[11px] text-zinc-600 mt-0.5 leading-snug px-2">A cut is a saved version of your edit Ã¢ÂÂ name your first one to start.</p>
                   <Button
                     size="sm"
                     variant="outline"
@@ -949,13 +949,13 @@ export default function FeatureTimeline() {
                                     <span className="text-[10px] text-zinc-600 ml-2">{pct.toFixed(0)}%</span>
                                   </div>
                                 </div>
-                                <Progress value={pct} className="h-1.5 bg-zinc-800" />
+                                <Progress value={pct} className="h-1.5 bg-amber-500/20" />
                                 {act.description && (
                                   <p className="text-xs text-zinc-500 mt-2">{act.description}</p>
                                 )}
                                 {act.targetDuration && (
                                   <p className="text-[10px] text-zinc-600 mt-1">
-                                    Target: {formatDuration(act.targetDuration)} â {actDuration > act.targetDuration ? "over" : "under"} by {formatDuration(Math.abs(actDuration - act.targetDuration))}
+                                    Target: {formatDuration(act.targetDuration)} Ã¢ÂÂ {actDuration > act.targetDuration ? "over" : "under"} by {formatDuration(Math.abs(actDuration - act.targetDuration))}
                                   </p>
                                 )}
                               </div>
@@ -1027,7 +1027,7 @@ export default function FeatureTimeline() {
                             ].map((bus) => (
                               <div key={bus.label} className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
                                 <p className="text-[10px] text-zinc-500 mb-1">{bus.label}</p>
-                                <Progress value={(bus.value || 0) * 100} className="h-1.5 bg-zinc-800" />
+                                <Progress value={(bus.value || 0) * 100} className="h-1.5 bg-amber-500/20" />
                                 <p className="font-mono text-xs text-zinc-400 mt-1">{((bus.value || 0) * 100).toFixed(0)}%</p>
                               </div>
                             ))}
