@@ -192,7 +192,7 @@ export default function Projects() {
 
             {/* Sort */}
             <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-              <SelectTrigger className="w-[130px] h-8 text-xs bg-card/50">
+              <SelectTrigger className="w-[130px] h-8 text-xs bg-card/50 border-amber-500/20 focus:ring-amber-500/30 focus:border-amber-500/50">
                 <ArrowUpDown className="h-3 w-3 mr-1" />
                 <SelectValue />
               </SelectTrigger>

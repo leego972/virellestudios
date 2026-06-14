@@ -202,7 +202,7 @@ export default function Contact() {
                     <div className="space-y-1.5">
                       <Label className="text-sm">Subject</Label>
                       <Select value={form.subject} onValueChange={v => setForm(f => ({ ...f, subject: v }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="border-amber-500/20 focus:ring-amber-500/30 focus:border-amber-500/50">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
