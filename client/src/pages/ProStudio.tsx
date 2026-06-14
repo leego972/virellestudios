@@ -403,5 +403,6 @@ function RenderHistoryTab() {
           </div>
         </CardContent>
       </Card>
+  </div>
   );
 }
