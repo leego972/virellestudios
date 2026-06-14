@@ -4,13 +4,13 @@ import { Bell, Check, CheckCheck, Trash2, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const TYPE_ICONS: Record<string, string> = {
-  welcome: "Ã°ÂÂÂ¬",
-  generation_complete: "Ã¢ÂÂ¨",
-  export_complete: "Ã°ÂÂÂ¦",
-  subscription_change: "Ã°ÂÂÂ³",
-  referral_reward: "Ã°ÂÂÂ",
-  system: "Ã°ÂÂÂ¢",
-  tip: "Ã°ÂÂÂ¡",
+  welcome: "🎬",
+  generation_complete: "✨",
+  export_complete: "📦",
+  subscription_change: "💳",
+  referral_reward: "🎁",
+  system: "📢",
+  tip: "💡",
 };
 
 export default function NotificationBell() {
@@ -116,7 +116,7 @@ export default function NotificationBell() {
                 >
                   {/* Icon */}
                   <div className="text-lg flex-shrink-0 mt-0.5">
-                    {TYPE_ICONS[(n as any).type || "system"] || "Ã°ÂÂÂ¢"}
+                    {TYPE_ICONS[(n as any).type || "system"] || "📢"}
                   </div>
 
                   {/* Content */}
