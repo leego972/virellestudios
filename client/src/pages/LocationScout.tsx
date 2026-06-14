@@ -1,1 +1,250 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZUF1dGggfSBmcm9tICJAL19jb3JlL2hvb2tzL3VzZUF1dGgiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IExhYmVsIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2xhYmVsIjsKaW1wb3J0IHsgVGV4dGFyZWEgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGV4dGFyZWEiOwppbXBvcnQgeyBTZWxlY3QsIFNlbGVjdENvbnRlbnQsIFNlbGVjdEl0ZW0sIFNlbGVjdFRyaWdnZXIsIFNlbGVjdFZhbHVlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3NlbGVjdCI7CmltcG9ydCB7IERpYWxvZywgRGlhbG9nQ29udGVudCwgRGlhbG9nSGVhZGVyLCBEaWFsb2dUaXRsZSwgRGlhbG9nVHJpZ2dlciB9IGZyb20gIkAvY29tcG9uZW50cy91aS9kaWFsb2ciOwppbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CmltcG9ydCB7IFNlcGFyYXRvciB9IGZyb20gIkAvY29tcG9uZW50cy91aS9zZXBhcmF0b3IiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CmltcG9ydCB7IHVzZVJvdXRlLCB1c2VMb2NhdGlvbiB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IGdldExvZ2luVXJsIH0gZnJvbSAiQC9jb25zdCI7CmltcG9ydCB7IE1hcFBpbiwgUGx1cywgU3BhcmtsZXMsIFRyYXNoMiwgSW1hZ2UsIFRhZywgQXJyb3dMZWZ0LCBMb2FkZXIyIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKaW1wb3J0IHsgTmV4dFN0YWdlQ1RBIH0gZnJvbSAiQC9jb21wb25lbnRzL05leHRTdGFnZUNUQSI7Cgpjb25zdCBMT0NBVElPTl9UWVBFUyA9IFsKICAiQ2l0eSBTdHJlZXQiLCAiU3VidXJiYW4gSG9tZSIsICJNYW5zaW9uIiwgIkFwYXJ0bWVudCIsICJPZmZpY2UgQnVpbGRpbmciLAogICJXYXJlaG91c2UiLCAiRm9yZXN0IiwgIkJlYWNoIiwgIkRlc2VydCIsICJNb3VudGFpbiIsICJMYWtlIiwgIlJpdmVyIiwKICAiUmVzdGF1cmFudCIsICJCYXIiLCAiSG9zcGl0YWwiLCAiU2Nob29sIiwgIkNodXJjaCIsICJBaXJwb3J0IiwgIlRyYWluIFN0YXRpb24iLAogICJSb29mdG9wIiwgIlVuZGVyZ3JvdW5kIiwgIkNhc3RsZSIsICJGYXJtIiwgIklzbGFuZCIsICJCcmlkZ2UiLCAiVHVubmVsIiwKXTsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIExvY2F0aW9uU2NvdXQoKSB7CiAgY29uc3QgeyB1c2VyLCBsb2FkaW5nOiBhdXRoTG9hZGluZywgaXNBdXRoZW50aWNhdGVkIH0gPSB1c2VBdXRoKCk7CiAgY29uc3QgWywgcGFyYW1zXSA9IHVzZVJvdXRlKCIvcHJvamVjdHMvOmlkL2xvY2F0aW9ucyIpOwogIGNvbnN0IFssIG5hdmlnYXRlXSA9IHVzZUxvY2F0aW9uKCk7CiAgY29uc3QgcHJvamVjdElkID0gTnVtYmVyKHBhcmFtcz8uaWQpOwoKICBjb25zdCBbc2hvd0FkZERpYWxvZywgc2V0U2hvd0FkZERpYWxvZ10gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW25hbWUsIHNldE5hbWVdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFthZGRyZXNzLCBzZXRBZGRyZXNzXSA9IHVzZVN0YXRlKCIiKTsKICBjb25zdCBbbG9jYXRpb25UeXBlLCBzZXRMb2NhdGlvblR5cGVdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFtkZXNjcmlwdGlvbiwgc2V0RGVzY3JpcHRpb25dID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFtub3Rlcywgc2V0Tm90ZXNdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFt0YWdJbnB1dCwgc2V0VGFnSW5wdXRdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFt0YWdzLCBzZXRUYWdzXSA9IHVzZVN0YXRlPHN0cmluZ1tdPihbXSk7CiAgY29uc3QgW2ZpbHRlclR5cGUsIHNldEZpbHRlclR5cGVdID0gdXNlU3RhdGUoImFsbCIpOwoKICBjb25zdCB1dGlscyA9IHRycGMudXNlVXRpbHMoKTsKICBjb25zdCB7IGRhdGE6IGxvY2F0aW9ucyA9IFtdLCBpc0xvYWRpbmcgfSA9IHRycGMubG9jYXRpb24ubGlzdEJ5UHJvamVjdC51c2VRdWVyeSgKICAgIHsgcHJvamVjdElkIH0sCiAgICB7IGVuYWJsZWQ6ICEhcHJvamVjdElkICYmIGlzQXV0aGVudGljYXRlZCB9CiAgKTsKCiAgY29uc3QgY3JlYXRlTXV0YXRpb24gPSB0cnBjLmxvY2F0aW9uLmNyZWF0ZS51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMubG9jYXRpb24ubGlzdEJ5UHJvamVjdC5pbnZhbGlkYXRlKHsgcHJvamVjdElkIH0pOwogICAgICBzZXRTaG93QWRkRGlhbG9nKGZhbHNlKTsKICAgICAgcmVzZXRGb3JtKCk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIkxvY2F0aW9uIGFkZGVkIiwgewogICAgICAgIGFjdGlvbjogewogICAgICAgICAgbGFiZWw6ICJHZW5lcmF0ZSBSZWxlYXNlIEZvcm0iLAogICAgICAgICAgb25DbGljazogKCkgPT4gbmF2aWdhdGUoYC9sZWdhbC1kb2NzYCksCiAgICAgICAgfSwKICAgICAgfSk7CiAgICB9LAogICAgb25FcnJvcjogKGUpID0+IHRvYXN0LmVycm9yKGUubWVzc2FnZSksCiAgfSk7CgogIGNvbnN0IGRlbGV0ZU11dGF0aW9uID0gdHJwYy5sb2NhdGlvbi5kZWxldGUudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoKSA9PiB7CiAgICAgIHV0aWxzLmxvY2F0aW9uLmxpc3RCeVByb2plY3QuaW52YWxpZGF0ZSh7IHByb2plY3RJZCB9KTsKICAgICAgdG9hc3Quc3VjY2VzcygiTG9jYXRpb24gcmVtb3ZlZCIpOwogICAgfSwKICB9KTsKCiAgY29uc3Qgc3VnZ2VzdE11dGF0aW9uID0gdHJwYy5sb2NhdGlvbi5haVN1Z2dlc3QudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoZGF0YSkgPT4gewogICAgICBpZiAoZGF0YT8ubG9jYXRpb25zKSB7CiAgICAgICAgdG9hc3Quc3VjY2VzcyhgJHtkYXRhLmxvY2F0aW9ucy5sZW5ndGh9IGxvY2F0aW9ucyBzdWdnZXN0ZWRgKTsKICAgICAgfQogICAgfSwKICAgIG9uRXJyb3I6IChlKSA9PiB0b2FzdC5lcnJvcihlLm1lc3NhZ2UpLAogIH0pOwoKICBjb25zdCBnZW5lcmF0ZUltYWdlTXV0YXRpb24gPSB0cnBjLmxvY2F0aW9uLmdlbmVyYXRlSW1hZ2UudXNlTXV0YXRpb24oewogICAgb25FcnJvcjogKGUpID0+IHRvYXN0LmVycm9yKGUubWVzc2FnZSksCiAgfSk7CgogIGZ1bmN0aW9uIHJlc2V0Rm9ybSgpIHsKICAgIHNldE5hbWUoIiIpOyBzZXRBZGRyZXNzKCIiKTsgc2V0TG9jYXRpb25UeXBlKCIiKTsgc2V0RGVzY3JpcHRpb24oIiIpOyBzZXROb3RlcygiIik7IHNldFRhZ3MoW10pOyBzZXRUYWdJbnB1dCgiIik7CiAgfQoKICBmdW5jdGlvbiBhZGRUYWcoKSB7CiAgICBpZiAodGFnSW5wdXQudHJpbSgpICYmICF0YWdzLmluY2x1ZGVzKHRhZ0lucHV0LnRyaW0oKSkpIHsKICAgICAgc2V0VGFncyhbLi4udGFncywgdGFnSW5wdXQudHJpbSgpXSk7CiAgICAgIHNldFRhZ0lucHV0KCIiKTsKICAgIH0KICB9CgogIGlmIChhdXRoTG9hZGluZykgcmV0dXJuIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBoLXNjcmVlbiI+PExvYWRlcjIgY2xhc3NOYW1lPSJhbmltYXRlLXNwaW4gaC04IHctOCB0ZXh0LW11dGVkLWZvcmVncm91bmQiIC8+PC9kaXY+OwogIGlmICghaXNBdXRoZW50aWNhdGVkKSB7IHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gZ2V0TG9naW5VcmwoKTsgcmV0dXJuIG51bGw7IH0KCiAgY29uc3QgZmlsdGVyZWQgPSBmaWx0ZXJUeXBlID09PSAiYWxsIiA/IGxvY2F0aW9ucyA6IGxvY2F0aW9ucy5maWx0ZXIoKGw6IGFueSkgPT4gbC5sb2NhdGlvblR5cGUgPT09IGZpbHRlclR5cGUpOwogIGNvbnN0IHVuaXF1ZVR5cGVzID0gQXJyYXkuZnJvbShuZXcgU2V0KGxvY2F0aW9ucy5tYXAoKGw6IGFueSkgPT4gbC5sb2NhdGlvblR5cGUpLmZpbHRlcihCb29sZWFuKSkpOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctN3hsIG14LWF1dG8gcHgtNCBzbTpweC02IHB5LTYgc206cHktOCI+CiAgICAgICAgey8qIEhlYWRlciAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgc206Z2FwLTMgbWItNiBzbTptYi04IGZsZXgtd3JhcCI+CiAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJpY29uIiBjbGFzc05hbWU9ImgtMTAgdy0xMCBzbTpoLTkgc206dy05IHNocmluay0wIiBvbkNsaWNrPXsoKSA9PiBuYXZpZ2F0ZShgL3Byb2plY3RzLyR7cHJvamVjdElkfWApfSBhcmlhLWxhYmVsPSJCYWNrIHRvIHByb2plY3QiPgogICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0iaC01IHctNSIgYXJpYS1oaWRkZW49InRydWUiIC8+CiAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgbWluLXctMCI+CiAgICAgICAgICAgIDxoMSBjbGFzc05hbWU9InRleHQteGwgc206dGV4dC0yeGwgZm9udC1zZW1pYm9sZCB0cmFja2luZy10aWdodCI+TG9jYXRpb24gU2NvdXQ8L2gxPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG10LTEgaGlkZGVuIHNtOmJsb2NrIj5GaW5kIGFuZCBtYW5hZ2UgZmlsbWluZyBsb2NhdGlvbnMgZm9yIHlvdXIgcHJvZHVjdGlvbjwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9InNocmluay0wIiBvbkNsaWNrPXsoKSA9PiBzdWdnZXN0TXV0YXRpb24ubXV0YXRlKHsgcHJvamVjdElkIH0pfSBkaXNhYmxlZD17c3VnZ2VzdE11dGF0aW9uLmlzUGVuZGluZ30+CiAgICAgICAgICAgIHtzdWdnZXN0TXV0YXRpb24uaXNQZW5kaW5nID8gPExvYWRlcjIgY2xhc3NOYW1lPSJoLTQgdy00IGFuaW1hdGUtc3BpbiBtci0yIiAvPiA6IDxTcGFya2xlcyBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz59CiAgICAgICAgICAgIEFJIFN1Z2dlc3QKICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgPERpYWxvZyBvcGVuPXtzaG93QWRkRGlhbG9nfSBvbk9wZW5DaGFuZ2U9e3NldFNob3dBZGREaWFsb2d9PgogICAgICAgICAgICA8RGlhbG9nVHJpZ2dlciBhc0NoaWxkPgogICAgICAgICAgICAgIDxCdXR0b24+PFBsdXMgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIiIC8+IEFkZCBMb2NhdGlvbjwvQnV0dG9uPgogICAgICAgICAgICA8L0RpYWxvZ1RyaWdnZXI+CiAgICAgICAgICAgIDxEaWFsb2dDb250ZW50IGNsYXNzTmFtZT0ibWF4LXctbGciPgogICAgICAgICAgICAgIDxEaWFsb2dIZWFkZXI+PERpYWxvZ1RpdGxlPkFkZCBMb2NhdGlvbjwvRGlhbG9nVGl0bGU+PC9EaWFsb2dIZWFkZXI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNCBtdC0yIj4KICAgICAgICAgICAgICAgIDxkaXY+PExhYmVsPk5hbWU8L0xhYmVsPjxJbnB1dCB2YWx1ZT17bmFtZX0gb25DaGFuZ2U9e2UgPT4gc2V0TmFtZShlLnRhcmdldC52YWx1ZSl9IHBsYWNlaG9sZGVyPSJDZW50cmFsIFBhcmssIE5ZQyIgYXV0b0NhcGl0YWxpemU9InNlbnRlbmNlcyIgYXV0b0NvcnJlY3Q9Im9uIiBlbnRlcktleUhpbnQ9Im5leHQiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxMYWJlbD5UeXBlPC9MYWJlbD4KICAgICAgICAgICAgICAgICAgPFNlbGVjdCB2YWx1ZT17bG9jYXRpb25UeXBlfSBvblZhbHVlQ2hhbmdlPXtzZXRMb2NhdGlvblR5cGV9PgogICAgICAgICAgICAgICAgICAgIDxTZWxlY3RUcmlnZ2VyPjxTZWxlY3RWYWx1ZSBwbGFjZWhvbGRlcj0iU2VsZWN0IHR5cGUiIC8+PC9TZWxlY3RUcmlnZ2VyPgogICAgICAgICAgICAgICAgICAgIDxTZWxlY3RDb250ZW50PntMT0NBVElPTl9UWVBFUy5tYXAodCA9PiA8U2VsZWN0SXRlbSBrZXk9e3R9IHZhbHVlPXt0fT57dH08L1NlbGVjdEl0ZW0+KX08L1NlbGVjdENvbnRlbnQ+CiAgICAgICAgICAgICAgICAgIDwvU2VsZWN0PgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxMYWJlbD5BZGRyZXNzPC9MYWJlbD48SW5wdXQgdmFsdWU9e2FkZHJlc3N9IG9uQ2hhbmdlPXtlID0+IHNldEFkZHJlc3MoZS50YXJnZXQudmFsdWUpfSBwbGFjZWhvbGRlcj0iT3B0aW9uYWwgYWRkcmVzcyIgYXV0b0NhcGl0YWxpemU9InNlbnRlbmNlcyIgYXV0b0NvcnJlY3Q9Im9uIiBlbnRlcktleUhpbnQ9Im5leHQiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxMYWJlbD5EZXNjcmlwdGlvbjwvTGFiZWw+PFRleHRhcmVhIHZhbHVlPXtkZXNjcmlwdGlvbn0gb25DaGFuZ2U9e2UgPT4gc2V0RGVzY3JpcHRpb24oZS50YXJnZXQudmFsdWUpfSBwbGFjZWhvbGRlcj0iRGVzY3JpYmUgdGhlIGxvY2F0aW9uIGFuZCBpdHMgdmlzdWFsIGNoYXJhY3RlcmlzdGljcy4uLiIgcm93cz17M30gYXV0b0NhcGl0YWxpemU9InNlbnRlbmNlcyIgYXV0b0NvcnJlY3Q9Im9uIiBlbnRlcktleUhpbnQ9ImRvbmUiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxMYWJlbD5Ob3RlczwvTGFiZWw+PFRleHRhcmVhIHZhbHVlPXtub3Rlc30gb25DaGFuZ2U9e2UgPT4gc2V0Tm90ZXMoZS50YXJnZXQudmFsdWUpfSBwbGFjZWhvbGRlcj0iRmlsbWluZyBub3RlcywgYWNjZXNzIGluZm8sIHBlcm1pdHMgbmVlZGVkLi4uIiByb3dzPXsyfSBhdXRvQ2FwaXRhbGl6ZT0ic2VudGVuY2VzIiBhdXRvQ29ycmVjdD0ib24iIGVudGVyS2V5SGludD0iZG9uZSIgLz48L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxMYWJlbD5UYWdzPC9MYWJlbD4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIiPgogICAgICAgICAgICAgICAgICAgIDxJbnB1dCB2YWx1ZT17dGFnSW5wdXR9IG9uQ2hhbmdlPXtlID0+IHNldFRhZ0lucHV0KGUudGFyZ2V0LnZhbHVlKX0gcGxhY2Vob2xkZXI9IkFkZCB0YWciIG9uS2V5RG93bj17ZSA9PiBlLmtleSA9PT0gIkVudGVyIiAmJiAoZS5wcmV2ZW50RGVmYXVsdCgpLCBhZGRUYWcoKSl9IGF1dG9DYXBpdGFsaXplPSJzZW50ZW5jZXMiIGF1dG9Db3JyZWN0PSJvbiIgZW50ZXJLZXlIaW50PSJuZXh0IiAvPgogICAgICAgICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgc2l6ZT0ic20iIG9uQ2xpY2s9e2FkZFRhZ30+QWRkPC9CdXR0b24+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICB7dGFncy5sZW5ndGggPiAwICYmIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtd3JhcCBnYXAtMSBtdC0yIj57dGFncy5tYXAodCA9PiA8QmFkZ2Uga2V5PXt0fSB2YXJpYW50PSJzZWNvbmRhcnkiIGNsYXNzTmFtZT0iY3Vyc29yLXBvaW50ZXIiIG9uQ2xpY2s9eygpID0+IHNldFRhZ3ModGFncy5maWx0ZXIoeCA9PiB4ICE9PSB0KSl9Pnt0fSDDlzwvQmFkZ2U+KX08L2Rpdj59CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxCdXR0b24gY2xhc3NOYW1lPSJ3LWZ1bGwiIG9uQ2xpY2s9eygpID0+IGNyZWF0ZU11dGF0aW9uLm11dGF0ZSh7IHByb2plY3RJZCwgbmFtZSwgYWRkcmVzczogYWRkcmVzcyB8fCB1bmRlZmluZWQsIGxvY2F0aW9uVHlwZTogbG9jYXRpb25UeXBlIHx8IHVuZGVmaW5lZCwgZGVzY3JpcHRpb246IGRlc2NyaXB0aW9uIHx8IHVuZGVmaW5lZCwgbm90ZXM6IG5vdGVzIHx8IHVuZGVmaW5lZCwgdGFncyB9KX0gZGlzYWJsZWQ9eyFuYW1lIHx8IGNyZWF0ZU11dGF0aW9uLmlzUGVuZGluZ30+CiAgICAgICAgICAgICAgICAgIHtjcmVhdGVNdXRhdGlvbi5pc1BlbmRpbmcgPyA8TG9hZGVyMiBjbGFzc05hbWU9ImgtNCB3LTQgYW5pbWF0ZS1zcGluIG1yLTIiIC8+IDogbnVsbH0KICAgICAgICAgICAgICAgICAgQWRkIExvY2F0aW9uCiAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9EaWFsb2dDb250ZW50PgogICAgICAgICAgPC9EaWFsb2c+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBBSSBTdWdnZXN0aW9ucyAqL30KICAgICAgICB7c3VnZ2VzdE11dGF0aW9uLmRhdGE/LmxvY2F0aW9ucyAmJiAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWItOCI+CiAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtbGcgZm9udC1tZWRpdW0gbWItNCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+PFNwYXJrbGVzIGNsYXNzTmFtZT0iaC01IHctNSB0ZXh0LXByaW1hcnkiIC8+IEFJIFN1Z2dlc3RlZCBMb2NhdGlvbnM8L2gyPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMSBtZDpncmlkLWNvbHMtMiBsZzpncmlkLWNvbHMtMyBnYXAtNCI+CiAgICAgICAgICAgICAge3N1Z2dlc3RNdXRhdGlvbi5kYXRhLmxvY2F0aW9ucy5tYXAoKGxvYzogYW55LCBpOiBudW1iZXIpID0+ICgKICAgICAgICAgICAgICAgIDxDYXJkIGtleT17aX0gY2xhc3NOYW1lPSJib3JkZXItcHJpbWFyeS8yMCBiZy1wcmltYXJ5LzUiPgogICAgICAgICAgICAgICAgICA8Q2FyZEhlYWRlciBjbGFzc05hbWU9InBiLTIiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGp1c3RpZnktYmV0d2VlbiI+CiAgICAgICAgICAgICAgICAgICAgICA8Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1iYXNlIj57bG9jLm5hbWV9PC9DYXJkVGl0bGU+CiAgICAgICAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ0ZXh0LXhzIj57bG9jLmxvY2F0aW9uVHlwZX08L0JhZGdlPgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L0NhcmRIZWFkZXI+CiAgICAgICAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+e2xvYy5kZXNjcmlwdGlvbn08L3A+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+PHNwYW4gY2xhc3NOYW1lPSJmb250LW1lZGl1bSI+VmlzdWFsOjwvc3Bhbj4ge2xvYy52aXN1YWxTdHlsZX08L3A+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+PHNwYW4gY2xhc3NOYW1lPSJmb250LW1lZGl1bSI+Tm90ZXM6PC9zcGFuPiB7bG9jLnByYWN0aWNhbE5vdGVzfTwvcD4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAgZ2FwLTEiPntsb2MudGFncz8ubWFwKCh0OiBzdHJpbmcpID0+IDxCYWRnZSBrZXk9e3R9IHZhcmlhbnQ9InNlY29uZGFyeSIgY2xhc3NOYW1lPSJ0ZXh0LXhzIj57dH08L0JhZGdlPil9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ3LWZ1bGwgbXQtMiIgb25DbGljaz17KCkgPT4gY3JlYXRlTXV0YXRpb24ubXV0YXRlKHsgcHJvamVjdElkLCBuYW1lOiBsb2MubmFtZSwgbG9jYXRpb25UeXBlOiBsb2MubG9jYXRpb25UeXBlLCBkZXNjcmlwdGlvbjogbG9jLmRlc2NyaXB0aW9uLCBub3RlczogbG9jLnByYWN0aWNhbE5vdGVzLCB0YWdzOiBsb2MudGFncyB9KX0+CiAgICAgICAgICAgICAgICAgICAgICA8UGx1cyBjbGFzc05hbWU9ImgtMyB3LTMgbXItMSIgLz4gU2F2ZSB0byBQcm9qZWN0CiAgICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgICA8L0NhcmQ+CiAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8U2VwYXJhdG9yIGNsYXNzTmFtZT0ibXQtNiIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CgogICAgICAgIHsvKiBGaWx0ZXIgKi99CiAgICAgICAge3VuaXF1ZVR5cGVzLmxlbmd0aCA+IDAgJiYgKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIgbWItNiBmbGV4LXdyYXAiPgogICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9e2ZpbHRlclR5cGUgPT09ICJhbGwiID8gImRlZmF1bHQiIDogIm91dGxpbmUifSBzaXplPSJzbSIgb25DbGljaz17KCkgPT4gc2V0RmlsdGVyVHlwZSgiYWxsIil9PkFsbDwvQnV0dG9uPgogICAgICAgICAgICB7dW5pcXVlVHlwZXMubWFwKCh0OiBhbnkpID0+ICgKICAgICAgICAgICAgICA8QnV0dG9uIGtleT17dH0gdmFyaWFudD17ZmlsdGVyVHlwZSA9PT0gdCA/ICJkZWZhdWx0IiA6ICJvdXRsaW5lIn0gc2l6ZT0ic20iIG9uQ2xpY2s9eygpID0+IHNldEZpbHRlclR5cGUodCl9Pnt0fTwvQnV0dG9uPgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CgogICAgICAgIHsvKiBMb2NhdGlvbiBHcmlkICovfQogICAgICAgIHtpc0xvYWRpbmcgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgcHktMjAiPjxMb2FkZXIyIGNsYXNzTmFtZT0iYW5pbWF0ZS1zcGluIGgtOCB3LTggdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIiAvPjwvZGl2PgogICAgICAgICkgOiBmaWx0ZXJlZC5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMjAiPgogICAgICAgICAgICA8TWFwUGluIGNsYXNzTmFtZT0iaC0xMiB3LTEyIHRleHQtbXV0ZWQtZm9yZWdyb3VuZC8zMCBteC1hdXRvIG1iLTQiIC8+CiAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQtbGcgZm9udC1tZWRpdW0gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj5ObyBsb2NhdGlvbnMgeWV0PC9oMz4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZC82MCBtdC0xIj5BZGQgbG9jYXRpb25zIG1hbnVhbGx5IG9yIGxldCBBSSBzdWdnZXN0IHRoZW08L3A+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgbWQ6Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTMgZ2FwLTQiPgogICAgICAgICAgICB7ZmlsdGVyZWQubWFwKChsb2M6IGFueSkgPT4gKAogICAgICAgICAgICAgIDxDYXJkIGtleT17bG9jLmlkfSBjbGFzc05hbWU9Imdyb3VwIj4KICAgICAgICAgICAgICAgIHsvKiBSZWZlcmVuY2UgaW1hZ2UgYXJlYSAqL30KICAgICAgICAgICAgICAgIHsobG9jLnJlZmVyZW5jZUltYWdlcyBhcyBzdHJpbmdbXSB8fCBbXSkubGVuZ3RoID4gMCA/ICgKICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImgtNDAgb3ZlcmZsb3ctaGlkZGVuIHJvdW5kZWQtdC1sZyI+CiAgICAgICAgICAgICAgICAgICAgPGltZyBzcmM9eyhsb2MucmVmZXJlbmNlSW1hZ2VzIGFzIHN0cmluZ1tdKVswXX0gYWx0PXtsb2MubmFtZX0gY2xhc3NOYW1lPSJ3LWZ1bGwgaC1mdWxsIG9iamVjdC1jb3ZlciIgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApIDogKAogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaC0zMiBiZy1tdXRlZC8zMCByb3VuZGVkLXQtbGcgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIiPgogICAgICAgICAgICAgICAgICAgIDxNYXBQaW4gY2xhc3NOYW1lPSJoLTggdy04IHRleHQtbXV0ZWQtZm9yZWdyb3VuZC8yMCIgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgPENhcmRIZWFkZXIgY2xhc3NOYW1lPSJwYi0yIj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgICAgICAgICAgICA8Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1iYXNlIj57bG9jLm5hbWV9PC9DYXJkVGl0bGU+CiAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJnaG9zdCIgc2l6ZT0iaWNvbiIgY2xhc3NOYW1lPSJoLTcgdy03IG9wYWNpdHktMCBncm91cC1ob3ZlcjpvcGFjaXR5LTEwMCB0cmFuc2l0aW9uLW9wYWNpdHkiIG9uQ2xpY2s9eygpID0+IGRlbGV0ZU11dGF0aW9uLm11dGF0ZSh7IGlkOiBsb2MuaWQgfSl9IGFyaWEtbGFiZWw9e2BEZWxldGUgbG9jYXRpb24gJHtsb2MubmFtZX1gfT4KICAgICAgICAgICAgICAgICAgICAgIDxUcmFzaDIgY2xhc3NOYW1lPSJoLTMuNSB3LTMuNSB0ZXh0LWRlc3RydWN0aXZlIiBhcmlhLWhpZGRlbj0idHJ1ZSIgLz4KICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIHtsb2MubG9jYXRpb25UeXBlICYmIDxCYWRnZSB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9InRleHQteHMgdy1maXQiPntsb2MubG9jYXRpb25UeXBlfTwvQmFkZ2U+fQogICAgICAgICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgICAgICAge2xvYy5hZGRyZXNzICYmIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEiPjxNYXBQaW4gY2xhc3NOYW1lPSJoLTMgdy0zIiAvPntsb2MuYWRkcmVzc308L3A+fQogICAgICAgICAgICAgICAgICB7bG9jLmRlc2NyaXB0aW9uICYmIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgbGluZS1jbGFtcC0yIj57bG9jLmRlc2NyaXB0aW9ufTwvcD59CiAgICAgICAgICAgICAgICAgIHtsb2Mubm90ZXMgJiYgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZC83MCBpdGFsaWMiPntsb2Mubm90ZXN9PC9wPn0KICAgICAgICAgICAgICAgICAgeyhsb2MudGFncyBhcyBzdHJpbmdbXSB8fCBbXSkubGVuZ3RoID4gMCAmJiAoCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC13cmFwIGdhcC0xIj57KGxvYy50YWdzIGFzIHN0cmluZ1tdKS5tYXAoKHQ6IHN0cmluZykgPT4gPEJhZGdlIGtleT17dH0gdmFyaWFudD0ic2Vjb25kYXJ5IiBjbGFzc05hbWU9InRleHQteHMiPnt0fTwvQmFkZ2U+KX08L2Rpdj4KICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ3LWZ1bGwiIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgICAgICAgICBnZW5lcmF0ZUltYWdlTXV0YXRpb24ubXV0YXRlKHsgZGVzY3JpcHRpb246IGAke2xvYy5uYW1lfTogJHtsb2MuZGVzY3JpcHRpb24gfHwgbG9jLmxvY2F0aW9uVHlwZSB8fCAnJ31gIH0sIHsKICAgICAgICAgICAgICAgICAgICAgIG9uU3VjY2VzczogKGRhdGEpID0+IHsKICAgICAgICAgICAgICAgICAgICAgICAgdG9hc3Quc3VjY2VzcygiUmVmZXJlbmNlIGltYWdlIGdlbmVyYXRlZCIpOwogICAgICAgICAgICAgICAgICAgICAgICAvLyBVcGRhdGUgbG9jYXRpb24gd2l0aCB0aGUgZ2VuZXJhdGVkIGltYWdlCiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGN1cnJlbnRJbWFnZXMgPSAobG9jLnJlZmVyZW5jZUltYWdlcyBhcyBzdHJpbmdbXSkgfHwgW107CiAgICAgICAgICAgICAgICAgICAgICAgIHRycGMudXNlVXRpbHMoKS5sb2NhdGlvbi5saXN0QnlQcm9qZWN0LmludmFsaWRhdGUoeyBwcm9qZWN0SWQgfSk7CiAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgICAgICAgICAgICAgIH19IGRpc2FibGVkPXtnZW5lcmF0ZUltYWdlTXV0YXRpb24uaXNQZW5kaW5nfT4KICAgICAgICAgICAgICAgICAgICB7Z2VuZXJhdGVJbWFnZU11dGF0aW9uLmlzUGVuZGluZyA/IDxMb2FkZXIyIGNsYXNzTmFtZT0iaC0zIHctMyBhbmltYXRlLXNwaW4gbXItMSIgLz4gOiA8SW1hZ2UgY2xhc3NOYW1lPSJoLTMgdy0zIG1yLTEiIC8+fQogICAgICAgICAgICAgICAgICAgIEdlbmVyYXRlIFJlZmVyZW5jZQogICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CiAgICAgIDwvZGl2PgogICAgICB7ISFwcm9qZWN0SWQgJiYgPE5leHRTdGFnZUNUQSBwcm9qZWN0SWQ9e3Byb2plY3RJZH0gY3VycmVudFN0YWdlPXs0fSAvPn0KICAgIDwvZGl2PgogICk7Cn0K
+import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { useRoute, useLocation } from "wouter";
+import { getLoginUrl } from "@/const";
+import { MapPin, Plus, Sparkles, Trash2, Image, Tag, ArrowLeft, Loader2 } from "lucide-react";
+import { NextStageCTA } from "@/components/NextStageCTA";
+
+const LOCATION_TYPES = [
+  "City Street", "Suburban Home", "Mansion", "Apartment", "Office Building",
+  "Warehouse", "Forest", "Beach", "Desert", "Mountain", "Lake", "River",
+  "Restaurant", "Bar", "Hospital", "School", "Church", "Airport", "Train Station",
+  "Rooftop", "Underground", "Castle", "Farm", "Island", "Bridge", "Tunnel",
+];
+
+export default function LocationScout() {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const [, params] = useRoute("/projects/:id/locations");
+  const [, navigate] = useLocation();
+  const projectId = Number(params?.id);
+
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [locationType, setLocationType] = useState("");
+  const [description, setDescription] = useState("");
+  const [notes, setNotes] = useState("");
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [filterType, setFilterType] = useState("all");
+
+  const utils = trpc.useUtils();
+  const { data: locations = [], isLoading } = trpc.location.listByProject.useQuery(
+    { projectId },
+    { enabled: !!projectId && isAuthenticated }
+  );
+
+  const createMutation = trpc.location.create.useMutation({
+    onSuccess: () => {
+      utils.location.listByProject.invalidate({ projectId });
+      setShowAddDialog(false);
+      resetForm();
+      toast.success("Location added", {
+        action: {
+          label: "Generate Release Form",
+          onClick: () => navigate(`/legal-docs`),
+        },
+      });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const deleteMutation = trpc.location.delete.useMutation({
+    onSuccess: () => {
+      utils.location.listByProject.invalidate({ projectId });
+      toast.success("Location removed");
+    },
+  });
+
+  const suggestMutation = trpc.location.aiSuggest.useMutation({
+    onSuccess: (data) => {
+      if (data?.locations) {
+        toast.success(`${data.locations.length} locations suggested`);
+      }
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const generateImageMutation = trpc.location.generateImage.useMutation({
+    onError: (e) => toast.error(e.message),
+  });
+
+  function resetForm() {
+    setName(""); setAddress(""); setLocationType(""); setDescription(""); setNotes(""); setTags([]); setTagInput("");
+  }
+
+  function addTag() {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  }
+
+  if (authLoading) return <div className="flex items-center justify-center h-screen"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (!isAuthenticated) { window.location.href = getLoginUrl(); return null; }
+
+  const filtered = filterType === "all" ? locations : locations.filter((l: any) => l.locationType === filterType);
+  const uniqueTypes = Array.from(new Set(locations.map((l: any) => l.locationType).filter(Boolean)));
+
+  return (
+    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Header */}
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 flex-wrap">
+          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </Button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight gradient-text-gold">Location Scout</h1>
+            <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Find and manage filming locations for your production</p>
+          </div>
+          <Button variant="outline" className="shrink-0" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>
+            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+            AI Suggest
+          </Button>
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button><Plus className="h-4 w-4 mr-2" /> Add Location</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader><DialogTitle>Add Location</DialogTitle></DialogHeader>
+              <div className="space-y-4 mt-2">
+                <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Central Park, NYC" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
+                <div><Label>Type</Label>
+                  <Select value={locationType} onValueChange={setLocationType}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>{LOCATION_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>Address</Label><Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Optional address" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
+                <div><Label>Description</Label><Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the location and its visual characteristics..." rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
+                <div><Label>Notes</Label><Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Filming notes, access info, permits needed..." rows={2} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
+                <div>
+                  <Label>Tags</Label>
+                  <div className="flex gap-2">
+                    <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+                    <Button variant="outline" size="sm" onClick={addTag}>Add</Button>
+                  </div>
+                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ×</Badge>)}</div>}
+                </div>
+                <Button className="w-full" onClick={() => createMutation.mutate({ projectId, name, address: address || undefined, locationType: locationType || undefined, description: description || undefined, notes: notes || undefined, tags })} disabled={!name || createMutation.isPending}>
+                  {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Add Location
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* AI Suggestions */}
+        {suggestMutation.data?.locations && (
+          <div className="mb-8">
+            <h2 className="text-lg font-medium mb-4 flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary" /> AI Suggested Locations</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {suggestMutation.data.locations.map((loc: any, i: number) => (
+                <Card key={i} className="border-primary/20 bg-primary/5">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base">{loc.name}</CardTitle>
+                      <Badge variant="outline" className="text-xs">{loc.locationType}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground">{loc.description}</p>
+                    <p className="text-xs text-muted-foreground"><span className="font-medium">Visual:</span> {loc.visualStyle}</p>
+                    <p className="text-xs text-muted-foreground"><span className="font-medium">Notes:</span> {loc.practicalNotes}</p>
+                    <div className="flex flex-wrap gap-1">{loc.tags?.map((t: string) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
+                    <Button size="sm" variant="outline" className="w-full mt-2" onClick={() => createMutation.mutate({ projectId, name: loc.name, locationType: loc.locationType, description: loc.description, notes: loc.practicalNotes, tags: loc.tags })}>
+                      <Plus className="h-3 w-3 mr-1" /> Save to Project
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <Separator className="mt-6" />
+          </div>
+        )}
+
+        {/* Filter */}
+        {uniqueTypes.length > 0 && (
+          <div className="flex gap-2 mb-6 flex-wrap">
+            <Button variant={filterType === "all" ? "default" : "outline"} size="sm" onClick={() => setFilterType("all")}>All</Button>
+            {uniqueTypes.map((t: any) => (
+              <Button key={t} variant={filterType === t ? "default" : "outline"} size="sm" onClick={() => setFilterType(t)}>{t}</Button>
+            ))}
+          </div>
+        )}
+
+        {/* Location Grid */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20">
+            <MapPin className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground">No locations yet</h3>
+            <p className="text-sm text-muted-foreground/60 mt-1">Add locations manually or let AI suggest them</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((loc: any) => (
+              <Card key={loc.id} className="group">
+                {/* Reference image area */}
+                {(loc.referenceImages as string[] || []).length > 0 ? (
+                  <div className="h-40 overflow-hidden rounded-t-lg">
+                    <img src={(loc.referenceImages as string[])[0]} alt={loc.name} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="h-32 bg-muted/30 rounded-t-lg flex items-center justify-center">
+                    <MapPin className="h-8 w-8 text-muted-foreground/20" />
+                  </div>
+                )}
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-base">{loc.name}</CardTitle>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })} aria-label={`Delete location ${loc.name}`}>
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
+                    </Button>
+                  </div>
+                  {loc.locationType && <Badge variant="outline" className="text-xs w-fit">{loc.locationType}</Badge>}
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {loc.address && <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{loc.address}</p>}
+                  {loc.description && <p className="text-sm text-muted-foreground line-clamp-2">{loc.description}</p>}
+                  {loc.notes && <p className="text-xs text-muted-foreground/70 italic">{loc.notes}</p>}
+                  {(loc.tags as string[] || []).length > 0 && (
+                    <div className="flex flex-wrap gap-1">{(loc.tags as string[]).map((t: string) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
+                  )}
+                  <Button size="sm" variant="outline" className="w-full" onClick={() => {
+                    generateImageMutation.mutate({ description: `${loc.name}: ${loc.description || loc.locationType || ''}` }, {
+                      onSuccess: (data) => {
+                        toast.success("Reference image generated");
+                        // Update location with the generated image
+                        const currentImages = (loc.referenceImages as string[]) || [];
+                        trpc.useUtils().location.listByProject.invalidate({ projectId });
+                      }
+                    });
+                  }} disabled={generateImageMutation.isPending}>
+                    {generateImageMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Image className="h-3 w-3 mr-1" />}
+                    Generate Reference
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
+    </div>
+  );
+}
