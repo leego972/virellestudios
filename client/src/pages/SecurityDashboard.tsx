@@ -163,7 +163,7 @@ export default function SecurityDashboard() {
                   <Activity className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.totalEvents}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.totalEvents}</p>
                   <p className="text-xs text-muted-foreground">Total Events</p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function SecurityDashboard() {
                   <AlertOctagon className="w-5 h-5 text-red-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.criticalEvents}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.criticalEvents}</p>
                   <p className="text-xs text-muted-foreground">Critical</p>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function SecurityDashboard() {
                   <AlertTriangle className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.highEvents}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.highEvents}</p>
                   <p className="text-xs text-muted-foreground">High Severity</p>
                 </div>
               </div>
@@ -202,7 +202,7 @@ export default function SecurityDashboard() {
                   <Users className="w-5 h-5 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.flaggedUsers}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.flaggedUsers}</p>
                   <p className="text-xs text-muted-foreground">Flagged Users</p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function SecurityDashboard() {
                   <Lock className="w-5 h-5 text-red-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.lockedOutUsers}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.lockedOutUsers}</p>
                   <p className="text-xs text-muted-foreground">Locked Out</p>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function SecurityDashboard() {
                   <Eye className="w-5 h-5 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.totalAuditEntries}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.totalAuditEntries}</p>
                   <p className="text-xs text-muted-foreground">Audit Entries</p>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export default function SecurityDashboard() {
                   <ShieldCheck className="w-5 h-5 text-purple-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.registrationAttempts24h}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{stats.registrationAttempts24h}</p>
                   <p className="text-xs text-muted-foreground">Registration Attempts (24h)</p>
                 </div>
               </div>
@@ -525,7 +525,7 @@ export default function SecurityDashboard() {
                         )}
                       </td>
                       <td className="py-2 px-3 text-xs text-muted-foreground max-w-[200px] truncate">
-                        {entry.details ? JSON.stringify(entry.details) : "â"}
+                        {entry.details ? JSON.stringify(entry.details) : "Ã¢ÂÂ"}
                       </td>
                     </tr>
                   ))}

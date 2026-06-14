@@ -58,7 +58,7 @@ export default function ProStudio() {
   );
 }
 
-/* ─── Style Bible ─── */
+/* âââ Style Bible âââ */
 function StyleBibleTab({ projectId }: { projectId: number }) {
   const q = trpc.styleBible.get.useQuery({ projectId });
   const save = trpc.styleBible.save.useMutation({ onSuccess: () => { toast.success("Style bible saved"); q.refetch(); } });
@@ -120,7 +120,7 @@ function StyleBibleTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ─── Shot Versions ─── */
+/* âââ Shot Versions âââ */
 function ShotVersionsTab({ projectId }: { projectId: number }) {
   const scenes = trpc.scene.listByProject.useQuery({ projectId });
   const versionsAll = trpc.shotVersions.list.useQuery({ projectId });
@@ -158,7 +158,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
         <CardHeader><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.length === 0 ? (
-            <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded — open a project with scenes to begin a Pro Studio session.</p>
+            <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded â open a project with scenes to begin a Pro Studio session.</p>
           ) : sceneList.map(s => (
             <button key={s.id} onClick={() => { setSelectedSceneId(s.id); setDraft(null); }} className={`w-full text-left p-2 rounded text-xs hover:bg-muted/50 ${sceneId === s.id ? "bg-muted/70 ring-1 ring-primary/30" : ""}`}>
               <div className="font-medium truncate">{s.title || s.name || `Scene ${s.id}`}</div>
@@ -173,7 +173,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm gradient-text-gold">{scene ? `Versions — ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
+          <CardTitle className="text-sm gradient-text-gold">{scene ? `Versions â ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
           <p className="text-xs text-muted-foreground">Track every render of this shot. Mark one as final so editors and reviewers know what to use.</p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -190,9 +190,9 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
                     </div>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeRow(i)} aria-label="Remove version"><Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" /></Button>
                   </div>
-                  <Input value={v.url || ""} onChange={e => updateRow(i, { url: e.target.value })} placeholder="https://...mp4 / .png — paste render URL" className="h-8 text-xs" />
+                  <Input value={v.url || ""} onChange={e => updateRow(i, { url: e.target.value })} placeholder="https://...mp4 / .png â paste render URL" className="h-8 text-xs" />
                   <Textarea rows={2} value={v.prompt || ""} onChange={e => updateRow(i, { prompt: e.target.value })} placeholder="Prompt used for this version" className="text-xs" />
-                  <Textarea rows={1} value={v.notes || ""} onChange={e => updateRow(i, { notes: e.target.value })} placeholder="Director notes — what's good/bad about this version" className="text-xs" />
+                  <Textarea rows={1} value={v.notes || ""} onChange={e => updateRow(i, { notes: e.target.value })} placeholder="Director notes â what's good/bad about this version" className="text-xs" />
                   {v.url && (v.url.endsWith(".mp4") || v.url.endsWith(".webm") ? (
                     <video src={v.url} controls className="w-full max-w-md rounded" />
                   ) : (
@@ -212,7 +212,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ─── Voice Consent ─── */
+/* âââ Voice Consent âââ */
 function VoiceConsentTab({ projectId }: { projectId: number }) {
   const characters = trpc.character.listByProject.useQuery({ projectId });
   const consents = trpc.voiceConsent.list.useQuery({ projectId });
@@ -246,9 +246,9 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{c.name}</div>
                     {consent ? (
-                      <div className="text-xs text-emerald-400">✓ Signed by {consent.data.signedBy} on {consent.data.signedDate}</div>
+                      <div className="text-xs text-emerald-400">â Signed by {consent.data.signedBy} on {consent.data.signedDate}</div>
                     ) : (
-                      <div className="text-xs text-amber-400">⚠ No consent on file — only synthetic / fictional voices allowed</div>
+                      <div className="text-xs text-amber-400">â  No consent on file â only synthetic / fictional voices allowed</div>
                     )}
                   </div>
                   <Button size="sm" variant={consent ? "outline" : "default"} onClick={() => {
@@ -310,7 +310,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ─── Provenance ─── */
+/* âââ Provenance âââ */
 function ProvenanceTab({ projectId }: { projectId: number }) {
   const q = trpc.provenance.export.useQuery({ projectId });
 
@@ -358,7 +358,7 @@ function ProvenanceTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ─── Render History ─── */
+/* âââ Render History âââ */
 function RenderHistoryTab() {
   const summary = trpc.renderHistory.summary.useQuery();
   const list = trpc.renderHistory.list.useQuery({ limit: 100 });
@@ -366,9 +366,9 @@ function RenderHistoryTab() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total credits spent</div><div className="text-2xl font-bold">{summary.data?.totalSpent ?? 0}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Last 30 days</div><div className="text-2xl font-bold">{summary.data?.last30Days ?? 0}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Distinct actions</div><div className="text-2xl font-bold">{summary.data?.byAction.length ?? 0}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total credits spent</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.totalSpent ?? 0}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Last 30 days</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.last30Days ?? 0}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Distinct actions</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.byAction.length ?? 0}</div></CardContent></Card>
       </div>
 
       <Card>
@@ -378,7 +378,7 @@ function RenderHistoryTab() {
             {(summary.data?.byAction || []).slice(0, 12).map(a => (
               <div key={a.action} className="flex items-center justify-between text-xs border-b py-1.5">
                 <div className="font-mono">{a.action}</div>
-                <div className="flex items-center gap-3 text-muted-foreground"><span>{a.count}×</span><span className="font-bold text-foreground">{a.total} cr</span></div>
+                <div className="flex items-center gap-3 text-muted-foreground"><span>{a.count}Ã</span><span className="font-bold text-foreground">{a.total} cr</span></div>
               </div>
             ))}
           </div>

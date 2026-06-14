@@ -102,7 +102,7 @@ function StageCard({ stage }: { stage: { stage: string; success: boolean; durati
           <div key={key} className="text-xs">
             <span className="text-muted-foreground capitalize">{key.replace(/_/g, " ")}: </span>
             <span className="text-foreground font-medium">
-              {Array.isArray(value) ? value.join(", ") || "â" : String(value)}
+              {Array.isArray(value) ? value.join(", ") || "Ã¢ÂÂ" : String(value)}
             </span>
           </div>
         ))}
@@ -249,7 +249,7 @@ export default function AdminAutonomous() {
             Autonomous Pipeline
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Content Creator â Marketing Engine â SEO Engine â all on autopilot
+            Content Creator Ã¢ÂÂ Marketing Engine Ã¢ÂÂ SEO Engine Ã¢ÂÂ all on autopilot
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -280,7 +280,7 @@ export default function AdminAutonomous() {
               <Image className="w-4 h-4 text-amber-400" />
               <span className="text-xs text-muted-foreground">Total Content</span>
             </div>
-            <p className="text-2xl font-bold">{stats?.totalPieces || 0}</p>
+            <p className="text-2xl font-bold gradient-text-gold">{stats?.totalPieces || 0}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
@@ -289,7 +289,7 @@ export default function AdminAutonomous() {
               <Share2 className="w-4 h-4 text-blue-400" />
               <span className="text-xs text-muted-foreground">Platforms</span>
             </div>
-            <p className="text-2xl font-bold">{Object.keys((stats as any)?.byPlatform || {}).length}</p>
+            <p className="text-2xl font-bold gradient-text-gold">{Object.keys((stats as any)?.byPlatform || {}).length}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
@@ -315,7 +315,7 @@ export default function AdminAutonomous() {
             {status?.lastRunResult ? (
               <StatusBadge success={status.lastRunResult.success} />
             ) : (
-              <p className="text-sm text-muted-foreground">â</p>
+              <p className="text-sm text-muted-foreground">Ã¢ÂÂ</p>
             )}
           </CardContent>
         </Card>
@@ -330,7 +330,7 @@ export default function AdminAutonomous() {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
-        {/* ââ Overview Tab ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Overview Tab Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="overview" className="space-y-4 mt-4">
           {/* Pipeline diagram */}
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
@@ -351,7 +351,7 @@ export default function AdminAutonomous() {
                       <p className="text-sm font-medium text-center">{step.label}</p>
                       <p className="text-xs text-muted-foreground text-center mt-1">{step.desc}</p>
                     </div>
-                    {i < 2 && <span className="text-muted-foreground text-xl">â</span>}
+                    {i < 2 && <span className="text-muted-foreground text-xl">Ã¢ÂÂ</span>}
                   </div>
                 ))}
               </div>
@@ -381,8 +381,8 @@ export default function AdminAutonomous() {
                     <p className="text-xs text-muted-foreground">Published</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-emerald-400">
-                      {status.lastRunResult.summary.seoOptimised ? "â" : "â"}
+                    <p className="text-2xl font-bold text-emerald-400 gradient-text-gold">
+                      {status.lastRunResult.summary.seoOptimised ? "Ã¢ÂÂ" : "Ã¢ÂÂ"}
                     </p>
                     <p className="text-xs text-muted-foreground">SEO Run</p>
                   </div>
@@ -419,7 +419,7 @@ export default function AdminAutonomous() {
           )}
         </TabsContent>
 
-        {/* ââ Controls Tab ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Controls Tab Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="controls" className="space-y-4 mt-4">
           {/* Scheduler control */}
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
@@ -506,7 +506,7 @@ export default function AdminAutonomous() {
                     Full Autonomous Pipeline
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Content Creation â Distribution â SEO ({selectedPlatforms.length} platforms)
+                    Content Creation Ã¢ÂÂ Distribution Ã¢ÂÂ SEO ({selectedPlatforms.length} platforms)
                   </p>
                 </div>
                 <Button
@@ -595,7 +595,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ââ Content Queue Tab ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Content Queue Tab Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="content" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader>
@@ -671,7 +671,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ââ History Tab ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ History Tab Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="history" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader>
@@ -707,7 +707,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ââ Settings Tab ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Settings Tab Ã¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="settings" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader>
@@ -732,7 +732,7 @@ export default function AdminAutonomous() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">Generate Videos</p>
-                      <p className="text-xs text-muted-foreground">Generate short video clips (uses Sora/Runway â slower)</p>
+                      <p className="text-xs text-muted-foreground">Generate short video clips (uses Sora/Runway Ã¢ÂÂ slower)</p>
                     </div>
                     <Switch
                       checked={status.config.generateVideos}

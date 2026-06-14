@@ -91,7 +91,7 @@ export default function Collaboration() {
       setInviteEmail("");
       toast.success("Invitation created");
     },
-    onError: () => toast.error("We couldn't send that invite ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ check the email address and try again."),
+    onError: () => toast.error("We couldn't send that invite ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check the email address and try again."),
   });
 
   const updateRoleMutation = trpc.collaboration.updateRole.useMutation({
@@ -188,7 +188,7 @@ export default function Collaboration() {
                   <Users className="h-5 w-5 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{activeMembers.length}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{activeMembers.length}</p>
                   <p className="text-xs text-muted-foreground">Active Members</p>
                 </div>
               </div>
@@ -201,7 +201,7 @@ export default function Collaboration() {
                   <Clock className="h-5 w-5 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{pendingInvites.length}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{pendingInvites.length}</p>
                   <p className="text-xs text-muted-foreground">Pending Invites</p>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export default function Collaboration() {
                   <Shield className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{teamMembers.length}</p>
+                  <p className="text-2xl font-bold gradient-text-gold">{teamMembers.length}</p>
                   <p className="text-xs text-muted-foreground">Total Invitations</p>
                 </div>
               </div>
@@ -460,10 +460,10 @@ export default function Collaboration() {
               <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Viewer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ View-only access</SelectItem>
-                  <SelectItem value="editor">Editor ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Edit scenes & scripts</SelectItem>
-                  <SelectItem value="producer">Producer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Manage production</SelectItem>
-                  <SelectItem value="director">Director ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Full creative control</SelectItem>
+                  <SelectItem value="viewer">Viewer ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ View-only access</SelectItem>
+                  <SelectItem value="editor">Editor ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Edit scenes & scripts</SelectItem>
+                  <SelectItem value="producer">Producer ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Manage production</SelectItem>
+                  <SelectItem value="director">Director ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Full creative control</SelectItem>
                 </SelectContent>
               </Select>
             </div>
