@@ -156,7 +156,7 @@ export default function Characters() {
       toast.success("Character deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Couldn't remove that character — please try again."),
+    onError: () => toast.error("Couldn't remove that character â please try again."),
   });
 
   const aiGenMutation = trpc.character.aiGenerate.useMutation({
@@ -362,7 +362,7 @@ export default function Characters() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Character Library</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Build your cast — upload photos, generate with AI, or create from scratch
+            Build your cast â upload photos, generate with AI, or create from scratch
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -381,10 +381,10 @@ export default function Characters() {
         </div>
       </div>
 
-        {/* ── Wardrobe warning banner ────────────────────────────────────── */}
+        {/* ââ Wardrobe warning banner ââââââââââââââââââââââââââââââââââââââ */}
         {(characters?.length || 0) > 0 && (
           <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm">
-            <span className="text-lg leading-none mt-0.5">⚠️</span>
+            <span className="text-lg leading-none mt-0.5">â ï¸</span>
             <p className="text-amber-800 dark:text-amber-300">
               <span className="font-semibold">Wardrobe not assigned.</span>
               {" "}Characters without a wardrobe assignment will render in a plain all-black outfit.
@@ -415,7 +415,7 @@ export default function Characters() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i} className="bg-card/50 glass-card">
+            <Card key={i} className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="p-4">
                 <Skeleton className="aspect-[3/4] w-full rounded-md mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />
@@ -425,7 +425,7 @@ export default function Characters() {
           ))}
         </div>
       ) : !characters?.length ? (
-        <Card className="bg-card/50 border-dashed glass-card">
+        <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
           <CardContent className="p-16 flex flex-col items-center text-center">
             <div className="h-16 w-16 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center mb-4">
               <Users className="h-8 w-8 text-violet-400" />
@@ -459,7 +459,7 @@ export default function Characters() {
           }).map((char) => {
             const attrs = (char.attributes || {}) as any;
             return (
-              <Card key={char.id} className="bg-card/50 group cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => openDetail(char)}>
+              <Card key={char.id} className="bg-card/50 group cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => openDetail(char)}>
                 <CardContent className="p-3">
                   {char.photoUrl ? (
                     <div className="aspect-[3/4] rounded-md overflow-hidden mb-3 bg-muted relative">
@@ -500,7 +500,7 @@ export default function Characters() {
                   )}
                   <h3 className="font-medium text-sm truncate">{char.name}</h3>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">
-                    {[attrs.role || attrs.characterRole, attrs.age || attrs.estimatedAge, attrs.gender].filter(Boolean).join(" · ") || char.description?.slice(0, 40) || "No details"}
+                    {[attrs.role || attrs.characterRole, attrs.age || attrs.estimatedAge, attrs.gender].filter(Boolean).join(" Â· ") || char.description?.slice(0, 40) || "No details"}
                   </p>
                 </CardContent>
               </Card>
@@ -509,9 +509,9 @@ export default function Characters() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          CREATE FROM PHOTO DIALOG — Primary feature
-          ═══════════════════════════════════════════════════════════════════ */}
+      {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+          CREATE FROM PHOTO DIALOG â Primary feature
+          âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Dialog open={photoDialogOpen} onOpenChange={(open) => {
         if (!open) {
           setPhotoDialogOpen(false);
@@ -529,20 +529,20 @@ export default function Characters() {
               Create Character from Photo
             </DialogTitle>
             <DialogDescription className="text-sm">
-              Upload a reference photo and AI will analyze every detail — facial structure, skin tone, hair, eyes — then generate a super-realistic cinematic character portrait.
+              Upload a reference photo and AI will analyze every detail â facial structure, skin tone, hair, eyes â then generate a super-realistic cinematic character portrait.
             </DialogDescription>
             <div className="mt-3 p-3 bg-amber-400/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
               <p className="font-semibold text-amber-600 dark:text-amber-400">Photo Requirements for Best Results</p>
               <ul className="space-y-1 text-muted-foreground list-none">
-                <li><span className="text-foreground font-medium">✓ Face photo (required):</span> Clear frontal or 3/4 shot, well-lit, no heavy shadows. The AI reads facial structure, skin tone, hair, and eyes from this.</li>
-                <li><span className="text-foreground font-medium">✓ Full body photo (optional):</span> Helps with wardrobe and posture. Body shape is captured via the form fields.</li>
-                <li><span className="text-foreground font-medium">✓ Resolution:</span> At least 512×512px. Higher is better. JPG, PNG, or WebP.</li>
-                <li><span className="text-muted-foreground">✗ Avoid:</span> Heavy filters, sunglasses, extreme angles, group photos, or very dark images.</li>
+                <li><span className="text-foreground font-medium">â Face photo (required):</span> Clear frontal or 3/4 shot, well-lit, no heavy shadows. The AI reads facial structure, skin tone, hair, and eyes from this.</li>
+                <li><span className="text-foreground font-medium">â Full body photo (optional):</span> Helps with wardrobe and posture. Body shape is captured via the form fields.</li>
+                <li><span className="text-foreground font-medium">â Resolution:</span> At least 512Ã512px. Higher is better. JPG, PNG, or WebP.</li>
+                <li><span className="text-muted-foreground">â Avoid:</span> Heavy filters, sunglasses, extreme angles, group photos, or very dark images.</li>
               </ul>
             </div>
           </DialogHeader>
           <form onSubmit={handlePhotoSubmit} className="space-y-5 mt-3">
-            {/* Reference Photo — Upload or Search tabs */}
+            {/* Reference Photo â Upload or Search tabs */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Reference Photo <span className="text-destructive">*</span></Label>
 
@@ -602,7 +602,7 @@ export default function Characters() {
                         <Upload className="h-6 w-6 text-violet-400" />
                       </div>
                       <p className="text-sm font-medium">Click to upload a photo</p>
-                      <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP — up to 10MB</p>
+                      <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP â up to 10MB</p>
                       <p className="text-xs text-muted-foreground mt-0.5">Best results with clear, well-lit face photos</p>
                     </div>
                   )}
@@ -624,7 +624,7 @@ export default function Characters() {
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="e.g. Napoleon Bonaparte, Audrey Hepburn, Elon Musk…"
+                        placeholder="e.g. Napoleon Bonaparte, Audrey Hepburn, Elon Muskâ¦"
                         value={personSearchQuery}
                         onChange={(e) => setPersonSearchQuery(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setPersonSearchActive(personSearchQuery.trim()); } }}
@@ -647,7 +647,7 @@ export default function Characters() {
                   {personImageSearch.isLoading && (
                     <div className="flex items-center justify-center h-32 text-muted-foreground">
                       <Loader2 className="h-5 w-5 animate-spin mr-2 text-amber-400" />
-                      <span className="text-sm">Searching Wikimedia Commons…</span>
+                      <span className="text-sm">Searching Wikimedia Commonsâ¦</span>
                     </div>
                   )}
 
@@ -719,7 +719,7 @@ export default function Characters() {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Images sourced from Wikimedia Commons are publicly available under their respective licences.
                         You are responsible for ensuring you have the right to use a person's likeness for your production.
-                        Virelle Studios provides this tool for creative reference only — always obtain appropriate consent
+                        Virelle Studios provides this tool for creative reference only â always obtain appropriate consent
                         before using a real person's likeness in a commercial project.
                       </p>
                       <button
@@ -741,7 +741,7 @@ export default function Characters() {
                   {/* Attribution note */}
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    Images sourced from Wikimedia Commons — free, openly licensed media repository
+                    Images sourced from Wikimedia Commons â free, openly licensed media repository
                   </p>
                 </div>
               )}
@@ -849,9 +849,9 @@ export default function Characters() {
         </DialogContent>
       </Dialog>
 
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           CHARACTER DETAIL DIALOG
-          ═══════════════════════════════════════════════════════════════════ */}
+          âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
           {selectedChar && (() => {
@@ -916,9 +916,9 @@ export default function Characters() {
         </DialogContent>
       </Dialog>
 
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           MANUAL CHARACTER DIALOG
-          ═══════════════════════════════════════════════════════════════════ */}
+          âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Dialog open={dialogOpen} onOpenChange={(open) => !open && closeDialog()}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -1044,12 +1044,12 @@ export default function Characters() {
               <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
-            {/* ── Non-Human / Creature / Animal Toggle ───────────────────────── */}
+            {/* ââ Non-Human / Creature / Animal Toggle âââââââââââââââââââââââââ */}
               <div className="space-y-3 rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50/50 dark:bg-orange-950/20 p-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">Non-Human Character</p>
-                    <p className="text-xs text-muted-foreground">Animal, creature, robot, mutant — no human actor needed.</p>
+                    <p className="text-xs text-muted-foreground">Animal, creature, robot, mutant â no human actor needed.</p>
                   </div>
                   <button type="button"
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.isNonHuman ? 'bg-orange-500' : 'bg-muted-foreground/30'}`}
@@ -1062,7 +1062,7 @@ export default function Characters() {
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Type</p>
                     <select className="w-full text-sm border rounded-md px-2 py-1.5 bg-background" value={form.costumeType} onChange={e=>setField("costumeType", e.target.value)}>
-                      <option value="">Select type…</option>
+                      <option value="">Select typeâ¦</option>
                       {["animal","creature","monster","robot","alien","mutant","puppet","fantasy","supernatural","other"].map(t=>(
                         <option key={t} value={t}>{t.charAt(0).toUpperCase()+t.slice(1)}</option>
                       ))}
@@ -1085,7 +1085,7 @@ export default function Characters() {
 
               <Separator />
 
-            {/* ── DEEP CHARACTER PROFILE ─────────────────────────────── */}
+            {/* ââ DEEP CHARACTER PROFILE âââââââââââââââââââââââââââââââ */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="h-px flex-1 bg-border" />
@@ -1093,7 +1093,7 @@ export default function Characters() {
                 <div className="h-px flex-1 bg-border" />
               </div>
               <p className="text-xs text-muted-foreground">
-                Build a complete character bible — identity, personality, speech, environment, wardrobe, and relationships. The AI uses every detail to generate consistent, authentic scenes.
+                Build a complete character bible â identity, personality, speech, environment, wardrobe, and relationships. The AI uses every detail to generate consistent, authentic scenes.
               </p>
             </div>
             <DeepCharacterProfile
@@ -1113,9 +1113,9 @@ export default function Characters() {
         </DialogContent>
       </Dialog>
 
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
           AI GENERATE FROM FEATURES DIALOG
-          ═══════════════════════════════════════════════════════════════════ */}
+          âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
