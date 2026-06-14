@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * CreatorProfile â Public page for a Virelle Studios creator or studio.
+ * CreatorProfile — Public page for a Virelle Studios creator or studio.
  * Route: /creators/:slug
  */
 export default function CreatorProfile() {
@@ -31,7 +31,7 @@ export default function CreatorProfile() {
   // Set OG meta tags
   useEffect(() => {
     if (!profile) return;
-    document.title = `${profile.displayName} â VirElle Studios`;
+    document.title = `${profile.displayName} — VirElle Studios`;
     const setMeta = (name: string, content: string, prop = false) => {
       const attr = prop ? "property" : "name";
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -39,20 +39,20 @@ export default function CreatorProfile() {
       el.setAttribute("content", content);
     };
     setMeta("description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`);
-    setMeta("og:title", `${profile.displayName} â VirElle Studios`, true);
+    setMeta("og:title", `${profile.displayName} — VirElle Studios`, true);
     setMeta("og:description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`, true);
     if (profile.avatarUrl) setMeta("og:image", profile.avatarUrl, true);
     setMeta("og:url", `${window.location.origin}/creators/${slug}`, true);
     setMeta("og:type", "profile", true);
     setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", `${profile.displayName} â VirElle Studios`);
+    setMeta("twitter:title", `${profile.displayName} — VirElle Studios`);
     setMeta("twitter:description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`);
   }, [profile, slug]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-neutral-400 text-sm animate-pulse">Loading profileâ¦</div>
+        <div className="text-neutral-400 text-sm animate-pulse">Loading profile…</div>
       </div>
     );
   }
@@ -264,7 +264,7 @@ export default function CreatorProfile() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-neutral-800/60 px-4 py-6 mt-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> â AI Cinema Platform</span>
+          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> — AI Cinema Platform</span>
           <div className="flex items-center gap-4">
             <Link href="/showcase" className="hover:text-neutral-300 transition-colors">Showcase</Link>
             <Link href="/privacy" className="hover:text-neutral-300 transition-colors">Privacy</Link>
