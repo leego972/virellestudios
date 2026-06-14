@@ -190,10 +190,17 @@ export default function AssetMarketplace() {
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
                     <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
+                  ) : asset.category === "funding" ? (
                     <div className="w-full h-full flex items-center justify-center opacity-20">
-                      {asset.category === "funding" ? <DollarSign className="w-12 h-12" /> : <Package className="w-12 h-12" />}
+                      <DollarSign className="w-12 h-12" />
                     </div>
+                    ) : (
+                      <img
+                        src={`https://image.pollinations.ai/prompt/${encodeURIComponent(`cinematic product photo of ${asset.name}, professional studio lighting, dramatic dark background, ultra-detailed 8K, fashion editorial`)}&width=512&height=512&nologo=true&model=flux`}
+                        alt={asset.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
                   )}
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
                     {asset.isPremium ? (
