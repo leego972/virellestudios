@@ -48,5 +48,6 @@ export default function AwaitingReviewPage() {
         </ul>
       )}
         </div>
+  </div>
   );
 }

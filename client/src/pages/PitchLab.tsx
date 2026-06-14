@@ -197,5 +197,6 @@ export default function PitchLab() {
       </Tabs>
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={1} />}
       </div>
+  </div>
   );
 }

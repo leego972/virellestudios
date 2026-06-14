@@ -381,5 +381,6 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
       )}
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={2} />}
       </div>
+  </div>
   );
 }

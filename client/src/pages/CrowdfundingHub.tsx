@@ -1043,5 +1043,6 @@ export default function CrowdfundingHub() {
     >
       <CrowdfundingHubInner />
     </SubscriptionGate>
+  </div>
   );
 }

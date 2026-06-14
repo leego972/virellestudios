@@ -1,1 +1,50 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCBTdHVkaW9PcGVuZXIgZnJvbSAiQC9jb21wb25lbnRzL1N0dWRpb09wZW5lciI7CgovKioKICogU3RhbmRhbG9uZSBwcmV2aWV3IHBhZ2UgZm9yIHRoZSBWaXJlbGxlIFN0dWRpb3Mgb3BlbmVyIGFuaW1hdGlvbi4KICogUm91dGU6IC9vcGVuZXItcHJldmlldwogKiBUaGlzIHBhZ2UgaXMgZm9yIGludGVybmFsIHJldmlldyBvbmx5LgogKi8KZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gT3BlbmVyUHJldmlldygpIHsKICBjb25zdCBba2V5LCBzZXRLZXldID0gdXNlU3RhdGUoMCk7CiAgY29uc3QgW3BsYXlpbmcsIHNldFBsYXlpbmddID0gdXNlU3RhdGUodHJ1ZSk7CgogIGNvbnN0IGhhbmRsZUNvbXBsZXRlID0gKCkgPT4gc2V0UGxheWluZyhmYWxzZSk7CiAgY29uc3QgaGFuZGxlUmVwbGF5ID0gKCkgPT4geyBzZXRLZXkoayA9PiBrICsgMSk7IHNldFBsYXlpbmcodHJ1ZSk7IH07CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0iZml4ZWQgaW5zZXQtMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciIgc3R5bGU9e3sgYmFja2dyb3VuZDoiIzA3MDcwZSIgfX0+CiAgICAgIHtwbGF5aW5nICYmICgKICAgICAgICA8U3R1ZGlvT3BlbmVyCiAgICAgICAgICBrZXk9e2tleX0KICAgICAgICAgIG9uQ29tcGxldGU9e2hhbmRsZUNvbXBsZXRlfQogICAgICAgICAgbW9kZT0ibG9naW4iCiAgICAgICAgICBza2lwcGFibGU9e3RydWV9CiAgICAgICAgLz4KICAgICAgKX0KICAgICAgeyFwbGF5aW5nICYmICgKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIiPgogICAgICAgICAgPHAgc3R5bGU9e3sgY29sb3I6ICJyZ2JhKDIxMiwxNzUsNTUsMC43KSIsIGxldHRlclNwYWNpbmc6ICIwLjNlbSIsIGZvbnRTaXplOiAiMC44cmVtIiwgbWFyZ2luQm90dG9tOiAiMjRweCIgfX0+CiAgICAgICAgICAgIE9QRU5FUiBDT01QTEVURQogICAgICAgICAgPC9wPgogICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICBvbkNsaWNrPXtoYW5kbGVSZXBsYXl9CiAgICAgICAgICAgIHN0eWxlPXt7CiAgICAgICAgICAgICAgYmFja2dyb3VuZDogIm5vbmUiLAogICAgICAgICAgICAgIGJvcmRlcjogIjFweCBzb2xpZCByZ2JhKDIxMiwxNzUsNTUsMC41KSIsCiAgICAgICAgICAgICAgY29sb3I6ICIjRDRBRjM3IiwKICAgICAgICAgICAgICBwYWRkaW5nOiAiMTJweCAzMnB4IiwKICAgICAgICAgICAgICBsZXR0ZXJTcGFjaW5nOiAiMC4zZW0iLAogICAgICAgICAgICAgIGZvbnRTaXplOiAiMC44cmVtIiwKICAgICAgICAgICAgICBjdXJzb3I6ICJwb2ludGVyIiwKICAgICAgICAgICAgICBmb250RmFtaWx5OiAiJ1BsYXlmYWlyIERpc3BsYXknLCdHZW9yZ2lhJyxzZXJpZiIsCiAgICAgICAgICAgIH19CiAgICAgICAgICA+CiAgICAgICAgICAgIFJFUExBWQogICAgICAgICAgPC9idXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgICl9CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useState } from "react";
+import StudioOpener from "@/components/StudioOpener";
+
+/**
+ * Standalone preview page for the Virelle Studios opener animation.
+ * Route: /opener-preview
+ * This page is for internal review only.
+ */
+export default function OpenerPreview() {
+  const [key, setKey] = useState(0);
+  const [playing, setPlaying] = useState(true);
+
+  const handleComplete = () => setPlaying(false);
+  const handleReplay = () => { setKey(k => k + 1); setPlaying(true); };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center" style={{ background:"#07070e" }}>
+      {playing && (
+        <StudioOpener
+          key={key}
+          onComplete={handleComplete}
+          mode="login"
+          skippable={true}
+        />
+      )}
+      {!playing && (
+        <div className="text-center">
+          <p style={{ color: "rgba(212,175,55,0.7)", letterSpacing: "0.3em", fontSize: "0.8rem", marginBottom: "24px" }}>
+            OPENER COMPLETE
+          </p>
+          <button
+            onClick={handleReplay}
+            style={{
+              background: "none",
+              border: "1px solid rgba(212,175,55,0.5)",
+              color: "#D4AF37",
+              padding: "12px 32px",
+              letterSpacing: "0.3em",
+              fontSize: "0.8rem",
+              cursor: "pointer",
+              fontFamily: "'Playfair Display','Georgia',serif",
+            }}
+          >
+            REPLAY
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -164,5 +164,6 @@ import { useState, useMemo } from "react";
         )}
         <p className="text-xs text-muted-foreground">Rates are approximate and subject to change. Always verify current terms with the official film commission before making production decisions.</p>
           </div>
+  </div>
   );
 }

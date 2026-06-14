@@ -145,5 +145,6 @@ import { useState, useMemo } from "react";
         )}
         <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross ÃÂÃÂÃÂÃÂ· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
           </div>
+  </div>
   );
 }

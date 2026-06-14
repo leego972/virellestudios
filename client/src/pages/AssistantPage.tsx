@@ -41,8 +41,8 @@ import { useState, useEffect } from "react";
           <div
             className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              width: "min(70vh, 70vw)",
-              height: "min(70vh, 70vw)",
+              width: "min(88vh, 88vw)",
+              height: "min(88vh, 88vw)",
               background: "radial-gradient(circle, rgba(160,180,255,0.15) 0%, rgba(100,130,255,0.08) 40%, transparent 72%)",
               filter: "blur(32px)",
             }}
@@ -50,7 +50,7 @@ import { useState, useEffect } from "react";
           {/* Face container */}
           <div
             className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2"
-            style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)" }}
+            style={{ width: "min(80vh, 80vw)", height: "min(80vh, 80vw)" }}
           >
             <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
           </div>

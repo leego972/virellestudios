@@ -1246,5 +1246,7 @@ export default function ContentCreatorPage() {
       </Tabs>
     </div>
     </div>
+  </div>
+  </div>
   );
 }

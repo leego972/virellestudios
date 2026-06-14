@@ -475,5 +475,6 @@ export default function Projects() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
+  </div>
   );
 }

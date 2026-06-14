@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
   // Eye socket positions — calibrated to virelle-face.png (0-100 viewBox)
   const GEO = {
-    leftEye:  { cx: 37, cy: 57, rx: 6,   ry: 4.5 },
-    rightEye: { cx: 63, cy: 57, rx: 6,   ry: 4.5 },
+    leftEye:  { cx: 38, cy: 60, rx: 7,   ry: 5.0 },
+    rightEye: { cx: 62, cy: 60, rx: 7,   ry: 5.0 },
   };
 
   type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
@@ -64,7 +64,7 @@ import React, { useEffect, useState } from 'react';
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           position: 'relative',
-          width: '72%',
+          width: '88%',
           aspectRatio: '1 / 1',
           animation: 'virelle-float 4.2s ease-in-out infinite',
           filter: isActive

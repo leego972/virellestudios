@@ -1166,5 +1166,7 @@ export default function WardrobeMarketplacePage() {
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <MarketplaceGrid search={search} setSearch={setSearch} setLocation={setLocation}
     </div>
+  </div>
+  </div>
   );
 }

@@ -2539,5 +2539,6 @@ export default function SceneEditor() {
       )}
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
         </div>
+  </div>
   );
 }

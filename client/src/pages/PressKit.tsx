@@ -204,6 +204,7 @@ export default function PressKit() {
         </DialogContent>
       </Dialog>
     </div>
+  </div>
   );
 }
 

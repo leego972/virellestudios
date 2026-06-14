@@ -358,5 +358,7 @@ export default function Credits() {
       </Card>
 
         </div>
+  </div>
+  </div>
   );
 }

@@ -685,5 +685,6 @@ export default function ScriptBreakdownWizardPage() {
         </div>
       )}
       </div>
+  </div>
   );
 }

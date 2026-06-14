@@ -226,7 +226,7 @@ export default function DialogueEditor() {
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6">
           {/* Scene Sidebar */}
           <div className="sm:col-span-3">
-            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+            <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Scenes</CardTitle>
               </CardHeader>
@@ -267,7 +267,7 @@ export default function DialogueEditor() {
 
           {/* Dialogue Conversation View */}
           <div className="sm:col-span-9">
-            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+            <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
@@ -276,7 +276,7 @@ export default function DialogueEditor() {
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+              <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
                 <ScrollArea className="h-[calc(100vh-18rem)]">
                   {conversationView.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground">

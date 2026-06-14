@@ -351,5 +351,6 @@ export default function BrandOutreach() {
       </div>
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={5} />}
       </div>
+  </div>
   );
 }

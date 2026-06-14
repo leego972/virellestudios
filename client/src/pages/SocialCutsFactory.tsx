@@ -273,5 +273,6 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       )}
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
       </div>
+  </div>
   );
 }

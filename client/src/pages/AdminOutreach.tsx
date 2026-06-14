@@ -595,5 +595,6 @@ export default function AdminOutreach() {
         </DialogContent>
       </Dialog>
         </div>
+  </div>
   );
 }

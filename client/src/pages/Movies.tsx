@@ -1027,5 +1027,7 @@ export default function Movies() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
+  </div>
+  </div>
   );
 }

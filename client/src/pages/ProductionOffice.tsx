@@ -690,5 +690,6 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
         </div>
       </CardContent>
     </Card>
+  </div>
   );
 }

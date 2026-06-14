@@ -192,5 +192,6 @@ export default function FestivalTracker() {
         })}
       </div>
         </div>
+  </div>
   );
 }

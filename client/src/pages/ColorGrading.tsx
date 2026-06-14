@@ -51,7 +51,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
     ]},
   ];
 
-  // ─── Color Wheel component ───────────────────────────────────────────────function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintChange, onMasterChange, color }: {
+  // ─── Color Wheel component ───────────────────────────────────────────────
+function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintChange, onMasterChange, color }: {
       label: string; sublabel: string; temp: number; tint: number; master: number;
       onTempChange: (v: number) => void; onTintChange: (v: number) => void; onMasterChange: (v: number) => void;
       color: string;

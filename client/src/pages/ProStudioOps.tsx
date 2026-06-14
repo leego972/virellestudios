@@ -970,5 +970,6 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
         </CardContent>
       </Card>
         </div>
+  </div>
   );
 }

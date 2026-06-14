@@ -964,5 +964,6 @@ export default function NewProject() {
         </div>
       </form>
         </div>
+  </div>
   );
 }
