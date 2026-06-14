@@ -475,7 +475,7 @@ export default function AdminAutonomous() {
                   <Switch
                     id="generate-videos"
                     checked={generateVideos}
-                    onCheckedChange={setGenerateVideos}
+                    onCheckedChange={setGenerateVideos} className="data-[state=checked]:bg-amber-500"
                   />
                   <Label htmlFor="generate-videos" className="text-sm">Generate Videos (slower)</Label>
                 </div>
@@ -483,7 +483,7 @@ export default function AdminAutonomous() {
                   <Switch
                     id="run-seo"
                     checked={runSeo}
-                    onCheckedChange={setRunSeo}
+                    onCheckedChange={setRunSeo} className="data-[state=checked]:bg-amber-500"
                   />
                   <Label htmlFor="run-seo" className="text-sm">Run SEO Optimisation</Label>
                 </div>

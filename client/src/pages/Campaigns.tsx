@@ -84,7 +84,7 @@ import { useLocation } from "wouter";
               />
             </div>
             <Select value={genreFilter} onValueChange={setGenreFilter}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue placeholder="Genre" />
               </SelectTrigger>
               <SelectContent>
@@ -93,7 +93,7 @@ import { useLocation } from "wouter";
               </SelectContent>
             </Select>
             <Select value={formatFilter} onValueChange={setFormatFilter}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue placeholder="Format" />
               </SelectTrigger>
               <SelectContent>
@@ -102,7 +102,7 @@ import { useLocation } from "wouter";
               </SelectContent>
             </Select>
             <Select value={modelFilter} onValueChange={setModelFilter}>
-              <SelectTrigger className="w-44">
+              <SelectTrigger className="w-44 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue placeholder="Funding model" />
               </SelectTrigger>
               <SelectContent>

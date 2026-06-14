@@ -663,7 +663,7 @@ export default function DirectorCut() {
             <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/10 bg-zinc-900/60 shrink-0 overflow-x-auto">
               <span className="text-xs text-zinc-500 font-medium shrink-0">Cut:</span>
               <Select value={activeCutId?.toString() ?? ""} onValueChange={(v) => setActiveCutId(v ? parseInt(v) : null)}>
-                <SelectTrigger className="h-6 text-xs w-44 shrink-0 border-white/10 bg-zinc-800">
+                <SelectTrigger className="h-6 text-xs w-44 shrink-0 border-white/10 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="No cut selected" />
                 </SelectTrigger>
                 <SelectContent>
@@ -703,7 +703,7 @@ export default function DirectorCut() {
                   </Button>
                   {!activeCut.isLocked && (
                     <Select onValueChange={(v) => { if (activeCutId && v) addSceneToCutMutation.mutate({ cutId: activeCutId, sceneId: parseInt(v) }); }}>
-                      <SelectTrigger className="h-6 text-xs w-36 shrink-0 border-white/10 bg-zinc-800">
+                      <SelectTrigger className="h-6 text-xs w-36 shrink-0 border-white/10 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue placeholder="+ Add scene" />
                       </SelectTrigger>
                       <SelectContent>

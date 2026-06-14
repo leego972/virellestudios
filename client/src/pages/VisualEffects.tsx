@@ -282,7 +282,7 @@ import { useState } from "react";
                       <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search effectsÃ¢ÂÂ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                     </div>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all" className="text-xs">All Categories</SelectItem>
                         {VFX_CATEGORIES.map(c => <SelectItem key={c.id} value={c.id} className="text-xs">{c.label}</SelectItem>)}
@@ -378,7 +378,7 @@ import { useState } from "react";
                           <div className="space-y-1.5">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</Label>
                             <Select value={vp.status} onValueChange={v => saveParams(selectedVfx, { status: v })}>
-                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 {VFX_STATUSES.map(s => (
                                   <SelectItem key={s.id} value={s.id} className="text-xs">
@@ -391,7 +391,7 @@ import { useState } from "react";
                           <div className="space-y-1.5">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Complexity</Label>
                             <Select value={vp.complexity} onValueChange={v => saveParams(selectedVfx, { complexity: v })}>
-                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 {VFX_COMPLEXITY.map(c => (
                                   <SelectItem key={c.id} value={c.id} className="text-xs">
@@ -420,14 +420,14 @@ import { useState } from "react";
                           <div className="space-y-1.5">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Layer</Label>
                             <Select value={selectedVfx.layer || "foreground"} onValueChange={v => updateMutation.mutate({ id: selectedVfx.id, layer: v as any })}>
-                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                               <SelectContent>{LAYERS.map(l => <SelectItem key={l} value={l} className="text-xs capitalize">{l}</SelectItem>)}</SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-1.5">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Blend Mode</Label>
                             <Select value={selectedVfx.blendMode || "normal"} onValueChange={v => updateMutation.mutate({ id: selectedVfx.id, blendMode: v })}>
-                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                               <SelectContent>{BLEND_MODES.map(m => <SelectItem key={m} value={m} className="text-xs capitalize">{m}</SelectItem>)}</SelectContent>
                             </Select>
                           </div>
@@ -455,14 +455,14 @@ import { useState } from "react";
                             <div className="space-y-1.5">
                               <Label className="text-[9px] text-muted-foreground">Software</Label>
                               <Select value={vp.software} onValueChange={v => saveParams(selectedVfx, { software: v })}>
-                                <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                                 <SelectContent>{PIPELINE_SOFTWARE.map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>
                             <div className="space-y-1.5">
                               <Label className="text-[9px] text-muted-foreground">Color Space</Label>
                               <Select value={vp.colorSpace} onValueChange={v => saveParams(selectedVfx, { colorSpace: v })}>
-                                <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                                 <SelectContent>{COLOR_SPACES.map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>

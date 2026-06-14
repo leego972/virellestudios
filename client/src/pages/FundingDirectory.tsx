@@ -778,7 +778,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <div className="space-y-1.5">
                   <Label className="text-xs">Format *</Label>
                   <Select value={form.format} onValueChange={(v) => set("format", v)}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {["Feature Film", "Short Film", "Documentary", "Animation", "TV Series", "Limited Series", "Web Series", "Hybrid"].map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -789,7 +789,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <div className="space-y-1.5">
                   <Label className="text-xs">Stage *</Label>
                   <Select value={form.stage} onValueChange={(v) => set("stage", v)}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {["Development", "Pre-Production", "Production", "Post-Production", "Completion", "Distribution"].map((s) => (
                         <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -915,7 +915,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <div className="space-y-1.5">
                   <Label className="text-xs">Rights Type</Label>
                   <Select value={form.rightsType} onValueChange={(v) => set("rightsType", v)}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>
                       {["Original Screenplay", "Adapted ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Novel / Book", "Adapted ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Article / Journalism", "Life Rights", "Remake Rights", "Archive-Driven", "Commissioned", "Other"].map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -930,7 +930,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <div className="space-y-1.5">
                   <Label className="text-xs">Applicant's Rights Position</Label>
                   <Select value={form.applicantRightsPosition} onValueChange={(v) => set("applicantRightsPosition", v)}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select position" /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select position" /></SelectTrigger>
                     <SelectContent>
                       {["Owned", "Optioned", "Licensed", "Commissioned", "In Negotiation", "Not Yet Secured"].map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -999,7 +999,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <div className="space-y-1.5">
                   <Label className="text-xs">Project Currency</Label>
                   <Select value={form.projectCurrency} onValueChange={(v) => set("projectCurrency", v)}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {["USD", "EUR", "GBP", "AUD", "CAD", "NZD", "ZAR", "NGN", "KES", "GHS", "INR", "JPY", "KRW", "CNY", "BRL", "MXN", "ARS", "NOK", "SEK", "DKK", "CHF", "Other"].map((c) => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -1085,7 +1085,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
               <div className="space-y-1.5">
                 <Label className="text-xs">Primary Release Pathway</Label>
                 <Select value={form.primaryReleasePathway} onValueChange={(v) => set("primaryReleasePathway", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select pathway" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select pathway" /></SelectTrigger>
                   <SelectContent>
                     {["Festival + Sales", "Theatrical", "Broadcaster", "Streamer", "Educational / Institutional", "Impact / Community", "Direct-to-Audience", "Hybrid"].map((t) => (
                       <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -1519,7 +1519,7 @@ export default function FundingDirectory() {
           )}
         </div>
         <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-          <SelectTrigger className="h-9 text-sm w-[180px]">
+          <SelectTrigger className="h-9 text-sm w-[180px] focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
             <Globe className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
             <SelectValue placeholder="All Countries" />
           </SelectTrigger>
@@ -1529,7 +1529,7 @@ export default function FundingDirectory() {
           </SelectContent>
         </Select>
         <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="h-9 text-sm w-[200px]">
+          <SelectTrigger className="h-9 text-sm w-[200px] focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
             <Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
             <SelectValue placeholder="All Types" />
           </SelectTrigger>

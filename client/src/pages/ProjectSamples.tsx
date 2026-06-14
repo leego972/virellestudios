@@ -349,7 +349,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
             <div>
               <Label>Genre</Label>
               <Select value={form.genre} onValueChange={(v) => setForm(f => ({ ...f, genre: v }))}>
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="Select genre" />
                 </SelectTrigger>
                 <SelectContent>
@@ -360,7 +360,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
             <div>
               <Label>AI Provider</Label>
               <Select value={form.provider} onValueChange={(v) => setForm(f => ({ ...f, provider: v }))}>
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="Select provider" />
                 </SelectTrigger>
                 <SelectContent>

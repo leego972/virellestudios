@@ -543,7 +543,7 @@ export default function ContentCreatorPage() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Platform</Label>
                     <Select value={platform} onValueChange={setPlatform}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -558,7 +558,7 @@ export default function ContentCreatorPage() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Content Type</Label>
                     <Select value={contentType} onValueChange={setContentType}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -606,7 +606,7 @@ export default function ContentCreatorPage() {
                     value={selectedCampaignId?.toString() || "none"}
                     onValueChange={v => setSelectedCampaignId(v === "none" ? undefined : Number(v))}
                   >
-                    <SelectTrigger className="h-9">
+                    <SelectTrigger className="h-9 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder="No campaign" />
                     </SelectTrigger>
                     <SelectContent>
@@ -620,7 +620,7 @@ export default function ContentCreatorPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Switch checked={includeImage} onCheckedChange={setIncludeImage} id="include-image" />
+                    <Switch checked={includeImage} onCheckedChange={setIncludeImage} id="include-image" className="data-[state=checked]:bg-amber-500" />
                     <Label htmlFor="include-image" className="text-xs cursor-pointer">Generate cinematic image</Label>
                   </div>
                 </div>
@@ -755,7 +755,7 @@ export default function ContentCreatorPage() {
         <TabsContent value="queue" className="space-y-4 mt-4">
           <div className="flex items-center gap-3 flex-wrap">
             <Select value={queuePlatformFilter || "all"} onValueChange={v => setQueuePlatformFilter(v === "all" ? undefined : v)}>
-              <SelectTrigger className="h-8 w-40">
+              <SelectTrigger className="h-8 w-40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue placeholder="All Platforms" />
               </SelectTrigger>
               <SelectContent>
@@ -764,7 +764,7 @@ export default function ContentCreatorPage() {
               </SelectContent>
             </Select>
             <Select value={queueStatusFilter || "all"} onValueChange={v => setQueueStatusFilter(v === "all" ? undefined : v)}>
-              <SelectTrigger className="h-8 w-36">
+              <SelectTrigger className="h-8 w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
@@ -884,15 +884,15 @@ export default function ContentCreatorPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Switch checked={newCampaignTikTok} onCheckedChange={setNewCampaignTikTok} id="tiktok-link" />
+                    <Switch checked={newCampaignTikTok} onCheckedChange={setNewCampaignTikTok} id="tiktok-link" className="data-[state=checked]:bg-amber-500" />
                     <Label htmlFor="tiktok-link" className="text-xs">Link TikTok</Label>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Switch checked={newCampaignSeo} onCheckedChange={setNewCampaignSeo} id="seo-link" />
+                    <Switch checked={newCampaignSeo} onCheckedChange={setNewCampaignSeo} id="seo-link" className="data-[state=checked]:bg-amber-500" />
                     <Label htmlFor="seo-link" className="text-xs">Link SEO</Label>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Switch checked={generateStrategy} onCheckedChange={setGenerateStrategy} id="gen-strategy" />
+                    <Switch checked={generateStrategy} onCheckedChange={setGenerateStrategy} id="gen-strategy" className="data-[state=checked]:bg-amber-500" />
                     <Label htmlFor="gen-strategy" className="text-xs">AI Strategy</Label>
                   </div>
                 </div>
@@ -988,7 +988,7 @@ export default function ContentCreatorPage() {
                 <div className="space-y-1.5">
                   <Label className="text-xs">Campaign</Label>
                   <Select value={bulkCampaignId?.toString() || "none"} onValueChange={v => setBulkCampaignId(v === "none" ? undefined : Number(v))}>
-                    <SelectTrigger className="h-9">
+                    <SelectTrigger className="h-9 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder="Select campaign" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1015,7 +1015,7 @@ export default function ContentCreatorPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Switch checked={bulkIncludeImages} onCheckedChange={setBulkIncludeImages} id="bulk-images" />
+                  <Switch checked={bulkIncludeImages} onCheckedChange={setBulkIncludeImages} id="bulk-images" className="data-[state=checked]:bg-amber-500" />
                   <Label htmlFor="bulk-images" className="text-xs">Generate cinematic images</Label>
                 </div>
                 <Button

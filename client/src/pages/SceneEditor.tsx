@@ -1186,7 +1186,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Time of Day</Label>
                       <Select value={form.timeOfDay} onValueChange={v => setField("timeOfDay", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.entries(TIME_OF_DAY_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                         </SelectContent>
@@ -1195,7 +1195,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Season</Label>
                       <Select value={form.season} onValueChange={v => setField("season", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Any" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Any" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="any_season">Any Season</SelectItem>
                           {Object.entries(SEASON_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1205,7 +1205,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground flex items-center gap-1"><Cloud className="h-3 w-3" />Weather</Label>
                       <Select value={form.weather} onValueChange={v => setField("weather", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.entries(WEATHER_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                         </SelectContent>
@@ -1214,7 +1214,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground flex items-center gap-1"><Heart className="h-3 w-3" />Mood</Label>
                       <Select value={form.mood} onValueChange={v => setField("mood", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select mood" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select mood" /></SelectTrigger>
                         <SelectContent>
                           {Object.entries(MOOD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                         </SelectContent>
@@ -1223,7 +1223,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Emotional Beat</Label>
                       <Select value={form.emotionalBeat} onValueChange={v => setField("emotionalBeat", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select beat" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select beat" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="unspecified">Unspecified</SelectItem>
                           {EMOTIONAL_BEAT_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1233,7 +1233,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Scene Type <span className="text-muted-foreground/60 text-[10px]">(camera grammar)</span></Label>
                       <Select value={form.sceneType} onValueChange={v => setField("sceneType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto-detect from genre/mood" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Auto-detect from genre/mood" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto-detect from genre &amp; mood</SelectItem>
                           <SelectItem value="action">Action ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ fight, chase, battle</SelectItem>
@@ -1265,7 +1265,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Camera Angle / Shot</Label>
                       <Select value={form.cameraAngle} onValueChange={v => setField("cameraAngle", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.entries(CAMERA_ANGLE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                         </SelectContent>
@@ -1274,7 +1274,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Camera Movement</Label>
                       <Select value={form.cameraMovement} onValueChange={v => setField("cameraMovement", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select movement" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select movement" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="static">No movement (static)</SelectItem>
                           {Object.entries(CAMERA_MOVEMENT_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1284,7 +1284,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Lens Type</Label>
                       <Select value={form.lensType} onValueChange={v => setField("lensType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select lens" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="auto_default">Auto / Default</SelectItem>
                           {Object.entries(LENS_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1294,7 +1294,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Depth of Field</Label>
                       <Select value={form.depthOfField} onValueChange={v => setField("depthOfField", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select DoF" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select DoF" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="auto">Auto</SelectItem>
                           {Object.entries(DEPTH_OF_FIELD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1304,7 +1304,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground flex items-center gap-1"><Lightbulb className="h-3 w-3" />Lighting</Label>
                       <Select value={form.lighting} onValueChange={v => setField("lighting", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.entries(LIGHTING_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                         </SelectContent>
@@ -1313,7 +1313,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Color Grade</Label>
                       <Select value={form.colorGrade} onValueChange={v => setField("colorGrade", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select grade" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select grade" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">No specific grade</SelectItem>
                           {Object.entries(COLOR_GRADE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1323,7 +1323,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Focal Length</Label>
                       <Select value={form.focalLength} onValueChange={v => setField("focalLength", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="auto_director">Auto / Director's choice</SelectItem>
                           {FOCAL_LENGTH_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1333,7 +1333,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Shot Type</Label>
                       <Select value={form.shotType} onValueChange={v => setField("shotType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="unspecified">Unspecified</SelectItem>
                           {SHOT_TYPE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1343,7 +1343,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Frame Rate</Label>
                       <Select value={form.frameRate} onValueChange={v => setField("frameRate", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="default_24fps">Default (24fps)</SelectItem>
                           {FRAME_RATE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1353,7 +1353,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Aspect Ratio</Label>
                       <Select value={form.aspectRatio} onValueChange={v => setField("aspectRatio", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="project_default">Project default</SelectItem>
                           {ASPECT_RATIO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1363,7 +1363,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Color Temperature</Label>
                       <Select value={form.colorTemperature} onValueChange={v => setField("colorTemperature", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="auto">Auto</SelectItem>
                           {COLOR_TEMPERATURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1373,7 +1373,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Color Palette</Label>
                       <Select value={form.colorPalette} onValueChange={v => setField("colorPalette", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="auto">Auto</SelectItem>
                           {COLOR_PALETTE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1401,7 +1401,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Camera Body / Sensor</Label>
                       <Select value={form.cameraBody || ""} onValueChange={v => setField("cameraBody", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select camera body" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select camera body" /></SelectTrigger>
                         <SelectContent>
                           {CAMERA_BODY_OPTIONS.map(o => <SelectItem key={o} value={o}>{CAMERA_BODY_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1410,7 +1410,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Lens Glass</Label>
                       <Select value={form.lensBrand || ""} onValueChange={v => setField("lensBrand", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select lens" /></SelectTrigger>
                         <SelectContent>
                           {LENS_BRAND_OPTIONS.map(o => <SelectItem key={o} value={o}>{LENS_BRAND_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1419,7 +1419,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Aperture / T-Stop</Label>
                       <Select value={form.aperture || ""} onValueChange={v => setField("aperture", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aperture" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select aperture" /></SelectTrigger>
                         <SelectContent>
                           {APERTURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{APERTURE_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1428,7 +1428,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Speed Ramp</Label>
                       <Select value={form.speedRamp || "normal"} onValueChange={v => setField("speedRamp", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Normal speed" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Normal speed" /></SelectTrigger>
                         <SelectContent>
                           {SPEED_RAMP_OPTIONS.map(o => <SelectItem key={o} value={o}>{SPEED_RAMP_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1437,7 +1437,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Optical Filter</Label>
                       <Select value={form.lensFilter || ""} onValueChange={v => setField("lensFilter", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No filter" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="No filter" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">No filter (clean)</SelectItem>
                           <SelectItem value="black_pro_mist_14">Black Pro-Mist ÃÂÃÂÃÂÃÂ¼ ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ subtle halation</SelectItem>
@@ -1466,7 +1466,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Shooting Format / Color Science</Label>
                       <Select value={form.shootingFormat || ""} onValueChange={v => setField("shootingFormat", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto / REC709" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Auto / REC709" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto / REC709 (standard)</SelectItem>
                           <SelectItem value="logc3_arriraw">ARRI LogC3 / ARRIRAW</SelectItem>
@@ -1508,7 +1508,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Coverage Type</Label>
                       <Select value={form.coverageType || ""} onValueChange={v => setField("coverageType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Unspecified" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Unspecified" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto / Unspecified</SelectItem>
                           <SelectItem value="establishing">Establishing ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ sets location/context</SelectItem>
@@ -1531,7 +1531,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Screen Direction</Label>
                       <Select value={form.screenDirection || ""} onValueChange={v => setField("screenDirection", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Auto" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto / Not specified</SelectItem>
                           <SelectItem value="ltr">LÃÂÃÂ¢ÃÂÃÂÃÂÃÂR ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ subjects move left to right</SelectItem>
@@ -1574,7 +1574,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Visual Style</Label>
                       <Select value={form.visualStyle || "photorealistic"} onValueChange={v => setField("visualStyle", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Photorealistic" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Photorealistic" /></SelectTrigger>
                         <SelectContent>
                           {VISUAL_STYLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{VISUAL_STYLE_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1583,7 +1583,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Genre Motion Logic</Label>
                       <Select value={form.genreMotion || "auto"} onValueChange={v => setField("genreMotion", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Auto" /></SelectTrigger>
                         <SelectContent>
                           {GENRE_MOTION_OPTIONS.map(o => <SelectItem key={o} value={o}>{GENRE_MOTION_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1592,7 +1592,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Lip-Sync Mode</Label>
                       <Select value={form.lipSyncMode || "none"} onValueChange={v => setField("lipSyncMode", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No lip sync" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="No lip sync" /></SelectTrigger>
                         <SelectContent>
                           {LIP_SYNC_OPTIONS.map(o => <SelectItem key={o} value={o}>{LIP_SYNC_LABELS[o] || o}</SelectItem>)}
                         </SelectContent>
@@ -1625,7 +1625,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Location Type</Label>
                       <Select value={form.locationType} onValueChange={v => setField("locationType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select location" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select location" /></SelectTrigger>
                         <SelectContent>
                           {LOCATION_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                         </SelectContent>
@@ -1634,7 +1634,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground flex items-center gap-1"><Home className="h-3 w-3" />Architectural Style</Label>
                       <Select value={form.realEstateStyle} onValueChange={v => setField("realEstateStyle", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select style" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select style" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="any_style">Any style</SelectItem>
                           {REAL_ESTATE_STYLES.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -1658,7 +1658,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground flex items-center gap-1"><Car className="h-3 w-3" />Vehicle</Label>
                       <Select value={form.vehicleType} onValueChange={v => setField("vehicleType", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {VEHICLE_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                         </SelectContent>
@@ -1667,7 +1667,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Crowd Level</Label>
                       <Select value={form.crowdLevel} onValueChange={v => setField("crowdLevel", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="unspecified">Unspecified</SelectItem>
                           {Object.entries(CROWD_LEVEL_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -1744,7 +1744,7 @@ export default function SceneEditor() {
                                   <div className="space-y-1">
                                     <Label className="text-[11px] text-muted-foreground">Wardrobe Category</Label>
                                     <Select value={entry.wardrobeCategory} onValueChange={v => updateWardrobe({ wardrobeCategory: v })}>
-                                      <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue placeholder="Default" /></SelectTrigger>
+                                      <SelectTrigger className="h-8 text-xs bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Default" /></SelectTrigger>
                                       <SelectContent>
                                         <SelectItem value="from_profile">Default (from profile)</SelectItem>
                                         {WARDROBE_CATEGORIES.map(c => <SelectItem key={c} value={c}>{WARDROBE_CATEGORY_LABELS[c]}</SelectItem>)}
@@ -1859,7 +1859,7 @@ export default function SceneEditor() {
                         <div className="space-y-1">
                           <Label className="text-[11px] text-muted-foreground">Role Type</Label>
                           <Select value={role.roleType} onValueChange={v => updateVoiceRole(idx, { roleType: v })}>
-                            <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue /></SelectTrigger>
+                            <SelectTrigger className="h-8 text-xs bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="narrator">Narrator</SelectItem>
                               <SelectItem value="voiceover">Voiceover (V.O.)</SelectItem>
@@ -1938,7 +1938,7 @@ export default function SceneEditor() {
                         value={form.soundtrackId ? String(form.soundtrackId) : "none"}
                         onValueChange={v => setField("soundtrackId", v === "none" ? null : parseInt(v))}
                       >
-                        <SelectTrigger className="h-9 text-sm bg-background/50">
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                           <SelectValue placeholder="Select soundtrack" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1996,7 +1996,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Visual Effects</Label>
                       <Select value={form.vfxElements} onValueChange={v => setField("vfxElements", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No VFX" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="No VFX" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">No VFX</SelectItem>
                           {Object.entries(VFX_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -2006,7 +2006,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Scene Transition</Label>
                       <Select value={form.transition} onValueChange={v => setField("transition", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Cut" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Cut" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="hard_cut">Hard Cut (default)</SelectItem>
                           {Object.entries(TRANSITION_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
@@ -2033,7 +2033,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Music Mood</Label>
                       <Select value={form.musicMood} onValueChange={v => setField("musicMood", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="no_preference">No preference</SelectItem>
                           {MUSIC_MOOD_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -2043,7 +2043,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Music Tempo</Label>
                       <Select value={form.musicTempo} onValueChange={v => setField("musicTempo", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="no_preference">No preference</SelectItem>
                           {MUSIC_TEMPO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -2053,7 +2053,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Ambient Sound</Label>
                       <Select value={form.ambientSound} onValueChange={v => setField("ambientSound", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">No specific ambient</SelectItem>
                           {AMBIENT_SOUND_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
@@ -2088,7 +2088,7 @@ export default function SceneEditor() {
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Action Description</Label>
                       <Select value={form.actionDescription} onValueChange={v => setField("actionDescription", v)}>
-                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="custom">Custom (see description)</SelectItem>
                           {ACTION_PRESETS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}

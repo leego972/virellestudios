@@ -203,7 +203,7 @@ export default function AdminSignatureCast() {
                               value={editDraft.tier ?? actor.tier}
                               onValueChange={(v) => setEditDraft((d) => ({ ...d, tier: v }))}
                             >
-                              <SelectTrigger className="h-7 text-xs mt-1">
+                              <SelectTrigger className="h-7 text-xs mt-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>

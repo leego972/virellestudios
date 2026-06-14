@@ -189,7 +189,7 @@ import { useState } from "react";
             </div>
             <div className="flex items-center gap-2">
               <Select value={exportFormat} onValueChange={setExportFormat}>
-                <SelectTrigger className="h-8 w-24 text-xs"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 w-24 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="srt" className="text-xs">SRT</SelectItem>
                   <SelectItem value="vtt" className="text-xs">WebVTT</SelectItem>
@@ -285,7 +285,7 @@ import { useState } from "react";
                     </div>
                     <div className="space-y-2">
                       <Select value={newLang} onValueChange={v => { setNewLang(v); setNewLangName(LANGUAGES.find(l=>l.code===v)?.name||v); }}>
-                        <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-8 text-xs bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>{LANGUAGES.map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.name}</SelectItem>)}</SelectContent>
                       </Select>
                       <Button size="sm" className="w-full gap-2" style={{ background: "linear-gradient(135deg,#6366f1,#8b5cf6)" }} onClick={handleGenerateAI} disabled={generating || generateMutation.isPending}>
@@ -303,7 +303,7 @@ import { useState } from "react";
                         <button onClick={() => setShowAddTrack(false)}><X className="h-3.5 w-3.5 text-muted-foreground" /></button>
                       </div>
                       <Select value={newLang} onValueChange={v => { setNewLang(v); setNewLangName(LANGUAGES.find(l=>l.code===v)?.name||v); }}>
-                        <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-8 text-xs bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>{LANGUAGES.map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.name}</SelectItem>)}</SelectContent>
                       </Select>
                       <Button size="sm" className="w-full gap-2" onClick={() => createMutation.mutate({ projectId, language: newLang, languageName: newLangName, entries: [] })} disabled={createMutation.isPending}>
@@ -335,7 +335,7 @@ import { useState } from "react";
                               const lang = LANGUAGES.find(l => l.code === v);
                               if (lang) handleTranslate(lang.code, lang.name);
                             }}>
-                              <SelectTrigger className="h-8 text-xs w-36">
+                              <SelectTrigger className="h-8 text-xs w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                                 <div className="flex items-center gap-1.5"><Languages className="h-3 w-3" />{translating ? "Translating..." : "AI Translate"}</div>
                               </SelectTrigger>
                               <SelectContent>{LANGUAGES.filter(l => l.code !== (selectedTrack as any).language).map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.name}</SelectItem>)}</SelectContent>

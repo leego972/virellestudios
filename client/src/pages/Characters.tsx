@@ -762,7 +762,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium">Visual Style</Label>
                 <Select value={photoForm.style} onValueChange={(v) => setPhotoForm(p => ({ ...p, style: v }))}>
-                  <SelectTrigger className="h-10 bg-background/50"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-10 bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="cinematic">Cinematic (Default)</SelectItem>
                     <SelectItem value="action">Action / Thriller</SelectItem>
@@ -778,7 +778,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium">Character Role</Label>
                 <Select value={photoForm.characterRole} onValueChange={(v) => setPhotoForm(p => ({ ...p, characterRole: v }))}>
-                  <SelectTrigger className="h-10 bg-background/50"><SelectValue placeholder="Select role" /></SelectTrigger>
+                  <SelectTrigger className="h-10 bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select role" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="hero">Hero / Protagonist</SelectItem>
                     <SelectItem value="villain">Villain / Antagonist</SelectItem>
@@ -984,7 +984,7 @@ export default function Characters() {
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role in Story</Label>
               <Select value={form.role} onValueChange={(v) => setField("role", v)}>
-                <SelectTrigger className="h-9 text-sm bg-background/50">
+                <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1006,7 +1006,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender</Label>
                 <Select value={form.gender} onValueChange={(v) => setField("gender", v)}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
@@ -1024,7 +1024,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
                 <Select value={form.build} onValueChange={(v) => setField("build", v)}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="slim">Slim</SelectItem>
                     <SelectItem value="average">Average</SelectItem>
@@ -1169,7 +1169,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.gender} onValueChange={v => setAiForm(p => ({ ...p, gender: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
@@ -1180,7 +1180,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Age Range <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.ageRange} onValueChange={v => setAiForm(p => ({ ...p, ageRange: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="teens">Teens (13-19)</SelectItem>
                     <SelectItem value="20s">20s</SelectItem>
@@ -1195,7 +1195,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Ethnicity <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.ethnicity} onValueChange={v => setAiForm(p => ({ ...p, ethnicity: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Caucasian">Caucasian</SelectItem>
                     <SelectItem value="African">African</SelectItem>
@@ -1216,7 +1216,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Skin Tone</Label>
                 <Select value={aiForm.skinTone} onValueChange={v => setAiForm(p => ({ ...p, skinTone: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="very fair">Very Fair</SelectItem>
                     <SelectItem value="fair">Fair</SelectItem>
@@ -1233,7 +1233,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
                 <Select value={aiForm.build} onValueChange={v => setAiForm(p => ({ ...p, build: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="petite">Petite</SelectItem>
                     <SelectItem value="slim">Slim</SelectItem>
@@ -1248,7 +1248,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Height</Label>
                 <Select value={aiForm.height} onValueChange={v => setAiForm(p => ({ ...p, height: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="short">Short</SelectItem>
                     <SelectItem value="below average">Below Average</SelectItem>
@@ -1264,7 +1264,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Color <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.hairColor} onValueChange={v => setAiForm(p => ({ ...p, hairColor: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="black">Black</SelectItem>
                     <SelectItem value="dark brown">Dark Brown</SelectItem>
@@ -1283,7 +1283,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Style <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.hairStyle} onValueChange={v => setAiForm(p => ({ ...p, hairStyle: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="short cropped">Short Cropped</SelectItem>
                     <SelectItem value="buzz cut">Buzz Cut</SelectItem>
@@ -1304,7 +1304,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Eye Color <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.eyeColor} onValueChange={v => setAiForm(p => ({ ...p, eyeColor: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="brown">Brown</SelectItem>
                     <SelectItem value="dark brown">Dark Brown</SelectItem>
@@ -1325,7 +1325,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Hair</Label>
                 <Select value={aiForm.facialHair} onValueChange={v => setAiForm(p => ({ ...p, facialHair: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="None" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None / Clean-shaven</SelectItem>
                     <SelectItem value="light stubble">Light Stubble</SelectItem>
@@ -1346,7 +1346,7 @@ export default function Characters() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Expression</Label>
                 <Select value={aiForm.expression} onValueChange={v => setAiForm(p => ({ ...p, expression: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="neutral">Neutral</SelectItem>
                     <SelectItem value="confident">Confident</SelectItem>

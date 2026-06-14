@@ -1300,7 +1300,7 @@ export default function ProjectDetail() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Format</Label>
                   <Select defaultValue="mp4">
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="mp4">MP4 (H.264)</SelectItem>
                       <SelectItem value="mov">MOV (ProRes)</SelectItem>
@@ -1315,7 +1315,7 @@ export default function ProjectDetail() {
                     <Monitor className="h-3 w-3" />Resolution
                   </Label>
                   <Select defaultValue={project.resolution || "1920x1080"}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1280x720">720p HD</SelectItem>
                       <SelectItem value="1920x1080">1080p Full HD</SelectItem>
@@ -1329,7 +1329,7 @@ export default function ProjectDetail() {
                     <Settings className="h-3 w-3" />Quality
                   </Label>
                   <Select defaultValue={project.quality || "high"}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="draft">Draft (Fast)</SelectItem>
                       <SelectItem value="standard">Standard</SelectItem>
@@ -1346,7 +1346,7 @@ export default function ProjectDetail() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Frame Rate</Label>
                   <Select defaultValue="24">
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="24">24 fps (Cinema)</SelectItem>
                       <SelectItem value="30">30 fps</SelectItem>
@@ -1357,7 +1357,7 @@ export default function ProjectDetail() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Aspect Ratio</Label>
                   <Select defaultValue="16:9">
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="16:9">16:9 (Widescreen)</SelectItem>
                       <SelectItem value="2.39:1">2.39:1 (Cinemascope)</SelectItem>
@@ -2165,7 +2165,7 @@ export default function ProjectDetail() {
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role in Story</Label>
               <Select value={charForm.role} onValueChange={v => setCharForm(p => ({ ...p, role: v }))}>
-                <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select role" /></SelectTrigger>
+                <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select role" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="protagonist">Protagonist</SelectItem>
                   <SelectItem value="antagonist">Antagonist</SelectItem>
@@ -2183,7 +2183,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender</Label>
                 <Select value={charForm.gender} onValueChange={v => setCharForm(p => ({ ...p, gender: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
@@ -2200,7 +2200,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
                 <Select value={charForm.build} onValueChange={v => setCharForm(p => ({ ...p, build: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="slim">Slim</SelectItem>
                     <SelectItem value="average">Average</SelectItem>
@@ -2285,7 +2285,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.gender} onValueChange={v => setAiCharForm(p => ({ ...p, gender: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
@@ -2296,7 +2296,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Age Range <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.ageRange} onValueChange={v => setAiCharForm(p => ({ ...p, ageRange: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="teens">Teens (13-19)</SelectItem>
                     <SelectItem value="20s">20s</SelectItem>
@@ -2311,7 +2311,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Ethnicity <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.ethnicity} onValueChange={v => setAiCharForm(p => ({ ...p, ethnicity: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Caucasian">Caucasian</SelectItem>
                     <SelectItem value="African">African</SelectItem>
@@ -2333,7 +2333,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Skin Tone</Label>
                 <Select value={aiCharForm.skinTone} onValueChange={v => setAiCharForm(p => ({ ...p, skinTone: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="very fair">Very Fair</SelectItem>
                     <SelectItem value="fair">Fair</SelectItem>
@@ -2350,7 +2350,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
                 <Select value={aiCharForm.build} onValueChange={v => setAiCharForm(p => ({ ...p, build: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="petite">Petite</SelectItem>
                     <SelectItem value="slim">Slim</SelectItem>
@@ -2365,7 +2365,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Height</Label>
                 <Select value={aiCharForm.height} onValueChange={v => setAiCharForm(p => ({ ...p, height: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="short">Short</SelectItem>
                     <SelectItem value="below average">Below Average</SelectItem>
@@ -2382,7 +2382,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Color <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.hairColor} onValueChange={v => setAiCharForm(p => ({ ...p, hairColor: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="black">Black</SelectItem>
                     <SelectItem value="dark brown">Dark Brown</SelectItem>
@@ -2401,7 +2401,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Style <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.hairStyle} onValueChange={v => setAiCharForm(p => ({ ...p, hairStyle: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="short cropped">Short Cropped</SelectItem>
                     <SelectItem value="buzz cut">Buzz Cut</SelectItem>
@@ -2424,7 +2424,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Eye Color <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.eyeColor} onValueChange={v => setAiCharForm(p => ({ ...p, eyeColor: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="brown">Brown</SelectItem>
                     <SelectItem value="dark brown">Dark Brown</SelectItem>
@@ -2447,7 +2447,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Hair</Label>
                 <Select value={aiCharForm.facialHair} onValueChange={v => setAiCharForm(p => ({ ...p, facialHair: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="None" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None / Clean-shaven</SelectItem>
                     <SelectItem value="light stubble">Light Stubble</SelectItem>
@@ -2471,7 +2471,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Expression</Label>
                 <Select value={aiCharForm.expression} onValueChange={v => setAiCharForm(p => ({ ...p, expression: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="neutral">Neutral</SelectItem>
                     <SelectItem value="confident">Confident</SelectItem>
@@ -2572,7 +2572,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Genre</Label>
                 <Select value={soundtrackForm.genre} onValueChange={v => setSoundtrackForm(p => ({ ...p, genre: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select genre" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select genre" /></SelectTrigger>
                   <SelectContent>
                     {GENRE_MUSIC_OPTIONS.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
                   </SelectContent>
@@ -2581,7 +2581,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Mood</Label>
                 <Select value={soundtrackForm.mood} onValueChange={v => setSoundtrackForm(p => ({ ...p, mood: v }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select mood" /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select mood" /></SelectTrigger>
                   <SelectContent>
                     {MOOD_OPTIONS.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                   </SelectContent>
@@ -2611,7 +2611,7 @@ export default function ProjectDetail() {
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Loop</Label>
                 <Select value={String(soundtrackForm.loop)} onValueChange={v => setSoundtrackForm(p => ({ ...p, loop: Number(v) }))}>
-                  <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="0">No Loop</SelectItem>
                     <SelectItem value="1">Loop</SelectItem>
@@ -2894,7 +2894,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Act Structure</Label>
               <Select value={actStructure} onValueChange={(v) => { setActStructure(v); setDirty(true); }}>
-                <SelectTrigger className="bg-background/50 h-8 text-xs">
+                <SelectTrigger className="bg-background/50 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -2907,7 +2907,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Tone / Style</Label>
               <Select value={tone} onValueChange={(v) => { setTone(v); setDirty(true); }}>
-                <SelectTrigger className="bg-background/50 h-8 text-xs">
+                <SelectTrigger className="bg-background/50 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="Select tone" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2920,7 +2920,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Target Audience</Label>
               <Select value={targetAudience} onValueChange={(v) => { setTargetAudience(v); setDirty(true); }}>
-                <SelectTrigger className="bg-background/50 h-8 text-xs">
+                <SelectTrigger className="bg-background/50 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="Select audience" />
                 </SelectTrigger>
                 <SelectContent>

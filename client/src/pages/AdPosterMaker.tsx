@@ -1085,7 +1085,7 @@ function AdPosterMakerInner() {
               <div>
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Link Project</Label>
                 <Select value={selectedProjectId?.toString() || "none"} onValueChange={(v) => setSelectedProjectId(v === "none" ? null : Number(v))}>
-                  <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select a project..." /></SelectTrigger>
+                  <SelectTrigger className="mt-1.5 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select a project..." /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No project</SelectItem>
                     {projects?.map((p) => (<SelectItem key={p.id} value={p.id.toString()}>{p.title}</SelectItem>))}
@@ -1244,7 +1244,7 @@ function AdPosterMakerInner() {
                       <div>
                         <Label className="text-xs">Font Family</Label>
                         <Select value={selectedElement.fontFamily} onValueChange={(v) => updateTextElement(selectedElement.id, { fontFamily: v })}>
-                          <SelectTrigger className="h-8 text-xs mt-1"><SelectValue /></SelectTrigger>
+                          <SelectTrigger className="h-8 text-xs mt-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                           <SelectContent>{FONT_FAMILIES.map((f) => (<SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>))}</SelectContent>
                         </Select>
                       </div>
@@ -1279,7 +1279,7 @@ function AdPosterMakerInner() {
                       </Button>
                       <div className="w-px h-5 bg-border mx-0.5" />
                       <Select value={selectedElement.textTransform} onValueChange={(v) => updateTextElement(selectedElement.id, { textTransform: v as TextElement["textTransform"] })}>
-                        <SelectTrigger className="h-7 text-xs w-20"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-7 text-xs w-20 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none" className="text-xs">Normal</SelectItem>
                           <SelectItem value="uppercase" className="text-xs">UPPER</SelectItem>
@@ -1289,11 +1289,11 @@ function AdPosterMakerInner() {
                     </div>
                     <div>
                       <Label className="text-xs">Letter Spacing: {selectedElement.letterSpacing}px</Label>
-                      <Slider className="mt-1" value={[selectedElement.letterSpacing]} min={0} max={20} step={0.5} onValueChange={([v]) => updateTextElement(selectedElement.id, { letterSpacing: v })} />
+                      <Slider className="mt-1 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" value={[selectedElement.letterSpacing]} min={0} max={20} step={0.5} onValueChange={([v]) => updateTextElement(selectedElement.id, { letterSpacing: v })} />
                     </div>
                     <div>
                       <Label className="text-xs">Opacity: {Math.round(selectedElement.opacity * 100)}%</Label>
-                      <Slider className="mt-1" value={[selectedElement.opacity]} min={0} max={1} step={0.05} onValueChange={([v]) => updateTextElement(selectedElement.id, { opacity: v })} />
+                      <Slider className="mt-1 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" value={[selectedElement.opacity]} min={0} max={1} step={0.05} onValueChange={([v]) => updateTextElement(selectedElement.id, { opacity: v })} />
                     </div>
                     <div>
                       <Label className="text-xs">Text Shadow</Label>
@@ -1358,7 +1358,7 @@ function AdPosterMakerInner() {
                   </div>
                   <div>
                     <Label className="text-xs">Overlay Opacity: {Math.round(poster.overlayOpacity * 100)}%</Label>
-                    <Slider className="mt-1" value={[poster.overlayOpacity]} min={0} max={1} step={0.05} onValueChange={([v]) => pushPoster({ ...poster, overlayOpacity: v })} />
+                    <Slider className="mt-1 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" value={[poster.overlayOpacity]} min={0} max={1} step={0.05} onValueChange={([v]) => pushPoster({ ...poster, overlayOpacity: v })} />
                   </div>
                 </div>
               </div>
@@ -1383,7 +1383,7 @@ function AdPosterMakerInner() {
                     {poster.gradient.type === "linear" && (
                       <div>
                         <Label className="text-xs">Angle: {poster.gradient.angle}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°</Label>
-                        <Slider className="mt-1" value={[poster.gradient.angle]} min={0} max={360} step={15} onValueChange={([v]) => pushPoster({ ...poster, gradient: { ...poster.gradient, angle: v } })} />
+                        <Slider className="mt-1 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" value={[poster.gradient.angle]} min={0} max={360} step={15} onValueChange={([v]) => pushPoster({ ...poster, gradient: { ...poster.gradient, angle: v } })} />
                       </div>
                     )}
                     {poster.gradient.colors.map((c, i) => (
@@ -1427,7 +1427,7 @@ function AdPosterMakerInner() {
                       <Label className="text-xs flex items-center gap-1">
                         <Icon className="h-3 w-3" /> {label}: {poster.filters[key]}{key === "blur" ? "px" : key === "hueRotate" ? "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°" : "%"}
                       </Label>
-                      <Slider className="mt-1" value={[poster.filters[key]]} min={min} max={max} step={key === "blur" ? 0.5 : key === "hueRotate" ? 15 : 5} onValueChange={([v]) => pushPoster({ ...poster, filters: { ...poster.filters, [key]: v } })} />
+                      <Slider className="mt-1 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" value={[poster.filters[key]]} min={min} max={max} step={key === "blur" ? 0.5 : key === "hueRotate" ? 15 : 5} onValueChange={([v]) => pushPoster({ ...poster, filters: { ...poster.filters, [key]: v } })} />
                     </div>
                   ))}
                 </div>
@@ -1478,7 +1478,7 @@ function AdPosterMakerInner() {
             <div>
               <Label>Export Scale</Label>
               <Select value={exportScale.toString()} onValueChange={(v) => setExportScale(Number(v))}>
-                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="mt-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {config.width}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ{config.height}px (Preview)</SelectItem>
                   <SelectItem value="2">2ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {config.width * 2}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ{config.height * 2}px (Recommended)</SelectItem>
@@ -1508,7 +1508,7 @@ function AdPosterMakerInner() {
           <div className="space-y-4">
             <div>
               <Label>URL to encode</Label>
-              <Input className="mt-1 focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+              <Input className="mt-1" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             {qrUrl && (
               <div className="flex flex-col items-center gap-3">
@@ -1676,7 +1676,7 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
       <div>
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Caption / Post Text</Label>
         <Textarea
-          className="mt-1.5 text-xs resize-none focus:ring-amber-500/30 focus:border-amber-500/50"
+          className="mt-1.5 text-xs resize-none"
           rows={3}
           placeholder="Write your post caption here..."
           value={publishCaption}
@@ -1849,15 +1849,15 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
       <div className="space-y-2">
         <div>
           <Label className="text-xs">Film Title</Label>
-          <Input className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+          <Input className="mt-1 h-8 text-xs" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Genre</Label>
-          <Input className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
+          <Input className="mt-1 h-8 text-xs" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Logline (optional)</Label>
-          <Textarea className="mt-1 text-xs resize-none focus:ring-amber-500/30 focus:border-amber-500/50" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+          <Textarea className="mt-1 text-xs resize-none" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
         </div>
         <Button
           size="sm"

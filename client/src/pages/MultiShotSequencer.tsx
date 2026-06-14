@@ -143,7 +143,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Camera Movement</Label>
             <Select value={shot.cameraMovement} onValueChange={(v) => onUpdate(shot.id, { cameraMovement: v })}>
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -434,7 +434,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Camera Body / Sensor</Label>
                   <Select value={cameraBody} onValueChange={setCameraBody}>
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -449,7 +449,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Lens Glass</Label>
                   <Select value={lensBrand} onValueChange={setLensBrand}>
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -464,7 +464,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Aperture / T-Stop</Label>
                   <Select value={aperture} onValueChange={setAperture}>
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -480,7 +480,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Genre Motion Logic</Label>
                   <Select value={genreMotion} onValueChange={setGenreMotion}>
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

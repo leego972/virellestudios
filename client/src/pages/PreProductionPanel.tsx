@@ -110,7 +110,7 @@ function SelectField({ value, onValueChange, placeholder, options }: {
 }) {
   return (
     <Select value={value || ""} onValueChange={onValueChange}>
-      <SelectTrigger className="text-sm"><SelectValue placeholder={placeholder} /></SelectTrigger>
+      <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder={placeholder} /></SelectTrigger>
       <SelectContent className="max-h-72">
         {options.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
       </SelectContent>
@@ -430,7 +430,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
                 </FieldGroup>
                 <FieldGroup label="Social / Economic Class">
                   <Select value={socialClass} onValueChange={setSocialClass}>
-                    <SelectTrigger className="text-sm"><SelectValue placeholder="Select class..." /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select class..." /></SelectTrigger>
                     <SelectContent>{SOCIAL_CLASSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </FieldGroup>
@@ -438,7 +438,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
 
               <FieldGroup label="Location Type">
                 <Select value={locType} onValueChange={setLocType}>
-                  <SelectTrigger className="text-sm"><SelectValue placeholder="Select type..." /></SelectTrigger>
+                  <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select type..." /></SelectTrigger>
                   <SelectContent className="max-h-72">
                     {GROUPED_LOCATION_TYPES.map(group => (
                       <SelectGroup key={group.group}>
@@ -481,7 +481,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
               <div className="grid grid-cols-2 gap-3">
                 <FieldGroup label="Permit Status">
                   <Select value={permitStatus} onValueChange={setPermitStatus}>
-                    <SelectTrigger className="text-sm"><SelectValue placeholder="Status..." /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Status..." /></SelectTrigger>
                     <SelectContent>{PERMIT_STATUSES.map(s => <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>)}</SelectContent>
                   </Select>
                 </FieldGroup>
@@ -884,7 +884,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
           </FieldGroup>
           <FieldGroup label="Season *">
             <Select value={season} onValueChange={setSeason}>
-              <SelectTrigger className="text-sm"><SelectValue placeholder="Season..." /></SelectTrigger>
+              <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Season..." /></SelectTrigger>
               <SelectContent>
                 {SEASONS.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
               </SelectContent>
@@ -892,7 +892,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
           </FieldGroup>
           <FieldGroup label="Visibility">
             <Select value={visibility} onValueChange={setVisibility}>
-              <SelectTrigger className="text-sm"><SelectValue placeholder="Visibility..." /></SelectTrigger>
+              <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Visibility..." /></SelectTrigger>
               <SelectContent>
                 {VISIBILITY_OPTIONS.map(o => <SelectItem key={o} value={o}>{o.replace(/-/g, " ")}</SelectItem>)}
               </SelectContent>
@@ -900,7 +900,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
           </FieldGroup>
           <FieldGroup label="Wind Condition">
             <Select value={wind} onValueChange={setWind}>
-              <SelectTrigger className="text-sm"><SelectValue placeholder="Wind..." /></SelectTrigger>
+              <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Wind..." /></SelectTrigger>
               <SelectContent>
                 {WIND_OPTIONS.map(o => <SelectItem key={o} value={o}>{o.replace(/-/g, " ")}</SelectItem>)}
               </SelectContent>
@@ -1156,7 +1156,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                 </div>
                 <FieldGroup label="Category">
                   <Select value={uCat} onValueChange={setUCat}>
-                    <SelectTrigger className="text-sm"><SelectValue placeholder="Select category..." /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select category..." /></SelectTrigger>
                     <SelectContent>
                       {WARDROBE_CATEGORIES.filter(c => c.value !== "all").map(c => (
                         <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -1178,7 +1178,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                 </FieldGroup>
                 <FieldGroup label="Condition">
                   <Select value={uCondition} onValueChange={setUCondition}>
-                    <SelectTrigger className="text-sm"><SelectValue placeholder="Select condition..." /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select condition..." /></SelectTrigger>
                     <SelectContent>
                       {["pristine", "lightly worn", "worn", "weathered", "distressed", "battle-damaged", "patched"].map(c => (
                         <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
@@ -2132,7 +2132,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
             <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <FieldGroup label="Text Style">
                 <Select value={textStyle} onValueChange={setTextStyle}>
-                  <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {TEXT_STYLES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                   </SelectContent>
@@ -2141,7 +2141,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
               <div className="grid grid-cols-2 gap-2">
                 <FieldGroup label="Position">
                   <Select value={textPos} onValueChange={setTextPos}>
-                    <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {TEXT_POSITIONS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
                     </SelectContent>
@@ -2149,7 +2149,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
                 </FieldGroup>
                 <FieldGroup label="Alignment">
                   <Select value={textAlign} onValueChange={setTextAlign}>
-                    <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {TEXT_ALIGNS.map(a => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}
                     </SelectContent>

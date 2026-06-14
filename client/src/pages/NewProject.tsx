@@ -309,7 +309,7 @@ export default function NewProject() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Genre</Label>
                   <Select value={genre} onValueChange={setGenre}>
-                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                    <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder="Select genre" />
                     </SelectTrigger>
                     <SelectContent>
@@ -322,7 +322,7 @@ export default function NewProject() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Rating</Label>
                   <Select value={rating} onValueChange={setRating}>
-                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                    <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -439,7 +439,7 @@ export default function NewProject() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Genre</Label>
                   <Select value={genre} onValueChange={setGenre}>
-                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                    <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder="Select genre" />
                     </SelectTrigger>
                     <SelectContent>
@@ -452,7 +452,7 @@ export default function NewProject() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Rating</Label>
                   <Select value={rating} onValueChange={setRating}>
-                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                    <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -532,7 +532,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Genre</Label>
                     <Select value={genre} onValueChange={setGenre}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue placeholder="Select genre" />
                       </SelectTrigger>
                       <SelectContent>
@@ -545,7 +545,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Rating</Label>
                     <Select value={rating} onValueChange={setRating}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -603,7 +603,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Resolution</Label>
                     <Select value={resolution} onValueChange={setResolution}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -617,7 +617,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Quality</Label>
                     <Select value={quality} onValueChange={setQuality}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -668,7 +668,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Tone / Style</Label>
                     <Select value={tone} onValueChange={setTone}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue placeholder="Select tone" />
                       </SelectTrigger>
                       <SelectContent>
@@ -681,7 +681,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Target Audience</Label>
                     <Select value={targetAudience} onValueChange={setTargetAudience}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue placeholder="Select audience" />
                       </SelectTrigger>
                       <SelectContent>
@@ -785,7 +785,7 @@ export default function NewProject() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Act Structure</Label>
                     <Select value={actStructure} onValueChange={setActStructure}>
-                      <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectTrigger className="bg-background/50 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

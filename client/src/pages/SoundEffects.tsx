@@ -273,7 +273,7 @@ import { useState, useRef } from "react";
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="mixboard"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Sliders className="h-3.5 w-3.5" />Mix Board</TabsTrigger>
+              <TabsTrigger value="mixboard"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Sliders className="h-3.5 w-3.5 [&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" />Mix Board</TabsTrigger>
               <TabsTrigger value="library"   className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Music className="h-3.5 w-3.5" />SFX Library</TabsTrigger>
               <TabsTrigger value="aigenerate" className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Wand2 className="h-3.5 w-3.5" />AI Studio</TabsTrigger>
               <TabsTrigger value="upload"    className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Upload className="h-3.5 w-3.5" />Upload</TabsTrigger>
@@ -289,7 +289,7 @@ import { useState, useRef } from "react";
                     <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search cuesâ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                   </div>
                   <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all" className="text-xs">All Categories</SelectItem>
                       {SFX_CATEGORIES.map(c => <SelectItem key={c.id} value={c.id} className="text-xs">{c.label}</SelectItem>)}
@@ -458,7 +458,7 @@ import { useState, useRef } from "react";
                                   <div className="space-y-1.5">
                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Bus Routing</Label>
                                     <Select value={mix.busRoute} onValueChange={v => saveMix(sfx, { busRoute: v })}>
-                                      <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                                      <SelectTrigger className="h-8 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                                       <SelectContent>
                                         {BUS_ROUTES.map(b => (
                                           <SelectItem key={b.id} value={b.id} className="text-xs">
@@ -609,7 +609,7 @@ import { useState, useRef } from "react";
                       <div className="space-y-1.5">
                         <Label className="text-xs text-muted-foreground">Category</Label>
                         <Select value={aiCategory} onValueChange={setAiCategory}>
-                          <SelectTrigger className="h-9 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
+                          <SelectTrigger className="h-9 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
                           <SelectContent>{SFX_CATEGORIES.map(c => <SelectItem key={c.id} value={c.id} className="text-xs">{c.label}</SelectItem>)}</SelectContent>
                         </Select>
                       </div>

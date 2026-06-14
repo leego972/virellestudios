@@ -481,7 +481,7 @@ function AICastingInner() {
             </div>
             {castMode === "signature" && (
               <Select value={tierFilter} onValueChange={setTierFilter}>
-                <SelectTrigger className="w-36 h-9 text-sm">
+                <SelectTrigger className="w-36 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <Crown className="w-3 h-3 mr-1 text-amber-400" />
                   <SelectValue placeholder="Tier" />
                 </SelectTrigger>
@@ -494,7 +494,7 @@ function AICastingInner() {
               </Select>
             )}
             <Select value={filterSpecialty} onValueChange={setFilterSpecialty}>
-              <SelectTrigger className="w-40 h-9 text-sm">
+              <SelectTrigger className="w-40 h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <Filter className="w-3 h-3 mr-1" />
                 <SelectValue />
               </SelectTrigger>
@@ -658,7 +658,7 @@ function AICastingInner() {
               <div>
                 <Label className="text-xs text-muted-foreground mb-1 block">Performance Style</Label>
                 <Select value={performanceStyle} onValueChange={setPerformanceStyle}>
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -704,7 +704,7 @@ function AICastingInner() {
                   <div>
                     <Label className="text-xs text-muted-foreground mb-1 block">Hair Style</Label>
                     <Select value={hairStyle} onValueChange={setHairStyle}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -722,7 +722,7 @@ function AICastingInner() {
                   <div>
                     <Label className="text-xs text-muted-foreground mb-1 block">Facial Hair</Label>
                     <Select value={facialHair} onValueChange={setFacialHair}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
