@@ -16,7 +16,7 @@ export default function CallSheetView({ data, printMode = false }: Props) {
   const dateStr = day?.shootDate ? new Date(day.shootDate).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : "Unscheduled";
 
   return (
-    <div className={printMode ? "bg-white text-black p-8 max-w-[8.5in] mx-auto print:p-4" : "text-zinc-100 p-6 rounded-xl" style={{ border:"1px solid rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}}>
+    <div className={printMode ? "bg-white text-black p-8 max-w-[8.5in] mx-auto print:p-4" : "text-zinc-100 p-6 rounded-xl"} style={{ border:"1px solid rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}}>
       {/* Header */}
       <div className={`flex items-start justify-between pb-4 mb-4 border-b ${printMode ? "border-zinc-300" : "border-zinc-800"}`}>
         <div>
