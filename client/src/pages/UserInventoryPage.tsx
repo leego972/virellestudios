@@ -83,12 +83,12 @@
     );
 
     // ── Assign mutation ──────────────────────────────────────────────────────────
-    const assignMutation = trpc.wardrobeMarket.assign.assign.useMutation({
+    const assignMutation = trpc.wardrobeMarket.director.assign.useMutation({
       onSuccess: () => {
         toast.success("Wardrobe item assigned to character — it will appear in every scene generation for the selected range.");
         resetAssign();
       },
-      onError: (err) => toast.error(err.message || "Failed to assign item"),
+      onError: (err: { message: string }) => toast.error(err.message || "Failed to assign item"),
     });
 
     const handleAssign = () => {
