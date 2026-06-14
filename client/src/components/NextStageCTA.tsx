@@ -6,7 +6,7 @@ import { JOURNEY_STAGES, getNextStage, getStage } from "@/lib/journeyStages";
 
 /**
  * Linear-flow footer for any stage page in the 8-stage filmmaker journey.
- * Shows "Stage N done â next up: Stage N+1: <title>" with a single big CTA.
+ * Shows "Stage N done — next up: Stage N+1: <title>" with a single big CTA.
  * On stage 8 it loops back to the project home and congratulates the user.
  */
 export function NextStageCTA({
@@ -28,7 +28,7 @@ export function NextStageCTA({
           <div className="flex items-start gap-3">
             <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-base">All 8 stages complete â congratulations.</p>
+              <p className="font-semibold text-base">All 8 stages complete — congratulations.</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Your film has cleared idea, casting, script, pre-prod, funding, soundstage, post and release.
               </p>
@@ -53,10 +53,10 @@ export function NextStageCTA({
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">
-              Stage {cur.number} of {JOURNEY_STAGES.length} Â· {cur.title}
+              Stage {cur.number} of {JOURNEY_STAGES.length} · {cur.title}
             </p>
             <p className="font-semibold text-base mt-0.5">
-              Next up: Stage {next.number} â {next.title}
+              Next up: Stage {next.number} — {next.title}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">{next.blurb}</p>
           </div>
