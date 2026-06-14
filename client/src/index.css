@@ -205,6 +205,13 @@
 :root:not(.dark) .text-zinc-900 { color: oklch(0.84 0.17 85) !important; }
 :root:not(.dark) .text-zinc-950 { color: oklch(0.86 0.18 85) !important; }
 
+  /* ── Gold/amber buttons: always black text (overrides zinc remap above) ── */
+  [data-slot="button"].bg-amber-500,
+  [data-slot="button"].bg-amber-400,
+  [data-slot="button"].bg-amber-600,
+  [data-slot="button"].bg-amber-300,
+  .btn-gold { color: #000000 !important; }
+
 /* text-neutral-* â readable on dark bg */
 :root:not(.dark) .text-neutral-100 { color: oklch(0.90 0.06 85) !important; }
 :root:not(.dark) .text-neutral-200 { color: oklch(0.85 0.10 85) !important; }
