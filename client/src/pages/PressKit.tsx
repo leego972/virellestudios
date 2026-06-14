@@ -1,1 +1,228 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVBhcmFtcywgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IE5leHRTdGFnZUNUQSB9IGZyb20gIkAvY29tcG9uZW50cy9OZXh0U3RhZ2VDVEEiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlLCBDYXJkRGVzY3JpcHRpb24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvY2FyZCI7CmltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKaW1wb3J0IHsgTGFiZWwgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvbGFiZWwiOwppbXBvcnQgeyBUZXh0YXJlYSB9IGZyb20gIkAvY29tcG9uZW50cy91aS90ZXh0YXJlYSI7CmltcG9ydCB7IERpYWxvZywgRGlhbG9nQ29udGVudCwgRGlhbG9nSGVhZGVyLCBEaWFsb2dUaXRsZSwgRGlhbG9nRGVzY3JpcHRpb24sIERpYWxvZ0Zvb3RlciB9IGZyb20gIkAvY29tcG9uZW50cy91aS9kaWFsb2ciOwppbXBvcnQgeyBBcnJvd0xlZnQsIFByaW50ZXIsIERvd25sb2FkLCBGaWxlVGV4dCwgQ29weSwgTWFpbCwgTGluayBhcyBMaW5rSWNvbiwgTG9hZGVyMiB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCBTaXRlSGVhZCBmcm9tICJAL2NvbXBvbmVudHMvU2l0ZUhlYWQiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CgppbnRlcmZhY2UgS2l0U3RhdGUgewogIHRhZ2xpbmU6IHN0cmluZzsKICBzeW5vcHNpc1Nob3J0OiBzdHJpbmc7CiAgc3lub3BzaXNMb25nOiBzdHJpbmc7CiAgZGlyZWN0b3JCaW86IHN0cmluZzsKICBwcm9kdWN0aW9uQ29tcGFueTogc3RyaW5nOwogIGNvbnRhY3RFbWFpbDogc3RyaW5nOwogIHRlY2huaWNhbFNwZWNzOiBzdHJpbmc7CiAgZmVzdGl2YWxzOiBzdHJpbmc7CiAgYXdhcmRzOiBzdHJpbmc7CiAgcHJlc3NRdW90ZXM6IHN0cmluZzsKfQoKZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gUHJlc3NLaXQoKSB7CiAgY29uc3QgeyBwcm9qZWN0SWQgfSA9IHVzZVBhcmFtczx7IHByb2plY3RJZDogc3RyaW5nIH0+KCk7CiAgY29uc3QgaWQgPSBwYXJzZUludChwcm9qZWN0SWQgfHwgIjAiKTsKICBjb25zdCB7IGRhdGE6IHByb2plY3QgfSA9IHRycGMucHJvamVjdC5nZXQudXNlUXVlcnkoeyBpZCB9LCB7IGVuYWJsZWQ6ICEhaWQgfSk7CiAgY29uc3QgeyBkYXRhOiBjaGFyYWN0ZXJzIH0gPSB0cnBjLmNoYXJhY3Rlci5saXN0QnlQcm9qZWN0LnVzZVF1ZXJ5KHsgcHJvamVjdElkOiBpZCB9LCB7IGVuYWJsZWQ6ICEhaWQgfSk7CgogIGNvbnN0IFtraXQsIHNldEtpdF0gPSB1c2VTdGF0ZTxLaXRTdGF0ZT4oewogICAgdGFnbGluZTogIiIsCiAgICBzeW5vcHNpc1Nob3J0OiAiIiwKICAgIHN5bm9wc2lzTG9uZzogIiIsCiAgICBkaXJlY3RvckJpbzogIiIsCiAgICBwcm9kdWN0aW9uQ29tcGFueTogIlZpcmVsbGUgU3R1ZGlvcyIsCiAgICBjb250YWN0RW1haWw6ICIiLAogICAgdGVjaG5pY2FsU3BlY3M6ICIiLAogICAgZmVzdGl2YWxzOiAiIiwKICAgIGF3YXJkczogIiIsCiAgICBwcmVzc1F1b3RlczogIiIsCiAgfSk7CgogIGNvbnN0IFtlbWFpbERpYWxvZywgc2V0RW1haWxEaWFsb2ddID0gdXNlU3RhdGU8eyBvcGVuOiBib29sZWFuOyByZWNpcGllbnRzOiBzdHJpbmcgfT4oeyBvcGVuOiBmYWxzZSwgcmVjaXBpZW50czogIiIgfSk7CgogIGZ1bmN0aW9uIHVwZGF0ZTxLIGV4dGVuZHMga2V5b2YgS2l0U3RhdGU+KGs6IEssIHY6IEtpdFN0YXRlW0tdKSB7CiAgICBzZXRLaXQoKHByZXYpID0+ICh7IC4uLnByZXYsIFtrXTogdiB9KSk7CiAgfQoKICBjb25zdCBzdWJtaXRFbWFpbERpYWxvZyA9ICgpID0+IHsKICAgIGNvbnN0IGxpc3QgPSBlbWFpbERpYWxvZy5yZWNpcGllbnRzLnNwbGl0KC9bLDtcc10rLykubWFwKChzKSA9PiBzLnRyaW0oKSkuZmlsdGVyKChzKSA9PiAvXlteQFxzXStAW15AXHNdK1wuW15AXHNdKyQvLnRlc3QocykpOwogICAgaWYgKGxpc3QubGVuZ3RoID09PSAwKSB7IHRvYXN0LmVycm9yKCJObyB2YWxpZCBlbWFpbCBhZGRyZXNzZXMiKTsgcmV0dXJuOyB9CiAgICBlbWFpbEtpdC5tdXRhdGUoeyBwcm9qZWN0SWQ6IGlkLCByZWNpcGllbnRzOiBsaXN0LCBraXQgfSk7CiAgICBzZXRFbWFpbERpYWxvZyh7IG9wZW46IGZhbHNlLCByZWNpcGllbnRzOiAiIiB9KTsKICB9OwoKICBjb25zdCBlbWFpbEtpdCA9IHRycGMuZmVhdHVyZUZpbG0uZW1haWxQcmVzc0tpdC51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6IChyOiBhbnkpID0+IHRvYXN0LnN1Y2Nlc3Mocj8ubWVzc2FnZSB8fCAiUHJlc3Mga2l0IHNlbnQiKSwKICAgIG9uRXJyb3I6IChlOiBhbnkpID0+IHRvYXN0LmVycm9yKGU/Lm1lc3NhZ2UgfHwgIkZhaWxlZCB0byBzZW5kIHByZXNzIGtpdCIpLAogIH0pOwoKICBmdW5jdGlvbiBleHBvcnRNYXJrZG93bigpIHsKICAgIGNvbnN0IG1kID0gYnVpbGRNYXJrZG93bihwcm9qZWN0Py50aXRsZSB8fCAiVW50aXRsZWQiLCBraXQsIGNoYXJhY3RlcnMgPz8gW10pOwogICAgY29uc3QgYmxvYiA9IG5ldyBCbG9iKFttZF0sIHsgdHlwZTogInRleHQvbWFya2Rvd24iIH0pOwogICAgY29uc3QgdXJsID0gVVJMLmNyZWF0ZU9iamVjdFVSTChibG9iKTsKICAgIGNvbnN0IGEgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJhIik7CiAgICBhLmhyZWYgPSB1cmw7CiAgICBhLmRvd25sb2FkID0gYCR7cHJvamVjdD8udGl0bGUgfHwgInByZXNzLWtpdCJ9LUVQSy5tZGA7CiAgICBhLmNsaWNrKCk7CiAgICBVUkwucmV2b2tlT2JqZWN0VVJMKHVybCk7CiAgfQoKICBmdW5jdGlvbiBjb3B5QWxsKCkgewogICAgY29uc3QgbWQgPSBidWlsZE1hcmtkb3duKHByb2plY3Q/LnRpdGxlIHx8ICJVbnRpdGxlZCIsIGtpdCwgY2hhcmFjdGVycyA/PyBbXSk7CiAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dChtZCkudGhlbigoKSA9PiB0b2FzdC5zdWNjZXNzKCJFUEsgY29waWVkIHRvIGNsaXBib2FyZC4iKSk7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBwYi0xMCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgPGRpdiBjbGFzc05hbWU9ImNvbnRhaW5lciBteC1hdXRvIHAtNCBtYXgtdy02eGwgc3BhY2UteS02Ij4KICAgICAgPFNpdGVIZWFkIHRpdGxlPXtgUHJlc3MgS2l0IOKAlCAke3Byb2plY3Q/LnRpdGxlIHx8ICJQcm9qZWN0In1gfSBkZXNjcmlwdGlvbj17YEVsZWN0cm9uaWMgUHJlc3MgS2l0IGZvciAke3Byb2plY3Q/LnRpdGxlIHx8ICJ5b3VyIGZpbG0ifSDigJQgc3lub3BzaXMsIHRlY2huaWNhbCBzcGVjcywgZmVzdGl2YWwgc2VsZWN0aW9ucyBhbmQgcHJlc3MgcXVvdGVzLmB9IC8+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBwcmludDpoaWRkZW4iPgogICAgICAgIDxMaW5rIGhyZWY9e2AvcHJvamVjdHMvJHtpZH1gfT4KICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0iZ2hvc3QiIHNpemU9InNtIiBjbGFzc05hbWU9Im1pbi1oLVs0NHB4XSI+PEFycm93TGVmdCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz5CYWNrIHRvIHByb2plY3Q8L0J1dHRvbj4KICAgICAgICA8L0xpbms+CiAgICAgICAgPGRpdj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1hbWJlci01MDAvODAiPlN0YWdlIDggwrcgUmVsZWFzZSAmIFByb21vdGU8L2Rpdj4KICAgICAgICAgIDxoMSBjbGFzc05hbWU9ImZvbnQtc2VyaWYgdGV4dC0zeGwgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxGaWxlVGV4dCBjbGFzc05hbWU9ImgtNiB3LTYgdGV4dC1hbWJlci00MDAiIC8+IFByZXNzIEtpdCBCdWlsZGVyPC9oMT4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMSBsZzpncmlkLWNvbHMtMiBnYXAtNiBwcmludDpncmlkLWNvbHMtMSI+CiAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJwcmludDpoaWRkZW4iPgogICAgICAgICAgPENhcmRIZWFkZXI+CiAgICAgICAgICAgIDxDYXJkVGl0bGU+RVBLIElucHV0czwvQ2FyZFRpdGxlPgogICAgICAgICAgICA8Q2FyZERlc2NyaXB0aW9uPkZpbGwgaW4gdGhlIGZpZWxkcy4gUHJldmlldyB1cGRhdGVzIGxpdmUuIEV4cG9ydCwgcHJpbnQsIG9yIHBhc3RlIGludG8geW91ciBkaXN0cmlidXRpb24gZW1haWxzLjwvQ2FyZERlc2NyaXB0aW9uPgogICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS0zIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij48TGFiZWw+VGFnbGluZTwvTGFiZWw+PElucHV0IHZhbHVlPXtraXQudGFnbGluZX0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoInRhZ2xpbmUiLCBlLnRhcmdldC52YWx1ZSl9IHBsYWNlaG9sZGVyPSciSW4gYSBjaXR5IG9mIGdsYXNzLCB0aGUgdHJ1dGggaGFzIGNyYWNrcy4iJyAvPjwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPjxMYWJlbD5TaG9ydCBTeW5vcHNpcyAoNTAtMTAwIHdvcmRzKTwvTGFiZWw+PFRleHRhcmVhIHJvd3M9ezN9IHZhbHVlPXtraXQuc3lub3BzaXNTaG9ydH0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoInN5bm9wc2lzU2hvcnQiLCBlLnRhcmdldC52YWx1ZSl9IC8+PC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+PExhYmVsPkxvbmcgU3lub3BzaXMgKDI1MC00MDAgd29yZHMpPC9MYWJlbD48VGV4dGFyZWEgcm93cz17Nn0gdmFsdWU9e2tpdC5zeW5vcHNpc0xvbmd9IG9uQ2hhbmdlPXsoZSkgPT4gdXBkYXRlKCJzeW5vcHNpc0xvbmciLCBlLnRhcmdldC52YWx1ZSl9IC8+PC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+PExhYmVsPkRpcmVjdG9yIEJpbzwvTGFiZWw+PFRleHRhcmVhIHJvd3M9ezN9IHZhbHVlPXtraXQuZGlyZWN0b3JCaW99IG9uQ2hhbmdlPXsoZSkgPT4gdXBkYXRlKCJkaXJlY3RvckJpbyIsIGUudGFyZ2V0LnZhbHVlKX0gLz48L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgZ2FwLTMiPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+PExhYmVsPlByb2R1Y3Rpb24gQ29tcGFueTwvTGFiZWw+PElucHV0IHZhbHVlPXtraXQucHJvZHVjdGlvbkNvbXBhbnl9IG9uQ2hhbmdlPXsoZSkgPT4gdXBkYXRlKCJwcm9kdWN0aW9uQ29tcGFueSIsIGUudGFyZ2V0LnZhbHVlKX0gLz48L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPjxMYWJlbD5Db250YWN0IEVtYWlsPC9MYWJlbD48SW5wdXQgdHlwZT0iZW1haWwiIHZhbHVlPXtraXQuY29udGFjdEVtYWlsfSBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZSgiY29udGFjdEVtYWlsIiwgZS50YXJnZXQudmFsdWUpfSAvPjwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij48TGFiZWw+VGVjaG5pY2FsIFNwZWNzPC9MYWJlbD48VGV4dGFyZWEgcm93cz17Mn0gdmFsdWU9e2tpdC50ZWNobmljYWxTcGVjc30gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoInRlY2huaWNhbFNwZWNzIiwgZS50YXJnZXQudmFsdWUpfSBwbGFjZWhvbGRlcj0iUnVudGltZSwgZm9ybWF0IChEQ1AsIFByb1JlcyA0MjIgSFEpLCBhc3BlY3QgcmF0aW8sIGF1ZGlvIG1peCwgbGFuZ3VhZ2UocyksIGNhcHRpb25zIiAvPjwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPjxMYWJlbD5GZXN0aXZhbHMgJiBTZWxlY3Rpb25zPC9MYWJlbD48VGV4dGFyZWEgcm93cz17Mn0gdmFsdWU9e2tpdC5mZXN0aXZhbHN9IG9uQ2hhbmdlPXsoZSkgPT4gdXBkYXRlKCJmZXN0aXZhbHMiLCBlLnRhcmdldC52YWx1ZSl9IHBsYWNlaG9sZGVyPSJPbmUgcGVyIGxpbmU6IDIwMjYgVHJpYmVjYSBGaWxtIEZlc3RpdmFsIOKAlCBPZmZpY2lhbCBTZWxlY3Rpb24iIC8+PC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+PExhYmVsPkF3YXJkczwvTGFiZWw+PFRleHRhcmVhIHJvd3M9ezJ9IHZhbHVlPXtraXQuYXdhcmRzfSBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZSgiYXdhcmRzIiwgZS50YXJnZXQudmFsdWUpfSAvPjwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPjxMYWJlbD5QcmVzcyBRdW90ZXM8L0xhYmVsPjxUZXh0YXJlYSByb3dzPXszfSB2YWx1ZT17a2l0LnByZXNzUXVvdGVzfSBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZSgicHJlc3NRdW90ZXMiLCBlLnRhcmdldC52YWx1ZSl9IHBsYWNlaG9sZGVyPSciQSBnZW51aW5lIGtub2Nrb3V0LiIg4oCUIEluZGllV2lyZScgLz48L2Rpdj4KCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtd3JhcCBnYXAtMiBwdC0yIj4KICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9eygpID0+IHdpbmRvdy5wcmludCgpfSBjbGFzc05hbWU9Im1pbi1oLVs0NHB4XSBiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNTAwIHRleHQtYmxhY2siPjxQcmludGVyIGNsYXNzTmFtZT0iaC00IHctNCBtci0yIiAvPlByaW50IC8gU2F2ZSBhcyBQREY8L0J1dHRvbj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Im91dGxpbmUiIG9uQ2xpY2s9e2V4cG9ydE1hcmtkb3dufSBjbGFzc05hbWU9Im1pbi1oLVs0NHB4XSI+PERvd25sb2FkIGNsYXNzTmFtZT0iaC00IHctNCBtci0yIiAvPkV4cG9ydCAubWQ8L0J1dHRvbj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Im91dGxpbmUiIG9uQ2xpY2s9e2NvcHlBbGx9IGNsYXNzTmFtZT0ibWluLWgtWzQ0cHhdIj48Q29weSBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz5Db3B5IGFsbDwvQnV0dG9uPgogICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gc2V0RW1haWxEaWFsb2coeyBvcGVuOiB0cnVlLCByZWNpcGllbnRzOiAiIiB9KX0gZGlzYWJsZWQ9e2VtYWlsS2l0LmlzUGVuZGluZ30gY2xhc3NOYW1lPSJtaW4taC1bNDRweF0iIGFyaWEtbGFiZWw9IkVtYWlsIHByZXNzIHBhY2siPgogICAgICAgICAgICAgICAge2VtYWlsS2l0LmlzUGVuZGluZyA/IDxMb2FkZXIyIGNsYXNzTmFtZT0iaC00IHctNCBtci0yIGFuaW1hdGUtc3BpbiIgLz4gOiA8TWFpbCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz59RW1haWwgUHJlc3MgUGFjawogICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gewogICAgICAgICAgICAgICAgY29uc3QgdXJsID0gYCR7d2luZG93LmxvY2F0aW9uLm9yaWdpbn0vcHJvamVjdHMvJHtpZH0vcHJlc3Mta2l0YDsKICAgICAgICAgICAgICAgIG5hdmlnYXRvci5jbGlwYm9hcmQud3JpdGVUZXh0KHVybCkudGhlbigoKSA9PiB0b2FzdC5zdWNjZXNzKCJTaGFyZSBsaW5rIGNvcGllZCIpKS5jYXRjaCgoKSA9PiB0b2FzdC5lcnJvcigiQ291bGQgbm90IGNvcHkiKSk7CiAgICAgICAgICAgICAgfX0gY2xhc3NOYW1lPSJtaW4taC1bNDRweF0iPjxMaW5rSWNvbiBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz5Db3B5IHNoYXJlIGxpbms8L0J1dHRvbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgIDwvQ2FyZD4KCiAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJiZy13aGl0ZSB0ZXh0LWJsYWNrIHByaW50OnNoYWRvdy1ub25lIHByaW50OmJvcmRlci1ub25lIGxnOmNvbC1zcGFuLTEgcHJpbnQ6Y29sLXNwYW4tMSI+CiAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJwLTggcHJvc2UgbWF4LXctbm9uZSI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEgbWItNiI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQteHMgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCB0ZXh0LWFtYmVyLTcwMCI+RWxlY3Ryb25pYyBQcmVzcyBLaXQ8L2Rpdj4KICAgICAgICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTN4bCBmb250LXNlcmlmICFtYi0xIj57cHJvamVjdD8udGl0bGUgfHwgIlVudGl0bGVkIFByb2plY3QifTwvaDE+CiAgICAgICAgICAgICAge2tpdC50YWdsaW5lICYmIDxwIGNsYXNzTmFtZT0idGV4dC1sZyBpdGFsaWMgIW10LTAiPntraXQudGFnbGluZX08L3A+fQogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAge2tpdC5zeW5vcHNpc1Nob3J0ICYmICgKICAgICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9Im1iLTQiPgogICAgICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC1zbSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IGJvcmRlci1iIHBiLTEiPkxvZ2xpbmUgLyBTaG9ydCBTeW5vcHNpczwvaDI+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gbGVhZGluZy1yZWxheGVkIj57a2l0LnN5bm9wc2lzU2hvcnR9PC9wPgogICAgICAgICAgICAgIDwvc2VjdGlvbj4KICAgICAgICAgICAgKX0KICAgICAgICAgICAge2tpdC5zeW5vcHNpc0xvbmcgJiYgKAogICAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibWItNCI+CiAgICAgICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgYm9yZGVyLWIgcGItMSI+U3lub3BzaXM8L2gyPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGxlYWRpbmctcmVsYXhlZCB3aGl0ZXNwYWNlLXByZS13cmFwIj57a2l0LnN5bm9wc2lzTG9uZ308L3A+CiAgICAgICAgICAgICAgPC9zZWN0aW9uPgogICAgICAgICAgICApfQogICAgICAgICAgICB7KGNoYXJhY3RlcnM/Lmxlbmd0aCA/PyAwKSA+IDAgJiYgKAogICAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibWItNCI+CiAgICAgICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgYm9yZGVyLWIgcGItMSI+Q2hhcmFjdGVyczwvaDI+CiAgICAgICAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJ0ZXh0LXNtIHBsLTUgbGlzdC1kaXNjIj4KICAgICAgICAgICAgICAgICAgeyhjaGFyYWN0ZXJzID8/IFtdKS5zbGljZSgwLCA4KS5tYXAoKGM6IGFueSkgPT4gKDxsaSBrZXk9e2MuaWR9PjxzdHJvbmc+e2MubmFtZX08L3N0cm9uZz57Yy5kZXNjcmlwdGlvbiA/IGAg4oCUICR7Yy5kZXNjcmlwdGlvbn1gIDogIiJ9PC9saT4pKX0KICAgICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgICAgPC9zZWN0aW9uPgogICAgICAgICAgICApfQogICAgICAgICAgICB7a2l0LmRpcmVjdG9yQmlvICYmICgKICAgICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9Im1iLTQiPjxoMiBjbGFzc05hbWU9InRleHQtc20gdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCBib3JkZXItYiBwYi0xIj5EaXJlY3RvcidzIEJpbzwvaDI+PHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGxlYWRpbmctcmVsYXhlZCB3aGl0ZXNwYWNlLXByZS13cmFwIj57a2l0LmRpcmVjdG9yQmlvfTwvcD48L3NlY3Rpb24+CiAgICAgICAgICAgICl9CiAgICAgICAgICAgIHtraXQudGVjaG5pY2FsU3BlY3MgJiYgKAogICAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibWItNCI+PGgyIGNsYXNzTmFtZT0idGV4dC1zbSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IGJvcmRlci1iIHBiLTEiPlRlY2huaWNhbCBTcGVjczwvaDI+PHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHdoaXRlc3BhY2UtcHJlLXdyYXAiPntraXQudGVjaG5pY2FsU3BlY3N9PC9wPjwvc2VjdGlvbj4KICAgICAgICAgICAgKX0KICAgICAgICAgICAge2tpdC5mZXN0aXZhbHMgJiYgKAogICAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0ibWItNCI+PGgyIGNsYXNzTmFtZT0idGV4dC1zbSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IGJvcmRlci1iIHBiLTEiPkZlc3RpdmFscyAmIFNlbGVjdGlvbnM8L2gyPjxwIGNsYXNzTmFtZT0idGV4dC1zbSB3aGl0ZXNwYWNlLXByZS13cmFwIj57a2l0LmZlc3RpdmFsc308L3A+PC9zZWN0aW9uPgogICAgICAgICAgICApfQogICAgICAgICAgICB7a2l0LmF3YXJkcyAmJiAoCiAgICAgICAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJtYi00Ij48aDIgY2xhc3NOYW1lPSJ0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgYm9yZGVyLWIgcGItMSI+QXdhcmRzPC9oMj48cCBjbGFzc05hbWU9InRleHQtc20gd2hpdGVzcGFjZS1wcmUtd3JhcCI+e2tpdC5hd2FyZHN9PC9wPjwvc2VjdGlvbj4KICAgICAgICAgICAgKX0KICAgICAgICAgICAge2tpdC5wcmVzc1F1b3RlcyAmJiAoCiAgICAgICAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJtYi00Ij48aDIgY2xhc3NOYW1lPSJ0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgYm9yZGVyLWIgcGItMSI+UHJlc3M8L2gyPjxwIGNsYXNzTmFtZT0idGV4dC1zbSBpdGFsaWMgd2hpdGVzcGFjZS1wcmUtd3JhcCI+e2tpdC5wcmVzc1F1b3Rlc308L3A+PC9zZWN0aW9uPgogICAgICAgICAgICApfQogICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9ImJvcmRlci10IHB0LTMgbXQtNiB0ZXh0LXhzIj4KICAgICAgICAgICAgICA8c3Ryb25nPntraXQucHJvZHVjdGlvbkNvbXBhbnl9PC9zdHJvbmc+IHtraXQuY29udGFjdEVtYWlsICYmIDw+wrcgPGEgaHJlZj17YG1haWx0bzoke2tpdC5jb250YWN0RW1haWx9YH0+e2tpdC5jb250YWN0RW1haWx9PC9hPjwvPn0KICAgICAgICAgICAgPC9zZWN0aW9uPgogICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICA8L0NhcmQ+CiAgICAgIDwvZGl2PgogIHshIWlkICYmIDxOZXh0U3RhZ2VDVEEgcHJvamVjdElkPXtpZH0gY3VycmVudFN0YWdlPXs4fSAvPn0KCiAgICAgIDxEaWFsb2cgb3Blbj17ZW1haWxEaWFsb2cub3Blbn0gb25PcGVuQ2hhbmdlPXsobykgPT4gc2V0RW1haWxEaWFsb2coKHMpID0+ICh7IC4uLnMsIG9wZW46IG8gfSkpfT4KICAgICAgICA8RGlhbG9nQ29udGVudD4KICAgICAgICAgIDxEaWFsb2dIZWFkZXI+CiAgICAgICAgICAgIDxEaWFsb2dUaXRsZT5FbWFpbCBQcmVzcyBQYWNrPC9EaWFsb2dUaXRsZT4KICAgICAgICAgICAgPERpYWxvZ0Rlc2NyaXB0aW9uPkVudGVyIG9uZSBvciBtb3JlIGVtYWlsIGFkZHJlc3Nlcywgc2VwYXJhdGVkIGJ5IGNvbW1hcy48L0RpYWxvZ0Rlc2NyaXB0aW9uPgogICAgICAgICAgPC9EaWFsb2dIZWFkZXI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgPExhYmVsIGh0bWxGb3I9InByZXNzLWVtYWlsLXJlY2lwaWVudHMiPlJlY2lwaWVudHM8L0xhYmVsPgogICAgICAgICAgICA8SW5wdXQKICAgICAgICAgICAgICBpZD0icHJlc3MtZW1haWwtcmVjaXBpZW50cyIKICAgICAgICAgICAgICB2YWx1ZT17ZW1haWxEaWFsb2cucmVjaXBpZW50c30KICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldEVtYWlsRGlhbG9nKChzKSA9PiAoeyAuLi5zLCByZWNpcGllbnRzOiBlLnRhcmdldC52YWx1ZSB9KSl9CiAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9ImFsaWNlQGV4YW1wbGUuY29tLCBib2JAZXhhbXBsZS5jb20iCiAgICAgICAgICAgICAgYXV0b0ZvY3VzCiAgICAgICAgICAgICAgb25LZXlEb3duPXsoZSkgPT4geyBpZiAoZS5rZXkgPT09ICJFbnRlciIpIHsgZS5wcmV2ZW50RGVmYXVsdCgpOyBzdWJtaXRFbWFpbERpYWxvZygpOyB9IH19CiAgICAgICAgICAgIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxEaWFsb2dGb290ZXI+CiAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gc2V0RW1haWxEaWFsb2coeyBvcGVuOiBmYWxzZSwgcmVjaXBpZW50czogIiIgfSl9PkNhbmNlbDwvQnV0dG9uPgogICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9e3N1Ym1pdEVtYWlsRGlhbG9nfSBkaXNhYmxlZD17ZW1haWxLaXQuaXNQZW5kaW5nfT4KICAgICAgICAgICAgICB7ZW1haWxLaXQuaXNQZW5kaW5nID8gPExvYWRlcjIgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIgYW5pbWF0ZS1zcGluIiBhcmlhLWhpZGRlbj0idHJ1ZSIgLz4gOiA8TWFpbCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgYXJpYS1oaWRkZW49InRydWUiIC8+fQogICAgICAgICAgICAgIFNlbmQKICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICA8L0RpYWxvZ0Zvb3Rlcj4KICAgICAgICA8L0RpYWxvZ0NvbnRlbnQ+CiAgICAgIDwvRGlhbG9nPgogICAgPC9kaXY+CiAgKTsKfQoKZnVuY3Rpb24gYnVpbGRNYXJrZG93bih0aXRsZTogc3RyaW5nLCBraXQ6IEtpdFN0YXRlLCBjaGFyYWN0ZXJzOiBhbnlbXSk6IHN0cmluZyB7CiAgY29uc3QgbGluZXM6IHN0cmluZ1tdID0gW107CiAgbGluZXMucHVzaChgIyAke3RpdGxlfSDigJQgRWxlY3Ryb25pYyBQcmVzcyBLaXRcbmApOwogIGlmIChraXQudGFnbGluZSkgbGluZXMucHVzaChgPiBfJHtraXQudGFnbGluZX1fXG5gKTsKICBpZiAoa2l0LnN5bm9wc2lzU2hvcnQpIGxpbmVzLnB1c2goYCMjIExvZ2xpbmUgLyBTaG9ydCBTeW5vcHNpc1xuXG4ke2tpdC5zeW5vcHNpc1Nob3J0fVxuYCk7CiAgaWYgKGtpdC5zeW5vcHNpc0xvbmcpIGxpbmVzLnB1c2goYCMjIFN5bm9wc2lzXG5cbiR7a2l0LnN5bm9wc2lzTG9uZ31cbmApOwogIGlmIChjaGFyYWN0ZXJzLmxlbmd0aCkgewogICAgbGluZXMucHVzaChgIyMgQ2hhcmFjdGVyc1xuYCk7CiAgICBmb3IgKGNvbnN0IGMgb2YgY2hhcmFjdGVycy5zbGljZSgwLCA4KSkgbGluZXMucHVzaChgLSAqKiR7Yy5uYW1lfSoqJHtjLmRlc2NyaXB0aW9uID8gYCDigJQgJHtjLmRlc2NyaXB0aW9ufWAgOiAiIn1gKTsKICAgIGxpbmVzLnB1c2goIiIpOwogIH0KICBpZiAoa2l0LmRpcmVjdG9yQmlvKSBsaW5lcy5wdXNoKGAjIyBEaXJlY3RvcidzIEJpb1xuXG4ke2tpdC5kaXJlY3RvckJpb31cbmApOwogIGlmIChraXQudGVjaG5pY2FsU3BlY3MpIGxpbmVzLnB1c2goYCMjIFRlY2huaWNhbCBTcGVjc1xuXG4ke2tpdC50ZWNobmljYWxTcGVjc31cbmApOwogIGlmIChraXQuZmVzdGl2YWxzKSBsaW5lcy5wdXNoKGAjIyBGZXN0aXZhbHMgJiBTZWxlY3Rpb25zXG5cbiR7a2l0LmZlc3RpdmFsc31cbmApOwogIGlmIChraXQuYXdhcmRzKSBsaW5lcy5wdXNoKGAjIyBBd2FyZHNcblxuJHtraXQuYXdhcmRzfVxuYCk7CiAgaWYgKGtpdC5wcmVzc1F1b3RlcykgbGluZXMucHVzaChgIyMgUHJlc3NcblxuJHtraXQucHJlc3NRdW90ZXN9XG5gKTsKICBsaW5lcy5wdXNoKGAtLS1cbioqJHtraXQucHJvZHVjdGlvbkNvbXBhbnl9Kioke2tpdC5jb250YWN0RW1haWwgPyBgIMK3ICR7a2l0LmNvbnRhY3RFbWFpbH1gIDogIiJ9YCk7CiAgcmV0dXJuIGxpbmVzLmpvaW4oIlxuIik7Cn0K
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { ArrowLeft, Printer, Download, FileText, Copy, Mail, Link as LinkIcon, Loader2 } from "lucide-react";
+import SiteHead from "@/components/SiteHead";
+import { toast } from "sonner";
+
+interface KitState {
+  tagline: string;
+  synopsisShort: string;
+  synopsisLong: string;
+  directorBio: string;
+  productionCompany: string;
+  contactEmail: string;
+  technicalSpecs: string;
+  festivals: string;
+  awards: string;
+  pressQuotes: string;
+}
+
+export default function PressKit() {
+  const { projectId } = useParams<{ projectId: string }>();
+  const id = parseInt(projectId || "0");
+  const { data: project } = trpc.project.get.useQuery({ id }, { enabled: !!id });
+  const { data: characters } = trpc.character.listByProject.useQuery({ projectId: id }, { enabled: !!id });
+
+  const [kit, setKit] = useState<KitState>({
+    tagline: "",
+    synopsisShort: "",
+    synopsisLong: "",
+    directorBio: "",
+    productionCompany: "Virelle Studios",
+    contactEmail: "",
+    technicalSpecs: "",
+    festivals: "",
+    awards: "",
+    pressQuotes: "",
+  });
+
+  const [emailDialog, setEmailDialog] = useState<{ open: boolean; recipients: string }>({ open: false, recipients: "" });
+
+  function update<K extends keyof KitState>(k: K, v: KitState[K]) {
+    setKit((prev) => ({ ...prev, [k]: v }));
+  }
+
+  const submitEmailDialog = () => {
+    const list = emailDialog.recipients.split(/[,;\s]+/).map((s) => s.trim()).filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+    if (list.length === 0) { toast.error("No valid email addresses"); return; }
+    emailKit.mutate({ projectId: id, recipients: list, kit });
+    setEmailDialog({ open: false, recipients: "" });
+  };
+
+  const emailKit = trpc.featureFilm.emailPressKit.useMutation({
+    onSuccess: (r: any) => toast.success(r?.message || "Press kit sent"),
+    onError: (e: any) => toast.error(e?.message || "Failed to send press kit"),
+  });
+
+  function exportMarkdown() {
+    const md = buildMarkdown(project?.title || "Untitled", kit, characters ?? []);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${project?.title || "press-kit"}-EPK.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function copyAll() {
+    const md = buildMarkdown(project?.title || "Untitled", kit, characters ?? []);
+    navigator.clipboard.writeText(md).then(() => toast.success("EPK copied to clipboard."));
+  }
+
+  return (
+    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div className="container mx-auto p-4 max-w-6xl space-y-6">
+      <SiteHead title={`Press Kit — ${project?.title || "Project"}`} description={`Electronic Press Kit for ${project?.title || "your film"} — synopsis, technical specs, festival selections and press quotes.`} />
+      <div className="flex items-center gap-3 print:hidden">
+        <Link href={`/projects/${id}`}>
+          <Button variant="ghost" size="sm" className="min-h-[44px]"><ArrowLeft className="h-4 w-4 mr-2" />Back to project</Button>
+        </Link>
+        <div>
+          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 · Release & Promote</div>
+          <h1 className="font-serif text-3xl flex items-center gap-2"><FileText className="h-6 w-6 text-amber-400" /> Press Kit Builder</h1>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-1">
+        <Card className="print:hidden">
+          <CardHeader>
+            <CardTitle>EPK Inputs</CardTitle>
+            <CardDescription>Fill in the fields. Preview updates live. Export, print, or paste into your distribution emails.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1.5"><Label>Tagline</Label><Input value={kit.tagline} onChange={(e) => update("tagline", e.target.value)} placeholder='"In a city of glass, the truth has cracks."' /></div>
+            <div className="space-y-1.5"><Label>Short Synopsis (50-100 words)</Label><Textarea rows={3} value={kit.synopsisShort} onChange={(e) => update("synopsisShort", e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>Long Synopsis (250-400 words)</Label><Textarea rows={6} value={kit.synopsisLong} onChange={(e) => update("synopsisLong", e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>Director Bio</Label><Textarea rows={3} value={kit.directorBio} onChange={(e) => update("directorBio", e.target.value)} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label>Production Company</Label><Input value={kit.productionCompany} onChange={(e) => update("productionCompany", e.target.value)} /></div>
+              <div className="space-y-1.5"><Label>Contact Email</Label><Input type="email" value={kit.contactEmail} onChange={(e) => update("contactEmail", e.target.value)} /></div>
+            </div>
+            <div className="space-y-1.5"><Label>Technical Specs</Label><Textarea rows={2} value={kit.technicalSpecs} onChange={(e) => update("technicalSpecs", e.target.value)} placeholder="Runtime, format (DCP, ProRes 422 HQ), aspect ratio, audio mix, language(s), captions" /></div>
+            <div className="space-y-1.5"><Label>Festivals & Selections</Label><Textarea rows={2} value={kit.festivals} onChange={(e) => update("festivals", e.target.value)} placeholder="One per line: 2026 Tribeca Film Festival — Official Selection" /></div>
+            <div className="space-y-1.5"><Label>Awards</Label><Textarea rows={2} value={kit.awards} onChange={(e) => update("awards", e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>Press Quotes</Label><Textarea rows={3} value={kit.pressQuotes} onChange={(e) => update("pressQuotes", e.target.value)} placeholder='"A genuine knockout." — IndieWire' /></div>
+
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button onClick={() => window.print()} className="min-h-[44px] bg-amber-600 hover:bg-amber-500 text-black"><Printer className="h-4 w-4 mr-2" />Print / Save as PDF</Button>
+              <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
+              <Button variant="outline" onClick={copyAll} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
+              <Button variant="outline" onClick={() => setEmailDialog({ open: true, recipients: "" })} disabled={emailKit.isPending} className="min-h-[44px]" aria-label="Email press pack">
+                {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
+              </Button>
+              <Button variant="outline" onClick={() => {
+                const url = `${window.location.origin}/projects/${id}/press-kit`;
+                navigator.clipboard.writeText(url).then(() => toast.success("Share link copied")).catch(() => toast.error("Could not copy"));
+              }} className="min-h-[44px]"><LinkIcon className="h-4 w-4 mr-2" />Copy share link</Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/5 border border-white/10 text-foreground print:bg-white print:text-black print:shadow-none print:border-none lg:col-span-1 print:col-span-1">
+          <CardContent className="p-8 prose max-w-none">
+            <div className="space-y-1 mb-6">
+              <div className="text-xs uppercase tracking-widest text-amber-700">Electronic Press Kit</div>
+              <h1 className="text-3xl font-serif !mb-1">{project?.title || "Untitled Project"}</h1>
+              {kit.tagline && <p className="text-lg italic !mt-0">{kit.tagline}</p>}
+            </div>
+            {kit.synopsisShort && (
+              <section className="mb-4">
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Logline / Short Synopsis</h2>
+                <p className="text-sm leading-relaxed">{kit.synopsisShort}</p>
+              </section>
+            )}
+            {kit.synopsisLong && (
+              <section className="mb-4">
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Synopsis</h2>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{kit.synopsisLong}</p>
+              </section>
+            )}
+            {(characters?.length ?? 0) > 0 && (
+              <section className="mb-4">
+                <h2 className="text-sm uppercase tracking-widest border-b pb-1">Characters</h2>
+                <ul className="text-sm pl-5 list-disc">
+                  {(characters ?? []).slice(0, 8).map((c: any) => (<li key={c.id}><strong>{c.name}</strong>{c.description ? ` — ${c.description}` : ""}</li>))}
+                </ul>
+              </section>
+            )}
+            {kit.directorBio && (
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Director's Bio</h2><p className="text-sm leading-relaxed whitespace-pre-wrap">{kit.directorBio}</p></section>
+            )}
+            {kit.technicalSpecs && (
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Technical Specs</h2><p className="text-sm whitespace-pre-wrap">{kit.technicalSpecs}</p></section>
+            )}
+            {kit.festivals && (
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Festivals & Selections</h2><p className="text-sm whitespace-pre-wrap">{kit.festivals}</p></section>
+            )}
+            {kit.awards && (
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Awards</h2><p className="text-sm whitespace-pre-wrap">{kit.awards}</p></section>
+            )}
+            {kit.pressQuotes && (
+              <section className="mb-4"><h2 className="text-sm uppercase tracking-widest border-b pb-1">Press</h2><p className="text-sm italic whitespace-pre-wrap">{kit.pressQuotes}</p></section>
+            )}
+            <section className="border-t pt-3 mt-6 text-xs">
+              <strong>{kit.productionCompany}</strong> {kit.contactEmail && <>· <a href={`mailto:${kit.contactEmail}`}>{kit.contactEmail}</a></>}
+            </section>
+          </CardContent>
+        </Card>
+      </div>
+  {!!id && <NextStageCTA projectId={id} currentStage={8} />}
+
+      <Dialog open={emailDialog.open} onOpenChange={(o) => setEmailDialog((s) => ({ ...s, open: o }))}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Email Press Pack</DialogTitle>
+            <DialogDescription>Enter one or more email addresses, separated by commas.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="press-email-recipients">Recipients</Label>
+            <Input
+              id="press-email-recipients"
+              value={emailDialog.recipients}
+              onChange={(e) => setEmailDialog((s) => ({ ...s, recipients: e.target.value }))}
+              placeholder="alice@example.com, bob@example.com"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); submitEmailDialog(); } }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEmailDialog({ open: false, recipients: "" })}>Cancel</Button>
+            <Button onClick={submitEmailDialog} disabled={emailKit.isPending}>
+              {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" /> : <Mail className="h-4 w-4 mr-2" aria-hidden="true" />}
+              Send
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function buildMarkdown(title: string, kit: KitState, characters: any[]): string {
+  const lines: string[] = [];
+  lines.push(`# ${title} — Electronic Press Kit\n`);
+  if (kit.tagline) lines.push(`> _${kit.tagline}_\n`);
+  if (kit.synopsisShort) lines.push(`## Logline / Short Synopsis\n\n${kit.synopsisShort}\n`);
+  if (kit.synopsisLong) lines.push(`## Synopsis\n\n${kit.synopsisLong}\n`);
+  if (characters.length) {
+    lines.push(`## Characters\n`);
+    for (const c of characters.slice(0, 8)) lines.push(`- **${c.name}**${c.description ? ` — ${c.description}` : ""}`);
+    lines.push("");
+  }
+  if (kit.directorBio) lines.push(`## Director's Bio\n\n${kit.directorBio}\n`);
+  if (kit.technicalSpecs) lines.push(`## Technical Specs\n\n${kit.technicalSpecs}\n`);
+  if (kit.festivals) lines.push(`## Festivals & Selections\n\n${kit.festivals}\n`);
+  if (kit.awards) lines.push(`## Awards\n\n${kit.awards}\n`);
+  if (kit.pressQuotes) lines.push(`## Press\n\n${kit.pressQuotes}\n`);
+  lines.push(`---\n**${kit.productionCompany}**${kit.contactEmail ? ` · ${kit.contactEmail}` : ""}`);
+  return lines.join("\n");
+}
