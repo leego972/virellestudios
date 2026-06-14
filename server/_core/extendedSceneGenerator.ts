@@ -21,6 +21,7 @@
  */
 
 import { generateVideo as generateBYOKVideo, selectProvider, type UserApiKeys, type VideoGenerationRequest, type VideoGenerationResult } from "./byokVideoEngine";
+import { logger } from "./logger";
 import { buildNegativePrompt } from "./cinematicPromptEngine";
 import { storagePut } from "../storage";
 import { execFile } from "child_process";
@@ -40,7 +41,7 @@ async function pollRunwaySentinel(apiKey: string, taskId: string): Promise<strin
   const MAX_WAIT_MS = 15 * 60 * 1000; // 15 minutes
   const POLL_INTERVAL_MS = 10_000;    // 10 seconds
   const startTime = Date.now();
-  console.log(`[ExtendedScene] Polling Runway task ${taskId}...`);
+  logger.info(`[ExtendedScene] Polling Runway task ${taskId}...`);
   while (Date.now() - startTime < MAX_WAIT_MS) {
     // Wrap each SDK call in a race against a 30s timeout to prevent hung connections
     const task = await Promise.race([
@@ -66,7 +67,7 @@ async function pollRunwaySentinel(apiKey: string, taskId: string): Promise<strin
           console.warn(`[ExtendedScene] Storage unavailable for Runway video (${storageErr.message}), using raw CDN URL`);
           url = videoUrl;
         }
-        console.log(`[ExtendedScene] Runway task ${taskId} completed: ${url}`);
+        logger.info(`[ExtendedScene] Runway task ${taskId} completed: ${url}`);
         return url;
       }
       throw new Error(`Runway task succeeded but no video URL in output: ${JSON.stringify(task).substring(0, 200)}`);
@@ -83,7 +84,7 @@ async function pollVeo3Sentinel(apiKey: string, operationName: string): Promise<
   const MAX_WAIT_MS = 20 * 60 * 1000; // 20 minutes
   const POLL_INTERVAL_MS = 15_000;    // 15 seconds
   const startTime = Date.now();
-  console.log(`[ExtendedScene] Polling Veo 3 operation ${operationName}...`);
+  logger.info(`[ExtendedScene] Polling Veo 3 operation ${operationName}...`);
   while (Date.now() - startTime < MAX_WAIT_MS) {
     const url = `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`;
     const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
@@ -109,7 +110,7 @@ async function pollVeo3Sentinel(apiKey: string, operationName: string): Promise<
           console.warn(`[ExtendedScene] Storage unavailable for Veo3 video (${storageErr.message}), using raw CDN URL`);
           s3Url = downloadUrl;
         }
-        console.log(`[ExtendedScene] Veo 3 operation ${operationName} completed: ${s3Url}`);
+        logger.info(`[ExtendedScene] Veo 3 operation ${operationName} completed: ${s3Url}`);
         return s3Url;
       }
     }
@@ -747,7 +748,7 @@ export async function generateExtendedScene(
 ): Promise<ExtendedSceneResult> {
   // Detect the active provider so planSubShots uses the correct clip duration
   const activeProvider = selectProvider(keys);
-  console.log(`[ExtendedScene] Active provider: ${activeProvider}`);
+  logger.info(`[ExtendedScene] Active provider: ${activeProvider}`);
 
   // If dialogue audio exists, match video duration to it (with buffer)
   let targetDuration = request.targetDurationSeconds;
@@ -773,7 +774,7 @@ export async function generateExtendedScene(
     }
   );
 
-  console.log(`[ExtendedScene] Scene ${request.sceneId}: ${subShots.length} sub-clips planned for ${targetDuration}s target`);
+  logger.info(`[ExtendedScene] Scene ${request.sceneId}: ${subShots.length} sub-clips planned for ${targetDuration}s target`);
 
   // Generate sub-clips sequentially (each uses previous clip's last frame)
   const generatedClipUrls: string[] = [];
@@ -788,7 +789,7 @@ export async function generateExtendedScene(
     }
 
     try {
-      console.log(`[ExtendedScene] Generating sub-clip ${i + 1}/${subShots.length} (${subShot.durationSeconds}s, ${subShot.cameraAngle})`);
+      logger.info(`[ExtendedScene] Generating sub-clip ${i + 1}/${subShots.length} (${subShot.durationSeconds}s, ${subShot.cameraAngle})`);
 
       // Use director's prompt override for first sub-shot if set; otherwise use auto-generated prompt
       const effectivePrompt = (i === 0 && request.aiPromptOverride) ? request.aiPromptOverride : subShot.prompt;
@@ -808,7 +809,7 @@ export async function generateExtendedScene(
           const kfCheck = await fetch(kfUrl, { method: "HEAD", signal: AbortSignal.timeout(15000) });
           if (kfCheck.ok) {
             effectiveImageUrl = kfUrl;
-            console.log(`[ExtendedScene] Auto-generated Pollinations keyframe for Runway sub-clip ${i + 1}`);
+            logger.info(`[ExtendedScene] Auto-generated Pollinations keyframe for Runway sub-clip ${i + 1}`);
           }
         } catch (kfErr: any) {
           console.warn(`[ExtendedScene] Keyframe auto-gen failed for sub-clip ${i + 1}: ${kfErr.message}`);
@@ -918,13 +919,13 @@ export async function generateExtendedScene(
   }
 
   // Stitch sub-clips into a single scene video
-  console.log(`[ExtendedScene] Stitching ${generatedClipUrls.length} sub-clips...`);
+  logger.info(`[ExtendedScene] Stitching ${generatedClipUrls.length} sub-clips...`);
   const { videoUrl, duration } = await stitchSubClips(generatedClipUrls, request.projectId, request.sceneId);
 
   // Extract thumbnail from first clip
   const thumbnailUrl = await extractFirstFrame(generatedClipUrls[0], request.projectId, request.sceneId);
 
-  console.log(`[ExtendedScene] Scene ${request.sceneId} complete: ${duration.toFixed(1)}s from ${generatedClipUrls.length} clips`);
+  logger.info(`[ExtendedScene] Scene ${request.sceneId} complete: ${duration.toFixed(1)}s from ${generatedClipUrls.length} clips`);
 
   return {
     videoUrl,
