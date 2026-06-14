@@ -913,7 +913,7 @@ export default function Landing() {
                   {/* Left ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ copy */}
                   <div className="p-8 md:p-10 flex flex-col justify-center">
                     <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23 collections ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 1,400+ items</p>
-                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight gradient-text-gold">
+                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight text-gold-shimmer">
                       Menswear. Womenswear. Kids. Sport.<br />
                       <span className="text-amber-400">From 30 cents per item.</span>
                     </h3>

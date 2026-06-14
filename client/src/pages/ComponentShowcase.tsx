@@ -245,7 +245,7 @@ export default function ComponentsShowcase() {
         <div className="space-y-12">
           {/* Text Colors Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Text Colors</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Text Colors</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -324,7 +324,7 @@ export default function ComponentsShowcase() {
 
           {/* Color Combinations Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Color Combinations</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Color Combinations</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -383,7 +383,7 @@ export default function ComponentsShowcase() {
 
           {/* Buttons Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Buttons</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Buttons</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -405,7 +405,7 @@ export default function ComponentsShowcase() {
 
           {/* Form Inputs Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Form Inputs</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Form Inputs</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -679,7 +679,7 @@ export default function ComponentsShowcase() {
 
           {/* Data Display Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Data Display</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Data Display</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -868,7 +868,7 @@ export default function ComponentsShowcase() {
 
           {/* Alerts Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Alerts</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Alerts</h3>
             <div className="space-y-4">
               <Alert>
                 <AlertCircle className="h-4 w-4" />
@@ -889,7 +889,7 @@ export default function ComponentsShowcase() {
 
           {/* Tabs Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Tabs</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Tabs</h3>
             <Tabs defaultValue="account" className="w-full">
               <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3">
                 <TabsTrigger value="account">Account</TabsTrigger>
@@ -958,7 +958,7 @@ export default function ComponentsShowcase() {
 
           {/* Accordion Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Accordion</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Accordion</h3>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Is it accessible?</AccordionTrigger>
@@ -985,7 +985,7 @@ export default function ComponentsShowcase() {
 
           {/* Collapsible Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Collapsible</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Collapsible</h3>
             <Collapsible>
               <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
                 <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
@@ -1016,7 +1016,7 @@ export default function ComponentsShowcase() {
 
           {/* Dialog, Sheet, Drawer Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Overlays</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Overlays</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -1120,7 +1120,7 @@ export default function ComponentsShowcase() {
 
           {/* Menus Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Menus</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Menus</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -1171,7 +1171,7 @@ export default function ComponentsShowcase() {
 
           {/* Calendar Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Calendar</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Calendar</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 flex justify-center">
                 <Calendar
@@ -1186,7 +1186,7 @@ export default function ComponentsShowcase() {
 
           {/* Carousel Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Carousel</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Carousel</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <Carousel className="w-full max-w-xs mx-auto">
@@ -1214,7 +1214,7 @@ export default function ComponentsShowcase() {
 
           {/* Toggle Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Toggle</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Toggle</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
@@ -1255,7 +1255,7 @@ export default function ComponentsShowcase() {
 
           {/* Aspect Ratio & Scroll Area Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Layout Components</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Layout Components</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -1287,7 +1287,7 @@ export default function ComponentsShowcase() {
 
           {/* Resizable Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Resizable Panels</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Resizable Panels</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <ResizablePanelGroup
@@ -1312,7 +1312,7 @@ export default function ComponentsShowcase() {
 
           {/* Toast Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">Toast</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">Toast</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
@@ -1393,7 +1393,7 @@ export default function ComponentsShowcase() {
 
           {/* AI ChatBox Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold gradient-text-gold">AI ChatBox</h3>
+            <h3 className="text-2xl font-semibold text-gold-shimmer">AI ChatBox</h3>
             <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="pt-6">
                 <div className="space-y-4">

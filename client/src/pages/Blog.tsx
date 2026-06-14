@@ -164,7 +164,7 @@ export default function Blog() {
 
       {/* CTA Section */}
       <section className="border-t border-white/10 py-16 px-4 sm:px-6 text-center bg-gradient-to-b from-transparent to-amber-950/10">
-        <h3 className="text-2xl sm:text-3xl font-bold mb-4 gradient-text-gold">Ready to Create Your Own AI Film?</h3>
+        <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-gold-shimmer">Ready to Create Your Own AI Film?</h3>
         <p className="text-white/60 mb-6 max-w-lg mx-auto">
           Join thousands of filmmakers using VirÃlle Studios to produce Hollywood-quality content with AI.
         </p>

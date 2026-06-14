@@ -807,7 +807,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Inciting Email
             </div>
-            <h3 className="text-2xl font-bold gradient-text-gold">
+            <h3 className="text-2xl font-bold text-gold-shimmer">
               One email reminded him he was a storyteller.
             </h3>
           </div>
@@ -841,7 +841,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Cast
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold gradient-text-gold">
+            <h3 className="text-2xl md:text-3xl font-bold text-gold-shimmer">
               Main characters
             </h3>
           </div>
@@ -892,7 +892,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Short Film
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold gradient-text-gold">
+            <h3 className="text-2xl md:text-3xl font-bold text-gold-shimmer">
               Full script
             </h3>
           </div>
@@ -1005,7 +1005,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Show Within The Show
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold tracking-tight gradient-text-gold">
+            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-gold-shimmer">
               {showrunner.signalBlackMiniTrailer.title}
             </h3>
             <p className="text-sm text-amber-300/70 italic mt-2">
@@ -1099,7 +1099,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               What Virelle Built
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold gradient-text-gold">
+            <h3 className="text-2xl md:text-3xl font-bold text-gold-shimmer">
               A complete production package
             </h3>
             <p className="text-sm text-neutral-500 mt-2 max-w-xl mx-auto">
@@ -1133,7 +1133,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Difference
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold gradient-text-gold">
+            <h3 className="text-2xl md:text-3xl font-bold text-gold-shimmer">
               {showrunner.comparisonCopy.headline}
             </h3>
             <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
@@ -1196,7 +1196,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Social Cuts
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold gradient-text-gold">
+            <h3 className="text-2xl md:text-3xl font-bold text-gold-shimmer">
               3 ready-to-post versions
             </h3>
           </div>
@@ -1549,7 +1549,7 @@ function DiscoveryFeed() {
               Start building your show
             </div>
 
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight gradient-text-gold">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight text-gold-shimmer">
               {showrunner.landingCopy.headline}
             </h3>
             <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
