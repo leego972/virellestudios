@@ -310,7 +310,7 @@ const defaultScene: SceneForm = {
   aiPromptOverride: "",
   negativePrompt: "",
   seed: null,
-  // Timing â default 45s (industry-standard for a typical scene)
+  // Timing Ã¢ÂÂ default 45s (industry-standard for a typical scene)
   duration: 45,
   transition: "",
   transitionDuration: 0.5,
@@ -331,24 +331,24 @@ export default function SceneEditor() {
   const handleGenerationError = (err: any) => {
     const msg: string = err?.message ?? "";
     if (msg.includes("trial has ended") || msg.includes("upgrade to a paid plan") || (err?.data?.code === "FORBIDDEN" && msg.includes("plan"))) {
-      toast.error("Your free trial has ended â upgrade to continue creating.", {
+      toast.error("Your free trial has ended Ã¢ÂÂ upgrade to continue creating.", {
         duration: 9000,
         action: { label: "View Plans", onClick: () => setLocation("/pricing") },
       });
     } else if (msg.includes("no_video_key") || msg.includes("No video generation key")) {
-      toast.error("No video provider configured. Add an API key in Settings â Providers.", { duration: 8000 });
+      toast.error("No video provider configured. Add an API key in Settings Ã¢ÂÂ Providers.", { duration: 8000 });
     } else if (msg.includes("402") || msg.includes("insufficient") || msg.includes("credits")) {
       toast.error("Insufficient credits. Top up your generation credits to continue.", { duration: 8000 });
     } else if (msg.includes("403") || msg.includes("quota") || msg.includes("rate limit")) {
       toast.error("Provider quota exceeded. Try again shortly or switch providers in Settings.", { duration: 8000 });
     } else if (msg.includes("401") || msg.includes("invalid_api_key") || msg.includes("Unauthorized")) {
-      toast.error("Invalid API key. Check your provider credentials in Settings â Providers.", { duration: 8000 });
+      toast.error("Invalid API key. Check your provider credentials in Settings Ã¢ÂÂ Providers.", { duration: 8000 });
     } else {
       toast.error(msg || "Generation failed. Please try again.", { duration: 6000 });
     }
   };
   const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
-  // v6.63 â Production Spine: per-scene approval + shot list + version compare
+  // v6.63 Ã¢ÂÂ Production Spine: per-scene approval + shot list + version compare
   const [productionOpen, setProductionOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -391,7 +391,7 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       if (isAutosaveSubmitRef.current) {
         isAutosaveSubmitRef.current = false;
-        // silent autosave â keep dialog open, no toast
+        // silent autosave Ã¢ÂÂ keep dialog open, no toast
         return;
       }
       toast.success("Scene updated");
@@ -452,7 +452,7 @@ export default function SceneEditor() {
             clearInterval(videoGenPollRef.current!);
             videoGenPollRef.current = null;
             utils.scene.listByProject.invalidate({ projectId });
-            toast.error("Scene generation failed â check your credits or provider status in Settings.", { duration: 6000 });
+            toast.error("Scene generation failed Ã¢ÂÂ check your credits or provider status in Settings.", { duration: 6000 });
           }
         }, 10000);
         // Stop polling after 10 minutes max
@@ -612,7 +612,7 @@ export default function SceneEditor() {
       aiPromptOverride: scene.aiPromptOverride || "",
       negativePrompt: (scene as any).negativePrompt || "",
       seed: (scene as any).seed ?? null,
-      // Timing â default 45s if not set
+      // Timing Ã¢ÂÂ default 45s if not set
       duration: scene.duration || 45,
       transition: scene.transitionType || ext.transition || "",
       transitionDuration: scene.transitionDuration ?? 0.5,
@@ -845,10 +845,10 @@ export default function SceneEditor() {
           </Button>
           <div className="min-w-0">
             <h1 className="text-base md:text-xl font-semibold tracking-tight truncate gradient-text-gold">
-              Scene Editor {project?.title ? `â ${project.title}` : ""}
+              Scene Editor {project?.title ? `Ã¢ÂÂ ${project.title}` : ""}
             </h1>
             <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">
-              {scenes?.length || 0} scenes Â· Drag to reorder
+              {scenes?.length || 0} scenes ÃÂ· Drag to reorder
             </p>
           </div>
         </div>
@@ -861,7 +861,7 @@ export default function SceneEditor() {
               bulkGenMutation.mutate({ projectId: Number(projectId) });
             }}
             disabled={bulkGenMutation.isPending}
-            title={`3 credits Ã ${scenes?.length || 0} scenes = ${3 * (scenes?.length || 0)} credits total`}
+            title={`3 credits ÃÂ ${scenes?.length || 0} scenes = ${3 * (scenes?.length || 0)} credits total`}
           >
             {bulkGenMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />
@@ -890,7 +890,7 @@ export default function SceneEditor() {
               }
             }}
             disabled={bulkVideoMutation.isPending}
-            title={`~10â20 credits Ã ${scenes?.length || 0} scenes (varies by duration)`}
+            title={`~10Ã¢ÂÂ20 credits ÃÂ ${scenes?.length || 0} scenes (varies by duration)`}
           >
             {bulkVideoMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />
@@ -1020,7 +1020,7 @@ export default function SceneEditor() {
           quoteSeed="scene-editor"
           icon={<Clapperboard className="h-9 w-9 text-amber-400/70" />}
           title="Block out your first scene"
-          description="A scene is the smallest unit of story Virelle can shoot. Set the location, time of day, mood, and the action â then generate a preview to see it come alive."
+          description="A scene is the smallest unit of story Virelle can shoot. Set the location, time of day, mood, and the action Ã¢ÂÂ then generate a preview to see it come alive."
           action={
             <Button onClick={openNewScene} className="gap-2">
               <Plus className="h-4 w-4" />
@@ -1076,7 +1076,7 @@ export default function SceneEditor() {
                     <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                    {[scene.timeOfDay, scene.locationType, scene.mood, scene.lighting].filter(Boolean).join(" Â· ")}
+                    {[scene.timeOfDay, scene.locationType, scene.mood, scene.lighting].filter(Boolean).join(" ÃÂ· ")}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className={`text-[10px] h-5 capitalize ${scene.status === 'generating' ? 'text-amber-400 border-amber-500/30 animate-pulse' : scene.status === 'failed' ? 'text-red-400 border-red-500/30' : ''}`}>{scene.status}</Badge>
@@ -1142,7 +1142,7 @@ export default function SceneEditor() {
             <p className="text-xs text-muted-foreground">Click any section header to expand or collapse it.</p>
           </DialogHeader>
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-1 mt-2">
-            {/* âââ Basic Info â always visible âââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Basic Info Ã¢ÂÂ always visible Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
             <div className="space-y-3 p-3 rounded-lg border border-border/60 bg-card/30">
               <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
                 <Clapperboard className="h-3.5 w-3.5" />
@@ -1157,27 +1157,27 @@ export default function SceneEditor() {
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />Duration (seconds)</Label>
                   <Input type="number" min={5} max={600} value={form.duration} onChange={e => setField("duration", parseInt(e.target.value) || 45)} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
                   <p className="text-[10px] text-muted-foreground/70">
-                    Industry standard: 30â90s dialogue Â· 45â120s action Â· up to 3min+ for key scenes
+                    Industry standard: 30Ã¢ÂÂ90s dialogue ÃÂ· 45Ã¢ÂÂ120s action ÃÂ· up to 3min+ for key scenes
                   </p>
                 </div>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Scene Description</Label>
-                <Textarea placeholder="Describe what happens in this scene in detail â actions, emotions, key moments..." value={form.description} onChange={e => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                <Textarea placeholder="Describe what happens in this scene in detail Ã¢ÂÂ actions, emotions, key moments..." value={form.description} onChange={e => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </div>
 
 
-            {/* âââ COLLAPSIBLE SECTIONS âââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ COLLAPSIBLE SECTIONS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
 
-            {/* ââ Time, Weather & Atmosphere ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Time, Weather & Atmosphere Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.atmosphere} onOpenChange={() => toggleSection("atmosphere")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.atmosphere ? "rotate-90" : ""}`} />
                   <Sun className="h-3.5 w-3.5 text-amber-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Time, Weather & Atmosphere</span>
-                  <span className="text-[10px] text-muted-foreground/60">{[form.timeOfDay, form.weather, form.mood].filter(Boolean).join(" Â· ") || "defaults"}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{[form.timeOfDay, form.weather, form.mood].filter(Boolean).join(" ÃÂ· ") || "defaults"}</span>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -1236,11 +1236,11 @@ export default function SceneEditor() {
                         <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto-detect from genre/mood" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto-detect from genre &amp; mood</SelectItem>
-                          <SelectItem value="action">Action â fight, chase, battle</SelectItem>
-                          <SelectItem value="dialogue">Dialogue â conversation, confrontation</SelectItem>
-                          <SelectItem value="emotional">Emotional â grief, love, loss, reunion</SelectItem>
-                          <SelectItem value="horror">Horror â threat, dread, supernatural</SelectItem>
-                          <SelectItem value="reveal">Reveal â discovery, twist, confession</SelectItem>
+                          <SelectItem value="action">Action Ã¢ÂÂ fight, chase, battle</SelectItem>
+                          <SelectItem value="dialogue">Dialogue Ã¢ÂÂ conversation, confrontation</SelectItem>
+                          <SelectItem value="emotional">Emotional Ã¢ÂÂ grief, love, loss, reunion</SelectItem>
+                          <SelectItem value="horror">Horror Ã¢ÂÂ threat, dread, supernatural</SelectItem>
+                          <SelectItem value="reveal">Reveal Ã¢ÂÂ discovery, twist, confession</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1249,14 +1249,14 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Camera, Lens & Lighting ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Camera, Lens & Lighting Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.camera} onOpenChange={() => toggleSection("camera")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.camera ? "rotate-90" : ""}`} />
                   <Camera className="h-3.5 w-3.5 text-blue-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Camera, Lens & Lighting</span>
-                  <span className="text-[10px] text-muted-foreground/60">{[form.cameraAngle, form.lighting].filter(Boolean).join(" Â· ") || "defaults"}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{[form.cameraAngle, form.lighting].filter(Boolean).join(" ÃÂ· ") || "defaults"}</span>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -1385,7 +1385,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Camera Rig (Pro) ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Camera Rig (Pro) Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.cameraRig} onOpenChange={() => toggleSection("cameraRig")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-400/5 hover:bg-amber-400/10 transition-colors text-left">
@@ -1440,26 +1440,26 @@ export default function SceneEditor() {
                         <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No filter" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">No filter (clean)</SelectItem>
-                          <SelectItem value="black_pro_mist_14">Black Pro-Mist Â¼ â subtle halation</SelectItem>
-                          <SelectItem value="black_pro_mist_12">Black Pro-Mist Â½ â dreamy bloom</SelectItem>
-                          <SelectItem value="black_pro_mist_1">Black Pro-Mist 1 â heavy diffusion</SelectItem>
-                          <SelectItem value="glimmerglass_1">Tiffen Glimmerglass 1 â fine halation</SelectItem>
-                          <SelectItem value="glimmerglass_2">Tiffen Glimmerglass 2 â medium glow</SelectItem>
-                          <SelectItem value="glimmerglass_3">Tiffen Glimmerglass 3 â soft glow</SelectItem>
-                          <SelectItem value="classic_soft_1">Schneider Classic Soft 1 â portrait diffusion</SelectItem>
-                          <SelectItem value="pearlescent_14">Tiffen Pearlescent Â¼ â pearl luminosity</SelectItem>
-                          <SelectItem value="low_contrast_1">Low Contrast 1 â shadow lift, film-like</SelectItem>
-                          <SelectItem value="low_contrast_3">Low Contrast 3 â heavy shadow lift</SelectItem>
-                          <SelectItem value="ultra_contrast_3">Ultra Contrast 3 â dual highlight+shadow</SelectItem>
-                          <SelectItem value="nd_2stop">ND 2-stop (0.6) â exposure control</SelectItem>
-                          <SelectItem value="nd_3stop">ND 3-stop (0.9) â wide aperture outdoors</SelectItem>
-                          <SelectItem value="nd_4stop">ND 4-stop (1.2) â shallow DoF in daylight</SelectItem>
-                          <SelectItem value="nd_6stop">ND 6-stop (1.8) â extreme control</SelectItem>
-                          <SelectItem value="polarizer">Polarizer â removes reflections</SelectItem>
-                          <SelectItem value="streak_horizontal">Streak (horizontal) â anamorphic flares</SelectItem>
-                          <SelectItem value="star_4pt">Star 4-point â practical starbursts</SelectItem>
-                          <SelectItem value="infrared">Infrared â surreal, leaves glow white</SelectItem>
-                          <SelectItem value="uv_skylight">UV / Skylight â haze reduction</SelectItem>
+                          <SelectItem value="black_pro_mist_14">Black Pro-Mist ÃÂ¼ Ã¢ÂÂ subtle halation</SelectItem>
+                          <SelectItem value="black_pro_mist_12">Black Pro-Mist ÃÂ½ Ã¢ÂÂ dreamy bloom</SelectItem>
+                          <SelectItem value="black_pro_mist_1">Black Pro-Mist 1 Ã¢ÂÂ heavy diffusion</SelectItem>
+                          <SelectItem value="glimmerglass_1">Tiffen Glimmerglass 1 Ã¢ÂÂ fine halation</SelectItem>
+                          <SelectItem value="glimmerglass_2">Tiffen Glimmerglass 2 Ã¢ÂÂ medium glow</SelectItem>
+                          <SelectItem value="glimmerglass_3">Tiffen Glimmerglass 3 Ã¢ÂÂ soft glow</SelectItem>
+                          <SelectItem value="classic_soft_1">Schneider Classic Soft 1 Ã¢ÂÂ portrait diffusion</SelectItem>
+                          <SelectItem value="pearlescent_14">Tiffen Pearlescent ÃÂ¼ Ã¢ÂÂ pearl luminosity</SelectItem>
+                          <SelectItem value="low_contrast_1">Low Contrast 1 Ã¢ÂÂ shadow lift, film-like</SelectItem>
+                          <SelectItem value="low_contrast_3">Low Contrast 3 Ã¢ÂÂ heavy shadow lift</SelectItem>
+                          <SelectItem value="ultra_contrast_3">Ultra Contrast 3 Ã¢ÂÂ dual highlight+shadow</SelectItem>
+                          <SelectItem value="nd_2stop">ND 2-stop (0.6) Ã¢ÂÂ exposure control</SelectItem>
+                          <SelectItem value="nd_3stop">ND 3-stop (0.9) Ã¢ÂÂ wide aperture outdoors</SelectItem>
+                          <SelectItem value="nd_4stop">ND 4-stop (1.2) Ã¢ÂÂ shallow DoF in daylight</SelectItem>
+                          <SelectItem value="nd_6stop">ND 6-stop (1.8) Ã¢ÂÂ extreme control</SelectItem>
+                          <SelectItem value="polarizer">Polarizer Ã¢ÂÂ removes reflections</SelectItem>
+                          <SelectItem value="streak_horizontal">Streak (horizontal) Ã¢ÂÂ anamorphic flares</SelectItem>
+                          <SelectItem value="star_4pt">Star 4-point Ã¢ÂÂ practical starbursts</SelectItem>
+                          <SelectItem value="infrared">Infrared Ã¢ÂÂ surreal, leaves glow white</SelectItem>
+                          <SelectItem value="uv_skylight">UV / Skylight Ã¢ÂÂ haze reduction</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1475,15 +1475,15 @@ export default function SceneEditor() {
                           <SelectItem value="ipp2_redcode">RED IPP2 / REDCODE RAW</SelectItem>
                           <SelectItem value="vlog_vgamut">Panasonic V-Log / V-Gamut</SelectItem>
                           <SelectItem value="clog2_cgamut">Canon C-Log2 / C-Gamut</SelectItem>
-                          <SelectItem value="aces_13">ACES 1.3 â VFX pipeline</SelectItem>
-                          <SelectItem value="aces_20">ACES 2.0 â HDR/WCG pipeline</SelectItem>
-                          <SelectItem value="dci_p3">DCI-P3 â cinema projector</SelectItem>
-                          <SelectItem value="hdr10_pq">HDR10 / PQ â streaming HDR</SelectItem>
-                          <SelectItem value="dolby_vision">Dolby Vision â premium HDR</SelectItem>
-                          <SelectItem value="super8_reversal">Super 8 reversal â warm, grainy</SelectItem>
-                          <SelectItem value="16mm_eclair">16mm Ãclair â textured grain</SelectItem>
-                          <SelectItem value="35mm_scope">35mm Anamorphic â Panavision scope</SelectItem>
-                          <SelectItem value="imax_70mm">IMAX 70mm â maximum clarity</SelectItem>
+                          <SelectItem value="aces_13">ACES 1.3 Ã¢ÂÂ VFX pipeline</SelectItem>
+                          <SelectItem value="aces_20">ACES 2.0 Ã¢ÂÂ HDR/WCG pipeline</SelectItem>
+                          <SelectItem value="dci_p3">DCI-P3 Ã¢ÂÂ cinema projector</SelectItem>
+                          <SelectItem value="hdr10_pq">HDR10 / PQ Ã¢ÂÂ streaming HDR</SelectItem>
+                          <SelectItem value="dolby_vision">Dolby Vision Ã¢ÂÂ premium HDR</SelectItem>
+                          <SelectItem value="super8_reversal">Super 8 reversal Ã¢ÂÂ warm, grainy</SelectItem>
+                          <SelectItem value="16mm_eclair">16mm ÃÂclair Ã¢ÂÂ textured grain</SelectItem>
+                          <SelectItem value="35mm_scope">35mm Anamorphic Ã¢ÂÂ Panavision scope</SelectItem>
+                          <SelectItem value="imax_70mm">IMAX 70mm Ã¢ÂÂ maximum clarity</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1492,7 +1492,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Coverage & Continuity ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Coverage & Continuity Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.coverage} onOpenChange={() => toggleSection("coverage")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors text-left">
@@ -1511,18 +1511,18 @@ export default function SceneEditor() {
                         <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Unspecified" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto / Unspecified</SelectItem>
-                          <SelectItem value="establishing">Establishing â sets location/context</SelectItem>
-                          <SelectItem value="master">Master shot â full scene wide</SelectItem>
-                          <SelectItem value="medium_coverage">Medium coverage â waist-up singles</SelectItem>
-                          <SelectItem value="close_coverage">Close-up coverage â face singles</SelectItem>
+                          <SelectItem value="establishing">Establishing Ã¢ÂÂ sets location/context</SelectItem>
+                          <SelectItem value="master">Master shot Ã¢ÂÂ full scene wide</SelectItem>
+                          <SelectItem value="medium_coverage">Medium coverage Ã¢ÂÂ waist-up singles</SelectItem>
+                          <SelectItem value="close_coverage">Close-up coverage Ã¢ÂÂ face singles</SelectItem>
                           <SelectItem value="over_shoulder">Over-the-shoulder (OTS)</SelectItem>
-                          <SelectItem value="insert">Insert â ECU detail (hands, props)</SelectItem>
-                          <SelectItem value="cutaway">Cutaway â reaction / environmental</SelectItem>
-                          <SelectItem value="pickup">Pickup â isolated re-shoot</SelectItem>
+                          <SelectItem value="insert">Insert Ã¢ÂÂ ECU detail (hands, props)</SelectItem>
+                          <SelectItem value="cutaway">Cutaway Ã¢ÂÂ reaction / environmental</SelectItem>
+                          <SelectItem value="pickup">Pickup Ã¢ÂÂ isolated re-shoot</SelectItem>
                           <SelectItem value="broll">B-roll / non-sync coverage</SelectItem>
-                          <SelectItem value="mos">MOS â picture only, no sync sound</SelectItem>
-                          <SelectItem value="pov">POV â character's eye view</SelectItem>
-                          <SelectItem value="vfx_plate">VFX plate â compositing background</SelectItem>
+                          <SelectItem value="mos">MOS Ã¢ÂÂ picture only, no sync sound</SelectItem>
+                          <SelectItem value="pov">POV Ã¢ÂÂ character's eye view</SelectItem>
+                          <SelectItem value="vfx_plate">VFX plate Ã¢ÂÂ compositing background</SelectItem>
                           <SelectItem value="aerial">Aerial / drone coverage</SelectItem>
                           <SelectItem value="second_unit">Second unit coverage</SelectItem>
                         </SelectContent>
@@ -1534,13 +1534,13 @@ export default function SceneEditor() {
                         <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Auto / Not specified</SelectItem>
-                          <SelectItem value="ltr">LâR â subjects move left to right</SelectItem>
-                          <SelectItem value="rtl">RâL â subjects move right to left</SelectItem>
+                          <SelectItem value="ltr">LÃ¢ÂÂR Ã¢ÂÂ subjects move left to right</SelectItem>
+                          <SelectItem value="rtl">RÃ¢ÂÂL Ã¢ÂÂ subjects move right to left</SelectItem>
                           <SelectItem value="towards_camera">Towards camera</SelectItem>
                           <SelectItem value="away_camera">Away from camera</SelectItem>
-                          <SelectItem value="stationary">Stationary â no lateral movement</SelectItem>
-                          <SelectItem value="180_axis_right">180Â° axis â camera right side</SelectItem>
-                          <SelectItem value="180_axis_left">180Â° axis â camera left side</SelectItem>
+                          <SelectItem value="stationary">Stationary Ã¢ÂÂ no lateral movement</SelectItem>
+                          <SelectItem value="180_axis_right">180ÃÂ° axis Ã¢ÂÂ camera right side</SelectItem>
+                          <SelectItem value="180_axis_left">180ÃÂ° axis Ã¢ÂÂ camera left side</SelectItem>
                           <SelectItem value="crossing_line">Crossing the line (intentional)</SelectItem>
                         </SelectContent>
                       </Select>
@@ -1549,7 +1549,7 @@ export default function SceneEditor() {
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Continuity Notes</Label>
                     <Textarea
-                      placeholder="What carries into this scene? e.g. 'Character wet from Scene 3 rain â wet hair, damp clothing throughout. Prop: gun in right hand all of Act 2. Wound on left cheek visible and bleeding.'"
+                      placeholder="What carries into this scene? e.g. 'Character wet from Scene 3 rain Ã¢ÂÂ wet hair, damp clothing throughout. Prop: gun in right hand all of Act 2. Wound on left cheek visible and bleeding.'"
                       value={form.continuityNotes}
                       onChange={e => setField("continuityNotes", e.target.value)}
                       className="min-h-[56px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -1558,7 +1558,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Visual Style & Motion (Pro) ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Visual Style & Motion (Pro) Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.visualStyle} onOpenChange={() => toggleSection("visualStyle")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-400/5 hover:bg-amber-400/10 transition-colors text-left">
@@ -1601,15 +1601,15 @@ export default function SceneEditor() {
                   </div>
                     {form.lipSyncMode && form.lipSyncMode !== "none" && (
                       <div className="col-span-3 flex items-start gap-2 mt-1 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-300/80">
-                        <span className="shrink-0">ð</span>
-                        <span>Lip sync uses each character&apos;s assigned ElevenLabs voice â set in <strong className="text-amber-300">Characters â Speech â AI Voice</strong>. Missing voices are auto-assigned.</span>
+                        <span className="shrink-0">Ã°ÂÂÂ</span>
+                        <span>Lip sync uses each character&apos;s assigned ElevenLabs voice Ã¢ÂÂ set in <strong className="text-amber-300">Characters Ã¢ÂÂ Speech Ã¢ÂÂ AI Voice</strong>. Missing voices are auto-assigned.</span>
                       </div>
                     )}
                 </div>
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Location & Setting ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Location & Setting Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.location} onOpenChange={() => toggleSection("location")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1680,7 +1680,7 @@ export default function SceneEditor() {
             </Collapsible>
 
 
-            {/* ââ Characters ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Characters Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.characters} onOpenChange={() => toggleSection("characters")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1701,7 +1701,7 @@ export default function SceneEditor() {
                             type="button"
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs transition-colors ${
                               form.characterIds.includes(char.id)
-                                ? "border-amber-400/40 bg-amber-400/10 text-primary"
+                                ? "border-amber-400/40 bg-amber-400/10 text-amber-400"
                                 : "hover:border-muted-foreground/30"
                             }`}
                             onClick={() => toggleCharacter(char.id)}
@@ -1794,7 +1794,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Extras / Background Actors (NEW) ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Extras / Background Actors (NEW) Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.extras} onOpenChange={() => toggleSection("extras")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1832,7 +1832,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Voice-Only Roles (NEW) ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Voice-Only Roles (NEW) Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.voiceRoles} onOpenChange={() => toggleSection("voiceRoles")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1891,7 +1891,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Dialogue ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Dialogue Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.dialogue} onOpenChange={() => toggleSection("dialogue")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1920,7 +1920,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Soundtrack ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Soundtrack Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.soundtrack} onOpenChange={() => toggleSection("soundtrack")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -1948,7 +1948,7 @@ export default function SceneEditor() {
                               <span className="flex items-center gap-2">
                                 <Music className="h-3 w-3" />
                                 {st.title}
-                                {st.genre && <span className="text-muted-foreground">Â· {st.genre}</span>}
+                                {st.genre && <span className="text-muted-foreground">ÃÂ· {st.genre}</span>}
                               </span>
                             </SelectItem>
                           ))}
@@ -1980,7 +1980,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ VFX & Post Production ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ VFX & Post Production Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.vfx} onOpenChange={() => toggleSection("vfx")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2018,7 +2018,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Sound Design ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Sound Design Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.sound} onOpenChange={() => toggleSection("sound")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2073,7 +2073,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Production Details ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Production Details Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.production} onOpenChange={() => toggleSection("production")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2132,7 +2132,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ AI Prompt Override ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ AI Prompt Override Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.aiOverride} onOpenChange={() => toggleSection("aiOverride")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2153,14 +2153,14 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Negative Prompt & Seed ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Negative Prompt & Seed Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.negativePromptSeed} onOpenChange={() => toggleSection("negativePromptSeed")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.negativePromptSeed ? "rotate-90" : ""}`} />
                   <Scissors className="h-3.5 w-3.5 text-red-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">Negative Prompt & Seed</span>
-                  <span className="text-[10px] text-muted-foreground/60">{form.negativePrompt ? "custom" : "default"}{form.seed !== null ? ` Â· seed ${form.seed}` : ""}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.negativePrompt ? "custom" : "default"}{form.seed !== null ? ` ÃÂ· seed ${form.seed}` : ""}</span>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -2186,7 +2186,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Director's Notes ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Director's Notes Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.director} onOpenChange={() => toggleSection("director")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2226,7 +2226,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ Reference Images ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ Reference Images Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.refImages} onOpenChange={() => toggleSection("refImages")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2238,7 +2238,7 @@ export default function SceneEditor() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
-                  <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP â max 10MB each.</p>
+                  <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP Ã¢ÂÂ max 10MB each.</p>
                   {form.referenceImages.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {form.referenceImages.map((url: string, idx: number) => (
@@ -2262,7 +2262,7 @@ export default function SceneEditor() {
                   )}
                   <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
                     <ImagePlus className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground text-center">Click to upload reference image<br /><span className="text-[10px]">PNG, JPG, WEBP â max 10MB</span></span>
+                    <span className="text-xs text-muted-foreground text-center">Click to upload reference image<br /><span className="text-[10px]">PNG, JPG, WEBP Ã¢ÂÂ max 10MB</span></span>
                     <input
                       type="file"
                       accept="image/png,image/jpeg,image/webp,image/*"
@@ -2295,7 +2295,7 @@ export default function SceneEditor() {
               </CollapsibleContent>
             </Collapsible>
 
-            {/* ââ External Footage ââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂ External Footage Ã¢ÂÂÃ¢ÂÂ */}
             <Collapsible open={openSections.footage} onOpenChange={() => toggleSection("footage")}>
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
@@ -2307,7 +2307,7 @@ export default function SceneEditor() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
-                  <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI â max 150MB) to attach to this scene.</p>
+                  <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI Ã¢ÂÂ max 150MB) to attach to this scene.</p>
                   {form.externalFootageUrl ? (
                     <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-400/10 border border-amber-500/30">
                       <Video className="h-4 w-4 text-amber-400 shrink-0" />
@@ -2321,7 +2321,7 @@ export default function SceneEditor() {
                   ) : (
                     <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
                       <Upload className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground text-center">Click to upload footage<br /><span className="text-[10px]">MP4, MOV, AVI, MKV â max 150MB</span></span>
+                      <span className="text-xs text-muted-foreground text-center">Click to upload footage<br /><span className="text-[10px]">MP4, MOV, AVI, MKV Ã¢ÂÂ max 150MB</span></span>
                       <input
                         type="file"
                         accept="video/mp4,video/quicktime,video/avi,video/x-matroska,video/*"
@@ -2352,16 +2352,16 @@ export default function SceneEditor() {
                         onChange={e => setField("externalFootageType", e.target.value)}
                         className="w-full h-9 text-sm bg-background/50 border border-border rounded-md px-3"
                       >
-                        <option value="replace">Replace AI generation â use this footage as the scene</option>
-                        <option value="overlay">Overlay â composite AI elements over this footage</option>
-                        <option value="reference">Reference only â use for style/continuity matching</option>
+                        <option value="replace">Replace AI generation Ã¢ÂÂ use this footage as the scene</option>
+                        <option value="overlay">Overlay Ã¢ÂÂ composite AI elements over this footage</option>
+                        <option value="reference">Reference only Ã¢ÂÂ use for style/continuity matching</option>
                       </select>
                     </div>
                   )}
                 </div>
               </CollapsibleContent>
             </Collapsible>
-            {/* v6.63 â Production controls: approval, shot list, version compare */}
+            {/* v6.63 Ã¢ÂÂ Production controls: approval, shot list, version compare */}
             {selectedSceneId && (() => {
               const currentScene: any = (scenes as any[])?.find((s: any) => s.id === selectedSceneId);
               return (
@@ -2447,13 +2447,13 @@ export default function SceneEditor() {
               <div className="flex items-center gap-2 ml-auto">
                 {selectedSceneId && (
                   <span className="text-[11px] text-muted-foreground tabular-nums hidden sm:inline" aria-live="polite">
-                    {isSaving ? "Savingâ¦" : autosavedAt ? `Saved ${new Date(autosavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Auto-save on"}
+                    {isSaving ? "SavingÃ¢ÂÂ¦" : autosavedAt ? `Saved ${new Date(autosavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Auto-save on"}
                   </span>
                 )}
                 <Button type="button" variant="ghost" size="sm" onClick={() => setEditDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" size="sm" disabled={isSaving} title="âS to save">
+                <Button type="submit" size="sm" disabled={isSaving} title="Ã¢ÂÂS to save">
                   {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-1 text-amber-400" />}
                   {selectedSceneId ? "Save Changes" : "Create Scene"}
                 </Button>
@@ -2514,7 +2514,7 @@ export default function SceneEditor() {
           <AlertDialogHeader>
             <AlertDialogTitle className="gradient-text-gold">Generate videos for all {scenes?.length} scenes?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will use approximately <strong>{10 * (scenes?.length ?? 0)}â{20 * (scenes?.length ?? 0)} credits</strong> (exact cost varies by scene duration). Each scene is billed individually as it generates.
+              This will use approximately <strong>{10 * (scenes?.length ?? 0)}Ã¢ÂÂ{20 * (scenes?.length ?? 0)} credits</strong> (exact cost varies by scene duration). Each scene is billed individually as it generates.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

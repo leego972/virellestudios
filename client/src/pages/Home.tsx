@@ -62,7 +62,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
   const PRODUCTION_PHASES = [
     {
-      id: "development", phase: "01", label: "Development", emoji: "ð",
+      id: "development", phase: "01", label: "Development", emoji: "Ã°ÂÂÂ",
       color: "amber", border: "border-amber-500/25", bg: "bg-amber-400/5", head: "text-amber-400", glow: "rgba(245,196,66,0.08)",
       tools: [
         { label: "New Project", description: "Create your film project", icon: Sparkles, path: "/projects/new" },
@@ -72,7 +72,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "preproduction", phase: "02", label: "Pre-Production", emoji: "ð¬",
+      id: "preproduction", phase: "02", label: "Pre-Production", emoji: "Ã°ÂÂÂ¬",
       color: "blue", border: "border-blue-500/25", bg: "bg-blue-500/5", head: "text-blue-400", glow: "rgba(59,130,246,0.08)",
       tools: [
         { label: "Storyboard", description: "Visual shot planning", icon: LayoutGrid, path: (id: number) => `/projects/${id}/storyboard`, needsProject: true },
@@ -84,7 +84,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "casting", phase: "03", label: "Casting & Crew", emoji: "ð­",
+      id: "casting", phase: "03", label: "Casting & Crew", emoji: "Ã°ÂÂÂ­",
       color: "purple", border: "border-purple-500/25", bg: "bg-purple-500/5", head: "text-purple-400", glow: "rgba(168,85,247,0.08)",
       tools: [
         { label: "Characters", description: "Build your cast roster", icon: Users, path: "/characters" },
@@ -95,7 +95,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "production", phase: "04", label: "Production", emoji: "ð¥",
+      id: "production", phase: "04", label: "Production", emoji: "Ã°ÂÂÂ¥",
       color: "green", border: "border-green-500/25", bg: "bg-green-500/5", head: "text-green-400", glow: "rgba(34,197,94,0.08)",
       tools: [
         { label: "Scene Builder", description: "Build scenes with AI", icon: Layers, path: (id: number) => `/projects/${id}/scenes`, needsProject: true },
@@ -107,7 +107,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "postproduction", phase: "05", label: "Post-Production", emoji: "â¨",
+      id: "postproduction", phase: "05", label: "Post-Production", emoji: "Ã¢ÂÂ¨",
       color: "rose", border: "border-rose-500/25", bg: "bg-rose-500/5", head: "text-rose-400", glow: "rgba(244,63,94,0.08)",
       tools: [
         { label: "Visual Effects", description: "VFX & CGI library", icon: Zap, path: (id: number) => `/projects/${id}/visual-effects`, needsProject: true },
@@ -115,11 +115,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
         { label: "Color Grading", description: "Cinematic color science", icon: Palette, path: (id: number) => `/projects/${id}/color-grading`, needsProject: true },
         { label: "Sound Effects", description: "SFX mixing studio", icon: Music, path: (id: number) => `/projects/${id}/sound-effects`, needsProject: true },
         { label: "Music Score", description: "Original score & sync", icon: Mic2, path: (id: number) => `/projects/${id}/music-score`, needsProject: true },
-        { label: "Opening Sequence", description: "Crawl Â· Narrator Â· Titles", icon: Film, path: (id: number) => `/projects/${id}/opening-sequence`, needsProject: true, badge: "NEW" },
+        { label: "Opening Sequence", description: "Crawl ÃÂ· Narrator ÃÂ· Titles", icon: Film, path: (id: number) => `/projects/${id}/opening-sequence`, needsProject: true, badge: "NEW" },
       ] as PhaseTool[],
     },
     {
-      id: "finishing", phase: "06", label: "Finishing", emoji: "ðï¸",
+      id: "finishing", phase: "06", label: "Finishing", emoji: "Ã°ÂÂÂÃ¯Â¸Â",
       color: "cyan", border: "border-cyan-500/25", bg: "bg-cyan-500/5", head: "text-cyan-400", glow: "rgba(6,182,212,0.08)",
       tools: [
         { label: "Subtitles & Access.", description: "Subtitles + D/deaf track", icon: Captions, path: (id: number) => `/projects/${id}/subtitles`, needsProject: true },
@@ -129,11 +129,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "marketing", phase: "07", label: "Marketing", emoji: "ð£",
+      id: "marketing", phase: "07", label: "Marketing", emoji: "Ã°ÂÂÂ£",
       color: "orange", border: "border-orange-500/25", bg: "bg-orange-500/5", head: "text-orange-400", glow: "rgba(249,115,22,0.08)",
       tools: [
         { label: "Trailer Studio", description: "AI trailer generator", icon: PlayCircle, path: (id: number) => `/projects/${id}/trailer-studio`, needsProject: true, badge: "AI" },
-        { label: "Social Cuts", description: "Reels Â· TikTok Â· YouTube", icon: Share2, path: (id: number) => `/projects/${id}/social-cuts`, needsProject: true },
+        { label: "Social Cuts", description: "Reels ÃÂ· TikTok ÃÂ· YouTube", icon: Share2, path: (id: number) => `/projects/${id}/social-cuts`, needsProject: true },
         { label: "Poster Maker", description: "Key art & poster", icon: Image, path: "/poster-maker" },
         { label: "Press Kit", description: "EPK for media outlets", icon: Newspaper, path: (id: number) => `/projects/${id}/press-kit`, needsProject: true },
         { label: "Pitch Deck", description: "Investor pitch deck", icon: BarChart, path: (id: number) => `/projects/${id}/pitch-deck`, needsProject: true },
@@ -141,7 +141,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       ] as PhaseTool[],
     },
     {
-      id: "distribution", phase: "08", label: "Distribution", emoji: "ð",
+      id: "distribution", phase: "08", label: "Distribution", emoji: "Ã°ÂÂÂ",
       color: "emerald", border: "border-emerald-500/25", bg: "bg-emerald-500/5", head: "text-emerald-400", glow: "rgba(16,185,129,0.08)",
       tools: [
         { label: "Generate & Export", description: "Render your final film", icon: Download, path: "/movies" },
@@ -254,7 +254,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
     useEffect(() => {
       const params = new URLSearchParams(window.location.search);
       if (params.get("opener") === "1") { setShowOpener(true); window.history.replaceState({}, "", "/"); }
-      if (params.get("subscription") === "success") { toast.success("ð¬ Welcome to Virelle Studios! Your membership is now active."); window.history.replaceState({}, "", "/"); }
+      if (params.get("subscription") === "success") { toast.success("Ã°ÂÂÂ¬ Welcome to Virelle Studios! Your membership is now active."); window.history.replaceState({}, "", "/"); }
     }, []);
 
     const { data: projects, isLoading } = trpc.project.list.useQuery(undefined, { enabled: !showOpener });
@@ -350,7 +350,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Studio</div>
-                  <div className="text-sm font-semibold capitalize">{(user as any).subscriptionTier || "free"}{hasApiKey ? <span className="text-emerald-400 text-xs font-normal ml-1">â ready</span> : <button onClick={() => setLocation("/settings?tab=api-keys")} className="text-amber-400 text-xs font-normal ml-1 underline hover:text-amber-300">add API key</button>}</div>
+                  <div className="text-sm font-semibold capitalize">{(user as any).subscriptionTier || "free"}{hasApiKey ? <span className="text-emerald-400 text-xs font-normal ml-1">Ã¢ÂÂ ready</span> : <button onClick={() => setLocation("/settings?tab=api-keys")} className="text-amber-400 text-xs font-normal ml-1 underline hover:text-amber-300">add API key</button>}</div>
                 </div>
               </CardContent>
             </Card>
@@ -365,7 +365,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">
               Welcome back{user?.name ? `, ${user.name}` : ""}
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio â let's make something great.</p>
+            <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio Ã¢ÂÂ let's make something great.</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
@@ -401,7 +401,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Add an API key to unlock video generation</p>
               <p className="text-xs text-gray-700 dark:text-amber-200/70 mt-0.5 leading-relaxed">
-                Virelle uses your own AI provider keys (Runway ML, fal.ai, Sora, etc.) â you only pay for what you generate.
+                Virelle uses your own AI provider keys (Runway ML, fal.ai, Sora, etc.) Ã¢ÂÂ you only pay for what you generate.
               </p>
             </div>
             <Button size="sm" variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-400/10 text-xs shrink-0" onClick={() => setLocation("/settings?tab=api-keys")}>
@@ -427,9 +427,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 <div className="min-w-0">
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">Continue your film</p>
                   <h2 className="text-lg font-semibold truncate mt-0.5 gradient-text-gold">{p.title}</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Stage {currentStage} of 8 â {cur.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Stage {currentStage} of 8 Ã¢ÂÂ {cur.title}</p>
                 </div>
-                <Link href={next.hrefFor(p.id)}><Button className="min-h-[40px] gap-2 whitespace-nowrap">{currentStage === 8 ? "Plan release" : `Continue â Stage ${next.number}`}</Button></Link>
+                <Link href={next.hrefFor(p.id)}><Button className="min-h-[40px] gap-2 whitespace-nowrap">{currentStage === 8 ? "Plan release" : `Continue Ã¢ÂÂ Stage ${next.number}`}</Button></Link>
               </div>
               <div className="flex items-center gap-1 overflow-x-auto pb-1 -mx-1 px-1">
                 {JOURNEY_STAGES.map((s) => {
@@ -438,7 +438,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                     <Link key={s.key} href={s.hrefFor(p.id)} className="shrink-0">
                       <div className={`h-9 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium border transition-colors ${
                         status === "done" ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                        : status === "active" ? "border-primary/60 bg-amber-500/15 text-primary"
+                        : status === "active" ? "border-primary/60 bg-amber-500/15 text-amber-400"
                         : "border-border bg-muted/20 text-muted-foreground hover:bg-muted"
                       }`} title={s.blurb}>
                         <span className="font-bold">{s.number}</span>
@@ -456,7 +456,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {[
             { label: "Total Projects", value: stats.total, icon: Film, color: "text-muted-foreground" },
-            { label: "In Production", value: stats.generating, icon: Loader2, color: "text-primary", spin: stats.generating > 0 },
+            { label: "In Production", value: stats.generating, icon: Loader2, color: "text-amber-400", spin: stats.generating > 0 },
             { label: "Completed", value: stats.completed, icon: CheckCircle2, color: "text-green-400" },
             { label: "Drafts", value: stats.draft, icon: Clock, color: "text-amber-400" },
             { label: "Characters", value: stats.characters, icon: Users, color: "text-purple-400" },
@@ -475,14 +475,14 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
         <GettingStartedChecklist onShowGuide={() => setForceOnboarding(true)} />
 
-        {/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
             FULL PRODUCTION PIPELINE
-        ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <div>
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div>
               <h2 className="text-lg font-semibold tracking-tight gradient-text-gold">Film Production Pipeline</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Every tool in your studio â from concept to distribution</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Every tool in your studio Ã¢ÂÂ from concept to distribution</p>
             </div>
             <div className="flex items-center gap-3">
               {/* Active project selector */}
@@ -494,7 +494,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                     onChange={e => setActivePipelineProjectId(Number(e.target.value) || null)}
                     className="text-xs border border-border/50 rounded-lg px-2 py-1.5 bg-background text-foreground max-w-[180px] truncate"
                   >
-                    <option value="">â select project â</option>
+                    <option value="">Ã¢ÂÂ select project Ã¢ÂÂ</option>
                     {projects.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
                   </select>
                 </div>
@@ -558,7 +558,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   <div>
                     <p className="text-sm font-semibold">Your first film starts here</p>
                     <p className="text-xs text-muted-foreground mt-1.5 max-w-xs mx-auto leading-relaxed">
-                      Name your project, choose a genre, build characters, write scenes â Virelle's pipeline guides you from concept to screen.
+                      Name your project, choose a genre, build characters, write scenes Ã¢ÂÂ Virelle's pipeline guides you from concept to screen.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row items-center gap-2">
@@ -647,7 +647,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{item.title}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{item.action} Â· {timeAgo(item.updatedAt)}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{item.action} ÃÂ· {timeAgo(item.updatedAt)}</p>
                       </div>
                     </div>
                   );
@@ -659,7 +659,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <div className="mt-6 space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Access</p>
               {[
-                { label: "My Movies", icon: Play, path: "/movies", color: "text-primary" },
+                { label: "My Movies", icon: Play, path: "/movies", color: "text-amber-400" },
                 { label: "Characters", icon: Users, path: "/characters", color: "text-purple-400" },
                 { label: "Film Festivals", icon: Trophy, path: "/festivals", color: "text-amber-400" },
                 { label: "Marketplace", icon: Sparkles, path: "/marketplace", color: "text-rose-400" },

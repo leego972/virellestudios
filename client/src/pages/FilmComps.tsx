@@ -46,8 +46,8 @@ import { useState, useMemo } from "react";
 
   const BUDGET_TIERS = [
     { value: "micro", label: "Micro (< $500K)" },
-    { value: "low", label: "Low ($500Kâ$5M)" },
-    { value: "mid", label: "Mid ($5Mâ$20M)" },
+    { value: "low", label: "Low ($500KÃ¢ÂÂ$5M)" },
+    { value: "mid", label: "Mid ($5MÃ¢ÂÂ$20M)" },
     { value: "high", label: "High ($20M+)" },
   ];
 
@@ -83,7 +83,7 @@ import { useState, useMemo } from "react";
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
-          <Input placeholder="Search title, genre, distributorâ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search title, genre, distributorÃ¢ÂÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
           <Select value={genreFilter} onValueChange={setGenreFilter}><SelectTrigger className="w-36"><SelectValue placeholder="Genre" /></SelectTrigger><SelectContent><SelectItem value="all">All genres</SelectItem>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select>
           <Select value={tierFilter} onValueChange={setTierFilter}><SelectTrigger className="w-44"><SelectValue placeholder="Budget tier" /></SelectTrigger><SelectContent><SelectItem value="all">All budgets</SelectItem>{BUDGET_TIERS.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select>
         </div>
@@ -94,7 +94,7 @@ import { useState, useMemo } from "react";
             { label: "Comps shown", value: filtered.length.toString(), icon: <Film className="text-amber-400/80 h-4 w-4" /> },
             { label: "Avg ROI", value: `${avgROI}x`, icon: <TrendingUp className="h-4 w-4" /> },
             { label: "Avg worldwide", value: fmt(avgWorldwide), icon: <Globe className="h-4 w-4" /> },
-            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "â", icon: <Star className="h-4 w-4" /> },
+            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "Ã¢ÂÂ", icon: <Star className="h-4 w-4" /> },
           ].map(s => (
             <Card key={s.label}>
               <CardContent className="p-3 flex items-center gap-2 glass-card">
@@ -120,7 +120,7 @@ import { useState, useMemo } from "react";
                     <td className="p-3"><Badge variant="outline" className="text-[10px]">{film.genre.split("/")[0]}</Badge></td>
                     <td className="p-3 font-mono text-xs">{film.budget}</td>
                     <td className="p-3 font-mono text-xs font-medium">{film.worldwide}</td>
-                    <td className="p-3"><span className={`font-bold ${film.roi >= 20 ? "text-green-500" : film.roi >= 5 ? "text-primary" : "text-muted-foreground"}`}>{film.roi}x</span></td>
+                    <td className="p-3"><span className={`font-bold ${film.roi >= 20 ? "text-green-500" : film.roi >= 5 ? "text-amber-400" : "text-muted-foreground"}`}>{film.roi}x</span></td>
                     <td className="p-3 text-xs text-muted-foreground max-w-[120px] truncate">{film.distribution}</td>
                   </tr>
                 ))}
@@ -143,7 +143,7 @@ import { useState, useMemo } from "react";
             </CardContent>
           </Card>
         )}
-        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross Ã· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
+        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross ÃÂ· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
           </div>
   );
 }

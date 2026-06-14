@@ -17,20 +17,20 @@ import { useState } from "react";
 
   const INITIAL_POSTS = [
     { id: 1, author: "Sofia R.", avatar: "SR", role: "Director", title: "What's your current script-to-screen workflow?", body: "I've been experimenting with going directly from script coverage to storyboard without a full breakdown. Curious what process others are following. Do you breakdown first or storyboard first?", category: "Craft", likes: 47, replies: 23, time: "2h ago", pinned: true },
-    { id: 2, author: "Marcus T.", avatar: "MT", role: "DP", title: "Mirrorless cameras for low-budget features in 2025 â which one wins?", body: "Running a test on Sony FX3, Canon R5C, and Blackmagic 6K. Happy to share footage stills if anyone wants to compare. The low-light difference is massive.", category: "Gear", likes: 31, replies: 18, time: "5h ago", pinned: false },
-    { id: 3, author: "Anya K.", avatar: "AK", role: "Writer/Director", title: "I got into Sundance on my 3rd feature â here's what changed", body: "Not gear. Not budget. The one thing that made the difference was having a complete story before starting to shoot. Detailed write-up in the comments.", category: "Festivals", likes: 203, replies: 67, time: "1d ago", pinned: false },
-    { id: 4, author: "James O.", avatar: "JO", role: "Producer", title: "Tax incentive comparison: Georgia vs. New Mexico â which is easier to qualify?", body: "Just came off a production in Georgia (28% credit) and considering NM for next project. The paperwork in Georgia was intense. Anyone done both?", category: "Finance", likes: 29, replies: 14, time: "1d ago", pinned: false },
+    { id: 2, author: "Marcus T.", avatar: "MT", role: "DP", title: "Mirrorless cameras for low-budget features in 2025 Ã¢ÂÂ which one wins?", body: "Running a test on Sony FX3, Canon R5C, and Blackmagic 6K. Happy to share footage stills if anyone wants to compare. The low-light difference is massive.", category: "Gear", likes: 31, replies: 18, time: "5h ago", pinned: false },
+    { id: 3, author: "Anya K.", avatar: "AK", role: "Writer/Director", title: "I got into Sundance on my 3rd feature Ã¢ÂÂ here's what changed", body: "Not gear. Not budget. The one thing that made the difference was having a complete story before starting to shoot. Detailed write-up in the comments.", category: "Festivals", likes: 203, replies: 67, time: "1d ago", pinned: false },
+    { id: 4, author: "James O.", avatar: "JO", role: "Producer", title: "Tax incentive comparison: Georgia vs. New Mexico Ã¢ÂÂ which is easier to qualify?", body: "Just came off a production in Georgia (28% credit) and considering NM for next project. The paperwork in Georgia was intense. Anyone done both?", category: "Finance", likes: 29, replies: 14, time: "1d ago", pinned: false },
     { id: 5, author: "Priya M.", avatar: "PM", role: "Composer", title: "AI-assisted scoring: legitimate tool or crutch?", body: "I've been using AI to generate first-pass sketches for scenes and then recomposing from there. Directors love the turnaround speed. Thoughts from the community?", category: "Music", likes: 88, replies: 44, time: "2d ago", pinned: false },
-    { id: 6, author: "Diego F.", avatar: "DF", role: "Editor", title: "Request: feedback on my short film trailer cut (2 min)", body: "Finished my first narrative short â a 12-minute thriller. Would love eyes on the trailer cut before I submit to festivals. Link in comments.", category: "Feedback", likes: 12, replies: 9, time: "3d ago", pinned: false },
+    { id: 6, author: "Diego F.", avatar: "DF", role: "Editor", title: "Request: feedback on my short film trailer cut (2 min)", body: "Finished my first narrative short Ã¢ÂÂ a 12-minute thriller. Would love eyes on the trailer cut before I submit to festivals. Link in comments.", category: "Feedback", likes: 12, replies: 9, time: "3d ago", pinned: false },
   ];
 
   const EVENTS = [
-    { title: "Sundance Film Festival", date: "Jan 23âFeb 2, 2026", location: "Park City, Utah", type: "Festival", url: "https://sundance.org" },
-    { title: "Berlin International Film Festival", date: "Feb 13â23, 2026", location: "Berlin, Germany", type: "Festival", url: "https://berlinale.de" },
-    { title: "Hot Docs International Documentary Festival", date: "May 1â11, 2026", location: "Toronto, Canada", type: "Festival", url: "https://hotdocs.ca" },
-    { title: "Cannes Film Market (MarchÃ© du Film)", date: "May 13â24, 2026", location: "Cannes, France", type: "Market", url: "https://marchedufilm.com" },
-    { title: "AFM â American Film Market", date: "Nov 5â10, 2025", location: "Las Vegas, NV", type: "Market", url: "https://americanfilmmarket.com" },
-    { title: "SXSW Film & TV Festival", date: "Mar 6â15, 2026", location: "Austin, Texas", type: "Festival", url: "https://sxsw.com/film" },
+    { title: "Sundance Film Festival", date: "Jan 23Ã¢ÂÂFeb 2, 2026", location: "Park City, Utah", type: "Festival", url: "https://sundance.org" },
+    { title: "Berlin International Film Festival", date: "Feb 13Ã¢ÂÂ23, 2026", location: "Berlin, Germany", type: "Festival", url: "https://berlinale.de" },
+    { title: "Hot Docs International Documentary Festival", date: "May 1Ã¢ÂÂ11, 2026", location: "Toronto, Canada", type: "Festival", url: "https://hotdocs.ca" },
+    { title: "Cannes Film Market (MarchÃÂ© du Film)", date: "May 13Ã¢ÂÂ24, 2026", location: "Cannes, France", type: "Market", url: "https://marchedufilm.com" },
+    { title: "AFM Ã¢ÂÂ American Film Market", date: "Nov 5Ã¢ÂÂ10, 2025", location: "Las Vegas, NV", type: "Market", url: "https://americanfilmmarket.com" },
+    { title: "SXSW Film & TV Festival", date: "Mar 6Ã¢ÂÂ15, 2026", location: "Austin, Texas", type: "Festival", url: "https://sxsw.com/film" },
   ];
 
   const RESOURCES = [
@@ -52,7 +52,7 @@ import { useState } from "react";
 
   const CATEGORY_COLORS: Record<string, string> = {
     Craft: "bg-violet-500/15 text-violet-500", Gear: "bg-blue-500/15 text-blue-500", Festivals: "bg-amber-500/15 text-amber-500",
-    Finance: "bg-green-500/15 text-green-500", Music: "bg-pink-500/15 text-pink-500", Feedback: "bg-amber-500/15 text-primary",
+    Finance: "bg-green-500/15 text-green-500", Music: "bg-pink-500/15 text-pink-500", Feedback: "bg-amber-500/15 text-amber-400",
     General: "bg-muted text-muted-foreground",
   };
 
@@ -126,14 +126,14 @@ import { useState } from "react";
               </div>
               <div className="space-y-1.5">
                 <Label>Content *</Label>
-                <Textarea className="h-32" placeholder="Share your experience, ask a question, or start a discussionâ¦" value={newBody} onChange={e => setNewBody(e.target.value)} />
+                <Textarea className="h-32" placeholder="Share your experience, ask a question, or start a discussionÃ¢ÂÂ¦" value={newBody} onChange={e => setNewBody(e.target.value)} />
                 <p className="text-[10px] text-muted-foreground">{newBody.length} characters (min 20)</p>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setNewPostOpen(false)}>Cancel</Button>
               <Button onClick={handleNewPost} disabled={submitting}>
-                {submitting ? "Postingâ¦" : "Post to Community"}
+                {submitting ? "PostingÃ¢ÂÂ¦" : "Post to Community"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -146,7 +146,7 @@ import { useState } from "react";
             <TabsTrigger value="resources">Directory</TabsTrigger>
           </TabsList>
 
-          {/* ââ Discussions ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Discussions Ã¢ÂÂÃ¢ÂÂ */}
           <TabsContent value="discussions" className="space-y-4 mt-4">
             <div className="flex gap-2 flex-wrap">
               <Button variant={catFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setCatFilter("all")}>All</Button>
@@ -163,13 +163,13 @@ import { useState } from "react";
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          {post.pinned && <Badge className="text-[10px] h-4">ð Pinned</Badge>}
+                          {post.pinned && <Badge className="text-[10px] h-4">Ã°ÂÂÂ Pinned</Badge>}
                           <span className={`text-[10px] px-1.5 py-0.5 rounded ${CATEGORY_COLORS[post.category] ?? "bg-muted text-muted-foreground"}`}>{post.category}</span>
                         </div>
                         <h3 className="font-semibold text-sm leading-snug mb-1">{post.title}</h3>
                         <p className="text-xs text-muted-foreground line-clamp-2">{post.body}</p>
                         <div className="flex items-center gap-4 mt-2">
-                          <span className="text-xs text-muted-foreground">{post.author} Â· {post.role} Â· {post.time}</span>
+                          <span className="text-xs text-muted-foreground">{post.author} ÃÂ· {post.role} ÃÂ· {post.time}</span>
                           <div className="flex items-center gap-3 ml-auto">
                             <button className={`flex items-center gap-1 text-xs transition-colors ${likedPosts.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-red-400"}`} onClick={() => toggleLike(post.id)}>
                               <Heart className={`h-3.5 w-3.5 ${likedPosts.has(post.id) ? "fill-current" : ""}`} />
@@ -197,7 +197,7 @@ import { useState } from "react";
             </div>
           </TabsContent>
 
-          {/* ââ Events ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Events Ã¢ÂÂÃ¢ÂÂ */}
           <TabsContent value="events" className="space-y-3 mt-4">
             <p className="text-sm text-muted-foreground">Upcoming industry events, film markets, and festivals.</p>
             {EVENTS.map(ev => (
@@ -219,7 +219,7 @@ import { useState } from "react";
             ))}
           </TabsContent>
 
-          {/* ââ Resources Directory ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Resources Directory Ã¢ÂÂÃ¢ÂÂ */}
           <TabsContent value="resources" className="space-y-4 mt-4">
             <div className="flex gap-2 flex-wrap">
               <Button variant={resourceFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setResourceFilter("all")}>All</Button>

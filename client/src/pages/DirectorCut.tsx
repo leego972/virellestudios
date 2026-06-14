@@ -25,7 +25,7 @@ import { trpc } from "@/lib/trpc";
 import { useIsMobile } from "@/hooks/useMobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-// âââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 type SceneStatus = "draft" | "generating" | "completed" | "failed";
 
@@ -52,7 +52,7 @@ interface TimelineScene {
 
 type PanelMode = "inspector" | "retake" | "transition";
 
-// âââ Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Helpers Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -86,7 +86,7 @@ const TRANSITION_OPTIONS = [
   { value: "dip_white", label: "Dip to White" },
 ];
 
-// âââ Timeline Clip Component âââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Timeline Clip Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function TimelineClip({
   scene,
@@ -191,7 +191,7 @@ function TimelineClip({
           <p className="text-[9px] text-white/50 font-mono">
             {formatTime(effectiveDuration)}
             {(scene.trimIn > 0 || scene.trimOut > 0) && (
-              <span className="text-amber-400 ml-1">â</span>
+              <span className="text-amber-400 ml-1">Ã¢ÂÂ</span>
             )}
           </p>
         </div>
@@ -269,7 +269,7 @@ function TimelineClip({
       {/* Transition marker (after clip) */}
       <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
         <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[8px] font-bold
-          ${scene.transitionType === "cut" ? "bg-zinc-800 border-zinc-600 text-zinc-400" : "bg-amber-400/20 border-primary/60 text-primary"}`}
+          ${scene.transitionType === "cut" ? "bg-zinc-800 border-zinc-600 text-zinc-400" : "bg-amber-400/20 border-primary/60 text-amber-400"}`}
           title={`Transition: ${scene.transitionType}`}
         >
           {scene.transitionType === "cut" ? "C" : scene.transitionType === "dissolve" ? "D" : scene.transitionType === "fade" ? "F" : "T"}
@@ -279,7 +279,7 @@ function TimelineClip({
   );
 }
 
-// âââ Main Page âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 export default function DirectorCut() {
   const [, navigate] = useLocation();
@@ -302,7 +302,7 @@ export default function DirectorCut() {
     onError: (e) => toast.error(e.message),
   });
 
-    // âââ Cut Management âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Cut Management Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
     const [activeCutId, setActiveCutId] = useState<number | null>(null);
     const [showNewCutDialog, setShowNewCutDialog] = useState(false);
     const [newCutTitle, setNewCutTitle] = useState("Director's Cut");
@@ -354,7 +354,7 @@ export default function DirectorCut() {
   // Delete confirm dialog
   const [deleteConfirmIdx, setDeleteConfirmIdx] = useState<number | null>(null);
 
-  // ââ Initialise timeline from raw scenes ââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Initialise timeline from raw scenes Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   useEffect(() => {
     if (!rawScenes) return;
     setScenes(
@@ -382,7 +382,7 @@ export default function DirectorCut() {
     );
   }, [rawScenes]);
 
-  // ââ Computed values âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Computed values Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const activeScenes = scenes.filter((s) => !s.isDisabled);
   const totalDuration = activeScenes.reduce(
     (acc, s) => acc + Math.max(1, s.duration - s.trimIn - s.trimOut),
@@ -390,7 +390,7 @@ export default function DirectorCut() {
   );
   const selectedScene = selectedIdx !== null ? scenes[selectedIdx] : null;
 
-  // ââ Playback ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Playback Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const stopPlayback = useCallback(() => {
     setIsPlaying(false);
     setCurrentPlayingIdx(null);
@@ -442,7 +442,7 @@ export default function DirectorCut() {
     };
   }, []);
 
-  // ââ Drag & Drop reorder âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Drag & Drop reorder Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
     dragFromIdx.current = index;
     e.dataTransfer.effectAllowed = "move";
@@ -468,7 +468,7 @@ export default function DirectorCut() {
     dragFromIdx.current = null;
   }, []);
 
-  // ââ Scene operations ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Scene operations Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const updateScene = useCallback((idx: number, patch: Partial<TimelineScene>) => {
     setScenes((prev) => prev.map((s, i) => i === idx ? { ...s, ...patch } : s));
     setHasUnsavedChanges(true);
@@ -493,7 +493,7 @@ export default function DirectorCut() {
     setHasUnsavedChanges(true);
   }, []);
 
-  // ââ Save changes ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Save changes Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
@@ -525,7 +525,7 @@ export default function DirectorCut() {
     }
   }, [scenes, projectId, reorderMutation, updateSceneMutation]);
 
-  // ââ Submit retake âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Submit retake Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const submitRetake = useCallback(async () => {
     if (selectedIdx === null) return;
     const scene = scenes[selectedIdx];
@@ -544,13 +544,13 @@ export default function DirectorCut() {
       });
       setRetakeDialogOpen(false);
       setRetakeText("");
-      toast.success("Retake instructions saved â re-generate the scene to apply");
+      toast.success("Retake instructions saved Ã¢ÂÂ re-generate the scene to apply");
     } catch (e: any) {
       toast.error(e.message);
     }
   }, [selectedIdx, scenes, retakeText, updateSceneMutation, updateScene]);
 
-  // ââ Playhead position on timeline âââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Playhead position on timeline Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const timelineRef = useRef<HTMLDivElement>(null);
   const handleTimelineClick = useCallback((e: React.MouseEvent) => {
     if (!timelineRef.current) return;
@@ -560,7 +560,7 @@ export default function DirectorCut() {
     setPlayheadTime(Math.max(0, Math.min(time, totalDuration)));
   }, [zoom, totalDuration]);
 
-  // ââ Keyboard shortcuts ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Keyboard shortcuts Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -573,10 +573,10 @@ export default function DirectorCut() {
     return () => window.removeEventListener("keydown", handler);
   }, [isPlaying, startPlayback, stopPlayback, selectedIdx, scenes.length]);
 
-  // ââ Render ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ Render Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   return (
     <div className="min-h-screen flex flex-col" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      {/* ââ Top Bar ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Top Bar Ã¢ÂÂÃ¢ÂÂ */}
       <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-white/10 bg-zinc-950/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-2 md:gap-3 min-w-0">
           <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
@@ -586,13 +586,13 @@ export default function DirectorCut() {
             <h1 className="text-xs md:text-sm font-semibold flex items-center gap-1.5 md:gap-2 gradient-text-gold">
               <Scissors className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-400 shrink-0" />
               <span className="truncate">Director's Cut</span>
-              {hasUnsavedChanges && <span className="text-[10px] text-amber-400 font-normal shrink-0">â</span>}
+              {hasUnsavedChanges && <span className="text-[10px] text-amber-400 font-normal shrink-0">Ã¢ÂÂ</span>}
             </h1>
             <p className="text-[11px] text-zinc-500 truncate">{project?.title || "Loading..."}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <span className="text-[10px] md:text-xs text-zinc-500 font-mono hidden sm:inline">{scenes.filter(s => !s.isDisabled).length} scenes Â· {formatTime(totalDuration)}</span>
+          <span className="text-[10px] md:text-xs text-zinc-500 font-mono hidden sm:inline">{scenes.filter(s => !s.isDisabled).length} scenes ÃÂ· {formatTime(totalDuration)}</span>
           <Button
             size="sm"
             variant="outline"
@@ -618,15 +618,15 @@ export default function DirectorCut() {
             disabled={isSaving || !hasUnsavedChanges}
           >
             {isSaving ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" /> : <Save className="w-3 h-3" />}
-            {isSaving ? "Savingâ¦" : "Save"}
+            {isSaving ? "SavingÃ¢ÂÂ¦" : "Save"}
           </Button>
         </div>
       </div>
 
-      {/* ââ Main Layout ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Main Layout Ã¢ÂÂÃ¢ÂÂ */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* ââ Left: Preview + Timeline ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Left: Preview + Timeline Ã¢ÂÂÃ¢ÂÂ */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
           {/* Preview Monitor */}
@@ -659,7 +659,7 @@ export default function DirectorCut() {
             )}
           </div>
 
-          {/* ââ Cut Manager Bar ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Cut Manager Bar Ã¢ÂÂÃ¢ÂÂ */}
             <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/10 bg-zinc-900/60 shrink-0 overflow-x-auto">
               <span className="text-xs text-zinc-500 font-medium shrink-0">Cut:</span>
               <Select value={activeCutId?.toString() ?? ""} onValueChange={(v) => setActiveCutId(v ? parseInt(v) : null)}>
@@ -669,7 +669,7 @@ export default function DirectorCut() {
                 <SelectContent>
                   {(cuts ?? []).map((c) => (
                     <SelectItem key={c.id} value={c.id.toString()}>
-                      {c.isLocked ? "ð " : "âï¸ "}{c.name}
+                      {c.isLocked ? "Ã°ÂÂÂ " : "Ã¢ÂÂÃ¯Â¸Â "}{c.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -682,7 +682,7 @@ export default function DirectorCut() {
                   <Separator orientation="vertical" className="h-4 bg-white/10" />
                   <span className="text-xs text-zinc-400 shrink-0">
                     {activeCut.isLocked
-                      ? `ð Locked Â· ${(cutScenes ?? []).filter((s) => s.isIncluded).length} scenes`
+                      ? `Ã°ÂÂÂ Locked ÃÂ· ${(cutScenes ?? []).filter((s) => s.isIncluded).length} scenes`
                       : `${(cutScenes ?? []).filter((s) => s.isIncluded).length} scenes in cut`}
                   </span>
                   {!activeCut.isLocked && (
@@ -847,9 +847,9 @@ export default function DirectorCut() {
             {!isMobile && (
               <div className="px-4 py-1.5 border-t border-white/5 bg-zinc-950 flex items-center gap-4 shrink-0">
                 <span className="text-[10px] text-zinc-600">
-                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400">Space</kbd> Play/Pause Â·
-                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">ââ</kbd> Select scene Â·
-                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">Del</kbd> Remove Â·
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400">Space</kbd> Play/Pause ÃÂ·
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">Ã¢ÂÂÃ¢ÂÂ</kbd> Select scene ÃÂ·
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">Del</kbd> Remove ÃÂ·
                   Drag clips to reorder
                 </span>
               </div>
@@ -857,7 +857,7 @@ export default function DirectorCut() {
           </div>
         </div>
 
-        {/* ââ Right: Inspector Panel (desktop only) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Right: Inspector Panel (desktop only) Ã¢ÂÂÃ¢ÂÂ */}
         {!isMobile && (
         <div className="w-80 border-l border-white/10 bg-zinc-950 flex flex-col shrink-0">
           {/* Panel tabs */}
@@ -883,7 +883,7 @@ export default function DirectorCut() {
             ) : (
               <div className="p-4 space-y-4">
 
-                {/* ââ Inspector Panel ââ */}
+                {/* Ã¢ÂÂÃ¢ÂÂ Inspector Panel Ã¢ÂÂÃ¢ÂÂ */}
                 {panelMode === "inspector" && (
                   <>
                     <div>
@@ -1031,7 +1031,7 @@ export default function DirectorCut() {
                   </>
                 )}
 
-                {/* ââ Retake Panel ââ */}
+                {/* Ã¢ÂÂÃ¢ÂÂ Retake Panel Ã¢ÂÂÃ¢ÂÂ */}
                 {panelMode === "retake" && (
                   <div className="space-y-4">
                     <div>
@@ -1057,7 +1057,7 @@ export default function DirectorCut() {
                       <Textarea
                         value={retakeText}
                         onChange={(e) => setRetakeText(e.target.value)}
-                        placeholder="e.g. The lighting is too dark â make it golden hour. The character should be running, not walking. Add more crowd in the background..."
+                        placeholder="e.g. The lighting is too dark Ã¢ÂÂ make it golden hour. The character should be running, not walking. Add more crowd in the background..."
                         className="text-xs min-h-[120px] bg-zinc-900 border-zinc-700 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
 
@@ -1104,7 +1104,7 @@ export default function DirectorCut() {
                   </div>
                 )}
 
-                {/* ââ Transition Panel ââ */}
+                {/* Ã¢ÂÂÃ¢ÂÂ Transition Panel Ã¢ÂÂÃ¢ÂÂ */}
                 {panelMode === "transition" && (
                   <div className="space-y-4">
                     <div>
@@ -1181,7 +1181,7 @@ export default function DirectorCut() {
                             key={opt.value}
                             className={`p-2 rounded text-[10px] text-center border transition-all
                               ${selectedScene.transitionType === opt.value
-                                ? "bg-amber-400/20 border-primary/60 text-primary"
+                                ? "bg-amber-400/20 border-primary/60 text-amber-400"
                                 : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}
                             onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}
                           >
@@ -1228,7 +1228,7 @@ export default function DirectorCut() {
         )}
       </div>
 
-      {/* ââ Mobile Inspector Sheet ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Mobile Inspector Sheet Ã¢ÂÂÃ¢ÂÂ */}
       {isMobile && (
         <Sheet open={mobileInspectorOpen} onOpenChange={setMobileInspectorOpen}>
           <SheetContent side="bottom" className="h-[70vh] bg-zinc-950 border-white/10 p-0">
@@ -1333,7 +1333,7 @@ export default function DirectorCut() {
                       </div>
                       <div className="grid grid-cols-3 gap-1.5">
                         {TRANSITION_OPTIONS.map((opt) => (
-                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-amber-400/20 border-primary/60 text-primary" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
+                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-amber-400/20 border-primary/60 text-amber-400" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -1345,7 +1345,7 @@ export default function DirectorCut() {
         </Sheet>
       )}
 
-      {/* ââ Delete Confirm Dialog ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Delete Confirm Dialog Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={deleteConfirmIdx !== null} onOpenChange={() => setDeleteConfirmIdx(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -1355,7 +1355,7 @@ export default function DirectorCut() {
           </DialogHeader>
           <p className="text-sm text-zinc-400">
             Remove <strong className="text-white">"{deleteConfirmIdx !== null ? (scenes[deleteConfirmIdx]?.title || `Scene ${deleteConfirmIdx + 1}`) : ""}"</strong> from the timeline?
-            The scene will still exist in the Scene Editor â this only removes it from the cut.
+            The scene will still exist in the Scene Editor Ã¢ÂÂ this only removes it from the cut.
           </p>
           <DialogFooter className="gap-2">
             <Button variant="outline" size="sm" onClick={() => setDeleteConfirmIdx(null)}>Cancel</Button>
