@@ -52,15 +52,15 @@ export default function SidesPage() {
     return m;
   }, [characters]);
 
-  // INDEX VIEW â pick which day's sides to print
+  // INDEX VIEW — pick which day's sides to print
   if (!selectedDayId) {
     return (
       <div className="min-h-screen text-zinc-100 p-4 md:p-6 print:hidden" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
         <div className="max-w-5xl mx-auto space-y-4">
           <Link href={`/projects/${projectId}`}>
-            <a className="text-sm text-zinc-400 hover:text-zinc-200">â Back to project</a>
+            <a className="text-sm text-zinc-400 hover:text-zinc-200">← Back to project</a>
           </Link>
-          <h1 className="text-2xl font-bold text-gold-shimmer">Sides â pick a shoot day</h1>
+          <h1 className="text-2xl font-bold text-gold-shimmer">Sides — pick a shoot day</h1>
           <p className="text-sm text-zinc-400">
             Sides are the printed pages handed to actors and crew at call time. They contain only
             the scenes scheduled for that day. Pick a day below, then your browser's print dialog
@@ -109,7 +109,7 @@ export default function SidesPage() {
       `}</style>
       <div className="no-print bg-zinc-900 text-zinc-100 p-3 flex items-center gap-4 sticky top-0 z-10">
         <Link href={`/projects/${projectId}/sides`}>
-          <a className="text-sm text-zinc-400 hover:text-zinc-200">â Pick another day</a>
+          <a className="text-sm text-zinc-400 hover:text-zinc-200">← Pick another day</a>
         </Link>
         <button
           onClick={() => window.print()}
@@ -125,19 +125,19 @@ export default function SidesPage() {
               {project?.title || "Untitled Project"}
             </h1>
             <span className="text-sm">
-              SIDES â Day {day?.dayNumber} of {days.length}
+              SIDES — Day {day?.dayNumber} of {days.length}
             </span>
           </div>
           <div className="text-sm mt-1 flex flex-wrap gap-4">
             <span>
               <strong>Date:</strong>{" "}
-              {day?.shootDate ? new Date(day.shootDate).toLocaleDateString() : "â"}
+              {day?.shootDate ? new Date(day.shootDate).toLocaleDateString() : "—"}
             </span>
             <span>
-              <strong>Call:</strong> {day?.callTime || "â"}
+              <strong>Call:</strong> {day?.callTime || "—"}
             </span>
             <span>
-              <strong>Wrap:</strong> {day?.wrapTime || "â"}
+              <strong>Wrap:</strong> {day?.wrapTime || "—"}
             </span>
             {location && (
               <span>
@@ -161,7 +161,7 @@ export default function SidesPage() {
                   </h2>
                   <span className="text-xs">
                     {s.timeOfDay ? s.timeOfDay.toUpperCase() : ""}
-                    {s.locationType ? ` Â· ${s.locationType.toUpperCase()}` : ""}
+                    {s.locationType ? ` · ${s.locationType.toUpperCase()}` : ""}
                   </span>
                 </div>
                 {sceneChars.length > 0 && (
