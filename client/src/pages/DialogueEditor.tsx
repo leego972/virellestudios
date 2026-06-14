@@ -211,7 +211,7 @@ export default function DialogueEditor() {
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => setShowAiSuggest(true)}>
-              <Sparkles className="h-4 w-4 sm:mr-2" />
+              <Sparkles className="h-4 w-4 sm:mr-2 text-amber-400/70" />
               <span className="hidden sm:inline">AI Suggest</span>
             </Button>
             <Button size="sm" onClick={() => setShowAddDialog(true)}>

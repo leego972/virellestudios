@@ -110,7 +110,7 @@ export default function LocationScout() {
             <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Find and manage filming locations for your production</p>
           </div>
           <Button variant="outline" className="shrink-0" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>
-            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2 text-amber-400/70" />}
             AI Suggest
           </Button>
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>

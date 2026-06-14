@@ -37,7 +37,7 @@ import {
 // ─── Platform Icons & Labels ──────────────────────────────────────────────────
 const PLATFORM_META: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
   tiktok: { label: "TikTok", color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", icon: <Video className="h-4 w-4" /> },
-  instagram: { label: "Camera", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4" /> },
+  instagram: { label: "Camera", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4 text-amber-400/70" /> },
   x_twitter: { label: "X (X)", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20", icon: <X className="h-4 w-4" /> },
   linkedin: { label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", icon: <Briefcase className="h-4 w-4" /> },
   facebook: { label: "ThumbsUp", color: "text-blue-500", bg: "bg-blue-600/10 border-blue-600/20", icon: <ThumbsUp className="h-4 w-4" /> },
@@ -533,7 +533,7 @@ export default function ContentCreatorPage() {
             <Card className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-blue-400" />
+                  <Sparkles className="h-4 w-4 text-blue-400 text-amber-400/70" />
                   AI Content Generator
                 </CardTitle>
                 <CardDescription>Generate platform-optimised content powered by SEO data</CardDescription>
@@ -633,7 +633,7 @@ export default function ContentCreatorPage() {
                   {generateMutation.isPending ? (
                     <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Generating...</>
                   ) : (
-                    <><Sparkles className="h-4 w-4 mr-2" />Generate Content</>
+                    <><Sparkles className="h-4 w-4 mr-2 text-amber-400/70" />Generate Content</>
                   )}
                 </Button>
               </CardContent>
@@ -1212,7 +1212,7 @@ export default function ContentCreatorPage() {
                 <Card className="bg-card/50 border-border/50">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Star className="h-4 w-4 text-yellow-400" />
+                      <Star className="h-4 w-4 text-yellow-400 text-amber-400/70" />
                       Top Performing Content
                     </CardTitle>
                   </CardHeader>
