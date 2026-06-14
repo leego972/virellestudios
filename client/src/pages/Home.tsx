@@ -41,6 +41,240 @@ import { useAuth } from "@/_core/hooks/useAuth";
     );
   }
 
+    function FilmProductionStepper({
+      hasApiKey,
+      firstProjectId,
+    }: {
+      hasApiKey: boolean;
+      firstProjectId: number | null;
+    }) {
+      const [, setLocation] = useLocation();
+      const [activeStep, setActiveStep] = useState(() => {
+        const saved = localStorage.getItem("virelle-stepper-step-v1");
+        return saved ? Number(saved) : 0;
+      });
+      const [skipped, setSkipped] = useState<Set<number>>(() => {
+        try { return new Set(JSON.parse(localStorage.getItem("virelle-stepper-skipped-v1") || "[]")); }
+        catch { return new Set(); }
+      });
+      const [manualDone, setManualDone] = useState<Record<string, boolean>>(() => {
+        try { return JSON.parse(localStorage.getItem("virelle-stepper-done-v1") || "{}"); }
+        catch { return {}; }
+      });
+      const [collapsed, setCollapsed] = useState(false);
+
+      const markDone = (id: string) => {
+        const next = { ...manualDone, [id]: true };
+        setManualDone(next);
+        localStorage.setItem("virelle-stepper-done-v1", JSON.stringify(next));
+      };
+
+      const goTo = (i: number) => {
+        setActiveStep(i);
+        localStorage.setItem("virelle-stepper-step-v1", String(i));
+      };
+
+      const skipStep = () => {
+        const next = new Set(skipped).add(activeStep);
+        setSkipped(next);
+        localStorage.setItem("virelle-stepper-skipped-v1", JSON.stringify([...next]));
+        if (activeStep < FILM_STEPS.length - 1) goTo(activeStep + 1);
+      };
+
+      const FILM_STEPS = [
+        {
+          id: "api_key",
+          icon: Key,
+          color: "#0ea5e9",
+          title: "Connect a Video API",
+          desc: "Add at least one API key (Veo3, Runway, or free Pollinations) so the AI can generate video for your scenes.",
+          action: "Open API Key Settings",
+          path: "/settings",
+          autoDone: hasApiKey,
+        },
+        {
+          id: "project",
+          icon: Sparkles,
+          color: "#8b5cf6",
+          title: "Create Your Project",
+          desc: "Give your film a title, genre, and a one-sentence logline. Every tool lives inside your project.",
+          action: "Create a Project",
+          path: "/projects/new",
+          autoDone: !!firstProjectId,
+        },
+        {
+          id: "script",
+          icon: BookOpen,
+          color: "#10b981",
+          title: "Write Your Script",
+          desc: "Use the AI Script Writer to generate a full screenplay from your premise, or write it yourself.",
+          action: "Open Script Writer",
+          path: firstProjectId ? `/projects/${firstProjectId}/script` : "/projects/new",
+          autoDone: !!manualDone["script"],
+        },
+        {
+          id: "shotlist",
+          icon: LayoutGrid,
+          color: "#f59e0b",
+          title: "Plan Your Scenes",
+          desc: "Use the Shot List to map out each scene's camera angle and action before generating video.",
+          action: "Open Shot List",
+          path: firstProjectId ? `/projects/${firstProjectId}/shot-list` : "/projects/new",
+          autoDone: !!manualDone["shotlist"],
+        },
+        {
+          id: "generate",
+          icon: Clapperboard,
+          color: "#ef4444",
+          title: "Generate Your First Scene",
+          desc: "Open the Scene Editor, describe your shot, and hit Generate. Your AI film starts here.",
+          action: "Generate a Scene",
+          path: firstProjectId ? `/projects/${firstProjectId}/scene-editor` : "/projects/new",
+          autoDone: !!manualDone["generate"],
+        },
+      ];
+
+      const allDone = FILM_STEPS.every((s, i) => s.autoDone || skipped.has(i));
+      if (allDone) return null;
+
+      const current = FILM_STEPS[activeStep];
+      const isDone = current.autoDone || !!manualDone[current.id];
+      const isSkipped = skipped.has(activeStep);
+      const Icon = current.icon;
+      const completedCount = FILM_STEPS.filter((s, i) => s.autoDone || !!manualDone[s.id]).length;
+
+      return (
+        <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-amber-500/10">
+            <div className="flex items-center gap-2.5">
+              <Clapperboard className="h-4 w-4 text-amber-400" />
+              <span className="text-sm font-semibold">Your path to your first film</span>
+              <span className="text-xs text-muted-foreground">
+                {completedCount} of {FILM_STEPS.length} done
+              </span>
+            </div>
+            <button
+              onClick={() => setCollapsed(c => !c)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+            >
+              {collapsed ? <><ChevronDown className="h-3.5 w-3.5" /> Show</> : <><ChevronUp className="h-3.5 w-3.5" /> Hide</>}
+            </button>
+          </div>
+
+          {!collapsed && (
+            <>
+              {/* Step breadcrumb nav */}
+              <div className="flex items-center gap-0 px-5 py-3 overflow-x-auto border-b border-border/20">
+                {FILM_STEPS.map((s, i) => {
+                  const done = s.autoDone || !!manualDone[s.id];
+                  const skip = skipped.has(i);
+                  const active = i === activeStep;
+                  const SIcon = s.icon;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => goTo(i)}
+                      className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all shrink-0 ${
+                        active
+                          ? "text-white"
+                          : done
+                          ? "text-emerald-400 hover:bg-emerald-500/10"
+                          : skip
+                          ? "text-muted-foreground/50 hover:bg-muted/20"
+                          : "text-muted-foreground hover:bg-muted/20"
+                      }`}
+                      style={active ? { backgroundColor: s.color + "30", border: `1px solid ${s.color}50` } : {}}
+                    >
+                      {done ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                      ) : (
+                        <span
+                          className="h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+                          style={active ? { backgroundColor: s.color, color: "#fff" } : { backgroundColor: "rgba(255,255,255,0.08)", color: "inherit" }}
+                        >
+                          {i + 1}
+                        </span>
+                      )}
+                      <span className="hidden sm:inline">{s.title.split(" ").slice(0, 2).join(" ")}</span>
+                      {i < FILM_STEPS.length - 1 && (
+                        <ChevronRight className="h-3 w-3 text-muted-foreground/30 ml-1 hidden sm:block" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active step detail */}
+              <div className="px-5 py-5 flex flex-col sm:flex-row items-start gap-5">
+                {/* Icon */}
+                <div
+                  className="h-14 w-14 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: current.color + "18", border: `1px solid ${current.color}30` }}
+                >
+                  <Icon className="h-6 w-6" style={{ color: current.color }} />
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <p className="text-sm font-bold text-foreground">{current.title}</p>
+                    {isDone && <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">Done</span>}
+                    {isSkipped && !isDone && <span className="text-[10px] font-semibold text-muted-foreground bg-muted/20 px-2 py-0.5 rounded-full">Skipped</span>}
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">{current.desc}</p>
+
+                  {/* Action buttons */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Primary action */}
+                    <button
+                      onClick={() => {
+                        if (!current.autoDone) markDone(current.id);
+                        setLocation(current.path);
+                      }}
+                      className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl text-white transition-all hover:opacity-90 active:scale-[0.98]"
+                      style={{ backgroundColor: current.color }}
+                    >
+                      {current.action}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+
+                    {/* Skip */}
+                    {!isDone && (
+                      <button
+                        onClick={skipStep}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2.5 rounded-xl hover:bg-muted/20"
+                      >
+                        Skip for now
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Back / Forward nav */}
+                <div className="flex items-center gap-2 shrink-0 sm:flex-col sm:justify-start">
+                  <button
+                    onClick={() => goTo(activeStep - 1)}
+                    disabled={activeStep === 0}
+                    className="h-8 w-8 rounded-lg border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => goTo(activeStep + 1)}
+                    disabled={activeStep === FILM_STEPS.length - 1}
+                    className="h-8 w-8 rounded-lg border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+  
   function timeAgo(date: string | Date) {
     const now = new Date(); const d = new Date(date);
     const seconds = Math.floor((now.getTime() - d.getTime()) / 1000);
@@ -313,7 +547,13 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <SiteHead title="Dashboard" description="Your AI film production studio dashboard." />
         <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
 
-        {/* Studio Status Bar */}
+          {/* Film Production Stepper */}
+          <FilmProductionStepper
+            hasApiKey={!!hasApiKey}
+            firstProjectId={projects?.[0]?.id ?? null}
+          />
+
+          {/* Studio Status Bar */}
         {user && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="Studio status overview">
             <Card style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)"}}>
