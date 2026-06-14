@@ -1,1 +1,433 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CiAgaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CiAgaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmRIZWFkZXIsIENhcmRUaXRsZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9jYXJkIjsKICBpbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CiAgaW1wb3J0IHsgSW5wdXQgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvaW5wdXQiOwogIGltcG9ydCB7IFRhYnMsIFRhYnNDb250ZW50LCBUYWJzTGlzdCwgVGFic1RyaWdnZXIgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGFicyI7CiAgaW1wb3J0IHsgU2VsZWN0LCBTZWxlY3RDb250ZW50LCBTZWxlY3RJdGVtLCBTZWxlY3RUcmlnZ2VyLCBTZWxlY3RWYWx1ZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9zZWxlY3QiOwogIGltcG9ydCB7IEFycm93TGVmdCwgTWljLCBHbG9iZSwgUGxheSwgRG93bmxvYWQsIFdhbmQyLCBWb2x1bWUyLCBMYW5ndWFnZXMsIFN0YXIsIENyb3duLCBDaGVja0NpcmNsZTIsIExvYWRlcjIsIFVwbG9hZCwgUmVmcmVzaEN3LCBTbGlkZXJzLCBWb2x1bWVYIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKICBpbXBvcnQgeyB1c2VMb2NhdGlvbiwgdXNlUGFyYW1zIH0gZnJvbSAid291dGVyIjsKICBpbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CgogIGNvbnN0IExBTkdVQUdFUyA9IFsKICAgIHsgY29kZTogImZyIiwgbmFtZTogIkZyZW5jaCIsIGZsYWc6ICLwn4er8J+HtyIsIGFjY2VudDogIlBhcmlzaWFuIiB9LAogICAgeyBjb2RlOiAiZXMiLCBuYW1lOiAiU3BhbmlzaCIsIGZsYWc6ICLwn4eq8J+HuCIsIGFjY2VudDogIkNhc3RpbGlhbiIgfSwKICAgIHsgY29kZTogImVzLW14IiwgbmFtZTogIlNwYW5pc2ggKE1leGljbykiLCBmbGFnOiAi8J+HsvCfh70iLCBhY2NlbnQ6ICJMYXRpbiBBbWVyaWNhbiIgfSwKICAgIHsgY29kZTogInB0LWJyIiwgbmFtZTogIlBvcnR1Z3Vlc2UgKEJyYXppbCkiLCBmbGFnOiAi8J+Hp/Cfh7ciLCBhY2NlbnQ6ICJCcmF6aWxpYW4iIH0sCiAgICB7IGNvZGU6ICJkZSIsIG5hbWU6ICJHZXJtYW4iLCBmbGFnOiAi8J+HqfCfh6oiLCBhY2NlbnQ6ICJIaWdoIEdlcm1hbiIgfSwKICAgIHsgY29kZTogIml0IiwgbmFtZTogIkl0YWxpYW4iLCBmbGFnOiAi8J+HrvCfh7kiLCBhY2NlbnQ6ICJSb21hbiIgfSwKICAgIHsgY29kZTogImphIiwgbmFtZTogIkphcGFuZXNlIiwgZmxhZzogIvCfh6/wn4e1IiwgYWNjZW50OiAiVG9reW8gU3RhbmRhcmQiIH0sCiAgICB7IGNvZGU6ICJrbyIsIG5hbWU6ICJLb3JlYW4iLCBmbGFnOiAi8J+HsPCfh7ciLCBhY2NlbnQ6ICJTZW91bCBTdGFuZGFyZCIgfSwKICAgIHsgY29kZTogInpoIiwgbmFtZTogIkNoaW5lc2UgKE1hbmRhcmluKSIsIGZsYWc6ICLwn4eo8J+HsyIsIGFjY2VudDogIlB1dG9uZ2h1YSIgfSwKICAgIHsgY29kZTogInpoLXR3IiwgbmFtZTogIkNoaW5lc2UgKFRyYWRpdGlvbmFsKSIsIGZsYWc6ICLwn4e58J+HvCIsIGFjY2VudDogIlRhaXdhbmVzZSBNYW5kYXJpbiIgfSwKICAgIHsgY29kZTogImFyIiwgbmFtZTogIkFyYWJpYyIsIGZsYWc6ICLwn4e48J+HpiIsIGFjY2VudDogIk1vZGVybiBTdGFuZGFyZCIgfSwKICAgIHsgY29kZTogImhpIiwgbmFtZTogIkhpbmRpIiwgZmxhZzogIvCfh67wn4ezIiwgYWNjZW50OiAiQm9sbHl3b29kIiB9LAogICAgeyBjb2RlOiAicnUiLCBuYW1lOiAiUnVzc2lhbiIsIGZsYWc6ICLwn4e38J+HuiIsIGFjY2VudDogIk1vc2NvdyBTdGFuZGFyZCIgfSwKICAgIHsgY29kZTogInBsIiwgbmFtZTogIlBvbGlzaCIsIGZsYWc6ICLwn4e18J+HsSIsIGFjY2VudDogIldhcnNhdyIgfSwKICAgIHsgY29kZTogIm5sIiwgbmFtZTogIkR1dGNoIiwgZmxhZzogIvCfh7Pwn4exIiwgYWNjZW50OiAiQW1zdGVyZGFtIiB9LAogICAgeyBjb2RlOiAic3YiLCBuYW1lOiAiU3dlZGlzaCIsIGZsYWc6ICLwn4e48J+HqiIsIGFjY2VudDogIlN0b2NraG9sbSIgfSwKICAgIHsgY29kZTogInRyIiwgbmFtZTogIlR1cmtpc2giLCBmbGFnOiAi8J+HufCfh7ciLCBhY2NlbnQ6ICJJc3RhbmJ1bCIgfSwKICAgIHsgY29kZTogImhlIiwgbmFtZTogIkhlYnJldyIsIGZsYWc6ICLwn4eu8J+HsSIsIGFjY2VudDogIklzcmFlbGkgU3RhbmRhcmQiIH0sCiAgICB7IGNvZGU6ICJ0aCIsIG5hbWU6ICJUaGFpIiwgZmxhZzogIvCfh7nwn4etIiwgYWNjZW50OiAiQ2VudHJhbCBUaGFpIiB9LAogICAgeyBjb2RlOiAidmkiLCBuYW1lOiAiVmlldG5hbWVzZSIsIGZsYWc6ICLwn4e78J+HsyIsIGFjY2VudDogIkhhbm9pIiB9LAogICAgeyBjb2RlOiAiaWQiLCBuYW1lOiAiSW5kb25lc2lhbiIsIGZsYWc6ICLwn4eu8J+HqSIsIGFjY2VudDogIkJhaGFzYSBTdGFuZGFyZCIgfSwKICAgIHsgY29kZTogIm1zIiwgbmFtZTogIk1hbGF5IiwgZmxhZzogIvCfh7Lwn4e+IiwgYWNjZW50OiAiTWFsYXlzaWFuIiB9LAogICAgeyBjb2RlOiAidWsiLCBuYW1lOiAiVWtyYWluaWFuIiwgZmxhZzogIvCfh7rwn4emIiwgYWNjZW50OiAiS3lpdiBTdGFuZGFyZCIgfSwKICAgIHsgY29kZTogInJvIiwgbmFtZTogIlJvbWFuaWFuIiwgZmxhZzogIvCfh7fwn4e0IiwgYWNjZW50OiAiQnVjaGFyZXN0IiB9LAogICAgeyBjb2RlOiAiY3MiLCBuYW1lOiAiQ3plY2giLCBmbGFnOiAi8J+HqPCfh78iLCBhY2NlbnQ6ICJQcmFndWUiIH0sCiAgICB7IGNvZGU6ICJodSIsIG5hbWU6ICJIdW5nYXJpYW4iLCBmbGFnOiAi8J+HrfCfh7oiLCBhY2NlbnQ6ICJCdWRhcGVzdCIgfSwKICAgIHsgY29kZTogImZpIiwgbmFtZTogIkZpbm5pc2giLCBmbGFnOiAi8J+Hq/Cfh64iLCBhY2NlbnQ6ICJIZWxzaW5raSIgfSwKICAgIHsgY29kZTogImRhIiwgbmFtZTogIkRhbmlzaCIsIGZsYWc6ICLwn4ep8J+HsCIsIGFjY2VudDogIkNvcGVuaGFnZW4iIH0sCiAgICB7IGNvZGU6ICJubyIsIG5hbWU6ICJOb3J3ZWdpYW4iLCBmbGFnOiAi8J+Hs/Cfh7QiLCBhY2NlbnQ6ICJCb2ttw6VsIiB9LAogICAgeyBjb2RlOiAiZWwiLCBuYW1lOiAiR3JlZWsiLCBmbGFnOiAi8J+HrPCfh7ciLCBhY2NlbnQ6ICJBdGhlbnMiIH0sCiAgICB7IGNvZGU6ICJmYSIsIG5hbWU6ICJGYXJzaS9QZXJzaWFuIiwgZmxhZzogIvCfh67wn4e3IiwgYWNjZW50OiAiVGVocmFuIiB9LAogICAgeyBjb2RlOiAic3ciLCBuYW1lOiAiU3dhaGlsaSIsIGZsYWc6ICLwn4ew8J+HqiIsIGFjY2VudDogIkVhc3QgQWZyaWNhbiIgfSwKICAgIHsgY29kZTogInRhIiwgbmFtZTogIlRhbWlsIiwgZmxhZzogIvCfh67wn4ezIiwgYWNjZW50OiAiQ2hlbm5haSIgfSwKICAgIHsgY29kZTogImJuIiwgbmFtZTogIkJlbmdhbGkiLCBmbGFnOiAi8J+Hp/Cfh6kiLCBhY2NlbnQ6ICJEaGFrYSIgfSwKICAgIHsgY29kZTogInRsIiwgbmFtZTogIkZpbGlwaW5vL1RhZ2Fsb2ciLCBmbGFnOiAi8J+HtfCfh60iLCBhY2NlbnQ6ICJNYW5pbGEiIH0sCiAgICB7IGNvZGU6ICJhZiIsIG5hbWU6ICJBZnJpa2FhbnMiLCBmbGFnOiAi8J+Hv/Cfh6YiLCBhY2NlbnQ6ICJDYXBlIFRvd24iIH0sCiAgXTsKCiAgY29uc3QgVk9JQ0VfU1RZTEVTID0gWwogICAgeyBpZDogImNpbmVtYXRpYy1tYWxlIiwgbmFtZTogIkNpbmVtYXRpYyBNYWxlIiwgaWNvbjogIvCfjqwiLCBkZXNjOiAiRGVlcCwgYXV0aG9yaXRhdGl2ZSBIb2xseXdvb2Qtc3R5bGUiIH0sCiAgICB7IGlkOiAiY2luZW1hdGljLWZlbWFsZSIsIG5hbWU6ICJDaW5lbWF0aWMgRmVtYWxlIiwgaWNvbjogIvCfjq0iLCBkZXNjOiAiUmljaCwgZXhwcmVzc2l2ZSBkcmFtYXRpYyB2b2ljZSIgfSwKICAgIHsgaWQ6ICJkb2N1bWVudGFyeSIsIG5hbWU6ICJEb2N1bWVudGFyeSIsIGljb246ICLwn46lIiwgZGVzYzogIk5hdHVyYWwsIHRydXN0d29ydGh5IG5hcnJhdG9yIiB9LAogICAgeyBpZDogImFuaW1lIiwgbmFtZTogIkFuaW1lIC8gQW5pbWF0aW9uIiwgaWNvbjogIuKcqCIsIGRlc2M6ICJFeHByZXNzaXZlLCBjaGFyYWN0ZXItZHJpdmVuIiB9LAogICAgeyBpZDogIm5ld3MiLCBuYW1lOiAiTmV3cyBCcm9hZGNhc3QiLCBpY29uOiAi8J+ToSIsIGRlc2M6ICJDbGVhciwgcHJvZmVzc2lvbmFsLCBuZXV0cmFsIiB9LAogICAgeyBpZDogImNvbW1lcmNpYWwiLCBuYW1lOiAiQ29tbWVyY2lhbCIsIGljb246ICLwn4yfIiwgZGVzYzogIlVwYmVhdCwgcGVyc3Vhc2l2ZSwgZW5nYWdpbmciIH0sCiAgXTsKCiAgZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRHViYmluZ1N0dWRpbygpIHsKICAgIGNvbnN0IFssIHNldExvY2F0aW9uXSA9IHVzZUxvY2F0aW9uKCk7CiAgICBjb25zdCBwYXJhbXMgPSB1c2VQYXJhbXMoKTsKICAgIGNvbnN0IFt0YXJnZXRMYW5nLCBzZXRUYXJnZXRMYW5nXSA9IHVzZVN0YXRlKCJmciIpOwogICAgY29uc3QgW3ZvaWNlU3R5bGUsIHNldFZvaWNlU3R5bGVdID0gdXNlU3RhdGUoImNpbmVtYXRpYy1tYWxlIik7CiAgICBjb25zdCBbbGlwU3luYywgc2V0TGlwU3luY10gPSB1c2VTdGF0ZSh0cnVlKTsKICAgIGNvbnN0IFtwcmVzZXJ2ZVRvbmUsIHNldFByZXNlcnZlVG9uZV0gPSB1c2VTdGF0ZSh0cnVlKTsKICAgIGNvbnN0IFtnZW5lcmF0aW5nLCBzZXRHZW5lcmF0aW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICAgIGNvbnN0IFtkb25lLCBzZXREb25lXSA9IHVzZVN0YXRlKGZhbHNlKTsKICAgIGNvbnN0IFthY3RpdmVUYWIsIHNldEFjdGl2ZVRhYl0gPSB1c2VTdGF0ZSgiZ2VuZXJhdGUiKTsKCiAgICBjb25zdCBzZWxlY3RlZExhbmcgPSBMQU5HVUFHRVMuZmluZChsID0+IGwuY29kZSA9PT0gdGFyZ2V0TGFuZyk7CgogICAgY29uc3QgaGFuZGxlR2VuZXJhdGUgPSBhc3luYyAoKSA9PiB7CiAgICAgIHNldEdlbmVyYXRpbmcodHJ1ZSk7CiAgICAgIGF3YWl0IG5ldyBQcm9taXNlKHIgPT4gc2V0VGltZW91dChyLCAyNTAwKSk7CiAgICAgIHNldEdlbmVyYXRpbmcoZmFsc2UpOwogICAgICBzZXREb25lKHRydWUpOwogICAgICB0b2FzdC5zdWNjZXNzKCJEdWIgdHJhY2sgZ2VuZXJhdGVkISIsIHsgZGVzY3JpcHRpb246IGAke3NlbGVjdGVkTGFuZz8ubmFtZX0gJHtzZWxlY3RlZExhbmc/LmZsYWd9IOKAlCByZWFkeSB0byBkb3dubG9hZGAgfSk7CiAgICB9OwoKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4gdGV4dC13aGl0ZSBwYi0yMCIgc3R5bGU9e3sgYmFja2dyb3VuZDogImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYm9yZGVyLWIgYm9yZGVyLWFtYmVyLTUwMC8yMCBiZy1ibGFjay82MCBiYWNrZHJvcC1ibHVyLXhsIHN0aWNreSB0b3AtMCB6LTMwIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy01eGwgbXgtYXV0byBweC00IGgtMTYgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTQiPgogICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJpY29uIiBvbkNsaWNrPXsoKSA9PiBzZXRMb2NhdGlvbigiLyIpfSBjbGFzc05hbWU9InRleHQtd2hpdGUvNjAgaG92ZXI6dGV4dC13aGl0ZSBzaHJpbmstMCI+CiAgICAgICAgICAgICAgPEFycm93TGVmdCBjbGFzc05hbWU9InctNSBoLTUgdGV4dC1hbWJlci00MDAvNzAiIC8+CiAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIuNSI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctOSBoLTkgYmctZ3JhZGllbnQtdG8tYnIgZnJvbS1hbWJlci01MDAgdG8tYW1iZXItNzAwIHJvdW5kZWQtbGcgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hhZG93LWxnIHNoYWRvdy1hbWJlci01MDAvMzAiPgogICAgICAgICAgICAgICAgPExhbmd1YWdlcyBjbGFzc05hbWU9InctNSBoLTUgdGV4dC1ibGFjayIgLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC1sZyBmb250LWJsYWNrIHRyYWNraW5nLXRpZ2h0IHVwcGVyY2FzZSBpdGFsaWMgZ3JhZGllbnQtdGV4dC1nb2xkIj5BSSBEdWJiaW5nIFN0dWRpbzwvaDE+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvNDAgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+MzYgTGFuZ3VhZ2VzIMK3IExpcC1TeW5jIMK3IFZvaWNlIENsb25pbmc8L3A+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJtbC1hdXRvIGJvcmRlci1hbWJlci01MDAvMzAgdGV4dC1hbWJlci01MDAgYmctYW1iZXItNTAwLzUiPgogICAgICAgICAgICAgIDxDcm93biBjbGFzc05hbWU9InctMyBoLTMgbXItMS41IiAvPiBQcm8KICAgICAgICAgICAgPC9CYWRnZT4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctNXhsIG14LWF1dG8gcHgtNCBweS04Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0yIG1kOmdyaWQtY29scy00IGdhcC00IG1iLTgiPgogICAgICAgICAgICB7WwogICAgICAgICAgICAgIHsgbGFiZWw6ICJMYW5ndWFnZXMiLCB2YWx1ZTogIjM2KyIsIGljb246IEdsb2JlIH0sCiAgICAgICAgICAgICAgeyBsYWJlbDogIlZvaWNlIFN0eWxlcyIsIHZhbHVlOiAiNiIsIGljb246IE1pYyB9LAogICAgICAgICAgICAgIHsgbGFiZWw6ICJMaXAtU3luYyBBSSIsIHZhbHVlOiAiSW5jbHVkZWQiLCBpY29uOiBQbGF5IH0sCiAgICAgICAgICAgICAgeyBsYWJlbDogIkV4cG9ydCBGb3JtYXRzIiwgdmFsdWU6ICJNUDQvTUtWL01PViIsIGljb246IERvd25sb2FkIH0sCiAgICAgICAgICAgIF0ubWFwKHMgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXtzLmxhYmVsfSBjbGFzc05hbWU9ImdsYXNzLWNhcmQgcm91bmRlZC14bCBwLTQgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMTAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctOSBoLTkgcm91bmRlZC1sZyBiZy1hbWJlci01MDAvMTAgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIiPgogICAgICAgICAgICAgICAgICA8cy5pY29uIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtYmxhY2sgdGV4dC13aGl0ZSI+e3MudmFsdWV9PC9wPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvNDAgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVyIj57cy5sYWJlbH08L3A+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKSl9CiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICA8VGFicyB2YWx1ZT17YWN0aXZlVGFifSBvblZhbHVlQ2hhbmdlPXtzZXRBY3RpdmVUYWJ9PgogICAgICAgICAgICA8VGFic0xpc3QgY2xhc3NOYW1lPSJiZy1ibGFjay80MCBib3JkZXIgYm9yZGVyLWFtYmVyLTUwMC8yMCBtYi02IHAtMSByb3VuZGVkLXhsIj4KICAgICAgICAgICAgICA8VGFic1RyaWdnZXIgdmFsdWU9ImdlbmVyYXRlIiBjbGFzc05hbWU9ImRhdGEtW3N0YXRlPWFjdGl2ZV06YmctYW1iZXItNTAwIGRhdGEtW3N0YXRlPWFjdGl2ZV06dGV4dC1ibGFjayBmb250LWJvbGQgcm91bmRlZC1sZyBweC01IGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj4KICAgICAgICAgICAgICAgIDxXYW5kMiBjbGFzc05hbWU9InctNCBoLTQiIC8+IEdlbmVyYXRlIER1YgogICAgICAgICAgICAgIDwvVGFic1RyaWdnZXI+CiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJ2b2ljZXMiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1hbWJlci01MDAgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LWJsYWNrIGZvbnQtYm9sZCByb3VuZGVkLWxnIHB4LTUgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgPE1pYyBjbGFzc05hbWU9InctNCBoLTQiIC8+IFZvaWNlIFN0eWxlcwogICAgICAgICAgICAgIDwvVGFic1RyaWdnZXI+CiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJsYW5ndWFnZXMiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1hbWJlci01MDAgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LWJsYWNrIGZvbnQtYm9sZCByb3VuZGVkLWxnIHB4LTUgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgPEdsb2JlIGNsYXNzTmFtZT0idy00IGgtNCIgLz4gQWxsIExhbmd1YWdlcwogICAgICAgICAgICAgIDwvVGFic1RyaWdnZXI+CiAgICAgICAgICAgIDwvVGFic0xpc3Q+CgogICAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9ImdlbmVyYXRlIj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBtZDpncmlkLWNvbHMtMiBnYXAtNiI+CiAgICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIGdsYXNzLWNhcmQiPgogICAgICAgICAgICAgICAgICA8Q2FyZEhlYWRlcj48Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxHbG9iZSBjbGFzc05hbWU9InctNSBoLTUiIC8+IFRhcmdldCBMYW5ndWFnZTwvQ2FyZFRpdGxlPjwvQ2FyZEhlYWRlcj4KICAgICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgICAgICA8U2VsZWN0IHZhbHVlPXt0YXJnZXRMYW5nfSBvblZhbHVlQ2hhbmdlPXtzZXRUYXJnZXRMYW5nfT4KICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RUcmlnZ2VyIGNsYXNzTmFtZT0iYmctd2hpdGUvNSBib3JkZXItYW1iZXItNTAwLzIwIHRleHQtd2hpdGUgaC0xMiI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RWYWx1ZSAvPgogICAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3RUcmlnZ2VyPgogICAgICAgICAgICAgICAgICAgICAgPFNlbGVjdENvbnRlbnQgY2xhc3NOYW1lPSJiZy16aW5jLTkwMCBib3JkZXItYW1iZXItNTAwLzIwIHRleHQtd2hpdGUgbWF4LWgtNjQiPgogICAgICAgICAgICAgICAgICAgICAgICB7TEFOR1VBR0VTLm1hcChsID0+ICgKICAgICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0SXRlbSBrZXk9e2wuY29kZX0gdmFsdWU9e2wuY29kZX0+e2wuZmxhZ30ge2wubmFtZX0g4oCUIHtsLmFjY2VudH08L1NlbGVjdEl0ZW0+CiAgICAgICAgICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3RDb250ZW50PgogICAgICAgICAgICAgICAgICAgIDwvU2VsZWN0PgogICAgICAgICAgICAgICAgICAgIHtzZWxlY3RlZExhbmcgJiYgKAogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InAtMyByb3VuZGVkLWxnIGJnLWFtYmVyLTUwMC81IGJvcmRlciBib3JkZXItYW1iZXItNTAwLzIwIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtYm9sZCB0ZXh0LWFtYmVyLTQwMCI+e3NlbGVjdGVkTGFuZy5mbGFnfSB7c2VsZWN0ZWRMYW5nLm5hbWV9PC9wPgogICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC13aGl0ZS81MCI+e3NlbGVjdGVkTGFuZy5hY2NlbnR9IGFjY2VudCDCtyBMaXAtc3luYyBjYWxpYnJhdGVkPC9wPgogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICAgICAgICAgIDwvQ2FyZD4KCiAgICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIGdsYXNzLWNhcmQiPgogICAgICAgICAgICAgICAgICA8Q2FyZEhlYWRlcj48Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxNaWMgY2xhc3NOYW1lPSJ3LTUgaC01IiAvPiBWb2ljZSBTdHlsZTwvQ2FyZFRpdGxlPjwvQ2FyZEhlYWRlcj4KICAgICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS0zIj4KICAgICAgICAgICAgICAgICAgICB7Vk9JQ0VfU1RZTEVTLnNsaWNlKDAsMykubWFwKHYgPT4gKAogICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBrZXk9e3YuaWR9IG9uQ2xpY2s9eygpID0+IHNldFZvaWNlU3R5bGUodi5pZCl9CiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17YHctZnVsbCBwLTMgcm91bmRlZC1sZyBib3JkZXIgdGV4dC1sZWZ0IHRyYW5zaXRpb24tYWxsICR7dm9pY2VTdHlsZSA9PT0gdi5pZCA/ICJib3JkZXItYW1iZXItNTAwIGJnLWFtYmVyLTUwMC8xMCIgOiAiYm9yZGVyLWFtYmVyLTUwMC8yMCBiZy13aGl0ZS9bMC4wMl0gaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC80MCJ9YH0+CiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWxnIj57di5pY29ufTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtYm9sZCB0ZXh0LXdoaXRlIj57di5uYW1lfTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzUwIj57di5kZXNjfTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgICB7dm9pY2VTdHlsZSA9PT0gdi5pZCAmJiA8Q2hlY2tDaXJjbGUyIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWFtYmVyLTQwMCBtbC1hdXRvIiAvPn0KICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICAgICAgICAgIDwvQ2FyZD4KCiAgICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIGdsYXNzLWNhcmQgbWQ6Y29sLXNwYW4tMiI+CiAgICAgICAgICAgICAgICAgIDxDYXJkSGVhZGVyPjxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTQwMCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+PFNsaWRlcnMgY2xhc3NOYW1lPSJ3LTUgaC01IiAvPiBEdWJiaW5nIE9wdGlvbnM8L0NhcmRUaXRsZT48L0NhcmRIZWFkZXI+CiAgICAgICAgICAgICAgICAgIDxDYXJkQ29udGVudD4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBtZDpncmlkLWNvbHMtNCBnYXAtNCBtYi02Ij4KICAgICAgICAgICAgICAgICAgICAgIHtbCiAgICAgICAgICAgICAgICAgICAgICAgIHsgbGFiZWw6ICJMaXAtU3luYyBBSSIsIHN0YXRlOiBsaXBTeW5jLCBzZXQ6IHNldExpcFN5bmMsIGRlc2M6ICJTeW5jIG1vdXRoIG1vdmVtZW50IHRvIGR1YiIgfSwKICAgICAgICAgICAgICAgICAgICAgICAgeyBsYWJlbDogIlByZXNlcnZlIFRvbmUiLCBzdGF0ZTogcHJlc2VydmVUb25lLCBzZXQ6IHNldFByZXNlcnZlVG9uZSwgZGVzYzogIk1hdGNoIG9yaWdpbmFsIGVtb3Rpb25hbCB0b25lIiB9LAogICAgICAgICAgICAgICAgICAgICAgXS5tYXAob3B0ID0+ICgKICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBrZXk9e29wdC5sYWJlbH0gb25DbGljaz17KCkgPT4gb3B0LnNldCghb3B0LnN0YXRlKX0KICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2BwLTQgcm91bmRlZC14bCBib3JkZXIgdGV4dC1sZWZ0IHRyYW5zaXRpb24tYWxsICR7b3B0LnN0YXRlID8gImJvcmRlci1hbWJlci01MDAgYmctYW1iZXItNTAwLzEwIiA6ICJib3JkZXItd2hpdGUvMTAgYmctd2hpdGUvWzAuMDJdIGhvdmVyOmJvcmRlci1hbWJlci01MDAvMzAifWB9PgogICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPXtgdy04IGgtOCByb3VuZGVkLWZ1bGwgbWItMiBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciAke29wdC5zdGF0ZSA/ICJiZy1hbWJlci01MDAiIDogImJnLXdoaXRlLzEwIn1gfT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtvcHQuc3RhdGUgPyA8Q2hlY2tDaXJjbGUyIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWJsYWNrIiAvPiA6IDxWb2x1bWVYIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LXdoaXRlLzQwIiAvPn0KICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1ib2xkIHRleHQtd2hpdGUiPntvcHQubGFiZWx9PC9wPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzQwIG10LTAuNSI+e29wdC5kZXNjfTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9e2hhbmRsZUdlbmVyYXRlfSBkaXNhYmxlZD17Z2VuZXJhdGluZ30KICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idy1mdWxsIGgtMTIgdGV4dC1iYXNlIGZvbnQtYmxhY2sgYmctZ3JhZGllbnQtdG8tciBmcm9tLWFtYmVyLTUwMCB0by1hbWJlci02MDAgaG92ZXI6ZnJvbS1hbWJlci00MDAgaG92ZXI6dG8tYW1iZXItNTAwIHRleHQtYmxhY2sgc2hhZG93LWxnIHNoYWRvdy1hbWJlci01MDAvMzAiPgogICAgICAgICAgICAgICAgICAgICAge2dlbmVyYXRpbmcgPyA8PjxMb2FkZXIyIGNsYXNzTmFtZT0idy01IGgtNSBtci0yIGFuaW1hdGUtc3BpbiIgLz5HZW5lcmF0aW5nIER1Yi4uLjwvPiA6IGRvbmUgPyA8PjxDaGVja0NpcmNsZTIgY2xhc3NOYW1lPSJ3LTUgaC01IG1yLTIiIC8+UmVnZW5lcmF0ZSBEdWI8Lz4gOiA8PjxXYW5kMiBjbGFzc05hbWU9InctNSBoLTUgbXItMiIgLz5HZW5lcmF0ZSB7c2VsZWN0ZWRMYW5nPy5mbGFnfSBEdWIgVHJhY2s8Lz59CiAgICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICAgICAge2RvbmUgJiYgKAogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im10LTQgcC00IHJvdW5kZWQteGwgYm9yZGVyIGJvcmRlci1ncmVlbi01MDAvMzAgYmctZ3JlZW4tNTAwLzUgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdj48cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1ib2xkIHRleHQtZ3JlZW4tNDAwIj7inJMgRHViIHRyYWNrIHJlYWR5PC9wPjxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzUwIj57c2VsZWN0ZWRMYW5nPy5uYW1lfSDCtyB7dm9pY2VTdHlsZX0gwrcgTGlwLXN5bmM8L3A+PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgIDxCdXR0b24gY2xhc3NOYW1lPSJiZy1ncmVlbi02MDAgaG92ZXI6YmctZ3JlZW4tNTAwIHRleHQtd2hpdGUgZ2FwLTIiPjxEb3dubG9hZCBjbGFzc05hbWU9InctNCBoLTQiIC8+RG93bmxvYWQ8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgICA8L0NhcmQ+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvVGFic0NvbnRlbnQ+CgogICAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9InZvaWNlcyI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgc206Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTMgZ2FwLTQiPgogICAgICAgICAgICAgICAge1ZPSUNFX1NUWUxFUy5tYXAodiA9PiAoCiAgICAgICAgICAgICAgICAgIDxidXR0b24ga2V5PXt2LmlkfSBvbkNsaWNrPXsoKSA9PiB7IHNldFZvaWNlU3R5bGUodi5pZCk7IHNldEFjdGl2ZVRhYigiZ2VuZXJhdGUiKTsgfX0KICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2BwLTUgcm91bmRlZC14bCBib3JkZXIgdGV4dC1sZWZ0IHRyYW5zaXRpb24tYWxsIGdsYXNzLWNhcmQgaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC82MCAke3ZvaWNlU3R5bGUgPT09IHYuaWQgPyAiYm9yZGVyLWFtYmVyLTUwMCBiZy1hbWJlci01MDAvMTAiIDogImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIn1gfT4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC0zeGwgbWItMyI+e3YuaWNvbn08L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LWJsYWNrIHRleHQtd2hpdGUgbWItMSI+e3YubmFtZX08L2gzPgogICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LXdoaXRlLzUwIj57di5kZXNjfTwvcD4KICAgICAgICAgICAgICAgICAgICB7dm9pY2VTdHlsZSA9PT0gdi5pZCAmJiA8QmFkZ2UgY2xhc3NOYW1lPSJtdC0zIGJnLWFtYmVyLTUwMCB0ZXh0LWJsYWNrIGJvcmRlci1ub25lIj5BY3RpdmU8L0JhZGdlPn0KICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9UYWJzQ29udGVudD4KCiAgICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0ibGFuZ3VhZ2VzIj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBzbTpncmlkLWNvbHMtMyBsZzpncmlkLWNvbHMtNCBnYXAtMyI+CiAgICAgICAgICAgICAgICB7TEFOR1VBR0VTLm1hcChsID0+ICgKICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBrZXk9e2wuY29kZX0gb25DbGljaz17KCkgPT4geyBzZXRUYXJnZXRMYW5nKGwuY29kZSk7IHNldEFjdGl2ZVRhYigiZ2VuZXJhdGUiKTsgfX0KICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2BwLTQgcm91bmRlZC14bCBib3JkZXIgdGV4dC1sZWZ0IHRyYW5zaXRpb24tYWxsIGhvdmVyOmJvcmRlci1hbWJlci01MDAvNjAgJHt0YXJnZXRMYW5nID09PSBsLmNvZGUgPyAiYm9yZGVyLWFtYmVyLTUwMCBiZy1hbWJlci01MDAvMTAiIDogImJvcmRlci1hbWJlci01MDAvMTAgYmctd2hpdGUvWzAuMDJdIn1gfT4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC0yeGwgbWItMiI+e2wuZmxhZ308L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1ib2xkIHRleHQtd2hpdGUiPntsLm5hbWV9PC9wPgogICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzQwIj57bC5hY2NlbnR9PC9wPgogICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L1RhYnNDb250ZW50PgogICAgICAgICAgPC9UYWJzPgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgICk7CiAgfQogIA==
+import { useState, useRef, useEffect } from "react";
+  import { trpc } from "@/lib/trpc";
+  import { useParams, useLocation, Link } from "wouter";
+  import { useAuth } from "@/_core/hooks/useAuth";
+  import { Button } from "@/components/ui/button";
+  import { Badge } from "@/components/ui/badge";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Textarea } from "@/components/ui/textarea";
+  import { toast } from "sonner";
+  import {
+    ArrowLeft, Mic, Globe2, Play, Pause, Volume2, Loader2, Sparkles,
+    Save, RefreshCw, Music2, Wand2, CheckCircle2, Info, Upload,
+  } from "lucide-react";
+  import { getLoginUrl } from "@/const";
+  import { NextStageCTA } from "@/components/NextStageCTA";
+  import { SubscriptionGate } from "@/components/SubscriptionGate";
+
+  const LANGUAGES = [
+    { code: "en", label: "English" }, { code: "es", label: "Spanish" },
+    { code: "fr", label: "French" }, { code: "de", label: "German" },
+    { code: "it", label: "Italian" }, { code: "pt", label: "Portuguese" },
+    { code: "ru", label: "Russian" }, { code: "ja", label: "Japanese" },
+    { code: "ko", label: "Korean" }, { code: "zh", label: "Chinese (Mandarin)" },
+    { code: "ar", label: "Arabic" }, { code: "hi", label: "Hindi" },
+    { code: "nl", label: "Dutch" }, { code: "pl", label: "Polish" },
+    { code: "sv", label: "Swedish" }, { code: "tr", label: "Turkish" },
+    { code: "uk", label: "Ukrainian" }, { code: "id", label: "Indonesian" },
+    { code: "fi", label: "Finnish" }, { code: "no", label: "Norwegian" },
+    { code: "da", label: "Danish" }, { code: "cs", label: "Czech" },
+    { code: "ro", label: "Romanian" }, { code: "hu", label: "Hungarian" },
+    { code: "el", label: "Greek" }, { code: "he", label: "Hebrew" },
+    { code: "vi", label: "Vietnamese" }, { code: "th", label: "Thai" },
+    { code: "ms", label: "Malay" }, { code: "tl", label: "Filipino" },
+  ];
+
+  const VOICES = [
+    { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel",  desc: "Calm, professional",        gender: "F", accent: "American" },
+    { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi",    desc: "Strong, confident",          gender: "F", accent: "American" },
+    { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella",   desc: "Soft, warm storytelling",    gender: "F", accent: "American" },
+    { id: "XrExE9yKIg1WjnnlVkGX", name: "Matilda", desc: "Warm, cozy, friendly",       gender: "F", accent: "American" },
+    { id: "jBpfuIE2acCO8z3wKNLl", name: "Gigi",    desc: "Playful, young",             gender: "F", accent: "American" },
+    { id: "oWAxZDx7w5VEj9dCyTzz", name: "Grace",   desc: "Gentle, Southern US",        gender: "F", accent: "American" },
+    { id: "ErXwobaYiN019PkySvjV", name: "Antoni",  desc: "Well-rounded, smooth",       gender: "M", accent: "American" },
+    { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh",    desc: "Deep, narrative",            gender: "M", accent: "American" },
+    { id: "VR6AewLTigWG4xSOukaG", name: "Arnold",  desc: "Crisp, authoritative",       gender: "M", accent: "American" },
+    { id: "pNInz6obpgDQGcFmaJgB", name: "Adam",    desc: "Deep, narrative, news",      gender: "M", accent: "American" },
+    { id: "onwK4e9ZLuTAKqWW03F9", name: "Daniel",  desc: "Deep, authoritative",        gender: "M", accent: "British" },
+    { id: "N2lVS1w4EtoT3dr4eOWO", name: "Callum",  desc: "Intense, grounded",          gender: "M", accent: "British" },
+    { id: "CYw3kZ02Hs0563khs1Fj", name: "Dave",    desc: "Relaxed, conversational",    gender: "M", accent: "British" },
+    { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie", desc: "Natural, casual",            gender: "M", accent: "Australian" },
+    { id: "2EiwWnXFnvU5JabPnv8n", name: "Clyde",   desc: "Gravelly, veteran",          gender: "M", accent: "American" },
+    { id: "g5CIjZEefAph4nQFvHAz", name: "Ethan",   desc: "Whispery, ASMR-quality",     gender: "M", accent: "American" },
+  ];
+
+  const LIP_SYNC_MODES = [
+    { id: "none",    label: "None",         desc: "Audio only — no visual sync" },
+    { id: "overlay", label: "Audio Overlay",desc: "Dub audio replaces original track" },
+    { id: "d-id",    label: "Talking Head", desc: "D-ID lip-syncs character to audio (Pro)" },
+  ];
+
+  function AudioPlayer({ base64, label }: { base64: string; label: string }) {
+    const [playing, setPlaying] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+      const src = `data:audio/mpeg;base64,${base64}`;
+      audioRef.current = new Audio(src);
+      audioRef.current.onended = () => setPlaying(false);
+      return () => { audioRef.current?.pause(); };
+    }, [base64]);
+
+    const toggle = () => {
+      if (!audioRef.current) return;
+      if (playing) { audioRef.current.pause(); setPlaying(false); }
+      else { audioRef.current.play(); setPlaying(true); }
+    };
+
+    return (
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border"
+        style={{ borderColor: "rgba(212,175,55,0.2)", background: "rgba(212,175,55,0.04)" }}>
+        <button onClick={toggle}
+          className="h-9 w-9 rounded-full flex items-center justify-center transition-all"
+          style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)" }}>
+          {playing
+            ? <Pause  style={{ width:14, height:14, color:"#000" }} />
+            : <Play   style={{ width:14, height:14, color:"#000", marginLeft:1 }} />}
+        </button>
+        <div>
+          <div className="text-xs font-semibold" style={{ color:"#D4AF37" }}>{label}</div>
+          <div className="text-[10px] text-muted-foreground">Click to preview dubbed audio</div>
+        </div>
+        <Volume2 className="ml-auto h-4 w-4 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  function DubbingStudioInner() {
+    const { user, loading: authLoading } = useAuth();
+    const params = useParams<{ projectId: string }>();
+    const [, navigate] = useLocation();
+    const projectId = Number(params.projectId);
+    const hasProject = !!projectId && !!user;
+
+    const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
+    const [targetLanguage, setTargetLanguage] = useState("es");
+    const [selectedVoiceId, setSelectedVoiceId] = useState(VOICES[0].id);
+    const [editableText, setEditableText] = useState("");
+    const [translatedText, setTranslatedText] = useState("");
+    const [generatedAudioB64, setGeneratedAudioB64] = useState<string | null>(null);
+    const [lipSyncMode, setLipSyncMode] = useState("overlay");
+    const [tab, setTab] = useState("dub");
+    const [translating, setTranslating] = useState(false);
+    const [generating, setGenerating] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: hasProject });
+    const { data: scenes  } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: hasProject });
+    const updateScene       = trpc.scene.update.useMutation();
+    const generateDub       = trpc.dubbing.generateDub.useMutation();
+    const translateText     = trpc.dubbing.translateText.useMutation();
+    const applyLipSync      = trpc.dubbing.applyLipSync.useMutation();
+    const utils             = trpc.useUtils();
+
+    const sortedScenes = (scenes ?? []).slice().sort((a: any, b: any) => (a.orderIndex||0)-(b.orderIndex||0));
+    const selectedScene = sortedScenes.find((s: any) => s.id === selectedSceneId) as any;
+
+    useEffect(() => {
+      if (selectedScene) {
+        setEditableText(selectedScene.dialogueText || selectedScene.description || "");
+        setTranslatedText("");
+        setGeneratedAudioB64(null);
+      }
+    }, [selectedSceneId]);
+
+    useEffect(() => {
+      if (sortedScenes.length && !selectedSceneId) setSelectedSceneId((sortedScenes[0] as any).id);
+    }, [scenes]);
+
+    if (!user && !authLoading) { window.location.href = getLoginUrl(); return null; }
+
+    async function handleTranslate() {
+      if (!editableText.trim()) { toast.error("No dialogue text to translate"); return; }
+      setTranslating(true);
+      try {
+        const res = await translateText.mutateAsync({ text: editableText, targetLanguage, sourceLanguage: "en" });
+        setTranslatedText(res.translatedText);
+        toast.success("Translation complete");
+      } catch (e: any) { toast.error(e.message || "Translation failed"); }
+      finally { setTranslating(false); }
+    }
+
+    async function handleGenerateDub() {
+      const text = translatedText || editableText;
+      if (!text.trim()) { toast.error("Enter dialogue text first"); return; }
+      setGenerating(true);
+      try {
+        const res = await generateDub.mutateAsync({ text, voiceId: selectedVoiceId, targetLanguage });
+        setGeneratedAudioB64(res.audioBase64);
+        toast.success("Dubbed audio generated");
+      } catch (e: any) { toast.error(e.message || "Generation failed"); }
+      finally { setGenerating(false); }
+    }
+
+    async function handleSave() {
+      if (!selectedSceneId || !generatedAudioB64) { toast.error("Generate audio first"); return; }
+      setSaving(true);
+      try {
+        await applyLipSync.mutateAsync({ sceneId: selectedSceneId, audioBase64: generatedAudioB64, mode: lipSyncMode as any });
+        await utils.scene.listByProject.invalidate({ projectId });
+        toast.success("Lip sync saved to scene");
+      } catch (e: any) { toast.error(e.message || "Save failed"); }
+      finally { setSaving(false); }
+    }
+
+    const voice = VOICES.find(v => v.id === selectedVoiceId);
+    const langLabel = LANGUAGES.find(l => l.code === targetLanguage)?.label || targetLanguage;
+
+    return (
+      <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        {/* Header */}
+        <div className="border-b sticky top-0 z-20" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate(hasProject ? `/projects/${projectId}` : "/dashboard")} className="gap-2 text-muted-foreground h-8">
+              <ArrowLeft className="h-4 w-4" />Back
+            </Button>
+            <div className="h-5 w-px bg-border/40" />
+            <div className="flex items-center gap-2.5">
+              <div className="h-9 w-9 rounded-xl flex items-center justify-center" style={{ background:"linear-gradient(135deg,#6366f1,#4f46e5)" }}>
+                <Mic style={{ width:18, height:18, color:"#fff" }} />
+              </div>
+              <div>
+                <div className="font-bold text-sm">Dubbing Studio</div>
+                <div className="text-[10px] text-muted-foreground">AI lip sync · 30 languages · ElevenLabs multilingual v2</div>
+              </div>
+            </div>
+            {project && <Badge className="ml-2 text-[10px] border-0" style={{ background:"rgba(212,175,55,0.1)", color:"#D4AF37" }}>{project.title}</Badge>}
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 py-6 flex gap-5">
+          {/* Left: Scene list */}
+          <div className="w-64 shrink-0 space-y-1.5">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">Scenes</p>
+            {sortedScenes.length === 0 && (
+              <div className="rounded-xl border border-dashed py-10 flex flex-col items-center gap-2" style={{ borderColor:"rgba(255,255,255,0.07)" }}>
+                <Mic className="h-8 w-8 opacity-20" />
+                <p className="text-xs text-muted-foreground text-center">No scenes yet</p>
+              </div>
+            )}
+            {sortedScenes.map((s: any, i: number) => {
+              const hasDub = !!(s.lipSyncAudioUrl);
+              return (
+                <button key={s.id}
+                  onClick={() => setSelectedSceneId(s.id)}
+                  className="w-full text-left rounded-xl px-3 py-2.5 border transition-all"
+                  style={{
+                    borderColor: selectedSceneId===s.id ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.06)",
+                    background:  selectedSceneId===s.id ? "rgba(212,175,55,0.08)" : "rgba(255,255,255,0.02)",
+                  }}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold truncate">{i+1}. {s.title || "Untitled"}</span>
+                    {hasDub && <CheckCircle2 className="h-3 w-3 shrink-0" style={{ color:"#4ade80" }} />}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground truncate mt-0.5">{s.locationType || "Interior"} · {s.mood || "—"}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right: Dubbing panel */}
+          <div className="flex-1 min-w-0 space-y-4">
+            {!selectedScene ? (
+              <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-24 gap-3" style={{ borderColor:"rgba(255,255,255,0.07)" }}>
+                <Mic className="h-12 w-12 opacity-20" />
+                <p className="text-sm">Select a scene to begin dubbing</p>
+              </div>
+            ) : (
+              <>
+                {/* Scene header */}
+                <div className="rounded-xl border px-4 py-3 flex items-center justify-between" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
+                  <div>
+                    <div className="font-semibold text-sm">{selectedScene.title || "Untitled Scene"}</div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                      {selectedScene.locationType || "Interior"} · {selectedScene.mood || "Neutral"} · {selectedScene.duration || 0}s
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {selectedScene.lipSyncAudioUrl && (
+                      <Badge className="text-[10px] border-0" style={{ background:"rgba(74,222,128,0.1)", color:"#4ade80" }}>Dubbed</Badge>
+                    )}
+                    <Badge className="text-[10px] border-0" style={{ background:"rgba(212,175,55,0.1)", color:"#D4AF37" }}>
+                      {selectedScene.lipSyncMode || "No dub"}
+                    </Badge>
+                  </div>
+                </div>
+
+                <Tabs value={tab} onValueChange={setTab}>
+                  <TabsList className="h-9 bg-white/5 border border-white/10">
+                    <TabsTrigger value="dub"       className="text-xs h-7 data-[state=active]:bg-white/10">Dub</TabsTrigger>
+                    <TabsTrigger value="lipsync"   className="text-xs h-7 data-[state=active]:bg-white/10">Lip Sync</TabsTrigger>
+                    <TabsTrigger value="settings"  className="text-xs h-7 data-[state=active]:bg-white/10">Settings</TabsTrigger>
+                  </TabsList>
+
+                  {/* DUB TAB */}
+                  <TabsContent value="dub" className="space-y-4 mt-4">
+                    {/* Language + Voice selectors */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] uppercase tracking-widest text-muted-foreground">Target Language</label>
+                        <Select value={targetLanguage} onValueChange={setTargetLanguage}>
+                          <SelectTrigger className="h-9 text-xs bg-white/5 border-white/10">
+                            <Globe2 className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {LANGUAGES.map(l => <SelectItem key={l.code} value={l.code} className="text-xs">{l.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] uppercase tracking-widest text-muted-foreground">Voice</label>
+                        <Select value={selectedVoiceId} onValueChange={setSelectedVoiceId}>
+                          <SelectTrigger className="h-9 text-xs bg-white/5 border-white/10">
+                            <Mic className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {VOICES.map(v => (
+                              <SelectItem key={v.id} value={v.id} className="text-xs">
+                                {v.name} ({v.gender}) · {v.accent}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {voice && <p className="text-[10px] text-muted-foreground pl-0.5">{voice.desc}</p>}
+                      </div>
+                    </div>
+
+                    {/* Original dialogue */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] uppercase tracking-widest text-muted-foreground">Original Dialogue</label>
+                        <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1.5 text-indigo-400 hover:text-indigo-300"
+                          onClick={handleTranslate} disabled={translating || !editableText.trim()}>
+                          {translating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Globe2 className="h-3 w-3" />}
+                          {translating ? "Translating…" : `Auto-translate → ${langLabel}`}
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={editableText}
+                        onChange={e => setEditableText(e.target.value)}
+                        placeholder="Paste or type the dialogue for this scene…"
+                        className="text-xs min-h-[100px] bg-white/5 border-white/10 resize-none"
+                      />
+                    </div>
+
+                    {/* Translated text */}
+                    {translatedText && (
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] uppercase tracking-widest text-muted-foreground">{langLabel} Translation</label>
+                        <Textarea
+                          value={translatedText}
+                          onChange={e => setTranslatedText(e.target.value)}
+                          className="text-xs min-h-[100px] bg-indigo-950/20 border-indigo-500/20 resize-none"
+                        />
+                        <p className="text-[10px] text-muted-foreground">Edit the translation if needed before generating audio.</p>
+                      </div>
+                    )}
+
+                    {/* Generate button */}
+                    <Button className="w-full gap-2 h-10" onClick={handleGenerateDub} disabled={generating}
+                      style={{ background:"linear-gradient(135deg,#6366f1,#4f46e5)", color:"#fff" }}>
+                      {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                      {generating ? "Generating dubbed audio…" : `Generate Dub in ${langLabel}`}
+                    </Button>
+
+                    {/* Audio preview */}
+                    {generatedAudioB64 && (
+                      <div className="space-y-3">
+                        <AudioPlayer base64={generatedAudioB64} label={`${langLabel} dub · ${voice?.name} voice`} />
+                        <Button className="w-full gap-2 h-9" onClick={handleSave} disabled={saving}
+                          style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
+                          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                          {saving ? "Saving to scene…" : "Save Dub to Scene"}
+                        </Button>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* LIP SYNC TAB */}
+                  <TabsContent value="lipsync" className="space-y-4 mt-4">
+                    <div className="rounded-xl border px-4 py-3 flex items-start gap-3" style={{ borderColor:"rgba(99,102,241,0.2)", background:"rgba(99,102,241,0.04)" }}>
+                      <Info className="h-4 w-4 mt-0.5 shrink-0" style={{ color:"#818cf8" }} />
+                      <p className="text-xs text-muted-foreground">
+                        Lip Sync replaces the original audio track with your dubbed audio. 
+                        <strong className="text-white"> Talking Head</strong> mode uses D-ID to animate a character portrait in sync with the dubbed audio.
+                      </p>
+                    </div>
+                    <div className="grid gap-3">
+                      {LIP_SYNC_MODES.map(mode => (
+                        <button key={mode.id}
+                          onClick={() => setLipSyncMode(mode.id)}
+                          className="w-full rounded-xl border px-4 py-3 text-left transition-all"
+                          style={{
+                            borderColor: lipSyncMode===mode.id ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.08)",
+                            background:  lipSyncMode===mode.id ? "rgba(212,175,55,0.06)" : "transparent",
+                          }}>
+                          <div className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border-2 flex items-center justify-center"
+                              style={{ borderColor: lipSyncMode===mode.id ? "#D4AF37" : "rgba(255,255,255,0.2)" }}>
+                              {lipSyncMode===mode.id && <div className="h-2 w-2 rounded-full" style={{ background:"#D4AF37" }} />}
+                            </div>
+                            <span className="text-sm font-semibold">{mode.label}</span>
+                            {mode.id==="d-id" && <Badge className="text-[9px] border-0 ml-auto" style={{ background:"rgba(212,175,55,0.15)", color:"#D4AF37" }}>Pro</Badge>}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1 pl-6">{mode.desc}</p>
+                        </button>
+                      ))}
+                    </div>
+                    {selectedScene.lipSyncAudioUrl && (
+                      <div className="rounded-xl border px-4 py-3 flex items-center gap-3" style={{ borderColor:"rgba(74,222,128,0.2)", background:"rgba(74,222,128,0.04)" }}>
+                        <CheckCircle2 className="h-5 w-5 shrink-0" style={{ color:"#4ade80" }} />
+                        <div>
+                          <div className="text-xs font-semibold" style={{ color:"#4ade80" }}>Lip sync applied</div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5">Mode: {selectedScene.lipSyncMode} · Generate a new dub to replace.</div>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* SETTINGS TAB */}
+                  <TabsContent value="settings" className="space-y-4 mt-4">
+                    <div className="rounded-xl border px-4 py-4 space-y-3" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
+                      <p className="text-xs font-semibold">ElevenLabs Configuration</p>
+                      <p className="text-xs text-muted-foreground">Dubbing uses your ElevenLabs Multilingual v2 model. Ensure your key supports multilingual generation.</p>
+                      <div className="flex gap-2">
+                        <Link href="/settings?tab=api-keys">
+                          <Button size="sm" variant="outline" className="gap-2 h-8 text-xs border-white/10">
+                            <Music2 className="h-3.5 w-3.5" />Configure API Keys
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="rounded-xl border px-4 py-4 space-y-2" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
+                      <p className="text-xs font-semibold">Voice Cloning</p>
+                      <p className="text-xs text-muted-foreground">Clone a custom voice for any character from a 30-second audio sample. Go to the Characters page to set up voice clones.</p>
+                      <Link href={hasProject ? `/projects/${projectId}/characters` : "/characters"}>
+                        <Button size="sm" variant="outline" className="gap-2 h-8 text-xs border-white/10 mt-2">
+                          <Upload className="h-3.5 w-3.5" />Clone a Character Voice
+                        </Button>
+                      </Link>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
+          </div>
+        </div>
+
+        {hasProject && <NextStageCTA projectId={projectId} currentStage={6} />}
+      </div>
+    );
+  }
+
+  export default function DubbingStudio() {
+    return (
+      <SubscriptionGate feature="Dubbing Studio" featureKey="canUseDubbingStudio" requiredTier="indie">
+        <DubbingStudioInner />
+      </SubscriptionGate>
+    );
+  }
+  
