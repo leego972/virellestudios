@@ -281,7 +281,7 @@ function TrailerStudioInner() {
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-sm md:text-lg font-bold flex items-center gap-2 gradient-text-gold">
+              <h1 className="text-sm md:text-lg font-bold flex items-center gap-2 text-gold-shimmer">
                 <Film className="h-4 w-4 md:h-5 md:w-5 text-amber-500 shrink-0" />
                 <span className="truncate">Trailer Studio</span>
               </h1>

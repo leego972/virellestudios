@@ -12,7 +12,7 @@ export default function AIContentPolicy() {
         </Button>
         <div className="flex items-center gap-3 mb-2">
           <Cpu className="h-6 w-6 text-amber-400" />
-          <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">AI Content Policy</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">AI Content Policy</h1>
         </div>
         <p className="text-muted-foreground text-sm mb-10">Last updated: March 2026 · Effective immediately</p>
 

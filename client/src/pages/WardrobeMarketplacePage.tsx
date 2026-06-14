@@ -702,7 +702,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <h1 className="text-2xl font-black tracking-tight gradient-text-gold">{(profile as any).brandName}</h1>
+              <h1 className="text-2xl font-black tracking-tight text-gold-shimmer">{(profile as any).brandName}</h1>
               {(profile as any).verified && (
                 <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">
                   <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
@@ -951,7 +951,7 @@ function MarketplaceGrid({
             Virelle Studios ÃÂ· In-House Virtual Fashion Label
           </div>
 
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tighter leading-none mb-3 gradient-text-gold">
+          <h1 className="text-5xl sm:text-7xl font-black tracking-tighter leading-none mb-3 text-gold-shimmer">
             LAMALO
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400">

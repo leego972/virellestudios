@@ -20,7 +20,7 @@ export default function TermsOfService() {
             <Shield className="h-6 w-6 text-amber-500" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Terms of Service</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Terms of Service</h1>
             <p className="text-muted-foreground text-sm mt-0.5">
               Last updated: March 2026 &mdash; Effective immediately upon account creation
             </p>

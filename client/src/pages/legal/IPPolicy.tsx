@@ -23,7 +23,7 @@ export default function IPPolicy() {
             <Shield className="w-7 h-7 text-amber-500" />
           </div>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold gradient-text-gold">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gold-shimmer">
               Intellectual Property &amp; DMCA Policy
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">

@@ -152,7 +152,7 @@ export default function Solutions() {
             <Globe className="h-3.5 w-3.5" />
             Built for every type of creator
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 gradient-text-gold">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-gold-shimmer">
             Solutions for{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               Every Creator

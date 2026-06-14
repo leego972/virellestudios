@@ -12,7 +12,7 @@ export default function AcceptableUsePolicy() {
         </Button>
         <div className="flex items-center gap-3 mb-2">
           <AlertTriangle className="h-6 w-6 text-amber-400" />
-          <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Acceptable Use Policy</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Acceptable Use Policy</h1>
         </div>
         <p className="text-muted-foreground text-sm mb-10">Last updated: March 2026 · Effective immediately</p>
 

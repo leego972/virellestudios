@@ -150,7 +150,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => setLocation(`/projects/${projectId}`)} className="gap-2 text-muted-foreground h-8"><ArrowLeft className="h-4 w-4" />Back</Button>
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Mic className="h-6 w-6" style={{ color:"#D4AF37" }} />AI Table Read</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Mic className="h-6 w-6" style={{ color:"#D4AF37" }} />AI Table Read</h1>
             <p className="text-sm text-muted-foreground">Listen to your script performed by text-to-speech voices assigned to each character</p>
           </div>
         </div>

@@ -66,7 +66,7 @@ import { useState, useMemo } from "react";
       <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Calculator className="h-6 w-6 text-amber-400" />Film Tax Incentive Calculator</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Calculator className="h-6 w-6 text-amber-400" />Film Tax Incentive Calculator</h1>
           <p className="text-sm text-muted-foreground mt-1">Compare rebates and tax credits across {JURISDICTIONS.length} global jurisdictions. Enter your budget to see estimated savings.</p>
         </div>
 

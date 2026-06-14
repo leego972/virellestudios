@@ -116,7 +116,7 @@
           <div className="flex items-center gap-3">
             <Shirt className="h-5 w-5 text-amber-500" />
             <div>
-              <h1 className="text-base font-bold gradient-text-gold">My Wardrobe Inventory</h1>
+              <h1 className="text-base font-bold text-gold-shimmer">My Wardrobe Inventory</h1>
               <p className="text-xs text-muted-foreground">Leased items and collections available for your productions</p>
             </div>
           </div>
