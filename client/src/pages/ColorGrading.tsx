@@ -582,7 +582,7 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
             </TabsContent>
           </Tabs>
         </div>
-        <NextStageCTA projectId={projectId} currentStage="colorGrading" />
+        <NextStageCTA projectId={projectId} currentStage={7} />
       </>
     );
   }
@@ -596,6 +596,6 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
   }
 
   export default function ColorGrading() {
-    return <SubscriptionGate feature="canUseColorGrading"><ColorGradingInner /></SubscriptionGate>;
+    return <SubscriptionGate feature="canUseColorGrading" featureKey="canUseColorGrading" requiredTier="indie"><ColorGradingInner /></SubscriptionGate>;
   }
   

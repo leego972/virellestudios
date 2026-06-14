@@ -639,7 +639,7 @@ function DashboardLayoutContent({
       <SidebarInset>
         {/* Mobile header */}
         {isMobile && (
-          <div data-mobile-header className="flex border-b h-auto min-h-[4rem] items-center justify-between px-3 sticky top-0 z-40 shrink-0" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }} style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
+          <div data-mobile-header className="flex border-b h-auto min-h-[4rem] items-center justify-between px-3 sticky top-0 z-40 shrink-0" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
               <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />

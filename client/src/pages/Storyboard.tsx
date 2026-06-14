@@ -407,7 +407,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
   export default function Storyboard() {
     return (
-      <SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="free">
+      <SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="indie">
         <StoryboardInner />
       </SubscriptionGate>
     );

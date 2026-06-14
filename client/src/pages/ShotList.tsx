@@ -510,6 +510,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
   }
 
   export default function ShotList() {
-    return <SubscriptionGate feature="canUseShotList"><ShotListInner /></SubscriptionGate>;
+    return <SubscriptionGate feature="canUseShotList" featureKey="canUseShotList" requiredTier="indie"><ShotListInner /></SubscriptionGate>;
   }
   

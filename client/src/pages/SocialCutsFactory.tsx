@@ -214,7 +214,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base gradient-text-gold">Brief inputs</CardTitle>
-          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             Pulling from {sortedScenes.length} scene{sortedScenes.length === 1 ? "" : "s"} of{" "}
             <span className="font-medium">{project?.title || "your project"}</span>.
           </CardDescription>
@@ -259,7 +259,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div>
               <CardTitle className="text-base gradient-text-gold">Latest brief</CardTitle>
-              <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>{FORMATS[format].label} ÃÂÃÂ· {angle}</CardDescription>
+              <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{FORMATS[format].label} ÃÂÃÂ· {angle}</CardDescription>
             </div>
             <Button onClick={() => copy(lastBrief)} size="sm" variant="ghost" className="gap-2">
               <Copy className="h-3 w-3" /> Copy

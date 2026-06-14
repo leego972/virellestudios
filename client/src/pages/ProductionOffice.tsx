@@ -259,7 +259,7 @@ pre{white-space:pre-wrap;font:inherit}
         <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
-          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             {sortedScenes.length} scenes ÃÂ· estimated total runtime{" "}
             {fmtDuration(sortedScenes.reduce((acc: number, s: any) => acc + (s.duration || 0), 0))}.
           </CardDescription>
@@ -347,7 +347,7 @@ pre{white-space:pre-wrap;font:inherit}
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Users className="h-4 w-4" /> Day-out-of-days
             </CardTitle>
-            <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
+            <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -392,7 +392,7 @@ pre{white-space:pre-wrap;font:inherit}
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4" /> AI Call Sheet
           </CardTitle>
-          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Pick a day and generate a print-ready one-pager.</CardDescription>
+          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Pick a day and generate a print-ready one-pager.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-3 gap-3">

@@ -900,7 +900,7 @@ export default function ComponentsShowcase() {
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
                   <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Account</CardTitle>
-                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                       Make changes to your account here.
                     </CardDescription>
                   </CardHeader>
@@ -910,7 +910,7 @@ export default function ComponentsShowcase() {
                       <Input id="name" defaultValue="Pedro Duarte" />
                     </div>
                   </CardContent>
-                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
+                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <Button>Save changes</Button>
                   </CardFooter>
                 </Card>
@@ -919,7 +919,7 @@ export default function ComponentsShowcase() {
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
                   <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Password</CardTitle>
-                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                       Change your password here.
                     </CardDescription>
                   </CardHeader>
@@ -933,7 +933,7 @@ export default function ComponentsShowcase() {
                       <Input id="new" type="password" />
                     </div>
                   </CardContent>
-                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
+                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <Button>Save password</Button>
                   </CardFooter>
                 </Card>
@@ -942,7 +942,7 @@ export default function ComponentsShowcase() {
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
                   <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="gradient-text-gold">Settings</CardTitle>
-                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                       Manage your settings here.
                     </CardDescription>
                   </CardHeader>
