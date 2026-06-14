@@ -71,13 +71,13 @@ export default function Projects() {
       toast.success("Project deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Couldn't delete that project â please try again, or refresh if it persists."),
+    onError: () => toast.error("Couldn't delete that project Ã¢ÂÂ please try again, or refresh if it persists."),
   });
 
     const createDemoMut = trpc.project.createDemoShort.useMutation({
       onSuccess: (data) => {
         utils.project.list.invalidate();
-        toast.success("Demo short generating â 5 scenes firing now!");
+        toast.success("Demo short generating Ã¢ÂÂ 5 scenes firing now!");
         setLocation(`/projects/${data.projectId}`);
       },
       onError: (err) => toast.error(err.message ?? "Could not create demo short"),
@@ -132,7 +132,7 @@ export default function Projects() {
   return (
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
-      <SiteHead title="Projects" description="Manage all your AI film productions in one place â scripts, scenes, casting, scoring, and distribution." />
+      <SiteHead title="Projects" description="Manage all your AI film productions in one place Ã¢ÂÂ scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Projects</h1>
@@ -150,7 +150,7 @@ export default function Projects() {
             onClick={() => createDemoMut.mutate()}
           >
             {createDemoMut.isPending
-              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />Generatingâ¦</>
+              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />GeneratingÃ¢ÂÂ¦</>
               : <><Film className="h-4 w-4 mr-1" />Demo Short</>}
           </Button>
       </div>
@@ -179,7 +179,7 @@ export default function Projects() {
                     onClick={() => setFilterStatus(status)}
                     className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                       filterStatus === status
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-amber-500 text-primary-foreground"
                         : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground"
                     }`}
                   >
@@ -208,13 +208,13 @@ export default function Projects() {
             <div className="flex border rounded-md bg-card/50 overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 ${viewMode === "grid" ? "bg-amber-500 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 ${viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 ${viewMode === "list" ? "bg-amber-500 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <List className="h-3.5 w-3.5" />
               </button>
@@ -228,7 +228,7 @@ export default function Projects() {
           <CardContent className="p-12 flex flex-col items-center text-center">
             <Film className="h-10 w-10 text-destructive/40 mb-3" />
             <p className="text-sm font-medium text-foreground/80 mb-1">We couldn't load your projects</p>
-            <p className="text-xs text-muted-foreground mb-4">Network or server hiccup â your work is safe. Retry below or refresh the page.</p>
+            <p className="text-xs text-muted-foreground mb-4">Network or server hiccup Ã¢ÂÂ your work is safe. Retry below or refresh the page.</p>
             <Button size="sm" variant="outline" onClick={() => window.location.reload()}>Retry</Button>
           </CardContent>
         </Card>
@@ -252,7 +252,7 @@ export default function Projects() {
           description={
             search || filterStatus !== "all"
               ? "Try clearing your search or status filter to see your other projects."
-              : "Every Virelle film starts as a project â title, genre, characters, scenes. Open a fresh slate and start writing."
+              : "Every Virelle film starts as a project Ã¢ÂÂ title, genre, characters, scenes. Open a fresh slate and start writing."
           }
           action={
             !search && filterStatus === "all" ? (
@@ -306,22 +306,22 @@ export default function Projects() {
                         const stage = computeProjectStage(project as any);
                         const meta = JOURNEY_STAGES[stage - 1];
                         return (
-                          <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-amber-400/5 text-primary">
-                            Stage {stage}/8 Â· {meta.title}
+                          <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-amber-400/5 text-amber-400">
+                            Stage {stage}/8 ÃÂ· {meta.title}
                           </Badge>
                         );
                       })()}
-                      <span className="text-border">Â·</span>
+                      <span className="text-border">ÃÂ·</span>
                       <span className="capitalize">{project.mode}</span>
                       {project.rating && (
                         <>
-                          <span className="text-border">Â·</span>
+                          <span className="text-border">ÃÂ·</span>
                           <span>{project.rating}</span>
                         </>
                       )}
                       {project.genre && (
                         <>
-                          <span className="text-border">Â·</span>
+                          <span className="text-border">ÃÂ·</span>
                           <span>{project.genre}</span>
                         </>
                       )}
@@ -332,7 +332,7 @@ export default function Projects() {
                           project.status === "completed"
                             ? "text-green-400"
                             : project.status === "generating"
-                            ? "text-primary"
+                            ? "text-amber-400"
                             : project.status === "failed"
                             ? "text-destructive"
                             : "text-muted-foreground"
@@ -345,7 +345,7 @@ export default function Projects() {
                       </span>
                       {project.createdAt && (
                         <>
-                          <span className="text-border text-xs">Â·</span>
+                          <span className="text-border text-xs">ÃÂ·</span>
                           <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                             <Calendar className="h-2.5 w-2.5" />
                             {timeAgo(project.createdAt)}
@@ -418,15 +418,15 @@ export default function Projects() {
                   <h3 className="font-medium text-sm truncate">{project.title}</h3>
                   <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
                     <span className="capitalize">{project.mode}</span>
-                    {project.genre && <><span className="text-border">Â·</span><span>{project.genre}</span></>}
-                    {project.createdAt && <><span className="text-border">Â·</span><span>{timeAgo(project.createdAt)}</span></>}
+                    {project.genre && <><span className="text-border">ÃÂ·</span><span>{project.genre}</span></>}
+                    {project.createdAt && <><span className="text-border">ÃÂ·</span><span>{timeAgo(project.createdAt)}</span></>}
                   </div>
                 </div>
                 <Badge
                   variant="secondary"
                   className={`text-[10px] shrink-0 ${
                     project.status === "completed" ? "bg-green-500/10 text-green-400" :
-                    project.status === "generating" ? "bg-amber-400/10 text-primary" :
+                    project.status === "generating" ? "bg-amber-400/10 text-amber-400" :
                     project.status === "failed" ? "bg-destructive/10 text-destructive" :
                     ""
                   }`}
