@@ -8,7 +8,7 @@ import showrunner from "@/data/showrunnerShowcase";
 import movie from "@/data/showrunnerMovie";
 
 /**
- * Showcase / Demo Reel Ã¢ÂÂ Public page to display VirElle Studios film quality.
+ * Showcase / Demo Reel ÃÂ¢ÃÂÃÂ Public page to display VirElle Studios film quality.
  * Shows completed AI-generated films with cinematic video players.
  */
 export default function Showcase() {
@@ -51,10 +51,10 @@ export default function Showcase() {
             SHOWCASE
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-2">
-            AI-Generated Cinema Ã¢ÂÂ Every Frame Crafted by Artificial Intelligence
+            AI-Generated Cinema ÃÂ¢ÃÂÃÂ Every Frame Crafted by Artificial Intelligence
           </p>
           <p className="text-sm text-neutral-500 max-w-xl mx-auto">
-            Experience the future of filmmaking. These films were created entirely using VirElle Studios Ã¢ÂÂ
+            Experience the future of filmmaking. These films were created entirely using VirElle Studios ÃÂ¢ÃÂÃÂ
             from script to screen, powered by AI.
           </p>
 
@@ -87,7 +87,7 @@ export default function Showcase() {
         </div>
       </header>
 
-      {/* THE SHOWRUNNER Ã¢ÂÂ featured Virelle Studios showcase */}
+      {/* THE SHOWRUNNER ÃÂ¢ÃÂÃÂ featured Virelle Studios showcase */}
       <TheShowrunnerSection />
 
       {/* Film Grid */}
@@ -101,15 +101,15 @@ export default function Showcase() {
             </div>
           </div>
         ) : !films || films.length === 0 ? (
-          // Static sample showcase Ã¢ÂÂ displayed when no user films are published yet
+          // Static sample showcase ÃÂ¢ÃÂÃÂ displayed when no user films are published yet
           <div className="space-y-12">
             {[
               {
                 id: "sample-opener",
-                title: "Virelle Studios Ã¢ÂÂ Cinematic Opener",
+                title: "Virelle Studios ÃÂ¢ÃÂÃÂ Cinematic Opener",
                 genre: "Brand Film",
                 directorName: "VirElle Studios",
-                plotSummary: "The official Virelle Studios brand opener Ã¢ÂÂ a white dove descends through god rays, lands on a polished silver shield, and triggers a breathtaking golden transformation as the VS emblem is revealed. Wings flapping, angelic choir, 16 seconds of pure cinematic identity. Generated entirely within the Virelle platform.",
+                plotSummary: "The official Virelle Studios brand opener ÃÂ¢ÃÂÃÂ a white dove descends through god rays, lands on a polished silver shield, and triggers a breathtaking golden transformation as the VS emblem is revealed. Wings flapping, angelic choir, 16 seconds of pure cinematic identity. Generated entirely within the Virelle platform.",
                 completedScenes: 3,
                 resolution: "1080p",
                 quality: "Cinematic",
@@ -126,7 +126,7 @@ export default function Showcase() {
                   {
                     id: 2,
                     title: "The Golden Transformation",
-                    description: "The dove lands and everything it touches turns to pure 24k gold Ã¢ÂÂ shield, branches, emblem.",
+                    description: "The dove lands and everything it touches turns to pure 24k gold ÃÂ¢ÃÂÃÂ shield, branches, emblem.",
                     videoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/virelle_studios_opener_final.mp4",
                     thumbnailUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
                     duration: 6,
@@ -170,10 +170,10 @@ export default function Showcase() {
         )}
       </main>
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Phase 3: Public Discovery Feed Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Phase 3: Public Discovery Feed ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 pb-16">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2"
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 gradient-text-gold"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
@@ -191,7 +191,7 @@ export default function Showcase() {
       <footer className="relative z-10 border-t border-neutral-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Sparkles className="w-8 h-8 mx-auto mb-4 text-amber-400 gold-glow" style={{ color: "#d4af37" }} />
-          <h2 className="text-3xl md:text-4xl font-bold mb-4"
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text-gold"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
@@ -221,7 +221,7 @@ export default function Showcase() {
   );
 }
 
-/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Film Card Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Film Card Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 
 interface FilmScene {
   id: number;
@@ -414,7 +414,7 @@ function FilmCard({
   );
 }
 
-/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Video Player Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Video Player Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 
 function VideoPlayer({ src, title }: { src: string; title: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -543,7 +543,7 @@ function VideoPlayer({ src, title }: { src: string; title: string }) {
   );
 }
 
-/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Phase 3: Discovery Feed Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Phase 3: Discovery Feed Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 
 type DiscoverySurface = "featured" | "trending" | "new" | "staff_picks";
 
@@ -576,7 +576,7 @@ function DiscoveryFeed() {
 
   return (
     <div>
-      <SiteHead title="Public Showcase Ã¢ÂÂ Films & Reels" description="Watch films, reels, and promos created on Virelle Studios by indie filmmakers and major studios worldwide." />
+      <SiteHead title="Public Showcase ÃÂ¢ÃÂÃÂ Films & Reels" description="Watch films, reels, and promos created on Virelle Studios by indie filmmakers and major studios worldwide." />
       {/* Surface Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-thin scrollbar-thumb-neutral-800">
         {tabs.map((tab) => {
@@ -691,21 +691,21 @@ function DiscoveryFeed() {
   );
 }
 
-/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
- * THE SHOWRUNNER Ã¢ÂÂ featured Virelle Studios showcase
+/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+ * THE SHOWRUNNER ÃÂ¢ÃÂÃÂ featured Virelle Studios showcase
  *
  * Renders the full 10-section showcase package: hero, disclaimer, inciting
  * email, character cards, full short-film script (collapsible), the
  * SIGNAL BLACK show-within-show mini-trailer, the production-package
  * checklist, the clips-vs-production comparison, the 3 social cuts, and the
  * closing CTA. All copy lives in client/src/data/showrunnerShowcase.ts.
- * Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+ * ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 
-  /* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
    * TheShowrunnerSection
-   * Full cinematic showcase for THE SHOWRUNNER Ã¢ÂÂ premium black/gold styling.
+   * Full cinematic showcase for THE SHOWRUNNER ÃÂ¢ÃÂÃÂ premium black/gold styling.
    * All copy lives in client/src/data/showrunnerShowcase.ts and showrunnerMovie.ts
-   * Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+   * ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
   function TheShowrunnerSection() {
     const [scriptOpen, setScriptOpen] = useState(false);
 
@@ -714,7 +714,7 @@ function DiscoveryFeed() {
         className="relative z-10 max-w-7xl mx-auto px-4 pb-24"
         data-testid="section-showrunner"
       >
-        {/* Ã¢ÂÂÃ¢ÂÂ CINEMATIC HERO Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ CINEMATIC HERO ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div
           className="relative overflow-hidden rounded-2xl border border-amber-500/25 mb-16 text-center"
           style={{
@@ -740,7 +740,7 @@ function DiscoveryFeed() {
           <div className="px-6 py-14 md:py-20 relative z-10">
             <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
               <Star className="w-3 h-3" />
-              Featured Showcase ÃÂ· VirElle Studios Original
+              Featured Showcase ÃÂÃÂ· VirElle Studios Original
             </div>
 
             <h2
@@ -766,14 +766,14 @@ function DiscoveryFeed() {
             </p>
 
             <div className="flex items-center justify-center flex-wrap gap-3 md:gap-6">
-              {["9 SCENES", "4Ã¢ÂÂ5 MIN", "COMEDY ÃÂ· DRAMA", "MELBOURNE", "AI SHOWCASE"].map(
+              {["9 SCENES", "4ÃÂ¢ÃÂÃÂ5 MIN", "COMEDY ÃÂÃÂ· DRAMA", "MELBOURNE", "AI SHOWCASE"].map(
                 (tag, i, arr) => (
                   <span key={tag} className="flex items-center gap-3 md:gap-6">
                     <span className="text-[11px] text-neutral-500 uppercase tracking-widest font-semibold">
                       {tag}
                     </span>
                     {i < arr.length - 1 && (
-                      <span className="text-amber-500/30 hidden sm:inline">ÃÂ·</span>
+                      <span className="text-amber-500/30 hidden sm:inline">ÃÂÃÂ·</span>
                     )}
                   </span>
                 )
@@ -791,17 +791,17 @@ function DiscoveryFeed() {
           />
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ DISCLAIMER Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ DISCLAIMER ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="rounded-lg border border-neutral-800 bg-neutral-950/80 p-5 mb-12 max-w-3xl mx-auto relative">
           <div className="absolute -top-2.5 left-6 px-2 bg-neutral-950 text-[10px] uppercase tracking-widest text-amber-400/70 font-semibold">
-            Disclaimer ÃÂ· Appears after opener, before film
+            Disclaimer ÃÂÃÂ· Appears after opener, before film
           </div>
           <p className="text-xs text-neutral-400 leading-relaxed">
             {showrunner.disclaimer.short}
           </p>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ INCITING EMAIL FROM SAM Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ INCITING EMAIL FROM SAM ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16 max-w-3xl mx-auto">
           <div className="text-center mb-6">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -835,7 +835,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ CHARACTER CARDS Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ CHARACTER CARDS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -886,7 +886,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ FULL SCRIPT (COLLAPSIBLE) Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ FULL SCRIPT (COLLAPSIBLE) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -906,7 +906,7 @@ function DiscoveryFeed() {
               <div className="flex items-center gap-3">
                 <FileText className="w-5 h-5 text-amber-400" />
                 <span className="text-white font-semibold">
-                  {showrunner.fullScript.length} scenes Ã¢ÂÂ read the full script
+                  {showrunner.fullScript.length} scenes ÃÂ¢ÃÂÃÂ read the full script
                 </span>
               </div>
               {scriptOpen ? (
@@ -999,7 +999,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ SIGNAL BLACK Ã¢ÂÂ SCI-FI NOIR (show within the show) Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SIGNAL BLACK ÃÂ¢ÃÂÃÂ SCI-FI NOIR (show within the show) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-6">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -1093,7 +1093,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ PRODUCTION PACKAGE Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ PRODUCTION PACKAGE ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -1103,7 +1103,7 @@ function DiscoveryFeed() {
               A complete production package
             </h3>
             <p className="text-sm text-neutral-500 mt-2 max-w-xl mx-auto">
-              Everything a show needs Ã¢ÂÂ built from one idea, no crew, no budget.
+              Everything a show needs ÃÂ¢ÃÂÃÂ built from one idea, no crew, no budget.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1127,7 +1127,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ CLIPWIZARD COMPARISON Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ CLIPWIZARD COMPARISON ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -1141,7 +1141,7 @@ function DiscoveryFeed() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {/* Rival Ã¢ÂÂ clearly fictional */}
+            {/* Rival ÃÂ¢ÃÂÃÂ clearly fictional */}
             <div className="rounded-xl border border-red-900/30 bg-red-950/10 p-5">
               <div className="flex items-center gap-2 mb-4">
                 <div className="text-xs text-red-400/80 uppercase tracking-widest font-semibold">
@@ -1190,7 +1190,7 @@ function DiscoveryFeed() {
           </p>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ SOCIAL CUTS Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SOCIAL CUTS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
@@ -1230,14 +1230,14 @@ function DiscoveryFeed() {
                   ))}
                 </ol>
                 <div className="text-xs text-amber-300/80 font-semibold border-t border-neutral-800 pt-3">
-                  Ã¢ÂÂ {cut.cta}
+                  ÃÂ¢ÃÂÃÂ {cut.cta}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ FILM STRUCTURE Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ FILM STRUCTURE ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-6">
             <div>
@@ -1276,14 +1276,14 @@ function DiscoveryFeed() {
           </ol>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ SCENE GENERATION PROMPTS Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SCENE GENERATION PROMPTS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="mb-6">
             <h3 className="text-xl font-bold tracking-tight gradient-text-gold">
               Scene Generation Prompts
             </h3>
             <p className="text-xs text-neutral-500 mt-1">
-              Visual prompts for each scene Ã¢ÂÂ ready for generation.
+              Visual prompts for each scene ÃÂ¢ÃÂÃÂ ready for generation.
             </p>
           </div>
           <div className="space-y-4">
@@ -1311,7 +1311,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ VOICE DIRECTION Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ VOICE DIRECTION ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <h3 className="text-xl font-bold mb-1 tracking-tight gradient-text-gold">
             Voice Direction
@@ -1348,7 +1348,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ MUSIC DIRECTION Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ MUSIC DIRECTION ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <h3 className="text-xl font-bold mb-1 tracking-tight gradient-text-gold">
             Music Direction
@@ -1384,7 +1384,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ SOUND DESIGN Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SOUND DESIGN ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <h3 className="text-xl font-bold mb-1 tracking-tight gradient-text-gold">
             Sound Design
@@ -1414,7 +1414,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ EDIT PLAN Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ EDIT PLAN ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <h3 className="text-xl font-bold mb-1 tracking-tight gradient-text-gold">
             Edit Plan
@@ -1461,7 +1461,7 @@ function DiscoveryFeed() {
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ ASSET PLACEHOLDERS Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ ASSET PLACEHOLDERS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div className="mb-16">
           <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
             <div>
@@ -1469,7 +1469,7 @@ function DiscoveryFeed() {
                 Asset Placeholders
               </h3>
               <p className="text-xs text-neutral-500 mt-1">
-                No media produced yet Ã¢ÂÂ all ready for generation.
+                No media produced yet ÃÂ¢ÃÂÃÂ all ready for generation.
               </p>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/5 text-amber-400 text-xs font-semibold">
@@ -1529,7 +1529,7 @@ function DiscoveryFeed() {
           </p>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ CTA Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ CTA ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <div
           className="relative overflow-hidden rounded-2xl border border-amber-500/25 text-center px-6 py-14 md:py-20"
           style={{
