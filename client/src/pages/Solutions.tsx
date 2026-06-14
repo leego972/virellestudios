@@ -15,14 +15,14 @@ const SEGMENTS = [
     color: "amber",
     title: "Independent Filmmakers",
     subtitle: "Make your feature film without a studio budget",
-    description: "You have the story. Virelle gives you the production infrastructure. Generate a complete feature-length film — screenplay, scenes, voice acting, soundtrack, and trailer — without a crew, location budget, or post-production house.",
+    description: "You have the story. Virelle gives you the production infrastructure. Generate a complete feature-length film â screenplay, scenes, voice acting, soundtrack, and trailer â without a crew, location budget, or post-production house.",
     useCases: [
-      "Feature films (up to 90–180 minutes)",
+      "Feature films (up to 90â180 minutes)",
       "Short films and festival submissions",
       "Proof-of-concept reels for investor pitches",
       "Pilot episodes for series development",
     ],
-    workflow: "Write your concept → AI generates screenplay → Generate scene previews → Produce scene videos → Mix audio → Export finished film",
+    workflow: "Write your concept â AI generates screenplay â Generate scene previews â Produce scene videos â Mix audio â Export finished film",
     recommendedTier: "Independent or Creator",
     tierColor: "text-emerald-400",
   },
@@ -32,14 +32,14 @@ const SEGMENTS = [
     color: "purple",
     title: "VFX & Production Companies",
     subtitle: "Generate the scenes that are too expensive to shoot",
-    description: "Shooting a live-action production with a real cast? Use Virelle to generate the scenes that would be physically impossible or prohibitively expensive — alien worlds, historical recreations, space battles, underwater sequences, natural disasters.",
+    description: "Shooting a live-action production with a real cast? Use Virelle to generate the scenes that would be physically impossible or prohibitively expensive â alien worlds, historical recreations, space battles, underwater sequences, natural disasters.",
     useCases: [
       "VFX scene generation for live-action films",
       "Background plate generation for compositing",
       "Previz and pre-production concept reels",
       "Stunt or dangerous scene replacements",
     ],
-    workflow: "Upload cast photos → Define scene parameters → Generate VFX scene → Export for compositing in DaVinci Resolve or Premiere",
+    workflow: "Upload cast photos â Define scene parameters â Generate VFX scene â Export for compositing in DaVinci Resolve or Premiere",
     recommendedTier: "Creator or Studio",
     tierColor: "text-purple-400",
   },
@@ -49,14 +49,14 @@ const SEGMENTS = [
     color: "pink",
     title: "Music Artists & Labels",
     subtitle: "Cinematic music videos without a film crew",
-    description: "Generate a fully cinematic music video for your track — with a narrative arc, character-consistent scenes, and visual style matched to your music. No director, no crew, no location permits.",
+    description: "Generate a fully cinematic music video for your track â with a narrative arc, character-consistent scenes, and visual style matched to your music. No director, no crew, no location permits.",
     useCases: [
       "Full narrative music videos",
       "Lyric video with cinematic backgrounds",
       "Tour announcement and promotional reels",
       "Album artwork and visual identity content",
     ],
-    workflow: "Define visual concept → Set character and scene parameters → Generate scenes to music → Export music video",
+    workflow: "Define visual concept â Set character and scene parameters â Generate scenes to music â Export music video",
     recommendedTier: "Amateur or Independent",
     tierColor: "text-pink-400",
   },
@@ -73,7 +73,7 @@ const SEGMENTS = [
       "Social media content (Instagram, TikTok, YouTube)",
       "Brand identity films and corporate videos",
     ],
-    workflow: "Define brand brief → Generate commercial script → Produce scenes → Create ad assets across all formats → Publish",
+    workflow: "Define brand brief â Generate commercial script â Produce scenes â Create ad assets across all formats â Publish",
     recommendedTier: "Creator or Studio",
     tierColor: "text-blue-400",
   },
@@ -83,14 +83,14 @@ const SEGMENTS = [
     color: "green",
     title: "Film Schools & Educators",
     subtitle: "Teach production with real tools, not theory",
-    description: "Give students access to a professional AI film production pipeline. Virelle is used in film schools and creative programmes to teach screenplay structure, visual development, production workflow, and post-production — with real outputs at every stage.",
+    description: "Give students access to a professional AI film production pipeline. Virelle is used in film schools and creative programmes to teach screenplay structure, visual development, production workflow, and post-production â with real outputs at every stage.",
     useCases: [
       "Student film production projects",
       "Screenplay development and visualisation",
       "Production workflow education",
       "Portfolio development for graduates",
     ],
-    workflow: "Student writes concept → Develops screenplay → Generates storyboard → Produces scenes → Assembles and exports film",
+    workflow: "Student writes concept â Develops screenplay â Generates storyboard â Produces scenes â Assembles and exports film",
     recommendedTier: "Amateur (per student) or Studio (institutional)",
     tierColor: "text-green-400",
   },
@@ -107,7 +107,7 @@ const SEGMENTS = [
       "API integration into existing production workflows",
       "Custom AI model fine-tuning for brand consistency",
     ],
-    workflow: "API integration → Team workspace setup → Bulk generation pipelines → Custom model training → Enterprise export and delivery",
+    workflow: "API integration â Team workspace setup â Bulk generation pipelines â Custom model training â Enterprise export and delivery",
     recommendedTier: "Studio or Industry",
     tierColor: "text-violet-400",
   },
@@ -127,7 +127,7 @@ export default function Solutions() {
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Solutions — Virelle Studios" description="Whether you're an independent filmmaker, TV showrunner, brand, or studio — Virelle Studios has the AI production tools to take your project from concept to screen." />
+      <SiteHead title="Solutions â Virelle Studios" description="Whether you're an independent filmmaker, TV showrunner, brand, or studio â Virelle Studios has the AI production tools to take your project from concept to screen." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -159,7 +159,7 @@ export default function Solutions() {
             </span>
           </h1>
           <p className="text-lg text-foreground/70 leading-relaxed">
-            Whether you're an independent filmmaker, a brand agency, a music artist, or a production studio — Virelle has a workflow built for your specific production needs.
+            Whether you're an independent filmmaker, a brand agency, a music artist, or a production studio â Virelle has a workflow built for your specific production needs.
           </p>
         </div>
       </section>
@@ -204,7 +204,7 @@ export default function Solutions() {
                   <div className={`rounded-xl border ${colors.border} bg-card/40 p-6`}>
                     <h4 className="text-xs font-semibold uppercase tracking-widest text-foreground/40 mb-4">Typical Workflow</h4>
                     <div className="space-y-3">
-                      {seg.workflow.split(" → ").map((step, si) => (
+                      {seg.workflow.split(" â ").map((step, si) => (
                         <div key={si} className="flex items-start gap-3">
                           <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${colors.bg} ${colors.text}`}>
                             {si + 1}
@@ -234,7 +234,7 @@ export default function Solutions() {
       {/* Quick navigation */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-5xl mx-auto">
-          <h3 className="text-center text-sm font-semibold text-foreground/40 uppercase tracking-widest mb-6">Jump to your use case</h3>
+          <h3 className="text-center text-sm font-semibold /40 uppercase tracking-widest mb-6 gradient-text-gold">Jump to your use case</h3>
           <div className="flex flex-wrap justify-center gap-3">
             {SEGMENTS.map((seg) => {
               const Icon = seg.icon;

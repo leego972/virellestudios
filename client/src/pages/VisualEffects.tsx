@@ -21,7 +21,7 @@ import { useState } from "react";
     Circle, Square, Triangle, Camera, Settings2, X,
   } from "lucide-react";
 
-  // ─── Constants ─────────────────────────────────────────────────────────────────
+  // âââ Constants âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const VFX_CATEGORIES = [
     { id: "explosions",   label: "Fire & Explosions",   icon: Flame,    color: "text-orange-400",  bg: "bg-orange-500/10",  border: "border-orange-500/30" },
@@ -53,8 +53,8 @@ import { useState } from "react";
 
   const VFX_COMPLEXITY = [
     { id: "simple",     label: "Simple",     color: "text-green-400",   bg: "bg-green-500/10",   desc: "< 2 hrs" },
-    { id: "moderate",   label: "Moderate",   color: "text-yellow-400",  bg: "bg-yellow-500/10",  desc: "½ day" },
-    { id: "complex",    label: "Complex",    color: "text-orange-400",  bg: "bg-orange-500/10",  desc: "1–2 days" },
+    { id: "moderate",   label: "Moderate",   color: "text-yellow-400",  bg: "bg-yellow-500/10",  desc: "Â½ day" },
+    { id: "complex",    label: "Complex",    color: "text-orange-400",  bg: "bg-orange-500/10",  desc: "1â2 days" },
     { id: "hero",       label: "Hero Shot",  color: "text-red-400",     bg: "bg-red-500/10",     desc: "1+ week" },
     { id: "impossible", label: "Impossible", color: "text-purple-400",  bg: "bg-purple-500/10",  desc: "Specialist" },
   ];
@@ -65,7 +65,7 @@ import { useState } from "react";
 
   const COLOR_SPACES = ["Rec. 709","sRGB","ACES 1.0 cg","Log C (ARRI)","S-Log3 (Sony)","V-Log (Panasonic)","DCI-P3","P3-D65"];
 
-  // ─── VFX Params stored in the parameters JSON field ────────────────────────────
+  // âââ VFX Params stored in the parameters JSON field ââââââââââââââââââââââââââââ
   interface VfxParams {
     status:           string;
     complexity:       string;
@@ -96,7 +96,7 @@ import { useState } from "react";
     return { ...DEFAULT_VFX_PARAMS, ...parameters };
   }
 
-  // ─── Sub-components ─────────────────────────────────────────────────────────────
+  // âââ Sub-components âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   function IntensityBar({ value }: { value: number }) {
     return (
@@ -124,7 +124,7 @@ import { useState } from "react";
     return (
       <div className={`inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full ${c.bg}`}>
         <span className={c.color}>{c.label}</span>
-        <span className="text-muted-foreground/60">·</span>
+        <span className="text-muted-foreground/60">Â·</span>
         <span className="text-muted-foreground/60">{c.desc}</span>
       </div>
     );
@@ -140,7 +140,7 @@ import { useState } from "react";
     );
   }
 
-  // ─── Main Page ──────────────────────────────────────────────────────────────────
+  // âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   export default function VisualEffects() {
     const params = useParams<{ id: string }>();
@@ -212,7 +212,7 @@ import { useState } from "react";
 
     return (
       <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#080810 100%)" }}>
-        {/* ── Header ── */}
+        {/* ââ Header ââ */}
         <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,5,14,0.97)", backdropFilter: "blur(24px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ import { useState } from "react";
                 </div>
                 <div>
                   <div className="font-bold text-sm tracking-tight">Visual Effects Studio</div>
-                  <div className="text-[10px] text-muted-foreground">{allVfx.length} shots · {allVfx.filter((v: any) => parseVfxParams(v.parameters).status === "final" || parseVfxParams(v.parameters).status === "delivered").length} final</div>
+                  <div className="text-[10px] text-muted-foreground">{allVfx.length} shots Â· {allVfx.filter((v: any) => parseVfxParams(v.parameters).status === "final" || parseVfxParams(v.parameters).status === "delivered").length} final</div>
                 </div>
               </div>
             </div>
@@ -240,7 +240,7 @@ import { useState } from "react";
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* ── Stats bar ── */}
+          {/* ââ Stats bar ââ */}
           <div className="mb-5 grid grid-cols-4 sm:grid-cols-7 gap-3">
             <div className="rounded-xl border px-3 py-2.5" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
               <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Total Shots</div>
@@ -254,12 +254,12 @@ import { useState } from "react";
             ))}
           </div>
 
-          {/* ── Pipeline banner ── */}
+          {/* ââ Pipeline banner ââ */}
           <div className="mb-6 rounded-xl border px-4 py-3 flex items-start gap-3" style={{ borderColor: "rgba(139,92,246,0.2)", background: "rgba(139,92,246,0.04)" }}>
             <Sparkles className="h-4 w-4 text-violet-400 mt-0.5 shrink-0" />
             <p className="text-xs text-muted-foreground leading-relaxed">
               <span className="text-violet-400 font-semibold">Connected to AI Generation Pipeline.</span>{" "}
-              All effects write into <span className="font-mono text-[11px] text-violet-300">vfxNotes</span> and <span className="font-mono text-[11px] text-violet-300">visualEffects</span> — layer order, intensity, blend mode, and color space are composited by the AI renderer at scene generation time.
+              All effects write into <span className="font-mono text-[11px] text-violet-300">vfxNotes</span> and <span className="font-mono text-[11px] text-violet-300">visualEffects</span> â layer order, intensity, blend mode, and color space are composited by the AI renderer at scene generation time.
             </p>
           </div>
 
@@ -270,7 +270,7 @@ import { useState } from "react";
               <TabsTrigger value="breakdown"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><FileBarChart2 className="h-3.5 w-3.5" />Breakdown Report</TabsTrigger>
             </TabsList>
 
-            {/* ══════════════════ SHOT BOARD ══════════════════ */}
+            {/* ââââââââââââââââââ SHOT BOARD ââââââââââââââââââ */}
             <TabsContent value="shotboard">
               <div className="flex gap-5">
                 {/* Left: Shot list */}
@@ -279,7 +279,7 @@ import { useState } from "react";
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="relative flex-1 min-w-48 max-w-xs">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                      <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search effects…" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
+                      <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search effectsâ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                     </div>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
@@ -356,7 +356,7 @@ import { useState } from "react";
                   )}
                 </div>
 
-                {/* ── Right: Edit panel ── */}
+                {/* ââ Right: Edit panel ââ */}
                 {selectedVfx && (() => {
                   const vp = getParams(selectedVfx);
                   return (
@@ -395,7 +395,7 @@ import { useState } from "react";
                               <SelectContent>
                                 {VFX_COMPLEXITY.map(c => (
                                   <SelectItem key={c.id} value={c.id} className="text-xs">
-                                    <span className={c.color}>{c.label}</span><span className="text-muted-foreground ml-1">· {c.desc}</span>
+                                    <span className={c.color}>{c.label}</span><span className="text-muted-foreground ml-1">Â· {c.desc}</span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -505,7 +505,7 @@ import { useState } from "react";
                               </div>
                               <div>
                                 <p className="text-[10px] font-semibold" style={{ color: vp.chromaKeyColor }}>{vp.chromaKeyColor}</p>
-                                <p className="text-[9px] text-muted-foreground">Key color — click swatch to change</p>
+                                <p className="text-[9px] text-muted-foreground">Key color â click swatch to change</p>
                               </div>
                             </div>
                           )}
@@ -518,7 +518,7 @@ import { useState } from "react";
                             <Switch checked={vp.rotoRequired} onCheckedChange={v => saveParams(selectedVfx, { rotoRequired: v })} />
                           </div>
                           {vp.rotoRequired && (
-                            <Textarea value={vp.rotoNotes} onChange={e => saveParams(selectedVfx, { rotoNotes: e.target.value })} placeholder="Describe roto scope: which elements, isolation requirements, tolerance…" className="text-xs min-h-[60px] bg-black/30 resize-none border-border/40" />
+                            <Textarea value={vp.rotoNotes} onChange={e => saveParams(selectedVfx, { rotoNotes: e.target.value })} placeholder="Describe roto scope: which elements, isolation requirements, toleranceâ¦" className="text-xs min-h-[60px] bg-black/30 resize-none border-border/40" />
                           )}
                         </div>
 
@@ -527,13 +527,13 @@ import { useState } from "react";
                         {/* Tracking Notes */}
                         <div className="space-y-1.5">
                           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Motion Tracking Notes</Label>
-                          <Textarea value={vp.trackingNotes} onChange={e => saveParams(selectedVfx, { trackingNotes: e.target.value })} placeholder="Tracking markers, camera data, stabilization requirements, matchmove references…" className="text-xs min-h-[60px] bg-black/30 resize-none border-border/40" />
+                          <Textarea value={vp.trackingNotes} onChange={e => saveParams(selectedVfx, { trackingNotes: e.target.value })} placeholder="Tracking markers, camera data, stabilization requirements, matchmove referencesâ¦" className="text-xs min-h-[60px] bg-black/30 resize-none border-border/40" />
                         </div>
 
                         {/* Supervisor / AI Notes */}
                         <div className="space-y-1.5">
                           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5"><Sparkles className="h-3 w-3 text-violet-400" />AI Generation Notes</Label>
-                          <Textarea value={editingNotes} onChange={e => setEditingNotes(e.target.value)} placeholder="Instructions for AI renderer — timing, blending behavior, scene context, intensity arc…" className="text-xs min-h-[80px] bg-black/30 resize-none border-violet-500/15" />
+                          <Textarea value={editingNotes} onChange={e => setEditingNotes(e.target.value)} placeholder="Instructions for AI renderer â timing, blending behavior, scene context, intensity arcâ¦" className="text-xs min-h-[80px] bg-black/30 resize-none border-violet-500/15" />
                           <Button size="sm" className="w-full gap-2 text-xs" style={{ background: "linear-gradient(135deg,#8b5cf6,#7c3aed)" }}
                             onClick={() => updateMutation.mutate({ id: selectedVfx.id, notes: editingNotes })} disabled={updateMutation.isPending}>
                             {updateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : null}Save Notes
@@ -561,13 +561,13 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══════════════════ VFX LIBRARY ══════════════════ */}
+            {/* ââââââââââââââââââ VFX LIBRARY ââââââââââââââââââ */}
             <TabsContent value="library">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="relative flex-1 min-w-48 max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search VFX library…" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
+                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search VFX libraryâ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -611,12 +611,12 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ══════════════════ BREAKDOWN REPORT ══════════════════ */}
+            {/* ââââââââââââââââââ BREAKDOWN REPORT ââââââââââââââââââ */}
             <TabsContent value="breakdown">
               <div className="space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h3 className="font-bold text-sm">VFX Breakdown Report</h3>
+                    <h3 className="font-bold text-sm gradient-text-gold">VFX Breakdown Report</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">Share with your VFX supervisor, compositing team, and post-production coordinator</p>
                   </div>
                   <Button size="sm" variant="outline" onClick={exportBreakdown} className="gap-2 text-xs border-border/40">
@@ -675,14 +675,14 @@ import { useState } from "react";
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{Math.round((vfx.intensity||0.7)*100)}%</td>
                               <td className="px-3 py-2.5 text-muted-foreground whitespace-nowrap">{vp.software?.replace(" / Fusion","")}</td>
                               <td className="px-3 py-2.5 text-muted-foreground whitespace-nowrap">{vp.colorSpace}</td>
-                              <td className="px-3 py-2.5 font-mono text-muted-foreground">{vp.frameIn && vp.frameOut ? `${vp.frameIn}–${vp.frameOut}` : "—"}</td>
-                              <td className="px-3 py-2.5 text-muted-foreground">{vp.artist || "—"}</td>
+                              <td className="px-3 py-2.5 font-mono text-muted-foreground">{vp.frameIn && vp.frameOut ? `${vp.frameIn}â${vp.frameOut}` : "â"}</td>
+                              <td className="px-3 py-2.5 text-muted-foreground">{vp.artist || "â"}</td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{vp.version}</td>
                               <td className="px-3 py-2.5 text-center">{vp.chromaKeyEnabled ? <span className="text-emerald-400 font-bold">Y</span> : <span className="text-muted-foreground/40">N</span>}</td>
                               <td className="px-3 py-2.5 text-center">{vp.rotoRequired ? <span className="text-amber-400 font-bold">Y</span> : <span className="text-muted-foreground/40">N</span>}</td>
-                              <td className="px-3 py-2.5 max-w-[150px] truncate text-muted-foreground">{vfx.notes || "—"}</td>
+                              <td className="px-3 py-2.5 max-w-[150px] truncate text-muted-foreground">{vfx.notes || "â"}</td>
                               <td className="px-3 py-2.5">
-                                <button onClick={() => { setSelectedId(vfx.id); setEditingNotes(vfx.notes||""); setActiveTab("shotboard"); }} className="text-[9px] text-violet-400 hover:underline whitespace-nowrap">Edit →</button>
+                                <button onClick={() => { setSelectedId(vfx.id); setEditingNotes(vfx.notes||""); setActiveTab("shotboard"); }} className="text-[9px] text-violet-400 hover:underline whitespace-nowrap">Edit â</button>
                               </td>
                             </tr>
                           );
