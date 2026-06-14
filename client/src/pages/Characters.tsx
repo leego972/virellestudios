@@ -863,7 +863,7 @@ export default function Characters() {
                     <img src={selectedChar.photoUrl} alt={selectedChar.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-6 right-6">
-                      <h2 className="text-2xl font-bold text-white">{selectedChar.name}</h2>
+                      <h2 className="text-2xl font-bold gradient-text-gold">{selectedChar.name}</h2>
                       <div className="flex gap-2 mt-2">
                         {attrs.generatedFromPhoto && <Badge className="bg-violet-600 text-white border-0"><Camera className="h-3 w-3 mr-1" />Created from Photo</Badge>}
                         {attrs.aiGenerated && !attrs.generatedFromPhoto && <Badge className="bg-blue-600 text-white border-0"><Sparkles className="h-3 w-3 mr-1" />AI Generated</Badge>}
