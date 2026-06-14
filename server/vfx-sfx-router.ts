@@ -290,7 +290,7 @@ import { router, protectedProcedure } from "./_core/trpc";
         }, {
           role: "user",
           content: `Scene: ${sceneDesc || "no description provided"}`,
-        }], { maxTokens: 400, temperature: 0.3 });
+        }], maxTokens: 400 });
 
         try {
           const replyText = typeof reply.choices[0]?.message?.content === "string" ? reply.choices[0].message.content : "";
