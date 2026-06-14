@@ -672,7 +672,7 @@ import { useState, useEffect } from "react";
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Crown className="w-5 h-5 text-amber-400" />
-                  <h1 className="text-xl font-bold">Virelle Signature Cast</h1>
+                  <h1 className="text-xl font-bold gradient-text-gold">Virelle Signature Cast</h1>
                 </div>
                 <p className="text-sm text-zinc-500">
                   {SIGNATURE_CAST.length} premium digital actors · Continuity-tuned · Promo-ready
