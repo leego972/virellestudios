@@ -23,12 +23,12 @@ import { useState, useEffect, useCallback } from "react";
   const ELEMENT_TYPES = [
     { id: "star_wars_crawl", label: "Star Wars Crawl", icon: Star, description: "Iconic scrolling yellow text on black", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20", defaultDuration: 12 },
     { id: "title_card", label: "Title Card", icon: Type, description: "Full-screen film title display", color: "text-white", bg: "bg-zinc-500/10", border: "border-amber-500/20/20", defaultDuration: 5 },
-    { id: "chapter_marker", label: "Chapter Marker", icon: LayoutTemplate, description: 'PART I ÃÂÃÂ· CHAPTER 3 ÃÂÃÂ· ACT TWO', color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20", defaultDuration: 4 },
+    { id: "chapter_marker", label: "Chapter Marker", icon: LayoutTemplate, description: 'PART I · CHAPTER 3 · ACT TWO', color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20", defaultDuration: 4 },
     { id: "narrator_vo", label: "Narrator V.O.", icon: Mic, description: "Opening narrator voiceover script", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20", defaultDuration: 20 },
     { id: "studio_logo", label: "Studio Ident", icon: Building2, description: "Production company logo ident", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", defaultDuration: 4 },
     { id: "cold_open", label: "Cold Open", icon: Clapperboard, description: "Pre-title scene before credits", color: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/20", defaultDuration: 60 },
     { id: "intertitle", label: "Intertitle", icon: AlignCenter, description: "Silent-era text card on black", color: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20", defaultDuration: 4 },
-    { id: "time_location", label: "Time & Location", icon: MapPin, description: "Paris, France ÃÂ¢ÃÂÃÂ 1943", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20", defaultDuration: 5 },
+    { id: "time_location", label: "Time & Location", icon: MapPin, description: "Paris, France — 1943", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20", defaultDuration: 5 },
     { id: "dedication", label: "Dedication", icon: Heart, description: "In loving memory of...", color: "text-pink-400", bg: "bg-pink-500/10", border: "border-pink-500/20", defaultDuration: 5 },
     { id: "content_warning", label: "Content Warning", icon: Info, description: "Rating / content advisory", color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/20", defaultDuration: 4 },
     { id: "fade_in", label: "Fade In", icon: Sunrise, description: "Fade from black into scene", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", defaultDuration: 2 },
@@ -144,11 +144,11 @@ import { useState, useEffect, useCallback } from "react";
 
         {/* Element navigator */}
         <div className="flex items-center justify-between gap-2">
-          <Button variant="outline" size="sm" onClick={() => setCurrent(c => Math.max(0, c - 1))} disabled={current === 0}>ÃÂ¢ÃÂÃÂ¹</Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrent(c => Math.max(0, c - 1))} disabled={current === 0}>‹</Button>
           <div className="text-xs text-muted-foreground flex-1 text-center">
-            {current + 1} / {elements.length} ÃÂ¢ÃÂÃÂ <span className={typeInfo?.color}>{typeInfo?.label}</span>
+            {current + 1} / {elements.length} — <span className={typeInfo?.color}>{typeInfo?.label}</span>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setCurrent(c => Math.min(elements.length - 1, c + 1))} disabled={current === elements.length - 1}>ÃÂ¢ÃÂÃÂº</Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrent(c => Math.min(elements.length - 1, c + 1))} disabled={current === elements.length - 1}>›</Button>
         </div>
       </div>
     );
@@ -279,7 +279,7 @@ import { useState, useEffect, useCallback } from "react";
 
     const exportScript = () => {
       const lines: string[] = [
-        "OPENING SEQUENCE ÃÂ¢ÃÂÃÂ PRODUCTION NOTES",
+        "OPENING SEQUENCE — PRODUCTION NOTES",
         "=" .repeat(50),
         `Project: ${(project.data as any)?.title || "Untitled"}`,
         `Total duration: ${elements.reduce((s, e) => s + e.duration, 0)}s`,
@@ -289,14 +289,14 @@ import { useState, useEffect, useCallback } from "react";
       ];
       elements.forEach((el, i) => {
         const typeInfo = ELEMENT_TYPES.find(t => t.id === el.type)!;
-        lines.push(`\n${String(i+1).padStart(2,"0")}. [${typeInfo.label}] ÃÂ¢ÃÂÃÂ ${el.duration}s ÃÂ¢ÃÂÃÂ ${el.animation}`);
+        lines.push(`\n${String(i+1).padStart(2,"0")}. [${typeInfo.label}] — ${el.duration}s — ${el.animation}`);
         if (el.text) lines.push(`    TEXT: "${el.text}"`);
         if (el.subtext) lines.push(`    SUBTEXT: "${el.subtext}"`);
         if (el.generationPrompt) lines.push(`    AI PROMPT: ${el.generationPrompt}`);
         if (el.notes) lines.push(`    NOTES: ${el.notes}`);
       });
       lines.push("\n" + "=".repeat(50));
-      lines.push("Generated by Virelle Studios ÃÂÃÂ· virelle.life");
+      lines.push("Generated by Virelle Studios · virelle.life");
       const blob = new Blob([lines.join("\n")], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a"); a.href = url; a.download = "opening-sequence.txt"; a.click();
@@ -322,7 +322,7 @@ import { useState, useEffect, useCallback } from "react";
                 <div>
                   <div className="font-semibold text-sm tracking-wide">Opening Sequence Studio</div>
                   <div className="text-[10px] text-muted-foreground tracking-widest uppercase">
-                    {(project.data as any)?.title || "Loading..."} ÃÂÃÂ· {elements.length} elements ÃÂÃÂ· {totalDuration}s
+                    {(project.data as any)?.title || "Loading..."} · {elements.length} elements · {totalDuration}s
                   </div>
                 </div>
               </div>
@@ -345,7 +345,7 @@ import { useState, useEffect, useCallback } from "react";
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Info banner ÃÂ¢ÃÂÃÂ pipeline connection */}
+          {/* Info banner — pipeline connection */}
           <div className="mb-5 rounded-lg border px-4 py-3 flex items-start gap-3"
             style={{ borderColor: "rgba(212,175,55,0.2)", background: "rgba(212,175,55,0.05)" }}>
             <Sparkles className="h-4 w-4 text-yellow-400 mt-0.5 shrink-0" />
@@ -530,7 +530,7 @@ import { useState, useEffect, useCallback } from "react";
                               selected.type === "chapter_marker" ? "PART I" :
                               selected.type === "dedication" ? "In loving memory of..." :
                               selected.type === "time_location" ? "Paris, France" :
-                              selected.type === "content_warning" ? "RATED R ÃÂ¢ÃÂÃÂ STRONG LANGUAGE" :
+                              selected.type === "content_warning" ? "RATED R — STRONG LANGUAGE" :
                               selected.type === "studio_logo" ? "VIRELLE STUDIOS" : "Text content"
                             }
                             className="text-sm bg-background/50"
