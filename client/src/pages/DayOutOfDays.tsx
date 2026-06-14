@@ -33,7 +33,7 @@ import { useParams, useLocation } from "wouter";
                   <Grid3x3 className="text-black" style={{ width:18, height:18 }} />
                 </div>
                 <div>
-                  <div className="font-bold text-sm">{project?.title} â Day-Out-of-Days</div>
+                  <div className="font-bold text-sm">{project?.title} — Day-Out-of-Days</div>
                   <div className="text-[10px] text-muted-foreground">Cast working / hold grid across the entire shoot</div>
                 </div>
               </div>
