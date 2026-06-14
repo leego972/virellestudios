@@ -166,6 +166,7 @@ export default function HowItWorks() {
             <span className="font-bold text-sm">Virelle Studios</span>
           </button>
           <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/blog")}>Blog</Button>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/pricing")}>Pricing</Button>
             <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold" onClick={() => setLocation("/register")}>
               Start Free Trial
@@ -193,7 +194,8 @@ export default function HowItWorks() {
           <div className="flex items-center justify-center gap-6 text-sm text-foreground/60">
             <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-amber-400" /> Full film in hours, not months</span>
             <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-amber-400" /> You own all outputs</span>
-            <span className="flex items-center gap-1.5"><RefreshCw className="h-4 w-4 text-amber-400" /> Regenerate anything, anytime</span>
+            <span className="flex items-center gap-1.5"><RefreshCw className="h-4 w-4 text-amber-400" /> Regenerate any scene, anytime</span>
+              <span className="flex items-center gap-1.5"><Globe className="h-4 w-4 text-amber-400" /> 130+ subtitle languages</span>
           </div>
         </div>
       </section>
