@@ -1,1 +1,283 @@
-aW1wb3J0IHsgdXNlQXV0aCB9IGZyb20gIkAvX2NvcmUvaG9va3MvdXNlQXV0aCI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IExhYmVsIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2xhYmVsIjsKaW1wb3J0IHsgU2VsZWN0LCBTZWxlY3RDb250ZW50LCBTZWxlY3RJdGVtLCBTZWxlY3RUcmlnZ2VyLCBTZWxlY3RWYWx1ZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9zZWxlY3QiOwppbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CmltcG9ydCB7IFNlcGFyYXRvciB9IGZyb20gIkAvY29tcG9uZW50cy91aS9zZXBhcmF0b3IiOwppbXBvcnQgeyBEaWFsb2csIERpYWxvZ0NvbnRlbnQsIERpYWxvZ0hlYWRlciwgRGlhbG9nVGl0bGUsIERpYWxvZ1RyaWdnZXIsIERpYWxvZ0Zvb3RlciB9IGZyb20gIkAvY29tcG9uZW50cy91aS9kaWFsb2ciOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IHVzZVBhcmFtcywgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgeyBMb2FkZXIyLCBBcnJvd0xlZnQsIFBsdXMsIFRyYXNoMiwgR3JpcFZlcnRpY2FsLCBGaWxtLCBBd2FyZCB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCB7IHVzZVN0YXRlIH0gZnJvbSAicmVhY3QiOwppbXBvcnQgeyBnZXRMb2dpblVybCB9IGZyb20gIkAvY29uc3QiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7Cgpjb25zdCBDT01NT05fUk9MRVMgPSBbCiAgIkRpcmVjdG9yIiwgIlByb2R1Y2VyIiwgIkV4ZWN1dGl2ZSBQcm9kdWNlciIsICJXcml0ZXIiLCAiQ2luZW1hdG9ncmFwaGVyIiwKICAiRWRpdG9yIiwgIkNvbXBvc2VyIiwgIlByb2R1Y3Rpb24gRGVzaWduZXIiLCAiQ29zdHVtZSBEZXNpZ25lciIsICJNYWtldXAgQXJ0aXN0IiwKICAiU291bmQgRGVzaWduZXIiLCAiVmlzdWFsIEVmZmVjdHMgU3VwZXJ2aXNvciIsICJDYXN0aW5nIERpcmVjdG9yIiwgIlN0dW50IENvb3JkaW5hdG9yIiwKICAiTGVhZCBBY3RvciIsICJTdXBwb3J0aW5nIEFjdG9yIiwgIkZlYXR1cmVkIEV4dHJhIiwKXTsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIENyZWRpdHNFZGl0b3IoKSB7CiAgY29uc3QgeyB1c2VyLCBsb2FkaW5nOiBhdXRoTG9hZGluZyB9ID0gdXNlQXV0aCgpOwogIGNvbnN0IHBhcmFtcyA9IHVzZVBhcmFtczx7IHByb2plY3RJZDogc3RyaW5nIH0+KCk7CiAgY29uc3QgWywgbmF2aWdhdGVdID0gdXNlTG9jYXRpb24oKTsKICBjb25zdCBwcm9qZWN0SWQgPSBOdW1iZXIocGFyYW1zLnByb2plY3RJZCk7CiAgY29uc3QgdXRpbHMgPSB0cnBjLnVzZVV0aWxzKCk7CgogIGNvbnN0IFtzaG93QWRkLCBzZXRTaG93QWRkXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbbmV3Um9sZSwgc2V0TmV3Um9sZV0gPSB1c2VTdGF0ZSgiIik7CiAgY29uc3QgW25ld05hbWUsIHNldE5ld05hbWVdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFtuZXdDaGFyTmFtZSwgc2V0TmV3Q2hhck5hbWVdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFtuZXdTZWN0aW9uLCBzZXROZXdTZWN0aW9uXSA9IHVzZVN0YXRlPCJvcGVuaW5nIiB8ICJjbG9zaW5nIj4oImNsb3NpbmciKTsKCiAgY29uc3QgeyBkYXRhOiBwcm9qZWN0LCBpc0xvYWRpbmc6IHByb2plY3RMb2FkaW5nIH0gPSB0cnBjLnByb2plY3QuZ2V0LnVzZVF1ZXJ5KAogICAgeyBpZDogcHJvamVjdElkIH0sCiAgICB7IGVuYWJsZWQ6ICEhdXNlciAmJiAhIXByb2plY3RJZCB9CiAgKTsKICBjb25zdCB7IGRhdGE6IGFsbENyZWRpdHMsIGlzTG9hZGluZzogY3JlZGl0c0xvYWRpbmcgfSA9IHRycGMuY3JlZGl0Lmxpc3RCeVByb2plY3QudXNlUXVlcnkoCiAgICB7IHByb2plY3RJZCB9LAogICAgeyBlbmFibGVkOiAhIXVzZXIgJiYgISFwcm9qZWN0SWQgfQogICk7CgogIGNvbnN0IGNyZWF0ZUNyZWRpdCA9IHRycGMuY3JlZGl0LmNyZWF0ZS51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMuY3JlZGl0Lmxpc3RCeVByb2plY3QuaW52YWxpZGF0ZSh7IHByb2plY3RJZCB9KTsKICAgICAgc2V0U2hvd0FkZChmYWxzZSk7CiAgICAgIHNldE5ld1JvbGUoIiIpOwogICAgICBzZXROZXdOYW1lKCIiKTsKICAgICAgc2V0TmV3Q2hhck5hbWUoIiIpOwogICAgICB0b2FzdC5zdWNjZXNzKCJDcmVkaXQgYWRkZWQiKTsKICAgIH0sCiAgfSk7CgogIGNvbnN0IGRlbGV0ZUNyZWRpdCA9IHRycGMuY3JlZGl0LmRlbGV0ZS51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMuY3JlZGl0Lmxpc3RCeVByb2plY3QuaW52YWxpZGF0ZSh7IHByb2plY3RJZCB9KTsKICAgICAgdG9hc3Quc3VjY2VzcygiQ3JlZGl0IHJlbW92ZWQiKTsKICAgIH0sCiAgfSk7CgogIGlmIChhdXRoTG9hZGluZyB8fCBwcm9qZWN0TG9hZGluZyB8fCBjcmVkaXRzTG9hZGluZykgewogICAgcmV0dXJuICgKICAgICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBiZy1iYWNrZ3JvdW5kIj4KICAgICAgICA8TG9hZGVyMiBjbGFzc05hbWU9ImgtOCB3LTggYW5pbWF0ZS1zcGluIHRleHQtcHJpbWFyeSIgLz4KICAgICAgPC9kaXY+CiAgICApOwogIH0KCiAgaWYgKCF1c2VyKSB7CiAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IGdldExvZ2luVXJsKCk7CiAgICByZXR1cm4gbnVsbDsKICB9CgogIGNvbnN0IG9wZW5pbmdDcmVkaXRzID0gYWxsQ3JlZGl0cz8uZmlsdGVyKGMgPT4gYy5zZWN0aW9uID09PSAib3BlbmluZyIpIHx8IFtdOwogIGNvbnN0IGNsb3NpbmdDcmVkaXRzID0gYWxsQ3JlZGl0cz8uZmlsdGVyKGMgPT4gYy5zZWN0aW9uID09PSAiY2xvc2luZyIpIHx8IFtdOwoKICBjb25zdCBoYW5kbGVBZGQgPSAoKSA9PiB7CiAgICBpZiAoIW5ld1JvbGUudHJpbSgpIHx8ICFuZXdOYW1lLnRyaW0oKSkgcmV0dXJuOwogICAgY3JlYXRlQ3JlZGl0Lm11dGF0ZSh7CiAgICAgIHByb2plY3RJZCwKICAgICAgcm9sZTogbmV3Um9sZS50cmltKCksCiAgICAgIG5hbWU6IG5ld05hbWUudHJpbSgpLAogICAgICBjaGFyYWN0ZXJOYW1lOiBuZXdDaGFyTmFtZS50cmltKCkgfHwgdW5kZWZpbmVkLAogICAgICBzZWN0aW9uOiBuZXdTZWN0aW9uLAogICAgICBvcmRlckluZGV4OiAoYWxsQ3JlZGl0cz8ubGVuZ3RoIHx8IDApLAogICAgfSk7CiAgfTsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4iIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgey8qIEhlYWRlciAqL30KICAgICAgPGRpdiBjbGFzc05hbWU9ImJvcmRlci1iIGJnLWNhcmQvNTAgc3RpY2t5IHRvcC0wIHotMTAiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy00eGwgbXgtYXV0byBweC0zIHNtOnB4LTQgcHktMyBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gZ2FwLTIgZmxleC13cmFwIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiBzbTpnYXAtMyBtaW4tdy0wIj4KICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJnaG9zdCIgc2l6ZT0iaWNvbiIgY2xhc3NOYW1lPSJoLTEwIHctMTAgc206aC05IHNtOnctOSBzaHJpbmstMCIgb25DbGljaz17KCkgPT4gbmF2aWdhdGUoYC9wcm9qZWN0cy8ke3Byb2plY3RJZH1gKX0gYXJpYS1sYWJlbD0iQmFjayB0byBwcm9qZWN0Ij4KICAgICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0iaC00IHctNCIgYXJpYS1oaWRkZW49InRydWUiIC8+CiAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLXctMCI+CiAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC1iYXNlIHNtOnRleHQtbGcgZm9udC1zZW1pYm9sZCB0cnVuY2F0ZSI+e3Byb2plY3Q/LnRpdGxlfSDigJQgQ3JlZGl0czwvaDE+CiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+e2FsbENyZWRpdHM/Lmxlbmd0aCB8fCAwfSBjcmVkaXRzPC9wPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPERpYWxvZyBvcGVuPXtzaG93QWRkfSBvbk9wZW5DaGFuZ2U9e3NldFNob3dBZGR9PgogICAgICAgICAgICA8RGlhbG9nVHJpZ2dlciBhc0NoaWxkPgogICAgICAgICAgICAgIDxCdXR0b24gc2l6ZT0ic20iPjxQbHVzIGNsYXNzTmFtZT0iaC00IHctNCBtci0xIiAvPkFkZCBDcmVkaXQ8L0J1dHRvbj4KICAgICAgICAgICAgPC9EaWFsb2dUcmlnZ2VyPgogICAgICAgICAgICA8RGlhbG9nQ29udGVudD4KICAgICAgICAgICAgICA8RGlhbG9nSGVhZGVyPgogICAgICAgICAgICAgICAgPERpYWxvZ1RpdGxlPkFkZCBDcmVkaXQ8L0RpYWxvZ1RpdGxlPgogICAgICAgICAgICAgIDwvRGlhbG9nSGVhZGVyPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTQiPgogICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgPExhYmVsPlJvbGU8L0xhYmVsPgogICAgICAgICAgICAgICAgICA8U2VsZWN0IHZhbHVlPXtuZXdSb2xlfSBvblZhbHVlQ2hhbmdlPXtzZXROZXdSb2xlfT4KICAgICAgICAgICAgICAgICAgICA8U2VsZWN0VHJpZ2dlcj48U2VsZWN0VmFsdWUgcGxhY2Vob2xkZXI9IlNlbGVjdCBvciB0eXBlIGEgcm9sZSIgLz48L1NlbGVjdFRyaWdnZXI+CiAgICAgICAgICAgICAgICAgICAgPFNlbGVjdENvbnRlbnQ+CiAgICAgICAgICAgICAgICAgICAgICB7Q09NTU9OX1JPTEVTLm1hcChyID0+ICgKICAgICAgICAgICAgICAgICAgICAgICAgPFNlbGVjdEl0ZW0ga2V5PXtyfSB2YWx1ZT17cn0+e3J9PC9TZWxlY3RJdGVtPgogICAgICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3RDb250ZW50PgogICAgICAgICAgICAgICAgICA8L1NlbGVjdD4KICAgICAgICAgICAgICAgICAgPElucHV0CiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJtdC0yIgogICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJPciB0eXBlIGEgY3VzdG9tIHJvbGUuLi4iCiAgICAgICAgICAgICAgICAgICAgdmFsdWU9e25ld1JvbGV9CiAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9e2UgPT4gc2V0TmV3Um9sZShlLnRhcmdldC52YWx1ZSl9CiAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxMYWJlbD5OYW1lPC9MYWJlbD4KICAgICAgICAgICAgICAgICAgPElucHV0IHBsYWNlaG9sZGVyPSJQZXJzb24ncyBuYW1lIiB2YWx1ZT17bmV3TmFtZX0gb25DaGFuZ2U9e2UgPT4gc2V0TmV3TmFtZShlLnRhcmdldC52YWx1ZSl9IC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxMYWJlbD5DaGFyYWN0ZXIgTmFtZSAob3B0aW9uYWwsIGZvciBjYXN0KTwvTGFiZWw+CiAgICAgICAgICAgICAgICAgIDxJbnB1dCBwbGFjZWhvbGRlcj0iQ2hhcmFjdGVyIG5hbWUiIHZhbHVlPXtuZXdDaGFyTmFtZX0gb25DaGFuZ2U9e2UgPT4gc2V0TmV3Q2hhck5hbWUoZS50YXJnZXQudmFsdWUpfSAvPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgICA8TGFiZWw+U2VjdGlvbjwvTGFiZWw+CiAgICAgICAgICAgICAgICAgIDxTZWxlY3QgdmFsdWU9e25ld1NlY3Rpb259IG9uVmFsdWVDaGFuZ2U9e3YgPT4gc2V0TmV3U2VjdGlvbih2IGFzICJvcGVuaW5nIiB8ICJjbG9zaW5nIil9PgogICAgICAgICAgICAgICAgICAgIDxTZWxlY3RUcmlnZ2VyPjxTZWxlY3RWYWx1ZSAvPjwvU2VsZWN0VHJpZ2dlcj4KICAgICAgICAgICAgICAgICAgICA8U2VsZWN0Q29udGVudD4KICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RJdGVtIHZhbHVlPSJvcGVuaW5nIj5PcGVuaW5nIENyZWRpdHM8L1NlbGVjdEl0ZW0+CiAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0SXRlbSB2YWx1ZT0iY2xvc2luZyI+Q2xvc2luZyBDcmVkaXRzPC9TZWxlY3RJdGVtPgogICAgICAgICAgICAgICAgICAgIDwvU2VsZWN0Q29udGVudD4KICAgICAgICAgICAgICAgICAgPC9TZWxlY3Q+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8RGlhbG9nRm9vdGVyPgogICAgICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJvdXRsaW5lIiBvbkNsaWNrPXsoKSA9PiBzZXRTaG93QWRkKGZhbHNlKX0+Q2FuY2VsPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9e2hhbmRsZUFkZH0gZGlzYWJsZWQ9eyFuZXdSb2xlLnRyaW0oKSB8fCAhbmV3TmFtZS50cmltKCkgfHwgY3JlYXRlQ3JlZGl0LmlzUGVuZGluZ30+CiAgICAgICAgICAgICAgICAgIHtjcmVhdGVDcmVkaXQuaXNQZW5kaW5nID8gPExvYWRlcjIgY2xhc3NOYW1lPSJoLTQgdy00IGFuaW1hdGUtc3BpbiBtci0xIiAvPiA6IG51bGx9CiAgICAgICAgICAgICAgICAgIEFkZAogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgPC9EaWFsb2dGb290ZXI+CiAgICAgICAgICAgIDwvRGlhbG9nQ29udGVudD4KICAgICAgICAgIDwvRGlhbG9nPgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KCiAgICAgIHsvKiBDb250ZW50ICovfQogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctNHhsIG14LWF1dG8gcHgtNCBweS02IHNwYWNlLXktOCI+CiAgICAgICAgey8qIE9wZW5pbmcgQ3JlZGl0cyAqL30KICAgICAgICA8Q2FyZD4KICAgICAgICAgIDxDYXJkSGVhZGVyIGNsYXNzTmFtZT0icGItMyI+CiAgICAgICAgICAgIDxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LWJhc2UgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgIDxGaWxtIGNsYXNzTmFtZT0iaC00IHctNCB0ZXh0LXByaW1hcnkiIC8+CiAgICAgICAgICAgICAgT3BlbmluZyBDcmVkaXRzCiAgICAgICAgICAgIDwvQ2FyZFRpdGxlPgogICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgPENhcmRDb250ZW50PgogICAgICAgICAgICB7b3BlbmluZ0NyZWRpdHMubGVuZ3RoID09PSAwID8gKAogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgcHktNCB0ZXh0LWNlbnRlciI+Tm8gb3BlbmluZyBjcmVkaXRzIHlldDwvcD4KICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgICAgIHtvcGVuaW5nQ3JlZGl0cy5tYXAoY3JlZGl0ID0+ICgKICAgICAgICAgICAgICAgICAgPGRpdiBrZXk9e2NyZWRpdC5pZH0gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBwLTIgcm91bmRlZC1tZCBib3JkZXIgYmctY2FyZC81MCI+CiAgICAgICAgICAgICAgICAgICAgPEdyaXBWZXJ0aWNhbCBjbGFzc05hbWU9ImgtNCB3LTQgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kLzMwIHNocmluay0wIiAvPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgbWluLXctMCI+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSBzaHJpbmstMCI+e2NyZWRpdC5yb2xlfTwvQmFkZ2U+CiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1zbSBmb250LW1lZGl1bSB0cnVuY2F0ZSI+e2NyZWRpdC5uYW1lfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAge2NyZWRpdC5jaGFyYWN0ZXJOYW1lICYmICgKICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0wLjUiPmFzIHtjcmVkaXQuY2hhcmFjdGVyTmFtZX08L3A+CiAgICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Imdob3N0IgogICAgICAgICAgICAgICAgICAgICAgc2l6ZT0iaWNvbiIKICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iaC03IHctNyBzaHJpbmstMCB0ZXh0LWRlc3RydWN0aXZlLzYwIGhvdmVyOnRleHQtZGVzdHJ1Y3RpdmUiCiAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBkZWxldGVDcmVkaXQubXV0YXRlKHsgaWQ6IGNyZWRpdC5pZCB9KX0KICAgICAgICAgICAgICAgICAgICAgIGFyaWEtbGFiZWw9e2BEZWxldGUgY3JlZGl0IGZvciAke2NyZWRpdC5uYW1lfWB9CiAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgPFRyYXNoMiBjbGFzc05hbWU9ImgtMy41IHctMy41IiBhcmlhLWhpZGRlbj0idHJ1ZSIgLz4KICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKX0KICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgPC9DYXJkPgoKICAgICAgICB7LyogQ2xvc2luZyBDcmVkaXRzICovfQogICAgICAgIDxDYXJkPgogICAgICAgICAgPENhcmRIZWFkZXIgY2xhc3NOYW1lPSJwYi0zIj4KICAgICAgICAgICAgPENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQtYmFzZSBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgPEF3YXJkIGNsYXNzTmFtZT0iaC00IHctNCB0ZXh0LXByaW1hcnkiIC8+CiAgICAgICAgICAgICAgQ2xvc2luZyBDcmVkaXRzCiAgICAgICAgICAgIDwvQ2FyZFRpdGxlPgogICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgPENhcmRDb250ZW50PgogICAgICAgICAgICB7Y2xvc2luZ0NyZWRpdHMubGVuZ3RoID09PSAwID8gKAogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgcHktNCB0ZXh0LWNlbnRlciI+Tm8gY2xvc2luZyBjcmVkaXRzIHlldDwvcD4KICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgICAgIHtjbG9zaW5nQ3JlZGl0cy5tYXAoY3JlZGl0ID0+ICgKICAgICAgICAgICAgICAgICAgPGRpdiBrZXk9e2NyZWRpdC5pZH0gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBwLTIgcm91bmRlZC1tZCBib3JkZXIgYmctY2FyZC81MCI+CiAgICAgICAgICAgICAgICAgICAgPEdyaXBWZXJ0aWNhbCBjbGFzc05hbWU9ImgtNCB3LTQgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kLzMwIHNocmluay0wIiAvPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgbWluLXctMCI+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSBzaHJpbmstMCI+e2NyZWRpdC5yb2xlfTwvQmFkZ2U+CiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1zbSBmb250LW1lZGl1bSB0cnVuY2F0ZSI+e2NyZWRpdC5uYW1lfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAge2NyZWRpdC5jaGFyYWN0ZXJOYW1lICYmICgKICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0wLjUiPmFzIHtjcmVkaXQuY2hhcmFjdGVyTmFtZX08L3A+CiAgICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Imdob3N0IgogICAgICAgICAgICAgICAgICAgICAgc2l6ZT0iaWNvbiIKICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iaC03IHctNyBzaHJpbmstMCB0ZXh0LWRlc3RydWN0aXZlLzYwIGhvdmVyOnRleHQtZGVzdHJ1Y3RpdmUiCiAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBkZWxldGVDcmVkaXQubXV0YXRlKHsgaWQ6IGNyZWRpdC5pZCB9KX0KICAgICAgICAgICAgICAgICAgICAgIGFyaWEtbGFiZWw9e2BEZWxldGUgY3JlZGl0IGZvciAke2NyZWRpdC5uYW1lfWB9CiAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgPFRyYXNoMiBjbGFzc05hbWU9ImgtMy41IHctMy41IiBhcmlhLWhpZGRlbj0idHJ1ZSIgLz4KICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKX0KICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgPC9DYXJkPgoKICAgICAgICB7LyogUHJldmlldyAqL30KICAgICAgICB7KGFsbENyZWRpdHM/Lmxlbmd0aCB8fCAwKSA+IDAgJiYgKAogICAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJiZy1ibGFjayB0ZXh0LXdoaXRlIGJvcmRlci0wIj4KICAgICAgICAgICAgPENhcmRIZWFkZXIgY2xhc3NOYW1lPSJwYi0zIj4KICAgICAgICAgICAgICA8Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1iYXNlIHRleHQtY2VudGVyIHRleHQtd2hpdGUvODAiPkNyZWRpdHMgUHJldmlldzwvQ2FyZFRpdGxlPgogICAgICAgICAgICA8L0NhcmRIZWFkZXI+CiAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InRleHQtY2VudGVyIHNwYWNlLXktNiBweS04Ij4KICAgICAgICAgICAgICB7b3BlbmluZ0NyZWRpdHMubGVuZ3RoID4gMCAmJiAoCiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgICAge29wZW5pbmdDcmVkaXRzLm1hcChjID0+ICgKICAgICAgICAgICAgICAgICAgICA8ZGl2IGtleT17Yy5pZH0gY2xhc3NOYW1lPSJzcGFjZS15LTAuNSI+CiAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCB0ZXh0LXdoaXRlLzUwIj57Yy5yb2xlfTwvcD4KICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1sZyBmb250LWxpZ2h0Ij57Yy5uYW1lfTwvcD4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICApfQogICAgICAgICAgICAgIHtvcGVuaW5nQ3JlZGl0cy5sZW5ndGggPiAwICYmIGNsb3NpbmdDcmVkaXRzLmxlbmd0aCA+IDAgJiYgKAogICAgICAgICAgICAgICAgPFNlcGFyYXRvciBjbGFzc05hbWU9ImJnLXdoaXRlLzEwIG15LTgiIC8+CiAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICB7Y2xvc2luZ0NyZWRpdHMubGVuZ3RoID4gMCAmJiAoCiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0zIj4KICAgICAgICAgICAgICAgICAge2Nsb3NpbmdDcmVkaXRzLm1hcChjID0+ICgKICAgICAgICAgICAgICAgICAgICA8ZGl2IGtleT17Yy5pZH0gY2xhc3NOYW1lPSJmbGV4IGp1c3RpZnktY2VudGVyIGdhcC04IHRleHQtc20iPgogICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzUwIHRleHQtcmlnaHQgdy00MCI+e2Mucm9sZX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtbGVmdCB3LTQwIj57Yy5uYW1lfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICApfQogICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgPC9DYXJkPgogICAgICAgICl9CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQo=
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { trpc } from "@/lib/trpc";
+import { useParams, useLocation } from "wouter";
+import { Loader2, ArrowLeft, Plus, Trash2, GripVertical, Film, Award } from "lucide-react";
+import { useState } from "react";
+import { getLoginUrl } from "@/const";
+import { toast } from "sonner";
+
+const COMMON_ROLES = [
+  "Director", "Producer", "Executive Producer", "Writer", "Cinematographer",
+  "Editor", "Composer", "Production Designer", "Costume Designer", "Makeup Artist",
+  "Sound Designer", "Visual Effects Supervisor", "Casting Director", "Stunt Coordinator",
+  "Lead Actor", "Supporting Actor", "Featured Extra",
+];
+
+export default function CreditsEditor() {
+  const { user, loading: authLoading } = useAuth();
+  const params = useParams<{ projectId: string }>();
+  const [, navigate] = useLocation();
+  const projectId = Number(params.projectId);
+  const utils = trpc.useUtils();
+
+  const [showAdd, setShowAdd] = useState(false);
+  const [newRole, setNewRole] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newCharName, setNewCharName] = useState("");
+  const [newSection, setNewSection] = useState<"opening" | "closing">("closing");
+
+  const { data: project, isLoading: projectLoading } = trpc.project.get.useQuery(
+    { id: projectId },
+    { enabled: !!user && !!projectId }
+  );
+  const { data: allCredits, isLoading: creditsLoading } = trpc.credit.listByProject.useQuery(
+    { projectId },
+    { enabled: !!user && !!projectId }
+  );
+
+  const createCredit = trpc.credit.create.useMutation({
+    onSuccess: () => {
+      utils.credit.listByProject.invalidate({ projectId });
+      setShowAdd(false);
+      setNewRole("");
+      setNewName("");
+      setNewCharName("");
+      toast.success("Credit added");
+    },
+  });
+
+  const deleteCredit = trpc.credit.delete.useMutation({
+    onSuccess: () => {
+      utils.credit.listByProject.invalidate({ projectId });
+      toast.success("Credit removed");
+    },
+  });
+
+  if (authLoading || projectLoading || creditsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    window.location.href = getLoginUrl();
+    return null;
+  }
+
+  const openingCredits = allCredits?.filter(c => c.section === "opening") || [];
+  const closingCredits = allCredits?.filter(c => c.section === "closing") || [];
+
+  const handleAdd = () => {
+    if (!newRole.trim() || !newName.trim()) return;
+    createCredit.mutate({
+      projectId,
+      role: newRole.trim(),
+      name: newName.trim(),
+      characterName: newCharName.trim() || undefined,
+      section: newSection,
+      orderIndex: (allCredits?.length || 0),
+    });
+  };
+
+  return (
+    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      {/* Header */}
+      <div className="border-b bg-card/50 sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            </Button>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg font-semibold truncate">{project?.title} — Credits</h1>
+              <p className="text-xs text-muted-foreground">{allCredits?.length || 0} credits</p>
+            </div>
+          </div>
+          <Dialog open={showAdd} onOpenChange={setShowAdd}>
+            <DialogTrigger asChild>
+              <Button size="sm"><Plus className="h-4 w-4 mr-1" />Add Credit</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Credit</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label>Role</Label>
+                  <Select value={newRole} onValueChange={setNewRole}>
+                    <SelectTrigger><SelectValue placeholder="Select or type a role" /></SelectTrigger>
+                    <SelectContent>
+                      {COMMON_ROLES.map(r => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    className="mt-2"
+                    placeholder="Or type a custom role..."
+                    value={newRole}
+                    onChange={e => setNewRole(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label>Name</Label>
+                  <Input placeholder="Person's name" value={newName} onChange={e => setNewName(e.target.value)} />
+                </div>
+                <div>
+                  <Label>Character Name (optional, for cast)</Label>
+                  <Input placeholder="Character name" value={newCharName} onChange={e => setNewCharName(e.target.value)} />
+                </div>
+                <div>
+                  <Label>Section</Label>
+                  <Select value={newSection} onValueChange={v => setNewSection(v as "opening" | "closing")}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="opening">Opening Credits</SelectItem>
+                      <SelectItem value="closing">Closing Credits</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
+                <Button onClick={handleAdd} disabled={!newRole.trim() || !newName.trim() || createCredit.isPending}>
+                  {createCredit.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                  Add
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
+        {/* Opening Credits */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Film className="h-4 w-4 text-primary" />
+              Opening Credits
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {openingCredits.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">No opening credits yet</p>
+            ) : (
+              <div className="space-y-2">
+                {openingCredits.map(credit => (
+                  <div key={credit.id} className="flex items-center gap-3 p-2 rounded-md border bg-card/50">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/30 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] shrink-0">{credit.role}</Badge>
+                        <span className="text-sm font-medium truncate">{credit.name}</span>
+                      </div>
+                      {credit.characterName && (
+                        <p className="text-xs text-muted-foreground mt-0.5">as {credit.characterName}</p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0 text-destructive/60 hover:text-destructive"
+                      onClick={() => deleteCredit.mutate({ id: credit.id })}
+                      aria-label={`Delete credit for ${credit.name}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Closing Credits */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Award className="h-4 w-4 text-primary" />
+              Closing Credits
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {closingCredits.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">No closing credits yet</p>
+            ) : (
+              <div className="space-y-2">
+                {closingCredits.map(credit => (
+                  <div key={credit.id} className="flex items-center gap-3 p-2 rounded-md border bg-card/50">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/30 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] shrink-0">{credit.role}</Badge>
+                        <span className="text-sm font-medium truncate">{credit.name}</span>
+                      </div>
+                      {credit.characterName && (
+                        <p className="text-xs text-muted-foreground mt-0.5">as {credit.characterName}</p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0 text-destructive/60 hover:text-destructive"
+                      onClick={() => deleteCredit.mutate({ id: credit.id })}
+                      aria-label={`Delete credit for ${credit.name}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Preview */}
+        {(allCredits?.length || 0) > 0 && (
+          <Card className="bg-black text-white border-0">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base text-center text-white/80">Credits Preview</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-6 py-8">
+              {openingCredits.length > 0 && (
+                <div className="space-y-4">
+                  {openingCredits.map(c => (
+                    <div key={c.id} className="space-y-0.5">
+                      <p className="text-xs uppercase tracking-widest text-white/50">{c.role}</p>
+                      <p className="text-lg font-light">{c.name}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {openingCredits.length > 0 && closingCredits.length > 0 && (
+                <Separator className="bg-white/10 my-8" />
+              )}
+              {closingCredits.length > 0 && (
+                <div className="space-y-3">
+                  {closingCredits.map(c => (
+                    <div key={c.id} className="flex justify-center gap-8 text-sm">
+                      <span className="text-white/50 text-right w-40">{c.role}</span>
+                      <span className="text-left w-40">{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}
