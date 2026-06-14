@@ -142,7 +142,7 @@ export default function DownloadApp() {
                   className={`group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] ${
                     androidReady
                       ? "bg-amber-500 text-black border-amber-400/40 hover:bg-amber-500/90 hover:scale-105 cursor-pointer"
-                      : "bg-white/5 text-white/60 border-white/15 cursor-not-allowed"
+                      : "bg-white/5 text-white/60 border-amber-500/20 cursor-not-allowed"
                   } disabled:opacity-60`}
                 >
                   <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -208,7 +208,7 @@ export default function DownloadApp() {
             <h3 className="text-center text-lg font-semibold mb-6 /60 gradient-text-gold">Every tool, on mobile</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {MOBILE_FEATURES.map(f => (
-                <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
+                <div key={f.label} className="bg-white/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
                   <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                   <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
                   <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>
@@ -245,7 +245,7 @@ export default function DownloadApp() {
                   className={`flex items-center gap-3 px-6 py-3 rounded-xl border text-sm font-semibold w-full sm:w-auto justify-center transition-all ${
                     ready
                       ? "border-white/20 bg-white/5 hover:bg-white/10 hover:scale-105 cursor-pointer"
-                      : "border-white/10 bg-white/5 text-white/50 cursor-not-allowed"
+                      : "border-amber-500/20 bg-white/5 text-white/50 cursor-not-allowed"
                   } disabled:opacity-60`}
                 >
                   <span className="text-xl">{emoji}</span>
@@ -260,7 +260,7 @@ export default function DownloadApp() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {DESKTOP_FEATURES.map(f => (
-              <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
+              <div key={f.label} className="bg-white/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
                 <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                 <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
                 <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>

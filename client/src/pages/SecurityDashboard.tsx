@@ -274,13 +274,13 @@ export default function SecurityDashboard() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border/50">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">User ID</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Reason</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Gen/1h</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Gen/24h</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">IPs</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">User ID</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Reason</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Gen/1h</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Gen/24h</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">IPs</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Status</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -494,12 +494,12 @@ export default function SecurityDashboard() {
               <table className="w-full">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border/50">
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Time</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">User</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Action</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">IP</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Status</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Details</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Time</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">User</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Action</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">IP</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Status</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Details</th>
                   </tr>
                 </thead>
                 <tbody>

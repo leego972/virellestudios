@@ -41,7 +41,7 @@ const PROFILE_TYPE_LABELS: Record<string, string> = {
 function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) {
   const [, setLocation] = useLocation();
   return (
-    <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur-md z-20">
+    <header className="border-b border-amber-500/20 px-4 sm:px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur-md z-20">
       {onBack && (
         <button onClick={onBack} className="text-white/40 hover:text-white transition-colors">
           <ChevronLeft className="h-5 w-5" />
@@ -105,7 +105,7 @@ function ValueProps() {
   ];
 
   return (
-    <section className="border-b border-white/10 bg-black py-14 px-4 sm:px-6">
+    <section className="border-b border-amber-500/20 bg-black py-14 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         <p className="text-center text-[11px] font-black uppercase tracking-widest text-amber-400/60 mb-8">
           Why Lamalo beats describing clothes in your prompt
@@ -198,10 +198,10 @@ function CustomOrderModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-[#0a0a0a] border border-white/15 rounded-3xl overflow-hidden shadow-2xl shadow-black/60 flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-lg bg-[#0a0a0a] border border-amber-500/20 rounded-3xl overflow-hidden shadow-2xl shadow-black/60 flex flex-col max-h-[90vh]">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/10 shrink-0">
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-amber-500/20 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
               <Wand2 className="h-4.5 w-4.5 text-amber-400" />
@@ -217,7 +217,7 @@ function CustomOrderModal({
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/10 shrink-0">
+        <div className="flex border-b border-amber-500/20 shrink-0">
           {[
             { key: "order" as OrderTab,  label: "New Order",   icon: Wand2        },
             { key: "orders" as OrderTab, label: "My Orders",   icon: ClipboardList },
@@ -257,7 +257,7 @@ function CustomOrderModal({
                     <p className="text-xs text-white/65 leading-relaxed">{pt}</p>
                   </div>
                 ))}
-                <p className="text-[10px] text-white/25 pt-1 border-t border-white/10 mt-2">
+                <p className="text-[10px] text-white/25 pt-1 border-t border-amber-500/20 mt-2">
                   vs Adobe Firefly ~A$35/mo ÃÂ· Midjourney ~A$15/mo ÃÂ· Human illustrator A$50Ã¢ÂÂ200+ per drawing
                 </p>
               </div>
@@ -271,7 +271,7 @@ function CustomOrderModal({
                     <select
                       value={characterId ?? ""}
                       onChange={e => setCharacterId(e.target.value ? Number(e.target.value) : null)}
-                      className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none"
+                      className="w-full glass-card/5 border border-amber-500/20 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none"
                     >
                       <option value="">No specific character Ã¢ÂÂ standalone item</option>
                       {(myCharacters ?? []).map(c => (
@@ -298,7 +298,7 @@ function CustomOrderModal({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="e.g. A fitted black leather biker jacket with silver zips, moto collar, and quilted shoulder panels. Slim cut, waist length."
-                  className="bg-white/5 border-white/15 text-white placeholder-white/25 text-sm resize-none h-28 focus:border-amber-500/50"
+                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/25 text-sm resize-none h-28 focus:border-amber-500/50"
                   maxLength={1000}
                 />
                 <p className="text-[10px] text-white/25 text-right">{description.length}/1000</p>
@@ -314,7 +314,7 @@ function CustomOrderModal({
                   value={refImageUrl}
                   onChange={(e) => setRefImageUrl(e.target.value)}
                   placeholder="https://example.com/jacket-reference.jpg"
-                  className="bg-white/5 border-white/15 text-white placeholder-white/25 text-sm h-10 focus:border-amber-500/50"
+                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/25 text-sm h-10 focus:border-amber-500/50"
                 />
                 <p className="text-[10px] text-white/30 leading-relaxed">
                   Paste a direct image URL of a similar garment for visual reference. The AI will use it to anchor colours, silhouette, and style.
@@ -352,7 +352,7 @@ function CustomOrderModal({
 
               {ordersLoading && (
                 <div className="space-y-3">
-                  {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl bg-white/5" />)}
+                  {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl glass-card/5" />)}
                 </div>
               )}
 
@@ -380,15 +380,15 @@ function CustomOrderModal({
                       order.status === "pending_payment"    ? "Awaiting payment"  :
                                                               "Failed";
                     return (
-                      <div key={order.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-4 flex gap-3">
+                      <div key={order.id} className="rounded-xl border border-amber-500/20 glass-card/[0.02] p-4 flex gap-3">
                         {order.generatedImageUrl ? (
                           <img
                             src={order.generatedImageUrl}
                             alt="Generated"
-                            className="w-16 h-16 rounded-lg object-cover border border-white/10 shrink-0"
+                            className="w-16 h-16 rounded-lg object-cover border border-amber-500/20 shrink-0"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                          <div className="w-16 h-16 rounded-lg glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0">
                             <Shirt className="h-7 w-7 text-white/15" />
                           </div>
                         )}
@@ -436,7 +436,7 @@ function ItemCard({
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
 
   return (
-    <div className="group rounded-xl border border-white/8 hover:border-amber-500/30 bg-white/[0.02] hover:bg-white/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
+    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
         {item.primaryImageUrl && !imgErr ? (
           <img
@@ -452,7 +452,7 @@ function ItemCard({
         )}
         {color && (
           <div className="absolute top-2 right-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-sm border border-white/10 text-white/70 rounded-full px-2 py-0.5">
+            <span className="text-[9px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-sm border border-amber-500/20 text-white/70 rounded-full px-2 py-0.5">
               {color}
             </span>
           </div>
@@ -505,13 +505,13 @@ function CollectionBlock({
   const isBuyingCol = leasingId === `collection-${col.id}`;
 
   return (
-    <div className="rounded-2xl border border-white/10 overflow-hidden">
-      <div className="bg-white/[0.03] p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+    <div className="rounded-2xl border border-amber-500/20 overflow-hidden">
+      <div className="glass-card/[0.03] p-5 flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <h3 className="text-base font-bold gradient-text-gold">{col.name}</h3>
             {col.season && (
-              <Badge variant="outline" className="border-white/15 text-white/40 text-[10px]">
+              <Badge variant="outline" className="border-amber-500/20 text-white/40 text-[10px]">
                 {col.season}
               </Badge>
             )}
@@ -539,7 +539,7 @@ function CollectionBlock({
           </Button>
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="h-9 px-3 rounded-lg border border-white/15 text-white/50 hover:text-white hover:border-white/30 text-xs font-semibold transition-all"
+            className="h-9 px-3 rounded-lg border border-amber-500/20 text-white/50 hover:text-white hover:border-white/30 text-xs font-semibold transition-all"
           >
             {expanded ? "Hide items" : `Browse ${itemCount} items`}
           </button>
@@ -547,7 +547,7 @@ function CollectionBlock({
       </div>
 
       {expanded && (
-        <div className="border-t border-white/8 p-4 bg-black">
+        <div className="border-t border-amber-500/20 p-4 bg-black">
           {items.length === 0 ? (
             <p className="text-xs text-white/30 text-center py-6">No items in this collection yet.</p>
           ) : (
@@ -660,7 +660,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
         <Button
           onClick={() => setLocation("/wardrobe-marketplace")}
           variant="outline"
-          className="border-white/15 text-white/70"
+          className="border-amber-500/20 text-white/70"
         >
           Back to Lamalo Fashions
         </Button>
@@ -688,15 +688,15 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
 
         {/* Profile hero */}
-        <div className="flex items-start gap-5 p-6 rounded-2xl border border-white/8 bg-white/[0.02]">
+        <div className="flex items-start gap-5 p-6 rounded-2xl border border-amber-500/20 glass-card/[0.02]">
           {(profile as any).logoUrl ? (
             <img
               src={(profile as any).logoUrl}
               alt={(profile as any).brandName}
-              className="w-20 h-20 rounded-2xl object-cover border border-white/15 shrink-0"
+              className="w-20 h-20 rounded-2xl object-cover border border-amber-500/20 shrink-0"
             />
           ) : (
-            <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-2xl glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0">
               <Shirt className="h-9 w-9 text-white/25" />
             </div>
           )}
@@ -775,7 +775,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
           </h2>
 
           {collections.length === 0 ? (
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-12 text-center">
+            <div className="glass-card/[0.03] border border-amber-500/20 rounded-2xl p-12 text-center">
               <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
               <p className="text-white/40 text-sm">No published collections yet.</p>
             </div>
@@ -794,7 +794,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
           )}
         </div>
 
-        <div className="border-t border-white/10 pt-8 text-center space-y-3">
+        <div className="border-t border-amber-500/20 pt-8 text-center space-y-3">
           <p className="text-xs text-white/30">
             Purchased items appear instantly in your wardrobe inventory Ã¢ÂÂ assign to any character across any project.
           </p>
@@ -822,7 +822,7 @@ function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void 
       className={`group text-left rounded-2xl overflow-hidden transition-all duration-200 border ${
         isLamalo
           ? "border-amber-500/40 hover:border-amber-400 bg-gradient-to-br from-amber-950/30 to-black shadow-lg shadow-amber-500/10"
-          : "border-white/10 hover:border-amber-500/30 bg-white/[0.02] hover:bg-white/[0.04]"
+          : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02] hover:bg-white/[0.04]"
       }`}
     >
       <div className="relative h-36 overflow-hidden">
@@ -833,7 +833,7 @@ function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-white/5 flex items-center justify-center">
+          <div className="w-full h-full glass-card/5 flex items-center justify-center">
             <Shirt className="h-8 w-8 text-white/20" />
           </div>
         )}
@@ -941,7 +941,7 @@ function MarketplaceGrid({
 
       {/* Hero */}
       <section
-        className="relative py-20 px-4 overflow-hidden border-b border-white/10"
+        className="relative py-20 px-4 overflow-hidden border-b border-amber-500/20"
         style={{ background: "linear-gradient(180deg,#000 0%,#0c0800 60%,#000 100%)" }}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.06)_0%,transparent_70%)] pointer-events-none" />
@@ -978,7 +978,7 @@ function MarketplaceGrid({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search designers, styles, collectionsÃ¢ÂÂ¦"
-                className="pl-10 bg-white/5 border-white/15 text-white placeholder-white/30 h-12 text-sm"
+                className="pl-10 bg-white/5 border-amber-500/20 text-white placeholder-white/30 h-12 text-sm"
               />
             </div>
             <Button
@@ -995,7 +995,7 @@ function MarketplaceGrid({
       <ValueProps />
 
       {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Custom Item Feature Strip Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
-      <section className="border-b border-white/10 bg-gradient-to-r from-amber-950/20 to-black py-10 px-4">
+      <section className="border-b border-amber-500/20 bg-gradient-to-r from-amber-950/20 to-black py-10 px-4">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-6">
           <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
             <Wand2 className="h-8 w-8 text-amber-400" />
@@ -1032,7 +1032,7 @@ function MarketplaceGrid({
       </section>
 
       {/* Stats bar */}
-      <section className="border-b border-white/10 py-6 px-4 bg-white/[0.01]">
+      <section className="border-b border-amber-500/20 py-6 px-4 bg-white/[0.01]">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-10">
           {[
             { icon: Users,   label: "Designers",    value: designers?.length ?? "Ã¢ÂÂ" },
@@ -1106,7 +1106,7 @@ function MarketplaceGrid({
       </section>
 
       {/* Designer CTA */}
-      <section className="border-t border-white/10 bg-white/[0.01] py-16 px-4">
+      <section className="border-t border-amber-500/20 bg-white/[0.01] py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <Building2 className="h-10 w-10 text-amber-400 mx-auto mb-4" />
           <h2 className="text-2xl font-black tracking-tight mb-3 gradient-text-gold">List your designs here.</h2>
@@ -1127,7 +1127,7 @@ function MarketplaceGrid({
         </div>
       </section>
 
-      <footer className="border-t border-white/10 py-8 px-4 text-center">
+      <footer className="border-t border-amber-500/20 py-8 px-4 text-center">
         <p className="text-xs text-white/20">
           ÃÂ© 2026 Virelle Studios ÃÂ· Lamalo Fashions ÃÂ·{" "}
           <button

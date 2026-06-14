@@ -117,17 +117,17 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </span>
             )}
             {scene.locationType && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
                 <MapPin style={{ width: 8, height: 8 }} />{scene.locationType}
               </span>
             )}
             {scene.weather && scene.weather !== "clear" && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
                 <Cloud style={{ width: 8, height: 8 }} />{scene.weather}
               </span>
             )}
             {scene.colorGrading && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/50">
+              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">
                 <Palette style={{ width: 8, height: 8 }} />{scene.colorGrading}
               </span>
             )}
@@ -195,19 +195,19 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <span className="text-[9px] text-muted-foreground/40 flex items-center gap-1">
                 <Clock style={{ width: 9, height: 9 }} />{formatTime(scene.duration || 30)}
               </span>
-              {scene.intExt && <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-muted-foreground/50">{scene.intExt}</span>}
+              {scene.intExt && <span className="text-[9px] px-1.5 py-0.5 rounded glass-card/5 text-muted-foreground/50">{scene.intExt}</span>}
             </div>
             <p className="text-[11px] text-muted-foreground/60 line-clamp-2 leading-relaxed">{scene.description || "No description"}</p>
             <div className="flex flex-wrap gap-1 pt-0.5">
               {scene.timeOfDay && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/5" style={{ color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5" style={{ color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
                   {scene.timeOfDay}
                 </span>
               )}
-              {scene.locationType && <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/50">{scene.locationType}</span>}
-              {scene.weather && scene.weather !== "clear" && <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/50">{scene.weather}</span>}
+              {scene.locationType && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">{scene.locationType}</span>}
+              {scene.weather && scene.weather !== "clear" && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50">{scene.weather}</span>}
               {(scene.characterIds as number[] || []).length > 0 && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 text-muted-foreground/40 truncate max-w-[200px]">
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/40 truncate max-w-[200px]">
                   {(scene.characterIds as number[]).map((id: number) => getCharName(id)).join(", ")}
                 </span>
               )}

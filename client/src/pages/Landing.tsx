@@ -117,7 +117,7 @@ export default function Landing() {
       <GoldWatermark />
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Navigation ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10 py-3" : "bg-transparent py-6"}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-amber-500/20 py-3" : "bg-transparent py-6"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setLocation("/")}>
@@ -152,13 +152,13 @@ export default function Landing() {
               <>
                 <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Sign In</button>
                 <Button onClick={() => setLocation("/register")} className="hidden sm:flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-5 shadow-lg shadow-amber-500/20 text-sm"><Film className="h-3.5 w-3.5" />Join as Director</Button>
-                <Button onClick={() => setLocation("/designer-register")} className="hidden sm:flex items-center gap-1.5 bg-transparent hover:bg-white/10 text-white border border-white/30 hover:border-white/50 font-bold rounded-full px-5 text-sm"><Shirt className="h-3.5 w-3.5" />Join as Designer</Button>
+                <Button onClick={() => setLocation("/designer-register")} className="hidden sm:flex items-center gap-1.5 bg-transparent hover:glass-card/10 text-white border border-white/30 hover:border-white/50 font-bold rounded-full px-5 text-sm"><Shirt className="h-3.5 w-3.5" />Join as Designer</Button>
               </>
             )}
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(o => !o)}
-              className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all"
+              className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:glass-card/10 transition-all"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -168,15 +168,15 @@ export default function Landing() {
 
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 py-4 px-6 space-y-1 shadow-2xl">
-            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Showcase</button>
-            <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Pricing</button>
-            <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
-            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Industry</button>
-            <div className="border-t border-white/10 pt-3 mt-1 flex flex-col gap-2">
-              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left">Sign In</button>
+          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-amber-500/20 py-4 px-6 space-y-1 shadow-2xl">
+            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Showcase</button>
+            <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Pricing</button>
+            <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
+            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Industry</button>
+            <div className="border-t border-amber-500/20 pt-3 mt-1 flex flex-col gap-2">
+              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all text-left">Sign In</button>
               <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Film className="h-4 w-4" />Join as Director</Button>
-              <Button onClick={() => { setLocation("/designer-register"); setMobileMenuOpen(false); }} className="w-full bg-transparent hover:bg-white/10 text-white border border-white/30 font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Shirt className="h-4 w-4" />Join as Designer</Button>
+              <Button onClick={() => { setLocation("/designer-register"); setMobileMenuOpen(false); }} className="w-full bg-transparent hover:glass-card/10 text-white border border-white/30 font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Shirt className="h-4 w-4" />Join as Designer</Button>
             </div>
           </div>
         )}
@@ -214,7 +214,7 @@ export default function Landing() {
                 Start Free
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setLocation("/showcase")} className="h-13 text-base px-8 gap-2 border-white/20 hover:bg-white/5 text-white">
+              <Button size="lg" variant="outline" onClick={() => setLocation("/showcase")} className="h-13 text-base px-8 gap-2 border-white/20 hover:glass-card/5 text-white">
                 <Play className="h-4 w-4" />
                 Watch The Showrunner
               </Button>
@@ -233,7 +233,7 @@ export default function Landing() {
               <p className="text-xs text-white/40 font-semibold uppercase tracking-widest">Also available on</p>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all text-sm font-semibold text-white/80"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -242,7 +242,7 @@ export default function Landing() {
               </button>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all text-sm font-semibold text-white/80"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
@@ -287,7 +287,7 @@ export default function Landing() {
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 1.5 The Showrunner Showcase Proof ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
           <section
-            className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10"
+            className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20"
             style={{ background: "linear-gradient(180deg, #000 0%, #0a0800 40%, #000 100%)" }}
             data-testid="section-showrunner-proof"
           >
@@ -402,7 +402,7 @@ export default function Landing() {
         </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 2. How It Works ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 bg-black">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
@@ -436,7 +436,7 @@ export default function Landing() {
 
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 2b. Get Your API Keys ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ provider shortcuts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section id="get-keys" className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+        <section id="get-keys" className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-amber-500/20">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
@@ -464,7 +464,7 @@ export default function Landing() {
                   href={p.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col p-4 rounded-2xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20 transition-all duration-200"
+                  className="group flex flex-col p-4 rounded-2xl border border-amber-500/20 bg-white/[0.02] hover:glass-card/[0.04] hover:border-white/20 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -491,7 +491,7 @@ export default function Landing() {
         </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 3. Two Core Use Cases ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/10">
+        <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-amber-500/20">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gold-shimmer">
@@ -500,7 +500,7 @@ export default function Landing() {
               </h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
+              <Card className="bg-white/[0.03] border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                 <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
                 <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                   <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
@@ -521,7 +521,7 @@ export default function Landing() {
                   <p className="text-xs font-semibold text-amber-400">Perfect for: Indie filmmakers, content creators, YouTube channels</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
+              <Card className="bg-white/[0.03] border-amber-500/20 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                 <div className="h-1.5 bg-gradient-to-r from-purple-400 to-violet-500" />
                 <CardContent className="p-8 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
@@ -547,7 +547,7 @@ export default function Landing() {
         </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 3b. Signature Cast Teaser ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black border-t border-amber-500/20">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
@@ -571,7 +571,7 @@ export default function Landing() {
                 { label: "Commercially clean", sub: "Platform-owned talent" },
                 { label: "Better for teams", sub: "Shared repeatable cast" },
               ].map(item => (
-                <div key={item.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
+                <div key={item.label} className="rounded-xl border border-amber-500/20 glass-card/[0.02] p-4 text-center">
                   <p className="text-sm font-semibold text-amber-300 mb-0.5">{item.label}</p>
                   <p className="text-xs text-white/40">{item.sub}</p>
                 </div>
@@ -597,21 +597,21 @@ export default function Landing() {
               <p className="mt-4 text-white/60 max-w-2xl mx-auto">Virelle is built for the rigorous demands of professional film production.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
+              <div className="p-8 rounded-3xl border border-amber-500/20 glass-card/[0.02]">
                 <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
                   <ShieldCheck className="h-6 w-6 text-blue-400" />
                 </div>
                 <h4 className="text-lg font-bold mb-3 gradient-text-gold">100% Commercial Ownership</h4>
                 <p className="text-sm text-white/50 leading-relaxed">You own all outputs commercially. No royalties, no licensing fees, and no platform watermarks on your exports.</p>
               </div>
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
+              <div className="p-8 rounded-3xl border border-amber-500/20 glass-card/[0.02]">
                 <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6">
                   <Cpu className="h-6 w-6 text-amber-400" />
                 </div>
                 <h4 className="text-lg font-bold mb-3 gradient-text-gold">BYOK Architecture</h4>
                 <p className="text-sm text-white/50 leading-relaxed">Your AI keys, your costs. Connect fal.ai, Runway, ElevenLabs, OpenAI and more ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Virelle orchestrates them without any markup. You pay providers directly.counts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
               </div>
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
+              <div className="p-8 rounded-3xl border border-amber-500/20 glass-card/[0.02]">
                 <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6">
                   <Globe className="h-6 w-6 text-purple-400" />
                 </div>
@@ -623,7 +623,7 @@ export default function Landing() {
         </section>
 
                 {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 4b. Clips are not a production ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-amber-500/20">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-gold-shimmer">Clips are not a production.</h2>
@@ -632,12 +632,12 @@ export default function Landing() {
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-7">
+                <div className="rounded-2xl border border-amber-500/20 glass-card/[0.02] p-7">
                   <h3 className="text-xs font-bold /30 uppercase tracking-widest mb-5">Generic clip tools</h3>
                   <ul className="space-y-3">
                     {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/35">
-                        <span className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center text-white/20 text-[10px] shrink-0">x</span>
+                        <span className="w-4 h-4 rounded-full border border-amber-500/20 flex items-center justify-center text-white/20 text-[10px] shrink-0">x</span>
                         {item}
                       </li>
                     ))}
@@ -659,7 +659,7 @@ export default function Landing() {
           </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 4c. What filmmakers build ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.015] border-t border-white/10">
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.015] border-t border-amber-500/20">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-amber-500/70 mb-3">Production range</p>
@@ -709,7 +709,7 @@ export default function Landing() {
           </section>
 
             {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 5. Pricing Preview ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-white/10">
+        <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-amber-500/20">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
@@ -726,7 +726,7 @@ export default function Landing() {
                 { tier: "Industry", price: "A$1,490", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
                 { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
-                <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
+                <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                     <h3 className="text-xl font-bold mb-2 gradient-text-gold">{plan.tier}</h3>
                     <div className="mb-1">
@@ -771,7 +771,7 @@ export default function Landing() {
         </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 6. Download App Section ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 bg-black">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-6">
               <Smartphone className="h-3.5 w-3.5" />
@@ -786,7 +786,7 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all w-full sm:w-auto"
+                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all w-full sm:w-auto"
               >
                 <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -798,7 +798,7 @@ export default function Landing() {
               </button>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all w-full sm:w-auto"
+                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all w-full sm:w-auto"
               >
                 <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
@@ -814,7 +814,7 @@ export default function Landing() {
         </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 7. FAQ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 bg-black">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold tracking-tight text-gold-shimmer">Frequently Asked Questions</h2>
@@ -839,7 +839,7 @@ export default function Landing() {
 
         
           {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Lamalo Virtual Wardrobe ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-          <section className="relative py-28 px-4 sm:px-6 lg:px-8 border-t border-white/10 overflow-hidden bg-black">
+          <section className="relative py-28 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 overflow-hidden bg-black">
             {/* Ambient glow */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_60%,rgba(99,102,241,0.04)_0%,transparent_70%)] pointer-events-none" />
@@ -930,7 +930,7 @@ export default function Landing() {
                       </button>
                       <button
                         onClick={() => setLocation("/designer-register")}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/15 hover:border-white/30 text-white/70 hover:text-white font-semibold text-sm transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-amber-500/20 hover:border-white/30 text-white/70 hover:text-white font-semibold text-sm transition-all"
                       >
                         List Your Designs
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -949,7 +949,7 @@ export default function Landing() {
                     ].map((cat) => (
                       <div
                         key={cat.label}
-                        className={`rounded-xl bg-gradient-to-br ${cat.color} border border-white/5 p-3 flex flex-col justify-between min-h-[80px]`}
+                        className={`rounded-xl bg-gradient-to-br ${cat.color} border border-amber-500/20 p-3 flex flex-col justify-between min-h-[80px]`}
                       >
                         <p className="text-[11px] font-bold text-white/80 leading-snug">{cat.label}</p>
                         <p className="text-[10px] text-white/35 mt-1 leading-snug">{cat.tag}</p>
@@ -960,7 +960,7 @@ export default function Landing() {
               </div>
 
               {/* Designer partner note */}
-              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="rounded-2xl border border-amber-500/20 glass-card/[0.02] p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
                   <Sparkles className="h-5 w-5 text-amber-400" />
                 </div>
@@ -982,7 +982,7 @@ export default function Landing() {
           </section>
 
                   {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 7.5 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Founding Designer Partner Program ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-          <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10">
+          <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-amber-500/20">
             <div className="absolute inset-0 bg-gradient-to-br from-black via-amber-950/10 to-black" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.07)_0%,transparent_70%)] pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_70%,rgba(212,175,55,0.04)_0%,transparent_60%)] pointer-events-none" />
@@ -1031,7 +1031,7 @@ export default function Landing() {
                 </div>
               </div>
                 {foundingStatus?.foundingActive !== false && foundingStatus?.spotsRemaining !== undefined && (
-                  <div className="mt-3 w-full bg-white/5 rounded-full overflow-hidden h-1.5">
+                  <div className="mt-3 w-full glass-card/5 rounded-full overflow-hidden h-1.5">
                     <div className="h-full bg-amber-400 rounded-full transition-all duration-700"
                       style={{ width: `${Math.round((foundingStatus.taken / foundingStatus.totalSpots) * 100)}%` }} />
                   </div>
@@ -1049,7 +1049,7 @@ export default function Landing() {
                   { icon: "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", title: "Production Credits", desc: "Get credited when your pieces are used in eligible Virelle.life productions." },
                   { icon: "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", title: "Global Reach, Day One", desc: "Discoverable by film productions worldwide from the moment you publish." },
                 ] as const).map((b) => (
-                  <div key={b.title} className="bg-white/3 border border-white/8 rounded-2xl p-5 hover:border-amber-500/25 hover:bg-white/5 transition-all">
+                  <div key={b.title} className="bg-white/3 border border-amber-500/20 rounded-2xl p-5 hover:border-amber-500/25 hover:glass-card/5 transition-all">
                     <div className="text-2xl mb-3">{b.icon}</div>
                     <h4 className="text-sm font-black mb-1.5 gradient-text-gold">{b.title}</h4>
                     <p className="text-xs text-white/45 leading-relaxed">{b.desc}</p>
@@ -1071,7 +1071,7 @@ export default function Landing() {
               </div>
 
               {/* For productions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ compact divider */}
-              <div className="border-t border-white/8 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="border-t border-amber-500/20 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <p className="text-white/35 text-xs font-bold uppercase tracking-wider mb-1">Already a filmmaker?</p>
                   <h3 className="text-xl font-black gradient-text-gold">Browse the Wardrobe Marketplace</h3>
@@ -1082,7 +1082,7 @@ export default function Landing() {
                 <Button
                   onClick={() => setLocation("/wardrobe-marketplace")}
                   variant="outline"
-                  className="shrink-0 border-white/15 text-white/70 hover:bg-white/5 font-bold px-8 h-11"
+                  className="shrink-0 border-amber-500/20 text-white/70 hover:bg-white/5 font-bold px-8 h-11"
                 >
                   Browse the Marketplace
                 </Button>
@@ -1092,7 +1092,7 @@ export default function Landing() {
           </section>
 
         {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 8. Final CTA ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-        <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-amber-500/20 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 text-gold-shimmer">READY TO PRODUCE?</h2>
@@ -1102,7 +1102,7 @@ export default function Landing() {
               <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
                 Start Free Trial
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5 text-white">
+              <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-amber-500/20 hover:bg-white/5 text-white">
                 View Pricing
               </Button>
             </div>
@@ -1111,7 +1111,7 @@ export default function Landing() {
       </main>
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Footer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 bg-black">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-2.5">
             <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />

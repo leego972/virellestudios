@@ -1499,13 +1499,13 @@ function ShotListTab({ projectId }: { projectId: number }) {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b bg-muted/40">
-                    <th className="text-left p-2 font-medium w-12">#</th>
-                    <th className="text-left p-2 font-medium w-20">Type</th>
-                    <th className="text-left p-2 font-medium w-16">Lens</th>
-                    <th className="text-left p-2 font-medium w-24">Movement</th>
-                    <th className="text-left p-2 font-medium">Frame / Action</th>
-                    <th className="text-left p-2 font-medium w-24">Lighting</th>
-                    <th className="text-left p-2 font-medium w-12">Dur.</th>
+                    <th className="text-left p-2 font-medium w-12 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">#</th>
+                    <th className="text-left p-2 font-medium w-20 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Type</th>
+                    <th className="text-left p-2 font-medium w-16 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Lens</th>
+                    <th className="text-left p-2 font-medium w-24 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Movement</th>
+                    <th className="text-left p-2 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Frame / Action</th>
+                    <th className="text-left p-2 font-medium w-24 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Lighting</th>
+                    <th className="text-left p-2 font-medium w-12 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Dur.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1566,12 +1566,12 @@ function ShotListTab({ projectId }: { projectId: number }) {
                   <div className="border-t overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead><tr className="border-b bg-muted/30">
-                        <th className="text-left p-2 w-12">#</th>
-                        <th className="text-left p-2 w-20">Type</th>
-                        <th className="text-left p-2 w-16">Lens</th>
-                        <th className="text-left p-2 w-24">Movement</th>
-                        <th className="text-left p-2">Frame / Action</th>
-                        <th className="text-left p-2 w-12">Dur.</th>
+                        <th className="text-left p-2 w-12 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">#</th>
+                        <th className="text-left p-2 w-20 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Type</th>
+                        <th className="text-left p-2 w-16 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Lens</th>
+                        <th className="text-left p-2 w-24 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Movement</th>
+                        <th className="text-left p-2 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Frame / Action</th>
+                        <th className="text-left p-2 w-12 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Dur.</th>
                       </tr></thead>
                       <tbody>
                         {sShots.map((shot: any, i: number) => (

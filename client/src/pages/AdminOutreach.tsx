@@ -295,14 +295,14 @@ export default function AdminOutreach() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/50 text-[11px] uppercase tracking-wider text-muted-foreground">
-                    <th className="text-left px-4 py-3">Email</th>
-                    <th className="text-left px-4 py-3">Name</th>
-                    <th className="text-left px-4 py-3">Company</th>
-                    <th className="text-left px-4 py-3">Role</th>
-                    <th className="text-left px-4 py-3">Tags</th>
-                    <th className="text-left px-4 py-3">Status</th>
-                    <th className="text-left px-4 py-3">Added</th>
-                    <th className="px-4 py-3" />
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Email</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Name</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Company</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Role</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Tags</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Status</th>
+                    <th className="text-left px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Added</th>
+                    <th className="px-4 py-3 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs" />
                   </tr>
                 </thead>
                 <tbody>

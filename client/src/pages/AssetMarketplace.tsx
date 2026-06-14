@@ -101,7 +101,7 @@ export default function AssetMarketplace() {
   return (
     <div className="min-h-screen text-white pb-20" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Header */}
-      <div className="border-b border-white/5 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
+      <div className="border-b border-amber-500/20 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="text-white/60 hover:text-white">
@@ -131,16 +131,16 @@ export default function AssetMarketplace() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input 
               placeholder="Search wardrobes, funding, music, locations..." 
-              className="pl-10 bg-white/5 border-white/10 h-11 focus:ring-amber-500/20 text-white"
+              className="pl-10 bg-white/5 border-amber-500/20 h-11 focus:ring-amber-500/20 text-white"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Select value={category} onValueChange={(v) => setCategory(v as AssetCategory)}>
-            <SelectTrigger className="w-full md:w-[200px] bg-white/5 border-white/10 h-11 text-white">
+            <SelectTrigger className="w-full md:w-[200px] bg-white/5 border-amber-500/20 h-11 text-white">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <SelectContent className="bg-zinc-900 border-white/10 text-white">
+            <SelectContent className="bg-zinc-900 border-amber-500/20 text-white">
               <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="wardrobes">Wardrobes (Real)</SelectItem>
               <SelectItem value="funding">Funding (Real)</SelectItem>
@@ -167,7 +167,7 @@ export default function AssetMarketplace() {
               size="sm"
               onClick={() => setCategory(cat.id as AssetCategory)}
               className={`rounded-full px-4 h-9 whitespace-nowrap ${
-                category === cat.id ? "bg-amber-500 text-black hover:bg-amber-600" : "border-white/10 hover:bg-white/5 text-white"
+                category === cat.id ? "bg-amber-500 text-black hover:bg-amber-600" : "border-amber-500/20 hover:bg-white/5 text-white"
               }`}
             >
               <cat.icon className="w-3.5 h-3.5 mr-2" />
@@ -180,13 +180,13 @@ export default function AssetMarketplace() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-[4/5] rounded-xl bg-white/5 animate-pulse border border-white/5" />
+              <div key={i} className="aspect-[4/5] rounded-xl glass-card/5 animate-pulse border border-amber-500/20" />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredAssets.map((asset) => (
-              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
+              <Card key={asset.id} className="border-amber-500/20 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
                     <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -263,7 +263,7 @@ export default function AssetMarketplace() {
 
         {/* Coming Soon Section */}
         {category !== "wardrobes" && category !== "funding" && category !== "all" && (
-          <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+          <div className="text-center py-20 border border-dashed border-amber-500/20 rounded-3xl glass-card/[0.01]">
             <Lock className="w-12 h-12 mx-auto mb-4 text-white/20" />
             <h2 className="text-xl font-bold mb-2 gradient-text-gold">Marketplace Expansion</h2>
             <p className="text-white/40 max-w-md mx-auto text-sm">

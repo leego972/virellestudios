@@ -513,7 +513,7 @@ export default function DesignerWardrobePage() {
           </div>
           {it.visibility !== "public" ? (
             <div className="absolute top-2 right-2">
-              <Badge variant="outline" className="bg-zinc-950/80 text-zinc-300 border-amber-500/20 text-[10px]">
+              <Badge variant="outline" className="bg-zinc-950/80 text-zinc-400 border-amber-500/20 text-[10px]">
                 <EyeOff className="w-3 h-3 mr-1" />
                 {it.visibility}
               </Badge>
@@ -530,7 +530,7 @@ export default function DesignerWardrobePage() {
           ) : null}
           <div className="flex items-center gap-1 mt-3 flex-wrap">
             {it.era ? (
-              <Badge variant="outline" className="bg-zinc-800/40 text-zinc-300 border-amber-500/20 text-[10px]">
+              <Badge variant="outline" className="bg-zinc-800/40 text-zinc-400 border-amber-500/20 text-[10px]">
                 {it.era}
               </Badge>
             ) : null}
@@ -675,7 +675,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
                   browseFilter === "all"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
+                    : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-400 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 All
@@ -691,7 +691,7 @@ export default function DesignerWardrobePage() {
                     className={`px-3 py-1.5 rounded-full text-xs border inline-flex items-center gap-1 transition-colors ${
                       active
                         ? "bg-amber-500 text-black border-amber-500"
-                        : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
+                        : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-400 border-amber-500/20 hover:border-amber-700/60"
                     }`}
                   >
                     <Icon className="w-3 h-3" />
@@ -872,7 +872,7 @@ export default function DesignerWardrobePage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-medium truncate">{item?.name ?? "Unknown item"}</span>
-                              <Badge variant="outline" className="bg-zinc-800/40 text-zinc-300 border-amber-500/20 text-[10px]">
+                              <Badge variant="outline" className="bg-zinc-800/40 text-zinc-400 border-amber-500/20 text-[10px]">
                                 {a.assignmentType.replace(/_/g, " ")}
                               </Badge>
                               <Badge variant="outline" className="bg-amber-900/30 text-amber-200 border-amber-700/40 text-[10px]">
@@ -920,7 +920,7 @@ export default function DesignerWardrobePage() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-zinc-300">Brand / studio name *</Label>
+              <Label className="text-zinc-400">Brand / studio name *</Label>
               <Input
                 value={profileForm.brandName}
                 onChange={(e) => setProfileForm((f) => ({ ...f, brandName: e.target.value }))}
@@ -930,7 +930,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Display name</Label>
+                <Label className="text-zinc-400">Display name</Label>
                 <Input
                   value={profileForm.displayName}
                   onChange={(e) => setProfileForm((f) => ({ ...f, displayName: e.target.value }))}
@@ -939,7 +939,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Profile type</Label>
+                <Label className="text-zinc-400">Profile type</Label>
                 <Select
                   value={profileForm.profileType}
                   onValueChange={(v) => setProfileForm((f) => ({ ...f, profileType: v }))}
@@ -956,7 +956,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">Bio</Label>
+              <Label className="text-zinc-400">Bio</Label>
               <Textarea
                 value={profileForm.bio}
                 onChange={(e) => setProfileForm((f) => ({ ...f, bio: e.target.value }))}
@@ -966,7 +966,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Website</Label>
+                <Label className="text-zinc-400">Website</Label>
                 <Input
                   value={profileForm.website}
                   onChange={(e) => setProfileForm((f) => ({ ...f, website: e.target.value }))}
@@ -975,7 +975,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Instagram</Label>
+                <Label className="text-zinc-400">Instagram</Label>
                 <Input
                   value={profileForm.instagram}
                   onChange={(e) => setProfileForm((f) => ({ ...f, instagram: e.target.value }))}
@@ -986,7 +986,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Contact email</Label>
+                <Label className="text-zinc-400">Contact email</Label>
                 <Input
                   value={profileForm.contactEmail}
                   onChange={(e) => setProfileForm((f) => ({ ...f, contactEmail: e.target.value }))}
@@ -995,7 +995,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Logo URL</Label>
+                <Label className="text-zinc-400">Logo URL</Label>
                 <Input
                   value={profileForm.logoUrl}
                   onChange={(e) => setProfileForm((f) => ({ ...f, logoUrl: e.target.value }))}
@@ -1005,7 +1005,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">Visibility</Label>
+              <Label className="text-zinc-400">Visibility</Label>
               <Select
                 value={profileForm.visibility}
                 onValueChange={(v) => setProfileForm((f) => ({ ...f, visibility: v as any }))}
@@ -1046,7 +1046,7 @@ export default function DesignerWardrobePage() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-zinc-300">Name *</Label>
+              <Label className="text-zinc-400">Name *</Label>
               <Input
                 value={collectionForm.name}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, name: e.target.value }))}
@@ -1055,7 +1055,7 @@ export default function DesignerWardrobePage() {
               />
             </div>
             <div>
-              <Label className="text-zinc-300">Description</Label>
+              <Label className="text-zinc-400">Description</Label>
               <Textarea
                 value={collectionForm.description}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, description: e.target.value }))}
@@ -1064,7 +1064,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1">
-                <Label className="text-zinc-300">Type</Label>
+                <Label className="text-zinc-400">Type</Label>
                 <Select
                   value={collectionForm.collectionType}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, collectionType: v }))}
@@ -1080,7 +1080,7 @@ export default function DesignerWardrobePage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-300">Season</Label>
+                <Label className="text-zinc-400">Season</Label>
                 <Input
                   value={collectionForm.season}
                   onChange={(e) => setCollectionForm((f) => ({ ...f, season: e.target.value }))}
@@ -1089,7 +1089,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Year</Label>
+                <Label className="text-zinc-400">Year</Label>
                 <Input
                   value={collectionForm.year}
                   onChange={(e) => setCollectionForm((f) => ({ ...f, year: e.target.value }))}
@@ -1100,7 +1100,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">Style tags (comma-separated)</Label>
+              <Label className="text-zinc-400">Style tags (comma-separated)</Label>
               <Input
                 value={collectionForm.styleTags}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, styleTags: e.target.value }))}
@@ -1109,7 +1109,7 @@ export default function DesignerWardrobePage() {
               />
             </div>
             <div>
-              <Label className="text-zinc-300">Cover image URL</Label>
+              <Label className="text-zinc-400">Cover image URL</Label>
               <Input
                 value={collectionForm.coverImageUrl}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, coverImageUrl: e.target.value }))}
@@ -1119,7 +1119,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Visibility</Label>
+                <Label className="text-zinc-400">Visibility</Label>
                 <Select
                   value={collectionForm.visibility}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, visibility: v as any }))}
@@ -1135,7 +1135,7 @@ export default function DesignerWardrobePage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-300">License</Label>
+                <Label className="text-zinc-400">License</Label>
                 <Select
                   value={collectionForm.licenseType}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, licenseType: v }))}
@@ -1152,7 +1152,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">License notes</Label>
+              <Label className="text-zinc-400">License notes</Label>
               <Textarea
                 value={collectionForm.licenseNotes}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, licenseNotes: e.target.value }))}
@@ -1187,7 +1187,7 @@ export default function DesignerWardrobePage() {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Name *</Label>
+                <Label className="text-zinc-400">Name *</Label>
                 <Input
                   value={itemForm.name}
                   onChange={(e) => setItemForm((f) => ({ ...f, name: e.target.value }))}
@@ -1195,7 +1195,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Category</Label>
+                <Label className="text-zinc-400">Category</Label>
                 <Select
                   value={itemForm.wardrobeType}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, wardrobeType: v as WardrobeType }))}
@@ -1213,7 +1213,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Subcategory</Label>
+                <Label className="text-zinc-400">Subcategory</Label>
                 <Input
                   value={itemForm.subcategory}
                   onChange={(e) => setItemForm((f) => ({ ...f, subcategory: e.target.value }))}
@@ -1222,7 +1222,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Era</Label>
+                <Label className="text-zinc-400">Era</Label>
                 <Input
                   value={itemForm.era}
                   onChange={(e) => setItemForm((f) => ({ ...f, era: e.target.value }))}
@@ -1232,7 +1232,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">Description</Label>
+              <Label className="text-zinc-400">Description</Label>
               <Textarea
                 value={itemForm.description}
                 onChange={(e) => setItemForm((f) => ({ ...f, description: e.target.value }))}
@@ -1241,7 +1241,7 @@ export default function DesignerWardrobePage() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <Label className="text-zinc-300">Colors</Label>
+                <Label className="text-zinc-400">Colors</Label>
                 <Input
                   value={itemForm.colors}
                   onChange={(e) => setItemForm((f) => ({ ...f, colors: e.target.value }))}
@@ -1250,7 +1250,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Materials</Label>
+                <Label className="text-zinc-400">Materials</Label>
                 <Input
                   value={itemForm.materials}
                   onChange={(e) => setItemForm((f) => ({ ...f, materials: e.target.value }))}
@@ -1259,7 +1259,7 @@ export default function DesignerWardrobePage() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Style tags</Label>
+                <Label className="text-zinc-400">Style tags</Label>
                 <Input
                   value={itemForm.styleTags}
                   onChange={(e) => setItemForm((f) => ({ ...f, styleTags: e.target.value }))}
@@ -1269,7 +1269,7 @@ export default function DesignerWardrobePage() {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-300">Primary image URL</Label>
+              <Label className="text-zinc-400">Primary image URL</Label>
               <Input
                 value={itemForm.primaryImageUrl}
                 onChange={(e) => setItemForm((f) => ({ ...f, primaryImageUrl: e.target.value }))}
@@ -1278,7 +1278,7 @@ export default function DesignerWardrobePage() {
               />
             </div>
             <div>
-              <Label className="text-zinc-300">Reference prompt for the AI</Label>
+              <Label className="text-zinc-400">Reference prompt for the AI</Label>
               <Textarea
                 value={itemForm.referencePrompt}
                 onChange={(e) => setItemForm((f) => ({ ...f, referencePrompt: e.target.value }))}
@@ -1288,7 +1288,7 @@ export default function DesignerWardrobePage() {
             </div>
 
             <div className="border-t border-amber-500/20 pt-3">
-              <Label className="text-zinc-300 text-xs uppercase tracking-wider">Usage permissions</Label>
+              <Label className="text-zinc-400 text-xs uppercase tracking-wider">Usage permissions</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {([
                   ["characterWardrobeAllowed", "Character wardrobe OK"],
@@ -1298,7 +1298,7 @@ export default function DesignerWardrobePage() {
                   ["commercialUseAllowed",    "Commercial production OK"],
                 ] as const).map(([k, label]) => (
                   <div key={k} className="flex items-center justify-between bg-zinc-950 border border-amber-500/20 rounded px-3 py-2">
-                    <span className="text-xs text-zinc-300">{label}</span>
+                    <span className="text-xs text-zinc-400">{label}</span>
                     <Switch
                       checked={(itemForm as any)[k]}
                       onCheckedChange={(v) => setItemForm((f) => ({ ...f, [k]: v } as any))}
@@ -1310,7 +1310,7 @@ export default function DesignerWardrobePage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">License</Label>
+                <Label className="text-zinc-400">License</Label>
                 <Select
                   value={itemForm.licenseType}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, licenseType: v }))}
@@ -1326,7 +1326,7 @@ export default function DesignerWardrobePage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-300">Visibility</Label>
+                <Label className="text-zinc-400">Visibility</Label>
                 <Select
                   value={itemForm.visibility}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, visibility: v }))}
@@ -1345,7 +1345,7 @@ export default function DesignerWardrobePage() {
 
             {myCollections.length > 0 ? (
               <div>
-                <Label className="text-zinc-300">Add to collection (optional)</Label>
+                <Label className="text-zinc-400">Add to collection (optional)</Label>
                 <Select
                   value={itemForm.collectionId || "none"}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, collectionId: v === "none" ? "" : v }))}
@@ -1392,7 +1392,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-2 rounded border text-sm ${
                   attachKind === "character"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-zinc-950 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
+                    : "bg-zinc-950 text-zinc-400 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 <User className="w-4 h-4 inline mr-1" /> Character
@@ -1402,7 +1402,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-2 rounded border text-sm ${
                   attachKind === "scene"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-zinc-950 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
+                    : "bg-zinc-950 text-zinc-400 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 <Sofa className="w-4 h-4 inline mr-1" /> Scene
@@ -1412,7 +1412,7 @@ export default function DesignerWardrobePage() {
             {attachKind === "character" ? (
               <>
                 <div>
-                  <Label className="text-zinc-300">Character</Label>
+                  <Label className="text-zinc-400">Character</Label>
                   <Select value={attachCharId} onValueChange={setAttachCharId}>
                     <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue placeholder="Pick a character" />
@@ -1425,7 +1425,7 @@ export default function DesignerWardrobePage() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-zinc-300">Type</Label>
+                  <Label className="text-zinc-400">Type</Label>
                   <Select value={attachAssignType} onValueChange={setAttachAssignType}>
                     <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue />
@@ -1440,7 +1440,7 @@ export default function DesignerWardrobePage() {
             ) : (
               <>
                 <div>
-                  <Label className="text-zinc-300">Scene</Label>
+                  <Label className="text-zinc-400">Scene</Label>
                   <Select value={attachSceneId} onValueChange={setAttachSceneId}>
                     <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue placeholder="Pick a scene" />
@@ -1455,7 +1455,7 @@ export default function DesignerWardrobePage() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-zinc-300">Type</Label>
+                  <Label className="text-zinc-400">Type</Label>
                   <Select value={attachAssignType} onValueChange={setAttachAssignType}>
                     <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue />
@@ -1474,7 +1474,7 @@ export default function DesignerWardrobePage() {
             )}
 
             <div>
-              <Label className="text-zinc-300">Usage mode</Label>
+              <Label className="text-zinc-400">Usage mode</Label>
               <Select value={attachUsage} onValueChange={setAttachUsage}>
                 <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                   <SelectValue />
@@ -1492,7 +1492,7 @@ export default function DesignerWardrobePage() {
             </div>
 
             <div>
-              <Label className="text-zinc-300">Placement notes</Label>
+              <Label className="text-zinc-400">Placement notes</Label>
               <Textarea
                 value={attachNotes}
                 onChange={(e) => setAttachNotes(e.target.value)}

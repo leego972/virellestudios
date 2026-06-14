@@ -109,7 +109,7 @@ export default function Credits() {
         <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             {summaryLoading ? (
-              <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
+              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
             ) : (
               <div className="text-center">
                 <div className="text-4xl font-black text-amber-400">
@@ -132,7 +132,7 @@ export default function Credits() {
         <Card>
           <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             {summaryLoading ? (
-              <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
+              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
             ) : (
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-blue-500/10 shrink-0">
@@ -159,7 +159,7 @@ export default function Credits() {
         <Card>
           <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             {summaryLoading ? (
-              <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
+              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
             ) : (
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-green-500/10 shrink-0">
@@ -225,7 +225,7 @@ export default function Credits() {
           {historyLoading ? (
             <div className="space-y-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-14 bg-white/5 rounded-lg animate-pulse" />
+                <div key={i} className="h-14 glass-card/5 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : transactions.length === 0 ? (
@@ -237,7 +237,7 @@ export default function Credits() {
           ) : (
             <>
               {/* Table header ÃÂ¢ÃÂÃÂ desktop only */}
-              <div className="hidden sm:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-3 pb-2 text-xs text-muted-foreground font-medium border-b border-white/5">
+              <div className="hidden sm:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-3 pb-2 text-xs text-muted-foreground font-medium border-b border-amber-500/20">
                 <span>Action</span>
                 <span className="text-right w-24">Amount</span>
                 <span className="text-right w-28">Balance After</span>
@@ -252,7 +252,7 @@ export default function Credits() {
                   return (
                     <div
                       key={tx.id}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-1 sm:gap-4 items-start sm:items-center px-3 py-3 rounded-lg hover:bg-white/3 transition-colors border border-transparent hover:border-white/5"
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-1 sm:gap-4 items-start sm:items-center px-3 py-3 rounded-lg hover:glass-card/3 transition-colors border border-transparent hover:border-amber-500/20"
                     >
                       {/* Action */}
                       <div className="flex items-center gap-2.5">
@@ -296,7 +296,7 @@ export default function Credits() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
+                <div className="flex items-center justify-between pt-4 border-t border-amber-500/20 mt-4">
                   <Button
                     variant="outline"
                     size="sm"

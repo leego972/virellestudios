@@ -58,7 +58,7 @@ function StatusBadge({ status }: { status: string }) {
     );
   }
   return (
-    <Badge className="bg-white/5 text-white/40 border-white/15">
+    <Badge className="bg-white/5 text-white/40 border-amber-500/20">
       <XCircle className="h-3 w-3 mr-1" /> Inactive
     </Badge>
   );
@@ -102,7 +102,7 @@ const ITEM_TIERS = [
 
     return (
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <DialogContent className="bg-zinc-900 border-white/15 text-white max-w-md glass-dark">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-white max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base font-bold gradient-text-gold">Set Pricing</DialogTitle>
             <p className="text-xs text-white/50 mt-0.5 truncate">{title}</p>
@@ -124,7 +124,7 @@ const ITEM_TIERS = [
                       className={`text-left rounded-lg px-2.5 py-1.5 border transition-all ${
                         leaseNum === p.price
                           ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
-                          : "bg-white/3 border-white/10 text-white/70 hover:border-amber-500/30 hover:text-white"
+                          : "bg-white/3 border-amber-500/20 text-white/70 hover:border-amber-500/30 hover:text-white"
                       }`}
                     >
                       <span className="text-xs font-bold block">A${p.price} · {p.label}</span>
@@ -146,7 +146,7 @@ const ITEM_TIERS = [
                             className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
                               leaseNum === v
                                 ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
-                                : "bg-white/5 border-white/10 hover:border-amber-500/30 hover:text-amber-400"
+                                : "bg-white/5 border-amber-500/20 hover:border-amber-500/30 hover:text-amber-400"
                             }`}
                           >
                             A${v}
@@ -170,7 +170,7 @@ const ITEM_TIERS = [
                     step="1"
                     value={retail}
                     onChange={(e) => setRetail(e.target.value)}
-                    className="pl-7 bg-white/5 border-white/15 text-white"
+                    className="pl-7 bg-white/5 border-amber-500/20 text-white"
                     placeholder="e.g. 800"
                   />
                 </div>
@@ -198,7 +198,7 @@ const ITEM_TIERS = [
                   step="0.50"
                   value={lease}
                   onChange={(e) => setLease(e.target.value)}
-                  className="pl-7 bg-white/5 border-white/15 text-white text-base font-bold"
+                  className="pl-7 bg-white/5 border-amber-500/20 text-white text-base font-bold"
                   placeholder="0.00"
                 />
               </div>
@@ -206,7 +206,7 @@ const ITEM_TIERS = [
 
             {/* Live earnings + breakeven */}
             {leaseNum > 0 && (
-              <div className="rounded-xl bg-white/3 border border-white/8 p-3 space-y-1.5">
+              <div className="rounded-xl glass-card/3 border border-amber-500/20 p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-white/50">You earn per lease</span>
                   <span className="text-sm font-bold text-green-400">A${youEarn.toFixed(2)}</span>
@@ -216,7 +216,7 @@ const ITEM_TIERS = [
                   <span className="text-xs text-white/30">−A${(leaseNum * 0.05).toFixed(2)}</span>
                 </div>
                 {leasesNeeded !== null && (
-                  <div className="pt-1.5 border-t border-white/8 flex items-center justify-between">
+                  <div className="pt-1.5 border-t border-amber-500/20 flex items-center justify-between">
                     <span className="text-xs text-white/50">Leases to cover A$299 membership</span>
                     <span className={`text-sm font-black ${leasesNeeded <= 6 ? "text-amber-400" : leasesNeeded <= 12 ? "text-amber-300/60" : "text-white/40"}`}>
                       {leasesNeeded}×
@@ -228,7 +228,7 @@ const ITEM_TIERS = [
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={onClose} className="border-white/15 text-white/70 hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400">
+            <Button variant="outline" onClick={onClose} className="border-amber-500/20 text-white/70 hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400">
               Cancel
             </Button>
             <Button
@@ -336,7 +336,7 @@ export default function DesignerStudioPage() {
     if (!isMember) {
       return (
         <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-          <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+          <header className="border-b border-amber-500/20 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
               <span className="text-sm font-black tracking-tighter uppercase italic">
@@ -365,7 +365,7 @@ export default function DesignerStudioPage() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {(publicItems as any[]).map((item) => (
-                  <div key={item.id} className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
+                  <div key={item.id} className="rounded-xl border border-amber-500/20 bg-white/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
                     <div className="aspect-square bg-white/5 overflow-hidden">
                       {item.primaryImageUrl ? (
                         <img src={item.primaryImageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
@@ -392,7 +392,7 @@ export default function DesignerStudioPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-amber-500/20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setLocation("/designer-wardrobe")}
@@ -412,7 +412,7 @@ export default function DesignerStudioPage() {
           variant="outline"
           size="sm"
           onClick={() => setLocation("/wardrobe-marketplace")}
-          className="border-white/15 text-white/70 hover:bg-white/5"
+          className="border-amber-500/20 text-white/70 hover:bg-white/5"
         >
           <Store className="h-3.5 w-3.5 mr-1.5" />
           Marketplace
@@ -421,11 +421,11 @@ export default function DesignerStudioPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Brand Header */}
-        <div className="bg-white/3 border border-white/10 rounded-2xl p-6 flex items-center gap-4">
+        <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 flex items-center gap-4">
           {profile?.logoUrl ? (
-            <img src={profile.logoUrl} alt={profile.brandName} className="w-14 h-14 rounded-full object-cover border border-white/15" />
+            <img src={profile.logoUrl} alt={profile.brandName} className="w-14 h-14 rounded-full object-cover border border-amber-500/20" />
           ) : (
-            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center border border-white/15">
+            <div className="w-14 h-14 rounded-full glass-card/10 flex items-center justify-center border border-amber-500/20">
               <Shirt className="h-7 w-7 text-white/30" />
             </div>
           )}
@@ -437,7 +437,7 @@ export default function DesignerStudioPage() {
             variant="outline"
             size="sm"
             onClick={() => setLocation("/designer-wardrobe")}
-            className="border-white/15 text-white/70 hover:bg-white/5 hidden sm:flex"
+            className="border-amber-500/20 text-white/70 hover:glass-card/5 hidden sm:flex"
           >
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
             Edit Profile
@@ -447,7 +447,7 @@ export default function DesignerStudioPage() {
         {/* Status Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Membership */}
-          <div className="bg-white/3 border border-white/10 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Membership</p>
             <StatusBadge status={membership?.status ?? "none"} />
             {membership?.expiresAt && (
@@ -458,7 +458,7 @@ export default function DesignerStudioPage() {
           </div>
 
           {/* Payouts */}
-          <div className="bg-white/3 border border-white/10 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Payouts</p>
             {connectLoading ? (
               <Skeleton className="h-5 w-24 bg-white/5" />
@@ -489,7 +489,7 @@ export default function DesignerStudioPage() {
           </div>
 
           {/* Earnings */}
-          <div className="bg-white/3 border border-white/10 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Your Earnings</p>
             <p className="text-2xl font-black text-amber-400">
               A${earnings?.totalEarnedDisplay ?? "0.00"}
@@ -509,14 +509,14 @@ export default function DesignerStudioPage() {
               size="sm"
               onClick={() => setLocation("/designer-wardrobe")}
               variant="outline"
-              className="border-white/15 text-white/70 hover:bg-white/5"
+              className="border-amber-500/20 text-white/70 hover:bg-white/5"
             >
               Manage in Wardrobe
             </Button>
           </div>
 
           {collections.length === 0 ? (
-            <div className="bg-white/3 border border-white/10 rounded-2xl p-10 text-center">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-10 text-center">
               <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
               <p className="text-white/40 text-sm mb-3">No collections yet.</p>
               <Button
@@ -532,12 +532,12 @@ export default function DesignerStudioPage() {
               {collections.map((col: any) => (
                 <div
                   key={col.id}
-                  className="bg-white/3 border border-white/10 rounded-xl p-4 flex items-center gap-3"
+                  className="glass-card/3 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3"
                 >
                   {col.coverImageUrl ? (
-                    <img src={col.coverImageUrl} alt={col.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-white/10" />
+                    <img src={col.coverImageUrl} alt={col.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-amber-500/20" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                    <div className="w-12 h-12 rounded-lg glass-card/5 flex items-center justify-center shrink-0">
                       <Package className="h-5 w-5 text-white/20" />
                     </div>
                   )}
@@ -550,7 +550,7 @@ export default function DesignerStudioPage() {
                           <Eye className="h-2.5 w-2.5 mr-1" /> Live
                         </Badge>
                       ) : (
-                        <Badge className="bg-white/5 text-white/40 border-white/10 text-[10px] py-0 px-1.5">
+                        <Badge className="bg-white/5 text-white/40 border-amber-500/20 text-[10px] py-0 px-1.5">
                           <EyeOff className="h-2.5 w-2.5 mr-1" /> Draft
                         </Badge>
                       )}
@@ -569,7 +569,7 @@ export default function DesignerStudioPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-white/15 text-white/60 hover:bg-white/5 text-xs h-7 px-2 hover:border-amber-500/50 hover:text-amber-400"
+                      className="border-amber-500/20 text-white/60 hover:bg-white/5 text-xs h-7 px-2 hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() =>
                         setPricingDialog({
                           open: true,

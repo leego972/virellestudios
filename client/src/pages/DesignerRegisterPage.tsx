@@ -224,7 +224,7 @@ export default function DesignerRegisterPage() {
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center gap-3">
+      <header className="border-b border-amber-500/20 px-6 py-4 flex items-center gap-3">
         <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
           <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
           <span className="text-sm font-black tracking-tighter uppercase italic">
@@ -261,14 +261,14 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 1: Brand Info ── */}
           {!loading && step === 1 && (
-            <form onSubmit={handleBrandInfoSubmit} className="space-y-5 bg-white/3 border border-white/10 rounded-2xl p-6">
+            <form onSubmit={handleBrandInfoSubmit} className="space-y-5 glass-card/3 border border-amber-500/20 rounded-2xl p-6">
               <div>
                 <Label className="text-white/80 text-sm mb-1.5 block">Brand / Studio Name *</Label>
                 <Input
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
                   placeholder="e.g. Cassidy Couture"
-                  className="bg-white/5 border-white/15 text-white placeholder-white/30"
+                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/30"
                   maxLength={255}
                   required
                 />
@@ -277,7 +277,7 @@ export default function DesignerRegisterPage() {
               <div>
                 <Label className="text-white/80 text-sm mb-1.5 block">Designer Type</Label>
                 <Select value={profileType} onValueChange={setProfileType}>
-                  <SelectTrigger className="bg-white/5 border-white/15 text-white">
+                  <SelectTrigger className="bg-white/5 border-amber-500/20 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-white/20">
@@ -299,7 +299,7 @@ export default function DesignerRegisterPage() {
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="Tell productions about your style and specialty..."
                   rows={3}
-                  className="bg-white/5 border-white/15 text-white placeholder-white/30 resize-none"
+                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/30 resize-none"
                   maxLength={2000}
                 />
               </div>
@@ -320,7 +320,7 @@ export default function DesignerRegisterPage() {
                 </div>
 
                 {/* Card 1 — Designer Membership Only */}
-                <div className="bg-white/3 border border-white/10 rounded-2xl p-5 space-y-3">
+                <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-5 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-bold text-white">Designer Membership</p>
@@ -388,7 +388,7 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 3: Connect Onboarding ── */}
           {!loading && step === 3 && (
-            <div className="bg-white/3 border border-white/10 rounded-2xl p-6 space-y-5 text-center">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 space-y-5 text-center">
               <Wallet className="h-10 w-10 text-amber-400 mx-auto" />
               <div>
                 <h2 className="text-xl font-black mb-2 gradient-text-gold">Set Up Your Payouts</h2>
@@ -415,7 +415,7 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 4: Done ── */}
           {!loading && step === 4 && (
-            <div className="bg-white/3 border border-white/10 rounded-2xl p-8 text-center space-y-5">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-8 text-center space-y-5">
               <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto">
                 <Sparkles className="h-8 w-8 text-amber-400" />
               </div>
@@ -436,7 +436,7 @@ export default function DesignerRegisterPage() {
                 <Button
                   variant="outline"
                   onClick={() => setLocation("/wardrobe-marketplace")}
-                  className="w-full border-white/15 text-white/70 hover:bg-white/5"
+                  className="w-full border-amber-500/20 text-white/70 hover:bg-white/5"
                 >
                   Browse the Marketplace
                 </Button>

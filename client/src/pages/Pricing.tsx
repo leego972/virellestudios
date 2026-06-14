@@ -418,7 +418,7 @@ export default function Pricing() {
                 <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
                         <Check className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         {h}
                       </li>
@@ -468,7 +468,7 @@ export default function Pricing() {
                 <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
                         <Check className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         {h}
                       </li>
@@ -496,14 +496,14 @@ export default function Pricing() {
             <table className="w-full text-sm text-left">
               <thead>
                 <tr className="border-b border-amber-500/20 bg-zinc-900/50">
-                  <th className="py-4 px-6 font-semibold">Feature</th>
-                  <th className="py-4 px-6 text-center font-semibold text-blue-400">
+                  <th className="py-4 px-6 font-semibold border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Feature</th>
+                  <th className="py-4 px-6 text-center font-semibold text-blue-400 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                     <div className="flex flex-col items-center gap-1">
                       <HollywoodBadge tier="indie" size={24} />
                       <span>Indie</span>
                     </div>
                   </th>
-                  <th className="py-4 px-6 text-center font-semibold text-emerald-400">
+                  <th className="py-4 px-6 text-center font-semibold text-emerald-400 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                     <div className="flex flex-col items-center gap-1">
                       <HollywoodBadge tier="creator" size={24} />
                       <span>Creator</span>
@@ -533,7 +533,7 @@ export default function Pricing() {
                   { name: "Team Members", indie: "1", creator: "1", industry: "5" },
                 ].map((row, i) => (
                   <tr key={i} className="hover:bg-amber-500/10/30 transition-colors">
-                    <td className="py-4 px-6 font-medium text-zinc-300">{row.name}</td>
+                    <td className="py-4 px-6 font-medium text-zinc-400">{row.name}</td>
                     {[row.indie, row.creator, row.industry].map((val, j) => (
                       <td key={j} className="py-4 px-6 text-center">
                         {typeof val === "boolean" ? (

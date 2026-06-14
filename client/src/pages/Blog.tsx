@@ -36,7 +36,7 @@ export default function Blog() {
     <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <SiteHead title="Filmmaker Blog & Insights" description="Articles, guides, and insights for AI-powered filmmaking â from script to screen." />
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-amber-500/20 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/">
@@ -99,7 +99,7 @@ export default function Blog() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white/5 rounded-xl h-72 animate-pulse" />
+              <div key={i} className="glass-card/5 rounded-xl h-72 animate-pulse" />
             ))}
           </div>
         ) : !articles || articles.length === 0 ? (
@@ -112,7 +112,7 @@ export default function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article) => (
               <Link key={article.id} href={`/blog/${article.slug}`}>
-                <article className="group bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-amber-500/30 transition-all hover:bg-white/[0.07] cursor-pointer h-full flex flex-col">
+                <article className="group bg-white/5 rounded-xl overflow-hidden border border-amber-500/20 hover:border-amber-500/30 transition-all hover:glass-card/[0.07] cursor-pointer h-full flex flex-col">
                   {/* Cover Image or Gradient */}
                   <div className="h-40 bg-gradient-to-br from-amber-600/20 to-orange-600/10 flex items-center justify-center overflow-hidden">
                     {(article as any).coverImageUrl ? (
@@ -163,7 +163,7 @@ export default function Blog() {
       </main>
 
       {/* CTA Section */}
-      <section className="border-t border-white/10 py-16 px-4 sm:px-6 text-center bg-gradient-to-b from-transparent to-amber-950/10">
+      <section className="border-t border-amber-500/20 py-16 px-4 sm:px-6 text-center bg-gradient-to-b from-transparent to-amber-950/10">
         <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-gold-shimmer">Ready to Create Your Own AI Film?</h3>
         <p className="text-white/60 mb-6 max-w-lg mx-auto">
           Join thousands of filmmakers using VirÃlle Studios to produce Hollywood-quality content with AI.

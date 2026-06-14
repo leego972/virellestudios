@@ -238,7 +238,7 @@ export default function FilmPage() {
           {genres.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {genres.map((g) => (
-                <Badge key={g} variant="outline" className="text-xs border-amber-500/20 text-zinc-300 bg-black/40">
+                <Badge key={g} variant="outline" className="text-xs border-amber-500/20 text-zinc-400 bg-black/40">
                   <Tag className="w-2.5 h-2.5 mr-1" />
                   {g}
                 </Badge>
@@ -249,7 +249,7 @@ export default function FilmPage() {
             {fp.title}
           </h1>
           {fp.showCreatorName && fp.creatorName && (
-            <p className="text-sm sm:text-base text-zinc-300 mt-2 drop-shadow">
+            <p className="text-sm sm:text-base text-zinc-400 mt-2 drop-shadow">
               Directed by{" "}
               <span className="text-amber-400 font-medium">{fp.creatorName}</span>
             </p>
@@ -297,7 +297,7 @@ export default function FilmPage() {
             <Button
               size="lg"
               variant="ghost"
-              className="gap-2 text-zinc-300 hover:text-white hover:bg-white/10 backdrop-blur-sm"
+              className="gap-2 text-zinc-400 hover:text-white hover:glass-card/10 backdrop-blur-sm"
               onClick={handleShare}
             >
               <Share2 className="w-4 h-4" />
@@ -314,7 +314,7 @@ export default function FilmPage() {
         {fp.description && (
           <div>
             <h2 className="text-lg font-semibold mb-3 text-amber-400 gradient-text-gold">About this film</h2>
-            <p className="text-zinc-300 leading-relaxed text-base">{fp.description}</p>
+            <p className="text-zinc-400 leading-relaxed text-base">{fp.description}</p>
           </div>
         )}
 
@@ -333,7 +333,7 @@ export default function FilmPage() {
             </div>
             {fp.creatorSlug && (
               <Link href={`/creators/${fp.creatorSlug}`}>
-                <Button size="sm" variant="outline" className="gap-1.5 border-amber-500/20 text-zinc-300 hover:text-white shrink-0 hover:border-amber-500/50 hover:text-amber-400">
+                <Button size="sm" variant="outline" className="gap-1.5 border-amber-500/20 text-zinc-400 hover:text-white shrink-0 hover:border-amber-500/50 hover:text-amber-400">
                   <User className="w-3.5 h-3.5" />
                   View Profile
                 </Button>
@@ -412,7 +412,7 @@ export default function FilmPage() {
               )}
             </button>
             {showBehindFilm && (
-              <div className="px-5 py-4 bg-zinc-950/60 text-sm text-zinc-300 leading-relaxed">
+              <div className="px-5 py-4 bg-zinc-950/60 text-sm text-zinc-400 leading-relaxed">
                 {behindTheFilm}
               </div>
             )}
@@ -486,7 +486,7 @@ export default function FilmPage() {
               </Button>
             </a>
             <Link href="/showcase">
-              <Button variant="outline" className="gap-2 border-amber-500/20 text-zinc-300 hover:text-white w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
+              <Button variant="outline" className="gap-2 border-amber-500/20 text-zinc-400 hover:text-white w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
                 <Film className="w-4 h-4" />
                 Browse Showcase
               </Button>

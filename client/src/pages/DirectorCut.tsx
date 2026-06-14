@@ -134,7 +134,7 @@ function TimelineClip({
       onDrop={(e) => onDrop(e, index)}
     >
       {/* Clip body */}
-      <div className={`h-20 rounded-md overflow-hidden border ${isSelected ? "border-primary/60" : "border-white/10"} bg-zinc-900 relative`}>
+      <div className={`h-20 rounded-md overflow-hidden border ${isSelected ? "border-primary/60" : "border-amber-500/20"} bg-zinc-900 relative`}>
         {/* Thumbnail */}
         {scene.thumbnailUrl ? (
           <img
@@ -222,7 +222,7 @@ function TimelineClip({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="h-5 w-5 rounded bg-zinc-800 border border-white/10 flex items-center justify-center hover:bg-amber-500/10"
+                className="h-5 w-5 rounded bg-zinc-800 border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/10"
                 onClick={(e) => { e.stopPropagation(); onToggleMute(); }}
               >
                 {scene.isMuted ? <VolumeX className="w-2.5 h-2.5 text-red-400" /> : <Volume2 className="w-2.5 h-2.5 text-white/60" />}
@@ -233,7 +233,7 @@ function TimelineClip({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="h-5 w-5 rounded bg-zinc-800 border border-white/10 flex items-center justify-center hover:bg-amber-500/10"
+                className="h-5 w-5 rounded bg-zinc-800 border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/10"
                 onClick={(e) => { e.stopPropagation(); onToggleDisable(); }}
               >
                 {scene.isDisabled ? <Eye className="w-2.5 h-2.5 text-white/60" /> : <EyeOff className="w-2.5 h-2.5 text-white/60" />}
@@ -244,7 +244,7 @@ function TimelineClip({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="h-5 w-5 rounded bg-zinc-800 border border-white/10 flex items-center justify-center hover:bg-amber-500/10"
+                className="h-5 w-5 rounded bg-zinc-800 border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/10"
                 onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
               >
                 <Copy className="w-2.5 h-2.5 text-white/60" />
@@ -255,7 +255,7 @@ function TimelineClip({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="h-5 w-5 rounded bg-zinc-800 border border-white/10 flex items-center justify-center hover:bg-red-900/60"
+                className="h-5 w-5 rounded bg-zinc-800 border border-amber-500/20 flex items-center justify-center hover:bg-red-900/60"
                 onClick={(e) => { e.stopPropagation(); onDelete(); }}
               >
                 <Trash2 className="w-2.5 h-2.5 text-red-400" />
@@ -577,7 +577,7 @@ export default function DirectorCut() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Top Bar ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-      <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-white/10 bg-zinc-950/80 backdrop-blur shrink-0">
+      <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-amber-500/20 bg-zinc-950/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-2 md:gap-3 min-w-0">
           <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
             <ArrowLeft className="w-4 h-4" />
@@ -630,7 +630,7 @@ export default function DirectorCut() {
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
           {/* Preview Monitor */}
-          <div className="bg-black border-b border-white/10 flex items-center justify-center" style={{ height: isMobile ? "160px" : "240px" }}>
+          <div className="bg-black border-b border-amber-500/20 flex items-center justify-center" style={{ height: isMobile ? "160px" : "240px" }}>
             {selectedScene?.videoUrl ? (
               <video
                 ref={videoRef}
@@ -660,10 +660,10 @@ export default function DirectorCut() {
           </div>
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Cut Manager Bar ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
-            <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/10 bg-zinc-900/60 shrink-0 overflow-x-auto">
+            <div className="flex items-center gap-2 px-3 py-1.5 border-b border-amber-500/20 bg-zinc-900/60 shrink-0 overflow-x-auto">
               <span className="text-xs text-zinc-500 font-medium shrink-0">Cut:</span>
               <Select value={activeCutId?.toString() ?? ""} onValueChange={(v) => setActiveCutId(v ? parseInt(v) : null)}>
-                <SelectTrigger className="h-6 text-xs w-44 shrink-0 border-white/10 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
+                <SelectTrigger className="h-6 text-xs w-44 shrink-0 border-amber-500/20 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                   <SelectValue placeholder="No cut selected" />
                 </SelectTrigger>
                 <SelectContent>
@@ -703,7 +703,7 @@ export default function DirectorCut() {
                   </Button>
                   {!activeCut.isLocked && (
                     <Select onValueChange={(v) => { if (activeCutId && v) addSceneToCutMutation.mutate({ cutId: activeCutId, sceneId: parseInt(v) }); }}>
-                      <SelectTrigger className="h-6 text-xs w-36 shrink-0 border-white/10 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
+                      <SelectTrigger className="h-6 text-xs w-36 shrink-0 border-amber-500/20 bg-zinc-800 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                         <SelectValue placeholder="+ Add scene" />
                       </SelectTrigger>
                       <SelectContent>
@@ -718,10 +718,10 @@ export default function DirectorCut() {
             </div>
             {/* New Cut Dialog */}
             <Dialog open={showNewCutDialog} onOpenChange={setShowNewCutDialog}>
-              <DialogContent className="bg-zinc-900 border-white/10 text-white glass-dark">
+              <DialogContent className="bg-zinc-900 border-amber-500/20 text-white glass-dark">
                 <DialogHeader><DialogTitle className="gradient-text-gold">Create New Cut</DialogTitle></DialogHeader>
                 <Label className="text-xs text-zinc-400">Cut name</Label>
-                <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-white/10" placeholder="Director's Cut v2" />
+                <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-amber-500/20" placeholder="Director's Cut v2" />
                 <DialogFooter>
                   <Button variant="ghost" onClick={() => setShowNewCutDialog(false)}>Cancel</Button>
                   <Button onClick={() => createCutMutation.mutate({ projectId, name: newCutTitle })} disabled={createCutMutation.isPending}>
@@ -732,7 +732,7 @@ export default function DirectorCut() {
             </Dialog>
 
             {/* Playback Controls */}
-          <div className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-zinc-950 border-b border-white/10 shrink-0">
+          <div className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-zinc-950 border-b border-amber-500/20 shrink-0">
             <div className="flex items-center gap-0.5 md:gap-1">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(0)} aria-label="Skip to start">
                 <SkipBack className="w-3.5 h-3.5" aria-hidden="true" />
@@ -774,7 +774,7 @@ export default function DirectorCut() {
           <div className="flex-1 overflow-hidden flex flex-col bg-zinc-950">
             {/* Timecode ruler */}
             <div
-              className="h-6 border-b border-white/10 bg-zinc-900 relative overflow-hidden shrink-0 cursor-pointer"
+              className="h-6 border-b border-amber-500/20 bg-zinc-900 relative overflow-hidden shrink-0 cursor-pointer"
               onClick={handleTimelineClick}
             >
               <div className="flex items-end h-full pl-4" style={{ gap: 0 }}>
@@ -845,7 +845,7 @@ export default function DirectorCut() {
 
             {/* Timeline footer: keyboard shortcuts hint */}
             {!isMobile && (
-              <div className="px-4 py-1.5 border-t border-white/5 bg-zinc-950 flex items-center gap-4 shrink-0">
+              <div className="px-4 py-1.5 border-t border-amber-500/20 bg-zinc-950 flex items-center gap-4 shrink-0">
                 <span className="text-[10px] text-zinc-600">
                   <kbd className="bg-zinc-800 px-1 rounded text-zinc-400">Space</kbd> Play/Pause ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·
                   <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</kbd> Select scene ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·
@@ -859,14 +859,14 @@ export default function DirectorCut() {
 
         {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Right: Inspector Panel (desktop only) ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
         {!isMobile && (
-        <div className="w-80 border-l border-white/10 bg-zinc-950 flex flex-col shrink-0">
+        <div className="w-80 border-l border-amber-500/20 bg-zinc-950 flex flex-col shrink-0">
           {/* Panel tabs */}
-          <div className="flex border-b border-white/10 shrink-0">
+          <div className="flex border-b border-amber-500/20 shrink-0">
             {(["inspector", "retake", "transition"] as PanelMode[]).map((mode) => (
               <button
                 key={mode}
                 className={`flex-1 py-2.5 text-xs font-medium capitalize transition-colors
-                  ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                  ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-400"}`}
                 onClick={() => setPanelMode(mode)}
               >
                 {mode === "inspector" ? "Inspector" : mode === "retake" ? "Retake" : "Transition"}
@@ -887,7 +887,7 @@ export default function DirectorCut() {
                 {panelMode === "inspector" && (
                   <>
                     <div>
-                      <p className="text-xs font-semibold text-zinc-300 mb-1">Scene {(selectedIdx ?? 0) + 1}</p>
+                      <p className="text-xs font-semibold text-zinc-400 mb-1">Scene {(selectedIdx ?? 0) + 1}</p>
                       <p className="text-sm font-medium text-white">{selectedScene.title || "Untitled Scene"}</p>
                       {selectedScene.description && (
                         <p className="text-xs text-zinc-500 mt-1 line-clamp-3">{selectedScene.description}</p>
@@ -917,7 +917,7 @@ export default function DirectorCut() {
 
                     {/* Trim controls */}
                     <div className="space-y-3">
-                      <p className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
+                      <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
                         <Scissors className="w-3 h-3" /> Trim
                       </p>
                       <div>
@@ -976,7 +976,7 @@ export default function DirectorCut() {
 
                     {/* Actions */}
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-zinc-300">Actions</p>
+                      <p className="text-xs font-semibold text-zinc-400">Actions</p>
                       <div className="grid grid-cols-2 gap-2">
                         <Button
                           size="sm"
@@ -1198,7 +1198,7 @@ export default function DirectorCut() {
 
           {/* Panel footer: scene counter */}
           {selectedScene && (
-            <div className="px-4 py-2 border-t border-white/10 flex items-center justify-between shrink-0">
+            <div className="px-4 py-2 border-t border-amber-500/20 flex items-center justify-between shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
@@ -1231,19 +1231,19 @@ export default function DirectorCut() {
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Mobile Inspector Sheet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       {isMobile && (
         <Sheet open={mobileInspectorOpen} onOpenChange={setMobileInspectorOpen}>
-          <SheetContent side="bottom" className="h-[70vh] bg-zinc-950 border-white/10 p-0">
-            <SheetHeader className="px-4 py-3 border-b border-white/10">
+          <SheetContent side="bottom" className="h-[70vh] bg-zinc-950 border-amber-500/20 p-0">
+            <SheetHeader className="px-4 py-3 border-b border-amber-500/20">
               <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                 <Layers className="w-4 h-4 text-amber-400" />
                 {selectedScene?.title || "Scene Inspector"}
               </SheetTitle>
             </SheetHeader>
-            <div className="flex border-b border-white/10 shrink-0">
+            <div className="flex border-b border-amber-500/20 shrink-0">
               {(["inspector", "retake", "transition"] as PanelMode[]).map((mode) => (
                 <button
                   key={mode}
                   className={`flex-1 py-2.5 text-xs font-medium capitalize transition-colors
-                    ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                    ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-400"}`}
                   onClick={() => setPanelMode(mode)}
                 >
                   {mode === "inspector" ? "Inspector" : mode === "retake" ? "Retake" : "Transition"}
@@ -1256,7 +1256,7 @@ export default function DirectorCut() {
                   {panelMode === "inspector" && (
                     <>
                       <div>
-                        <p className="text-xs font-semibold text-zinc-300 mb-1">Scene {(selectedIdx ?? 0) + 1}</p>
+                        <p className="text-xs font-semibold text-zinc-400 mb-1">Scene {(selectedIdx ?? 0) + 1}</p>
                         <p className="text-sm font-medium text-white">{selectedScene.title || "Untitled Scene"}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
@@ -1271,7 +1271,7 @@ export default function DirectorCut() {
                       </div>
                       <Separator className="bg-white/10" />
                       <div className="space-y-3">
-                        <p className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5"><Scissors className="w-3 h-3" /> Trim</p>
+                        <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5"><Scissors className="w-3 h-3" /> Trim</p>
                         <div>
                           <div className="flex justify-between mb-1">
                             <Label className="text-[11px] text-zinc-500">Trim In</Label>

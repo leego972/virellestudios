@@ -311,10 +311,10 @@ export default function AdminSignatureCast() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-amber-500/20">
-                        <th className="text-left py-2 text-xs text-zinc-500 font-medium">Tier</th>
-                        <th className="text-right py-2 text-xs text-zinc-500 font-medium">Creator</th>
-                        <th className="text-right py-2 text-xs text-zinc-500 font-medium">Commercial</th>
-                        <th className="text-right py-2 text-xs text-zinc-500 font-medium">Episodic</th>
+                        <th className="text-left py-2 text-xs text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Tier</th>
+                        <th className="text-right py-2 text-xs text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Creator</th>
+                        <th className="text-right py-2 text-xs text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Commercial</th>
+                        <th className="text-right py-2 text-xs text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Episodic</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -374,12 +374,12 @@ export default function AdminSignatureCast() {
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="border-b border-amber-500/20">
-                          <th className="text-left py-2 text-zinc-500 font-medium">User ID</th>
-                          <th className="text-left py-2 text-zinc-500 font-medium">Actor</th>
-                          <th className="text-left py-2 text-zinc-500 font-medium">License</th>
-                          <th className="text-left py-2 text-zinc-500 font-medium">Project</th>
-                          <th className="text-right py-2 text-zinc-500 font-medium">Amount</th>
-                          <th className="text-right py-2 text-zinc-500 font-medium">Date</th>
+                          <th className="text-left py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">User ID</th>
+                          <th className="text-left py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Actor</th>
+                          <th className="text-left py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">License</th>
+                          <th className="text-left py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Project</th>
+                          <th className="text-right py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Amount</th>
+                          <th className="text-right py-2 text-zinc-500 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Date</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -448,7 +448,7 @@ export default function AdminSignatureCast() {
                         <div className="space-y-1.5">
                           {analytics.byActor.map((row: any) => (
                             <div key={row.actorId} className="flex items-center justify-between text-xs">
-                              <span className="text-zinc-300">{row.actorId}</span>
+                              <span className="text-zinc-400">{row.actorId}</span>
                               <div className="flex items-center gap-3">
                                 <span className="text-zinc-500">{row.unlocks} unlocks</span>
                                 <span className="text-white font-mono">A${(row.revenue / 100).toFixed(2)}</span>

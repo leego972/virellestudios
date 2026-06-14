@@ -264,13 +264,13 @@ export default function AdminUsers() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-border/50">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">User</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Role</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Login Method</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Joined</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Last Active</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">User</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Email</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Role</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Login Method</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Joined</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Last Active</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -379,14 +379,14 @@ export default function AdminUsers() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-border/50">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">ID</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Title</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Owner</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Genre</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Scenes</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Created</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">ID</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Title</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Owner</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Genre</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Status</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Scenes</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Created</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -467,13 +467,13 @@ export default function AdminUsers() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border/50">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">User</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Beta Expires</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Assign Beta (days)</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Grant Credits</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">User</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Email</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Status</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Beta Expires</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Assign Beta (days)</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Grant Credits</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
