@@ -52,7 +52,7 @@ function buildPrompt(b: BriefState, projectTitle: string, brand: any) {
   return `Write a personalized cold-outreach email to a brand partnerships contact about an integration in our project.
 
 Project: "${projectTitle}"
-Format: ${b.format} ÃÂ· Genre: ${b.genre}
+Format: ${b.format} · Genre: ${b.genre}
 Audience: ${b.audience}
 
 Brand: ${brand?.organization || "[brand]"}
@@ -62,7 +62,7 @@ Why this brand fits the story: ${b.brandFit}
 Integration idea: ${b.integrationIdea}
 The ask (e.g. $25k cash + product, or in-kind only): ${b.ask}
 
-Constraints: Ã¢ÂÂ¤180 words, conversational but precise, lead with the brand-relevant story beat (not us), include 1 specific integration moment, end with a clear next step (15-min call). No emojis, no buzzwords. Subject line on the first line.`;
+Constraints: ≤180 words, conversational but precise, lead with the brand-relevant story beat (not us), include 1 specific integration moment, end with a clear next step (15-min call). No emojis, no buzzwords. Subject line on the first line.`;
 }
 
 export default function BrandOutreach() {
@@ -187,7 +187,7 @@ export default function BrandOutreach() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Brand Outreach Desk</h1>
         <p className="text-muted-foreground mt-1">
-          {brands.length} brand & sponsor desks ÃÂ· pitch tailored cold emails for product placement, integrations, and co-marketing.
+          {brands.length} brand & sponsor desks · pitch tailored cold emails for product placement, integrations, and co-marketing.
         </p>
       </div>
 
@@ -200,7 +200,7 @@ export default function BrandOutreach() {
           </CardHeader>
           <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <Input
-              placeholder="Search brandsÃ¢ÂÂ¦"
+              placeholder="Search brands…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -221,7 +221,7 @@ export default function BrandOutreach() {
                       <div className="min-w-0">
                         <div className="font-medium text-sm truncate">{p.organization}</div>
                         <div className="text-xs text-muted-foreground truncate">
-                          {p.country}{p.type ? ` ÃÂ· ${p.type}` : ""}
+                          {p.country}{p.type ? ` · ${p.type}` : ""}
                         </div>
                       </div>
                       {p.website && (
