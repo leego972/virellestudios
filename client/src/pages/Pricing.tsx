@@ -12,8 +12,8 @@ import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
-// ─── Tier Definitions ────────────────────────────────────────────────────────
-// All prices in AUD. Three public tiers: Indie, Creator, Industry — all self-serve.
+// âââ Tier Definitions ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// All prices in AUD. Three public tiers: Indie, Creator, Industry â all self-serve.
 // Legacy DB keys independent/creator/studio all resolve to Industry.
 
 const SELF_SERVE_TIERS = [
@@ -109,7 +109,7 @@ const SELF_SERVE_TIERS = [
   },
 ];
 
-// Enterprise / custom-pricing tier (contact sales — not shown in main grid)
+// Enterprise / custom-pricing tier (contact sales â not shown in main grid)
 const ENTERPRISE_TIERS = [
   {
     id: "industry",
@@ -153,33 +153,33 @@ const CREDIT_PACKS = [
 ];
 
 const CREDIT_COSTS = [
-  { action: "Create New Project", cost: 0, icon: "📁" },
-  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "🎬" },
-  { action: "Generate Scene Video (≤45s)", cost: 10, icon: "🎥" },
-  { action: "Regenerate Scene Video", cost: 8, icon: "🔄" },
-  { action: "Generate Preview Image", cost: 3, icon: "🖼️" },
-  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "📸" },
-  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "📹" },
-  { action: "Virelle AI Chat (per message)", cost: 2, icon: "💬" },
-  { action: "AI Script Writer", cost: 8, icon: "📝" },
-  { action: "AI Storyboard Generation", cost: 8, icon: "🎨" },
-  { action: "AI Dialogue Polish", cost: 5, icon: "🗣️" },
-  { action: "AI Continuity Check", cost: 5, icon: "🔍" },
-  { action: "AI Shot List Generation", cost: 5, icon: "📋" },
-  { action: "Trailer Generation", cost: 20, icon: "🎞️" },
-  { action: "Ad/Poster Generation", cost: 5, icon: "🖼️" },
-  { action: "Subtitle Generation", cost: 8, icon: "💬" },
-  { action: "Export Final Film", cost: 8, icon: "💾" },
-  { action: "Budget Estimator", cost: 5, icon: "💰" },
-  { action: "Location Scout", cost: 3, icon: "📍" },
-  { action: "Mood Board", cost: 3, icon: "🎨" },
-  { action: "Color Grading Plan", cost: 4, icon: "🌈" },
-  { action: "Sound Effects (AI)", cost: 5, icon: "🔊" },
-  { action: "ADR Suggestions", cost: 5, icon: "🎙️" },
-  { action: "Foley Suggestions", cost: 5, icon: "🎵" },
-  { action: "Score Cues", cost: 8, icon: "🎼" },
-  { action: "Mix Summary Export", cost: 2, icon: "🎚️" },
-  { action: "Funding Application", cost: 10, icon: "💼" },
+  { action: "Create New Project", cost: 0, icon: "ð" },
+  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "ð¬" },
+  { action: "Generate Scene Video (â¤45s)", cost: 10, icon: "ð¥" },
+  { action: "Regenerate Scene Video", cost: 8, icon: "ð" },
+  { action: "Generate Preview Image", cost: 3, icon: "ð¼ï¸" },
+  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "ð¸" },
+  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "ð¹" },
+  { action: "Virelle AI Chat (per message)", cost: 2, icon: "ð¬" },
+  { action: "AI Script Writer", cost: 8, icon: "ð" },
+  { action: "AI Storyboard Generation", cost: 8, icon: "ð¨" },
+  { action: "AI Dialogue Polish", cost: 5, icon: "ð£ï¸" },
+  { action: "AI Continuity Check", cost: 5, icon: "ð" },
+  { action: "AI Shot List Generation", cost: 5, icon: "ð" },
+  { action: "Trailer Generation", cost: 20, icon: "ðï¸" },
+  { action: "Ad/Poster Generation", cost: 5, icon: "ð¼ï¸" },
+  { action: "Subtitle Generation", cost: 8, icon: "ð¬" },
+  { action: "Export Final Film", cost: 8, icon: "ð¾" },
+  { action: "Budget Estimator", cost: 5, icon: "ð°" },
+  { action: "Location Scout", cost: 3, icon: "ð" },
+  { action: "Mood Board", cost: 3, icon: "ð¨" },
+  { action: "Color Grading Plan", cost: 4, icon: "ð" },
+  { action: "Sound Effects (AI)", cost: 5, icon: "ð" },
+  { action: "ADR Suggestions", cost: 5, icon: "ðï¸" },
+  { action: "Foley Suggestions", cost: 5, icon: "ðµ" },
+  { action: "Score Cues", cost: 8, icon: "ð¼" },
+  { action: "Mix Summary Export", cost: 2, icon: "ðï¸" },
+  { action: "Funding Application", cost: 10, icon: "ð¼" },
 ];
 
 const FAQ = [
@@ -189,7 +189,7 @@ const FAQ = [
   },
   {
     q: "How do credits work?",
-    a: "Credits are consumed each time you use a generative feature — such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
+    a: "Credits are consumed each time you use a generative feature â such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
   },
   {
     q: "Can I cancel my subscription?",
@@ -201,7 +201,7 @@ const FAQ = [
   },
   {
     q: "Do unused credits roll over?",
-    a: "Yes — all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
+    a: "Yes â all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
   },
   {
     q: "What payment methods are accepted?",
@@ -210,7 +210,7 @@ const FAQ = [
 ];
 
 export default function Pricing() {
-  // Read URL params — source=mobile means the user came from the mobile app
+  // Read URL params â source=mobile means the user came from the mobile app
   const urlParams = new URLSearchParams(window.location.search);
   const urlSource = urlParams.get("source") ?? "";
   const urlTier = urlParams.get("tier") ?? "";
@@ -325,13 +325,13 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen text-white selection:bg-amber-500/30" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios — from Free to Studio. AI film production from $0 to enterprise scale." />
+      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios â from Free to Studio. AI film production from $0 to enterprise scale." />
 
-          {/* ── Founding Director urgency banner ── */}
+          {/* ââ Founding Director urgency banner ââ */}
           <div className="sticky top-0 z-40 bg-amber-500 text-black py-2 px-4 text-center text-xs font-bold tracking-wide">
-            <span className="mr-2">🎬</span>
-            Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
-            <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
+            <span className="mr-2">ð¬</span>
+            Founding Director Offer â 50% off your first year on any annual Creator or Industry plan.
+            <span className="ml-2 opacity-70">Early access pricing Â· Limited availability.</span>
           </div>
       <GoldWatermarkLaunch />
       
@@ -352,11 +352,11 @@ export default function Pricing() {
             {/* Trust badges */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 mb-2">
               {[
-                { icon: "✓", label: "Cancel anytime" },
-                { icon: "✓", label: "Credits never expire" },
-                { icon: "✓", label: "100% commercial ownership" },
-                { icon: "✓", label: "BYOK support" },
-              { icon: "🛡", label: "14-day money-back guarantee" },
+                { icon: "â", label: "Cancel anytime" },
+                { icon: "â", label: "Credits never expire" },
+                { icon: "â", label: "100% commercial ownership" },
+                { icon: "â", label: "BYOK support" },
+              { icon: "ð¡", label: "14-day money-back guarantee" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="text-emerald-400 font-bold">{icon}</span>
@@ -370,7 +370,7 @@ export default function Pricing() {
             <span className={`text-sm ${billingCycle === "monthly" ? "text-white" : "text-muted-foreground"}`}>Monthly</span>
             <button
               onClick={() => setBillingCycle(billingCycle === "monthly" ? "annual" : "monthly")}
-              className="relative w-14 h-7 bg-zinc-800 rounded-full p-1 transition-colors hover:bg-zinc-700"
+              className="relative w-14 h-7 bg-zinc-800 rounded-full p-1 transition-colors hover:bg-amber-500/10"
             >
               <div className={`w-5 h-5 bg-amber-500 rounded-full transition-transform ${billingCycle === "annual" ? "translate-x-7" : "translate-x-0"}`} />
             </button>
@@ -478,7 +478,7 @@ export default function Pricing() {
                 <CardFooter>
                   <Button 
                     variant="outline"
-                    className="w-full border-zinc-700 hover:bg-zinc-800"
+                    className="w-full border-zinc-700 hover:bg-amber-500/10"
                     onClick={() => handleEnterpriseContact(tier.id)}
                   >
                     {tier.primaryCTA}
@@ -532,7 +532,7 @@ export default function Pricing() {
                   { name: "NLE Export", indie: false, creator: false, industry: true },
                   { name: "Team Members", indie: "1", creator: "1", industry: "5" },
                 ].map((row, i) => (
-                  <tr key={i} className="hover:bg-zinc-800/30 transition-colors">
+                  <tr key={i} className="hover:bg-amber-500/10/30 transition-colors">
                     <td className="py-4 px-6 font-medium text-zinc-300">{row.name}</td>
                     {[row.indie, row.creator, row.industry].map((val, j) => (
                       <td key={j} className="py-4 px-6 text-center">
@@ -570,7 +570,7 @@ export default function Pricing() {
                 <CardFooter>
                   <Button
                     variant="outline"
-                    className="w-full border-zinc-700 hover:bg-zinc-800"
+                    className="w-full border-zinc-700 hover:bg-amber-500/10"
                     onClick={() => handleTopUp(pack.id)}
                     disabled={loadingPack === pack.id}
                   >

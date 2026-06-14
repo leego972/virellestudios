@@ -1,7 +1,7 @@
-// v6.69 Phase 3 — Script-to-Storyboard Breakdown Wizard.
-// v6.73 Phase 2 — Polish: append/replace mode (with destructive confirm),
+// v6.69 Phase 3 â Script-to-Storyboard Breakdown Wizard.
+// v6.73 Phase 2 â Polish: append/replace mode (with destructive confirm),
 // post-apply summary (created / reused / new / missing references).
-// v6.74 Phase 3 — Richer review screen. Step 2 now shows five distinct
+// v6.74 Phase 3 â Richer review screen. Step 2 now shows five distinct
 // sections (Story / Characters / Locations / Props / Scenes), each with
 // per-row include toggles, so the user can curate the entire breakdown
 // before any DB write happens. The wizard now ships top-level characters +
@@ -11,9 +11,9 @@
 // Three steps:
 //   1. Load the project's existing script (or paste a new one).
 //   2. Review the proposed breakdown (story / cast / locations / props /
-//      scenes — each with toggles to remove rows). If the project already
+//      scenes â each with toggles to remove rows). If the project already
 //      has scenes, prompt for append vs replace.
-//   3. Apply — creates scenes (and now characters/locations) for the project,
+//   3. Apply â creates scenes (and now characters/locations) for the project,
 //      then shows a rich summary.
 //
 // All AI calls are server-side; this page only renders proposals and lets the
@@ -23,7 +23,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "../lib/trpc";
 
-// v6.74 — Richer per-scene shape returned by analyzeScript. All v6.74-only
+// v6.74 â Richer per-scene shape returned by analyzeScript. All v6.74-only
 // fields are tolerant of legacy/empty server payloads (default to []/null).
 type ProposedShotSuggestion = {
   shotType: string | null;
@@ -71,11 +71,11 @@ export default function ScriptBreakdownWizardPage() {
   const [skipped, setSkipped] = useState<Record<number, boolean>>({});
   const [warnings, setWarnings] = useState<string[]>([]);
   const [source, setSource] = useState<string>("");
-  // v6.73 — append (default, safe) vs replace (destructive, requires
+  // v6.73 â append (default, safe) vs replace (destructive, requires
   // explicit double-confirmation before we send the mutation).
   const [mode, setMode] = useState<"append" | "replace">("append");
 
-  // v6.74 — Rich top-level metadata + entity proposals. All optional in the
+  // v6.74 â Rich top-level metadata + entity proposals. All optional in the
   // server response, so we render conditionally and never crash on the older
   // minimal shape from a v6.73-or-earlier server.
   const [storyTitle, setStoryTitle] = useState<string | null>(null);
@@ -86,7 +86,7 @@ export default function ScriptBreakdownWizardPage() {
   const [proposedChars, setProposedChars] = useState<ProposedCharacter[]>([]);
   const [proposedLocs, setProposedLocs] = useState<ProposedLocation[]>([]);
   const [proposedProps, setProposedProps] = useState<string[]>([]);
-  // Per-row include toggles — same pattern as the scene `skipped` map.
+  // Per-row include toggles â same pattern as the scene `skipped` map.
   const [skippedChars, setSkippedChars] = useState<Record<string, boolean>>({});
   const [skippedLocs, setSkippedLocs] = useState<Record<string, boolean>>({});
   const [skippedProps, setSkippedProps] = useState<Record<string, boolean>>({});
@@ -148,7 +148,7 @@ export default function ScriptBreakdownWizardPage() {
   const acceptedLocs = proposedLocs.filter((l) => !skippedLocs[l.name.toLowerCase()]);
   const acceptedProps = proposedProps.filter((p) => !skippedProps[p.toLowerCase()]);
 
-  // v6.73 — Surface the existing scene count so the user can decide between
+  // v6.73 â Surface the existing scene count so the user can decide between
   // append and replace with full information.
   const existingSceneCount: number =
     Array.isArray(project?.scenes) ? project.scenes.length :
@@ -170,7 +170,7 @@ export default function ScriptBreakdownWizardPage() {
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <div className="flex items-center gap-3 mb-4">
         <Link href={`/projects/${projectId}/command-center`}>
-          <a className="text-sm text-amber-300 hover:underline">← Command Center</a>
+          <a className="text-sm text-amber-300 hover:underline">â Command Center</a>
         </Link>
         <h1 className="text-2xl font-semibold gradient-text-gold">Script-to-Scene Breakdown</h1>
       </div>
@@ -187,7 +187,7 @@ export default function ScriptBreakdownWizardPage() {
                 : "border-zinc-800 text-zinc-500"
             }`}
           >
-            Step {n} —{" "}
+            Step {n} â{" "}
             {n === 1 ? "Load script" : n === 2 ? "Review proposal" : "Apply"}
           </li>
         ))}
@@ -211,13 +211,13 @@ export default function ScriptBreakdownWizardPage() {
           <textarea
             value={script}
             onChange={(e) => setScript(e.target.value)}
-            placeholder="Paste your screenplay here…"
+            placeholder="Paste your screenplay hereâ¦"
             rows={14}
             className="w-full bg-zinc-950 border border-zinc-800 rounded p-3 text-sm font-mono"
           />
           <div className="mt-3 flex items-center justify-between">
             <div className="text-xs text-zinc-500">
-              {script.trim().length} characters · {script.split(/\n+/).length} lines
+              {script.trim().length} characters Â· {script.split(/\n+/).length} lines
             </div>
             <button
               onClick={() =>
@@ -226,7 +226,7 @@ export default function ScriptBreakdownWizardPage() {
               disabled={analyzeMut.isPending || script.trim().length < 40}
               className="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium disabled:opacity-50"
             >
-              {analyzeMut.isPending ? "Analyzing…" : "Analyze script →"}
+              {analyzeMut.isPending ? "Analyzingâ¦" : "Analyze script â"}
             </button>
           </div>
           {analyzeMut.error && (
@@ -240,16 +240,16 @@ export default function ScriptBreakdownWizardPage() {
           {warnings.length > 0 && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded p-3 text-xs text-amber-200">
               {warnings.map((w, i) => (
-                <div key={i}>· {w}</div>
+                <div key={i}>Â· {w}</div>
               ))}
             </div>
           )}
           <div className="text-sm text-zinc-300">
             Proposing <strong>{proposed.length}</strong> scene{proposed.length === 1 ? "" : "s"}
-            {source ? ` (${source} source)` : ""}. Uncheck anything you don't want — only ticked rows are saved.
+            {source ? ` (${source} source)` : ""}. Uncheck anything you don't want â only ticked rows are saved.
           </div>
 
-          {/* ─── Section 1: Story ─── */}
+          {/* âââ Section 1: Story âââ */}
           {(storyTitle || storyLogline || storyGenre || storyTone || storyThemes.length > 0) && (
             <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100">
@@ -271,21 +271,21 @@ export default function ScriptBreakdownWizardPage() {
                 {storyThemes.length > 0 && (
                   <div>
                     <span className="text-zinc-500">Themes:</span>{" "}
-                    <span className="text-zinc-100">{storyThemes.join(" · ")}</span>
+                    <span className="text-zinc-100">{storyThemes.join(" Â· ")}</span>
                   </div>
                 )}
                 <div className="pt-1 text-[11px] text-zinc-500 italic">
-                  Story metadata is shown for context only — it isn't written to the project.
+                  Story metadata is shown for context only â it isn't written to the project.
                 </div>
               </div>
             </details>
           )}
 
-          {/* ─── Section 2: Characters ─── */}
+          {/* âââ Section 2: Characters âââ */}
           {proposedChars.length > 0 && (
             <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
-                <span>Characters · {acceptedChars.length} / {proposedChars.length} selected</span>
+                <span>Characters Â· {acceptedChars.length} / {proposedChars.length} selected</span>
               </summary>
               <ul className="mt-3 divide-y divide-zinc-800">
                 {proposedChars.map((c) => {
@@ -318,11 +318,11 @@ export default function ScriptBreakdownWizardPage() {
             </details>
           )}
 
-          {/* ─── Section 3: Locations ─── */}
+          {/* âââ Section 3: Locations âââ */}
           {proposedLocs.length > 0 && (
             <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
-                <span>Locations · {acceptedLocs.length} / {proposedLocs.length} selected</span>
+                <span>Locations Â· {acceptedLocs.length} / {proposedLocs.length} selected</span>
               </summary>
               <ul className="mt-3 divide-y divide-zinc-800">
                 {proposedLocs.map((l) => {
@@ -355,11 +355,11 @@ export default function ScriptBreakdownWizardPage() {
             </details>
           )}
 
-          {/* ─── Section 4: Props ─── */}
+          {/* âââ Section 4: Props âââ */}
           {proposedProps.length > 0 && (
             <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
-                <span>Props · {acceptedProps.length} / {proposedProps.length} selected</span>
+                <span>Props Â· {acceptedProps.length} / {proposedProps.length} selected</span>
               </summary>
               <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                 {proposedProps.map((p) => {
@@ -386,16 +386,16 @@ export default function ScriptBreakdownWizardPage() {
             </details>
           )}
 
-          {/* ─── Section 5: Scenes ─── */}
+          {/* âââ Section 5: Scenes âââ */}
           <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg" open>
             <summary className="cursor-pointer p-4 text-sm font-semibold text-zinc-100">
-              Scenes · {accepted.length} / {proposed.length} selected
+              Scenes Â· {accepted.length} / {proposed.length} selected
             </summary>
             <div className="divide-y divide-zinc-800 max-h-[60vh] overflow-y-auto">
               {proposed.map((s) => (
                 <label
                   key={s.sceneNumber}
-                  className="flex items-start gap-3 p-3 hover:bg-zinc-900 cursor-pointer"
+                  className="flex items-start gap-3 p-3 hover:bg-amber-500/10 cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -411,10 +411,10 @@ export default function ScriptBreakdownWizardPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 text-xs text-zinc-500">
                       <span>Scene {s.sceneNumber}</span>
-                      {s.location && <span>· {s.location}</span>}
-                      {s.timeOfDay && <span>· {s.timeOfDay}</span>}
-                      {s.mood && <span>· {s.mood}</span>}
-                      <span>· ~{s.estimatedDuration}s</span>
+                      {s.location && <span>Â· {s.location}</span>}
+                      {s.timeOfDay && <span>Â· {s.timeOfDay}</span>}
+                      {s.mood && <span>Â· {s.mood}</span>}
+                      <span>Â· ~{s.estimatedDuration}s</span>
                     </div>
                     <div className="text-sm text-zinc-100 font-medium truncate">
                       {s.title}
@@ -422,10 +422,10 @@ export default function ScriptBreakdownWizardPage() {
                     <div className="text-xs text-zinc-400 line-clamp-2">{s.description}</div>
                     {s.characters.length > 0 && (
                       <div className="mt-1 text-[10px] text-amber-200/80">
-                        {s.characters.join(" · ")}
+                        {s.characters.join(" Â· ")}
                       </div>
                     )}
-                    {/* v6.74 — surface props/shots/continuity per scene so the
+                    {/* v6.74 â surface props/shots/continuity per scene so the
                         user can spot-check before approving. Each is rendered
                         only when present so old payloads stay clean. */}
                     {s.props.length > 0 && (
@@ -439,7 +439,7 @@ export default function ScriptBreakdownWizardPage() {
                         {s.shotSuggestions.map((sh, i) => {
                           const parts = [sh.shotType, sh.lens, sh.movement, sh.framing].filter(Boolean);
                           const label = parts.join(" / ") || (sh.notes ? sh.notes.slice(0, 40) : "shot");
-                          return <span key={i} className="mr-2">· {label}</span>;
+                          return <span key={i} className="mr-2">Â· {label}</span>;
                         })}
                       </div>
                     )}
@@ -450,7 +450,7 @@ export default function ScriptBreakdownWizardPage() {
                     )}
                     {s.dialogue && (
                       <div className="mt-1 text-[10px] text-zinc-500 italic line-clamp-1">
-                        “{s.dialogue}”
+                        â{s.dialogue}â
                       </div>
                     )}
                   </div>
@@ -459,7 +459,7 @@ export default function ScriptBreakdownWizardPage() {
             </div>
           </details>
 
-          {/* v6.73 — Append vs replace prompt. Only shown when the project
+          {/* v6.73 â Append vs replace prompt. Only shown when the project
               already has scenes; in fresh projects there's nothing to
               replace so we hide the choice entirely. */}
           {existingSceneCount > 0 && (
@@ -476,7 +476,7 @@ export default function ScriptBreakdownWizardPage() {
                     checked={mode === "append"}
                     onChange={() => setMode("append")}
                   />
-                  <span><strong>Append</strong> — add these as new scenes after the existing ones (safe).</span>
+                  <span><strong>Append</strong> â add these as new scenes after the existing ones (safe).</span>
                 </label>
                 <label className="flex items-center gap-2 text-xs text-rose-200 cursor-pointer">
                   <input
@@ -485,7 +485,7 @@ export default function ScriptBreakdownWizardPage() {
                     checked={mode === "replace"}
                     onChange={() => setMode("replace")}
                   />
-                  <span><strong>Replace</strong> — delete all existing scenes first, then create these (destructive).</span>
+                  <span><strong>Replace</strong> â delete all existing scenes first, then create these (destructive).</span>
                 </label>
               </div>
             </div>
@@ -496,11 +496,11 @@ export default function ScriptBreakdownWizardPage() {
               onClick={() => setStep(1)}
               className="text-xs text-zinc-400 hover:underline"
             >
-              ← Back
+              â Back
             </button>
             <button
               onClick={() => {
-                // v6.73 — Replace requires an explicit destructive confirm
+                // v6.73 â Replace requires an explicit destructive confirm
                 // before we even send the mutation. The backend also
                 // double-checks via confirmReplace, so this can't slip past
                 // a missed UI guard.
@@ -513,7 +513,7 @@ export default function ScriptBreakdownWizardPage() {
                   );
                   if (!ok) return;
                 }
-                // v6.74 — only send props/characters that the user actually
+                // v6.74 â only send props/characters that the user actually
                 // ticked. Per-scene props are filtered to the project-wide
                 // accepted set so a deselected prop disappears everywhere.
                 const acceptedPropSet = new Set(acceptedProps.map((p) => p.toLowerCase()));
@@ -549,9 +549,9 @@ export default function ScriptBreakdownWizardPage() {
               }`}
             >
               {applyMut.isPending
-                ? (mode === "replace" ? "Replacing…" : "Applying…")
+                ? (mode === "replace" ? "Replacingâ¦" : "Applyingâ¦")
                 : (mode === "replace"
-                    ? `Replace ${existingSceneCount} → ${accepted.length}`
+                    ? `Replace ${existingSceneCount} â ${accepted.length}`
                     : `Apply ${accepted.length} scene${accepted.length === 1 ? "" : "s"}`)}
             </button>
           </div>
@@ -562,9 +562,9 @@ export default function ScriptBreakdownWizardPage() {
       )}
 
       {step === 3 && (
-        // v6.73 — Rich post-apply summary: created + (if replace) deleted +
+        // v6.73 â Rich post-apply summary: created + (if replace) deleted +
         // reused vs new characters/locations + missing references + clear
-        // next-action call-outs. v6.74 — also calls out characters/locations
+        // next-action call-outs. v6.74 â also calls out characters/locations
         // we actually created from the breakdown.
         <div className="space-y-4">
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-6">
@@ -575,13 +575,13 @@ export default function ScriptBreakdownWizardPage() {
               {applyMut.data?.created ?? 0} new scene
               {applyMut.data?.created === 1 ? "" : "s"} added to your project
               {(applyMut.data?.deleted ?? 0) > 0
-                ? ` · ${applyMut.data!.deleted} previous scene${applyMut.data!.deleted === 1 ? "" : "s"} replaced`
+                ? ` Â· ${applyMut.data!.deleted} previous scene${applyMut.data!.deleted === 1 ? "" : "s"} replaced`
                 : ""}
               {((applyMut.data?.summary as any)?.createdCharacters?.length ?? 0) > 0
-                ? ` · ${(applyMut.data!.summary as any).createdCharacters.length} character${(applyMut.data!.summary as any).createdCharacters.length === 1 ? "" : "s"} imported`
+                ? ` Â· ${(applyMut.data!.summary as any).createdCharacters.length} character${(applyMut.data!.summary as any).createdCharacters.length === 1 ? "" : "s"} imported`
                 : ""}
               {((applyMut.data?.summary as any)?.createdLocations?.length ?? 0) > 0
-                ? ` · ${(applyMut.data!.summary as any).createdLocations.length} location${(applyMut.data!.summary as any).createdLocations.length === 1 ? "" : "s"} imported`
+                ? ` Â· ${(applyMut.data!.summary as any).createdLocations.length} location${(applyMut.data!.summary as any).createdLocations.length === 1 ? "" : "s"} imported`
                 : ""}
               .
             </div>
@@ -651,7 +651,7 @@ export default function ScriptBreakdownWizardPage() {
               {applyMut.data.summary.missingReferences.length > 0 && (
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-amber-300/80 mb-1">
-                    Missing references — fix these before generating video
+                    Missing references â fix these before generating video
                   </div>
                   <ul className="text-xs text-rose-200 list-disc ml-5 space-y-0.5">
                     {applyMut.data.summary.missingReferences.map((m, i) => (
@@ -670,13 +670,13 @@ export default function ScriptBreakdownWizardPage() {
               </a>
             </Link>
             <Link href={`/projects/${projectId}/storyboard`}>
-              <a className="inline-block bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded text-sm">
+              <a className="inline-block bg-zinc-800 hover:bg-amber-500/10 text-zinc-100 px-4 py-2 rounded text-sm">
                 Open storyboard
               </a>
             </Link>
             {applyMut.data?.summary && applyMut.data.summary.newCharacters.length > 0 && (
               <Link href={`/projects/${projectId}/characters`}>
-                <a className="inline-block bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded text-sm">
+                <a className="inline-block bg-zinc-800 hover:bg-amber-500/10 text-zinc-100 px-4 py-2 rounded text-sm">
                   Add reference images
                 </a>
               </Link>
