@@ -3769,43 +3769,25 @@ Available fields you can update:
         let aiResponse = "";
 
         const _abort = new AbortController();
-          const _abortTimer = setTimeout(() => _abort.abort(), 30000);
-          try {          if (provider === "groq") {
-              const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: "POST",
-                headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  model: "llama-3.3-70b-versatile",
-                  messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
-                  max_tokens: 1000,
-                  temperature: 0.7,
-                }),
-                signal: _abort.signal,
-              });
-              if (!resp.ok) { const e = await resp.text(); throw new Error(`Groq API error ${resp.status}: ${e}`); }
-              const data = await resp.json();
-              aiResponse = data.choices?.[0]?.message?.content || "";
-            } else  {
-            const resp = await fetch("https://api.venice.ai/api/v1/chat/completions", {
+        const _abortTimer = setTimeout(() => _abort.abort(), 30000);
+        try {
+          if (provider === "groq") {
+            const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
               method: "POST",
-              headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json",
-              },
+              headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
               body: JSON.stringify({
-                model: "llama-3.3-70b",
+                model: "llama-3.3-70b-versatile",
                 messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
                 max_tokens: 1000,
                 temperature: 0.7,
               }),
+              signal: _abort.signal,
             });
-            if (!resp.ok) {
-              const errText = await resp.text();
-              throw new Error(`Venice API error ${resp.status}: ${errText}`);
-            }
+            if (!resp.ok) { const e = await resp.text(); throw new Error(`Groq API error ${resp.status}: ${e}`); }
             const data = await resp.json();
             aiResponse = data.choices?.[0]?.message?.content || "";
-          } else if (provider === "openai") {
+          } else if (provider === "venice") {
+
             const resp = await fetch("https://api.openai.com/v1/chat/completions", {
               method: "POST",
               headers: {
