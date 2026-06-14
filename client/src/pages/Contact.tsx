@@ -56,7 +56,7 @@ export default function Contact() {
         <Card className="max-w-md w-full text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardContent className="pt-10 pb-8 space-y-4">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-            <h2 className="text-2xl font-bold gradient-text-gold">Message Sent</h2>
+            <h2 className="text-2xl font-bold text-gold-shimmer">Message Sent</h2>
             <p className="text-muted-foreground">
               Thank you for reaching out. Our team will review your message and get back to you within 24 hours.
             </p>
@@ -96,7 +96,7 @@ export default function Contact() {
           {/* Contact Info */}
           <div className="lg:col-span-2 space-y-6">
             <div>
-              <h2 className="text-2xl font-bold mb-2 gradient-text-gold">Let's Talk</h2>
+              <h2 className="text-2xl font-bold mb-2 text-gold-shimmer">Let's Talk</h2>
               <p className="text-muted-foreground">
                 Whether you're interested in our Industry plan, need technical support, or want to explore a partnership, we'd love to hear from you.
               </p>

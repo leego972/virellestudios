@@ -197,7 +197,7 @@ const LocationRecreation: React.FC = () => {
             <>
               {/* Step 1: Upload Video */}
               <div className="p-8 rounded-3xl border border-amber-500/20 backdrop-blur-sm glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
-                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 gradient-text-gold">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 text-gold-shimmer">
                   <Video className="text-blue-400" />
                   {selectedLocationId ? "Location Details" : "1. Upload Location Reference"}
                 </h2>
@@ -250,7 +250,7 @@ const LocationRecreation: React.FC = () => {
 
               {/* Step 2: Environment Controls */}
               <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-amber-500/20 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
-                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 gradient-text-gold">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 text-gold-shimmer">
                   <Settings className="text-purple-400" />
                   2. Environmental Controls
                 </h2>
