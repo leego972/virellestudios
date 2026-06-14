@@ -1,1 +1,278 @@
-aW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IENhcmQsIENhcmRDb250ZW50LCBDYXJkRGVzY3JpcHRpb24sIENhcmRIZWFkZXIsIENhcmRUaXRsZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9jYXJkIjsKaW1wb3J0IHsgQ3Jvd24sIFphcCwgTG9jaywgQXJyb3dSaWdodCwgQ2FtZXJhLCBGaWxtLCBDYWxlbmRhckRheXMgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwppbXBvcnQgeyBIb2xseXdvb2RCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy9Ib2xseXdvb2RJY29uIjsKaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwoKaW50ZXJmYWNlIFVwZ3JhZGVQcm9tcHRQcm9wcyB7CiAgZmVhdHVyZT86IHN0cmluZzsKICAvLyBBY2NlcHRzIGJvdGggY2Fub25pY2FsIGtleXMgYW5kIGxlZ2FjeSBhbGlhc2VzCiAgcmVxdWlyZWRUaWVyPzogImluZGllIiB8ICJhbWF0ZXVyIiB8ICJpbmRlcGVuZGVudCIgfCAiY3JlYXRvciIgfCAic3R1ZGlvIiB8ICJpbmR1c3RyeSIgfCAicHJvIjsKICBjdXJyZW50VGllcj86IHN0cmluZzsKICBjbGFzc05hbWU/OiBzdHJpbmc7CiAgY29tcGFjdD86IGJvb2xlYW47Cn0KCi8vIFRocmVlIHB1YmxpYy1mYWNpbmcgdGllcnM6IEluZGllLCBDcmVhdG9yLCBJbmR1c3RyeS4KLy8gTGVnYWN5IERCIGtleXMgKGluZGVwZW5kZW50LCBjcmVhdG9yLCBzdHVkaW8pIGFsbCBtYXAgdG8gSW5kdXN0cnkuCmNvbnN0IFRJRVJfRElTUExBWTogUmVjb3JkPHN0cmluZywgeyBuYW1lOiBzdHJpbmc7IGljb246IFJlYWN0LkVsZW1lbnRUeXBlOyBjb2xvcjogc3RyaW5nOyBwcmljZTogc3RyaW5nOyBjcmVkaXRzOiBzdHJpbmcgfT4gPSB7CiAgaW5kaWU6IHsKICAgIG5hbWU6ICJJbmRpZSIsCiAgICBpY29uOiBaYXAsCiAgICBjb2xvcjogInRleHQtYmx1ZS00MDAiLAogICAgcHJpY2U6ICJBJDE0OS9tb250aCBvciBBJDEsNDkwL3llYXIiLAogICAgY3JlZGl0czogIjUwMCBjcmVkaXRzL21vbnRoIGluY2x1ZGVkIiwKICB9LAogIGFtYXRldXI6IHsKICAgIG5hbWU6ICJDcmVhdG9yIiwKICAgIGljb246IENhbWVyYSwKICAgIGNvbG9yOiAidGV4dC1lbWVyYWxkLTQwMCIsCiAgICBwcmljZTogIkEkNDkwL21vbnRoIG9yIEEkNCw5MDAveWVhciIsCiAgICBjcmVkaXRzOiAiMiwwMDAgY3JlZGl0cy9tb250aCBpbmNsdWRlZCIsCiAgfSwKICBpbmRlcGVuZGVudDogewogICAgbmFtZTogIkluZHVzdHJ5IiwKICAgIGljb246IEZpbG0sCiAgICBjb2xvcjogInRleHQtdmlvbGV0LTQwMCIsCiAgICBwcmljZTogIkEkMSw0OTAvbW9udGggb3IgQSQxNCw5MDAveWVhciIsCiAgICBjcmVkaXRzOiAiNiwwMDAgY3JlZGl0cy9tb250aCBpbmNsdWRlZCIsCiAgfSwKICAvLyBMZWdhY3kgYWxpYXNlcyDigJQgYWxsIHJlc29sdmUgdG8gSW5kdXN0cnkKICBjcmVhdG9yOiB7CiAgICBuYW1lOiAiSW5kdXN0cnkiLAogICAgaWNvbjogRmlsbSwKICAgIGNvbG9yOiAidGV4dC12aW9sZXQtNDAwIiwKICAgIHByaWNlOiAiQSQxLDQ5MC9tb250aCBvciBBJDE0LDkwMC95ZWFyIiwKICAgIGNyZWRpdHM6ICI2LDAwMCBjcmVkaXRzL21vbnRoIGluY2x1ZGVkIiwKICB9LAogIHN0dWRpbzogewogICAgbmFtZTogIkluZHVzdHJ5IiwKICAgIGljb246IEZpbG0sCiAgICBjb2xvcjogInRleHQtdmlvbGV0LTQwMCIsCiAgICBwcmljZTogIkEkMSw0OTAvbW9udGggb3IgQSQxNCw5MDAveWVhciIsCiAgICBjcmVkaXRzOiAiNiwwMDAgY3JlZGl0cy9tb250aCBpbmNsdWRlZCIsCiAgfSwKICBpbmR1c3RyeTogewogICAgbmFtZTogIkluZHVzdHJ5IiwKICAgIGljb246IENyb3duLAogICAgY29sb3I6ICJ0ZXh0LXllbGxvdy00MDAiLAogICAgcHJpY2U6ICJDdXN0b20gcHJpY2luZyIsCiAgICBjcmVkaXRzOiAiNiwwMDArIGNyZWRpdHMvbW9udGgiLAogIH0sCn07CgovLyBOb3JtYWxpc2UgYW55IGxlZ2FjeSBrZXkgdG8gdGhlIGNhbm9uaWNhbCAzLXRpZXIga2V5IGZvciBkaXNwbGF5IHB1cnBvc2VzCmZ1bmN0aW9uIG5vcm1hbGlzZVRpZXIodGllcjogc3RyaW5nKTogc3RyaW5nIHsKICBpZiAodGllciA9PT0gImNyZWF0b3IiIHx8IHRpZXIgPT09ICJzdHVkaW8iIHx8IHRpZXIgPT09ICJpbmRlcGVuZGVudCIgfHwgdGllciA9PT0gInBybyIpIHJldHVybiAiaW5kZXBlbmRlbnQiOwogIHJldHVybiB0aWVyOwp9CgovLyBUaWVyLWF3YXJlIGJ1dHRvbiBjbGFzcyDigJQgbWF0Y2hlcyBQcmljaW5nLnRzeCB0aWVyIGNvbG9ycwpmdW5jdGlvbiB0aWVyQnV0dG9uQ2xhc3Mobm9ybVRpZXI6IHN0cmluZyk6IHN0cmluZyB7CiAgaWYgKG5vcm1UaWVyID09PSAiaW5kaWUiKSAgICAgICByZXR1cm4gImJnLWVtZXJhbGQtNjAwIGhvdmVyOmJnLWVtZXJhbGQtNTAwIHRleHQtd2hpdGUiOwogIGlmIChub3JtVGllciA9PT0gImFtYXRldXIiKSAgICAgcmV0dXJuICJiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNTAwIHRleHQtd2hpdGUiOwogIGlmIChub3JtVGllciA9PT0gImluZGVwZW5kZW50IikgcmV0dXJuICJiZy12aW9sZXQtNjAwIGhvdmVyOmJnLXZpb2xldC01MDAgdGV4dC13aGl0ZSI7CiAgcmV0dXJuICJiZy15ZWxsb3ctNjAwIGhvdmVyOmJnLXllbGxvdy01MDAgdGV4dC13aGl0ZSI7IC8vIGluZHVzdHJ5IC8gY29udGFjdCBzYWxlcwp9CgovLyBUaWVyLWF3YXJlIGJvcmRlci9iZyBjbGFzcyBmb3IgdGhlIGNvbXBhY3Qgd3JhcHBlcgpmdW5jdGlvbiB0aWVyQm9yZGVyQ2xhc3Mobm9ybVRpZXI6IHN0cmluZyk6IHN0cmluZyB7CiAgaWYgKG5vcm1UaWVyID09PSAiaW5kaWUiKSAgICAgICByZXR1cm4gImJvcmRlci1lbWVyYWxkLTUwMC8zMCBiZy1lbWVyYWxkLTUwMC81IjsKICBpZiAobm9ybVRpZXIgPT09ICJhbWF0ZXVyIikgICAgIHJldHVybiAiYm9yZGVyLWFtYmVyLTUwMC8zMCBiZy1hbWJlci01MDAvNSI7CiAgaWYgKG5vcm1UaWVyID09PSAiaW5kZXBlbmRlbnQiKSByZXR1cm4gImJvcmRlci12aW9sZXQtNTAwLzMwIGJnLXZpb2xldC01MDAvNSI7CiAgcmV0dXJuICJib3JkZXIteWVsbG93LTUwMC8zMCBiZy15ZWxsb3ctNTAwLzUiOwp9CgpleHBvcnQgZnVuY3Rpb24gVXBncmFkZVByb21wdCh7CiAgZmVhdHVyZSwKICByZXF1aXJlZFRpZXIgPSAiaW5kZXBlbmRlbnQiLAogIGNsYXNzTmFtZSA9ICIiLAogIGNvbXBhY3QgPSBmYWxzZSwKfTogVXBncmFkZVByb21wdFByb3BzKSB7CiAgY29uc3QgWywgc2V0TG9jYXRpb25dID0gdXNlTG9jYXRpb24oKTsKCiAgY29uc3Qgbm9ybVRpZXIgPSBub3JtYWxpc2VUaWVyKHJlcXVpcmVkVGllcik7CiAgY29uc3QgdGllciA9IFRJRVJfRElTUExBWVtub3JtVGllcl0gfHwgVElFUl9ESVNQTEFZLmluZGVwZW5kZW50OwogIGNvbnN0IEljb24gPSB0aWVyLmljb247CiAgLy8gSW5kdXN0cnkgKHNhbGVzLWxlZCkgdXNlcyBjb250YWN0LXNhbGVzIGZsb3c7IGFsbCB0aHJlZSBzZWxmLXNlcnZlIHRpZXJzIHVzZSAvcHJpY2luZwogIGNvbnN0IGlzQ29udGFjdFNhbGVzID0gbm9ybVRpZXIgPT09ICJpbmR1c3RyeSIgJiYgdGllci5wcmljZSA9PT0gIkN1c3RvbSBwcmljaW5nIjsKCiAgaWYgKGNvbXBhY3QpIHsKICAgIGNvbnN0IGJ0bkNsYXNzID0gdGllckJ1dHRvbkNsYXNzKG5vcm1UaWVyKTsKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPXtgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgcC0zIHJvdW5kZWQtbGcgYm9yZGVyICR7dGllckJvcmRlckNsYXNzKG5vcm1UaWVyKX0gJHtjbGFzc05hbWV9YH0+CiAgICAgICAgPExvY2sgY2xhc3NOYW1lPXtgdy00IGgtNCAke3RpZXIuY29sb3J9IHNocmluay0wYH0gLz4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtbWVkaXVtIHRydW5jYXRlIj4KICAgICAgICAgICAge2ZlYXR1cmUgPyBgJHtmZWF0dXJlfSByZXF1aXJlcyBgIDogIlJlcXVpcmVzICJ9CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT17dGllci5jb2xvcn0+e3RpZXIubmFtZX08L3NwYW4+CiAgICAgICAgICA8L3A+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj57dGllci5wcmljZX08L3A+CiAgICAgICAgPC9kaXY+CiAgICAgICAge2lzQ29udGFjdFNhbGVzID8gKAogICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICBzaXplPSJzbSIKICAgICAgICAgICAgY2xhc3NOYW1lPXtgJHtidG5DbGFzc30gc2hyaW5rLTBgfQogICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiB7CiAgICAgICAgICAgICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSBgbWFpbHRvOnN0dWRpb3N2aXJlbGxlQGdtYWlsLmNvbT9zdWJqZWN0PSR7ZW5jb2RlVVJJQ29tcG9uZW50KAogICAgICAgICAgICAgICAgYFZpcmVsbGUgU3R1ZGlvcyDigJQgJHt0aWVyLm5hbWV9IEVucXVpcnlgCiAgICAgICAgICAgICAgKX1gOwogICAgICAgICAgICB9fQogICAgICAgICAgPgogICAgICAgICAgICA8Q2FsZW5kYXJEYXlzIGNsYXNzTmFtZT0idy0zIGgtMyBtci0xIiAvPgogICAgICAgICAgICBDb250YWN0IFNhbGVzCiAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICApIDogKAogICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICBzaXplPSJzbSIKICAgICAgICAgICAgY2xhc3NOYW1lPXtgJHtidG5DbGFzc30gc2hyaW5rLTBgfQogICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRMb2NhdGlvbigiL3ByaWNpbmciKX0KICAgICAgICAgID4KICAgICAgICAgICAgPEFycm93UmlnaHQgY2xhc3NOYW1lPSJ3LTMgaC0zIG1yLTEiIC8+CiAgICAgICAgICAgIFVwZ3JhZGUKICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICl9CiAgICAgIDwvZGl2PgogICAgKTsKICB9CgogIHJldHVybiAoCiAgICA8Q2FyZCBjbGFzc05hbWU9e2Ake2NsYXNzTmFtZX1gfSBzdHlsZT17eyBib3JkZXI6IjFweCBzb2xpZCByZ2JhKDIxMiwxNzUsNTUsMC4zNSkiLCBiYWNrZ3JvdW5kOiJsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLHJnYmEoMjEyLDE3NSw1NSwwLjA2KSAwJSxyZ2JhKDI1NSwyNTUsMjU1LDAuMDEpIDEwMCUpIiB9fT4KICAgICAgPENhcmRIZWFkZXIgY2xhc3NOYW1lPSJwYi0zIj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InAtMiByb3VuZGVkLWxnIGJnLWFtYmVyLTUwMC8xMCI+CiAgICAgICAgICAgIDxMb2NrIGNsYXNzTmFtZT0idy01IGgtNSB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQtYmFzZSI+CiAgICAgICAgICAgICAge2ZlYXR1cmUgPyBgJHtmZWF0dXJlfSBpcyBsb2NrZWRgIDogIkZlYXR1cmUgbG9ja2VkIn0KICAgICAgICAgICAgPC9DYXJkVGl0bGU+CiAgICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24gY2xhc3NOYW1lPSJ0ZXh0LXhzIG10LTAuNSI+CiAgICAgICAgICAgICAge2lzQ29udGFjdFNhbGVzCiAgICAgICAgICAgICAgICA/IGBBdmFpbGFibGUgb24gJHt0aWVyLm5hbWV9IOKAlCBjb250YWN0IHNhbGVzIGZvciBwcmljaW5nYAogICAgICAgICAgICAgICAgOiBgQXZhaWxhYmxlIGZyb20gJHt0aWVyLm5hbWV9IOKAlCAke3RpZXIucHJpY2V9YH0KICAgICAgICAgICAgPC9DYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgPC9DYXJkSGVhZGVyPgogICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJzcGFjZS15LTQiPgogICAgICAgIHsvKiBUaWVyIGluZm8gKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9e2BmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBwLTMgcm91bmRlZC1sZyBib3JkZXIgJHsKICAgICAgICAgIG5vcm1UaWVyID09PSAiaW5kaWUiICAgICAgICA/ICJib3JkZXItYmx1ZS01MDAvMzAgYmctYmx1ZS01MDAvNSIgOgogICAgICAgICAgbm9ybVRpZXIgPT09ICJhbWF0ZXVyIiAgICAgID8gImJvcmRlci1lbWVyYWxkLTUwMC8zMCBiZy1lbWVyYWxkLTUwMC81IiA6CiAgICAgICAgICBub3JtVGllciA9PT0gImluZGVwZW5kZW50IiAgPyAiYm9yZGVyLXZpb2xldC01MDAvMzAgYmctdmlvbGV0LTUwMC81IiA6CiAgICAgICAgICAiYm9yZGVyLXllbGxvdy01MDAvMzAgYmcteWVsbG93LTUwMC81IgogICAgICAgIH1gfT4KICAgICAgICAgIDxIb2xseXdvb2RCYWRnZSB0aWVyPXtub3JtVGllciA9PT0gImluZGllIiA/ICJpbmRpZSIgOiBub3JtVGllciA9PT0gImFtYXRldXIiID8gImNyZWF0b3IiIDogImluZHVzdHJ5In0gc2l6ZT17MzJ9IGNsYXNzTmFtZT0ic2hyaW5rLTAiIC8+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8cCBjbGFzc05hbWU9e2B0ZXh0LXNtIGZvbnQtc2VtaWJvbGQgJHt0aWVyLmNvbG9yfWB9Pnt0aWVyLm5hbWV9PC9wPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj57dGllci5wcmljZX08L3A+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQiPnt0aWVyLmNyZWRpdHN9PC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBUaWVyIHByb2dyZXNzaW9uIOKAlCAzIHB1YmxpYyB0aWVycyAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMyBnYXAtMSB0ZXh0LWNlbnRlciI+CiAgICAgICAgICB7WwogICAgICAgICAgICB7IGtleTogImluZGllIiwgICAgICAgYmFkZ2VLZXk6ICJpbmRpZSIgYXMgY29uc3QsICAgIGxhYmVsOiAiSW5kaWUiLCAgICBjb2xvcjogInRleHQtYmx1ZS00MDAiLCAgICBiZzogImJnLWJsdWUtNTAwLzEwIiB9LAogICAgICAgICAgICB7IGtleTogImFtYXRldXIiLCAgICAgYmFkZ2VLZXk6ICJjcmVhdG9yIiBhcyBjb25zdCwgIGxhYmVsOiAiQ3JlYXRvciIsICBjb2xvcjogInRleHQtZW1lcmFsZC00MDAiLCBiZzogImJnLWVtZXJhbGQtNTAwLzEwIiB9LAogICAgICAgICAgICB7IGtleTogImluZGVwZW5kZW50IiwgYmFkZ2VLZXk6ICJpbmR1c3RyeSIgYXMgY29uc3QsIGxhYmVsOiAiSW5kdXN0cnkiLCBjb2xvcjogInRleHQtdmlvbGV0LTQwMCIsICBiZzogImJnLXZpb2xldC01MDAvMTAiIH0sCiAgICAgICAgICBdLm1hcCgodCkgPT4gKAogICAgICAgICAgICA8ZGl2CiAgICAgICAgICAgICAga2V5PXt0LmtleX0KICAgICAgICAgICAgICBjbGFzc05hbWU9e2BwLTEuNSByb3VuZGVkIGZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGdhcC0wLjUgJHsKICAgICAgICAgICAgICAgIHQua2V5ID09PSBub3JtVGllciA/IGAke3QuYmd9IHJpbmctMSByaW5nLWN1cnJlbnQgJHt0LmNvbG9yfWAgOiAib3BhY2l0eS00MCIKICAgICAgICAgICAgICB9YH0KICAgICAgICAgICAgPgogICAgICAgICAgICAgIDxIb2xseXdvb2RCYWRnZSB0aWVyPXt0LmJhZGdlS2V5fSBzaXplPXsyMH0gLz4KICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtWzlweF0gZm9udC1tZWRpdW0iPnt0LmxhYmVsfTwvc3Bhbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICApKX0KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIENUQSAqL30KICAgICAgICB7aXNDb250YWN0U2FsZXMgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgIGNsYXNzTmFtZT17YHctZnVsbCAke3RpZXJCdXR0b25DbGFzcyhub3JtVGllcil9YH0KICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiB7CiAgICAgICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IGBtYWlsdG86c3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tP3N1YmplY3Q9JHtlbmNvZGVVUklDb21wb25lbnQoCiAgICAgICAgICAgICAgICAgIGBWaXJlbGxlIFN0dWRpb3Mg4oCUICR7dGllci5uYW1lfSBFbnF1aXJ5YAogICAgICAgICAgICAgICAgKX1gOwogICAgICAgICAgICAgIH19CiAgICAgICAgICAgID4KICAgICAgICAgICAgICA8Q2FsZW5kYXJEYXlzIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIiAvPgogICAgICAgICAgICAgIERpc2N1c3MgRW50ZXJwcmlzZSBXb3JrZmxvdwogICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgIHZhcmlhbnQ9Imdob3N0IgogICAgICAgICAgICAgIGNsYXNzTmFtZT0idy1mdWxsIHRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIgogICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldExvY2F0aW9uKCIvcHJpY2luZyIpfQogICAgICAgICAgICA+CiAgICAgICAgICAgICAgVmlldyBhbGwgcGxhbnMKICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICBjbGFzc05hbWU9e2B3LWZ1bGwgJHt0aWVyQnV0dG9uQ2xhc3Mobm9ybVRpZXIpfWB9CiAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0TG9jYXRpb24oIi9wcmljaW5nIil9CiAgICAgICAgICAgID4KICAgICAgICAgICAgICA8WmFwIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIiAvPgogICAgICAgICAgICAgIFVwZ3JhZGUgdG8ge3RpZXIubmFtZX0KICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIHRleHQtY2VudGVyIj4KICAgICAgICAgICAgICBBbm51YWwgcGxhbnMgc2F2ZSB+MTclIMK3IEZvdW5kaW5nIG1lbWJlcnMgc2F2ZSA1MCUgb2ZmIGZpcnN0IHllYXIKICAgICAgICAgICAgPC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KICAgICAgPC9DYXJkQ29udGVudD4KICAgIDwvQ2FyZD4KICApOwp9CgppbnRlcmZhY2UgRmVhdHVyZUdhdGVQcm9wcyB7CiAgY2hpbGRyZW46IFJlYWN0LlJlYWN0Tm9kZTsKICBmZWF0dXJlOiBzdHJpbmc7CiAgcmVxdWlyZWRUaWVyOiAiaW5kaWUiIHwgImFtYXRldXIiIHwgImluZGVwZW5kZW50IiB8ICJjcmVhdG9yIiB8ICJzdHVkaW8iIHwgImluZHVzdHJ5IiB8ICJwcm8iOwogIGN1cnJlbnRUaWVyPzogc3RyaW5nOwogIGhhc0FjY2VzczogYm9vbGVhbjsKfQoKZXhwb3J0IGZ1bmN0aW9uIEZlYXR1cmVHYXRlKHsgY2hpbGRyZW4sIGZlYXR1cmUsIHJlcXVpcmVkVGllciwgY3VycmVudFRpZXIsIGhhc0FjY2VzcyB9OiBGZWF0dXJlR2F0ZVByb3BzKSB7CiAgaWYgKGhhc0FjY2VzcykgcmV0dXJuIDw+e2NoaWxkcmVufTwvPjsKICByZXR1cm4gPFVwZ3JhZGVQcm9tcHQgZmVhdHVyZT17ZmVhdHVyZX0gcmVxdWlyZWRUaWVyPXtyZXF1aXJlZFRpZXJ9IGN1cnJlbnRUaWVyPXtjdXJyZW50VGllcn0gLz47Cn0KCi8qKgogKiBTbWFsbCBpbmxpbmUgYmFkZ2Ugc2hvd2luZyBtZW1iZXJzaGlwIHRpZXIg4oCUIHVzZXMgSG9sbHl3b29kIGJyYW5kZWQgYmFkZ2UgaW1hZ2VzLgogKi8KZXhwb3J0IGZ1bmN0aW9uIEluZGllQmFkZ2UoKSB7CiAgcmV0dXJuICgKICAgIDxzcGFuIGNsYXNzTmFtZT0iaW5saW5lLWZsZXggaXRlbXMtY2VudGVyIGdhcC0xLjUiPgogICAgICA8SG9sbHl3b29kQmFkZ2UgdGllcj0iaW5kaWUiIHNpemU9ezIyfSAvPgogICAgPC9zcGFuPgogICk7Cn0KCmV4cG9ydCBmdW5jdGlvbiBDcmVhdG9yQmFkZ2UoKSB7CiAgcmV0dXJuICgKICAgIDxzcGFuIGNsYXNzTmFtZT0iaW5saW5lLWZsZXggaXRlbXMtY2VudGVyIGdhcC0xLjUiPgogICAgICA8SG9sbHl3b29kQmFkZ2UgdGllcj0iY3JlYXRvciIgc2l6ZT17MjJ9IC8+CiAgICA8L3NwYW4+CiAgKTsKfQoKZXhwb3J0IGZ1bmN0aW9uIEluZHVzdHJ5QmFkZ2UoKSB7CiAgcmV0dXJuICgKICAgIDxzcGFuIGNsYXNzTmFtZT0iaW5saW5lLWZsZXggaXRlbXMtY2VudGVyIGdhcC0xLjUiPgogICAgICA8SG9sbHl3b29kQmFkZ2UgdGllcj0iaW5kdXN0cnkiIHNpemU9ezIyfSAvPgogICAgPC9zcGFuPgogICk7Cn0KCi8vIEJhY2t3YXJkLWNvbXBhdCBhbGlhc2VzCmV4cG9ydCBmdW5jdGlvbiBJbmRlcGVuZGVudEJhZGdlKCkgeyByZXR1cm4gPEluZHVzdHJ5QmFkZ2UgLz47IH0KZXhwb3J0IGZ1bmN0aW9uIFByb0JhZGdlKCkgeyByZXR1cm4gPEluZHVzdHJ5QmFkZ2UgLz47IH0KCmV4cG9ydCBkZWZhdWx0IFVwZ3JhZGVQcm9tcHQ7Cg==
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Crown, Zap, Lock, ArrowRight, Camera, Film, CalendarDays } from "lucide-react";
+import { HollywoodBadge } from "@/components/HollywoodIcon";
+import { useLocation } from "wouter";
+
+interface UpgradePromptProps {
+  feature?: string;
+  // Accepts both canonical keys and legacy aliases
+  requiredTier?: "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "pro";
+  currentTier?: string;
+  className?: string;
+  compact?: boolean;
+}
+
+// Three public-facing tiers: Indie, Creator, Industry.
+// Legacy DB keys (independent, creator, studio) all map to Industry.
+const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; color: string; price: string; credits: string }> = {
+  indie: {
+    name: "Indie",
+    icon: Zap,
+    color: "text-blue-400",
+    price: "A$149/month or A$1,490/year",
+    credits: "500 credits/month included",
+  },
+  amateur: {
+    name: "Creator",
+    icon: Camera,
+    color: "text-emerald-400",
+    price: "A$490/month or A$4,900/year",
+    credits: "2,000 credits/month included",
+  },
+  independent: {
+    name: "Industry",
+    icon: Film,
+    color: "text-violet-400",
+    price: "A$1,490/month or A$14,900/year",
+    credits: "6,000 credits/month included",
+  },
+  // Legacy aliases â all resolve to Industry
+  creator: {
+    name: "Industry",
+    icon: Film,
+    color: "text-violet-400",
+    price: "A$1,490/month or A$14,900/year",
+    credits: "6,000 credits/month included",
+  },
+  studio: {
+    name: "Industry",
+    icon: Film,
+    color: "text-violet-400",
+    price: "A$1,490/month or A$14,900/year",
+    credits: "6,000 credits/month included",
+  },
+  industry: {
+    name: "Industry",
+    icon: Crown,
+    color: "text-yellow-400",
+    price: "Custom pricing",
+    credits: "6,000+ credits/month",
+  },
+};
+
+// Normalise any legacy key to the canonical 3-tier key for display purposes
+function normaliseTier(tier: string): string {
+  if (tier === "creator" || tier === "studio" || tier === "independent" || tier === "pro") return "independent";
+  return tier;
+}
+
+// Tier-aware button class â matches Pricing.tsx tier colors
+function tierButtonClass(normTier: string): string {
+  if (normTier === "indie")       return "bg-emerald-600 hover:bg-emerald-500 text-white";
+  if (normTier === "amateur")     return "bg-amber-600 hover:bg-amber-500 text-white";
+  if (normTier === "independent") return "bg-violet-600 hover:bg-violet-500 text-white";
+  return "bg-yellow-600 hover:bg-yellow-500 text-white"; // industry / contact sales
+}
+
+// Tier-aware border/bg class for the compact wrapper
+function tierBorderClass(normTier: string): string {
+  if (normTier === "indie")       return "border-emerald-500/30 bg-emerald-500/5";
+  if (normTier === "amateur")     return "border-amber-500/30 bg-amber-500/5";
+  if (normTier === "independent") return "border-violet-500/30 bg-violet-500/5";
+  return "border-yellow-500/30 bg-yellow-500/5";
+}
+
+export function UpgradePrompt({
+  feature,
+  requiredTier = "independent",
+  className = "",
+  compact = false,
+}: UpgradePromptProps) {
+  const [, setLocation] = useLocation();
+
+  const normTier = normaliseTier(requiredTier);
+  const tier = TIER_DISPLAY[normTier] || TIER_DISPLAY.independent;
+  const Icon = tier.icon;
+  // Industry (sales-led) uses contact-sales flow; all three self-serve tiers use /pricing
+  const isContactSales = normTier === "industry" && tier.price === "Custom pricing";
+
+  if (compact) {
+    const btnClass = tierButtonClass(normTier);
+    return (
+      <div className={`flex items-center gap-3 p-3 rounded-lg border ${tierBorderClass(normTier)} ${className}`}>
+        <Lock className={`w-4 h-4 ${tier.color} shrink-0`} />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">
+            {feature ? `${feature} requires ` : "Requires "}
+            <span className={tier.color}>{tier.name}</span>
+          </p>
+          <p className="text-xs text-muted-foreground">{tier.price}</p>
+        </div>
+        {isContactSales ? (
+          <Button
+            size="sm"
+            className={`${btnClass} shrink-0`}
+            onClick={() => {
+              window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
+                `Virelle Studios â ${tier.name} Enquiry`
+              )}`;
+            }}
+          >
+            <CalendarDays className="w-3 h-3 mr-1" />
+            Contact Sales
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className={`${btnClass} shrink-0`}
+            onClick={() => setLocation("/pricing")}
+          >
+            <ArrowRight className="w-3 h-3 mr-1" />
+            Upgrade
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Card className={`${className}`} style={{ border:"1px solid rgba(212,175,55,0.35)", background:"linear-gradient(135deg,rgba(212,175,55,0.06) 0%,rgba(255,255,255,0.01) 100%)" }}>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-amber-500/10">
+            <Lock className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <CardTitle className="text-base gradient-text-gold">
+              {feature ? `${feature} is locked` : "Feature locked"}
+            </CardTitle>
+            <CardDescription className="text-xs mt-0.5">
+              {isContactSales
+                ? `Available on ${tier.name} â contact sales for pricing`
+                : `Available from ${tier.name} â ${tier.price}`}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Tier info */}
+        <div className={`flex items-center gap-3 p-3 rounded-lg border ${
+          normTier === "indie"        ? "border-blue-500/30 bg-blue-500/5" :
+          normTier === "amateur"      ? "border-emerald-500/30 bg-emerald-500/5" :
+          normTier === "independent"  ? "border-violet-500/30 bg-violet-500/5" :
+          "border-yellow-500/30 bg-yellow-500/5"
+        }`}>
+          <HollywoodBadge tier={normTier === "indie" ? "indie" : normTier === "amateur" ? "creator" : "industry"} size={32} className="shrink-0" />
+          <div>
+            <p className={`text-sm font-semibold ${tier.color}`}>{tier.name}</p>
+            <p className="text-xs text-muted-foreground">{tier.price}</p>
+            <p className="text-xs text-muted-foreground">{tier.credits}</p>
+          </div>
+        </div>
+
+        {/* Tier progression â 3 public tiers */}
+        <div className="grid grid-cols-3 gap-1 text-center">
+          {[
+            { key: "indie",       badgeKey: "indie" as const,    label: "Indie",    color: "text-blue-400",    bg: "bg-blue-500/10" },
+            { key: "amateur",     badgeKey: "creator" as const,  label: "Creator",  color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { key: "independent", badgeKey: "industry" as const, label: "Industry", color: "text-violet-400",  bg: "bg-violet-500/10" },
+          ].map((t) => (
+            <div
+              key={t.key}
+              className={`p-1.5 rounded flex flex-col items-center gap-0.5 ${
+                t.key === normTier ? `${t.bg} ring-1 ring-current ${t.color}` : "opacity-40"
+              }`}
+            >
+              <HollywoodBadge tier={t.badgeKey} size={20} />
+              <span className="text-[9px] font-medium">{t.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        {isContactSales ? (
+          <div className="space-y-2">
+            <Button
+              className={`w-full ${tierButtonClass(normTier)}`}
+              onClick={() => {
+                window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
+                  `Virelle Studios â ${tier.name} Enquiry`
+                )}`;
+              }}
+            >
+              <CalendarDays className="w-4 h-4 mr-2" />
+              Discuss Enterprise Workflow
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-xs text-muted-foreground"
+              onClick={() => setLocation("/pricing")}
+            >
+              View all plans
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Button
+              className={`w-full ${tierButtonClass(normTier)}`}
+              onClick={() => setLocation("/pricing")}
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Upgrade to {tier.name}
+            </Button>
+            <p className="text-[10px] text-muted-foreground text-center">
+              Annual plans save ~17% Â· Founding members save 50% off first year
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+interface FeatureGateProps {
+  children: React.ReactNode;
+  feature: string;
+  requiredTier: "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "pro";
+  currentTier?: string;
+  hasAccess: boolean;
+}
+
+export function FeatureGate({ children, feature, requiredTier, currentTier, hasAccess }: FeatureGateProps) {
+  if (hasAccess) return <>{children}</>;
+  return <UpgradePrompt feature={feature} requiredTier={requiredTier} currentTier={currentTier} />;
+}
+
+/**
+ * Small inline badge showing membership tier â uses Hollywood branded badge images.
+ */
+export function IndieBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="indie" size={22} />
+    </span>
+  );
+}
+
+export function CreatorBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="creator" size={22} />
+    </span>
+  );
+}
+
+export function IndustryBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="industry" size={22} />
+    </span>
+  );
+}
+
+// Backward-compat aliases
+export function IndependentBadge() { return <IndustryBadge />; }
+export function ProBadge() { return <IndustryBadge />; }
+
+export default UpgradePrompt;

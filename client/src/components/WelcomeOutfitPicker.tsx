@@ -10,7 +10,7 @@ import { useState } from "react";
   export default function WelcomeOutfitPicker() {
     const { data: gift } = (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.() ?? {};
 
-    // ✅ Fix: enabled passed as OPTIONS (2nd arg), not input (1st arg)
+    // â Fix: enabled passed as OPTIONS (2nd arg), not input (1st arg)
     const { data: outfits = [], isLoading: outfitsLoading } = (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.(
       undefined,
       { enabled: !!(gift?.eligible && !gift?.claimed) }
@@ -41,7 +41,7 @@ import { useState } from "react";
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
               <Gift className="w-5 h-5 text-yellow-500 shrink-0" />
-              <DialogTitle className="text-base leading-snug">Welcome Gift — 2 Free Lamalo Outfits</DialogTitle>
+              <DialogTitle className="text-base leading-snug gradient-text-gold">Welcome Gift â 2 Free Lamalo Outfits</DialogTitle>
             </div>
             <DialogDescription className="text-sm">
               Choose any 2 outfits from Lamalo Fashions as a welcome gift. These are yours permanently at no cost.
@@ -50,7 +50,7 @@ import { useState } from "react";
 
           {outfitsLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground text-amber-400" />
             </div>
           ) : outfits.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
@@ -104,7 +104,7 @@ import { useState } from "react";
                   }}
               >
                 {claimMut?.isPending
-                  ? <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                  ? <Loader2 className="w-4 h-4 animate-spin mr-1 text-amber-400" />
                   : <Gift className="w-4 h-4 mr-1" />}
                 Claim Free
               </Button>

@@ -1,1 +1,176 @@
-aW1wb3J0IHsgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IENhcmQsIENhcmRDb250ZW50IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgewogIEJvb2tPcGVuLAogIEJyaWVmY2FzZSwKICBDYWxlbmRhciwKICBDYW1lcmEsCiAgQ2xhcHBlcmJvYXJkLAogIERvd25sb2FkLAogIEZpbGVUZXh0LAogIEZpbG0sCiAgR2xvYmUsCiAgTWVnYXBob25lLAogIE11c2ljLAogIFBhbGV0dGUsCiAgU2Nyb2xsVGV4dCwKICBTY2lzc29ycywKICBTaGllbGRDaGVjaywKICBTcGFya2xlcywKICBUeXBlLAogIFVzZXJzLAogIFZvbHVtZTIsCiAgV2FuZDIsCiAgV2FsbGV0LAp9IGZyb20gImx1Y2lkZS1yZWFjdCI7Cgp0eXBlIFRvb2wgPSB7CiAgdGl0bGU6IHN0cmluZzsKICBkZXNjcmlwdGlvbjogc3RyaW5nOwogIGhyZWY6IHN0cmluZzsKICBpY29uOiBSZWFjdC5Db21wb25lbnRUeXBlPHsgY2xhc3NOYW1lPzogc3RyaW5nIH0+OwogIGJhZGdlPzogc3RyaW5nOwp9OwoKdHlwZSBHcm91cCA9IHsKICB0aXRsZTogc3RyaW5nOwogIGRlc2NyaXB0aW9uOiBzdHJpbmc7CiAgdG9vbHM6IFRvb2xbXTsKfTsKCmZ1bmN0aW9uIFRvb2xDYXJkKHsgdG9vbCB9OiB7IHRvb2w6IFRvb2wgfSkgewogIGNvbnN0IEljb24gPSB0b29sLmljb247CiAgcmV0dXJuICgKICAgIDxMaW5rIGhyZWY9e3Rvb2wuaHJlZn0+CiAgICAgIDxDYXJkIGNsYXNzTmFtZT0iaC1mdWxsIGN1cnNvci1wb2ludGVyIHRyYW5zaXRpb24tYWxsIGFjdGl2ZTpzY2FsZS1bMC45OV0iIHN0eWxlPXt7IGJvcmRlcjoiMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsMC4wNikiLCBiYWNrZ3JvdW5kOiJyZ2JhKDI1NSwyNTUsMjU1LDAuMDIpIiB9fSBvbk1vdXNlRW50ZXI9e2U9PnsoZS5jdXJyZW50VGFyZ2V0IGFzIEhUTUxFbGVtZW50KS5zdHlsZS5ib3JkZXJDb2xvcj0icmdiYSgyMTIsMTc1LDU1LDAuMzUpIjsoZS5jdXJyZW50VGFyZ2V0IGFzIEhUTUxFbGVtZW50KS5zdHlsZS5iYWNrZ3JvdW5kPSJyZ2JhKDIxMiwxNzUsNTUsMC4wNCkifX0gb25Nb3VzZUxlYXZlPXtlPT57KGUuY3VycmVudFRhcmdldCBhcyBIVE1MRWxlbWVudCkuc3R5bGUuYm9yZGVyQ29sb3I9InJnYmEoMjU1LDI1NSwyNTUsMC4wNikiOyhlLmN1cnJlbnRUYXJnZXQgYXMgSFRNTEVsZW1lbnQpLnN0eWxlLmJhY2tncm91bmQ9InJnYmEoMjU1LDI1NSwyNTUsMC4wMikifX0+CiAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC0zLjUgZmxleCBpdGVtcy1zdGFydCBnYXAtMyI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaC05IHctOSByb3VuZGVkLWxnIGJnLWFtYmVyLTUwMC8xMCBib3JkZXIgYm9yZGVyLWFtYmVyLTUwMC8yMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaHJpbmstMCB0ZXh0LWFtYmVyLTUwMCI+CiAgICAgICAgICAgIDxJY29uIGNsYXNzTmFtZT0iaC00IHctNCIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1pbi13LTAgZmxleC0xIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIG1pbi13LTAiPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtbWVkaXVtIGxlYWRpbmctdGlnaHQgdHJ1bmNhdGUiPnt0b29sLnRpdGxlfTwvZGl2PgogICAgICAgICAgICAgIHt0b29sLmJhZGdlICYmICgKICAgICAgICAgICAgICAgIDxCYWRnZSBjbGFzc05hbWU9ImgtNSB0ZXh0LVsxMHB4XSBiZy1hbWJlci01MDAvMTUgdGV4dC1hbWJlci01MDAgaG92ZXI6YmctYW1iZXItNTAwLzE1IHNocmluay0wIj4KICAgICAgICAgICAgICAgICAge3Rvb2wuYmFkZ2V9CiAgICAgICAgICAgICAgICA8L0JhZGdlPgogICAgICAgICAgICAgICl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgbGVhZGluZy1zbnVnIG10LTEgbGluZS1jbGFtcC0yIj57dG9vbC5kZXNjcmlwdGlvbn08L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgIDwvQ2FyZD4KICAgIDwvTGluaz4KICApOwp9CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBQcm9qZWN0VG9vbEh1Yih7IHByb2plY3RJZCB9OiB7IHByb2plY3RJZDogbnVtYmVyIHwgc3RyaW5nIH0pIHsKICBjb25zdCBncm91cHM6IEdyb3VwW10gPSBbCiAgICB7CiAgICAgIHRpdGxlOiAiMS4gUGxhbiIsCiAgICAgIGRlc2NyaXB0aW9uOiAiRGV2ZWxvcCB0aGUgY29uY2VwdCwgcGl0Y2gsIHNjcmlwdCwgY2FzdCBhbmQgcHJvZHVjdGlvbiBwbGFuLiIsCiAgICAgIHRvb2xzOiBbCiAgICAgICAgeyB0aXRsZTogIlBpdGNoIExhYiIsIGRlc2NyaXB0aW9uOiAiTG9nbGluZSwgdHJlYXRtZW50LCBwaXRjaCBtYXRlcmlhbHMgYW5kIGNyZWF0aXZlIHBvc2l0aW9uaW5nLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3BpdGNoLWxhYmAsIGljb246IEJyaWVmY2FzZSB9LAogICAgICAgIHsgdGl0bGU6ICJTY3JpcHQgV3JpdGVyIiwgZGVzY3JpcHRpb246ICJXcml0ZSwgcmV2aXNlIGFuZCBzdHJ1Y3R1cmUgdGhlIHNjcmVlbnBsYXkuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc2NyaXB0YCwgaWNvbjogU2Nyb2xsVGV4dCB9LAogICAgICAgIHsgdGl0bGU6ICJTY3JpcHQgQnJlYWtkb3duIiwgZGVzY3JpcHRpb246ICJCcmVhayBkb3duIHNjZW5lcywgbG9jYXRpb25zLCBjYXN0LCBwcm9wcyBhbmQgcHJvZHVjdGlvbiBuZWVkcy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9zY3JpcHQtYnJlYWtkb3duYCwgaWNvbjogRmlsZVRleHQgfSwKICAgICAgICB7IHRpdGxlOiAiU2VyaWVzIEJpYmxlIiwgZGVzY3JpcHRpb246ICJXb3JsZCwgY2hhcmFjdGVycywgZXBpc29kZXMgYW5kIGNvbnRpbnVpdHkgYmlibGUuIiwgaHJlZjogYC9zZXJpZXNgLCBpY29uOiBCb29rT3BlbiB9LAogICAgICAgIHsgdGl0bGU6ICJDYXN0aW5nIEJvYXJkIiwgZGVzY3JpcHRpb246ICJDYXN0IGNoYXJhY3RlcnMgYW5kIG9yZ2FuaXNlIHRhbGVudCBkZWNpc2lvbnMuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vY2FzdGluZy1ib2FyZGAsIGljb246IFVzZXJzIH0sCiAgICAgICAgeyB0aXRsZTogIlByZS1Qcm9kdWN0aW9uIFBhbmVsIiwgZGVzY3JpcHRpb246ICJEaXJlY3RvciB2aXNpb24sIHZlaGljbGVzLCBsb2NhdGlvbnMsIGF0bW9zcGhlcmUgYW5kIHZpc3VhbCBydWxlcy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9wcmUtcHJvZHVjdGlvbmAsIGljb246IENsYXBwZXJib2FyZCB9LAogICAgICBdLAogICAgfSwKICAgIHsKICAgICAgdGl0bGU6ICIyLiBQcmVwYXJlIiwKICAgICAgZGVzY3JpcHRpb246ICJCdWlsZCB0aGUgc2hvb3QgcGxhbiwgYnVkZ2V0LCBsb2NhdGlvbnMsIHNjaGVkdWxlIGFuZCBsZWdhbCBwYWNrYWdlLiIsCiAgICAgIHRvb2xzOiBbCiAgICAgICAgeyB0aXRsZTogIlByb2R1Y3Rpb24gT2ZmaWNlIiwgZGVzY3JpcHRpb246ICJDZW50cmFsIG9wZXJhdGluZyByb29tIGZvciB0aGUgcHJvamVjdC4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9wcm9kdWN0aW9uLW9mZmljZWAsIGljb246IEJyaWVmY2FzZSB9LAogICAgICAgIHsgdGl0bGU6ICJTY2hlZHVsZSIsIGRlc2NyaXB0aW9uOiAiU3RyaXAgYm9hcmQsIHNob290IGRheXMgYW5kIHNjZW5lIHNjaGVkdWxpbmcuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc2NoZWR1bGVgLCBpY29uOiBDYWxlbmRhciB9LAogICAgICAgIHsgdGl0bGU6ICJDYWxsIFNoZWV0cyIsIGRlc2NyaXB0aW9uOiAiRGFpbHkgcHJpbnRhYmxlIGNhbGwgc2hlZXRzIGZvciBwcm9kdWN0aW9uLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L2NhbGwtc2hlZXRzYCwgaWNvbjogRmlsZVRleHQgfSwKICAgICAgICB7IHRpdGxlOiAiQnVkZ2V0IFRyYWNrZXIiLCBkZXNjcmlwdGlvbjogIkVzdGltYXRlLCB0cmFjayBhbmQgb3JnYW5pc2UgZmlsbSBidWRnZXQgaXRlbXMuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vYnVkZ2V0LXRyYWNrZXJgLCBpY29uOiBXYWxsZXQgfSwKICAgICAgICB7IHRpdGxlOiAiTG9jYXRpb24gU2NvdXQiLCBkZXNjcmlwdGlvbjogIkZpbmQgYW5kIG1hbmFnZSBzaG9vdGluZyBsb2NhdGlvbnMuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vbG9jYXRpb25zYCwgaWNvbjogR2xvYmUgfSwKICAgICAgICB7IHRpdGxlOiAiTGVnYWwgRG9jcyIsIGRlc2NyaXB0aW9uOiAiUmVsZWFzZXMsIGFncmVlbWVudHMgYW5kIGxlZ2FsIHByb2R1Y3Rpb24gcGFwZXJ3b3JrLiIsIGhyZWY6IGAvbGVnYWwtZG9jc2AsIGljb246IFNoaWVsZENoZWNrIH0sCiAgICAgIF0sCiAgICB9LAogICAgewogICAgICB0aXRsZTogIjMuIENyZWF0ZSIsCiAgICAgIGRlc2NyaXB0aW9uOiAiR2VuZXJhdGUgc2hvdHMsIHNjZW5lcywgZGlhbG9ndWUsIGltYWdlcnkgYW5kIHByb2R1Y3Rpb24gYXNzZXRzLiIsCiAgICAgIHRvb2xzOiBbCiAgICAgICAgeyB0aXRsZTogIlNjZW5lIEVkaXRvciIsIGRlc2NyaXB0aW9uOiAiQ3JlYXRlLCBlZGl0IGFuZCByZWdlbmVyYXRlIGluZGl2aWR1YWwgc2NlbmVzLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3NjZW5lc2AsIGljb246IENsYXBwZXJib2FyZCB9LAogICAgICAgIHsgdGl0bGU6ICJTdG9yeWJvYXJkIiwgZGVzY3JpcHRpb246ICJWaXN1YWwgc3Rvcnlib2FyZCBhbmQgc2NlbmUgY29tcG9zaXRpb24uIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc3Rvcnlib2FyZGAsIGljb246IENhbWVyYSB9LAogICAgICAgIHsgdGl0bGU6ICJTaG90IExpc3QiLCBkZXNjcmlwdGlvbjogIlNob3QgYnJlYWtkb3duIGFuZCBwcm9kdWN0aW9uIGNvdmVyYWdlLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3Nob3QtbGlzdGAsIGljb246IEZpbG0gfSwKICAgICAgICB7IHRpdGxlOiAiTXVsdGktU2hvdCBTZXF1ZW5jZXIiLCBkZXNjcmlwdGlvbjogIkJ1aWxkIG11bHRpLXNob3Qgc2VxdWVuY2VzIHdpdGggY29udGludWl0eS4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9tdWx0aS1zaG90YCwgaWNvbjogQ2FtZXJhIH0sCiAgICAgICAgeyB0aXRsZTogIkRpYWxvZ3VlIEVkaXRvciIsIGRlc2NyaXB0aW9uOiAiRGlhbG9ndWUsIHZvaWNlIGRpcmVjdGlvbiBhbmQgc2NlbmUgcGVyZm9ybWFuY2UuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vZGlhbG9ndWVgLCBpY29uOiBUeXBlIH0sCiAgICAgICAgeyB0aXRsZTogIkxpdmUgQWN0aW9uIFBsYXRlIiwgZGVzY3JpcHRpb246ICJQbGF0ZSBhbmQgbGl2ZS1hY3Rpb24gY29tcG9zaXRpbmcgd29ya2Zsb3cuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vbGl2ZS1hY3Rpb24tcGxhdGVgLCBpY29uOiBGaWxtIH0sCiAgICAgIF0sCiAgICB9LAogICAgewogICAgICB0aXRsZTogIjQuIEZpbmlzaCIsCiAgICAgIGRlc2NyaXB0aW9uOiAiUG9zdC1wcm9kdWN0aW9uOiBlZGl0LCBWRlgsIHNvdW5kLCBzY29yZSwgc3VidGl0bGVzLCBncmFkaW5nIGFuZCBleHBvcnQuIiwKICAgICAgdG9vbHM6IFsKICAgICAgICB7IHRpdGxlOiAiQ3V0dGluZyBSb29tIiwgZGVzY3JpcHRpb246ICJFZGl0LCBhc3NlbWJsZSBhbmQgcmV2aWV3IHRoZSBmaW5hbCBjdXQuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vY3V0dGluZy1yb29tYCwgaWNvbjogU2Npc3NvcnMsIGJhZGdlOiAiUG9zdCIgfSwKICAgICAgICB7IHRpdGxlOiAiRGlyZWN0b3IncyBDdXQiLCBkZXNjcmlwdGlvbjogIkNyZWF0aXZlIHJldmlldywgc2VsZWN0cywgbm90ZXMgYW5kIGZpbmFsIGRlY2lzaW9ucy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9kaXJlY3Rvci1jdXRgLCBpY29uOiBGaWxtLCBiYWRnZTogIlBvc3QiIH0sCiAgICAgICAgeyB0aXRsZTogIlZpc3VhbCBFZmZlY3RzIiwgZGVzY3JpcHRpb246ICJTaG90LWxldmVsIFZGWCBnZW5lcmF0aW9uIGFuZCByZXBhaXIuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vdmlzdWFsLWVmZmVjdHNgLCBpY29uOiBTcGFya2xlcywgYmFkZ2U6ICJWRlgiIH0sCiAgICAgICAgeyB0aXRsZTogIlZGWCBTdWl0ZSIsIGRlc2NyaXB0aW9uOiAiQWR2YW5jZWQgY29tcG9zaXRpbmcgYW5kIGVmZmVjdHMgd29ya2Zsb3cuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vdmZ4LXN1aXRlYCwgaWNvbjogV2FuZDIsIGJhZGdlOiAiVkZYIiB9LAogICAgICAgIHsgdGl0bGU6ICJDb2xvciBHcmFkaW5nIiwgZGVzY3JpcHRpb246ICJMb29rLCB0b25lLCBwYWxldHRlIGFuZCBjaW5lbWF0aWMgZ3JhZGUuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vY29sb3ItZ3JhZGluZ2AsIGljb246IFBhbGV0dGUsIGJhZGdlOiAiR3JhZGUiIH0sCiAgICAgICAgeyB0aXRsZTogIlNvdW5kIEVmZmVjdHMiLCBkZXNjcmlwdGlvbjogIkZvbGV5LCBpbXBhY3Qgc291bmRzLCBhbWJpZW5jZSBhbmQgc291bmQgZGVzaWduLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3NvdW5kLWVmZmVjdHNgLCBpY29uOiBWb2x1bWUyLCBiYWRnZTogIlNvdW5kIiB9LAogICAgICAgIHsgdGl0bGU6ICJNdXNpYyBTY29yZSIsIGRlc2NyaXB0aW9uOiAiQ29tcG9zZSBhbmQgb3JnYW5pc2UgdGhlIGNpbmVtYXRpYyBzY29yZS4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9tdXNpYy1zY29yZWAsIGljb246IE11c2ljLCBiYWRnZTogIlNvdW5kIiB9LAogICAgICAgIHsgdGl0bGU6ICJTdWJ0aXRsZXMiLCBkZXNjcmlwdGlvbjogIkNhcHRpb25zLCBhY2Nlc3NpYmlsaXR5IGFuZCBsYW5ndWFnZSB0cmFja3MuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc3VidGl0bGVzYCwgaWNvbjogVHlwZSwgYmFkZ2U6ICJBY2Nlc3MiIH0sCiAgICAgICAgeyB0aXRsZTogIkNyZWRpdHMgRWRpdG9yIiwgZGVzY3JpcHRpb246ICJPcGVuaW5nIGFuZCBlbmQgY3JlZGl0cyBzZXF1ZW5jZS4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9jcmVkaXRzYCwgaWNvbjogRmlsZVRleHQgfSwKICAgICAgICB7IHRpdGxlOiAiTkxFIEV4cG9ydCIsIGRlc2NyaXB0aW9uOiAiRXhwb3J0IGZvciBwcm9mZXNzaW9uYWwgZWRpdGluZyB0aW1lbGluZXMuIiwgaHJlZjogYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vbmxlLWV4cG9ydGAsIGljb246IERvd25sb2FkIH0sCiAgICAgIF0sCiAgICB9LAogICAgewogICAgICB0aXRsZTogIjUuIFJlbGVhc2UiLAogICAgICBkZXNjcmlwdGlvbjogIlBhY2thZ2UsIGZ1bmQsIHByb21vdGUgYW5kIGRpc3RyaWJ1dGUgdGhlIGZpbmlzaGVkIHByb2plY3QuIiwKICAgICAgdG9vbHM6IFsKICAgICAgICB7IHRpdGxlOiAiVHJhaWxlciBTdHVkaW8iLCBkZXNjcmlwdGlvbjogIkNyZWF0ZSBhIHRyYWlsZXIgZnJvbSB5b3VyIHByb2plY3QgYXNzZXRzLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3RyYWlsZXItc3R1ZGlvYCwgaWNvbjogRmlsbSB9LAogICAgICAgIHsgdGl0bGU6ICJTb2NpYWwgQ3V0cyIsIGRlc2NyaXB0aW9uOiAiU2hvcnQtZm9ybSBjbGlwcyBmb3IgVGlrVG9rLCBSZWVscyBhbmQgU2hvcnRzLiIsIGhyZWY6IGAvcHJvamVjdHMvJHtwcm9qZWN0SWR9L3NvY2lhbC1jdXRzYCwgaWNvbjogTWVnYXBob25lIH0sCiAgICAgICAgeyB0aXRsZTogIlByZXNzIEtpdCIsIGRlc2NyaXB0aW9uOiAiQnVpbGQgcHJvZmVzc2lvbmFsIHByZXNzIGFzc2V0cy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9wcmVzcy1raXRgLCBpY29uOiBCcmllZmNhc2UgfSwKICAgICAgICB7IHRpdGxlOiAiRmVzdGl2YWwgVHJhY2tlciIsIGRlc2NyaXB0aW9uOiAiVHJhY2sgZmVzdGl2YWwgc3VibWlzc2lvbnMgYW5kIGRlYWRsaW5lcy4iLCBocmVmOiBgL2Zlc3RpdmFsc2AsIGljb246IENhbGVuZGFyIH0sCiAgICAgICAgeyB0aXRsZTogIkRpc3RyaWJ1dGlvbiIsIGRlc2NyaXB0aW9uOiAiUHJlcGFyZSBwbGF0Zm9ybS1yZWFkeSBkaXN0cmlidXRpb24gZXhwb3J0cy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9kaXN0cmlidXRlYCwgaWNvbjogR2xvYmUgfSwKICAgICAgICB7IHRpdGxlOiAiQ3Jvd2RmdW5kaW5nIiwgZGVzY3JpcHRpb246ICJQcmVwYXJlIGNhbXBhaWduIG1hdGVyaWFscyBhbmQgZnVuZGluZyBsaW5rcy4iLCBocmVmOiBgL3Byb2plY3RzLyR7cHJvamVjdElkfS9jcm93ZGZ1bmRpbmdgLCBpY29uOiBXYWxsZXQgfSwKICAgICAgXSwKICAgIH0sCiAgXTsKCiAgcmV0dXJuICgKICAgIDxDYXJkIGNsYXNzTmFtZT0ic2hhZG93LWxnIiBzdHlsZT17eyBib3JkZXI6IjFweCBzb2xpZCByZ2JhKDIxMiwxNzUsNTUsMC4yKSIsIGJhY2tncm91bmQ6InJnYmEoMjU1LDI1NSwyNTUsMC4wMTUpIiwgYmFja2Ryb3BGaWx0ZXI6ImJsdXIoOHB4KSIgfX0+CiAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtNSBzcGFjZS15LTUiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIHNtOmZsZXgtcm93IHNtOml0ZW1zLWVuZCBzbTpqdXN0aWZ5LWJldHdlZW4gZ2FwLTIiPgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzEwcHhdIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1hbWJlci01MDAvODAgbWItMSI+Q29tcGxldGUgd29ya2Zsb3c8L2Rpdj4KICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0iZm9udC1zZXJpZiB0ZXh0LXhsIGxlYWRpbmctdGlnaHQiPlBsYW4g4oaSIENyZWF0ZSDihpIgUHJvZHVjZSDihpIgRmluaXNoIOKGkiBSZWxlYXNlPC9oMz4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0xIG1heC13LTN4bCI+CiAgICAgICAgICAgICAgQWxsIG1ham9yIHRvb2xzIGFyZSBncm91cGVkIGJ5IHRoZSByZWFsIGZpbG0tcHJvZHVjdGlvbiBwcm9jZXNzLiBOb3RoaW5nIGlzIHJlbW92ZWQ7IHRoaXMgaHViIG1ha2VzIGhpZGRlbiBmZWF0dXJlcyBlYXNpZXIgdG8gZmluZC4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8TGluayBocmVmPXtgL3Byb2plY3RzLyR7cHJvamVjdElkfS9jdXR0aW5nLXJvb21gfT4KICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMzAgaG92ZXI6YmctYW1iZXItNTAwLzEwIHdoaXRlc3BhY2Utbm93cmFwIj4KICAgICAgICAgICAgICBPcGVuIFBvc3QtUHJvZHVjdGlvbgogICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgIDwvTGluaz4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNSI+CiAgICAgICAgICB7Z3JvdXBzLm1hcCgoZ3JvdXApID0+ICgKICAgICAgICAgICAgPHNlY3Rpb24ga2V5PXtncm91cC50aXRsZX0gY2xhc3NOYW1lPSJzcGFjZS15LTIuNSI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4tdy0wIj4KICAgICAgICAgICAgICAgICAgPGg0IGNsYXNzTmFtZT0idGV4dC1zbSBmb250LXNlbWlib2xkIHRyYWNraW5nLXdpZGUiPntncm91cC50aXRsZX08L2g0PgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj57Z3JvdXAuZGVzY3JpcHRpb259PC9wPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaC1weCBmbGV4LTEiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCg5MGRlZyxyZ2JhKDIxMiwxNzUsNTUsMC4zKSx0cmFuc3BhcmVudCkiIH19IC8+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgeGw6Z3JpZC1jb2xzLTMgMnhsOmdyaWQtY29scy01IGdhcC0yLjUiPgogICAgICAgICAgICAgICAge2dyb3VwLnRvb2xzLm1hcCgodG9vbCkgPT4gKAogICAgICAgICAgICAgICAgICA8VG9vbENhcmQga2V5PXtgJHtncm91cC50aXRsZX0tJHt0b29sLnRpdGxlfWB9IHRvb2w9e3Rvb2x9IC8+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9zZWN0aW9uPgogICAgICAgICAgKSl9CiAgICAgICAgPC9kaXY+CiAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICA8L0NhcmQ+CiAgKTsKfQo=
+import { Link } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  BookOpen,
+  Briefcase,
+  Calendar,
+  Camera,
+  Clapperboard,
+  Download,
+  FileText,
+  Film,
+  Globe,
+  Megaphone,
+  Music,
+  Palette,
+  ScrollText,
+  Scissors,
+  ShieldCheck,
+  Sparkles,
+  Type,
+  Users,
+  Volume2,
+  Wand2,
+  Wallet,
+} from "lucide-react";
+
+type Tool = {
+  title: string;
+  description: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+};
+
+type Group = {
+  title: string;
+  description: string;
+  tools: Tool[];
+};
+
+function ToolCard({ tool }: { tool: Tool }) {
+  const Icon = tool.icon;
+  return (
+    <Link href={tool.href}>
+      <Card className="h-full cursor-pointer transition-all active:scale-[0.99] glass-card" style={{ border:"1px solid rgba(255,255,255,0.06)", background:"rgba(255,255,255,0.02)" }} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor="rgba(212,175,55,0.35)";(e.currentTarget as HTMLElement).style.background="rgba(212,175,55,0.04)"}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor="rgba(255,255,255,0.06)";(e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.02)"}}>
+        <CardContent className="p-3.5 flex items-start gap-3">
+          <div className="h-9 w-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-500">
+            <Icon className="h-4 w-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="text-sm font-medium leading-tight truncate">{tool.title}</div>
+              {tool.badge && (
+                <Badge className="h-5 text-[10px] bg-amber-500/15 text-amber-500 hover:bg-amber-500/15 shrink-0">
+                  {tool.badge}
+                </Badge>
+              )}
+            </div>
+            <div className="text-xs text-muted-foreground leading-snug mt-1 line-clamp-2">{tool.description}</div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+export default function ProjectToolHub({ projectId }: { projectId: number | string }) {
+  const groups: Group[] = [
+    {
+      title: "1. Plan",
+      description: "Develop the concept, pitch, script, cast and production plan.",
+      tools: [
+        { title: "Pitch Lab", description: "Logline, treatment, pitch materials and creative positioning.", href: `/projects/${projectId}/pitch-lab`, icon: Briefcase },
+        { title: "Script Writer", description: "Write, revise and structure the screenplay.", href: `/projects/${projectId}/script`, icon: ScrollText },
+        { title: "Script Breakdown", description: "Break down scenes, locations, cast, props and production needs.", href: `/projects/${projectId}/script-breakdown`, icon: FileText },
+        { title: "Series Bible", description: "World, characters, episodes and continuity bible.", href: `/series`, icon: BookOpen },
+        { title: "Casting Board", description: "Cast characters and organise talent decisions.", href: `/projects/${projectId}/casting-board`, icon: Users },
+        { title: "Pre-Production Panel", description: "Director vision, vehicles, locations, atmosphere and visual rules.", href: `/projects/${projectId}/pre-production`, icon: Clapperboard },
+      ],
+    },
+    {
+      title: "2. Prepare",
+      description: "Build the shoot plan, budget, locations, schedule and legal package.",
+      tools: [
+        { title: "Production Office", description: "Central operating room for the project.", href: `/projects/${projectId}/production-office`, icon: Briefcase },
+        { title: "Schedule", description: "Strip board, shoot days and scene scheduling.", href: `/projects/${projectId}/schedule`, icon: Calendar },
+        { title: "Call Sheets", description: "Daily printable call sheets for production.", href: `/projects/${projectId}/call-sheets`, icon: FileText },
+        { title: "Budget Tracker", description: "Estimate, track and organise film budget items.", href: `/projects/${projectId}/budget-tracker`, icon: Wallet },
+        { title: "Location Scout", description: "Find and manage shooting locations.", href: `/projects/${projectId}/locations`, icon: Globe },
+        { title: "Legal Docs", description: "Releases, agreements and legal production paperwork.", href: `/legal-docs`, icon: ShieldCheck },
+      ],
+    },
+    {
+      title: "3. Create",
+      description: "Generate shots, scenes, dialogue, imagery and production assets.",
+      tools: [
+        { title: "Scene Editor", description: "Create, edit and regenerate individual scenes.", href: `/projects/${projectId}/scenes`, icon: Clapperboard },
+        { title: "Storyboard", description: "Visual storyboard and scene composition.", href: `/projects/${projectId}/storyboard`, icon: Camera },
+        { title: "Shot List", description: "Shot breakdown and production coverage.", href: `/projects/${projectId}/shot-list`, icon: Film },
+        { title: "Multi-Shot Sequencer", description: "Build multi-shot sequences with continuity.", href: `/projects/${projectId}/multi-shot`, icon: Camera },
+        { title: "Dialogue Editor", description: "Dialogue, voice direction and scene performance.", href: `/projects/${projectId}/dialogue`, icon: Type },
+        { title: "Live Action Plate", description: "Plate and live-action compositing workflow.", href: `/projects/${projectId}/live-action-plate`, icon: Film },
+      ],
+    },
+    {
+      title: "4. Finish",
+      description: "Post-production: edit, VFX, sound, score, subtitles, grading and export.",
+      tools: [
+        { title: "Cutting Room", description: "Edit, assemble and review the final cut.", href: `/projects/${projectId}/cutting-room`, icon: Scissors, badge: "Post" },
+        { title: "Director's Cut", description: "Creative review, selects, notes and final decisions.", href: `/projects/${projectId}/director-cut`, icon: Film, badge: "Post" },
+        { title: "Visual Effects", description: "Shot-level VFX generation and repair.", href: `/projects/${projectId}/visual-effects`, icon: Sparkles, badge: "VFX" },
+        { title: "VFX Suite", description: "Advanced compositing and effects workflow.", href: `/projects/${projectId}/vfx-suite`, icon: Wand2, badge: "VFX" },
+        { title: "Color Grading", description: "Look, tone, palette and cinematic grade.", href: `/projects/${projectId}/color-grading`, icon: Palette, badge: "Grade" },
+        { title: "Sound Effects", description: "Foley, impact sounds, ambience and sound design.", href: `/projects/${projectId}/sound-effects`, icon: Volume2, badge: "Sound" },
+        { title: "Music Score", description: "Compose and organise the cinematic score.", href: `/projects/${projectId}/music-score`, icon: Music, badge: "Sound" },
+        { title: "Subtitles", description: "Captions, accessibility and language tracks.", href: `/projects/${projectId}/subtitles`, icon: Type, badge: "Access" },
+        { title: "Credits Editor", description: "Opening and end credits sequence.", href: `/projects/${projectId}/credits`, icon: FileText },
+        { title: "NLE Export", description: "Export for professional editing timelines.", href: `/projects/${projectId}/nle-export`, icon: Download },
+      ],
+    },
+    {
+      title: "5. Release",
+      description: "Package, fund, promote and distribute the finished project.",
+      tools: [
+        { title: "Trailer Studio", description: "Create a trailer from your project assets.", href: `/projects/${projectId}/trailer-studio`, icon: Film },
+        { title: "Social Cuts", description: "Short-form clips for TikTok, Reels and Shorts.", href: `/projects/${projectId}/social-cuts`, icon: Megaphone },
+        { title: "Press Kit", description: "Build professional press assets.", href: `/projects/${projectId}/press-kit`, icon: Briefcase },
+        { title: "Festival Tracker", description: "Track festival submissions and deadlines.", href: `/festivals`, icon: Calendar },
+        { title: "Distribution", description: "Prepare platform-ready distribution exports.", href: `/projects/${projectId}/distribute`, icon: Globe },
+        { title: "Crowdfunding", description: "Prepare campaign materials and funding links.", href: `/projects/${projectId}/crowdfunding`, icon: Wallet },
+      ],
+    },
+  ];
+
+  return (
+    <Card className="shadow-lg glass-card" style={{ border:"1px solid rgba(212,175,55,0.2)", background:"rgba(255,255,255,0.015)", backdropFilter:"blur(8px)" }}>
+      <CardContent className="p-5 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-amber-500/80 mb-1">Complete workflow</div>
+            <h3 className="font-serif text-xl leading-tight">Plan â Create â Produce â Finish â Release</h3>
+            <p className="text-sm text-muted-foreground mt-1 max-w-3xl">
+              All major tools are grouped by the real film-production process. Nothing is removed; this hub makes hidden features easier to find.
+            </p>
+          </div>
+          <Link href={`/projects/${projectId}/cutting-room`}>
+            <Button variant="outline" className="border-amber-500/30 hover:bg-amber-500/10 whitespace-nowrap">
+              Open Post-Production
+            </Button>
+          </Link>
+        </div>
+
+        <div className="space-y-5">
+          {groups.map((group) => (
+            <section key={group.title} className="space-y-2.5">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0">
+                  <h4 className="text-sm font-semibold tracking-wide">{group.title}</h4>
+                  <p className="text-xs text-muted-foreground">{group.description}</p>
+                </div>
+                <div className="h-px flex-1" style={{ background:"linear-gradient(90deg,rgba(212,175,55,0.3),transparent)" }} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-2.5">
+                {group.tools.map((tool) => (
+                  <ToolCard key={`${group.title}-${tool.title}`} tool={tool} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

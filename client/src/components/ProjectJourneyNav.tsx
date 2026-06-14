@@ -1,1 +1,270 @@
-aW1wb3J0IHsgdXNlTWVtbyB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IENhcmQsIENhcmRDb250ZW50IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBQcm9ncmVzcyB9IGZyb20gIkAvY29tcG9uZW50cy91aS9wcm9ncmVzcyI7CmltcG9ydCBQcm9qZWN0VG9vbEh1YiBmcm9tICIuL1Byb2plY3RUb29sSHViIjsKaW1wb3J0IHsKICBMaWdodGJ1bGIsCiAgVXNlcnMsCiAgU2Nyb2xsVGV4dCwKICBDbGlwYm9hcmRMaXN0LAogIFdhbGxldCwKICBDbGFwcGVyYm9hcmQsCiAgU2Npc3NvcnMsCiAgTWVnYXBob25lLAogIEFycm93UmlnaHQsCiAgQ2hlY2tDaXJjbGUyLAogIENpcmNsZSwKfSBmcm9tICJsdWNpZGUtcmVhY3QiOwoKdHlwZSBTdGFnZVN0YXR1cyA9ICJkb25lIiB8ICJhY3RpdmUiIHwgInRvZG8iOwoKdHlwZSBTdGFnZSA9IHsKICBrZXk6IHN0cmluZzsKICBudW1iZXI6IG51bWJlcjsKICB0aXRsZTogc3RyaW5nOwogIGJsdXJiOiBzdHJpbmc7CiAgaWNvbjogUmVhY3QuQ29tcG9uZW50VHlwZTx7IGNsYXNzTmFtZT86IHN0cmluZyB9PjsKICBocmVmRm9yOiAocHJvamVjdElkOiBudW1iZXIgfCBzdHJpbmcpID0+IHN0cmluZzsKICBpc0RvbmU6IChzaWduYWxzOiBQcm9qZWN0U2lnbmFscykgPT4gYm9vbGVhbjsKICBjdGFMYWJlbDogc3RyaW5nOwogIHN1cmZhY2VzOiBzdHJpbmdbXTsKfTsKCmV4cG9ydCB0eXBlIFByb2plY3RTaWduYWxzID0gewogIGhhc0xvZ2xpbmU6IGJvb2xlYW47CiAgY2hhcmFjdGVyQ291bnQ6IG51bWJlcjsKICBzY2VuZUNvdW50OiBudW1iZXI7CiAgaGFzU2NyaXB0OiBib29sZWFuOwogIGhhc0J1ZGdldDogYm9vbGVhbjsKICBoYXNGdW5kaW5nQXBwbGljYXRpb246IGJvb2xlYW47CiAgaGFzU2hvdHNHZW5lcmF0ZWQ6IGJvb2xlYW47CiAgaGFzTG9ja2VkU2hvdHM6IGJvb2xlYW47CiAgaGFzRXhwb3J0OiBib29sZWFuOwogIGhhc0NhbXBhaWduOiBib29sZWFuOwp9OwoKY29uc3QgU1RBR0VTOiBTdGFnZVtdID0gWwogIHsKICAgIGtleTogImlkZWEiLAogICAgbnVtYmVyOiAxLAogICAgdGl0bGU6ICJJZGVhICYgUGl0Y2giLAogICAgYmx1cmI6ICJMb2dsaW5lLCB0cmVhdG1lbnQsIGxvb2tib29rLCBwaXRjaCBkZWNrIiwKICAgIGljb246IExpZ2h0YnVsYiwKICAgIGhyZWZGb3I6IChpZCkgPT4gYC9wcm9qZWN0cy8ke2lkfS9waXRjaC1sYWJgLAogICAgaXNEb25lOiAocykgPT4gcy5oYXNMb2dsaW5lLAogICAgY3RhTGFiZWw6ICJPcGVuIFBpdGNoIExhYiIsCiAgICBzdXJmYWNlczogWyJQaXRjaCBMYWIiLCAiTW9vZCBCb2FyZCJdLAogIH0sCiAgewogICAga2V5OiAiY2hhcmFjdGVycyIsCiAgICBudW1iZXI6IDIsCiAgICB0aXRsZTogIkNhc3RpbmcgU3R1ZGlvIiwKICAgIGJsdXJiOiAiUGhvdG8gb3IgZGVzY3JpcHRpb24g4oaSIGNvbnNpc3RlbnQgc2NyZWVuLXJlYWR5IGFjdG9yIiwKICAgIGljb246IFVzZXJzLAogICAgaHJlZkZvcjogKGlkKSA9PiBgL3Byb2plY3RzLyR7aWR9L2Nhc3RpbmctYm9hcmRgLAogICAgaXNEb25lOiAocykgPT4gcy5jaGFyYWN0ZXJDb3VudCA+PSAxLAogICAgY3RhTGFiZWw6ICJDYXN0IHlvdXIgZmlyc3QgYWN0b3IiLAogICAgc3VyZmFjZXM6IFsiQ2hhcmFjdGVycyIsICJUYWxlbnQgU2VhcmNoIiwgIlNpZ25hdHVyZSBDYXN0Il0sCiAgfSwKICB7CiAgICBrZXk6ICJzY3JpcHQiLAogICAgbnVtYmVyOiAzLAogICAgdGl0bGU6ICJXcml0ZXIncyBSb29tIiwKICAgIGJsdXJiOiAiU2NyaXB0LCBzY2VuZSBjYXJkcywgZGlhbG9ndWUsIGJlYXQgc2hlZXQiLAogICAgaWNvbjogU2Nyb2xsVGV4dCwKICAgIGhyZWZGb3I6IChpZCkgPT4gYC9wcm9qZWN0cy8ke2lkfS9zY3JpcHRgLAogICAgaXNEb25lOiAocykgPT4gcy5oYXNTY3JpcHQgfHwgcy5zY2VuZUNvdW50ID49IDEsCiAgICBjdGFMYWJlbDogIk9wZW4gdGhlIHNjcmlwdCIsCiAgICBzdXJmYWNlczogWyJTY3JpcHQgV3JpdGVyIiwgIkRpYWxvZ3VlIEVkaXRvciIsICJTY2VuZSBFZGl0b3IiXSwKICB9LAogIHsKICAgIGtleTogInByZXByb2QiLAogICAgbnVtYmVyOiA0LAogICAgdGl0bGU6ICJQcm9kdWN0aW9uIE9mZmljZSIsCiAgICBibHVyYjogIkJyZWFrZG93biwgc2NoZWR1bGUsIGJ1ZGdldCwgbG9jYXRpb25zLCBjYWxsIHNoZWV0IiwKICAgIGljb246IENsaXBib2FyZExpc3QsCiAgICBocmVmRm9yOiAoaWQpID0+IGAvcHJvamVjdHMvJHtpZH0vcHJvZHVjdGlvbi1vZmZpY2VgLAogICAgaXNEb25lOiAocykgPT4gcy5oYXNCdWRnZXQsCiAgICBjdGFMYWJlbDogIlBsYW4gdGhlIHNob290IiwKICAgIHN1cmZhY2VzOiBbIkJ1ZGdldCBFc3RpbWF0b3IiLCAiTG9jYXRpb24gU2NvdXQiLCAiUHJlLVByb2R1Y3Rpb24gUGFuZWwiXSwKICB9LAogIHsKICAgIGtleTogImZ1bmRpbmciLAogICAgbnVtYmVyOiA1LAogICAgdGl0bGU6ICJGdW5kaW5nIE9mZmljZSIsCiAgICBibHVyYjogIkFwcGx5IHRvIDEzMCsgZnVuZGVycyB3b3JsZHdpZGUsIHRyYWNrIGRlY2lzaW9ucyIsCiAgICBpY29uOiBXYWxsZXQsCiAgICBocmVmRm9yOiAoaWQpID0+IGAvcHJvamVjdHMvJHtpZH0vY3Jvd2RmdW5kaW5nYCwKICAgIGlzRG9uZTogKHMpID0+IHMuaGFzRnVuZGluZ0FwcGxpY2F0aW9uLAogICAgY3RhTGFiZWw6ICJGaW5kIHlvdXIgZnVuZGVycyIsCiAgICBzdXJmYWNlczogWyJGdW5kaW5nIERpcmVjdG9yeSIsICJQaXRjaCBEZWNrIiwgIkNyb3dkZnVuZGluZyJdLAogIH0sCiAgewogICAga2V5OiAicHJvZHVjdGlvbiIsCiAgICBudW1iZXI6IDYsCiAgICB0aXRsZTogIlNvdW5kc3RhZ2UiLAogICAgYmx1cmI6ICJHZW5lcmF0ZSBzY2VuZXMgd2l0aCBjb250aW51aXR5IGxvY2tlZCBhY3Jvc3Mgc2hvdHMiLAogICAgaWNvbjogQ2xhcHBlcmJvYXJkLAogICAgaHJlZkZvcjogKGlkKSA9PiBgL3Byb2plY3RzLyR7aWR9L211bHRpLXNob3RgLAogICAgaXNEb25lOiAocykgPT4gcy5oYXNTaG90c0dlbmVyYXRlZCwKICAgIGN0YUxhYmVsOiAiUm9sbCBjYW1lcmEiLAogICAgc3VyZmFjZXM6IFsiTXVsdGktU2hvdCBTZXF1ZW5jZXIiLCAiU2NlbmUgRWRpdG9yIiwgIkNvbnRpbnVpdHkgQ2hlY2siXSwKICB9LAogIHsKICAgIGtleTogInBvc3QiLAogICAgbnVtYmVyOiA3LAogICAgdGl0bGU6ICJQb3N0LVByb2R1Y3Rpb24iLAogICAgYmx1cmI6ICJFZGl0LCBWRlgsIGNvbG9yLCBzb3VuZCwgY2FwdGlvbnMsIGNyZWRpdHMsIGFuZCBtYXN0ZXIgZXhwb3J0IiwKICAgIGljb246IFNjaXNzb3JzLAogICAgaHJlZkZvcjogKGlkKSA9PiBgL3Byb2plY3RzLyR7aWR9L2N1dHRpbmctcm9vbWAsCiAgICBpc0RvbmU6IChzKSA9PiBzLmhhc0V4cG9ydCwKICAgIGN0YUxhYmVsOiAiT3BlbiBQb3N0LVByb2R1Y3Rpb24iLAogICAgc3VyZmFjZXM6IFsiQ3V0dGluZyBSb29tIiwgIlZGWCIsICJDb2xvciIsICJTb3VuZCIsICJFeHBvcnQiXSwKICB9LAogIHsKICAgIGtleTogInJlbGVhc2UiLAogICAgbnVtYmVyOiA4LAogICAgdGl0bGU6ICJSZWxlYXNlICYgUHJvbW90ZSIsCiAgICBibHVyYjogIlRyYWlsZXIsIHNvY2lhbCBjdXRzLCBmZXN0aXZhbHMsIHBhaWQgY2FtcGFpZ25zIiwKICAgIGljb246IE1lZ2FwaG9uZSwKICAgIGhyZWZGb3I6IChpZCkgPT4gYC9wcm9qZWN0cy8ke2lkfS9wcmVzcy1raXRgLAogICAgaXNEb25lOiAocykgPT4gcy5oYXNDYW1wYWlnbiwKICAgIGN0YUxhYmVsOiAiQnVpbGQgUHJlc3MgS2l0IiwKICAgIHN1cmZhY2VzOiBbIlByZXNzIEtpdCIsICJGZXN0aXZhbCBUcmFja2VyIiwgIkRpc3RyaWJ1dGUiLCAiVHJhaWxlciBTdHVkaW8iLCAiQ2FtcGFpZ24gTWFuYWdlciJdLAogIH0sCl07CgpleHBvcnQgZnVuY3Rpb24gUHJvamVjdEpvdXJuZXlOYXYoewogIHByb2plY3RJZCwKICBzaWduYWxzLAp9OiB7CiAgcHJvamVjdElkOiBudW1iZXIgfCBzdHJpbmc7CiAgc2lnbmFsczogUHJvamVjdFNpZ25hbHM7Cn0pIHsKICBjb25zdCB7IHN0YWdlc1dpdGhTdGF0dXMsIGN1cnJlbnRTdGFnZSwgY29tcGxldGVkQ291bnQsIHBlcmNlbnQgfSA9IHVzZU1lbW8oKCkgPT4gewogICAgY29uc3QgZW5yaWNoZWQ6IEFycmF5PFN0YWdlICYgeyBzdGF0dXM6IFN0YWdlU3RhdHVzIH0+ID0gW107CiAgICBsZXQgZm91bmRDdXJyZW50ID0gZmFsc2U7CiAgICBsZXQgZG9uZSA9IDA7CgogICAgZm9yIChjb25zdCBzdGFnZSBvZiBTVEFHRVMpIHsKICAgICAgY29uc3QgaXNEb25lID0gc3RhZ2UuaXNEb25lKHNpZ25hbHMpOwogICAgICBsZXQgc3RhdHVzOiBTdGFnZVN0YXR1czsKICAgICAgaWYgKGlzRG9uZSkgewogICAgICAgIHN0YXR1cyA9ICJkb25lIjsKICAgICAgICBkb25lKys7CiAgICAgIH0gZWxzZSBpZiAoIWZvdW5kQ3VycmVudCkgewogICAgICAgIHN0YXR1cyA9ICJhY3RpdmUiOwogICAgICAgIGZvdW5kQ3VycmVudCA9IHRydWU7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgc3RhdHVzID0gInRvZG8iOwogICAgICB9CiAgICAgIGVucmljaGVkLnB1c2goeyAuLi5zdGFnZSwgc3RhdHVzIH0pOwogICAgfQoKICAgIGNvbnN0IGN1cnJlbnQgPSBlbnJpY2hlZC5maW5kKChzKSA9PiBzLnN0YXR1cyA9PT0gImFjdGl2ZSIpID8/IGVucmljaGVkW2VucmljaGVkLmxlbmd0aCAtIDFdOwogICAgcmV0dXJuIHsKICAgICAgc3RhZ2VzV2l0aFN0YXR1czogZW5yaWNoZWQsCiAgICAgIGN1cnJlbnRTdGFnZTogY3VycmVudCwKICAgICAgY29tcGxldGVkQ291bnQ6IGRvbmUsCiAgICAgIHBlcmNlbnQ6IE1hdGgucm91bmQoKGRvbmUgLyBTVEFHRVMubGVuZ3RoKSAqIDEwMCksCiAgICB9OwogIH0sIFtzaWduYWxzXSk7CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS02Ij4KICAgICAgPENhcmQgY2xhc3NOYW1lPSJzaGFkb3ctbGciIHN0eWxlPXt7IGJvcmRlcjoiMXB4IHNvbGlkIHJnYmEoMjEyLDE3NSw1NSwwLjIpIiwgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZyxyZ2JhKDIxMiwxNzUsNTUsMC4wNCkgMCUscmdiYSgyNTUsMjU1LDI1NSwwLjAxNSkgMTAwJSkiIH19PgogICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtNiI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LWNvbCBzbTpmbGV4LXJvdyBzbTppdGVtcy1jZW50ZXIgc206anVzdGlmeS1iZXR3ZWVuIGdhcC00IG1iLTQiPgogICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1hbWJlci01MDAvODAgbWItMSI+CiAgICAgICAgICAgICAgICBUaGUgRmlsbW1ha2VyJ3MgSm91cm5leQogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9ImZvbnQtc2VyaWYgdGV4dC0yeGwiPgogICAgICAgICAgICAgICAge2N1cnJlbnRTdGFnZS5zdGF0dXMgPT09ICJhY3RpdmUiID8gIk5leHQ6ICIgOiAiQ29tcGxldGU6ICJ9CiAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtYW1iZXItNDAwIj57Y3VycmVudFN0YWdlLnRpdGxlfTwvc3Bhbj4KICAgICAgICAgICAgICA8L2gzPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgbXQtMSI+e2N1cnJlbnRTdGFnZS5ibHVyYn08L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8TGluayBocmVmPXtjdXJyZW50U3RhZ2UuaHJlZkZvcihwcm9qZWN0SWQpfT4KICAgICAgICAgICAgICA8QnV0dG9uIHNpemU9ImxnIiBjbGFzc05hbWU9ImJnLWFtYmVyLTYwMCBob3ZlcjpiZy1hbWJlci01MDAgdGV4dC1ibGFjayBmb250LW1lZGl1bSB3aGl0ZXNwYWNlLW5vd3JhcCI+CiAgICAgICAgICAgICAgICB7Y3VycmVudFN0YWdlLmN0YUxhYmVsfQogICAgICAgICAgICAgICAgPEFycm93UmlnaHQgY2xhc3NOYW1lPSJtbC0yIGgtNCB3LTQiIC8+CiAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gdGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQiPgogICAgICAgICAgICAgIDxzcGFuPgogICAgICAgICAgICAgICAgU3RhZ2Uge2N1cnJlbnRTdGFnZS5udW1iZXJ9IG9mIHtTVEFHRVMubGVuZ3RofSDCtyB7Y29tcGxldGVkQ291bnR9IGNvbXBsZXRlCiAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICAgIDxzcGFuPntwZXJjZW50fSU8L3NwYW4+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8UHJvZ3Jlc3MgdmFsdWU9e3BlcmNlbnR9IGNsYXNzTmFtZT0iaC0yIiAvPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgPC9DYXJkPgoKICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTQgZ2FwLTMiPgogICAgICAgIHtzdGFnZXNXaXRoU3RhdHVzLm1hcCgoc3RhZ2UpID0+IHsKICAgICAgICAgIGNvbnN0IEljb24gPSBzdGFnZS5pY29uOwogICAgICAgICAgY29uc3QgaXNBY3RpdmUgPSBzdGFnZS5zdGF0dXMgPT09ICJhY3RpdmUiOwogICAgICAgICAgY29uc3QgaXNEb25lID0gc3RhZ2Uuc3RhdHVzID09PSAiZG9uZSI7CiAgICAgICAgICByZXR1cm4gKAogICAgICAgICAgICA8TGluayBrZXk9e3N0YWdlLmtleX0gaHJlZj17c3RhZ2UuaHJlZkZvcihwcm9qZWN0SWQpfT4KICAgICAgICAgICAgICA8Q2FyZAogICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtbCiAgICAgICAgICAgICAgICAgICJjdXJzb3ItcG9pbnRlciB0cmFuc2l0aW9uLWFsbCBkdXJhdGlvbi0yMDAgaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC80MCBob3ZlcjpzaGFkb3ctbWQgaG92ZXI6LXRyYW5zbGF0ZS15LTAuNSBhY3RpdmU6dHJhbnNsYXRlLXktMCBhY3RpdmU6c2NhbGUtWzAuOTldIG1pbi1oLVs0NHB4XSIsCiAgICAgICAgICAgICAgICAgIGlzQWN0aXZlCiAgICAgICAgICAgICAgICAgICAgPyAiYm9yZGVyLWFtYmVyLTUwMC82MCBiZy1hbWJlci01MDAvNSBzaGFkb3ctWzBfMF8wXzFweF9yZ2JhKDI0NSwxNTgsMTEsMC4zKV0iCiAgICAgICAgICAgICAgICAgICAgOiBpc0RvbmUKICAgICAgICAgICAgICAgICAgICAgID8gImJvcmRlci1lbWVyYWxkLTUwMC8zMCBiZy1lbWVyYWxkLTUwMC81IgogICAgICAgICAgICAgICAgICAgICAgOiAiYm9yZGVyLWJvcmRlci80MCBiZy1jYXJkLzMwIiwKICAgICAgICAgICAgICAgIF0uam9pbigiICIpfQogICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtNCBzcGFjZS15LTIiPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBqdXN0aWZ5LWJldHdlZW4iPgogICAgICAgICAgICAgICAgICAgIDxkaXYKICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17WwogICAgICAgICAgICAgICAgICAgICAgICAiaC05IHctOSByb3VuZGVkLW1kIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIiwKICAgICAgICAgICAgICAgICAgICAgICAgaXNBY3RpdmUKICAgICAgICAgICAgICAgICAgICAgICAgICA/ICJiZy1hbWJlci01MDAvMjAgdGV4dC1hbWJlci00MDAiCiAgICAgICAgICAgICAgICAgICAgICAgICAgOiBpc0RvbmUKICAgICAgICAgICAgICAgICAgICAgICAgICAgID8gImJnLWVtZXJhbGQtNTAwLzE1IHRleHQtZW1lcmFsZC00MDAiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA6ICJiZy1tdXRlZCB0ZXh0LW11dGVkLWZvcmVncm91bmQiLAogICAgICAgICAgICAgICAgICAgICAgXS5qb2luKCIgIil9CiAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgPEljb24gY2xhc3NOYW1lPSJoLTQgdy00IiAvPgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIHtpc0RvbmUgPyAoCiAgICAgICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUyIGNsYXNzTmFtZT0iaC00IHctNCB0ZXh0LWVtZXJhbGQtNDAwIiBhcmlhLWxhYmVsPSJDb21wbGV0ZSIgLz4KICAgICAgICAgICAgICAgICAgICApIDogaXNBY3RpdmUgPyAoCiAgICAgICAgICAgICAgICAgICAgICA8QmFkZ2UgY2xhc3NOYW1lPSJiZy1hbWJlci01MDAvMjAgdGV4dC1hbWJlci00MDAgaG92ZXI6YmctYW1iZXItNTAwLzIwIHRleHQtWzEwcHhdIj4KICAgICAgICAgICAgICAgICAgICAgICAgTm93CiAgICAgICAgICAgICAgICAgICAgICA8L0JhZGdlPgogICAgICAgICAgICAgICAgICAgICkgOiAoCiAgICAgICAgICAgICAgICAgICAgICA8Q2lyY2xlIGNsYXNzTmFtZT0iaC00IHctNCB0ZXh0LW11dGVkLWZvcmVncm91bmQvNDAiIGFyaWEtbGFiZWw9IlVwY29taW5nIiAvPgogICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0wLjUiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgICAgICAgICAgIFN0YWdlIHtzdGFnZS5udW1iZXJ9CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvbnQtbWVkaXVtIHRleHQtc20gbGVhZGluZy10aWdodCI+e3N0YWdlLnRpdGxlfTwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBsaW5lLWNsYW1wLTIiPntzdGFnZS5ibHVyYn08L2Rpdj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgICAgIDwvQ2FyZD4KICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgKTsKICAgICAgICB9KX0KICAgICAgPC9kaXY+CgogICAgICA8UHJvamVjdFRvb2xIdWIgcHJvamVjdElkPXtwcm9qZWN0SWR9IC8+CiAgICA8L2Rpdj4KICApOwp9CgpleHBvcnQgZGVmYXVsdCBQcm9qZWN0Sm91cm5leU5hdjsK
+import { useMemo } from "react";
+import { Link } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import ProjectToolHub from "./ProjectToolHub";
+import {
+  Lightbulb,
+  Users,
+  ScrollText,
+  ClipboardList,
+  Wallet,
+  Clapperboard,
+  Scissors,
+  Megaphone,
+  ArrowRight,
+  CheckCircle2,
+  Circle,
+} from "lucide-react";
+
+type StageStatus = "done" | "active" | "todo";
+
+type Stage = {
+  key: string;
+  number: number;
+  title: string;
+  blurb: string;
+  icon: React.ComponentType<{ className?: string }>;
+  hrefFor: (projectId: number | string) => string;
+  isDone: (signals: ProjectSignals) => boolean;
+  ctaLabel: string;
+  surfaces: string[];
+};
+
+export type ProjectSignals = {
+  hasLogline: boolean;
+  characterCount: number;
+  sceneCount: number;
+  hasScript: boolean;
+  hasBudget: boolean;
+  hasFundingApplication: boolean;
+  hasShotsGenerated: boolean;
+  hasLockedShots: boolean;
+  hasExport: boolean;
+  hasCampaign: boolean;
+};
+
+const STAGES: Stage[] = [
+  {
+    key: "idea",
+    number: 1,
+    title: "Idea & Pitch",
+    blurb: "Logline, treatment, lookbook, pitch deck",
+    icon: Lightbulb,
+    hrefFor: (id) => `/projects/${id}/pitch-lab`,
+    isDone: (s) => s.hasLogline,
+    ctaLabel: "Open Pitch Lab",
+    surfaces: ["Pitch Lab", "Mood Board"],
+  },
+  {
+    key: "characters",
+    number: 2,
+    title: "Casting Studio",
+    blurb: "Photo or description â consistent screen-ready actor",
+    icon: Users,
+    hrefFor: (id) => `/projects/${id}/casting-board`,
+    isDone: (s) => s.characterCount >= 1,
+    ctaLabel: "Cast your first actor",
+    surfaces: ["Characters", "Talent Search", "Signature Cast"],
+  },
+  {
+    key: "script",
+    number: 3,
+    title: "Writer's Room",
+    blurb: "Script, scene cards, dialogue, beat sheet",
+    icon: ScrollText,
+    hrefFor: (id) => `/projects/${id}/script`,
+    isDone: (s) => s.hasScript || s.sceneCount >= 1,
+    ctaLabel: "Open the script",
+    surfaces: ["Script Writer", "Dialogue Editor", "Scene Editor"],
+  },
+  {
+    key: "preprod",
+    number: 4,
+    title: "Production Office",
+    blurb: "Breakdown, schedule, budget, locations, call sheet",
+    icon: ClipboardList,
+    hrefFor: (id) => `/projects/${id}/production-office`,
+    isDone: (s) => s.hasBudget,
+    ctaLabel: "Plan the shoot",
+    surfaces: ["Budget Estimator", "Location Scout", "Pre-Production Panel"],
+  },
+  {
+    key: "funding",
+    number: 5,
+    title: "Funding Office",
+    blurb: "Apply to 130+ funders worldwide, track decisions",
+    icon: Wallet,
+    hrefFor: (id) => `/projects/${id}/crowdfunding`,
+    isDone: (s) => s.hasFundingApplication,
+    ctaLabel: "Find your funders",
+    surfaces: ["Funding Directory", "Pitch Deck", "Crowdfunding"],
+  },
+  {
+    key: "production",
+    number: 6,
+    title: "Soundstage",
+    blurb: "Generate scenes with continuity locked across shots",
+    icon: Clapperboard,
+    hrefFor: (id) => `/projects/${id}/multi-shot`,
+    isDone: (s) => s.hasShotsGenerated,
+    ctaLabel: "Roll camera",
+    surfaces: ["Multi-Shot Sequencer", "Scene Editor", "Continuity Check"],
+  },
+  {
+    key: "post",
+    number: 7,
+    title: "Post-Production",
+    blurb: "Edit, VFX, color, sound, captions, credits, and master export",
+    icon: Scissors,
+    hrefFor: (id) => `/projects/${id}/cutting-room`,
+    isDone: (s) => s.hasExport,
+    ctaLabel: "Open Post-Production",
+    surfaces: ["Cutting Room", "VFX", "Color", "Sound", "Export"],
+  },
+  {
+    key: "release",
+    number: 8,
+    title: "Release & Promote",
+    blurb: "Trailer, social cuts, festivals, paid campaigns",
+    icon: Megaphone,
+    hrefFor: (id) => `/projects/${id}/press-kit`,
+    isDone: (s) => s.hasCampaign,
+    ctaLabel: "Build Press Kit",
+    surfaces: ["Press Kit", "Festival Tracker", "Distribute", "Trailer Studio", "Campaign Manager"],
+  },
+];
+
+export function ProjectJourneyNav({
+  projectId,
+  signals,
+}: {
+  projectId: number | string;
+  signals: ProjectSignals;
+}) {
+  const { stagesWithStatus, currentStage, completedCount, percent } = useMemo(() => {
+    const enriched: Array<Stage & { status: StageStatus }> = [];
+    let foundCurrent = false;
+    let done = 0;
+
+    for (const stage of STAGES) {
+      const isDone = stage.isDone(signals);
+      let status: StageStatus;
+      if (isDone) {
+        status = "done";
+        done++;
+      } else if (!foundCurrent) {
+        status = "active";
+        foundCurrent = true;
+      } else {
+        status = "todo";
+      }
+      enriched.push({ ...stage, status });
+    }
+
+    const current = enriched.find((s) => s.status === "active") ?? enriched[enriched.length - 1];
+    return {
+      stagesWithStatus: enriched,
+      currentStage: current,
+      completedCount: done,
+      percent: Math.round((done / STAGES.length) * 100),
+    };
+  }, [signals]);
+
+  return (
+    <div className="space-y-6">
+      <Card className="shadow-lg glass-card" style={{ border:"1px solid rgba(212,175,55,0.2)", background:"linear-gradient(135deg,rgba(212,175,55,0.04) 0%,rgba(255,255,255,0.015) 100%)" }}>
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <div className="text-xs uppercase tracking-widest text-amber-500/80 mb-1">
+                The Filmmaker's Journey
+              </div>
+              <h3 className="font-serif text-2xl">
+                {currentStage.status === "active" ? "Next: " : "Complete: "}
+                <span className="text-amber-400">{currentStage.title}</span>
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">{currentStage.blurb}</p>
+            </div>
+            <Link href={currentStage.hrefFor(projectId)}>
+              <Button size="lg" className="bg-amber-600 hover:bg-amber-500 text-black font-medium whitespace-nowrap">
+                {currentStage.ctaLabel}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>
+                Stage {currentStage.number} of {STAGES.length} Â· {completedCount} complete
+              </span>
+              <span>{percent}%</span>
+            </div>
+            <Progress value={percent} className="h-2" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {stagesWithStatus.map((stage) => {
+          const Icon = stage.icon;
+          const isActive = stage.status === "active";
+          const isDone = stage.status === "done";
+          return (
+            <Link key={stage.key} href={stage.hrefFor(projectId)}>
+              <Card
+                className={[
+                  "cursor-pointer transition-all duration-200 hover:border-amber-500/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] min-h-[44px]",
+                  isActive
+                    ? "border-amber-500/60 bg-amber-500/5 shadow-[0_0_0_1px_rgba(245,158,11,0.3)]"
+                    : isDone
+                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      : "border-border/40 bg-card/30",
+                ].join(" ")}
+              >
+                <CardContent className="p-4 space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div
+                      className={[
+                        "h-9 w-9 rounded-md flex items-center justify-center",
+                        isActive
+                          ? "bg-amber-500/20 text-amber-400"
+                          : isDone
+                            ? "bg-emerald-500/15 text-emerald-400"
+                            : "bg-muted text-muted-foreground",
+                      ].join(" ")}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    {isDone ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" aria-label="Complete" />
+                    ) : isActive ? (
+                      <Badge className="bg-amber-500/20 text-amber-400 hover:bg-amber-500/20 text-[10px]">
+                        Now
+                      </Badge>
+                    ) : (
+                      <Circle className="h-4 w-4 text-muted-foreground/40" aria-label="Upcoming" />
+                    )}
+                  </div>
+                  <div className="space-y-0.5">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      Stage {stage.number}
+                    </div>
+                    <div className="font-medium text-sm leading-tight">{stage.title}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">{stage.blurb}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+
+      <ProjectToolHub projectId={projectId} />
+    </div>
+  );
+}
+
+export default ProjectJourneyNav;
