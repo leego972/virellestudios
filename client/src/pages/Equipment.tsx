@@ -31,16 +31,16 @@ import { useState, useMemo } from "react";
   }
 
   const CATEGORIES = [
-    { key: "camera", label: "Camera", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·" },
-    { key: "lens", label: "Lenses", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ­" },
-    { key: "lighting", label: "Lighting", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡" },
-    { key: "audio", label: "Audio", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-    { key: "grip", label: "Grip & Electric", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬" },
-    { key: "props", label: "Props", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ­" },
-    { key: "costume", label: "Costume & Hair/MU", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-    { key: "transport", label: "Transport", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-    { key: "set", label: "Set Dressing", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-    { key: "other", label: "Other", icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" },
+    { key: "camera", label: "Camera", icon: "📷" },
+    { key: "lens", label: "Lenses", icon: "🔭" },
+    { key: "lighting", label: "Lighting", icon: "💡" },
+    { key: "audio", label: "Audio", icon: "🎙️" },
+    { key: "grip", label: "Grip & Electric", icon: "🎬" },
+    { key: "props", label: "Props", icon: "🎭" },
+    { key: "costume", label: "Costume & Hair/MU", icon: "👗" },
+    { key: "transport", label: "Transport", icon: "🚐" },
+    { key: "set", label: "Set Dressing", icon: "🛋️" },
+    { key: "other", label: "Other", icon: "📦" },
   ];
 
   const OWNERSHIP_COLORS: Record<OwnershipType, string> = {
@@ -109,7 +109,7 @@ import { useState, useMemo } from "react";
 
     const exportList = () => {
       const lines = ["EQUIPMENT LIST","=============","","Category | Item | Qty | Ownership | Status | Vendor | Daily Rate | Notes","",
-        ...items.map(i => `${CATEGORIES.find(c => c.key === i.category)?.label ?? i.category} | ${i.name} | ${i.quantity} | ${i.ownership} | ${i.status} | ${i.vendor || "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"} | ${i.dailyRate || "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"} | ${i.notes || "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}`)
+        ...items.map(i => `${CATEGORIES.find(c => c.key === i.category)?.label ?? i.category} | ${i.name} | ${i.quantity} | ${i.ownership} | ${i.status} | ${i.vendor || "—"} | ${i.dailyRate || "—"} | ${i.notes || "—"}`)
       ];
       const blob = new Blob([lines.join("\n")], { type: "text/plain" });
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "equipment-list.txt"; a.click();
@@ -149,9 +149,9 @@ import { useState, useMemo } from "react";
               <div className="space-y-1.5"><Label>Category</Label><Select value={editing.category ?? "other"} onValueChange={v => setEditing(p => ({ ...p, category: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{CATEGORIES.map(c => <SelectItem key={c.key} value={c.key}>{c.icon} {c.label}</SelectItem>)}</SelectContent></Select></div>
               <div className="space-y-1.5"><Label>Ownership</Label><Select value={editing.ownership ?? "rented"} onValueChange={v => setEditing(p => ({ ...p, ownership: v as OwnershipType }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="owned">Owned</SelectItem><SelectItem value="rented">Rented</SelectItem><SelectItem value="borrowed">Borrowed</SelectItem><SelectItem value="needed">Still Needed</SelectItem></SelectContent></Select></div>
               <div className="space-y-1.5"><Label>Quantity</Label><Input type="number" min="1" value={editing.quantity ?? 1} onChange={e => setEditing(p => ({ ...p, quantity: parseInt(e.target.value) || 1 }))} /></div>
-              <div className="space-y-1.5"><Label>Vendor / Owner</Label><Input placeholder="LensRentals, John DoeÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" value={editing.vendor ?? ""} onChange={e => setEditing(p => ({ ...p, vendor: e.target.value }))} /></div>
+              <div className="space-y-1.5"><Label>Vendor / Owner</Label><Input placeholder="LensRentals, John Doe…" value={editing.vendor ?? ""} onChange={e => setEditing(p => ({ ...p, vendor: e.target.value }))} /></div>
               <div className="space-y-1.5"><Label>Daily Rate</Label><Input placeholder="$150/day" value={editing.dailyRate ?? ""} onChange={e => setEditing(p => ({ ...p, dailyRate: e.target.value }))} /></div>
-              <div className="space-y-1.5 sm:col-span-2"><Label>Notes</Label><Textarea className="h-16 text-sm" placeholder="Serial number, pickup instructions, special requirementsÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" value={editing.notes ?? ""} onChange={e => setEditing(p => ({ ...p, notes: e.target.value }))} /></div>
+              <div className="space-y-1.5 sm:col-span-2"><Label>Notes</Label><Textarea className="h-16 text-sm" placeholder="Serial number, pickup instructions, special requirements…" value={editing.notes ?? ""} onChange={e => setEditing(p => ({ ...p, notes: e.target.value }))} /></div>
               <div className="flex gap-2 sm:col-span-2 lg:col-span-3">
                 <Button onClick={save}><Save className="h-4 w-4 mr-1" />Save</Button>
                 <Button variant="outline" onClick={() => setEditing(null)}><X className="h-4 w-4 mr-1" />Cancel</Button>
@@ -162,7 +162,7 @@ import { useState, useMemo } from "react";
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
-          <Input placeholder="Search itemsÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search items…" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
           <Select value={catFilter} onValueChange={setCatFilter}><SelectTrigger className="w-40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All categories</SelectItem>{CATEGORIES.map(c => <SelectItem key={c.key} value={c.key}>{c.icon} {c.label}</SelectItem>)}</SelectContent></Select>
           <Select value={ownerFilter} onValueChange={setOwnerFilter}><SelectTrigger className="w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All ownership</SelectItem><SelectItem value="owned">Owned</SelectItem><SelectItem value="rented">Rented</SelectItem><SelectItem value="borrowed">Borrowed</SelectItem><SelectItem value="needed">Needed</SelectItem></SelectContent></Select>
         </div>
@@ -186,7 +186,7 @@ import { useState, useMemo } from "react";
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={`font-medium text-sm ${item.checkedOut ? "line-through text-muted-foreground" : ""}`}>{item.name}</span>
-                        {item.quantity > 1 && <span className="text-xs text-muted-foreground">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ{item.quantity}</span>}
+                        {item.quantity > 1 && <span className="text-xs text-muted-foreground">×{item.quantity}</span>}
                         <span className={`text-[10px] px-1.5 py-0.5 rounded border capitalize ${OWNERSHIP_COLORS[item.ownership]}`}>{item.ownership}</span>
                         <span className={`text-[10px] capitalize ${STATUS_COLORS[item.status]}`}>{item.checkedOut ? "checked out" : item.status}</span>
                       </div>
