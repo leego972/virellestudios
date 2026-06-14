@@ -613,7 +613,45 @@ export const appRouter = router({
         await db.markTokenUsed(record.id);
         return { success: true };
       }),
-  }),
+
+      // ─── Voice Cloning ──────────────────────────────────────────────────────────
+      // Upload an audio sample → ElevenLabs instantVC → voice_id saved on character.
+      cloneVoice: protectedProcedure
+        .input(z.object({
+          characterId: z.number(),
+          name: z.string().min(1).max(128),
+          audioBase64: z.string().min(1),
+          description: z.string().max(500).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const char = await db.getCharacterById(input.characterId);
+          if (!char) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+          if (char.projectId) await assertCanAccessProject(char.projectId, ctx.user.id);
+          const userKeys = await db.getUserApiKeys(ctx.user.id);
+          const elevenlabsKey = userKeys.elevenlabsKey;
+          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for voice cloning. Add it in Settings → API Keys." });
+          const audioBuffer = Buffer.from(input.audioBase64, "base64");
+          const formData = new FormData();
+          formData.append("name", input.name);
+          if (input.description) formData.append("description", input.description);
+          formData.append("files", new Blob([audioBuffer], { type: "audio/mpeg" }), "sample.mp3");
+          const resp = await fetch("https://api.elevenlabs.io/v1/voices/add", {
+            method: "POST",
+            headers: { "xi-api-key": elevenlabsKey },
+            body: formData as any,
+          });
+          if (!resp.ok) {
+            const err = await resp.text().catch(() => "Voice API error");
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Voice cloning failed: ${err.slice(0, 200)}` });
+          }
+          const data = await resp.json() as any;
+          const voiceId = data.voice_id as string;
+          if (!voiceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ElevenLabs did not return a voice_id" });
+          await db.updateCharacter(input.characterId, { voiceId } as any);
+          logger.info(`[character.cloneVoice] voice ${voiceId} for char ${input.characterId}`);
+          return { voiceId, success: true };
+        }),
+    }),
 
   // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Admin ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
   admin: router({
@@ -14603,5 +14641,87 @@ Return JSON ONLY in this exact shape:
         }),
     }),
 
+    // ─── Dubbing Studio ───────────────────────────────────────────────────────────
+    // AI multilingual dubbing + lip-sync: ElevenLabs v2 TTS · GPT translation.
+    dubbing: router({
+
+      generateDub: protectedProcedure
+        .input(z.object({
+          text:           z.string().min(1).max(10000),
+          voiceId:        z.string().min(1),
+          targetLanguage: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const userKeys = await db.getUserApiKeys(ctx.user.id);
+          const elevenlabsKey = userKeys.elevenlabsKey;
+          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for dubbing. Add it in Settings → API Keys." });
+          const body: any = {
+            text: input.text,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true },
+          };
+          if (input.targetLanguage && input.targetLanguage !== "en") body.language_code = input.targetLanguage;
+          const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${input.voiceId}`, {
+            method: "POST",
+            headers: { "xi-api-key": elevenlabsKey, "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (!resp.ok) {
+            const err = await resp.text().catch(() => "TTS error");
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `ElevenLabs TTS failed: ${err.slice(0, 200)}` });
+          }
+          const buf = await resp.arrayBuffer();
+          const audioBase64 = Buffer.from(buf).toString("base64");
+          logger.info(`[dubbing.generateDub] ${buf.byteLength}B audio for user ${ctx.user.id}`);
+          return { audioBase64, format: "mp3" as const };
+        }),
+
+      applyLipSync: protectedProcedure
+        .input(z.object({
+          sceneId:     z.number(),
+          audioBase64: z.string().min(1),
+          mode:        z.enum(["none", "overlay", "d-id"]).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          requireFeature(ctx.user, "canUseAIVoiceActing", "Lip Sync");
+          const scene = await db.getSceneById(input.sceneId);
+          if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+          await assertCanAccessProject(scene.projectId, ctx.user.id);
+          const audioDataUrl = `data:audio/mpeg;base64,${input.audioBase64}`;
+          await db.updateScene(input.sceneId, {
+            lipSyncMode:    input.mode ?? "overlay",
+            lipSyncAudioUrl: audioDataUrl,
+          } as any);
+          logger.info(`[dubbing.applyLipSync] mode=${input.mode ?? "overlay"} scene ${input.sceneId}`);
+          return { success: true };
+        }),
+
+      translateText: protectedProcedure
+        .input(z.object({
+          text:           z.string().min(1).max(10000),
+          targetLanguage: z.string().min(2),
+          sourceLanguage: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const userKeys = await db.getUserApiKeys(ctx.user.id);
+          const openaiKey = userKeys.openaiKey;
+          if (!openaiKey) throw new TRPCError({ code: "BAD_REQUEST", message: "OpenAI API key required for translation. Add it in Settings → API Keys." });
+          const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: `Translate the following${input.sourceLanguage ? ` ${input.sourceLanguage}` : ""} screenplay dialogue to ${input.targetLanguage}. Preserve tone, emotion, and screenplay formatting. Return ONLY the translation, no preamble:
+
+${input.text}` }],
+              max_tokens: 3000,
+            }),
+          });
+          if (!resp.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Translation request failed" });
+          const data = await resp.json() as any;
+          return { translatedText: (data.choices?.[0]?.message?.content ?? "") as string };
+        }),
+    }),
+  
   });
 export type AppRouter = typeof appRouter;
