@@ -67,13 +67,13 @@ export default function NewProject() {
   const [openingScene, setOpeningScene] = useState("");
   const [climax, setClimax] = useState("");
   const [storyResolution, setStoryResolution] = useState("");
-  // v6.62 ÃÂ¢ÃÂÃÂ Project-level reference images (style anchors). Held as data URLs
+  // v6.62 — Project-level reference images (style anchors). Held as data URLs
   // until the project exists, then flushed via projectReferenceImage upload.
   const [pendingRefImages, setPendingRefImages] = useState<string[]>([]);
 
   const projectRefUploadMut = trpc.upload.projectReferenceImage.useMutation();
 
-  // Trailer generation mutation ÃÂ¢ÃÂÃÂ called after project is created in trailer mode
+  // Trailer generation mutation — called after project is created in trailer mode
   const trailerMutation = trpc.generation.generateTrailer.useMutation({
     onSuccess: () => {
       toast.success("Trailer generation started");
@@ -82,7 +82,7 @@ export default function NewProject() {
   });
 
   // Flush any queued reference images to the freshly-created project. Runs
-  // sequentially (rate-limited upload endpoint) and silently ÃÂ¢ÃÂÃÂ failures here
+  // sequentially (rate-limited upload endpoint) and silently — failures here
   // shouldn't block the user from getting into their project.
   const flushPendingRefs = async (projectId: number) => {
     for (const dataUrl of pendingRefImages) {
@@ -96,7 +96,7 @@ export default function NewProject() {
           projectId,
         });
       } catch (e: any) {
-        // Surface to the user ÃÂ¢ÃÂÃÂ they specifically attached this anchor and
+        // Surface to the user — they specifically attached this anchor and
         // will wonder why it's missing in scene-gen if we swallow it silently.
         console.warn("Reference image upload failed:", e);
         toast.error(`Style anchor upload failed: ${e?.message || "unknown error"}. You can re-upload from the project page.`);
@@ -269,9 +269,9 @@ export default function NewProject() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-amber-400" />
-                <CardTitle className="text-sm font-medium gradient-text-gold">Quick Generate ÃÂ¢ÃÂÃÂ Just the Essentials</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Quick Generate — Just the Essentials</CardTitle>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Fill in a title and describe your film. Our AI Director handles the rest ÃÂ¢ÃÂÃÂ screenplay, scenes, characters, and cinematography.</p>
+              <p className="text-xs text-muted-foreground mt-1">Fill in a title and describe your film. Our AI Director handles the rest — screenplay, scenes, characters, and cinematography.</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1.5">
@@ -334,10 +334,10 @@ export default function NewProject() {
                 </div>
               </div>
 
-              {/* Duration ÃÂ¢ÃÂÃÂ seconds for first minute, then minute-by-minute.
+              {/* Duration — seconds for first minute, then minute-by-minute.
                   Underlying `duration` is stored in MINUTES (fractional), e.g. 0.5 = 30 seconds. */}
               {(() => {
-                // 12 ticks of 5s for the first minute (5s, 10s ÃÂ¢ÃÂÃÂ¦ 60s), then 1 tick per minute up to maxDuration
+                // 12 ticks of 5s for the first minute (5s, 10s … 60s), then 1 tick per minute up to maxDuration
                 const tickToMinutes = (tick: number): number => {
                   if (tick <= 11) return Math.round(((tick + 1) * 5) / 60 * 100) / 100;
                   return tick - 10;
@@ -403,7 +403,7 @@ export default function NewProject() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Clapperboard className="h-4 w-4 text-amber-400" />
-                <CardTitle className="text-sm font-medium gradient-text-gold">Generate Trailer ÃÂ¢ÃÂÃÂ AI Cinematic Preview</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Generate Trailer — AI Cinematic Preview</CardTitle>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Virelle will generate your film's scenes, then automatically produce a cinematic trailer with key shots, tagline, and beat structure. No editing required.
@@ -478,7 +478,7 @@ export default function NewProject() {
           </Card>
         )}
 
-        {/* Tabbed sections ÃÂ¢ÃÂÃÂ only show in manual/scene-by-scene mode */}
+        {/* Tabbed sections — only show in manual/scene-by-scene mode */}
         {mode === "manual" && <Tabs defaultValue="basics" className="w-full">
           <TabsList className="flex flex-wrap w-full h-auto gap-1">
             <TabsTrigger value="basics" className="gap-1.5 data-[state=active]:text-amber-400">
@@ -495,7 +495,7 @@ export default function NewProject() {
             </TabsTrigger>
           </TabsList>
 
-          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tab 1: Basics ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+          {/* ─── Tab 1: Basics ─── */}
           <TabsContent value="basics" className="space-y-4 mt-4">
             <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-4">
@@ -699,7 +699,7 @@ export default function NewProject() {
                   </Label>
                   <Textarea
                     id="plot"
-                    placeholder="A high-level summary of your entire film's plot ÃÂ¢ÃÂÃÂ the who, what, where, when, and why..."
+                    placeholder="A high-level summary of your entire film's plot — the who, what, where, when, and why..."
                     value={plotSummary}
                     onChange={(e) => setPlotSummary(e.target.value)}
                     className="bg-background/50 min-h-[120px] text-sm resize-y"
@@ -712,7 +712,7 @@ export default function NewProject() {
             </Card>
           </TabsContent>
 
-          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tab 2: Story & Plot ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+          {/* ─── Tab 2: Story & Plot ─── */}
           <TabsContent value="story" className="space-y-4 mt-4">
             <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-4">
@@ -774,7 +774,7 @@ export default function NewProject() {
             </Card>
           </TabsContent>
 
-          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tab 3: Narrative Details ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+          {/* ─── Tab 3: Narrative Details ─── */}
           <TabsContent value="narrative" className="space-y-4 mt-4">
             <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-4">
@@ -837,7 +837,7 @@ export default function NewProject() {
                   </Label>
                   <Textarea
                     id="openingScene"
-                    placeholder="How does the film begin? Describe the opening scene ÃÂ¢ÃÂÃÂ the first thing the audience sees. Set the tone, introduce the world, hook the viewer..."
+                    placeholder="How does the film begin? Describe the opening scene — the first thing the audience sees. Set the tone, introduce the world, hook the viewer..."
                     value={openingScene}
                     onChange={(e) => setOpeningScene(e.target.value)}
                     className="bg-background/50 min-h-[100px] text-sm resize-y"
@@ -850,7 +850,7 @@ export default function NewProject() {
                   </Label>
                   <Textarea
                     id="climax"
-                    placeholder="Describe the climactic moment ÃÂ¢ÃÂÃÂ the peak of tension where the central conflict comes to a head. What happens? Who is involved? What's at stake?"
+                    placeholder="Describe the climactic moment — the peak of tension where the central conflict comes to a head. What happens? Who is involved? What's at stake?"
                     value={climax}
                     onChange={(e) => setClimax(e.target.value)}
                     className="bg-background/50 min-h-[100px] text-sm resize-y"
@@ -911,7 +911,7 @@ export default function NewProject() {
           </div>
         </div>
 
-        {/* v6.62 ÃÂ¢ÃÂÃÂ Project-level reference images (style anchors) */}
+        {/* v6.62 — Project-level reference images (style anchors) */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm gradient-text-gold">Style Anchors (optional)</CardTitle>
@@ -926,7 +926,7 @@ export default function NewProject() {
 
         {/* Submit */}
         <div className="flex items-center justify-end gap-3 pt-2">
-          {/* v6.62 ÃÂ¢ÃÂÃÂ Cost preflight chip. Quick mode + trailer mode trigger
+          {/* v6.62 — Cost preflight chip. Quick mode + trailer mode trigger
               automatic generation, so show what it'll cost before submitting. */}
           {(mode === "quick" || mode === "trailer") && (
             <CostPreflight
