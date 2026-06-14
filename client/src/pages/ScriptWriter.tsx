@@ -38,7 +38,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { NextStageCTA } from "@/components/NextStageCTA";
 
-// ─── Screenplay element types ─────────────────────────────────────────────────
+// âââ Screenplay element types âââââââââââââââââââââââââââââââââââââââââââââââââ
 
 type ElementType =
   | "scene-heading"
@@ -81,7 +81,7 @@ const ELEMENT_STYLES: Record<ElementType, string> = {
   transition: "text-right uppercase",
 };
 
-// ─── AI Assist button definitions ────────────────────────────────────────────
+// âââ AI Assist button definitions ââââââââââââââââââââââââââââââââââââââââââââ
 
 type AssistAction =
   | "continue"
@@ -105,15 +105,15 @@ const ASSIST_BUTTONS: AssistButton[] = [
   { action: "continue", label: "Continue", icon: <Wand2 className="h-3 w-3 mr-1" />, tooltip: "Write the next 3-4 scenes continuing from current position" },
   { action: "rewrite", label: "Rewrite", icon: <Pencil className="h-3 w-3 mr-1" />, tooltip: "Rewrite the selected element with sharper dialogue and tighter action" },
   { action: "dialogue", label: "Dialogue", icon: <MessageSquare className="h-3 w-3 mr-1" />, tooltip: "Generate a full dialogue exchange with distinct character voices and subtext" },
-  { action: "action-line", label: "Action Line", icon: <Zap className="h-3 w-3 mr-1" />, tooltip: "Write cinematic action lines — present tense, active verbs, visual detail" },
+  { action: "action-line", label: "Action Line", icon: <Zap className="h-3 w-3 mr-1" />, tooltip: "Write cinematic action lines â present tense, active verbs, visual detail" },
   { action: "transition", label: "Transition", icon: <ArrowLeft className="h-3 w-3 mr-1 rotate-180" />, tooltip: "Add a scene transition (CUT TO, SMASH CUT, DISSOLVE, MATCH CUT...)" },
   { action: "scene-expand", label: "Expand Scene", icon: <Plus className="h-3 w-3 mr-1" />, tooltip: "Expand a brief outline into a fully written scene" },
-  { action: "polish", label: "Polish", icon: <Star className="h-3 w-3 mr-1" />, tooltip: "Polish to production-ready quality — sharpen dialogue, tighten action, fix format" },
+  { action: "polish", label: "Polish", icon: <Star className="h-3 w-3 mr-1" />, tooltip: "Polish to production-ready quality â sharpen dialogue, tighten action, fix format" },
   { action: "character-voice", label: "Character Voice", icon: <Type className="h-3 w-3 mr-1" />, tooltip: "Rewrite dialogue so each character has a distinct, authentic voice" },
   { action: "scene-beat", label: "Scene Beat", icon: <BookOpen className="h-3 w-3 mr-1" />, tooltip: "Break down a scene into beats, then write the full scene from them" },
 ];
 
-// ─── Parsing utilities ────────────────────────────────────────────────────────
+// âââ Parsing utilities ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function parseScriptToElements(content: string): ScriptElement[] {
   if (!content || content.trim() === "")
@@ -265,7 +265,7 @@ function countWords(elements: ScriptElement[]): number {
 }
 
 function estimateScreenTime(elements: ScriptElement[]): string {
-  // Industry standard: 1 page ≈ 1 minute. ~3000 chars per page.
+  // Industry standard: 1 page â 1 minute. ~3000 chars per page.
   const content = elementsToScript(elements);
   const pages = Math.max(1, content.length / 3000);
   const minutes = Math.round(pages);
@@ -275,7 +275,7 @@ function estimateScreenTime(elements: ScriptElement[]): string {
   return `~${h}h ${m}m`;
 }
 
-// ─── Template Picker Modal ────────────────────────────────────────────────────
+// âââ Template Picker Modal ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function TemplatePicker({
   open,
@@ -295,7 +295,7 @@ function TemplatePicker({
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
-            <BookOpen className="h-5 w-5 text-primary" />
+            <BookOpen className="h-5 w-5 text-amber-400" />
             Hollywood Script Templates
           </DialogTitle>
           <DialogDescription>
@@ -324,7 +324,7 @@ function TemplatePicker({
         {selected && (
           <div className="mt-4 space-y-4 border-t border-border pt-4">
             <div>
-              <h3 className="font-semibold text-sm mb-1">{selected.genre} — Beat Sheet</h3>
+              <h3 className="font-semibold text-sm mb-1">{selected.genre} â Beat Sheet</h3>
               <p className="text-xs text-muted-foreground mb-3">{selected.toneDescription}</p>
 
               <div className="space-y-2">
@@ -345,7 +345,7 @@ function TemplatePicker({
                             <Badge variant="outline" className="shrink-0 text-[10px] h-5">{beat.pageRange}</Badge>
                             <div>
                               <span className="font-medium">{beat.name}</span>
-                              <span className="text-muted-foreground"> — {beat.description}</span>
+                              <span className="text-muted-foreground"> â {beat.description}</span>
                             </div>
                           </div>
                         ))}
@@ -381,7 +381,7 @@ function TemplatePicker({
             <div>
               <Label className="text-sm font-medium">Director's Notes (optional)</Label>
               <p className="text-xs text-muted-foreground mb-1.5">
-                Add your story's specific details — protagonist name, setting, central conflict, tone notes. The AI will use these alongside the template structure.
+                Add your story's specific details â protagonist name, setting, central conflict, tone notes. The AI will use these alongside the template structure.
               </p>
               <Textarea
                 value={instructions}
@@ -418,7 +418,7 @@ function TemplatePicker({
   );
 }
 
-// ─── Import Scene Modal ───────────────────────────────────────────────────────
+// âââ Import Scene Modal âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function ImportSceneModal({
   open,
@@ -458,11 +458,11 @@ function ImportSceneModal({
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
-            <FilePlus className="h-5 w-5 text-primary" />
+            <FilePlus className="h-5 w-5 text-amber-400" />
             Import External Scene
           </DialogTitle>
           <DialogDescription>
-            Import a scene from a .fountain, .txt, or .fdx file — or paste screenplay text directly. The imported content will be parsed and connected to your script.
+            Import a scene from a .fountain, .txt, or .fdx file â or paste screenplay text directly. The imported content will be parsed and connected to your script.
           </DialogDescription>
         </DialogHeader>
 
@@ -548,7 +548,7 @@ function ImportSceneModal({
   );
 }
 
-// ─── AI Assist Instructions Modal ────────────────────────────────────────────
+// âââ AI Assist Instructions Modal ââââââââââââââââââââââââââââââââââââââââââââ
 
 function AssistInstructionsModal({
   open,
@@ -580,7 +580,7 @@ function AssistInstructionsModal({
             <Textarea
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
-              placeholder="Add specific direction for this AI action — character notes, tone, what should happen next, etc."
+              placeholder="Add specific direction for this AI action â character notes, tone, what should happen next, etc."
               rows={3}
               className="text-sm"
               autoFocus
@@ -606,7 +606,7 @@ function AssistInstructionsModal({
   );
 }
 
-// ─── Main ScriptWriter Component ──────────────────────────────────────────────
+// âââ Main ScriptWriter Component ââââââââââââââââââââââââââââââââââââââââââââââ
 
 export default function ScriptWriter() {
   const { projectId, scriptId } = useParams<{ projectId: string; scriptId?: string }>();
@@ -714,11 +714,11 @@ export default function ScriptWriter() {
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [isDirty, elements, title]);
 
-  // Auth guard — after all hooks
+  // Auth guard â after all hooks
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Loader2 className="h-6 w-6 animate-spin text-primary text-amber-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-amber-400 text-amber-400" />
       </div>
     );
   }
@@ -731,7 +731,7 @@ export default function ScriptWriter() {
     );
   }
 
-  // ─── Element operations ───────────────────────────────────────────────────
+  // âââ Element operations âââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const updateElement = (id: string, text: string) => {
     setElements((prev) => prev.map((el) => (el.id === id ? { ...el, text } : el)));
@@ -796,7 +796,7 @@ export default function ScriptWriter() {
     }
   };
 
-  // ─── AI handlers ──────────────────────────────────────────────────────────
+  // âââ AI handlers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const handleAiGenerateWithTemplate = (template: ScriptTemplate, instructions: string) => {
     setAiLoading(true);
@@ -857,7 +857,7 @@ export default function ScriptWriter() {
     setAssistModalOpen(true);
   };
 
-  // ─── Import handler ───────────────────────────────────────────────────────
+  // âââ Import handler âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const handleImport = (text: string, position: "append" | "prepend" | "replace") => {
     const imported = parseScriptToElements(text);
@@ -872,7 +872,7 @@ export default function ScriptWriter() {
     toast.success(`${imported.length} elements imported and connected`);
   };
 
-  // ─── Export handler ───────────────────────────────────────────────────────
+  // âââ Export handler âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const handleExport = (format: "txt" | "fountain" | "screenplay" | "fdx") => {
     const safeName = title.replace(/[^a-zA-Z0-9]/g, "_");
@@ -912,13 +912,13 @@ export default function ScriptWriter() {
     textarea.style.height = textarea.scrollHeight + "px";
   };
 
-  // ─── Stats ────────────────────────────────────────────────────────────────
+  // âââ Stats ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const wordCount = countWords(elements);
   const pageCount = Math.max(1, Math.round(elementsToScript(elements).length / 3000));
   const screenTime = estimateScreenTime(elements);
 
-  // ─── Render ───────────────────────────────────────────────────────────────
+  // âââ Render âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
@@ -1059,7 +1059,7 @@ export default function ScriptWriter() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-7 shrink-0 border-primary/40 text-primary hover:bg-amber-400/10"
+                className="text-xs h-7 shrink-0 border-primary/40 text-amber-400 hover:bg-amber-400/10"
                 onClick={() => setTemplatePickerOpen(true)}
                 disabled={aiLoading}
               >
@@ -1155,7 +1155,7 @@ export default function ScriptWriter() {
           </div>
         </div>
 
-        {/* Main editor — screenplay page */}
+        {/* Main editor â screenplay page */}
         <div className="flex-1 flex justify-center py-8 px-4">
           <div className="w-full max-w-[700px]">
             {/* Screenplay page */}
@@ -1248,7 +1248,7 @@ export default function ScriptWriter() {
 
             {/* Footer stats */}
             <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground px-2 flex-wrap gap-2">
-              <span>{elements.length} elements · {wordCount.toLocaleString()} words</span>
+              <span>{elements.length} elements Â· {wordCount.toLocaleString()} words</span>
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <FileText className="h-3 w-3" />
@@ -1261,7 +1261,7 @@ export default function ScriptWriter() {
               </div>
               <span className="flex items-center gap-1">
                 <Type className="h-3 w-3" />
-                Tab cycles type · Enter next line
+                Tab cycles type Â· Enter next line
               </span>
             </div>
           </div>

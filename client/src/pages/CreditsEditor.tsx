@@ -64,7 +64,7 @@ export default function CreditsEditor() {
   if (authLoading || projectLoading || creditsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Loader2 className="h-8 w-8 animate-spin text-primary text-amber-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-amber-400 text-amber-400" />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function CreditsEditor() {
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">{project?.title} — Credits</h1>
+              <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">{project?.title} â Credits</h1>
               <p className="text-xs text-muted-foreground">{allCredits?.length || 0} credits</p>
             </div>
           </div>

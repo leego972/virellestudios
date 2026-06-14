@@ -270,7 +270,7 @@ export default function ComponentsShowcase() {
                       <p className="text-sm text-muted-foreground mb-1">
                         Primary
                       </p>
-                      <p className="text-primary text-lg font-medium">
+                      <p className="text-amber-400 text-lg font-medium">
                         Primary brand color text
                       </p>
                     </div>
@@ -1158,7 +1158,7 @@ export default function ComponentsShowcase() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-semibold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework – created and maintained by
+                          The React Framework â created and maintained by
                           @vercel.
                         </p>
                       </div>

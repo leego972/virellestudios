@@ -91,7 +91,7 @@ export default function Collaboration() {
       setInviteEmail("");
       toast.success("Invitation created");
     },
-    onError: () => toast.error("We couldn't send that invite — check the email address and try again."),
+    onError: () => toast.error("We couldn't send that invite â check the email address and try again."),
   });
 
   const updateRoleMutation = trpc.collaboration.updateRole.useMutation({
@@ -211,7 +211,7 @@ export default function Collaboration() {
             <CardContent className="p-4 glass-card">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-primary" />
+                  <Shield className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{teamMembers.length}</p>
@@ -460,10 +460,10 @@ export default function Collaboration() {
               <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Viewer — View-only access</SelectItem>
-                  <SelectItem value="editor">Editor — Edit scenes & scripts</SelectItem>
-                  <SelectItem value="producer">Producer — Manage production</SelectItem>
-                  <SelectItem value="director">Director — Full creative control</SelectItem>
+                  <SelectItem value="viewer">Viewer â View-only access</SelectItem>
+                  <SelectItem value="editor">Editor â Edit scenes & scripts</SelectItem>
+                  <SelectItem value="producer">Producer â Manage production</SelectItem>
+                  <SelectItem value="director">Director â Full creative control</SelectItem>
                 </SelectContent>
               </Select>
             </div>

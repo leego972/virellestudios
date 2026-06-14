@@ -67,7 +67,7 @@ const TYPE_COLORS: Record<MovieType, string> = {
 };
 
 function formatDuration(seconds: number | null | undefined): string {
-  if (!seconds) return "â";
+  if (!seconds) return "Ã¢ÂÂ";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
@@ -77,7 +77,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes) return "â";
+  if (!bytes) return "Ã¢ÂÂ";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024)
@@ -106,7 +106,7 @@ type MovieItem = {
   updatedAt: Date;
 };
 
-// âââ YouTube Export Modal ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ YouTube Export Modal Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function YouTubeExportModal({
   movie,
   open,
@@ -146,8 +146,8 @@ function YouTubeExportModal({
     setTitle(movie.title);
     setDescription(
       movie.description
-        ? `${movie.description}\n\nCreated with Virelle Studios â AI-powered cinema.\nhttps://virelle.life`
-        : `Created with Virelle Studios â AI-powered cinema.\nhttps://virelle.life`
+        ? `${movie.description}\n\nCreated with Virelle Studios Ã¢ÂÂ AI-powered cinema.\nhttps://virelle.life`
+        : `Created with Virelle Studios Ã¢ÂÂ AI-powered cinema.\nhttps://virelle.life`
     );
   }
 
@@ -234,7 +234,7 @@ function YouTubeExportModal({
               }
             >
               <PlayCircle className="h-4 w-4" />
-              {exportMutation.isPending ? "Uploadingâ¦" : "Upload to YouTube"}
+              {exportMutation.isPending ? "UploadingÃ¢ÂÂ¦" : "Upload to YouTube"}
             </Button>
           )}
         </DialogFooter>
@@ -368,7 +368,7 @@ export default function Movies() {
         {/* Play button - visible for any movie with content */}
         {(movie.fileUrl || movie.thumbnailUrl) && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary/80 transition-all group-hover:scale-110">
+            <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center group-hover:bg-amber-500/80 transition-all group-hover:scale-110">
               <Play className="h-7 w-7 text-white fill-white ml-1" />
             </div>
           </div>
@@ -454,7 +454,7 @@ export default function Movies() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 sm:hidden text-primary hover:text-amber-400"
+                className="h-8 w-8 sm:hidden text-amber-400 hover:text-amber-400"
                 onClick={(e) => {
                   e.stopPropagation();
                   playMovie(movie.id, movie.type);
@@ -534,7 +534,7 @@ export default function Movies() {
           )}
           {(movie.fileUrl || movie.thumbnailUrl) && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-primary/80 transition-all">
+              <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-amber-500/80 transition-all">
                 <Play className="h-4 w-4 text-white fill-white ml-0.5" />
               </div>
             </div>
@@ -637,12 +637,12 @@ export default function Movies() {
                 Back to My Movies
               </Button>
               <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 gradient-text-gold">
-                <FolderOpen className="h-6 w-6 text-primary" />
+                <FolderOpen className="h-6 w-6 text-amber-400" />
                 {activeFolder}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 {folderContents.length} item
-                {folderContents.length !== 1 ? "s" : ""} â{" "}
+                {folderContents.length !== 1 ? "s" : ""} Ã¢ÂÂ{" "}
                 {folderContents.filter((m) => m.type === "scene").length} scenes
                 {folderContents.filter((m) => m.type === "trailer").length > 0 &&
                   `, ${folderContents.filter((m) => m.type === "trailer").length} trailer${folderContents.filter((m) => m.type === "trailer").length !== 1 ? "s" : ""}`}
@@ -716,7 +716,7 @@ export default function Movies() {
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
             <CardContent className="p-4 flex items-center gap-3 glass-card">
               <div className="p-2 rounded-lg bg-amber-400/10">
-                <Folder className="h-5 w-5 text-primary" />
+                <Folder className="h-5 w-5 text-amber-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{folderNames.length}</p>
@@ -828,7 +828,7 @@ export default function Movies() {
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <Folder className="h-16 w-16 text-primary/30" />
+                                  <Folder className="h-16 w-16 text-amber-400/30" />
                                 </div>
                               )}
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -892,7 +892,7 @@ export default function Movies() {
                           >
                             <CardContent className="p-3 flex items-center gap-4 glass-card">
                               <div className="w-12 h-12 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
-                                <Folder className="h-6 w-6 text-primary" />
+                                <Folder className="h-6 w-6 text-amber-400" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <h3 className="font-medium truncate">

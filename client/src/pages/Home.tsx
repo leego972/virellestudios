@@ -438,7 +438,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                     <Link key={s.key} href={s.hrefFor(p.id)} className="shrink-0">
                       <div className={`h-9 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium border transition-colors ${
                         status === "done" ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                        : status === "active" ? "border-primary/60 bg-amber-500/15 text-amber-400"
+                        : status === "active" ? "border-primary/60 bg-amber-500/15 text-primary"
                         : "border-border bg-muted/20 text-muted-foreground hover:bg-muted"
                       }`} title={s.blurb}>
                         <span className="font-bold">{s.number}</span>
@@ -456,7 +456,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {[
             { label: "Total Projects", value: stats.total, icon: Film, color: "text-muted-foreground" },
-            { label: "In Production", value: stats.generating, icon: Loader2, color: "text-amber-400", spin: stats.generating > 0 },
+            { label: "In Production", value: stats.generating, icon: Loader2, color: "text-primary", spin: stats.generating > 0 },
             { label: "Completed", value: stats.completed, icon: CheckCircle2, color: "text-green-400" },
             { label: "Drafts", value: stats.draft, icon: Clock, color: "text-amber-400" },
             { label: "Characters", value: stats.characters, icon: Users, color: "text-purple-400" },
@@ -535,7 +535,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <p className="text-xs text-zinc-400 max-w-lg">Cast premium digital talent directly into your project. Continuity-tuned, screen-tested, and promo-ready.</p>
             </div>
           </div>
-          <Button size="sm" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold shrink-0" onClick={(e) => { e.stopPropagation(); setLocation("/talent-search"); }}>
+          <Button size="sm" className="bg-primary hover:bg-amber-400 text-black font-semibold shrink-0" onClick={(e) => { e.stopPropagation(); setLocation("/talent-search"); }}>
             Browse the Cast <ArrowRight className="ml-2 w-3 h-3" />
           </Button>
         </div>
@@ -659,7 +659,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <div className="mt-6 space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Access</p>
               {[
-                { label: "My Movies", icon: Play, path: "/movies", color: "text-amber-400" },
+                { label: "My Movies", icon: Play, path: "/movies", color: "text-primary" },
                 { label: "Characters", icon: Users, path: "/characters", color: "text-purple-400" },
                 { label: "Film Festivals", icon: Trophy, path: "/festivals", color: "text-amber-400" },
                 { label: "Marketplace", icon: Sparkles, path: "/marketplace", color: "text-rose-400" },

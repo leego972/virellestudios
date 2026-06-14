@@ -46,7 +46,7 @@ function ReviewerCommentBox({
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Leave a note on "{sceneTitle}"
         </p>
-        {sent && <span className="text-[11px] text-green-500 font-medium">✓ Sent to filmmaker</span>}
+        {sent && <span className="text-[11px] text-green-500 font-medium">â Sent to filmmaker</span>}
       </div>
       <div className="flex gap-2 mb-2">
         <input
@@ -65,7 +65,7 @@ function ReviewerCommentBox({
         />
       </div>
       <textarea
-        placeholder="Your note for the filmmaker — pacing, performance, sound, story…"
+        placeholder="Your note for the filmmaker â pacing, performance, sound, storyâ¦"
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, 2000))}
         rows={2}
@@ -77,7 +77,7 @@ function ReviewerCommentBox({
           disabled={!name.trim() || !comment.trim() || add.isPending}
           className="h-7 px-3 rounded-md bg-amber-500 text-white text-xs font-medium disabled:opacity-50 hover:opacity-90"
         >
-          {add.isPending ? "Sending…" : "Send note"}
+          {add.isPending ? "Sendingâ¦" : "Send note"}
         </button>
       </div>
       {add.error && <p className="mt-1 text-[11px] text-red-500">{add.error.message}</p>}
@@ -88,7 +88,7 @@ function ReviewerCommentBox({
 function ScreenerWatermark({ name }: { name: string }) {
   if (!name) return null;
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const label = `${name} · ${stamp} UTC · CONFIDENTIAL`;
+  const label = `${name} Â· ${stamp} UTC Â· CONFIDENTIAL`;
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
       <div className="absolute inset-0 flex items-center justify-center">
@@ -114,7 +114,7 @@ function ScreenerWatermark({ name }: { name: string }) {
  *
  * Producers, friends, or collaborators receive a /share/:projectId/:token
  * URL from the project owner and can review the film without signing up.
- * No comments / approvals yet — that's stage 2 of the review system.
+ * No comments / approvals yet â that's stage 2 of the review system.
  */
 export default function SharePreview() {
   const params = useParams<{ projectId: string; token: string }>();
@@ -190,10 +190,10 @@ export default function SharePreview() {
           <h1 className="text-3xl sm:text-4xl font-bold mb-3 gradient-text-gold">{project.title}</h1>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-4">
             {project.directorName && <span>Directed by {project.directorName}</span>}
-            {project.genre && (<><span>·</span><span>{project.genre}</span></>)}
-            {project.mode && (<><span>·</span><span className="capitalize">{project.mode}</span></>)}
-            {project.duration && (<><span>·</span><span>{project.duration}s</span></>)}
-            {project.resolution && (<><span>·</span><span>{project.resolution}</span></>)}
+            {project.genre && (<><span>Â·</span><span>{project.genre}</span></>)}
+            {project.mode && (<><span>Â·</span><span className="capitalize">{project.mode}</span></>)}
+            {project.duration && (<><span>Â·</span><span>{project.duration}s</span></>)}
+            {project.resolution && (<><span>Â·</span><span>{project.resolution}</span></>)}
           </div>
           {project.logline && (
             <p className="text-base text-foreground/90 italic mb-2">"{project.logline}"</p>
@@ -244,7 +244,7 @@ export default function SharePreview() {
             <CardContent className="p-4 glass-card">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold">Scene {active.sceneNumber} — {active.title}</h3>
+                  <h3 className="font-semibold">Scene {active.sceneNumber} â {active.title}</h3>
                   {active.description && (
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{active.description}</p>
                   )}
@@ -325,7 +325,7 @@ export default function SharePreview() {
           </p>
           <a
             href="/"
-            className="inline-block px-4 py-2 rounded-md bg-amber-500 text-white text-sm font-medium hover:bg-primary/90"
+            className="inline-block px-4 py-2 rounded-md bg-amber-500 text-white text-sm font-medium hover:bg-amber-500/90"
           >
             Try VirElle Studios free
           </a>

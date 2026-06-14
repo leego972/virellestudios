@@ -83,7 +83,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { FeatureGate } from "@/components/UpgradePrompt";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// âââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 type TemplateType =
   | "poster" | "social-square" | "social-story" | "banner" | "billboard"
@@ -153,37 +153,37 @@ type PosterState = {
   gradient: GradientOverlay;
 };
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// âââ Constants âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const TEMPLATE_CONFIG: Record<TemplateType, { label: string; icon: React.ElementType; width: number; height: number; description: string; category: string; emoji: string }> = {
-  "poster":             { label: "Movie Poster",      icon: RectangleHorizontal, width: 675,  height: 1000, description: "Classic 27×40 portrait poster",            category: "Film",        emoji: "🎬" },
-  "trailer-card":       { label: "Trailer Card",       icon: Clapperboard,        width: 1280, height: 720,  description: "YouTube/Vimeo trailer thumbnail",          category: "Film",        emoji: "🎞️" },
-  "dvd-cover":          { label: "DVD/Blu-ray",        icon: Disc3,               width: 780,  height: 1050, description: "Front cover with spine area",              category: "Film",        emoji: "💿" },
-  "letterbox":          { label: "Letterbox",          icon: Film,                width: 1200, height: 500,  description: "Cinematic widescreen banner",              category: "Film",        emoji: "📽️" },
-  "press-kit":          { label: "Press Kit",          icon: FileText,            width: 900,  height: 1200, description: "Professional media press layout",          category: "Film",        emoji: "📋" },
-  "withoutabox-poster": { label: "Festival Poster",    icon: Ticket,              width: 675,  height: 1000, description: "FilmFreeway / WithoutABox submission",     category: "Film",        emoji: "🏆" },
-  "ig-feed":            { label: "IG Feed (4:5)",      icon: Square,              width: 1080, height: 1350, description: "Instagram feed post — optimal 4:5 ratio",   category: "Instagram",   emoji: "📸" },
-  "ig-square":          { label: "IG Square (1:1)",    icon: Square,              width: 1080, height: 1080, description: "Instagram square post",                   category: "Instagram",   emoji: "⬛" },
-  "ig-story":           { label: "IG Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Instagram Story — 9:16 vertical",           category: "Instagram",   emoji: "📱" },
-  "ig-reels":           { label: "IG Reels Cover",     icon: Smartphone,          width: 1080, height: 1920, description: "Reels cover thumbnail — 9:16",            category: "Instagram",   emoji: "🎵" },
-  "tiktok-vertical":    { label: "TikTok Video",       icon: Smartphone,          width: 1080, height: 1920, description: "TikTok video ad — 9:16 vertical",         category: "TikTok",      emoji: "🎵" },
-  "tiktok-thumbnail":   { label: "TikTok Thumbnail",   icon: Square,              width: 1080, height: 1080, description: "TikTok profile/cover thumbnail",           category: "TikTok",      emoji: "🖼️" },
-  "fb-feed":            { label: "FB Feed Ad",         icon: Monitor,             width: 1200, height: 628,  description: "Facebook feed image ad — 1.91:1",        category: "Facebook",    emoji: "📘" },
-  "fb-story":           { label: "FB Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Facebook Story — 9:16 vertical",          category: "Facebook",    emoji: "📱" },
-  "fb-cover":           { label: "FB Page Cover",      icon: Monitor,             width: 1640, height: 624,  description: "Facebook Page cover photo",               category: "Facebook",    emoji: "🖼️" },
-  "discord-banner":     { label: "Discord Banner",     icon: Monitor,             width: 960,  height: 540,  description: "Discord server banner — 16:9",           category: "Discord",     emoji: "💬" },
-  "discord-card":       { label: "Discord Card",       icon: Square,              width: 800,  height: 450,  description: "Discord announcement embed card",         category: "Discord",     emoji: "📢" },
-  "yt-thumbnail":       { label: "YT Thumbnail",       icon: Monitor,             width: 1280, height: 720,  description: "YouTube video thumbnail — 16:9",         category: "YouTube",     emoji: "▶️" },
-  "yt-shorts":          { label: "YT Shorts",          icon: Smartphone,          width: 1080, height: 1920, description: "YouTube Shorts — 9:16 vertical",          category: "YouTube",     emoji: "📲" },
-  "yt-channel-art":     { label: "YT Channel Art",     icon: Monitor,             width: 2560, height: 1440, description: "YouTube channel banner art",               category: "YouTube",     emoji: "🎨" },
-  "social-square":      { label: "Social Square",      icon: Square,              width: 800,  height: 800,  description: "Generic square social post",              category: "Marketing",   emoji: "📣" },
-  "social-story":       { label: "Social Story",       icon: Smartphone,          width: 540,  height: 960,  description: "Generic story format",                   category: "Marketing",   emoji: "📱" },
-  "social-ad":          { label: "Social Ad",          icon: Megaphone,           width: 1080, height: 1080, description: "High-res social media ad",                category: "Marketing",   emoji: "📢" },
-  "banner":             { label: "Banner",             icon: Monitor,             width: 1280, height: 720,  description: "YouTube thumbnail, website header",       category: "Marketing",   emoji: "🖥️" },
-  "billboard":          { label: "Billboard",          icon: Megaphone,           width: 1200, height: 400,  description: "Ultra-wide outdoor advertising",          category: "Marketing",   emoji: "🗺️" },
-  "event-flyer":        { label: "Event Flyer",        icon: Ticket,              width: 600,  height: 900,  description: "Premiere, screening, festival",           category: "Marketing",   emoji: "🎟️" },
-  "influencer-kit":     { label: "Influencer Kit",     icon: Sparkles,            width: 1080, height: 1080, description: "Influencer outreach square card",         category: "Marketing",   emoji: "✨" },
-  "album-art":          { label: "Soundtrack Art",     icon: Music,               width: 800,  height: 800,  description: "Soundtrack or score album cover",         category: "Other",       emoji: "🎵" },
+  "poster":             { label: "Movie Poster",      icon: RectangleHorizontal, width: 675,  height: 1000, description: "Classic 27Ã40 portrait poster",            category: "Film",        emoji: "ð¬" },
+  "trailer-card":       { label: "Trailer Card",       icon: Clapperboard,        width: 1280, height: 720,  description: "YouTube/Vimeo trailer thumbnail",          category: "Film",        emoji: "ðï¸" },
+  "dvd-cover":          { label: "DVD/Blu-ray",        icon: Disc3,               width: 780,  height: 1050, description: "Front cover with spine area",              category: "Film",        emoji: "ð¿" },
+  "letterbox":          { label: "Letterbox",          icon: Film,                width: 1200, height: 500,  description: "Cinematic widescreen banner",              category: "Film",        emoji: "ð½ï¸" },
+  "press-kit":          { label: "Press Kit",          icon: FileText,            width: 900,  height: 1200, description: "Professional media press layout",          category: "Film",        emoji: "ð" },
+  "withoutabox-poster": { label: "Festival Poster",    icon: Ticket,              width: 675,  height: 1000, description: "FilmFreeway / WithoutABox submission",     category: "Film",        emoji: "ð" },
+  "ig-feed":            { label: "IG Feed (4:5)",      icon: Square,              width: 1080, height: 1350, description: "Instagram feed post â optimal 4:5 ratio",   category: "Instagram",   emoji: "ð¸" },
+  "ig-square":          { label: "IG Square (1:1)",    icon: Square,              width: 1080, height: 1080, description: "Instagram square post",                   category: "Instagram",   emoji: "â¬" },
+  "ig-story":           { label: "IG Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Instagram Story â 9:16 vertical",           category: "Instagram",   emoji: "ð±" },
+  "ig-reels":           { label: "IG Reels Cover",     icon: Smartphone,          width: 1080, height: 1920, description: "Reels cover thumbnail â 9:16",            category: "Instagram",   emoji: "ðµ" },
+  "tiktok-vertical":    { label: "TikTok Video",       icon: Smartphone,          width: 1080, height: 1920, description: "TikTok video ad â 9:16 vertical",         category: "TikTok",      emoji: "ðµ" },
+  "tiktok-thumbnail":   { label: "TikTok Thumbnail",   icon: Square,              width: 1080, height: 1080, description: "TikTok profile/cover thumbnail",           category: "TikTok",      emoji: "ð¼ï¸" },
+  "fb-feed":            { label: "FB Feed Ad",         icon: Monitor,             width: 1200, height: 628,  description: "Facebook feed image ad â 1.91:1",        category: "Facebook",    emoji: "ð" },
+  "fb-story":           { label: "FB Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Facebook Story â 9:16 vertical",          category: "Facebook",    emoji: "ð±" },
+  "fb-cover":           { label: "FB Page Cover",      icon: Monitor,             width: 1640, height: 624,  description: "Facebook Page cover photo",               category: "Facebook",    emoji: "ð¼ï¸" },
+  "discord-banner":     { label: "Discord Banner",     icon: Monitor,             width: 960,  height: 540,  description: "Discord server banner â 16:9",           category: "Discord",     emoji: "ð¬" },
+  "discord-card":       { label: "Discord Card",       icon: Square,              width: 800,  height: 450,  description: "Discord announcement embed card",         category: "Discord",     emoji: "ð¢" },
+  "yt-thumbnail":       { label: "YT Thumbnail",       icon: Monitor,             width: 1280, height: 720,  description: "YouTube video thumbnail â 16:9",         category: "YouTube",     emoji: "â¶ï¸" },
+  "yt-shorts":          { label: "YT Shorts",          icon: Smartphone,          width: 1080, height: 1920, description: "YouTube Shorts â 9:16 vertical",          category: "YouTube",     emoji: "ð²" },
+  "yt-channel-art":     { label: "YT Channel Art",     icon: Monitor,             width: 2560, height: 1440, description: "YouTube channel banner art",               category: "YouTube",     emoji: "ð¨" },
+  "social-square":      { label: "Social Square",      icon: Square,              width: 800,  height: 800,  description: "Generic square social post",              category: "Marketing",   emoji: "ð£" },
+  "social-story":       { label: "Social Story",       icon: Smartphone,          width: 540,  height: 960,  description: "Generic story format",                   category: "Marketing",   emoji: "ð±" },
+  "social-ad":          { label: "Social Ad",          icon: Megaphone,           width: 1080, height: 1080, description: "High-res social media ad",                category: "Marketing",   emoji: "ð¢" },
+  "banner":             { label: "Banner",             icon: Monitor,             width: 1280, height: 720,  description: "YouTube thumbnail, website header",       category: "Marketing",   emoji: "ð¥ï¸" },
+  "billboard":          { label: "Billboard",          icon: Megaphone,           width: 1200, height: 400,  description: "Ultra-wide outdoor advertising",          category: "Marketing",   emoji: "ðºï¸" },
+  "event-flyer":        { label: "Event Flyer",        icon: Ticket,              width: 600,  height: 900,  description: "Premiere, screening, festival",           category: "Marketing",   emoji: "ðï¸" },
+  "influencer-kit":     { label: "Influencer Kit",     icon: Sparkles,            width: 1080, height: 1080, description: "Influencer outreach square card",         category: "Marketing",   emoji: "â¨" },
+  "album-art":          { label: "Soundtrack Art",     icon: Music,               width: 800,  height: 800,  description: "Soundtrack or score album cover",         category: "Other",       emoji: "ðµ" },
 };
 
 const FONT_FAMILIES = [
@@ -250,12 +250,12 @@ const GENRE_PRESETS: Record<string, { bg: string; overlay: string; text: string;
 };
 
 const BADGE_PRESETS: { type: BadgeOverlay["type"]; label: string; color: string; bgColor: string; emoji: string }[] = [
-  { type: "now-streaming",    label: "NOW STREAMING",     color: "#ffffff", bgColor: "#e50914", emoji: "▶️" },
-  { type: "award-winner",     label: "AWARD WINNER",      color: "#000000", bgColor: "#ffd700", emoji: "🏆" },
-  { type: "official-selection", label: "OFFICIAL SELECTION", color: "#ffffff", bgColor: "#1a1a2e", emoji: "🎬" },
-  { type: "coming-soon",      label: "COMING SOON",       color: "#ffffff", bgColor: "#0a0a0a", emoji: "📅" },
-  { type: "limited-release",  label: "LIMITED RELEASE",   color: "#ffffff", bgColor: "#7c3aed", emoji: "💎" },
-  { type: "watch-now",        label: "WATCH NOW",         color: "#000000", bgColor: "#f59e0b", emoji: "🎥" },
+  { type: "now-streaming",    label: "NOW STREAMING",     color: "#ffffff", bgColor: "#e50914", emoji: "â¶ï¸" },
+  { type: "award-winner",     label: "AWARD WINNER",      color: "#000000", bgColor: "#ffd700", emoji: "ð" },
+  { type: "official-selection", label: "OFFICIAL SELECTION", color: "#ffffff", bgColor: "#1a1a2e", emoji: "ð¬" },
+  { type: "coming-soon",      label: "COMING SOON",       color: "#ffffff", bgColor: "#0a0a0a", emoji: "ð" },
+  { type: "limited-release",  label: "LIMITED RELEASE",   color: "#ffffff", bgColor: "#7c3aed", emoji: "ð" },
+  { type: "watch-now",        label: "WATCH NOW",         color: "#000000", bgColor: "#f59e0b", emoji: "ð¥" },
 ];
 
 const DEFAULT_FILTERS: ImageFilters = { brightness: 100, contrast: 100, saturation: 100, blur: 0, hueRotate: 0 };
@@ -296,7 +296,7 @@ function getDefaultTextElements(templateType: TemplateType): TextElement[] {
         textTransform: "uppercase", letterSpacing: 6, shadowColor: "#000000", shadowBlur: 2,
       },
       {
-        id: generateId(), text: "Directed by • Produced by • Starring", x: w / 2, y: h * 0.93,
+        id: generateId(), text: "Directed by â¢ Produced by â¢ Starring", x: w / 2, y: h * 0.93,
         fontSize: 10, fontFamily: "Inter", fontWeight: "normal", fontStyle: "normal",
         color: "#666666", textAlign: "center", maxWidth: w * 0.9, opacity: 0.7,
         textTransform: "none", letterSpacing: 1, shadowColor: "#000000", shadowBlur: 0,
@@ -316,7 +316,7 @@ function getDefaultTextElements(templateType: TemplateType): TextElement[] {
   return base;
 }
 
-// ─── History Hook ────────────────────────────────────────────────────────────
+// âââ History Hook ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function useHistory<T>(initial: T) {
   const [history, setHistory] = useState<T[]>([initial]);
@@ -341,7 +341,7 @@ function useHistory<T>(initial: T) {
   return { current, push, undo, redo, canUndo, canRedo };
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// âââ Component âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function AdPosterMakerInner() {
   const [, setLocation] = useLocation();
@@ -823,7 +823,7 @@ function AdPosterMakerInner() {
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      {/* ── Hero Header ── */}
+      {/* ââ Hero Header ââ */}
       <div className="border-b border-border/50 bg-gradient-to-r from-background via-primary/5 to-background px-4 sm:px-6 py-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -834,12 +834,12 @@ function AdPosterMakerInner() {
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3 gradient-text-gold">
               <div className="p-2 rounded-xl bg-amber-400/10 border border-primary/20">
-                <Megaphone className="h-6 w-6 text-primary" />
+                <Megaphone className="h-6 w-6 text-amber-400" />
               </div>
               Ad & Poster Maker
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Professional film marketing assets — posters, ads, video content & brand kits
+              Professional film marketing assets â posters, ads, video content & brand kits
             </p>
           </div>
 
@@ -866,7 +866,7 @@ function AdPosterMakerInner() {
               {isGeneratingVideo ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Video className="h-3.5 w-3.5" />}
               <span className="hidden sm:inline">Video Ad</span>
             </Button>
-            <Button size="sm" className="gap-1.5 h-9 bg-primary hover:bg-primary/90" onClick={() => setShowExportDialog(true)}>
+            <Button size="sm" className="gap-1.5 h-9 bg-primary hover:bg-amber-500/90" onClick={() => setShowExportDialog(true)}>
               <Download className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Export</span>
             </Button>
@@ -918,17 +918,17 @@ function AdPosterMakerInner() {
         </div>
       </div>
 
-      {/* ── Main Layout ── */}
+      {/* ââ Main Layout ââ */}
       <div className="flex flex-col lg:flex-row gap-0 h-[calc(100vh-180px)] overflow-hidden">
 
-        {/* ── Canvas Area ── */}
+        {/* ââ Canvas Area ââ */}
         <div className="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
           {/* Canvas toolbar */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs border-white/10 text-white/60">{config.label} — {config.width}×{config.height}</Badge>
+              <Badge variant="outline" className="text-xs border-white/10 text-white/60">{config.label} â {config.width}Ã{config.height}</Badge>
               {selectedProjectId && projectDetail && (
-                <Badge className="bg-amber-400/20 text-primary border-primary/30 text-xs">
+                <Badge className="bg-amber-400/20 text-amber-400 border-primary/30 text-xs">
                   <Film className="h-3 w-3 mr-1" />{projectDetail.title}
                 </Badge>
               )}
@@ -1044,7 +1044,7 @@ function AdPosterMakerInner() {
           {videoAdUrl && (
             <div className="border-t border-white/5 p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Video className="h-4 w-4 text-primary" />
+                <Video className="h-4 w-4 text-amber-400" />
                 <span className="text-sm font-medium text-white">Video Ad Generated</span>
               </div>
               <video src={videoAdUrl} controls className="w-full max-h-40 rounded-lg" />
@@ -1052,7 +1052,7 @@ function AdPosterMakerInner() {
           )}
         </div>
 
-        {/* ── Sidebar ── */}
+        {/* ââ Sidebar ââ */}
         <div className="w-full lg:w-[380px] border-l border-border/50 bg-card overflow-y-auto flex-shrink-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
             <TabsList className="w-full flex overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto rounded-none border-b border-border/50 bg-muted/30 p-1 gap-0.5 [&>*]:shrink-0 [&>*]:whitespace-nowrap">
@@ -1078,7 +1078,7 @@ function AdPosterMakerInner() {
               </TabsTrigger>
             </TabsList>
 
-            {/* ── Design Tab ── */}
+            {/* ââ Design Tab ââ */}
             <TabsContent value="design" className="p-4 space-y-5 mt-0">
 
               {/* Project Link */}
@@ -1112,7 +1112,7 @@ function AdPosterMakerInner() {
                   {filteredTemplates.map(([type, cfg]) => (
                     <button
                       key={type}
-                      className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${poster.templateType === type ? "border-amber-400/40 bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
+                      className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${poster.templateType === type ? "border-amber-400/40 bg-amber-500/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
                       onClick={() => handleTemplateChange(type)}
                     >
                       <span className="text-lg shrink-0">{cfg.emoji}</span>
@@ -1120,7 +1120,7 @@ function AdPosterMakerInner() {
                         <p className="text-sm font-medium truncate">{cfg.label}</p>
                         <p className="text-[11px] text-muted-foreground">{cfg.description}</p>
                       </div>
-                      <Badge variant="outline" className="text-[10px] shrink-0 border-border/50">{cfg.width}×{cfg.height}</Badge>
+                      <Badge variant="outline" className="text-[10px] shrink-0 border-border/50">{cfg.width}Ã{cfg.height}</Badge>
                     </button>
                   ))}
                 </div>
@@ -1202,7 +1202,7 @@ function AdPosterMakerInner() {
               </div>
             </TabsContent>
 
-            {/* ── Text Tab ── */}
+            {/* ââ Text Tab ââ */}
             <TabsContent value="text" className="p-4 space-y-4 mt-0">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Text Layers</Label>
@@ -1215,7 +1215,7 @@ function AdPosterMakerInner() {
                 {poster.textElements.map((el) => (
                   <button
                     key={el.id}
-                    className={`w-full flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${poster.selectedElementId === el.id ? "border-amber-400/40 bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
+                    className={`w-full flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${poster.selectedElementId === el.id ? "border-amber-400/40 bg-amber-500/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
                     onClick={() => pushPoster({ ...poster, selectedElementId: el.id })}
                   >
                     <Type className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
@@ -1233,7 +1233,7 @@ function AdPosterMakerInner() {
               {selectedElement && (
                 <Card className="border-primary/20 bg-amber-400/5 glass-card">
                   <CardHeader className="pb-2 pt-3 px-3 glass-card">
-                    <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider gradient-text-gold glass-card">Edit Selected Layer</CardTitle>
+                    <CardTitle className="text-xs font-semibold text-amber-400 uppercase tracking-wider gradient-text-gold glass-card">Edit Selected Layer</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3 px-3 pb-3 glass-card">
                     <div>
@@ -1320,7 +1320,7 @@ function AdPosterMakerInner() {
               )}
             </TabsContent>
 
-            {/* ── Style Tab ── */}
+            {/* ââ Style Tab ââ */}
             <TabsContent value="style" className="p-4 space-y-5 mt-0">
 
               {/* Color Themes */}
@@ -1382,7 +1382,7 @@ function AdPosterMakerInner() {
                     </div>
                     {poster.gradient.type === "linear" && (
                       <div>
-                        <Label className="text-xs">Angle: {poster.gradient.angle}°</Label>
+                        <Label className="text-xs">Angle: {poster.gradient.angle}Â°</Label>
                         <Slider className="mt-1" value={[poster.gradient.angle]} min={0} max={360} step={15} onValueChange={([v]) => pushPoster({ ...poster, gradient: { ...poster.gradient, angle: v } })} />
                       </div>
                     )}
@@ -1425,7 +1425,7 @@ function AdPosterMakerInner() {
                   ].map(({ key, label, icon: Icon, min, max }) => (
                     <div key={key}>
                       <Label className="text-xs flex items-center gap-1">
-                        <Icon className="h-3 w-3" /> {label}: {poster.filters[key]}{key === "blur" ? "px" : key === "hueRotate" ? "°" : "%"}
+                        <Icon className="h-3 w-3" /> {label}: {poster.filters[key]}{key === "blur" ? "px" : key === "hueRotate" ? "Â°" : "%"}
                       </Label>
                       <Slider className="mt-1" value={[poster.filters[key]]} min={min} max={max} step={key === "blur" ? 0.5 : key === "hueRotate" ? 15 : 5} onValueChange={([v]) => pushPoster({ ...poster, filters: { ...poster.filters, [key]: v } })} />
                     </div>
@@ -1454,12 +1454,12 @@ function AdPosterMakerInner() {
               </div>
             </TabsContent>
 
-            {/* ── Publish Tab ── */}
+            {/* ââ Publish Tab ââ */}
             <TabsContent value="publish" className="p-4 mt-0">
               <PublishTab currentTemplate={poster.templateType} />
             </TabsContent>
 
-            {/* ── More Tab ── */}
+            {/* ââ More Tab ââ */}
             <TabsContent value="more" className="p-4 space-y-4 mt-0">
               <FestivalTab />
               <InfluencerKitTab projectTitle={projectDetail?.title ?? undefined} projectGenre={projectDetail?.genre ?? undefined} projectLogline={projectDetail?.plotSummary ?? undefined} />
@@ -1468,11 +1468,11 @@ function AdPosterMakerInner() {
         </div>
       </div>
 
-      {/* ── Export Dialog ── */}
+      {/* ââ Export Dialog ââ */}
       <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Download className="h-5 w-5 text-primary" /> Export Asset</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Download className="h-5 w-5 text-amber-400" /> Export Asset</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1480,16 +1480,16 @@ function AdPosterMakerInner() {
               <Select value={exportScale.toString()} onValueChange={(v) => setExportScale(Number(v))}>
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1× — {config.width}×{config.height}px (Preview)</SelectItem>
-                  <SelectItem value="2">2× — {config.width * 2}×{config.height * 2}px (Recommended)</SelectItem>
-                  <SelectItem value="3">3× — {config.width * 3}×{config.height * 3}px (Print Quality)</SelectItem>
-                  <SelectItem value="4">4× — {config.width * 4}×{config.height * 4}px (Ultra HD)</SelectItem>
+                  <SelectItem value="1">1Ã â {config.width}Ã{config.height}px (Preview)</SelectItem>
+                  <SelectItem value="2">2Ã â {config.width * 2}Ã{config.height * 2}px (Recommended)</SelectItem>
+                  <SelectItem value="3">3Ã â {config.width * 3}Ã{config.height * 3}px (Print Quality)</SelectItem>
+                  <SelectItem value="4">4Ã â {config.width * 4}Ã{config.height * 4}px (Ultra HD)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="bg-muted/40 rounded-xl p-3 text-sm">
-              <p className="font-medium">Output: <span className="text-primary">{config.width * exportScale}×{config.height * exportScale}px PNG</span></p>
-              <p className="text-xs text-muted-foreground mt-1">Template: {config.label} — {config.description}</p>
+              <p className="font-medium">Output: <span className="text-amber-400">{config.width * exportScale}Ã{config.height * exportScale}px PNG</span></p>
+              <p className="text-xs text-muted-foreground mt-1">Template: {config.label} â {config.description}</p>
             </div>
           </div>
           <DialogFooter>
@@ -1499,11 +1499,11 @@ function AdPosterMakerInner() {
         </DialogContent>
       </Dialog>
 
-      {/* ── QR Code Dialog ── */}
+      {/* ââ QR Code Dialog ââ */}
       <Dialog open={showQrDialog} onOpenChange={setShowQrDialog}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><QrCode className="h-5 w-5 text-primary" /> QR Code Overlay</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><QrCode className="h-5 w-5 text-amber-400" /> QR Code Overlay</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1539,7 +1539,7 @@ function AdPosterMakerInner() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Tagline Variants Dialog ── */}
+      {/* ââ Tagline Variants Dialog ââ */}
       <Dialog open={showTaglinesDialog} onOpenChange={setShowTaglinesDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -1553,7 +1553,7 @@ function AdPosterMakerInner() {
                 onClick={() => applyTagline(tagline)}
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xs font-bold text-primary/60 mt-0.5 shrink-0">{i + 1}</span>
+                  <span className="text-xs font-bold text-amber-400/60 mt-0.5 shrink-0">{i + 1}</span>
                   <p className="text-sm italic text-muted-foreground group-hover:text-foreground transition-colors">"{tagline}"</p>
                 </div>
               </button>
@@ -1563,7 +1563,7 @@ function AdPosterMakerInner() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Brand Kit Dialog ── */}
+      {/* ââ Brand Kit Dialog ââ */}
       <Dialog open={showBrandKitDialog} onOpenChange={setShowBrandKitDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -1614,7 +1614,7 @@ function getMockupWrapper(mode: "phone" | "laptop" | "billboard") {
   return "relative p-8 bg-[#1a1a1a] rounded-sm border-8 border-[#555] shadow-2xl";
 }
 
-// ─── Publish Tab ─────────────────────────────────────────────────────────────
+// âââ Publish Tab âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const PLATFORM_TEMPLATES: Record<string, TemplateType[]> = {
   instagram: ["ig-feed", "ig-square", "ig-story", "ig-reels"],
@@ -1625,11 +1625,11 @@ const PLATFORM_TEMPLATES: Record<string, TemplateType[]> = {
 };
 
 const PLATFORM_META: Record<string, { name: string; icon: string; color: string; maxFileSizeMB: number; formats: string; notes: string }> = {
-  instagram: { name: "Instagram", icon: "📸", color: "border-pink-500/30 bg-pink-500/5",    maxFileSizeMB: 8,   formats: "JPG, PNG", notes: "Max 8 MB. 1080px wide. Ratios: 1:1, 4:5, 9:16." },
-  tiktok:    { name: "TikTok",    icon: "🎵", color: "border-cyan-500/30 bg-cyan-500/5",    maxFileSizeMB: 20,  formats: "JPG, PNG, MP4", notes: "Max 20 MB. Videos: 9:16, up to 60s. Min 720p." },
-  facebook:  { name: "Facebook",  icon: "📘", color: "border-blue-500/30 bg-blue-500/5",    maxFileSizeMB: 30,  formats: "JPG, PNG", notes: "Max 30 MB. Feed: 1.91:1. Stories: 9:16." },
-  discord:   { name: "Discord",   icon: "💬", color: "border-indigo-500/30 bg-indigo-500/5", maxFileSizeMB: 8,   formats: "JPG, PNG, GIF", notes: "Max 8 MB. Banner: 960×540. Embeds: 16:9." },
-  youtube:   { name: "YouTube",   icon: "▶️", color: "border-red-500/30 bg-red-500/5",      maxFileSizeMB: 2,   formats: "JPG, PNG", notes: "Thumbnails: max 2 MB, 1280×720." },
+  instagram: { name: "Instagram", icon: "ð¸", color: "border-pink-500/30 bg-pink-500/5",    maxFileSizeMB: 8,   formats: "JPG, PNG", notes: "Max 8 MB. 1080px wide. Ratios: 1:1, 4:5, 9:16." },
+  tiktok:    { name: "TikTok",    icon: "ðµ", color: "border-cyan-500/30 bg-cyan-500/5",    maxFileSizeMB: 20,  formats: "JPG, PNG, MP4", notes: "Max 20 MB. Videos: 9:16, up to 60s. Min 720p." },
+  facebook:  { name: "Facebook",  icon: "ð", color: "border-blue-500/30 bg-blue-500/5",    maxFileSizeMB: 30,  formats: "JPG, PNG", notes: "Max 30 MB. Feed: 1.91:1. Stories: 9:16." },
+  discord:   { name: "Discord",   icon: "ð¬", color: "border-indigo-500/30 bg-indigo-500/5", maxFileSizeMB: 8,   formats: "JPG, PNG, GIF", notes: "Max 8 MB. Banner: 960Ã540. Embeds: 16:9." },
+  youtube:   { name: "YouTube",   icon: "â¶ï¸", color: "border-red-500/30 bg-red-500/5",      maxFileSizeMB: 2,   formats: "JPG, PNG", notes: "Thumbnails: max 2 MB, 1280Ã720." },
 };
 
 function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
@@ -1703,7 +1703,7 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
                         <Badge variant="outline" className="text-[10px] text-muted-foreground h-4">Not connected</Badge>
                       )}
                       {isCurrentOptimal && (
-                        <Badge className="text-[10px] bg-amber-500/20 text-amber-400 border-amber-500/30 h-4">✓ Optimal</Badge>
+                        <Badge className="text-[10px] bg-amber-500/20 text-amber-400 border-amber-500/30 h-4">â Optimal</Badge>
                       )}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{meta.notes}</p>
@@ -1737,13 +1737,13 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
   );
 }
 
-// ─── Festival & Distribution Tab ─────────────────────────────────────────────
+// âââ Festival & Distribution Tab âââââââââââââââââââââââââââââââââââââââââââââ
 
 const FESTIVAL_PLATFORMS = [
-  { name: "FilmFreeway",     icon: "🏆", description: "World's leading festival submission platform. 10,000+ festivals.", url: "https://filmfreeway.com",      type: "submission" },
-  { name: "Festhome",        icon: "🌟", description: "5,000+ festivals worldwide with easy online submissions.",         url: "https://festhome.com",         type: "submission" },
-  { name: "Vimeo On Demand", icon: "📡", description: "Self-distribute directly to audiences. Set your own price.",       url: "https://vimeo.com/ondemand",   type: "distribution" },
-  { name: "Reelport",        icon: "📦", description: "European film distribution and festival submission platform.",     url: "https://www.reelport.com",     type: "distribution" },
+  { name: "FilmFreeway",     icon: "ð", description: "World's leading festival submission platform. 10,000+ festivals.", url: "https://filmfreeway.com",      type: "submission" },
+  { name: "Festhome",        icon: "ð", description: "5,000+ festivals worldwide with easy online submissions.",         url: "https://festhome.com",         type: "submission" },
+  { name: "Vimeo On Demand", icon: "ð¡", description: "Self-distribute directly to audiences. Set your own price.",       url: "https://vimeo.com/ondemand",   type: "distribution" },
+  { name: "Reelport",        icon: "ð¦", description: "European film distribution and festival submission platform.",     url: "https://www.reelport.com",     type: "distribution" },
 ];
 
 function FestivalTab() {
@@ -1755,7 +1755,7 @@ function FestivalTab() {
           {["submission", "distribution"].map((type) => (
             <div key={type}>
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                {type === "submission" ? "🏆 Festival Submissions" : "📡 Self-Distribution"}
+                {type === "submission" ? "ð Festival Submissions" : "ð¡ Self-Distribution"}
               </p>
               <div className="space-y-1.5">
                 {FESTIVAL_PLATFORMS.filter((p) => p.type === type).map((platform) => (
@@ -1784,7 +1784,7 @@ function FestivalTab() {
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Press Kit Checklist</Label>
         <div className="space-y-1.5 mt-2">
           {[
-            { item: "Movie Poster (27×40)", template: "poster" },
+            { item: "Movie Poster (27Ã40)", template: "poster" },
             { item: "Festival Submission Poster", template: "withoutabox-poster" },
             { item: "Press Kit Layout", template: "press-kit" },
             { item: "Trailer Card / Thumbnail", template: "trailer-card" },
@@ -1805,7 +1805,7 @@ function FestivalTab() {
   );
 }
 
-// ─── Influencer Kit Tab ───────────────────────────────────────────────────────
+// âââ Influencer Kit Tab âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { projectTitle?: string; projectGenre?: string; projectLogline?: string }) {
   const [filmTitle, setFilmTitle] = useState(projectTitle || "");
@@ -1832,11 +1832,11 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
   };
 
   const kitSections = generatedKit ? [
-    { label: "Social Caption", key: "caption" as const, icon: "📸" },
-    { label: "Hashtags", key: "hashtags" as const, icon: "#️⃣" },
-    { label: "Email Pitch", key: "emailPitch" as const, icon: "✉️" },
-    { label: "LinkedIn Post", key: "linkedinPost" as const, icon: "💼" },
-    ...(generatedKit.pressRelease ? [{ label: "Press Release", key: "pressRelease" as const, icon: "📰" }] : []),
+    { label: "Social Caption", key: "caption" as const, icon: "ð¸" },
+    { label: "Hashtags", key: "hashtags" as const, icon: "#ï¸â£" },
+    { label: "Email Pitch", key: "emailPitch" as const, icon: "âï¸" },
+    { label: "LinkedIn Post", key: "linkedinPost" as const, icon: "ð¼" },
+    ...(generatedKit.pressRelease ? [{ label: "Press Release", key: "pressRelease" as const, icon: "ð°" }] : []),
   ] : [];
 
   return (
@@ -1905,7 +1905,7 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
   );
 }
 
-// ─── Utility ─────────────────────────────────────────────────────────────────
+// âââ Utility âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function hexToRgba(hex: string, opacity: number): string {
   const r = parseInt(hex.slice(1, 3), 16);

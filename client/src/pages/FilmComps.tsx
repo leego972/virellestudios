@@ -46,8 +46,8 @@ import { useState, useMemo } from "react";
 
   const BUDGET_TIERS = [
     { value: "micro", label: "Micro (< $500K)" },
-    { value: "low", label: "Low ($500K–$5M)" },
-    { value: "mid", label: "Mid ($5M–$20M)" },
+    { value: "low", label: "Low ($500Kâ$5M)" },
+    { value: "mid", label: "Mid ($5Mâ$20M)" },
     { value: "high", label: "High ($20M+)" },
   ];
 
@@ -77,13 +77,13 @@ import { useState, useMemo } from "react";
       <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><BarChart3 className="h-6 w-6 text-primary" />Film Comps & Market Analytics</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><BarChart3 className="h-6 w-6 text-amber-400" />Film Comps & Market Analytics</h1>
           <p className="text-sm text-muted-foreground mt-1">Comparable films to benchmark your project's commercial potential and find your distribution path.</p>
         </div>
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
-          <Input placeholder="Search title, genre, distributor…" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search title, genre, distributorâ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
           <Select value={genreFilter} onValueChange={setGenreFilter}><SelectTrigger className="w-36"><SelectValue placeholder="Genre" /></SelectTrigger><SelectContent><SelectItem value="all">All genres</SelectItem>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select>
           <Select value={tierFilter} onValueChange={setTierFilter}><SelectTrigger className="w-44"><SelectValue placeholder="Budget tier" /></SelectTrigger><SelectContent><SelectItem value="all">All budgets</SelectItem>{BUDGET_TIERS.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select>
         </div>
@@ -94,11 +94,11 @@ import { useState, useMemo } from "react";
             { label: "Comps shown", value: filtered.length.toString(), icon: <Film className="text-amber-400/80 h-4 w-4" /> },
             { label: "Avg ROI", value: `${avgROI}x`, icon: <TrendingUp className="h-4 w-4" /> },
             { label: "Avg worldwide", value: fmt(avgWorldwide), icon: <Globe className="h-4 w-4" /> },
-            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "—", icon: <Star className="h-4 w-4" /> },
+            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "â", icon: <Star className="h-4 w-4" /> },
           ].map(s => (
             <Card key={s.label}>
               <CardContent className="p-3 flex items-center gap-2 glass-card">
-                <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary shrink-0">{s.icon}</div>
+                <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 shrink-0">{s.icon}</div>
                 <div className="min-w-0"><p className="font-bold text-base truncate">{s.value}</p><p className="text-[10px] text-muted-foreground truncate">{s.label}</p></div>
               </CardContent>
             </Card>
@@ -143,7 +143,7 @@ import { useState, useMemo } from "react";
             </CardContent>
           </Card>
         )}
-        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross ÷ production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
+        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross Ã· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
           </div>
   );
 }

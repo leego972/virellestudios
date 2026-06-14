@@ -82,7 +82,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "ownerName", label: "Property Owner / Manager Name", placeholder: "John Doe" },
         { key: "propertyAddress", label: "Property Address", placeholder: "123 Main St, Los Angeles, CA 90001" },
-        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15â16, 2025" },
+        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15Ã¢ÂÂ16, 2025" },
         { key: "compensation", label: "Compensation (if any)", placeholder: "$500 per day / No compensation" },
       ],
       template: (d) => `LOCATION RELEASE AGREEMENT
@@ -136,7 +136,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "actorName", label: "Actor Name", placeholder: "Jane Smith" },
         { key: "roleName", label: "Character / Role", placeholder: "Detective Sarah Cole" },
-        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10â20, 2025" },
+        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10Ã¢ÂÂ20, 2025" },
         { key: "compensation", label: "Compensation", placeholder: "$500/day SAG Ultra Low Budget" },
         { key: "creditPosition", label: "Screen Credit", placeholder: 'Starring / "Jane Smith as Detective Sarah Cole"' },
       ],
@@ -244,7 +244,7 @@ import { useState } from "react";
   From: ${d.yourName || "[YOUR NAME/COMPANY]"}
   To: Licensing Department, ${d.publisher || "[PUBLISHER]"}
 
-  RE: Sync Licence Request â "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
+  RE: Sync Licence Request Ã¢ÂÂ "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
 
   Dear Licensing Team,
 
@@ -362,7 +362,7 @@ import { useState } from "react";
       <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><FileText className="h-6 w-6 text-primary" /> Legal Document Generator</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><FileText className="h-6 w-6 text-amber-400" /> Legal Document Generator</h1>
           <p className="text-sm text-muted-foreground mt-1">Production-ready legal templates. Fill in the fields, then copy or download. Always have a qualified attorney review before signing.</p>
         </div>
 
@@ -376,7 +376,7 @@ import { useState } from "react";
                     <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card" onClick={() => handleSelect(t)}>
                       <CardContent className="p-4 space-y-2 glass-card">
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>
+                          <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>
                           <span className="font-medium text-sm">{t.title}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{t.description}</p>
@@ -410,7 +410,7 @@ import { useState } from "react";
                       </div>
                     ))}
                     <Button className="w-full" onClick={handleGenerate} disabled={generating}>
-                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Generatingâ¦</> : "Generate Document"}
+                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />GeneratingÃ¢ÂÂ¦</> : "Generate Document"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -425,7 +425,7 @@ import { useState } from "react";
                     </div>
                   </div>
                   <Card><CardContent className="p-4 glass-card"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
-                  <p className="text-[10px] text-muted-foreground">â ï¸ This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
+                  <p className="text-[10px] text-muted-foreground">Ã¢ÂÂ Ã¯Â¸Â This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
                 </div>
               )}
             </div>

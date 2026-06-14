@@ -266,7 +266,7 @@ export default function CampaignManager() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
-            <Megaphone className="h-6 w-6 text-primary" />
+            <Megaphone className="h-6 w-6 text-amber-400" />
             Campaign Manager
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -459,10 +459,10 @@ export default function CampaignManager() {
                       <StatusBadge status={campaign.status} />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {campaign.platforms.length} platforms Â· {campaign.contentType.replace(/_/g, " ")}
+                      {campaign.platforms.length} platforms ÃÂ· {campaign.contentType.replace(/_/g, " ")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {(campaign.postHistory || []).length} posts Â· {campaign.schedule}
+                      {(campaign.postHistory || []).length} posts ÃÂ· {campaign.schedule}
                     </p>
                   </button>
                 ))}
@@ -477,7 +477,7 @@ export default function CampaignManager() {
                         <div>
                           <CardTitle className="gradient-text-gold glass-card">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
-                            {selectedCampaign.contentType.replace(/_/g, " ")} Â· {selectedCampaign.schedule}
+                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂ· {selectedCampaign.schedule}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2 flex-wrap">
@@ -603,11 +603,11 @@ export default function CampaignManager() {
                                   {content.hashtags?.length > 0 && (
                                     <div className="flex flex-wrap gap-1">
                                       {content.hashtags.map((tag: string, i: number) => (
-                                        <span key={i} className="text-xs text-primary cursor-pointer" onClick={() => copyToClipboard(`#${tag}`)}>#{tag}</span>
+                                        <span key={i} className="text-xs text-amber-400 cursor-pointer" onClick={() => copyToClipboard(`#${tag}`)}>#{tag}</span>
                                       ))}
                                     </div>
                                   )}
-                                  <p className="text-sm font-medium text-primary">{content.callToAction}</p>
+                                  <p className="text-sm font-medium text-amber-400">{content.callToAction}</p>
                                   {/* Social Share Buttons */}
                                   <div className="pt-2 border-t">
                                     <SocialShareButtons content={content} platforms={platforms} />
@@ -672,7 +672,7 @@ export default function CampaignManager() {
                 Quick Content Generator
               </CardTitle>
               <CardDescription>
-                Generate ad copy for a single platform instantly â no campaign needed
+                Generate ad copy for a single platform instantly Ã¢ÂÂ no campaign needed
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 glass-card">
@@ -775,7 +775,7 @@ export default function CampaignManager() {
                   <div className="space-y-2">
                     <Label>Call to Action</Label>
                     <div className="p-3 bg-amber-400/5 border border-primary/20 rounded-lg flex items-center justify-between">
-                      <span className="text-sm font-medium text-primary">{previewContent.callToAction}</span>
+                      <span className="text-sm font-medium text-amber-400">{previewContent.callToAction}</span>
                       <Button size="sm" variant="ghost" onClick={() => copyToClipboard(previewContent.callToAction)}>
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -826,13 +826,13 @@ export default function CampaignManager() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <Card>
                   <CardContent className="p-4 text-center glass-card">
-                    <p className="text-3xl font-bold text-primary">{(analytics as any)?.totalCampaigns || 0}</p>
+                    <p className="text-3xl font-bold text-amber-400">{(analytics as any)?.totalCampaigns || 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Total Campaigns</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center glass-card">
-                    <p className="text-3xl font-bold text-primary">{(analytics as any)?.totalPosts || analytics?.totals?.impressions || 0}</p>
+                    <p className="text-3xl font-bold text-amber-400">{(analytics as any)?.totalPosts || analytics?.totals?.impressions || 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Total Posts</p>
                   </CardContent>
                 </Card>
@@ -855,7 +855,7 @@ export default function CampaignManager() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
-                      <Globe className="h-4 w-4 text-primary" />
+                      <Globe className="h-4 w-4 text-amber-400" />
                       Platform Breakdown
                     </CardTitle>
                   </CardHeader>
@@ -863,7 +863,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.platformBreakdown || Object.entries(analytics?.byPlatform || {})).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet â create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet Ã¢ÂÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -897,7 +897,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.contentTypeBreakdown || []).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet â create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet Ã¢ÂÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -924,7 +924,7 @@ export default function CampaignManager() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
-                    <Clock className="h-4 w-4 text-primary" />
+                    <Clock className="h-4 w-4 text-amber-400" />
                     Recent Activity
                   </CardTitle>
                 </CardHeader>
@@ -932,7 +932,7 @@ export default function CampaignManager() {
                   {((analytics as any)?.recentActivity || analytics?.rows || []).length === 0 ? (
                     <div className="text-center py-8">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity â start posting to see your history here</p>
+                      <p className="text-sm text-muted-foreground">No recent activity Ã¢ÂÂ start posting to see your history here</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -942,7 +942,7 @@ export default function CampaignManager() {
                             <StatusBadge status={activity.status} />
                             <div>
                               <p className="text-sm font-medium">{activity.campaign}</p>
-                              <p className="text-xs text-muted-foreground">{activity.platformName} Â· {activity.contentPreview}</p>
+                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂ· {activity.contentPreview}</p>
                             </div>
                           </div>
                           <span className="text-xs text-muted-foreground">
@@ -959,7 +959,7 @@ export default function CampaignManager() {
               <Card className="border-primary/20 bg-amber-400/5 glass-card">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
-                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <TrendingUp className="h-4 w-4 text-amber-400" />
                     Free Advertising Tips
                   </CardTitle>
                 </CardHeader>
@@ -968,13 +968,13 @@ export default function CampaignManager() {
                     {[
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
-                      { tip: "Use 3-5 hashtags on Instagram â more than 10 actually reduces reach" },
+                      { tip: "Use 3-5 hashtags on Instagram Ã¢ÂÂ more than 10 actually reduces reach" },
                       { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <CheckCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
                         <p className="text-muted-foreground">{item.tip}</p>
                       </div>
                     ))}
@@ -995,7 +995,7 @@ export default function CampaignManager() {
             return (
               <div key={category}>
                 <h3 className="text-lg font-medium flex items-center gap-2 mb-3">
-                  <CategoryIcon className="h-5 w-5 text-primary" />
+                  <CategoryIcon className="h-5 w-5 text-amber-400" />
                   {CATEGORY_LABELS[category] || category}
                   <Badge variant="secondary" className="text-xs">{(catPlatforms as any[]).length}</Badge>
                 </h3>

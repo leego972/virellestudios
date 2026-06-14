@@ -76,7 +76,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios â sales, support, partnerships, and press inquiries." />
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios Ã¢ÂÂ sales, support, partnerships, and press inquiries." />
       {/* Header */}
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
@@ -106,7 +106,7 @@ export default function Contact() {
               <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
-                    <Mail className="h-5 w-5 text-primary" />
+                    <Mail className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Email</p>
@@ -118,7 +118,7 @@ export default function Contact() {
               <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
-                    <MessageSquare className="h-5 w-5 text-primary" />
+                    <MessageSquare className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Live Chat</p>
@@ -130,7 +130,7 @@ export default function Contact() {
               <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
-                    <Building2 className="h-5 w-5 text-primary" />
+                    <Building2 className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Enterprise & Industry</p>

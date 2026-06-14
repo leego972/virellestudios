@@ -101,7 +101,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
       const allVoices = typeof speechSynthesis !== "undefined" ? speechSynthesis.getVoices() : [];
       setCharacters(charNames.map((name, i) => ({ name, voice: allVoices[i % allVoices.length] ?? null, voiceName: allVoices[i % allVoices.length]?.name ?? "", color: CHAR_COLORS[i % CHAR_COLORS.length] })));
       setStep("voices");
-      toast.success(`Found ${charNames.length} character${charNames.length !== 1 ? "s" : ""} — assign voices to start`);
+      toast.success(`Found ${charNames.length} character${charNames.length !== 1 ? "s" : ""} â assign voices to start`);
     };
 
     const startRead = async () => {
@@ -171,14 +171,14 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         {step === "voices" && (
           <div className="space-y-4">
             <Card className="border-border/40 bg-black/20 glass-card">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Users className="h-5 w-5 text-primary" />Assign Voices to Characters</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Users className="h-5 w-5 text-amber-400" />Assign Voices to Characters</CardTitle></CardHeader>
               <CardContent className="space-y-3 glass-card">
                 {characters.map(char => (
                   <div key={char.name} className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-black shrink-0" style={{ background: char.color }}>{char.name.charAt(0)}</div>
                     <span className="font-medium text-sm w-32 truncate shrink-0">{char.name}</span>
                     <Select value={char.voiceName} onValueChange={v => updateCharVoice(char.name, v)}>
-                      <SelectTrigger className="flex-1 text-xs h-8"><SelectValue placeholder="Select voice…" /></SelectTrigger>
+                      <SelectTrigger className="flex-1 text-xs h-8"><SelectValue placeholder="Select voiceâ¦" /></SelectTrigger>
                       <SelectContent className="max-h-48">{voices.map(v => <SelectItem key={v.name} value={v.name} className="text-xs">{v.name} ({v.lang})</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
@@ -202,15 +202,15 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               ) : (
                 <Button onClick={startRead}><Play className="h-4 w-4 mr-2" />Restart</Button>
               )}
-              <Button variant="outline" onClick={() => { stopRead(); setStep("voices"); }}>← Edit Voices</Button>
-              {reading && <span className="text-xs text-muted-foreground animate-pulse">Reading…</span>}
+              <Button variant="outline" onClick={() => { stopRead(); setStep("voices"); }}>â Edit Voices</Button>
+              {reading && <span className="text-xs text-muted-foreground animate-pulse">Readingâ¦</span>}
             </div>
             <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-1">
               {parsed.map((line, i) => {
                 const char = line.character ? characters.find(c => c.name === line.character) : null;
                 const isActive = i === currentLine;
                 return (
-                  <div key={i} className={`px-3 py-2 rounded-lg transition-all ${isActive ? "bg-primary/15 border border-primary/30" : "opacity-60"}`}>
+                  <div key={i} className={`px-3 py-2 rounded-lg transition-all ${isActive ? "bg-amber-500/15 border border-primary/30" : "opacity-60"}`}>
                     {line.type === "header" && <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-amber-400/60">{line.text}</p>}
                     {line.type === "action" && <p className="text-sm text-muted-foreground italic">{line.text}</p>}
                     {line.type === "dialogue" && (

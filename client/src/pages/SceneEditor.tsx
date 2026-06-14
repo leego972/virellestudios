@@ -940,7 +940,7 @@ export default function SceneEditor() {
           <Button
             size="sm"
             variant="outline"
-            className="border-primary/40 text-primary hover:bg-amber-400/10"
+            className="border-primary/40 text-amber-400 hover:bg-amber-400/10"
             onClick={() => setLocation(`/projects/${projectId}/director-cut`)}
           >
             <Scissors className="h-4 w-4 sm:mr-1" />
@@ -1701,7 +1701,7 @@ export default function SceneEditor() {
                             type="button"
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs transition-colors ${
                               form.characterIds.includes(char.id)
-                                ? "border-amber-400/40 bg-amber-400/10 text-amber-400"
+                                ? "border-amber-400/40 bg-amber-400/10 text-primary"
                                 : "hover:border-muted-foreground/30"
                             }`}
                             onClick={() => toggleCharacter(char.id)}

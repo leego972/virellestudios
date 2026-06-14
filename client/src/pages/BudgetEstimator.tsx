@@ -77,7 +77,7 @@ function ActualsRow({
           <span className="text-muted-foreground">vs estimate {formatCurrency(estimate)}</span>
           <span
             className={`font-semibold ${hot ? "text-red-500" : cold ? "text-amber-500" : "text-green-500"}`}
-            title={hot ? "Over budget — hot cost" : cold ? "Underspend — review estimate" : "On budget"}
+            title={hot ? "Over budget â hot cost" : cold ? "Underspend â review estimate" : "On budget"}
           >
             {variance >= 0 ? "+" : ""}{formatCurrency(variance)} ({pctOver >= 0 ? "+" : ""}{pctOver.toFixed(1)}%)
           </span>
@@ -152,7 +152,7 @@ export default function BudgetEstimator() {
       setSelectedBudgetId(data.id);
       toast.success("Budget estimate generated");
     },
-    onError: () => toast.error("Couldn't run the budget estimate this time — please try again in a moment."),
+    onError: () => toast.error("Couldn't run the budget estimate this time â please try again in a moment."),
   });
 
   const deleteMutation = trpc.budget.delete.useMutation({
@@ -177,7 +177,7 @@ export default function BudgetEstimator() {
       cat.items.forEach((item) => {
         rows.push(`"${cat.label}","${item.name}",${item.cost},"${item.notes || ""}"`);
       });
-      rows.push(`"${cat.label} — Subtotal",,${cat.estimate},`);
+      rows.push(`"${cat.label} â Subtotal",,${cat.estimate},`);
     });
     rows.push(`"TOTAL",,${activeBudget.totalEstimate},`);
     const blob = new Blob([rows.join("\n")], { type: "text/csv" });
@@ -202,11 +202,11 @@ export default function BudgetEstimator() {
       `${"-".repeat(60)}`,
     ];
     Object.entries(breakdown).forEach(([, cat]) => {
-      lines.push(`\n${cat.label.toUpperCase()} — ${formatCurrency(cat.estimate)}`);
+      lines.push(`\n${cat.label.toUpperCase()} â ${formatCurrency(cat.estimate)}`);
       lines.push(`${"-".repeat(40)}`);
       cat.items.forEach((item) => {
         lines.push(`  ${item.name.padEnd(30)} ${formatCurrency(item.cost)}`);
-        if (item.notes) lines.push(`    → ${item.notes}`);
+        if (item.notes) lines.push(`    â ${item.notes}`);
       });
     });
     lines.push(`\n${"-".repeat(60)}`);
@@ -280,7 +280,7 @@ export default function BudgetEstimator() {
           </div>
         ) : generateMutation.isPending && !activeBudget ? (
           <div className="text-center py-24">
-            <Loader2 className="h-12 w-12 mx-auto mb-6 animate-spin text-primary text-amber-400" />
+            <Loader2 className="h-12 w-12 mx-auto mb-6 animate-spin text-amber-400 text-amber-400" />
             <h2 className="text-lg font-semibold mb-2 gradient-text-gold">Analyzing Your Production</h2>
             <p className="text-sm text-muted-foreground">Evaluating scenes, locations, cast, VFX requirements...</p>
           </div>
@@ -296,7 +296,7 @@ export default function BudgetEstimator() {
                     size="sm"
                     onClick={() => setSelectedBudgetId(b.id)}
                   >
-                    {formatCurrency(b.totalEstimate || 0)} · {new Date(b.createdAt).toLocaleDateString()}
+                    {formatCurrency(b.totalEstimate || 0)} Â· {new Date(b.createdAt).toLocaleDateString()}
                   </Button>
                 ))}
               </div>
@@ -390,7 +390,7 @@ export default function BudgetEstimator() {
                             <span className="text-sm font-medium ml-4 flex-shrink-0">{formatCurrency(item.cost)}</span>
                           </div>
                         ))}
-                        {/* ── Hot-cost tracker: estimate vs actual ── */}
+                        {/* ââ Hot-cost tracker: estimate vs actual ââ */}
                         <ActualsRow
                           budgetId={activeBudget.id}
                           categoryKey={key}

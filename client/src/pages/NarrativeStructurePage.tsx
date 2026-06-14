@@ -114,7 +114,7 @@ import { useState } from "react";
       <Card className="border-primary/30 glass-card">
         <CardHeader className="pb-3 glass-card">
           <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-primary" />
+            <Lock className="w-4 h-4 text-amber-400" />
             <CardTitle className="text-base gradient-text-gold glass-card">Visual DNA Lock</CardTitle>
             <Badge variant="outline" className="text-xs">Project-wide</Badge>
           </div>
@@ -154,7 +154,7 @@ import { useState } from "react";
           <div>
             <Label className="text-xs">Visual Notes</Label>
             <Textarea value={current.visualNotes ?? ""} onChange={e => set("visualNotes", e.target.value)}
-              placeholder="Any additional visual direction to enforce across all scenes…" rows={2} />
+              placeholder="Any additional visual direction to enforce across all scenesâ¦" rows={2} />
           </div>
           <Button size="sm" onClick={() => upsertMut?.mutate?.({ projectId, ...(form ?? current) })}>
             <Lock className="w-3 h-3 mr-1" />Lock Visual DNA

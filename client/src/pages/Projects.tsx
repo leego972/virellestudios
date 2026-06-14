@@ -179,7 +179,7 @@ export default function Projects() {
                     onClick={() => setFilterStatus(status)}
                     className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                       filterStatus === status
-                        ? "bg-amber-500 text-primary-foreground"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground"
                     }`}
                   >
@@ -208,13 +208,13 @@ export default function Projects() {
             <div className="flex border rounded-md bg-card/50 overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 ${viewMode === "grid" ? "bg-amber-500 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 ${viewMode === "list" ? "bg-amber-500 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 ${viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <List className="h-3.5 w-3.5" />
               </button>
@@ -332,7 +332,7 @@ export default function Projects() {
                           project.status === "completed"
                             ? "text-green-400"
                             : project.status === "generating"
-                            ? "text-amber-400"
+                            ? "text-primary"
                             : project.status === "failed"
                             ? "text-destructive"
                             : "text-muted-foreground"
@@ -426,7 +426,7 @@ export default function Projects() {
                   variant="secondary"
                   className={`text-[10px] shrink-0 ${
                     project.status === "completed" ? "bg-green-500/10 text-green-400" :
-                    project.status === "generating" ? "bg-amber-400/10 text-amber-400" :
+                    project.status === "generating" ? "bg-amber-400/10 text-primary" :
                     project.status === "failed" ? "bg-destructive/10 text-destructive" :
                     ""
                   }`}
