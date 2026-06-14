@@ -384,7 +384,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <img src="/icons/icon.svg" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
@@ -496,7 +496,7 @@ function DashboardLayoutContent({
               </a>
             )}
             {/* Leego branding Ã¢ÂÂ tap to pulse to ~2cm for 2s, then shrink back */}
-            <div className="flex justify-center items-center py-2 group-data-[collapsible=icon]:px-0">
+            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
               <LeegoLogo
                 className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
               />
@@ -630,7 +630,7 @@ function DashboardLayoutContent({
           <div data-mobile-header className="flex border-b h-auto min-h-[4rem] items-center justify-between px-3 sticky top-0 z-40 shrink-0" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
-              <img src="/icons/icon.svg" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
               <span className="text-base font-bold truncate">Virelle Studios</span>
             </div>
             {switchable && (
@@ -701,7 +701,7 @@ function DashboardLayoutContent({
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
-              src="/icons/icon.svg"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
               className="hidden dark:block w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.055]"
               style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
@@ -709,18 +709,14 @@ function DashboardLayoutContent({
             />
             {/* Light mode: very faint golden logo */}
             <img
-              src="/icons/icon.svg"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
               className="block dark:hidden w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.06]"
               style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
               draggable={false}
             />
           </div>
-          {/* Gold watermark — non-interactive, centered in content area */}
-            <div className="fixed inset-0 flex items-center justify-center pointer-events-none select-none" style={{ zIndex: 0, left: 'var(--sidebar-width, 240px)' }}>
-              <img src="/icons/icon.svg" alt="" className="w-72 h-72 opacity-[0.05] dark:opacity-[0.06]" style={{ filter: 'sepia(1) saturate(4) hue-rotate(5deg) brightness(1.2)' }} draggable={false} />
-            </div>
-            <div className="flex-1 relative z-10">{children}</div>
+          <div className="flex-1 relative z-10">{children}</div>
           <LeegoFooter />
         </main>
       </SidebarInset>
