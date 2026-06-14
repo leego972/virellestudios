@@ -209,6 +209,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
             </button>
           );
         })}
+      </div>
 
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>

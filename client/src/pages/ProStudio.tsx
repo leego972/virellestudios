@@ -227,7 +227,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
 
   return (
     <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+      <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base gradient-text-gold">AI Voice & Likeness Consent</CardTitle>
         <p className="text-xs text-muted-foreground">Required when cloning a real person's voice or using a likeness that resembles a real performer. Distributors and platforms require this paper trail before accepting AI content.</p>
       </CardHeader>

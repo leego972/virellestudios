@@ -933,20 +933,20 @@ export default function ComponentsShowcase() {
                       <Input id="new" type="password" />
                     </div>
                   </CardContent>
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
+                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
                     <Button>Save password</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>
               <TabsContent value="settings">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
                     <CardTitle className="gradient-text-gold">Settings</CardTitle>
-                    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Manage your settings here.
                     </CardDescription>
                   </CardHeader>
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
                     <p className="text-sm text-muted-foreground">
                       Settings content goes here.
                     </p>

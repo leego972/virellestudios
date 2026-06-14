@@ -575,7 +575,6 @@ export default function DialogueEditor() {
       </Dialog>
     </div>
   );
-    </>
 }
 
 function EditDialogueLine({ dialogue, onSave, onCancel }: {

@@ -294,7 +294,7 @@ pre{white-space:pre-wrap;font:inherit}
             <Calendar className="h-4 w-4" /> Stripboard
           </CardTitle>
         </CardHeader>
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+        <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {stripboard.map((day) => (
               <div key={day.day} className="border rounded-lg p-3 space-y-2 bg-muted/20">
