@@ -1,1 +1,230 @@
-Ly8gdjYuNjggUGhhc2UgNSDigJQgQllPSyBQcm92aWRlciBDb250cm9sIENlbnRlci4KLy8gTGV0cyB1c2VycyBzZWUgd2hpY2ggcHJvdmlkZXJzIHRoZXkndmUgY29uZmlndXJlZCwgdmFsaWRhdGUga2V5cywgYW5kIHBpY2sKLy8gdGhlaXIgcHJlZmVycmVkIHZpZGVvIC8gTExNIHByb3ZpZGVyIHBsdXMgaG93IGFnZ3Jlc3NpdmVseSB0byBmYWxsIGJhY2sgdG8KLy8gcGxhdGZvcm0gY3JlZGl0cy4gVGhlIHBhZ2UgbmV2ZXIgZGlzcGxheXMgcmF3IGtleSBzdHJpbmdzIOKAlCBvbmx5IG1hc2tlZAovLyAiY29uZmlndXJlZCAvIG5vdCBjb25maWd1cmVkIC8gdmFsaWQgLyBpbnZhbGlkIiBzdGF0dXMgZnJvbSB0aGUgc2VydmVyLgoKaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwppbXBvcnQgU2l0ZUhlYWQgZnJvbSAiQC9jb21wb25lbnRzL1NpdGVIZWFkIjsKCmNvbnN0IFZJREVPX1BST1ZJREVSUyA9IFsKICAicnVud2F5IiwKICAib3BlbmFpIiwKICAicmVwbGljYXRlIiwKICAiZmFsIiwKICAibHVtYSIsCiAgImJ5dGVwbHVzIiwKICAiaHVnZ2luZ2ZhY2UiLApdIGFzIGNvbnN0OwoKY29uc3QgTExNX1BST1ZJREVSUyA9IFsib3BlbmFpIiwgImFudGhyb3BpYyIsICJnb29nbGUiLCAidmVuaWNlIl0gYXMgY29uc3Q7Cgpjb25zdCBBTExfUFJPVklERVJTOiB7IGlkOiBzdHJpbmc7IGxhYmVsOiBzdHJpbmc7IGNhcGFiaWxpdHk6IHN0cmluZzsga2V5VXJsPzogc3RyaW5nOyByZXF1aXJlZD86IGJvb2xlYW4gfVtdID0gWwogIHsgaWQ6ICJvcGVuYWkiLCBsYWJlbDogIk9wZW5BSSIsIGNhcGFiaWxpdHk6ICJMTE0g4oCiIGltYWdlIOKAoiB2aWRlbyDigKIgdm9pY2UiLCBrZXlVcmw6ICJodHRwczovL3BsYXRmb3JtLm9wZW5haS5jb20vYXBpLWtleXMiIH0sCiAgeyBpZDogImFudGhyb3BpYyIsIGxhYmVsOiAiQW50aHJvcGljIENsYXVkZSIsIGNhcGFiaWxpdHk6ICJMTE0iLCBrZXlVcmw6ICJodHRwczovL2NvbnNvbGUuYW50aHJvcGljLmNvbS9zZXR0aW5ncy9rZXlzIiB9LAogIHsgaWQ6ICJnb29nbGUiLCBsYWJlbDogIkdvb2dsZSBBSSBTdHVkaW8iLCBjYXBhYmlsaXR5OiAiTExNIOKAoiBWZW8gMyB2aWRlbyIsIGtleVVybDogImh0dHBzOi8vYWlzdHVkaW8uZ29vZ2xlLmNvbS9hcGlrZXkiIH0sCiAgeyBpZDogInZlbmljZSIsIGxhYmVsOiAiVmVuaWNlIEFJIiwgY2FwYWJpbGl0eTogIkxMTSAocHJpdmFjeS1mb2N1c2VkKSIsIGtleVVybDogImh0dHBzOi8vdmVuaWNlLmFpL3NldHRpbmdzL2FwaSIgfSwKICB7IGlkOiAicnVud2F5IiwgbGFiZWw6ICJSdW53YXkiLCBjYXBhYmlsaXR5OiAiVmlkZW8gKHByZW1pdW0gcXVhbGl0eSkiLCBrZXlVcmw6ICJodHRwczovL2FwcC5ydW53YXltbC5jb20vc2V0dGluZ3MiIH0sCiAgeyBpZDogInJlcGxpY2F0ZSIsIGxhYmVsOiAiUmVwbGljYXRlIiwgY2FwYWJpbGl0eTogIlZpZGVvIOKAoiBpbWFnZSIsIGtleVVybDogImh0dHBzOi8vcmVwbGljYXRlLmNvbS9hY2NvdW50L2FwaS10b2tlbnMiIH0sCiAgeyBpZDogImZhbCIsIGxhYmVsOiAiZmFsLmFpIiwgY2FwYWJpbGl0eTogIlZpZGVvIOKAoiBpbWFnZSAoY2hlYXBlc3QsIHJlY29tbWVuZGVkKSIsIGtleVVybDogImh0dHBzOi8vZmFsLmFpL2Rhc2hib2FyZC9rZXlzIiB9LAogIHsgaWQ6ICJsdW1hIiwgbGFiZWw6ICJMdW1hIERyZWFtIE1hY2hpbmUiLCBjYXBhYmlsaXR5OiAiVmlkZW8iLCBrZXlVcmw6ICJodHRwczovL2x1bWFsYWJzLmFpL2RyZWFtLW1hY2hpbmUvYXBpIiB9LAogIHsgaWQ6ICJieXRlcGx1cyIsIGxhYmVsOiAiQnl0ZVBsdXMgU2VlZERhbmNlIiwgY2FwYWJpbGl0eTogIlZpZGVvIiwga2V5VXJsOiAiaHR0cHM6Ly9jb25zb2xlLmJ5dGVwbHVzLmNvbS8iIH0sCiAgeyBpZDogImh1Z2dpbmdmYWNlIiwgbGFiZWw6ICJIdWdnaW5nIEZhY2UiLCBjYXBhYmlsaXR5OiAiVmlkZW8g4oCiIGltYWdlIChmcmVlIHRpZXIpIiwga2V5VXJsOiAiaHR0cHM6Ly9odWdnaW5nZmFjZS5jby9zZXR0aW5ncy90b2tlbnMiIH0sCiAgeyBpZDogImVsZXZlbmxhYnMiLCBsYWJlbDogIkVsZXZlbkxhYnMiLCBjYXBhYmlsaXR5OiAiVm9pY2UgJiBTRlgg4oCUIHJlcXVpcmVkIGZvciBhbGwgc291bmQiLCBrZXlVcmw6ICJodHRwczovL2VsZXZlbmxhYnMuaW8vYXBwL3NldHRpbmdzL2FwaS1rZXlzIiwgcmVxdWlyZWQ6IHRydWUgfSwKICB7IGlkOiAic3VubyIsIGxhYmVsOiAiU3VubyIsIGNhcGFiaWxpdHk6ICJNdXNpYyBzY29yZXMiLCBrZXlVcmw6ICJodHRwczovL2FwcC5zdW5vLmFpL2FjY291bnQiIH0sCiAgeyBpZDogImRpZCIsIGxhYmVsOiAiRC1JRCIsIGNhcGFiaWxpdHk6ICJBdXNsYW4gc2lnbi1sYW5ndWFnZSBpbnRlcnByZXRlciBvdmVybGF5Iiwga2V5VXJsOiAiaHR0cHM6Ly9zdHVkaW8uZC1pZC5jb20vYWNjb3VudC1zZXR0aW5ncyIgfSwKXTsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEJZT0tDb250cm9sQ2VudGVyUGFnZSgpIHsKICBjb25zdCBzdGF0dXNRID0gdHJwYy5ieW9rLmdldFByb3ZpZGVyU3RhdHVzLnVzZVF1ZXJ5KHVuZGVmaW5lZCwgewogICAgcmVmZXRjaE9uV2luZG93Rm9jdXM6IGZhbHNlLAogIH0pOwogIGNvbnN0IHVwZGF0ZU11dCA9IHRycGMuYnlvay51cGRhdGVQcm92aWRlclByZWZlcmVuY2VzLnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKCkgPT4gc3RhdHVzUS5yZWZldGNoKCksCiAgfSk7CiAgY29uc3QgdGVzdE11dCA9IHRycGMuYnlvay50ZXN0UHJvdmlkZXJLZXkudXNlTXV0YXRpb24oKTsKCiAgY29uc3QgW3ByZWZlcnJlZFZpZGVvLCBzZXRQcmVmZXJyZWRWaWRlb10gPSB1c2VTdGF0ZTxzdHJpbmc+KCIiKTsKICBjb25zdCBbcHJlZmVycmVkTGxtLCBzZXRQcmVmZXJyZWRMbG1dID0gdXNlU3RhdGU8c3RyaW5nPigiIik7CiAgLy8gdjYuNjkgcmVwYWlyIOKAlCB2YWx1ZXMgbWF0Y2ggdGhlIHBlcnNpc3RlZCBzcGVjCiAgLy8gKGNyZWRpdHNfb25seSB8IGJ5b2tfb25seSB8IGJ5b2tfd2l0aF9jb25zZW50IHwgYnlva193aXRoX2F1dG9fZmFsbGJhY2spLgogIHR5cGUgRmFsbGJhY2tNb2RlID0gImNyZWRpdHNfb25seSIgfCAiYnlva19vbmx5IiB8ICJieW9rX3dpdGhfY29uc2VudCIgfCAiYnlva193aXRoX2F1dG9fZmFsbGJhY2siOwogIGNvbnN0IFtmYWxsYmFja01vZGUsIHNldEZhbGxiYWNrTW9kZV0gPSB1c2VTdGF0ZTxGYWxsYmFja01vZGU+KCJieW9rX3dpdGhfY29uc2VudCIpOwoKICBjb25zdCBzdGF0dXM6IGFueSA9IHN0YXR1c1EuZGF0YSA/PyB7fTsKICAvLyB2Ni42OSByZXBhaXIg4oCUIGh5ZHJhdGUgdGhlIHNhdmVkIGZhbGxiYWNrIG1vZGUgb25jZSBpdCBsb2Fkcy4KICB1c2VFZmZlY3QoKCkgPT4gewogICAgY29uc3Qgc2F2ZWQgPSAoc3RhdHVzPy5ieW9rRmFsbGJhY2tNb2RlID8/IG51bGwpIGFzIEZhbGxiYWNrTW9kZSB8IG51bGw7CiAgICBpZiAoc2F2ZWQgJiYgc2F2ZWQgIT09IGZhbGxiYWNrTW9kZSkgc2V0RmFsbGJhY2tNb2RlKHNhdmVkKTsKICB9LCBbc3RhdHVzPy5ieW9rRmFsbGJhY2tNb2RlXSk7CiAgY29uc3QgcHJvdmlkZXJzOiBhbnkgPSBzdGF0dXMucHJvdmlkZXJzID8/IHt9OwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiB0ZXh0LXppbmMtMTAwIHB4LTYgcHktOCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8U2l0ZUhlYWQgdGl0bGU9IkJZT0sgUHJvdmlkZXIgQ29udHJvbCBDZW50ZXIiIC8+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy0zeGwgbXgtYXV0byBzcGFjZS15LTYiPgogICAgICAgIDxoZWFkZXI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIgdGV4dC1hbWJlci00MDAvODAiPgogICAgICAgICAgICBQcm92aWRlciBjb250cm9sCiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxoMSBjbGFzc05hbWU9InRleHQtM3hsIGZvbnQtc2VtaWJvbGQgbXQtMSI+QllPSyBDb250cm9sIENlbnRlcjwvaDE+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtemluYy00MDAgdGV4dC1zbSBtdC0xIj4KICAgICAgICAgICAgU2VlIHdoaWNoIEFJIHByb3ZpZGVycyB5b3UgaGF2ZSBjb25maWd1cmVkIGFuZCBjaG9vc2UgaG93IFZpcmVsbGUKICAgICAgICAgICAgZ2VuZXJhdGVzIHlvdXIgc2NlbmVzLiBZb3VyIGtleXMgYXJlIG5ldmVyIHNob3duIGJhY2sgdG8geW91cgogICAgICAgICAgICBicm93c2VyIOKAlCBvbmx5IHRoZWlyIHN0YXR1cy4KICAgICAgICAgIDwvcD4KICAgICAgICA8L2hlYWRlcj4KCiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJib3JkZXIgYm9yZGVyLXppbmMtODAwIGJnLXppbmMtOTAwLzQwIHJvdW5kZWQtbGcgcC01Ij4KICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtc20gdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVyIHRleHQtemluYy00MDAgbWItMyI+CiAgICAgICAgICAgIENvbmZpZ3VyZWQgcHJvdmlkZXJzCiAgICAgICAgICA8L2gyPgogICAgICAgICAge3N0YXR1c1EuaXNMb2FkaW5nICYmIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtemluYy01MDAiPkxvYWRpbmfigKY8L2Rpdj59CiAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJzcGFjZS15LTIiPgogICAgICAgICAgICB7QUxMX1BST1ZJREVSUy5tYXAoKHApID0+IHsKICAgICAgICAgICAgICBjb25zdCBzID0gcHJvdmlkZXJzW3AuaWRdID8/ICJub3RfY29uZmlndXJlZCI7CiAgICAgICAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgICAgIDxsaQogICAgICAgICAgICAgICAgICBrZXk9e3AuaWR9CiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIHRleHQtc20gcHktMiBib3JkZXItYiBib3JkZXItemluYy04MDAvNjAgbGFzdDpib3JkZXItYi0wIgogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtemluYy0xMDAiPntwLmxhYmVsfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICAgIHtwLnJlcXVpcmVkICYmIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gYmctdmlvbGV0LTUwMC8yMCB0ZXh0LXZpb2xldC0zMDAgcHgtMS41IHB5LTAuNSByb3VuZGVkIGZvbnQtc2VtaWJvbGQiPlJlcXVpcmVkPC9zcGFuPn0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNTAwIj57cC5jYXBhYmlsaXR5fTwvZGl2PgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgICAgICAgICA8U3RhdHVzQmFkZ2Ugc3RhdHVzPXtzfSAvPgogICAgICAgICAgICAgICAgICAgIHtzICE9PSAibm90X2NvbmZpZ3VyZWQiICYmICgKICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gdGVzdE11dC5tdXRhdGUoeyBwcm92aWRlcjogcC5pZCB9KX0KICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ0ZXh0LXhzIGJnLXppbmMtODAwIGhvdmVyOmJnLXppbmMtNzAwIHB4LTIuNSBweS0xIHJvdW5kZWQiCiAgICAgICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXt0ZXN0TXV0LmlzUGVuZGluZ30KICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAgVGVzdAogICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgICB7cC5rZXlVcmwgJiYgKAogICAgICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICAgICAgaHJlZj17cC5rZXlVcmx9CiAgICAgICAgICAgICAgICAgICAgICAgIHRhcmdldD0iX2JsYW5rIgogICAgICAgICAgICAgICAgICAgICAgICByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiCiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LWFtYmVyLTQwMCBob3Zlcjp0ZXh0LWFtYmVyLTMwMCB1bmRlcmxpbmUgdW5kZXJsaW5lLW9mZnNldC0yIHdoaXRlc3BhY2Utbm93cmFwIgogICAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgICBHZXQga2V5IOKGkgogICAgICAgICAgICAgICAgICAgICAgPC9hPgogICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICApOwogICAgICAgICAgICB9KX0KICAgICAgICAgIDwvdWw+CiAgICAgICAgICB7dGVzdE11dC5kYXRhICYmICgKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im10LTMgdGV4dC14cyB0ZXh0LXppbmMtMzAwIj4KICAgICAgICAgICAgICBUZXN0IHJlc3VsdCBmb3Ige3Rlc3RNdXQuZGF0YS5wcm92aWRlcn06eyIgIn0KICAgICAgICAgICAgICA8U3RhdHVzQmFkZ2Ugc3RhdHVzPXt0ZXN0TXV0LmRhdGEuc3RhdHVzfSAvPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICl9CiAgICAgICAgICA8cCBjbGFzc05hbWU9Im10LTQgdGV4dC14cyB0ZXh0LXppbmMtNTAwIj4KICAgICAgICAgICAgVG8gYWRkIG9yIGNoYW5nZSBhIGtleSwgb3BlbiB0aGUgU2V0dGluZ3MgcGFnZSDihpIgQVBJIGtleXMuIEtleXMgYXJlCiAgICAgICAgICAgIHN0b3JlZCBlbmNyeXB0ZWQgYXQgcmVzdCBhbmQgbmV2ZXIgcmV0dXJuZWQgdG8gdGhlIGJyb3dzZXIuCiAgICAgICAgICAgIDxzdHJvbmcgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtMzAwIj4gRWxldmVuTGFicyBpcyByZXF1aXJlZDwvc3Ryb25nPiBmb3IgYWxsIHZvaWNlIGFuZCBzb3VuZCBnZW5lcmF0aW9uLgogICAgICAgICAgPC9wPgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJtdC0yIHRleHQteHMgdGV4dC16aW5jLTUwMCI+CiAgICAgICAgICAgIFRoZSBELUlEIGtleSBwb3dlcnMgdGhlIG9wdGlvbmFsIGNpcmN1bGFyIEF1c2xhbiBzaWduLWxhbmd1YWdlIGludGVycHJldGVyIG92ZXJsYXkgb24gZXhwb3J0ZWQgZmlsbXMuCiAgICAgICAgICA8L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9ImJvcmRlciBib3JkZXItemluYy04MDAgYmctemluYy05MDAvNDAgcm91bmRlZC1sZyBwLTUiPgogICAgICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC1zbSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIgdGV4dC16aW5jLTQwMCBtYi0zIj4KICAgICAgICAgICAgUHJlZmVyZW5jZXMKICAgICAgICAgIDwvaDI+CgogICAgICAgICAgPGxhYmVsIGNsYXNzTmFtZT0iYmxvY2sgdGV4dC1zbSB0ZXh0LXppbmMtMzAwIG1iLTEiPgogICAgICAgICAgICBQcmVmZXJyZWQgdmlkZW8gcHJvdmlkZXIKICAgICAgICAgIDwvbGFiZWw+CiAgICAgICAgICA8c2VsZWN0CiAgICAgICAgICAgIHZhbHVlPXtwcmVmZXJyZWRWaWRlbyB8fCAoc3RhdHVzLnByZWZlcnJlZFZpZGVvUHJvdmlkZXIgPz8gIiIpfQogICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldFByZWZlcnJlZFZpZGVvKGUudGFyZ2V0LnZhbHVlKX0KICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctemluYy05NTAgYm9yZGVyIGJvcmRlci16aW5jLTgwMCByb3VuZGVkIHB4LTMgcHktMiB0ZXh0LXNtIG1iLTQiCiAgICAgICAgICA+CiAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9IiI+QXV0byAobGV0IFZpcmVsbGUgY2hvb3NlKTwvb3B0aW9uPgogICAgICAgICAgICB7VklERU9fUFJPVklERVJTLm1hcCgocCkgPT4gKAogICAgICAgICAgICAgIDxvcHRpb24ga2V5PXtwfSB2YWx1ZT17cH0+CiAgICAgICAgICAgICAgICB7cH0KICAgICAgICAgICAgICA8L29wdGlvbj4KICAgICAgICAgICAgKSl9CiAgICAgICAgICA8L3NlbGVjdD4KCiAgICAgICAgICA8bGFiZWwgY2xhc3NOYW1lPSJibG9jayB0ZXh0LXNtIHRleHQtemluYy0zMDAgbWItMSI+CiAgICAgICAgICAgIFByZWZlcnJlZCBMTE0gcHJvdmlkZXIgKHNjcmlwdCAmIGRpYWxvZ3VlKQogICAgICAgICAgPC9sYWJlbD4KICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgdmFsdWU9e3ByZWZlcnJlZExsbSB8fCAoc3RhdHVzLnByZWZlcnJlZExsbVByb3ZpZGVyID8/ICIiKX0KICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRQcmVmZXJyZWRMbG0oZS50YXJnZXQudmFsdWUpfQogICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBiZy16aW5jLTk1MCBib3JkZXIgYm9yZGVyLXppbmMtODAwIHJvdW5kZWQgcHgtMyBweS0yIHRleHQtc20gbWItNCIKICAgICAgICAgID4KICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iIj5BdXRvIChsZXQgVmlyZWxsZSBjaG9vc2UpPC9vcHRpb24+CiAgICAgICAgICAgIHtMTE1fUFJPVklERVJTLm1hcCgocCkgPT4gKAogICAgICAgICAgICAgIDxvcHRpb24ga2V5PXtwfSB2YWx1ZT17cH0+CiAgICAgICAgICAgICAgICB7cH0KICAgICAgICAgICAgICA8L29wdGlvbj4KICAgICAgICAgICAgKSl9CiAgICAgICAgICA8L3NlbGVjdD4KCiAgICAgICAgICA8bGFiZWwgY2xhc3NOYW1lPSJibG9jayB0ZXh0LXNtIHRleHQtemluYy0zMDAgbWItMSI+RmFsbGJhY2sgcG9saWN5PC9sYWJlbD4KICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgdmFsdWU9e2ZhbGxiYWNrTW9kZX0KICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRGYWxsYmFja01vZGUoZS50YXJnZXQudmFsdWUgYXMgRmFsbGJhY2tNb2RlKX0KICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctemluYy05NTAgYm9yZGVyIGJvcmRlci16aW5jLTgwMCByb3VuZGVkIHB4LTMgcHktMiB0ZXh0LXNtIG1iLTQiCiAgICAgICAgICA+CiAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9ImJ5b2tfb25seSI+VXNlIG15IGtleSBvbmx5IOKAlCBuZXZlciBmYWxsIGJhY2s8L29wdGlvbj4KICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iYnlva193aXRoX2NvbnNlbnQiPgogICAgICAgICAgICAgIFRyeSBteSBrZXkgZmlyc3QsIHRoZW4gYXNrIGJlZm9yZSB1c2luZyBWaXJlbGxlIGNyZWRpdHMKICAgICAgICAgICAgPC9vcHRpb24+CiAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9ImJ5b2tfd2l0aF9hdXRvX2ZhbGxiYWNrIj4KICAgICAgICAgICAgICBUcnkgbXkga2V5IGZpcnN0LCBzaWxlbnRseSBmYWxsIGJhY2sgdG8gVmlyZWxsZSBjcmVkaXRzCiAgICAgICAgICAgIDwvb3B0aW9uPgogICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSJjcmVkaXRzX29ubHkiPkFsd2F5cyB1c2UgVmlyZWxsZSBjcmVkaXRzPC9vcHRpb24+CiAgICAgICAgICA8L3NlbGVjdD4KCiAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+CiAgICAgICAgICAgICAgdXBkYXRlTXV0Lm11dGF0ZSh7CiAgICAgICAgICAgICAgICBwcmVmZXJyZWRWaWRlb1Byb3ZpZGVyOiBwcmVmZXJyZWRWaWRlbyB8fCBudWxsLAogICAgICAgICAgICAgICAgcHJlZmVycmVkTGxtUHJvdmlkZXI6IHByZWZlcnJlZExsbSB8fCBudWxsLAogICAgICAgICAgICAgICAgZmFsbGJhY2tNb2RlLAogICAgICAgICAgICAgIH0pCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZGlzYWJsZWQ9e3VwZGF0ZU11dC5pc1BlbmRpbmd9CiAgICAgICAgICAgIGNsYXNzTmFtZT0iYmctYW1iZXItNTAwIGhvdmVyOmJnLWFtYmVyLTQwMCB0ZXh0LWJsYWNrIHB4LTQgcHktMiByb3VuZGVkIHRleHQtc20gZm9udC1tZWRpdW0gZGlzYWJsZWQ6b3BhY2l0eS01MCIKICAgICAgICAgID4KICAgICAgICAgICAge3VwZGF0ZU11dC5pc1BlbmRpbmcgPyAiU2F2aW5n4oCmIiA6ICJTYXZlIHByZWZlcmVuY2VzIn0KICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAge3VwZGF0ZU11dC5pc1N1Y2Nlc3MgJiYgKAogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LWVtZXJhbGQtMzAwIG10LTIiPlByZWZlcmVuY2VzIHNhdmVkLjwvZGl2PgogICAgICAgICAgKX0KICAgICAgICA8L3NlY3Rpb24+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQoKZnVuY3Rpb24gU3RhdHVzQmFkZ2UoeyBzdGF0dXMgfTogeyBzdGF0dXM6IHN0cmluZyB9KSB7CiAgY29uc3QgbWFwOiBSZWNvcmQ8c3RyaW5nLCB7IGxhYmVsOiBzdHJpbmc7IGNsczogc3RyaW5nIH0+ID0gewogICAgbm90X2NvbmZpZ3VyZWQ6IHsgbGFiZWw6ICJOb3QgY29uZmlndXJlZCIsIGNsczogImJnLXppbmMtODAwIHRleHQtemluYy00MDAiIH0sCiAgICBjb25maWd1cmVkOiB7IGxhYmVsOiAiQ29uZmlndXJlZCIsIGNsczogImJnLXppbmMtNzAwIHRleHQtemluYy0yMDAiIH0sCiAgICB2YWxpZDogeyBsYWJlbDogIlZhbGlkIiwgY2xzOiAiYmctZW1lcmFsZC03MDAvNDAgdGV4dC1lbWVyYWxkLTIwMCIgfSwKICAgIGludmFsaWQ6IHsgbGFiZWw6ICJJbnZhbGlkIiwgY2xzOiAiYmctcmVkLTcwMC80MCB0ZXh0LXJlZC0yMDAiIH0sCiAgICByYXRlX2xpbWl0ZWQ6IHsgbGFiZWw6ICJSYXRlIGxpbWl0ZWQiLCBjbHM6ICJiZy1hbWJlci03MDAvNDAgdGV4dC1hbWJlci0yMDAiIH0sCiAgICB1bnN1cHBvcnRlZDogeyBsYWJlbDogIlVuc3VwcG9ydGVkIiwgY2xzOiAiYmctemluYy04MDAgdGV4dC16aW5jLTQwMCIgfSwKICAgIHVua25vd25fZXJyb3I6IHsgbGFiZWw6ICJFcnJvciIsIGNsczogImJnLXJlZC03MDAvNDAgdGV4dC1yZWQtMjAwIiB9LAogIH07CiAgY29uc3QgbSA9IG1hcFtzdGF0dXNdID8/IG1hcC5ub3RfY29uZmlndXJlZDsKICByZXR1cm4gKAogICAgPHNwYW4gY2xhc3NOYW1lPXtgdGV4dC1bMTFweF0gcHgtMiBweS0wLjUgcm91bmRlZCAke20uY2xzfWB9PnttLmxhYmVsfTwvc3Bhbj4KICApOwp9Cg==
+// v6.68 Phase 5 — BYOK Provider Control Center.
+// Lets users see which providers they've configured, validate keys, and pick
+// their preferred video / LLM provider plus how aggressively to fall back to
+// platform credits. The page never displays raw key strings — only masked
+// "configured / not configured / valid / invalid" status from the server.
+
+import { useEffect, useState } from "react";
+import { trpc } from "@/lib/trpc";
+import SiteHead from "@/components/SiteHead";
+
+const VIDEO_PROVIDERS = [
+  "runway",
+  "openai",
+  "replicate",
+  "fal",
+  "luma",
+  "byteplus",
+  "huggingface",
+] as const;
+
+const LLM_PROVIDERS = ["openai", "anthropic", "google", "venice"] as const;
+
+const ALL_PROVIDERS: { id: string; label: string; capability: string; keyUrl?: string; required?: boolean }[] = [
+  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice", keyUrl: "https://platform.openai.com/api-keys" },
+  { id: "anthropic", label: "Anthropic Claude", capability: "LLM", keyUrl: "https://console.anthropic.com/settings/keys" },
+  { id: "google", label: "Google AI Studio", capability: "LLM • Veo 3 video", keyUrl: "https://aistudio.google.com/apikey" },
+  { id: "venice", label: "Venice AI", capability: "LLM (privacy-focused)", keyUrl: "https://venice.ai/settings/api" },
+  { id: "runway", label: "Runway", capability: "Video (premium quality)", keyUrl: "https://app.runwayml.com/settings" },
+  { id: "replicate", label: "Replicate", capability: "Video • image", keyUrl: "https://replicate.com/account/api-tokens" },
+  { id: "fal", label: "fal.ai", capability: "Video • image (cheapest, recommended)", keyUrl: "https://fal.ai/dashboard/keys" },
+  { id: "luma", label: "Luma Dream Machine", capability: "Video", keyUrl: "https://lumalabs.ai/dream-machine/api" },
+  { id: "byteplus", label: "BytePlus SeedDance", capability: "Video", keyUrl: "https://console.byteplus.com/" },
+  { id: "huggingface", label: "Hugging Face", capability: "Video • image (free tier)", keyUrl: "https://huggingface.co/settings/tokens" },
+  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX — required for all sound", keyUrl: "https://elevenlabs.io/app/settings/api-keys", required: true },
+  { id: "suno", label: "Suno", capability: "Music scores", keyUrl: "https://app.suno.ai/account" },
+  { id: "did", label: "D-ID", capability: "Auslan sign-language interpreter overlay", keyUrl: "https://studio.d-id.com/account-settings" },
+];
+
+export default function BYOKControlCenterPage() {
+  const statusQ = trpc.byok.getProviderStatus.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const updateMut = trpc.byok.updateProviderPreferences.useMutation({
+    onSuccess: () => statusQ.refetch(),
+  });
+  const testMut = trpc.byok.testProviderKey.useMutation();
+
+  const [preferredVideo, setPreferredVideo] = useState<string>("");
+  const [preferredLlm, setPreferredLlm] = useState<string>("");
+  // v6.69 repair — values match the persisted spec
+  // (credits_only | byok_only | byok_with_consent | byok_with_auto_fallback).
+  type FallbackMode = "credits_only" | "byok_only" | "byok_with_consent" | "byok_with_auto_fallback";
+  const [fallbackMode, setFallbackMode] = useState<FallbackMode>("byok_with_consent");
+
+  const status: any = statusQ.data ?? {};
+  // v6.69 repair — hydrate the saved fallback mode once it loads.
+  useEffect(() => {
+    const saved = (status?.byokFallbackMode ?? null) as FallbackMode | null;
+    if (saved && saved !== fallbackMode) setFallbackMode(saved);
+  }, [status?.byokFallbackMode]);
+  const providers: any = status.providers ?? {};
+
+  return (
+    <div className="min-h-screen text-zinc-100 px-6 py-8" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <SiteHead title="BYOK Provider Control Center" />
+      <div className="max-w-3xl mx-auto space-y-6">
+        <header>
+          <div className="text-xs uppercase tracking-wider text-amber-400/80">
+            Provider control
+          </div>
+          <h1 className="text-3xl font-semibold mt-1 gradient-text-gold">BYOK Control Center</h1>
+          <p className="text-zinc-400 text-sm mt-1">
+            See which AI providers you have configured and choose how Virelle
+            generates your scenes. Your keys are never shown back to your
+            browser — only their status.
+          </p>
+        </header>
+
+        <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
+          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+            Configured providers
+          </h2>
+          {statusQ.isLoading && <div className="text-sm text-zinc-500">Loading…</div>}
+          <ul className="space-y-2">
+            {ALL_PROVIDERS.map((p) => {
+              const s = providers[p.id] ?? "not_configured";
+              return (
+                <li
+                  key={p.id}
+                  className="flex items-center justify-between text-sm py-2 border-b border-zinc-800/60 last:border-b-0"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-100">{p.label}</span>
+                      {p.required && <span className="text-[10px] bg-violet-500/20 text-violet-300 px-1.5 py-0.5 rounded font-semibold">Required</span>}
+                    </div>
+                    <div className="text-xs text-zinc-500">{p.capability}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <StatusBadge status={s} />
+                    {s !== "not_configured" && (
+                      <button
+                        onClick={() => testMut.mutate({ provider: p.id })}
+                        className="text-xs bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded"
+                        disabled={testMut.isPending}
+                      >
+                        Test
+                      </button>
+                    )}
+                    {p.keyUrl && (
+                      <a
+                        href={p.keyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2 whitespace-nowrap"
+                      >
+                        Get key →
+                      </a>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          {testMut.data && (
+            <div className="mt-3 text-xs text-zinc-300">
+              Test result for {testMut.data.provider}:{" "}
+              <StatusBadge status={testMut.data.status} />
+            </div>
+          )}
+          <p className="mt-4 text-xs text-zinc-500">
+            To add or change a key, open the Settings page → API keys. Keys are
+            stored encrypted at rest and never returned to the browser.
+            <strong className="text-zinc-300"> ElevenLabs is required</strong> for all voice and sound generation.
+          </p>
+          <p className="mt-2 text-xs text-zinc-500">
+            The D-ID key powers the optional circular Auslan sign-language interpreter overlay on exported films.
+          </p>
+        </section>
+
+        <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
+          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+            Preferences
+          </h2>
+
+          <label className="block text-sm text-zinc-300 mb-1">
+            Preferred video provider
+          </label>
+          <select
+            value={preferredVideo || (status.preferredVideoProvider ?? "")}
+            onChange={(e) => setPreferredVideo(e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+          >
+            <option value="">Auto (let Virelle choose)</option>
+            {VIDEO_PROVIDERS.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+
+          <label className="block text-sm text-zinc-300 mb-1">
+            Preferred LLM provider (script & dialogue)
+          </label>
+          <select
+            value={preferredLlm || (status.preferredLlmProvider ?? "")}
+            onChange={(e) => setPreferredLlm(e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+          >
+            <option value="">Auto (let Virelle choose)</option>
+            {LLM_PROVIDERS.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+
+          <label className="block text-sm text-zinc-300 mb-1">Fallback policy</label>
+          <select
+            value={fallbackMode}
+            onChange={(e) => setFallbackMode(e.target.value as FallbackMode)}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+          >
+            <option value="byok_only">Use my key only — never fall back</option>
+            <option value="byok_with_consent">
+              Try my key first, then ask before using Virelle credits
+            </option>
+            <option value="byok_with_auto_fallback">
+              Try my key first, silently fall back to Virelle credits
+            </option>
+            <option value="credits_only">Always use Virelle credits</option>
+          </select>
+
+          <button
+            onClick={() =>
+              updateMut.mutate({
+                preferredVideoProvider: preferredVideo || null,
+                preferredLlmProvider: preferredLlm || null,
+                fallbackMode,
+              })
+            }
+            disabled={updateMut.isPending}
+            className="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium disabled:opacity-50"
+          >
+            {updateMut.isPending ? "Saving…" : "Save preferences"}
+          </button>
+          {updateMut.isSuccess && (
+            <div className="text-xs text-emerald-300 mt-2">Preferences saved.</div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; cls: string }> = {
+    not_configured: { label: "Not configured", cls: "bg-zinc-800 text-zinc-400" },
+    configured: { label: "Configured", cls: "bg-zinc-700 text-zinc-200" },
+    valid: { label: "Valid", cls: "bg-emerald-700/40 text-emerald-200" },
+    invalid: { label: "Invalid", cls: "bg-red-700/40 text-red-200" },
+    rate_limited: { label: "Rate limited", cls: "bg-amber-700/40 text-amber-200" },
+    unsupported: { label: "Unsupported", cls: "bg-zinc-800 text-zinc-400" },
+    unknown_error: { label: "Error", cls: "bg-red-700/40 text-red-200" },
+  };
+  const m = map[status] ?? map.not_configured;
+  return (
+    <span className={`text-[11px] px-2 py-0.5 rounded ${m.cls}`}>{m.label}</span>
+  );
+}
