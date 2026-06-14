@@ -62,7 +62,7 @@ export default function CinematicEmptyState({
           "{quote.text}"
         </blockquote>
         <figcaption className="mt-2 text-[11px] uppercase tracking-[0.2em] text-primary/40">
-          â {quote.author}
+          — {quote.author}
         </figcaption>
       </figure>
     </div>
