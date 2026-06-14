@@ -1,1 +1,180 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZVJlZiwgdXNlRWZmZWN0IH0gZnJvbSAicmVhY3QiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJlbGwsIENoZWNrLCBDaGVja0NoZWNrLCBUcmFzaDIsIEV4dGVybmFsTGluaywgWCB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwoKY29uc3QgVFlQRV9JQ09OUzogUmVjb3JkPHN0cmluZywgc3RyaW5nPiA9IHsKICB3ZWxjb21lOiAi8J+OrCIsCiAgZ2VuZXJhdGlvbl9jb21wbGV0ZTogIuKcqCIsCiAgZXhwb3J0X2NvbXBsZXRlOiAi8J+TpiIsCiAgc3Vic2NyaXB0aW9uX2NoYW5nZTogIvCfkrMiLAogIHJlZmVycmFsX3Jld2FyZDogIvCfjoEiLAogIHN5c3RlbTogIvCfk6IiLAogIHRpcDogIvCfkqEiLAp9OwoKZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gTm90aWZpY2F0aW9uQmVsbCgpIHsKICBjb25zdCBbb3Blbiwgc2V0T3Blbl0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgcGFuZWxSZWYgPSB1c2VSZWY8SFRNTERpdkVsZW1lbnQ+KG51bGwpOwoKICBjb25zdCB7IGRhdGE6IHVucmVhZCB9ID0gdHJwYy5ub3RpZmljYXRpb25zLnVucmVhZENvdW50LnVzZVF1ZXJ5KHVuZGVmaW5lZCwgewogICAgcmVmZXRjaEludGVydmFsOiAzMF8wMDAsIC8vIHBvbGwgZXZlcnkgMzBzCiAgfSk7CiAgY29uc3QgeyBkYXRhOiBub3RpZmljYXRpb25zLCByZWZldGNoIH0gPSB0cnBjLm5vdGlmaWNhdGlvbnMubGlzdC51c2VRdWVyeSgKICAgIHsgbGltaXQ6IDMwIH0sCiAgICB7IGVuYWJsZWQ6IG9wZW4gfQogICk7CgogIGNvbnN0IG1hcmtSZWFkID0gdHJwYy5ub3RpZmljYXRpb25zLm1hcmtSZWFkLnVzZU11dGF0aW9uKHsgb25TdWNjZXNzOiAoKSA9PiByZWZldGNoKCkgfSk7CiAgY29uc3QgbWFya0FsbFJlYWQgPSB0cnBjLm5vdGlmaWNhdGlvbnMubWFya0FsbFJlYWQudXNlTXV0YXRpb24oeyBvblN1Y2Nlc3M6ICgpID0+IHJlZmV0Y2goKSB9KTsKICBjb25zdCBkZWxldGVOb3RpZiA9IHRycGMubm90aWZpY2F0aW9ucy5kZWxldGUudXNlTXV0YXRpb24oeyBvblN1Y2Nlc3M6ICgpID0+IHJlZmV0Y2goKSB9KTsKCiAgLy8gQ2xvc2Ugb24gb3V0c2lkZSBjbGljawogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBmdW5jdGlvbiBoYW5kbGVDbGljayhlOiBNb3VzZUV2ZW50KSB7CiAgICAgIGlmIChwYW5lbFJlZi5jdXJyZW50ICYmICFwYW5lbFJlZi5jdXJyZW50LmNvbnRhaW5zKGUudGFyZ2V0IGFzIE5vZGUpKSB7CiAgICAgICAgc2V0T3BlbihmYWxzZSk7CiAgICAgIH0KICAgIH0KICAgIGlmIChvcGVuKSBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJtb3VzZWRvd24iLCBoYW5kbGVDbGljayk7CiAgICByZXR1cm4gKCkgPT4gZG9jdW1lbnQucmVtb3ZlRXZlbnRMaXN0ZW5lcigibW91c2Vkb3duIiwgaGFuZGxlQ2xpY2spOwogIH0sIFtvcGVuXSk7CgogIGNvbnN0IGNvdW50ID0gdW5yZWFkPy5jb3VudCB8fCAwOwoKICBjb25zdCBmb3JtYXRUaW1lID0gKGRhdGU6IHN0cmluZyB8IERhdGUpID0+IHsKICAgIGNvbnN0IGQgPSBuZXcgRGF0ZShkYXRlKTsKICAgIGNvbnN0IG5vdyA9IG5ldyBEYXRlKCk7CiAgICBjb25zdCBkaWZmTXMgPSBub3cuZ2V0VGltZSgpIC0gZC5nZXRUaW1lKCk7CiAgICBjb25zdCBkaWZmTWluID0gTWF0aC5mbG9vcihkaWZmTXMgLyA2MDAwMCk7CiAgICBpZiAoZGlmZk1pbiA8IDEpIHJldHVybiAiSnVzdCBub3ciOwogICAgaWYgKGRpZmZNaW4gPCA2MCkgcmV0dXJuIGAke2RpZmZNaW59bSBhZ29gOwogICAgY29uc3QgZGlmZkhyID0gTWF0aC5mbG9vcihkaWZmTWluIC8gNjApOwogICAgaWYgKGRpZmZIciA8IDI0KSByZXR1cm4gYCR7ZGlmZkhyfWggYWdvYDsKICAgIGNvbnN0IGRpZmZEYXkgPSBNYXRoLmZsb29yKGRpZmZIciAvIDI0KTsKICAgIGlmIChkaWZmRGF5IDwgNykgcmV0dXJuIGAke2RpZmZEYXl9ZCBhZ29gOwogICAgcmV0dXJuIGQudG9Mb2NhbGVEYXRlU3RyaW5nKCJlbi1VUyIsIHsgbW9udGg6ICJzaG9ydCIsIGRheTogIm51bWVyaWMiIH0pOwogIH07CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUiIHJlZj17cGFuZWxSZWZ9PgogICAgICB7LyogQmVsbCBCdXR0b24gKi99CiAgICAgIDxidXR0b24KICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRPcGVuKCFvcGVuKX0KICAgICAgICBjbGFzc05hbWU9InJlbGF0aXZlIHAtMiByb3VuZGVkLWxnIHRleHQtd2hpdGUvNjAgaG92ZXI6dGV4dC13aGl0ZSBob3ZlcjpiZy13aGl0ZS8xMCB0cmFuc2l0aW9uLWNvbG9ycyIKICAgICAgICB0aXRsZT0iTm90aWZpY2F0aW9ucyIKICAgICAgICBhcmlhLWxhYmVsPXtjb3VudCA+IDAgPyBgTm90aWZpY2F0aW9ucywgJHtjb3VudH0gdW5yZWFkYCA6ICJOb3RpZmljYXRpb25zIn0KICAgICAgICBhcmlhLWhhc3BvcHVwPSJkaWFsb2ciCiAgICAgICAgYXJpYS1leHBhbmRlZD17b3Blbn0KICAgICAgPgogICAgICAgIDxCZWxsIGNsYXNzTmFtZT0iaC01IHctNSIgYXJpYS1oaWRkZW49InRydWUiIC8+CiAgICAgICAge2NvdW50ID4gMCAmJiAoCiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImFic29sdXRlIC10b3AtMC41IC1yaWdodC0wLjUgbWluLXctWzE4cHhdIGgtWzE4cHhdIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHJvdW5kZWQtZnVsbCBiZy1hbWJlci01MDAgdGV4dC1ibGFjayB0ZXh0LVsxMHB4XSBmb250LWJvbGQgcHgtMSI+CiAgICAgICAgICAgIHtjb3VudCA+IDk5ID8gIjk5KyIgOiBjb3VudH0KICAgICAgICAgIDwvc3Bhbj4KICAgICAgICApfQogICAgICA8L2J1dHRvbj4KCiAgICAgIHsvKiBEcm9wZG93biBQYW5lbCAqL30KICAgICAge29wZW4gJiYgKAogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSByaWdodC0wIHRvcC1mdWxsIG10LTIgdy04MCBzbTp3LTk2IG1heC1oLVs0ODBweF0gYmctWyMwYzBiMThdIGJvcmRlciBib3JkZXItd2hpdGUvMTAgcm91bmRlZC14bCBzaGFkb3ctMnhsIHotWzEwMF0gZmxleCBmbGV4LWNvbCBvdmVyZmxvdy1oaWRkZW4iPgogICAgICAgICAgey8qIEhlYWRlciAqL30KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gcHgtNCBweS0zIGJvcmRlci1iIGJvcmRlci13aGl0ZS8xMCI+CiAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXdoaXRlIj5Ob3RpZmljYXRpb25zPC9oMz4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIj4KICAgICAgICAgICAgICB7Y291bnQgPiAwICYmICgKICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgdmFyaWFudD0iZ2hvc3QiCiAgICAgICAgICAgICAgICAgIHNpemU9InNtIgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InRleHQteHMgdGV4dC1hbWJlci00MDAgaG92ZXI6dGV4dC1hbWJlci0zMDAgaC03IHB4LTIiCiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IG1hcmtBbGxSZWFkLm11dGF0ZSgpfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaGVjayBjbGFzc05hbWU9ImgtMy41IHctMy41IG1yLTEiIC8+CiAgICAgICAgICAgICAgICAgIE1hcmsgYWxsIHJlYWQKICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPXsoKSA9PiBzZXRPcGVuKGZhbHNlKX0gY2xhc3NOYW1lPSJwLTEgdGV4dC13aGl0ZS80MCBob3Zlcjp0ZXh0LXdoaXRlIiBhcmlhLWxhYmVsPSJDbG9zZSBub3RpZmljYXRpb25zIj4KICAgICAgICAgICAgICAgIDxYIGNsYXNzTmFtZT0iaC00IHctNCIgYXJpYS1oaWRkZW49InRydWUiIC8+CiAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgey8qIExpc3QgKi99CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG92ZXJmbG93LXktYXV0byI+CiAgICAgICAgICAgIHshbm90aWZpY2F0aW9ucyB8fCBub3RpZmljYXRpb25zLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icHktMTIgdGV4dC1jZW50ZXIiPgogICAgICAgICAgICAgICAgPEJlbGwgY2xhc3NOYW1lPSJoLTggdy04IHRleHQtd2hpdGUvMjAgbXgtYXV0byBtYi0yIiAvPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtd2hpdGUvNDAiPk5vIG5vdGlmaWNhdGlvbnMgeWV0PC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApIDogKAogICAgICAgICAgICAgIG5vdGlmaWNhdGlvbnMubWFwKChuKSA9PiAoCiAgICAgICAgICAgICAgICA8ZGl2CiAgICAgICAgICAgICAgICAgIGtleT17bi5pZH0KICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgZmxleCBnYXAtMyBweC00IHB5LTMgYm9yZGVyLWIgYm9yZGVyLXdoaXRlLzUgaG92ZXI6Ymctd2hpdGUvNSB0cmFuc2l0aW9uLWNvbG9ycyAkewogICAgICAgICAgICAgICAgICAgICFuLmlzUmVhZCA/ICJiZy1hbWJlci01MDAvNSIgOiAiIgogICAgICAgICAgICAgICAgICB9YH0KICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgey8qIEljb24gKi99CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWxnIGZsZXgtc2hyaW5rLTAgbXQtMC41Ij4KICAgICAgICAgICAgICAgICAgICB7VFlQRV9JQ09OU1sobiBhcyBhbnkpLnR5cGUgfHwgInN5c3RlbSJdIHx8ICLwn5OiIn0KICAgICAgICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICAgICAgICB7LyogQ29udGVudCAqL30KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXgtMSBtaW4tdy0wIj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBqdXN0aWZ5LWJldHdlZW4gZ2FwLTIiPgogICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPXtgdGV4dC1zbSBsZWFkaW5nLXRpZ2h0ICR7IW4uaXNSZWFkID8gInRleHQtd2hpdGUgZm9udC1tZWRpdW0iIDogInRleHQtd2hpdGUvNzAifWB9PgogICAgICAgICAgICAgICAgICAgICAgICB7bi50aXRsZX0KICAgICAgICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICAgICAgICAgIHshbi5pc1JlYWQgJiYgKAogICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idy0yIGgtMiByb3VuZGVkLWZ1bGwgYmctYW1iZXItNTAwIGZsZXgtc2hyaW5rLTAgbXQtMS41IiAvPgogICAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICB7bi5tZXNzYWdlICYmICgKICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzQwIG10LTAuNSBsaW5lLWNsYW1wLTIiPntuLm1lc3NhZ2V9PC9wPgogICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIG10LTEuNSI+CiAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvMzAiPntmb3JtYXRUaW1lKG4uY3JlYXRlZEF0KX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICB7bi5saW5rICYmICgKICAgICAgICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICAgICAgICBocmVmPXtuLmxpbmt9CiAgICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB0ZXh0LWFtYmVyLTQwMCBob3Zlcjp0ZXh0LWFtYmVyLTMwMCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMC41IgogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICghbi5pc1JlYWQpIG1hcmtSZWFkLm11dGF0ZSh7IGlkOiBuLmlkIH0pOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgc2V0T3BlbihmYWxzZSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgfX0KICAgICAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxFeHRlcm5hbExpbmsgY2xhc3NOYW1lPSJoLTIuNSB3LTIuNSIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICBWaWV3CiAgICAgICAgICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgICAgICAgey8qIEFjdGlvbnMgKi99CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIGdhcC0xIGZsZXgtc2hyaW5rLTAiPgogICAgICAgICAgICAgICAgICAgIHshbi5pc1JlYWQgJiYgKAogICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBtYXJrUmVhZC5tdXRhdGUoeyBpZDogbi5pZCB9KX0KICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJwLTEgdGV4dC13aGl0ZS8zMCBob3Zlcjp0ZXh0LWFtYmVyLTQwMCB0cmFuc2l0aW9uLWNvbG9ycyIKICAgICAgICAgICAgICAgICAgICAgICAgdGl0bGU9Ik1hcmsgYXMgcmVhZCIKICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAgPENoZWNrIGNsYXNzTmFtZT0iaC0zLjUgdy0zLjUiIC8+CiAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IGRlbGV0ZU5vdGlmLm11dGF0ZSh7IGlkOiBuLmlkIH0pfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJwLTEgdGV4dC13aGl0ZS8zMCBob3Zlcjp0ZXh0LXJlZC00MDAgdHJhbnNpdGlvbi1jb2xvcnMiCiAgICAgICAgICAgICAgICAgICAgICB0aXRsZT0iRGVsZXRlIgogICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgIDxUcmFzaDIgY2xhc3NOYW1lPSJoLTMuNSB3LTMuNSIgLz4KICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICApKQogICAgICAgICAgICApfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgICl9CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useState, useRef, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import { Bell, Check, CheckCheck, Trash2, ExternalLink, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const TYPE_ICONS: Record<string, string> = {
+  welcome: "ð¬",
+  generation_complete: "â¨",
+  export_complete: "ð¦",
+  subscription_change: "ð³",
+  referral_reward: "ð",
+  system: "ð¢",
+  tip: "ð¡",
+};
+
+export default function NotificationBell() {
+  const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const { data: unread } = trpc.notifications.unreadCount.useQuery(undefined, {
+    refetchInterval: 30_000, // poll every 30s
+  });
+  const { data: notifications, refetch } = trpc.notifications.list.useQuery(
+    { limit: 30 },
+    { enabled: open }
+  );
+
+  const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => refetch() });
+  const markAllRead = trpc.notifications.markAllRead.useMutation({ onSuccess: () => refetch() });
+  const deleteNotif = trpc.notifications.delete.useMutation({ onSuccess: () => refetch() });
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const count = unread?.count || 0;
+
+  const formatTime = (date: string | Date) => {
+    const d = new Date(date);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return "Just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr}h ago`;
+    const diffDay = Math.floor(diffHr / 24);
+    if (diffDay < 7) return `${diffDay}d ago`;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  };
+
+  return (
+    <div className="relative" ref={panelRef}>
+      {/* Bell Button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="relative p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+        title="Notifications"
+        aria-label={count > 0 ? `Notifications, ${count} unread` : "Notifications"}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+      >
+        <Bell className="h-5 w-5" aria-hidden="true" />
+        {count > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-amber-500 text-black text-[10px] font-bold px-1">
+            {count > 99 ? "99+" : count}
+          </span>
+        )}
+      </button>
+
+      {/* Dropdown Panel */}
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 max-h-[480px] bg-[#0c0b18] border border-white/10 rounded-xl shadow-2xl z-[100] flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+            <h3 className="text-sm font-semibold text-white gradient-text-gold">Notifications</h3>
+            <div className="flex items-center gap-1">
+              {count > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-amber-400 hover:text-amber-300 h-7 px-2"
+                  onClick={() => markAllRead.mutate()}
+                >
+                  <CheckCheck className="h-3.5 w-3.5 mr-1" />
+                  Mark all read
+                </Button>
+              )}
+              <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white" aria-label="Close notifications">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
+          {/* List */}
+          <div className="flex-1 overflow-y-auto">
+            {!notifications || notifications.length === 0 ? (
+              <div className="py-12 text-center">
+                <Bell className="h-8 w-8 text-white/20 mx-auto mb-2" />
+                <p className="text-sm text-white/40">No notifications yet</p>
+              </div>
+            ) : (
+              notifications.map((n) => (
+                <div
+                  key={n.id}
+                  className={`flex gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-colors ${
+                    !n.isRead ? "bg-amber-500/5" : ""
+                  }`}
+                >
+                  {/* Icon */}
+                  <div className="text-lg flex-shrink-0 mt-0.5">
+                    {TYPE_ICONS[(n as any).type || "system"] || "ð¢"}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className={`text-sm leading-tight ${!n.isRead ? "text-white font-medium" : "text-white/70"}`}>
+                        {n.title}
+                      </p>
+                      {!n.isRead && (
+                        <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 mt-1.5" />
+                      )}
+                    </div>
+                    {n.message && (
+                      <p className="text-xs text-white/40 mt-0.5 line-clamp-2">{n.message}</p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[10px] text-white/30">{formatTime(n.createdAt)}</span>
+                      {n.link && (
+                        <a
+                          href={n.link}
+                          className="text-[10px] text-amber-400 hover:text-amber-300 flex items-center gap-0.5"
+                          onClick={() => {
+                            if (!n.isRead) markRead.mutate({ id: n.id });
+                            setOpen(false);
+                          }}
+                        >
+                          <ExternalLink className="h-2.5 w-2.5" />
+                          View
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    {!n.isRead && (
+                      <button
+                        onClick={() => markRead.mutate({ id: n.id })}
+                        className="p-1 text-white/30 hover:text-amber-400 transition-colors"
+                        title="Mark as read"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteNotif.mutate({ id: n.id })}
+                      className="p-1 text-white/30 hover:text-red-400 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
