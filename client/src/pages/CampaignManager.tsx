@@ -310,7 +310,7 @@ export default function CampaignManager() {
                           onClick={() => setContentType(ct.value)}
                           className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
                             contentType === ct.value
-                              ? "border-primary bg-primary/5"
+                              ? "border-amber-400/40 bg-amber-400/5"
                               : "border-border hover:border-muted-foreground/30"
                           }`}
                         >
@@ -370,7 +370,7 @@ export default function CampaignManager() {
                               onClick={() => togglePlatform(p.id)}
                               className={`flex items-center gap-2 p-2 rounded-lg border text-left text-sm transition-all ${
                                 selectedPlatforms.includes(p.id)
-                                  ? "border-primary bg-primary/5"
+                                  ? "border-amber-400/40 bg-amber-400/5"
                                   : "border-border hover:border-muted-foreground/30"
                               }`}
                             >
@@ -450,7 +450,7 @@ export default function CampaignManager() {
                     onClick={() => setSelectedCampaignId(campaign.id)}
                     className={`w-full text-left p-4 rounded-lg border transition-all ${
                       selectedCampaignId === campaign.id
-                        ? "border-primary bg-primary/5"
+                        ? "border-amber-400/40 bg-amber-400/5"
                         : "border-border hover:border-muted-foreground/30"
                     }`}
                   >
@@ -774,7 +774,7 @@ export default function CampaignManager() {
                   </div>
                   <div className="space-y-2">
                     <Label>Call to Action</Label>
-                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
+                    <div className="p-3 bg-amber-400/5 border border-primary/20 rounded-lg flex items-center justify-between">
                       <span className="text-sm font-medium text-primary">{previewContent.callToAction}</span>
                       <Button size="sm" variant="ghost" onClick={() => copyToClipboard(previewContent.callToAction)}>
                         <Copy className="h-3 w-3" />
@@ -956,7 +956,7 @@ export default function CampaignManager() {
               </Card>
 
               {/* Advertising Tips */}
-              <Card className="border-primary/20 bg-primary/5">
+              <Card className="border-primary/20 bg-amber-400/5">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                     <TrendingUp className="h-4 w-4 text-primary" />

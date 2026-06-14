@@ -141,7 +141,7 @@ export default function DownloadApp() {
                   title={androidReady ? "Download Android APK" : "Android app coming soon"}
                   className={`group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] ${
                     androidReady
-                      ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer"
+                      ? "bg-primary text-primary-foreground border-amber-400/40 hover:bg-primary/90 hover:scale-105 cursor-pointer"
                       : "bg-white/5 text-white/60 border-white/15 cursor-not-allowed"
                   } disabled:opacity-60`}
                 >

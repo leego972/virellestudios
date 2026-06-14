@@ -546,7 +546,7 @@ function CrowdfundingHubInner() {
                   href={p.website || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block p-3 rounded-lg border hover:border-primary hover:bg-accent/40 transition-colors"
+                  className="block p-3 rounded-lg border hover:border-amber-400/40 hover:bg-accent/40 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">

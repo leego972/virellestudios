@@ -833,7 +833,7 @@ function AdPosterMakerInner() {
               </Button>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3 gradient-text-gold">
-              <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+              <div className="p-2 rounded-xl bg-amber-400/10 border border-primary/20">
                 <Megaphone className="h-6 w-6 text-primary" />
               </div>
               Ad & Poster Maker
@@ -909,7 +909,7 @@ function AdPosterMakerInner() {
               <button
                 key={m}
                 onClick={() => setMockupMode(m)}
-                className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${mockupMode === m ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary/30"}`}
+                className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${mockupMode === m ? "bg-primary text-primary-foreground border-amber-400/40" : "border-border hover:border-primary/30"}`}
               >
                 {m === "none" ? "Off" : m.charAt(0).toUpperCase() + m.slice(1)}
               </button>
@@ -928,7 +928,7 @@ function AdPosterMakerInner() {
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-xs border-white/10 text-white/60">{config.label} — {config.width}×{config.height}</Badge>
               {selectedProjectId && projectDetail && (
-                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+                <Badge className="bg-amber-400/20 text-primary border-primary/30 text-xs">
                   <Film className="h-3 w-3 mr-1" />{projectDetail.title}
                 </Badge>
               )}
@@ -1101,7 +1101,7 @@ function AdPosterMakerInner() {
                   {categories.map((cat) => (
                     <button
                       key={cat}
-                      className={`text-[10px] px-2.5 py-1 rounded-full border transition-all font-medium ${templateFilter === cat ? "bg-primary text-primary-foreground border-primary shadow-sm" : "border-border hover:border-primary/40 text-muted-foreground"}`}
+                      className={`text-[10px] px-2.5 py-1 rounded-full border transition-all font-medium ${templateFilter === cat ? "bg-primary text-primary-foreground border-amber-400/40 shadow-sm" : "border-border hover:border-primary/40 text-muted-foreground"}`}
                       onClick={() => setTemplateFilter(cat)}
                     >
                       {cat}
@@ -1112,7 +1112,7 @@ function AdPosterMakerInner() {
                   {filteredTemplates.map(([type, cfg]) => (
                     <button
                       key={type}
-                      className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${poster.templateType === type ? "border-primary bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
+                      className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${poster.templateType === type ? "border-amber-400/40 bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
                       onClick={() => handleTemplateChange(type)}
                     >
                       <span className="text-lg shrink-0">{cfg.emoji}</span>
@@ -1215,7 +1215,7 @@ function AdPosterMakerInner() {
                 {poster.textElements.map((el) => (
                   <button
                     key={el.id}
-                    className={`w-full flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${poster.selectedElementId === el.id ? "border-primary bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
+                    className={`w-full flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${poster.selectedElementId === el.id ? "border-amber-400/40 bg-primary/8 ring-1 ring-primary/20" : "border-border/50 hover:border-primary/30 hover:bg-muted/40"}`}
                     onClick={() => pushPoster({ ...poster, selectedElementId: el.id })}
                   >
                     <Type className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
@@ -1231,7 +1231,7 @@ function AdPosterMakerInner() {
               </div>
 
               {selectedElement && (
-                <Card className="border-primary/20 bg-primary/5">
+                <Card className="border-primary/20 bg-amber-400/5">
                   <CardHeader className="pb-2 pt-3 px-3">
                     <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider gradient-text-gold">Edit Selected Layer</CardTitle>
                   </CardHeader>
@@ -1368,7 +1368,7 @@ function AdPosterMakerInner() {
                 <div className="flex items-center justify-between">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Gradient Overlay</Label>
                   <button
-                    className={`text-xs px-2.5 py-0.5 rounded-full border transition-all font-medium ${poster.gradient.enabled ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground"}`}
+                    className={`text-xs px-2.5 py-0.5 rounded-full border transition-all font-medium ${poster.gradient.enabled ? "bg-primary text-primary-foreground border-amber-400/40" : "border-border text-muted-foreground"}`}
                     onClick={() => pushPoster({ ...poster, gradient: { ...poster.gradient, enabled: !poster.gradient.enabled } })}
                   >
                     {poster.gradient.enabled ? "ON" : "OFF"}
@@ -1549,7 +1549,7 @@ function AdPosterMakerInner() {
             {taglineVariants.map((tagline, i) => (
               <button
                 key={i}
-                className="w-full text-left p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                className="w-full text-left p-3 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-amber-400/5 transition-all group"
                 onClick={() => applyTagline(tagline)}
               >
                 <div className="flex items-start gap-2">

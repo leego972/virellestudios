@@ -210,7 +210,7 @@ export default function Collaboration() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center">
                   <Shield className="h-5 w-5 text-primary" />
                 </div>
                 <div>
@@ -260,7 +260,7 @@ export default function Collaboration() {
                   <Card key={member.id}>
                     <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0">
                           <RoleIcon className={`h-4 w-4 ${roleConfig?.color || ""}`} />
                         </div>
                         <div className="min-w-0">

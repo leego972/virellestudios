@@ -269,7 +269,7 @@ function TimelineClip({
       {/* Transition marker (after clip) */}
       <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
         <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[8px] font-bold
-          ${scene.transitionType === "cut" ? "bg-zinc-800 border-zinc-600 text-zinc-400" : "bg-primary/20 border-primary/60 text-primary"}`}
+          ${scene.transitionType === "cut" ? "bg-zinc-800 border-zinc-600 text-zinc-400" : "bg-amber-400/20 border-primary/60 text-primary"}`}
           title={`Transition: ${scene.transitionType}`}
         >
           {scene.transitionType === "cut" ? "C" : scene.transitionType === "dissolve" ? "D" : scene.transitionType === "fade" ? "F" : "T"}
@@ -866,7 +866,7 @@ export default function DirectorCut() {
               <button
                 key={mode}
                 className={`flex-1 py-2.5 text-xs font-medium capitalize transition-colors
-                  ${panelMode === mode ? "text-white border-b-2 border-primary bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                  ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
                 onClick={() => setPanelMode(mode)}
               >
                 {mode === "inspector" ? "Inspector" : mode === "retake" ? "Retake" : "Transition"}
@@ -1181,7 +1181,7 @@ export default function DirectorCut() {
                             key={opt.value}
                             className={`p-2 rounded text-[10px] text-center border transition-all
                               ${selectedScene.transitionType === opt.value
-                                ? "bg-primary/20 border-primary/60 text-primary"
+                                ? "bg-amber-400/20 border-primary/60 text-primary"
                                 : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}
                             onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}
                           >
@@ -1243,7 +1243,7 @@ export default function DirectorCut() {
                 <button
                   key={mode}
                   className={`flex-1 py-2.5 text-xs font-medium capitalize transition-colors
-                    ${panelMode === mode ? "text-white border-b-2 border-primary bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                    ${panelMode === mode ? "text-white border-b-2 border-amber-400/40 bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
                   onClick={() => setPanelMode(mode)}
                 >
                   {mode === "inspector" ? "Inspector" : mode === "retake" ? "Retake" : "Transition"}
@@ -1333,7 +1333,7 @@ export default function DirectorCut() {
                       </div>
                       <div className="grid grid-cols-3 gap-1.5">
                         {TRANSITION_OPTIONS.map((opt) => (
-                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-primary/20 border-primary/60 text-primary" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
+                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-amber-400/20 border-primary/60 text-primary" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
                         ))}
                       </div>
                     </div>

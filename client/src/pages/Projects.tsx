@@ -306,7 +306,7 @@ export default function Projects() {
                         const stage = computeProjectStage(project as any);
                         const meta = JOURNEY_STAGES[stage - 1];
                         return (
-                          <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-primary/5 text-primary">
+                          <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-amber-400/5 text-primary">
                             Stage {stage}/8 · {meta.title}
                           </Badge>
                         );
@@ -426,7 +426,7 @@ export default function Projects() {
                   variant="secondary"
                   className={`text-[10px] shrink-0 ${
                     project.status === "completed" ? "bg-green-500/10 text-green-400" :
-                    project.status === "generating" ? "bg-primary/10 text-primary" :
+                    project.status === "generating" ? "bg-amber-400/10 text-primary" :
                     project.status === "failed" ? "bg-destructive/10 text-destructive" :
                     ""
                   }`}

@@ -26,9 +26,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
     const { allDone: isDone } = useOnboardingChecklist();
     if (isDone) return null;
     return (
-      <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 flex items-center justify-between gap-4">
+      <div className="rounded-xl border border-primary/20 bg-amber-400/5 px-4 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-amber-400" />
           </div>
           <div>
@@ -63,7 +63,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   const PRODUCTION_PHASES = [
     {
       id: "development", phase: "01", label: "Development", emoji: "📋",
-      color: "amber", border: "border-amber-500/25", bg: "bg-primary/5", head: "text-amber-400", glow: "rgba(245,196,66,0.08)",
+      color: "amber", border: "border-amber-500/25", bg: "bg-amber-400/5", head: "text-amber-400", glow: "rgba(245,196,66,0.08)",
       tools: [
         { label: "New Project", description: "Create your film project", icon: Sparkles, path: "/projects/new" },
         { label: "Script Writer", description: "AI screenplay & story", icon: BookOpen, path: (id: number) => `/projects/${id}/script`, needsProject: true },
@@ -318,7 +318,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="Studio status overview">
             <Card style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)"}}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Sparkles className="h-5 w-5 text-amber-400" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -369,12 +369,12 @@ import { useAuth } from "@/_core/hooks/useAuth";
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
-              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-primary/10 hover:text-amber-400" size="sm">
+              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
                 <DollarSign className="h-4 w-4" />Funding
               </Button>
             )}
             {user && (user as any).role === "admin" && (
-              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-primary/10 hover:text-amber-400" size="sm">
+              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
                 <DollarSign className="h-4 w-4" />Funding
               </Button>
             )}
@@ -394,8 +394,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
         {/* API Key Banner */}
         {providers !== undefined && !hasApiKey && (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-primary/10 px-4 py-3.5">
-            <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-400/10 px-4 py-3.5">
+            <div className="h-8 w-8 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0 mt-0.5">
               <Key className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="flex-1 min-w-0">
@@ -404,7 +404,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 Virelle uses your own AI provider keys (Runway ML, fal.ai, Sora, etc.) — you only pay for what you generate.
               </p>
             </div>
-            <Button size="sm" variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-primary/10 text-xs shrink-0" onClick={() => setLocation("/settings?tab=api-keys")}>
+            <Button size="sm" variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-400/10 text-xs shrink-0" onClick={() => setLocation("/settings?tab=api-keys")}>
               <Key className="h-3 w-3 mr-1.5" />Add API Key
             </Button>
           </div>
@@ -524,13 +524,13 @@ import { useAuth } from "@/_core/hooks/useAuth";
           onClick={() => setLocation("/signature-cast")}
         >
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-500/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5 text-amber-400" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-semibold text-white">Virelle Signature Cast</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-amber-400 border border-amber-500/20 font-medium">New</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-500/20 font-medium">New</span>
               </div>
               <p className="text-xs text-zinc-400 max-w-lg">Cast premium digital talent directly into your project. Continuity-tuned, screen-tested, and promo-ready.</p>
             </div>
@@ -552,7 +552,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             ) : inProgressProjects.length === 0 ? (
               <Card className="border-dashed bg-card/40 glass-card">
                 <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-full bg-amber-400/10 flex items-center justify-center">
                     <Clapperboard className="h-6 w-6 text-amber-400" />
                   </div>
                   <div>

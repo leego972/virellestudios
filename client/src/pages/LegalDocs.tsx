@@ -376,7 +376,7 @@ import { useState } from "react";
                     <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group" onClick={() => handleSelect(t)}>
                       <CardContent className="p-4 space-y-2">
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">{t.icon}</div>
+                          <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>
                           <span className="font-medium text-sm">{t.title}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{t.description}</p>

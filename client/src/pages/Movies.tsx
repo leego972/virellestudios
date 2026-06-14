@@ -715,7 +715,7 @@ export default function Movies() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
+              <div className="p-2 rounded-lg bg-amber-400/10">
                 <Folder className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -891,7 +891,7 @@ export default function Movies() {
                             }}
                           >
                             <CardContent className="p-3 flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                              <div className="w-12 h-12 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                                 <Folder className="h-6 w-6 text-primary" />
                               </div>
                               <div className="flex-1 min-w-0">

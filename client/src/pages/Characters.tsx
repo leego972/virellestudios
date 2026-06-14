@@ -531,7 +531,7 @@ export default function Characters() {
             <DialogDescription className="text-sm">
               Upload a reference photo and AI will analyze every detail — facial structure, skin tone, hair, eyes — then generate a super-realistic cinematic character portrait.
             </DialogDescription>
-            <div className="mt-3 p-3 bg-primary/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
+            <div className="mt-3 p-3 bg-amber-400/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
               <p className="font-semibold text-amber-600 dark:text-amber-400">Photo Requirements for Best Results</p>
               <ul className="space-y-1 text-muted-foreground list-none">
                 <li><span className="text-foreground font-medium">✓ Face photo (required):</span> Clear frontal or 3/4 shot, well-lit, no heavy shadows. The AI reads facial structure, skin tone, hair, and eyes from this.</li>
@@ -714,7 +714,7 @@ export default function Characters() {
 
                   {/* Consent disclaimer */}
                   {selectedSearchImage && (
-                    <div className="p-3 rounded-lg bg-primary/10 border border-amber-500/30 space-y-2">
+                    <div className="p-3 rounded-lg bg-amber-400/10 border border-amber-500/30 space-y-2">
                       <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Consent & Usage Disclaimer</p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Images sourced from Wikimedia Commons are publicly available under their respective licences.

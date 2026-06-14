@@ -213,7 +213,7 @@ export default function BrandOutreach() {
                     onClick={() => setSelectedId(p.id)}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
                       active
-                        ? "border-primary bg-accent/60"
+                        ? "border-amber-400/40 bg-accent/60"
                         : "hover:border-primary/50 hover:bg-accent/30"
                     }`}
                   >

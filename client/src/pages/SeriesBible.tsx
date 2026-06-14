@@ -42,7 +42,7 @@ import { useState } from "react";
 
   const FORMATS = ["Drama Series","Comedy Series","Limited Series","Anthology","Docuseries","Animation","Web Series","Mini-Series"];
   const GENRES = ["Drama","Comedy","Thriller","Sci-Fi","Horror","Fantasy","Crime","Romance","Documentary","Action","Mystery"];
-  const EPISODE_STATUS_COLOR: Record<string, string> = { outline: "bg-muted text-muted-foreground", draft: "bg-primary/20 text-primary", locked: "bg-green-500/20 text-green-600" };
+  const EPISODE_STATUS_COLOR: Record<string, string> = { outline: "bg-muted text-muted-foreground", draft: "bg-amber-400/20 text-primary", locked: "bg-green-500/20 text-green-600" };
 
   const DEFAULT_SERIES: Series = {
     id: "1", title: "", format: "Drama Series", genre: "Drama",
@@ -153,7 +153,7 @@ import { useState } from "react";
                     {season.episodes.map(ep => (
                       <Card key={ep.id} className="hover:border-primary/30 transition-colors">
                         <CardContent className="p-3 flex items-start gap-3">
-                          <span className="text-xs font-bold text-primary bg-primary/10 rounded px-1.5 py-0.5 shrink-0">S{season.number}E{ep.number}</span>
+                          <span className="text-xs font-bold text-primary bg-amber-400/10 rounded px-1.5 py-0.5 shrink-0">S{season.number}E{ep.number}</span>
                           <div className="flex-1 min-w-0">
                             {editingEpisode?.ep.id === ep.id ? (
                               <div className="space-y-2">

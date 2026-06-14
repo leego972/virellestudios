@@ -98,7 +98,7 @@ import { useState, useMemo } from "react";
           ].map(s => (
             <Card key={s.label}>
               <CardContent className="p-3 flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">{s.icon}</div>
+                <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary shrink-0">{s.icon}</div>
                 <div className="min-w-0"><p className="font-bold text-base truncate">{s.value}</p><p className="text-[10px] text-muted-foreground truncate">{s.label}</p></div>
               </CardContent>
             </Card>
@@ -114,7 +114,7 @@ import { useState, useMemo } from "react";
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map(film => (
-                  <tr key={film.title} className={`hover:bg-muted/20 cursor-pointer transition-colors ${selected?.title === film.title ? "bg-primary/5" : ""}`} onClick={() => setSelected(selected?.title === film.title ? null : film)}>
+                  <tr key={film.title} className={`hover:bg-muted/20 cursor-pointer transition-colors ${selected?.title === film.title ? "bg-amber-400/5" : ""}`} onClick={() => setSelected(selected?.title === film.title ? null : film)}>
                     <td className="p-3 font-medium max-w-[160px] truncate">{film.title}</td>
                     <td className="p-3 text-muted-foreground text-xs">{film.year}</td>
                     <td className="p-3"><Badge variant="outline" className="text-[10px]">{film.genre.split("/")[0]}</Badge></td>

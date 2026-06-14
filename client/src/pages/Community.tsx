@@ -159,7 +159,7 @@ import { useState } from "react";
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-9 w-9 shrink-0 mt-0.5">
-                        <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">{post.avatar}</AvatarFallback>
+                        <AvatarFallback className="text-xs font-bold bg-amber-400/10 text-primary">{post.avatar}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -203,7 +203,7 @@ import { useState } from "react";
             {EVENTS.map(ev => (
               <Card key={ev.title} className="hover:border-primary/30 transition-colors">
                 <CardContent className="p-4 flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary shrink-0">
                     {ev.type === "Festival" ? <Film className="h-5 w-5" /> : <Megaphone className="h-5 w-5" />}
                   </div>
                   <div className="flex-1 min-w-0">

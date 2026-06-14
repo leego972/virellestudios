@@ -196,7 +196,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
               onClick={() => setFormat(f)}
               className={`text-left p-4 rounded-lg border transition-all ${
                 active
-                  ? "border-primary bg-accent/60 shadow-sm"
+                  ? "border-amber-400/40 bg-accent/60 shadow-sm"
                   : "hover:border-primary/50 hover:bg-accent/30"
               }`}
             >
@@ -230,7 +230,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
                   onClick={() => setAngle(a)}
                   className={`text-xs px-2 py-1 rounded border ${
                     a === angle
-                      ? "bg-primary text-primary-foreground border-primary"
+                      ? "bg-primary text-primary-foreground border-amber-400/40"
                       : "hover:bg-accent"
                   }`}
                 >

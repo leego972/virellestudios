@@ -278,7 +278,7 @@ export default function SharePreview() {
             {scenes.map((s: any) => (
               <Card
                 key={s.id}
-                className={`overflow-hidden cursor-pointer hover:border-primary/40 transition-colors ${activeScene === s.id ? "border-primary" : ""}`}
+                className={`overflow-hidden cursor-pointer hover:border-primary/40 transition-colors ${activeScene === s.id ? "border-amber-400/40" : ""}`}
                 onClick={() => s.videoUrl && setActiveScene(s.id)}
               >
                 <div className="aspect-video bg-muted relative group">

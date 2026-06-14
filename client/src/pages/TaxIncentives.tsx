@@ -92,7 +92,7 @@ import { useState, useMemo } from "react";
               )}
             </CardContent>
           </Card>
-          <Card className="bg-primary/5 border-primary/20">
+          <Card className="bg-amber-400/5 border-primary/20">
             <CardContent className="p-4 space-y-2">
               <p className="text-sm font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" />Top 3 Incentives Right Now</p>
               {top3.map((j, i) => (

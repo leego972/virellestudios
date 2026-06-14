@@ -299,7 +299,7 @@ export default function DialogueEditor() {
                               className="flex gap-4 p-4 rounded-lg border border-border/30 hover:border-border/60 transition-colors cursor-pointer"
                               onClick={() => setEditingId(d.id)}
                             >
-                              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-400/10 flex items-center justify-center">
                                 <User className="h-4 w-4 text-primary" />
                               </div>
                               <div className="flex-1 min-w-0">

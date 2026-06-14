@@ -205,7 +205,7 @@ export default function NewProject() {
             <Card
               className={`cursor-pointer transition-colors ${
                 mode === "quick"
-                  ? "border-primary bg-primary/5"
+                  ? "border-amber-400/40 bg-amber-400/5"
                   : "bg-card/50 hover:border-muted-foreground/30"
               }`}
               onClick={() => setMode("quick")}
@@ -225,7 +225,7 @@ export default function NewProject() {
             <Card
               className={`cursor-pointer transition-colors ${
                 mode === "manual"
-                  ? "border-primary bg-primary/5"
+                  ? "border-amber-400/40 bg-amber-400/5"
                   : "bg-card/50 hover:border-muted-foreground/30"
               }`}
               onClick={() => setMode("manual")}
@@ -647,7 +647,7 @@ export default function NewProject() {
                           onClick={() => setCinemaIndustry(industry)}
                           className={`flex flex-col items-start gap-0.5 p-2.5 rounded-lg border text-left transition-all ${
                             cinemaIndustry === industry
-                              ? 'border-primary bg-primary/10 text-primary'
+                              ? 'border-amber-400/40 bg-amber-400/10 text-primary'
                               : 'border-border/50 bg-background/30 hover:border-border hover:bg-background/50 text-muted-foreground'
                           }`}
                         >
