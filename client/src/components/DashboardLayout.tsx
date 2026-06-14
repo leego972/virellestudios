@@ -92,6 +92,7 @@ const menuGroups = [
         { icon: Clapperboard, label: "My Movies", path: "/movies" },
         { icon: Tv, label: "Series", path: "/series" },
         { icon: MessageSquare, label: "Director's AI", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
+        { icon: Key, label: "Generation Keys", path: "/settings/byok", hollywoodKey: "settings" as ToolIconKey },
       ],
     },
     {
@@ -383,12 +384,12 @@ function DashboardLayoutContent({
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
               </button>
               {!isCollapsed && (
-                <div className="flex items-center gap-2 min-w-0 flex-1">
+                <a href="/" className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer hover:opacity-80 transition-opacity">
                   <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
-                </div>
+                </a>
               )}
               {/* v6.62 — RenderQueueTray lives in the top bar only (see below)
                   so we don't end up with two trays polling at the same time on
@@ -630,8 +631,10 @@ function DashboardLayoutContent({
           <div data-mobile-header className="flex border-b h-auto min-h-[4rem] items-center justify-between px-3 sticky top-0 z-40 shrink-0" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
+              <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
               <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
               <span className="text-base font-bold truncate">Virelle Studios</span>
+              </a>
             </div>
             {switchable && (
               <button
