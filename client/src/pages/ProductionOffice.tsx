@@ -79,7 +79,7 @@ export default function ProductionOffice() {
     { enabled: hasProject, refetchInterval: 4000 }
   );
 
-  // Ã¢ÂÂÃ¢ÂÂ Stripboard: group scenes into shoot days Ã¢ÂÂÃ¢ÂÂ
+  // ── Stripboard: group scenes into shoot days ──
   const [shootDays, setShootDays] = useState<number>(5);
   const [startDate, setStartDate] = useState<string>(() =>
     new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
@@ -115,7 +115,7 @@ export default function ProductionOffice() {
     return days;
   }, [sortedScenes, shootDays, startDate]);
 
-  // Ã¢ÂÂÃ¢ÂÂ Day-out-of-days for cast Ã¢ÂÂÃ¢ÂÂ
+  // ── Day-out-of-days for cast ──
   const dood = useMemo(() => {
     if (!characters || stripboard.length === 0) return [];
     return characters.map((c: any) => {
@@ -130,7 +130,7 @@ export default function ProductionOffice() {
     });
   }, [characters, stripboard]);
 
-  // Ã¢ÂÂÃ¢ÂÂ AI call sheet Ã¢ÂÂÃ¢ÂÂ
+  // ── AI call sheet ──
   const [callDayIdx, setCallDayIdx] = useState(0);
   const [crewCallTime, setCrewCallTime] = useState("06:30");
   const [unitBase, setUnitBase] = useState("");
@@ -172,13 +172,13 @@ export default function ProductionOffice() {
       const sceneList = day.scenes
         .map(
           (s: any, i: number) =>
-            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"}\n  Location: ${s.locationType || s.city || "TBD"}\n  Time of day: ${s.timeOfDay || "TBD"} ÃÂ· Duration: ${fmtDuration(s.duration)}\n  ${s.description || ""}`
+            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"}\n  Location: ${s.locationType || s.city || "TBD"}\n  Time of day: ${s.timeOfDay || "TBD"} · Duration: ${fmtDuration(s.duration)}\n  ${s.description || ""}`
         )
         .join("\n\n");
 
       const prompt = `Generate a professional one-page film call sheet (markdown) for "${project?.title || "Untitled"}".
 
-Shoot day: Day ${day.day} of ${stripboard.length} ÃÂ· Date: ${day.date}
+Shoot day: Day ${day.day} of ${stripboard.length} · Date: ${day.date}
 General crew call: ${crewCallTime}
 Unit base / parking: ${unitBase || "TBD"}
 Locations covered today: ${[...new Set(day.scenes.map((s: any) => s.locationType || s.city || "TBD"))].join(", ")}
@@ -199,7 +199,7 @@ Sections required (in order):
 7. Safety notes & nearest hospital placeholder
 8. Emergency contacts placeholder
 
-Output clean markdown only Ã¢ÂÂ no commentary.`;
+Output clean markdown only — no commentary.`;
 
       await sendMessage.mutateAsync({
         projectId,
@@ -260,7 +260,7 @@ pre{white-space:pre-wrap;font:inherit}
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
           <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-            {sortedScenes.length} scenes ÃÂ· estimated total runtime{" "}
+            {sortedScenes.length} scenes · estimated total runtime{" "}
             {fmtDuration(sortedScenes.reduce((acc: number, s: any) => acc + (s.duration || 0), 0))}.
           </CardDescription>
         </CardHeader>
@@ -303,13 +303,13 @@ pre{white-space:pre-wrap;font:inherit}
                   <Badge variant="outline" className="text-[10px]">{day.date}</Badge>
                 </div>
                 {day.scenes.length === 0 ? (
-                  <p className="text-xs text-muted-foreground italic">Ã¢ÂÂ hold day Ã¢ÂÂ</p>
+                  <p className="text-xs text-muted-foreground italic">— hold day —</p>
                 ) : (
                   day.scenes.map((s: any) => (
                     <div key={s.id} className="text-xs border rounded p-2 bg-[#07070e] space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium truncate">
-                          #{s.orderIndex ?? "?"} ÃÂ· {s.title || "Untitled"}
+                          #{s.orderIndex ?? "?"} · {s.title || "Untitled"}
                         </span>
                         <span className="flex items-center gap-1 text-muted-foreground shrink-0">
                           <Clock className="h-3 w-3" />
@@ -318,7 +318,7 @@ pre{white-space:pre-wrap;font:inherit}
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          {timeIcon(s.timeOfDay)} {s.timeOfDay || "Ã¢ÂÂ"}
+                          {timeIcon(s.timeOfDay)} {s.timeOfDay || "—"}
                         </span>
                         <span className="flex items-center gap-1 truncate">
                           <MapPin className="h-3 w-3" />
@@ -333,7 +333,7 @@ pre{white-space:pre-wrap;font:inherit}
             {stripboard.length === 0 && (
               <div className="py-8 col-span-full text-center">
                 <p className="text-sm text-foreground/80 font-medium">Stripboard empty</p>
-                <p className="text-xs text-muted-foreground mt-1">Write your script in the Scene Editor Ã¢ÂÂ locations, time of day and characters will roll up here automatically.</p>
+                <p className="text-xs text-muted-foreground mt-1">Write your script in the Scene Editor — locations, time of day and characters will roll up here automatically.</p>
               </div>
             )}
           </div>
@@ -373,7 +373,7 @@ pre{white-space:pre-wrap;font:inherit}
                         {working ? (
                           <span className="inline-block w-4 h-4 rounded bg-amber-500 text-white text-[10px] leading-4">W</span>
                         ) : (
-                          <span className="text-muted-foreground/40">ÃÂ·</span>
+                          <span className="text-muted-foreground/40">·</span>
                         )}
                       </td>
                     ))}
@@ -406,7 +406,7 @@ pre{white-space:pre-wrap;font:inherit}
                 <SelectContent>
                   {stripboard.map((d, i) => (
                     <SelectItem key={d.day} value={String(i)}>
-                      Day {d.day} Ã¢ÂÂ {d.date} ({d.scenes.length} scn)
+                      Day {d.day} — {d.date} ({d.scenes.length} scn)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -447,7 +447,7 @@ pre{white-space:pre-wrap;font:inherit}
         </CardContent>
       </Card>
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Daily Production Report (DPR) Ã¢ÂÂ pro-studio wrap report Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ── Daily Production Report (DPR) — pro-studio wrap report ── */}
       {!!projectId && stripboard.length > 0 && (
         <DailyProductionReport
           projectId={projectId}
@@ -457,7 +457,7 @@ pre{white-space:pre-wrap;font:inherit}
         />
       )}
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Chain of Title Ã¢ÂÂ clearance / rights tracker Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ── Chain of Title — clearance / rights tracker ── */}
       {!!projectId && <ChainOfTitleSection projectId={projectId} />}
 
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
@@ -465,7 +465,7 @@ pre{white-space:pre-wrap;font:inherit}
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂ Daily Production Report (DPR) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ── Daily Production Report (DPR) ───────────────────────────────────────
 // After each shoot day, an AD logs scenes shot, hours worked, meal
 // breaks, weather, and any incidents. Insurance, payroll, completion
 // bond, and post-production planning all depend on these reports.
@@ -511,14 +511,14 @@ ${day.scenes.map((s: any) => `- Sc ${s.sceneNumber || s.id} ${s.title || ""} (${
 Generate a clean, distributor-grade DPR in markdown with:
 1. Header: production title, date, day X of Y, location, weather (assume seasonal)
 2. Scenes shot vs scheduled (assume all scheduled were shot unless noted)
-3. Setups / takes summary (estimate professional norms Ã¢ÂÂ 6-12 setups/day)
+3. Setups / takes summary (estimate professional norms — 6-12 setups/day)
 4. Crew/cast call vs actual wrap time (12-hour day baseline)
 5. Meal breaks (breakfast 7am, lunch ~6 hrs after call, no second meal penalty)
 6. Script pages shot vs scheduled
-7. Camera reports Ã¢ÂÂ media transferred, backup status (assume A/B + LTO)
+7. Camera reports — media transferred, backup status (assume A/B + LTO)
 8. Sound / continuity / makeup notes (typical)
-9. Safety incidents (none Ã¢ÂÂ clean day)
-10. Producer's notes Ã¢ÂÂ outstanding items, tomorrow's priorities
+9. Safety incidents (none — clean day)
+10. Producer's notes — outstanding items, tomorrow's priorities
 
 Output clean markdown only, no commentary.`;
       await sendMessage.mutateAsync({ projectId, message: prompt });
@@ -551,7 +551,7 @@ Output clean markdown only, no commentary.`;
             </SelectTrigger>
             <SelectContent>
               {stripboard.map((d: any, i: number) => (
-                <SelectItem key={i} value={String(i)}>Day {d.day} Ã¢ÂÂ {d.date}</SelectItem>
+                <SelectItem key={i} value={String(i)}>Day {d.day} — {d.date}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -570,7 +570,7 @@ Output clean markdown only, no commentary.`;
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂ Chain of Title Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ── Chain of Title ──────────────────────────────────────────────────────
 // Distributors, festivals, and streamers will not accept a film without
 // proof every right has been cleared. This is the producer's checklist.
 const COT_TEMPLATE = [
@@ -636,10 +636,10 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
               Chain of Title
             </CardTitle>
             <CardDescription className="text-xs">
-              Rights & clearances tracker Ã¢ÂÂ required by distributors, festivals, streamers and E&O insurers.
+              Rights & clearances tracker — required by distributors, festivals, streamers and E&O insurers.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="text-xs">{cleared}/{COT_TEMPLATE.length} cleared ÃÂ· {pct}%</Badge>
+          <Badge variant="outline" className="text-xs">{cleared}/{COT_TEMPLATE.length} cleared · {pct}%</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -660,7 +660,7 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
             </div>
             <div className="flex gap-2">
               <Input
-                placeholder="Notes (party, contract date, payment termsÃ¢ÂÂ¦)"
+                placeholder="Notes (party, contract date, payment terms…)"
                 value={item.notes || ""}
                 onChange={(e) => update(item.key, { notes: e.target.value.slice(0, 2000) })}
                 className="h-7 text-xs flex-1"
