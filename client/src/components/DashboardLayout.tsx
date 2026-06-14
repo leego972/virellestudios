@@ -126,6 +126,8 @@ const menuGroups = [
       items: [
         { icon: ShoppingBag, label: "Asset Market", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
         { icon: Zap, label: "VFX & Sound Studio", path: "/vfx-studio" },
+        { icon: Headphones, label: "Music Studio", path: "/music-studio" },
+        { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
         { icon: Shirt, label: "Wardrobe", path: "/wardrobe-marketplace" },
       ],
     },
