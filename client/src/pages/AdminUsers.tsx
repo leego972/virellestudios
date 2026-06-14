@@ -228,13 +228,13 @@ export default function AdminUsers() {
         <Tabs defaultValue="users" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
           <TabsList className="bg-muted/50 w-full sm:w-auto inline-flex min-w-full sm:min-w-0">
-            <TabsTrigger value="users" className="gap-2 flex-1 sm:flex-none">
+            <TabsTrigger value="users" className="gap-2 flex-1 sm:flex-none data-[state=active]:text-amber-400">
               <Users className="w-4 h-4" /> Users
             </TabsTrigger>
-            <TabsTrigger value="projects" className="gap-2 flex-1 sm:flex-none">
+            <TabsTrigger value="projects" className="gap-2 flex-1 sm:flex-none data-[state=active]:text-amber-400">
               <Film className="w-4 h-4" /> Projects
             </TabsTrigger>
-            <TabsTrigger value="beta" className="gap-2 flex-1 sm:flex-none">
+            <TabsTrigger value="beta" className="gap-2 flex-1 sm:flex-none data-[state=active]:text-amber-400">
               <Zap className="w-4 h-4 text-amber-400" /> Beta Testers
             </TabsTrigger>
           </TabsList>

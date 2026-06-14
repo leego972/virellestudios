@@ -307,9 +307,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="list"   className="gap-1.5 text-xs h-7"><Layers className="h-3.5 w-3.5" />Shot List</TabsTrigger>
-              <TabsTrigger value="camera" className="gap-1.5 text-xs h-7"><Camera className="h-3.5 w-3.5" />Camera Sheet</TabsTrigger>
-              <TabsTrigger value="print"  className="gap-1.5 text-xs h-7"><Printer className="h-3.5 w-3.5" />Print View</TabsTrigger>
+              <TabsTrigger value="list"   className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Layers className="h-3.5 w-3.5" />Shot List</TabsTrigger>
+              <TabsTrigger value="camera" className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Camera className="h-3.5 w-3.5" />Camera Sheet</TabsTrigger>
+              <TabsTrigger value="print"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Printer className="h-3.5 w-3.5" />Print View</TabsTrigger>
             </TabsList>
 
             {/* ══ SHOT LIST ══ */}

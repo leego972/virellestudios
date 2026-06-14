@@ -417,8 +417,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="mb-5 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="overview"    className="gap-1.5 text-xs h-7"><BarChart3 className="h-3.5 w-3.5" />Overview</TabsTrigger>
-              <TabsTrigger value="departments" className="gap-1.5 text-xs h-7"><Layers className="h-3.5 w-3.5" />Departments</TabsTrigger>
+              <TabsTrigger value="overview"    className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><BarChart3 className="h-3.5 w-3.5" />Overview</TabsTrigger>
+              <TabsTrigger value="departments" className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Layers className="h-3.5 w-3.5" />Departments</TabsTrigger>
             </TabsList>
 
             {/* ══ OVERVIEW ══ */}

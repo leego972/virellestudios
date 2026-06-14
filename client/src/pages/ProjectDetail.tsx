@@ -756,30 +756,30 @@ export default function ProjectDetail() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-primary/40 [&>*]:data-[state=active]:text-primary">
           {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
-          <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+          <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Clapperboard className="h-3 w-3 hidden sm:inline" />Journey
           </TabsTrigger>
-          <TabsTrigger value="overview" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">Overview</TabsTrigger>
-          <TabsTrigger value="story" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+          <TabsTrigger value="overview" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center data-[state=active]:text-amber-400">Overview</TabsTrigger>
+          <TabsTrigger value="story" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <BookOpen className="h-3 w-3 hidden sm:inline" />Story
           </TabsTrigger>
-          <TabsTrigger value="characters" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">
+          <TabsTrigger value="characters" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center data-[state=active]:text-amber-400">
             <span className="sm:hidden">Cast{characters?.length ? ` ${characters.length}` : ""}</span>
             <span className="hidden sm:inline">Characters {characters?.length ? `(${characters.length})` : ""}</span>
           </TabsTrigger>
-          <TabsTrigger value="scenes" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">
+          <TabsTrigger value="scenes" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center data-[state=active]:text-amber-400">
             Scenes{scenes?.length ? ` ${scenes.length}` : ""}
           </TabsTrigger>
-          <TabsTrigger value="soundtrack" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+          <TabsTrigger value="soundtrack" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Music className="h-3 w-3 hidden sm:inline" />
             <span className="sm:hidden">Music{soundtracks?.length ? ` ${soundtracks.length}` : ""}</span>
             <span className="hidden sm:inline">Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}</span>
           </TabsTrigger>
-          <TabsTrigger value="trailer" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">Trailer</TabsTrigger>
-          <TabsTrigger value="export" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+          <TabsTrigger value="trailer" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center data-[state=active]:text-amber-400">Trailer</TabsTrigger>
+          <TabsTrigger value="export" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Download className="h-3 w-3 hidden sm:inline" />Export
           </TabsTrigger>
-          <TabsTrigger value="tools" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+          <TabsTrigger value="tools" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Settings className="h-3 w-3 hidden sm:inline" />Tools
           </TabsTrigger>
         </TabsList>
@@ -1877,7 +1877,7 @@ export default function ProjectDetail() {
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Award className="h-5 w-5 text-primary" />
+                  <Award className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Credits Editor</p>

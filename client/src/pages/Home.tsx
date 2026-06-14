@@ -29,7 +29,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-primary" />
+            <Sparkles className="h-4 w-4 text-amber-400" />
           </div>
           <div>
             <p className="text-sm font-medium">Getting started checklist</p>
@@ -553,7 +553,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               <Card className="border-dashed bg-card/40">
                 <CardContent className="p-6 flex flex-col items-center text-center gap-4">
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Clapperboard className="h-6 w-6 text-primary" />
+                    <Clapperboard className="h-6 w-6 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">Your first film starts here</p>

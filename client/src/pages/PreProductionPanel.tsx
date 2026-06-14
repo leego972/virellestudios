@@ -2256,31 +2256,31 @@ export default function PreProductionPanel() {
       <div className="max-w-6xl mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 h-auto flex-wrap">
-            <TabsTrigger value="vision" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="vision" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Eye className="h-3.5 w-3.5" />Vision
             </TabsTrigger>
-            <TabsTrigger value="locations" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="locations" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <MapPin className="h-3.5 w-3.5" />Locations
             </TabsTrigger>
-            <TabsTrigger value="vehicles" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="vehicles" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Car className="h-3.5 w-3.5" />Vehicles
             </TabsTrigger>
-            <TabsTrigger value="atmosphere" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="atmosphere" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <CloudSun className="h-3.5 w-3.5" />Atmosphere
             </TabsTrigger>
-            <TabsTrigger value="wardrobe" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="wardrobe" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Camera className="h-3.5 w-3.5" />Wardrobe
             </TabsTrigger>
-            <TabsTrigger value="shotlist" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="shotlist" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Film className="h-3.5 w-3.5" />Shot List
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="schedule" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <CalendarDays className="h-3.5 w-3.5" />Schedule
             </TabsTrigger>
-            <TabsTrigger value="continuity" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="continuity" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Eye className="h-3.5 w-3.5" />Continuity
             </TabsTrigger>
-            <TabsTrigger value="titlecard" className="gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="titlecard" className="gap-2 text-xs sm:text-sm data-[state=active]:text-amber-400">
               <Star className="h-3.5 w-3.5" />Title Cards
             </TabsTrigger>
           </TabsList>

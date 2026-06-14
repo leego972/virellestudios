@@ -481,15 +481,15 @@ export default function NewProject() {
         {/* Tabbed sections — only show in manual/scene-by-scene mode */}
         {mode === "manual" && <Tabs defaultValue="basics" className="w-full">
           <TabsList className="flex flex-wrap w-full h-auto gap-1">
-            <TabsTrigger value="basics" className="gap-1.5">
+            <TabsTrigger value="basics" className="gap-1.5 data-[state=active]:text-amber-400">
               <Film className="h-3.5 w-3.5" />
               Basics
             </TabsTrigger>
-            <TabsTrigger value="story" className="gap-1.5">
+            <TabsTrigger value="story" className="gap-1.5 data-[state=active]:text-amber-400">
               <BookOpen className="h-3.5 w-3.5" />
               Story &amp; Plot
             </TabsTrigger>
-            <TabsTrigger value="narrative" className="gap-1.5">
+            <TabsTrigger value="narrative" className="gap-1.5 data-[state=active]:text-amber-400">
               <Sparkles className="h-3.5 w-3.5" />
               Narrative Details
             </TabsTrigger>

@@ -653,7 +653,7 @@ export default function Movies() {
           ) : (
             <>
               <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 gradient-text-gold">
-                <Clapperboard className="h-6 w-6 text-primary" />
+                <Clapperboard className="h-6 w-6 text-amber-400" />
                 My Movies
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
@@ -772,7 +772,7 @@ export default function Movies() {
           {filteredFolderNames.length === 0 && filteredTopLevel.length === 0 ? (
             <CinematicEmptyState
               quoteSeed="movies-library"
-              icon={<Clapperboard className="h-9 w-9 text-primary/70" />}
+              icon={<Clapperboard className="h-9 w-9 text-amber-400/70" />}
               title={searchQuery ? "No matches in your library" : "Your library is waiting for its first cut"}
               description={
                 searchQuery

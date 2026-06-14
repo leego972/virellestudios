@@ -175,7 +175,7 @@ export default function SharePreview() {
       <header className="border-b">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Film className="h-5 w-5 text-primary" />
+            <Film className="h-5 w-5 text-amber-400" />
             <span className="font-semibold">VirElle Studios</span>
             <Badge variant="outline" className="ml-2 text-[10px]">Review preview</Badge>
           </div>

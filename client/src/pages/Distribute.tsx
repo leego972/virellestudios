@@ -320,19 +320,19 @@ export default function Distribute() {
 
       <Tabs defaultValue="exports">
         <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-4 sm:max-w-2xl">
-          <TabsTrigger value="exports" className="shrink-0 sm:shrink">
+          <TabsTrigger value="exports" className="shrink-0 sm:shrink data-[state=active]:text-amber-400">
             <Film className="w-4 h-4 mr-1" />
             Exports
           </TabsTrigger>
-          <TabsTrigger value="assets" className="shrink-0 sm:shrink">
+          <TabsTrigger value="assets" className="shrink-0 sm:shrink data-[state=active]:text-amber-400">
             <Sparkles className="w-4 h-4 mr-1" />
             Promo Copy
           </TabsTrigger>
-          <TabsTrigger value="filmpage" className="shrink-0 sm:shrink">
+          <TabsTrigger value="filmpage" className="shrink-0 sm:shrink data-[state=active]:text-amber-400">
             <Globe className="w-4 h-4 mr-1" />
             Film Page
           </TabsTrigger>
-          <TabsTrigger value="profile" className="shrink-0 sm:shrink">
+          <TabsTrigger value="profile" className="shrink-0 sm:shrink data-[state=active]:text-amber-400">
             <User className="w-4 h-4 mr-1" />
             Profile
           </TabsTrigger>

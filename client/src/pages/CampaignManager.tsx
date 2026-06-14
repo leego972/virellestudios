@@ -421,7 +421,7 @@ export default function CampaignManager() {
         <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="quick-generate">Quick Generate</TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-1">
+          <TabsTrigger value="analytics" className="flex items-center gap-1 data-[state=active]:text-amber-400">
             <BarChart3 className="h-3 w-3" /> Analytics
           </TabsTrigger>
           <TabsTrigger value="platforms">Platforms</TabsTrigger>
@@ -889,7 +889,7 @@ export default function CampaignManager() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
-                      <Sparkles className="h-4 w-4 text-primary" />
+                      <Sparkles className="h-4 w-4 text-amber-400" />
                       Content Type Performance
                     </CardTitle>
                   </CardHeader>

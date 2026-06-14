@@ -250,10 +250,10 @@ export default function AdminOutreach() {
 
       <Tabs defaultValue="contacts">
         <TabsList className="bg-card border border-border/50">
-          <TabsTrigger value="contacts" className="flex items-center gap-1.5">
+          <TabsTrigger value="contacts" className="flex items-center gap-1.5 data-[state=active]:text-amber-400">
             <List className="h-3.5 w-3.5" /> Contacts
           </TabsTrigger>
-          <TabsTrigger value="campaigns" className="flex items-center gap-1.5">
+          <TabsTrigger value="campaigns" className="flex items-center gap-1.5 data-[state=active]:text-amber-400">
             <Send className="h-3.5 w-3.5" /> Campaigns
           </TabsTrigger>
         </TabsList>

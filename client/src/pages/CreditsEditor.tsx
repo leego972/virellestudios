@@ -166,7 +166,7 @@ export default function CreditsEditor() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
-              <Film className="h-4 w-4 text-primary" />
+              <Film className="h-4 w-4 text-amber-400" />
               Opening Credits
             </CardTitle>
           </CardHeader>
@@ -207,7 +207,7 @@ export default function CreditsEditor() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
-              <Award className="h-4 w-4 text-primary" />
+              <Award className="h-4 w-4 text-amber-400" />
               Closing Credits
             </CardTitle>
           </CardHeader>

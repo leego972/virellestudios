@@ -1018,7 +1018,7 @@ export default function SceneEditor() {
       ) : !scenes?.length ? (
         <CinematicEmptyState
           quoteSeed="scene-editor"
-          icon={<Clapperboard className="h-9 w-9 text-primary/70" />}
+          icon={<Clapperboard className="h-9 w-9 text-amber-400/70" />}
           title="Block out your first scene"
           description="A scene is the smallest unit of story Virelle can shoot. Set the location, time of day, mood, and the action — then generate a preview to see it come alive."
           action={

@@ -389,10 +389,10 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="wheels"   className="gap-1.5 text-xs h-7"><Palette className="h-3.5 w-3.5" />Wheels</TabsTrigger>
-              <TabsTrigger value="primary"  className="gap-1.5 text-xs h-7"><Sliders className="h-3.5 w-3.5" />Primary</TabsTrigger>
-              <TabsTrigger value="luts"     className="gap-1.5 text-xs h-7"><Sparkles className="h-3.5 w-3.5" />LUT Library</TabsTrigger>
-              <TabsTrigger value="scopes"   className="gap-1.5 text-xs h-7"><BarChart3 className="h-3.5 w-3.5" />Scopes</TabsTrigger>
+              <TabsTrigger value="wheels"   className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Palette className="h-3.5 w-3.5" />Wheels</TabsTrigger>
+              <TabsTrigger value="primary"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Sliders className="h-3.5 w-3.5" />Primary</TabsTrigger>
+              <TabsTrigger value="luts"     className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Sparkles className="h-3.5 w-3.5" />LUT Library</TabsTrigger>
+              <TabsTrigger value="scopes"   className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><BarChart3 className="h-3.5 w-3.5" />Scopes</TabsTrigger>
             </TabsList>
 
             {/* ══ WHEELS ══ */}

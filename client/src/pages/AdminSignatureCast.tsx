@@ -140,10 +140,10 @@ export default function AdminSignatureCast() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-zinc-900 border border-zinc-800">
-            <TabsTrigger value="actors" className="text-sm">Actor Config</TabsTrigger>
-            <TabsTrigger value="pricing" className="text-sm">Pricing</TabsTrigger>
-            <TabsTrigger value="entitlements" className="text-sm">Active Licenses</TabsTrigger>
-            <TabsTrigger value="analytics" className="text-sm">Analytics</TabsTrigger>
+            <TabsTrigger value="actors" className="text-sm data-[state=active]:text-amber-400">Actor Config</TabsTrigger>
+            <TabsTrigger value="pricing" className="text-sm data-[state=active]:text-amber-400">Pricing</TabsTrigger>
+            <TabsTrigger value="entitlements" className="text-sm data-[state=active]:text-amber-400">Active Licenses</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-sm data-[state=active]:text-amber-400">Analytics</TabsTrigger>
           </TabsList>
 
           {/* ── ACTOR CONFIG TAB ── */}

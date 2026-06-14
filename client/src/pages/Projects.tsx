@@ -247,7 +247,7 @@ export default function Projects() {
       ) : filtered.length === 0 ? (
         <CinematicEmptyState
           quoteSeed="projects-list"
-          icon={<Film className="h-9 w-9 text-primary/70" />}
+          icon={<Film className="h-9 w-9 text-amber-400/70" />}
           title={search || filterStatus !== "all" ? "Nothing matches those filters" : "Roll camera on your first project"}
           description={
             search || filterStatus !== "all"

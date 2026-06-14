@@ -265,9 +265,9 @@ import { useState } from "react";
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="shotboard"  className="gap-1.5 text-xs h-7"><Layers className="h-3.5 w-3.5" />Shot Board ({allVfx.length})</TabsTrigger>
-              <TabsTrigger value="library"    className="gap-1.5 text-xs h-7"><Star className="h-3.5 w-3.5" />VFX Library</TabsTrigger>
-              <TabsTrigger value="breakdown"  className="gap-1.5 text-xs h-7"><FileBarChart2 className="h-3.5 w-3.5" />Breakdown Report</TabsTrigger>
+              <TabsTrigger value="shotboard"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Layers className="h-3.5 w-3.5" />Shot Board ({allVfx.length})</TabsTrigger>
+              <TabsTrigger value="library"    className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Star className="h-3.5 w-3.5" />VFX Library</TabsTrigger>
+              <TabsTrigger value="breakdown"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><FileBarChart2 className="h-3.5 w-3.5" />Breakdown Report</TabsTrigger>
             </TabsList>
 
             {/* ══════════════════ SHOT BOARD ══════════════════ */}

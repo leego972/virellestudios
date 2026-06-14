@@ -470,7 +470,7 @@ export default function DialogueEditor() {
       <Dialog open={showAiSuggest} onOpenChange={(open) => { setShowAiSuggest(open); if (!open) setAiSuggestions([]); }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-primary" /> AI Dialogue Suggestions</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-amber-400" /> AI Dialogue Suggestions</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>

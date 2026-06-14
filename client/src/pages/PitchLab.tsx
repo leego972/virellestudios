@@ -156,10 +156,10 @@ export default function PitchLab() {
 
       <Tabs value={activeKind as string} onValueChange={(v) => setActiveKind(v as keyof typeof PROMPTS)}>
         <TabsList className="flex w-full overflow-x-auto scrollbar-none sm:grid sm:grid-cols-4 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
-          <TabsTrigger value="logline" className="text-xs"><Wand2 className="h-3 w-3 mr-1" />Loglines</TabsTrigger>
-          <TabsTrigger value="synopsis" className="text-xs"><FileText className="h-3 w-3 mr-1" />Synopsis</TabsTrigger>
-          <TabsTrigger value="treatment" className="text-xs"><FileText className="h-3 w-3 mr-1" />Treatment</TabsTrigger>
-          <TabsTrigger value="deck" className="text-xs"><Layout className="h-3 w-3 mr-1" />Pitch Deck</TabsTrigger>
+          <TabsTrigger value="logline" className="text-xs data-[state=active]:text-amber-400"><Wand2 className="h-3 w-3 mr-1" />Loglines</TabsTrigger>
+          <TabsTrigger value="synopsis" className="text-xs data-[state=active]:text-amber-400"><FileText className="h-3 w-3 mr-1" />Synopsis</TabsTrigger>
+          <TabsTrigger value="treatment" className="text-xs data-[state=active]:text-amber-400"><FileText className="h-3 w-3 mr-1" />Treatment</TabsTrigger>
+          <TabsTrigger value="deck" className="text-xs data-[state=active]:text-amber-400"><Layout className="h-3 w-3 mr-1" />Pitch Deck</TabsTrigger>
         </TabsList>
 
         {(Object.keys(PROMPTS) as Array<keyof typeof PROMPTS>).map((kind) => (

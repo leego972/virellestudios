@@ -273,11 +273,11 @@ import { useState, useRef } from "react";
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 border border-border/40 bg-black/40 h-9 gap-0.5">
-              <TabsTrigger value="mixboard"  className="gap-1.5 text-xs h-7"><Sliders className="h-3.5 w-3.5" />Mix Board</TabsTrigger>
-              <TabsTrigger value="library"   className="gap-1.5 text-xs h-7"><Music className="h-3.5 w-3.5" />SFX Library</TabsTrigger>
-              <TabsTrigger value="aigenerate" className="gap-1.5 text-xs h-7"><Wand2 className="h-3.5 w-3.5" />AI Studio</TabsTrigger>
-              <TabsTrigger value="upload"    className="gap-1.5 text-xs h-7"><Upload className="h-3.5 w-3.5" />Upload</TabsTrigger>
-              <TabsTrigger value="spotting"  className="gap-1.5 text-xs h-7"><LayoutList className="h-3.5 w-3.5" />Spotting Sheet</TabsTrigger>
+              <TabsTrigger value="mixboard"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Sliders className="h-3.5 w-3.5" />Mix Board</TabsTrigger>
+              <TabsTrigger value="library"   className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Music className="h-3.5 w-3.5" />SFX Library</TabsTrigger>
+              <TabsTrigger value="aigenerate" className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Wand2 className="h-3.5 w-3.5" />AI Studio</TabsTrigger>
+              <TabsTrigger value="upload"    className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><Upload className="h-3.5 w-3.5" />Upload</TabsTrigger>
+              <TabsTrigger value="spotting"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><LayoutList className="h-3.5 w-3.5" />Spotting Sheet</TabsTrigger>
             </TabsList>
 
             {/* ══════════════════ MIX BOARD ══════════════════ */}
