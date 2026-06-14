@@ -102,7 +102,7 @@ function StageCard({ stage }: { stage: { stage: string; success: boolean; durati
           <div key={key} className="text-xs">
             <span className="text-muted-foreground capitalize">{key.replace(/_/g, " ")}: </span>
             <span className="text-foreground font-medium">
-              {Array.isArray(value) ? value.join(", ") || "ÃÂ¢ÃÂÃÂ" : String(value)}
+              {Array.isArray(value) ? value.join(", ") || "—" : String(value)}
             </span>
           </div>
         ))}
@@ -248,7 +248,7 @@ export default function AdminAutonomous() {
             Autonomous Pipeline
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Content Creator ÃÂ¢ÃÂÃÂ Marketing Engine ÃÂ¢ÃÂÃÂ SEO Engine ÃÂ¢ÃÂÃÂ all on autopilot
+            Content Creator → Marketing Engine → SEO Engine — all on autopilot
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -314,7 +314,7 @@ export default function AdminAutonomous() {
             {status?.lastRunResult ? (
               <StatusBadge success={status.lastRunResult.success} />
             ) : (
-              <p className="text-sm text-muted-foreground">ÃÂ¢ÃÂÃÂ</p>
+              <p className="text-sm text-muted-foreground">—</p>
             )}
           </CardContent>
         </Card>
@@ -329,7 +329,7 @@ export default function AdminAutonomous() {
           <TabsTrigger value="settings" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Settings</TabsTrigger>
         </TabsList>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Overview Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ── Overview Tab ── */}
         <TabsContent value="overview" className="space-y-4 mt-4">
           {/* Pipeline diagram */}
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -350,7 +350,7 @@ export default function AdminAutonomous() {
                       <p className="text-sm font-medium text-center">{step.label}</p>
                       <p className="text-xs text-muted-foreground text-center mt-1">{step.desc}</p>
                     </div>
-                    {i < 2 && <span className="text-muted-foreground text-xl">ÃÂ¢ÃÂÃÂ</span>}
+                    {i < 2 && <span className="text-muted-foreground text-xl">→</span>}
                   </div>
                 ))}
               </div>
@@ -381,7 +381,7 @@ export default function AdminAutonomous() {
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-emerald-400 gradient-text-gold">
-                      {status.lastRunResult.summary.seoOptimised ? "ÃÂ¢ÃÂÃÂ" : "ÃÂ¢ÃÂÃÂ"}
+                      {status.lastRunResult.summary.seoOptimised ? "✓" : "—"}
                     </p>
                     <p className="text-xs text-muted-foreground">SEO Run</p>
                   </div>
@@ -418,7 +418,7 @@ export default function AdminAutonomous() {
           )}
         </TabsContent>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Controls Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ── Controls Tab ── */}
         <TabsContent value="controls" className="space-y-4 mt-4">
           {/* Scheduler control */}
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -505,7 +505,7 @@ export default function AdminAutonomous() {
                     Full Autonomous Pipeline
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Content Creation ÃÂ¢ÃÂÃÂ Distribution ÃÂ¢ÃÂÃÂ SEO ({selectedPlatforms.length} platforms)
+                    Content Creation → Distribution → SEO ({selectedPlatforms.length} platforms)
                   </p>
                 </div>
                 <Button
@@ -594,7 +594,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Content Queue Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ── Content Queue Tab ── */}
         <TabsContent value="content" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader>
@@ -670,7 +670,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ History Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ── History Tab ── */}
         <TabsContent value="history" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader>
@@ -706,7 +706,7 @@ export default function AdminAutonomous() {
           </Card>
         </TabsContent>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Settings Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ── Settings Tab ── */}
         <TabsContent value="settings" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader>
@@ -731,7 +731,7 @@ export default function AdminAutonomous() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">Generate Videos</p>
-                      <p className="text-xs text-muted-foreground">Generate short video clips (uses Sora/Runway ÃÂ¢ÃÂÃÂ slower)</p>
+                      <p className="text-xs text-muted-foreground">Generate short video clips (uses Sora/Runway — slower)</p>
                     </div>
                     <Switch
                       checked={status.config.generateVideos}
