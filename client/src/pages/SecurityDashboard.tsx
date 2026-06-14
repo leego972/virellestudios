@@ -525,7 +525,7 @@ export default function SecurityDashboard() {
                         )}
                       </td>
                       <td className="py-2 px-3 text-xs text-muted-foreground max-w-[200px] truncate">
-                        {entry.details ? JSON.stringify(entry.details) : "ÃÂ¢ÃÂÃÂ"}
+                        {entry.details ? JSON.stringify(entry.details) : "—"}
                       </td>
                     </tr>
                   ))}
