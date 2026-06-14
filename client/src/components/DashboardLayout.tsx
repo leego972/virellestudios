@@ -154,60 +154,60 @@ const adminMenuItems = [
 ];
 
 const SUPPORTED_LANGUAGES = [
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ English-speaking markets Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "en", name: "English", dir: "ltr", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¸" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ South Asian cinema (Bollywood, Tamil, Telugu, Bengali) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "hi", name: "Ã Â¤Â¹Ã Â¤Â¿Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¦Ã Â¥Â (Hindi)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
-  { code: "ta", name: "Ã Â®Â¤Ã Â®Â®Ã Â®Â¿Ã Â®Â´Ã Â¯Â (Tamil)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
-  { code: "te", name: "Ã Â°Â¤Ã Â±ÂÃ Â°Â²Ã Â±ÂÃ Â°ÂÃ Â±Â (Telugu)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
-  { code: "bn", name: "Ã Â¦Â¬Ã Â¦Â¾Ã Â¦ÂÃ Â¦Â²Ã Â¦Â¾ (Bengali)", dir: "ltr", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ©" },
-  { code: "ml", name: "Ã Â´Â®Ã Â´Â²Ã Â´Â¯Ã Â´Â¾Ã Â´Â³Ã Â´Â (Malayalam)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
-  { code: "mr", name: "Ã Â¤Â®Ã Â¤Â°Ã Â¤Â¾Ã Â¤Â Ã Â¥Â (Marathi)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ East Asian cinema (Korean Wave, J-Cinema, Chinese) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "ko", name: "Ã­ÂÂÃªÂµÂ­Ã¬ÂÂ´ (Korean)", dir: "ltr", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ·" },
-  { code: "ja", name: "Ã¦ÂÂ¥Ã¦ÂÂ¬Ã¨ÂªÂ (Japanese)", dir: "ltr", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂµ" },
-  { code: "zh", name: "Ã¤Â¸Â­Ã¦ÂÂ Ã¦ÂÂ®Ã©ÂÂÃ¨Â¯Â (Mandarin)", dir: "ltr", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ³" },
-  { code: "zh-TW", name: "Ã¤Â¸Â­Ã¦ÂÂ Ã§Â¹ÂÃ©Â«Â (Cantonese/HK)", dir: "ltr", flag: "Ã°ÂÂÂ­Ã°ÂÂÂ°" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Middle Eastern & North African cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "ar", name: "ÃÂ§ÃÂÃÂ¹ÃÂ±ÃÂ¨ÃÂÃÂ© (Arabic)", dir: "rtl", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¦" },
-  { code: "he", name: "ÃÂ¢ÃÂÃÂ¨ÃÂÃÂª (Hebrew)", dir: "rtl", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ±" },
-  { code: "fa", name: "ÃÂÃÂ§ÃÂ±ÃÂ³ÃÂ (Persian/Farsi)", dir: "rtl", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ·" },
-  { code: "tr", name: "TÃÂ¼rkÃÂ§e (Turkish)", dir: "ltr", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ·" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ European cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "fr", name: "FranÃÂ§ais", dir: "ltr", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ·" },
-  { code: "es", name: "EspaÃÂ±ol", dir: "ltr", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¸" },
-  { code: "es-MX", name: "EspaÃÂ±ol (MÃÂ©xico)", dir: "ltr", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ½" },
-  { code: "it", name: "Italiano", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¹" },
-  { code: "de", name: "Deutsch", dir: "ltr", flag: "Ã°ÂÂÂ©Ã°ÂÂÂª" },
-  { code: "pt", name: "PortuguÃÂªs (Brasil)", dir: "ltr", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ·" },
-  { code: "pt-PT", name: "PortuguÃÂªs (Portugal)", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¹" },
-  { code: "ru", name: "ÃÂ ÃÂÃÂÃÂÃÂºÃÂ¸ÃÂ¹", dir: "ltr", flag: "Ã°ÂÂÂ·Ã°ÂÂÂº" },
-  { code: "pl", name: "Polski", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ±" },
-  { code: "nl", name: "Nederlands", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ±" },
-  { code: "sv", name: "Svenska", dir: "ltr", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂª" },
-  { code: "da", name: "Dansk", dir: "ltr", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ°" },
-  { code: "no", name: "Norsk", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ´" },
-  { code: "fi", name: "Suomi", dir: "ltr", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ®" },
-  { code: "el", name: "ÃÂÃÂ»ÃÂ»ÃÂ·ÃÂ½ÃÂ¹ÃÂºÃÂ¬ (Greek)", dir: "ltr", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ·" },
-  { code: "cs", name: "ÃÂeÃÂ¡tina (Czech)", dir: "ltr", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¿" },
-  { code: "hu", name: "Magyar (Hungarian)", dir: "ltr", flag: "Ã°ÂÂÂ­Ã°ÂÂÂº" },
-  { code: "ro", name: "RomÃÂ¢nÃÂ", dir: "ltr", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ´" },
-  { code: "uk", name: "ÃÂ£ÃÂºÃÂÃÂ°ÃÂÃÂ½ÃÂÃÂÃÂºÃÂ° (Ukrainian)", dir: "ltr", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¦" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ African cinema (Nollywood, South African, East African) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "yo", name: "YorÃÂ¹bÃÂ¡", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
-  { code: "ig", name: "Igbo", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
-  { code: "ha", name: "Hausa", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
-  { code: "sw", name: "Kiswahili", dir: "ltr", flag: "Ã°ÂÂÂ°Ã°ÂÂÂª" },
-  { code: "am", name: "Ã¡ÂÂ Ã¡ÂÂÃ¡ÂÂ­Ã¡ÂÂ (Amharic)", dir: "ltr", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¹" },
-  { code: "zu", name: "isiZulu", dir: "ltr", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦" },
-  { code: "af", name: "Afrikaans", dir: "ltr", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦" },
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Southeast Asian cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  { code: "th", name: "Ã Â¸Â Ã Â¸Â²Ã Â¸Â©Ã Â¸Â²Ã Â¹ÂÃ Â¸ÂÃ Â¸Â¢ (Thai)", dir: "ltr", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ­" },
-  { code: "vi", name: "TiÃ¡ÂºÂ¿ng ViÃ¡Â»Ât (Vietnamese)", dir: "ltr", flag: "Ã°ÂÂÂ»Ã°ÂÂÂ³" },
-  { code: "id", name: "Bahasa Indonesia", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ©" },
-  { code: "ms", name: "Bahasa Melayu", dir: "ltr", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¾" },
-  { code: "tl", name: "Filipino", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ­" },
-];
+    // English
+    { code: "en",    name: "English",                   dir: "ltr", flag: "🇺🇸" },
+    // South Asian cinema
+    { code: "hi",    name: "हिन्दी (Hindi)",             dir: "ltr", flag: "🇮🇳" },
+    { code: "ta",    name: "தமிழ் (Tamil)",              dir: "ltr", flag: "🇮🇳" },
+    { code: "te",    name: "తెలుగు (Telugu)",            dir: "ltr", flag: "🇮🇳" },
+    { code: "bn",    name: "বাংলা (Bengali)",            dir: "ltr", flag: "🇧🇩" },
+    { code: "ml",    name: "മലയാളം (Malayalam)",        dir: "ltr", flag: "🇮🇳" },
+    { code: "mr",    name: "मराठी (Marathi)",            dir: "ltr", flag: "🇮🇳" },
+    // East Asian cinema
+    { code: "ko",    name: "한국어 (Korean)",             dir: "ltr", flag: "🇰🇷" },
+    { code: "ja",    name: "日本語 (Japanese)",           dir: "ltr", flag: "🇯🇵" },
+    { code: "zh",    name: "中文普通话 (Mandarin)",       dir: "ltr", flag: "🇨🇳" },
+    { code: "zh-TW", name: "中文繁體 (Cantonese/HK)",    dir: "ltr", flag: "🇭🇰" },
+    // Middle East & North Africa
+    { code: "ar",    name: "العربية (Arabic)",           dir: "rtl", flag: "🇸🇦" },
+    { code: "he",    name: "עברית (Hebrew)",             dir: "rtl", flag: "🇮🇱" },
+    { code: "fa",    name: "فارسی (Persian/Farsi)",      dir: "rtl", flag: "🇮🇷" },
+    { code: "tr",    name: "Türkçe (Turkish)",           dir: "ltr", flag: "🇹🇷" },
+    // European cinema
+    { code: "fr",    name: "Français",                   dir: "ltr", flag: "🇫🇷" },
+    { code: "es",    name: "Español",                    dir: "ltr", flag: "🇪🇸" },
+    { code: "es-MX", name: "Español (México)",           dir: "ltr", flag: "🇲🇽" },
+    { code: "it",    name: "Italiano",                   dir: "ltr", flag: "🇮🇹" },
+    { code: "de",    name: "Deutsch",                    dir: "ltr", flag: "🇩🇪" },
+    { code: "pt",    name: "Português (Brasil)",         dir: "ltr", flag: "🇧🇷" },
+    { code: "pt-PT", name: "Português (Portugal)",       dir: "ltr", flag: "🇵🇹" },
+    { code: "ru",    name: "Русский",                    dir: "ltr", flag: "🇷🇺" },
+    { code: "pl",    name: "Polski",                     dir: "ltr", flag: "🇵🇱" },
+    { code: "nl",    name: "Nederlands",                 dir: "ltr", flag: "🇳🇱" },
+    { code: "sv",    name: "Svenska",                    dir: "ltr", flag: "🇸🇪" },
+    { code: "da",    name: "Dansk",                      dir: "ltr", flag: "🇩🇰" },
+    { code: "no",    name: "Norsk",                      dir: "ltr", flag: "🇳🇴" },
+    { code: "fi",    name: "Suomi",                      dir: "ltr", flag: "🇫🇮" },
+    { code: "el",    name: "Ελληνικά (Greek)",           dir: "ltr", flag: "🇬🇷" },
+    { code: "cs",    name: "Čeština (Czech)",            dir: "ltr", flag: "🇨🇿" },
+    { code: "hu",    name: "Magyar (Hungarian)",         dir: "ltr", flag: "🇭🇺" },
+    { code: "ro",    name: "Română",                     dir: "ltr", flag: "🇷🇴" },
+    { code: "uk",    name: "Українська (Ukrainian)",     dir: "ltr", flag: "🇺🇦" },
+    // African cinema
+    { code: "yo",    name: "Yorùbá",                     dir: "ltr", flag: "🇳🇬" },
+    { code: "ig",    name: "Igbo",                       dir: "ltr", flag: "🇳🇬" },
+    { code: "ha",    name: "Hausa",                      dir: "ltr", flag: "🇳🇬" },
+    { code: "sw",    name: "Kiswahili",                  dir: "ltr", flag: "🇰🇪" },
+    { code: "am",    name: "አማርኛ (Amharic)",            dir: "ltr", flag: "🇪🇹" },
+    { code: "zu",    name: "isiZulu",                    dir: "ltr", flag: "🇿🇦" },
+    { code: "af",    name: "Afrikaans",                  dir: "ltr", flag: "🇿🇦" },
+    // Southeast Asian cinema
+    { code: "th",    name: "ภาษาไทย (Thai)",             dir: "ltr", flag: "🇹🇭" },
+    { code: "vi",    name: "Tiếng Việt (Vietnamese)",    dir: "ltr", flag: "🇻🇳" },
+    { code: "id",    name: "Bahasa Indonesia",           dir: "ltr", flag: "🇮🇩" },
+    { code: "ms",    name: "Bahasa Melayu",              dir: "ltr", flag: "🇲🇾" },
+    { code: "tl",    name: "Filipino",                   dir: "ltr", flag: "🇵🇭" },
+  ]
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 240;
@@ -233,10 +233,10 @@ export default function DashboardLayout({
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
     '/signature-cast', '/talent-search',
-    // Publicly shareable content Ã¢ÂÂ accessible without login
+    // Publicly shareable content — accessible without login
     '/share', '/films', '/creators', '/crowdfund', '/collections',
   ];
-  // Use window.location.pathname as the authoritative path Ã¢ÂÂ wouter's useLocation()
+  // Use window.location.pathname as the authoritative path — wouter's useLocation()
   // may not reflect the actual URL during the initial render on hard page load.
   const actualPath = typeof window !== 'undefined' ? window.location.pathname : currentPath;
   const isPublicRoute = PUBLIC_ROUTES.some(r => actualPath === r || actualPath.startsWith(r + '/'));
@@ -262,7 +262,7 @@ export default function DashboardLayout({
   if (!user && isPublicRoute) {
     return <>{children}</>;
   }
-  // Admin route guard Ã¢ÂÂ non-admins are silently redirected to home
+  // Admin route guard — non-admins are silently redirected to home
   if (actualPath.startsWith('/admin') && (user as any)?.role !== 'admin') {
     window.location.href = '/';
     return <DashboardLayoutSkeleton />;
@@ -390,7 +390,7 @@ function DashboardLayoutContent({
                   </span>
                 </div>
               )}
-              {/* v6.62 Ã¢ÂÂ RenderQueueTray lives in the top bar only (see below)
+              {/* v6.62 — RenderQueueTray lives in the top bar only (see below)
                   so we don't end up with two trays polling at the same time on
                   desktop. The sidebar keeps just the NotificationBell. */}
               {!isCollapsed && <NotificationBell />}
@@ -469,7 +469,7 @@ function DashboardLayoutContent({
               <a
                 href="/pricing"
                 className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors group-data-[collapsible=icon]:justify-center"
-                title={(user as any).isAdmin ? "Admin Ã¢ÂÂ Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining Ã¢ÂÂ click to top up`}
+                title={(user as any).isAdmin ? "Admin — Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining — click to top up`}
               >
                 <div className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)", border: "1.5px solid #d4af37" }}>
                   <HollywoodIcon tool="credits" size={20} className="opacity-90" />
@@ -477,10 +477,10 @@ function DashboardLayoutContent({
                 <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold" style={{ color: "#d4af37" }}>
-                      {(user as any).isAdmin ? "Ã¢ÂÂ credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
+                      {(user as any).isAdmin ? "∞ credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
                     </span>
                     {!(user as any).isAdmin && (
-                      <span className="text-[9px] text-muted-foreground hover:text-amber-400 transition-colors">Top up Ã¢ÂÂ</span>
+                      <span className="text-[9px] text-muted-foreground hover:text-amber-400 transition-colors">Top up →</span>
                     )}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-muted overflow-hidden">
@@ -495,7 +495,7 @@ function DashboardLayoutContent({
                 </div>
               </a>
             )}
-            {/* Leego branding Ã¢ÂÂ tap to pulse to ~2cm for 2s, then shrink back */}
+            {/* Leego branding — tap to pulse to ~2cm for 2s, then shrink back */}
             <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
               <LeegoLogo
                 className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
@@ -533,7 +533,7 @@ function DashboardLayoutContent({
                   >
                     <span className="text-base">{lang.flag}</span>
                     <span>{lang.name}</span>
-                    {uiLang === lang.code && <span className="ml-auto text-amber-400 text-xs">Ã¢ÂÂ</span>}
+                    {uiLang === lang.code && <span className="ml-auto text-amber-400 text-xs">✓</span>}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -588,7 +588,7 @@ function DashboardLayoutContent({
                       tier === "indie" ? "bg-green-500/10 text-green-400 border border-green-500/20" :
                       "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      {user?.role === "admin" ? "Ã¢Â­Â Admin" :
+                      {user?.role === "admin" ? "⭐ Admin" :
                        (tier === "industry" || tier === "independent" || tier === "creator" || tier === "studio") ? "Industry" :
                        tier === "amateur" ? "Creator" :
                        tier === "indie" ? "Indie" :
@@ -658,11 +658,11 @@ function DashboardLayoutContent({
                 onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }))}
                 className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg transition-colors text-xs text-muted-foreground" style={{ border:"1px solid rgba(255,255,255,0.1)", background:"rgba(255,255,255,0.04)" }}
                 aria-label="Open command palette"
-                title="Quick navigation (Ã¢ÂÂK)"
+                title="Quick navigation (⌘K)"
               >
                 <Search className="h-3.5 w-3.5" />
-                <span>SearchÃ¢ÂÂ¦</span>
-                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">Ã¢ÂÂK</kbd>
+                <span>Search…</span>
+                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">⌘K</kbd>
               </button>
               <RenderQueueTray />
               <NotificationBell />
@@ -697,7 +697,7 @@ function DashboardLayoutContent({
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative z-10 overscroll-contain" style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
-          {/* Gold VS watermark branding Ã¢ÂÂ bottom-right corner, subtle and non-intrusive */}
+          {/* Gold VS watermark branding — bottom-right corner, subtle and non-intrusive */}
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
