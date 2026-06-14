@@ -64,6 +64,16 @@ import React from 'react';
           transition: 'filter 0.6s ease',
         }}>
 
+          {/* Gold ambient glow behind the transparent mask */}
+          <div style={{
+            position: 'absolute',
+            inset: '-15%',
+            background: 'radial-gradient(ellipse 60% 50% at 50% 52%, rgba(201,168,76,0.28) 0%, rgba(180,130,40,0.12) 45%, transparent 70%)',
+            filter: 'blur(20px)',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }} />
+
           {/* Mask image */}
           <img
             src="/virelle-face.png"
