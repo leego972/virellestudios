@@ -87,7 +87,21 @@ export default function About() {
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="About Virelle Studios" description="Learn how Virelle Studios is building the world's most powerful AI film production platform — from script to screen in one unified studio." />
+      <SiteHead
+          title="About Virelle Studios"
+          description="Learn how Virelle Studios is building the world's most powerful AI film production platform — from script to screen in one unified studio."
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Virelle Studios",
+            "url": "https://virelle.life",
+            "logo": "https://virelle.life/virelle-logo-square.png",
+            "foundingDate": "2025",
+            "description": "AI film production platform — screenplay, scene generation, voice acting, sound editing, subtitle translation, and film funding directory in one unified workflow.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Web, iOS, Android"
+          }}
+        />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b" style={{background:"rgba(7,7,14,0.97)",backdropFilter:"blur(24px)",borderBottomColor:"rgba(255,255,255,0.07)"}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
