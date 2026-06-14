@@ -996,3 +996,63 @@
     font-display: swap;
   }
   
+
+  /* ── Virelle Cinematic Glass Card ─────────────────────────────────────────── */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(212, 175, 55, 0.25);
+  }
+
+  /* ── Cinematic sticky header ───────────────────────────────────────────────── */
+  .glass-header {
+    background: rgba(7, 7, 14, 0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  /* ── Gold button (primary CTA) ────────────────────────────────────────────── */
+  .btn-gold {
+    background: linear-gradient(135deg, #D4AF37, #b8960c);
+    color: #000;
+    font-weight: 600;
+  }
+  .btn-gold:hover { opacity: 0.9; }
+
+  /* ── Cinematic stats number ─────────────────────────────────────────────────── */
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, #D4AF37 0%, #f0d060 50%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Gold border glow (e.g. selected card) ────────────────────────────────── */
+  .gold-ring {
+    outline: 1px solid rgba(212, 175, 55, 0.6);
+    outline-offset: 2px;
+  }
+
+  /* ── Subtle gold glow shadow ──────────────────────────────────────────────── */
+  .gold-glow {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ── Cinematic gradient text ─────────────────────────────────────────────────── */
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #f0d060 50%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
