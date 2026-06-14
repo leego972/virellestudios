@@ -1,1 +1,380 @@
-aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlIH0gZnJvbSAicmVhY3QiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IHRvYXN0IH0gZnJvbSAic29ubmVyIjsKaW1wb3J0IHsgCiAgVXBsb2FkLCAKICBNYXBQaW4sIAogIFN1biwgCiAgTW9vbiwgCiAgQ2xvdWRSYWluLCAKICBXaW5kLCAKICBaYXAsIAogIENoZWNrQ2lyY2xlLCAKICBBbGVydENpcmNsZSwKICBWaWRlbywKICBDaGV2cm9uUmlnaHQsCiAgU2V0dGluZ3MKfSBmcm9tICJsdWNpZGUtcmVhY3QiOwoKaW1wb3J0IHsgdXNlUGFyYW1zLCB1c2VMb2NhdGlvbiB9IGZyb20gIndvdXRlciI7Cgpjb25zdCBMb2NhdGlvblJlY3JlYXRpb246IFJlYWN0LkZDID0gKCkgPT4gewogIGNvbnN0IHBhcmFtcyA9IHVzZVBhcmFtczx7IHByb2plY3RJZDogc3RyaW5nIH0+KCk7CiAgY29uc3QgWywgbmF2aWdhdGVdID0gdXNlTG9jYXRpb24oKTsKICBjb25zdCBwcm9qZWN0SWQgPSBwYXJzZUludChwYXJhbXM/LnByb2plY3RJZCB8fCAiMCIpOwogIGNvbnN0IFt2aWRlb1VybCwgc2V0VmlkZW9VcmxdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFtsb2NhdGlvbk5hbWUsIHNldExvY2F0aW9uTmFtZV0gPSB1c2VTdGF0ZSgiIik7CiAgY29uc3QgW3VwbG9hZGluZywgc2V0VXBsb2FkaW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbc2VsZWN0ZWRMb2NhdGlvbklkLCBzZXRTZWxlY3RlZExvY2F0aW9uSWRdID0gdXNlU3RhdGU8bnVtYmVyIHwgbnVsbD4obnVsbCk7CiAgY29uc3QgW3ZpZXcsIHNldFZpZXddID0gdXNlU3RhdGU8InVwbG9hZCIgfCAiZ2FsbGVyeSI+KCJnYWxsZXJ5Iik7CiAgCiAgY29uc3QgW2VudlNldHRpbmdzLCBzZXRFbnZTZXR0aW5nc10gPSB1c2VTdGF0ZSh7CiAgICB0aW1lT2ZEYXk6ICJhZnRlcm5vb24iLAogICAgd2VhdGhlcjogImNsZWFyIiwKICAgIGxpZ2h0aW5nOiAibmF0dXJhbCIKICB9KTsKICBjb25zdCBbc2VsZWN0ZWRTY2VuZUlkcywgc2V0U2VsZWN0ZWRTY2VuZUlkc10gPSB1c2VTdGF0ZTxudW1iZXJbXT4oW10pOwoKICBjb25zdCB1dGlscyA9IHRycGMudXNlQ29udGV4dCgpOwogIGNvbnN0IHsgZGF0YTogbG9jYXRpb25zTGlzdCwgaXNMb2FkaW5nOiBsb2FkaW5nTG9jYXRpb25zIH0gPSB0cnBjLmxvY2F0aW9uUmVjcmVhdGlvbi5saXN0LnVzZVF1ZXJ5KHsgCiAgICBwcm9qZWN0SWQ6IHByb2plY3RJZCAKICB9KTsKCiAgY29uc3QgeyBkYXRhOiBzY2VuZXMgPSBbXSB9ID0gdHJwYy5zY2VuZS5saXN0QnlQcm9qZWN0LnVzZVF1ZXJ5KHsKICAgIHByb2plY3RJZDogcHJvamVjdElkCiAgfSk7CgogIGNvbnN0IGFzc2lnbk11dGF0aW9uID0gdHJwYy5sb2NhdGlvblJlY3JlYXRpb24uYXNzaWduVG9TY2VuZXMudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoKSA9PiB7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIkxvY2F0aW9uIGFzc2lnbmVkIHRvIHNlbGVjdGVkIHNjZW5lcyIpOwogICAgICBzZXRTZWxlY3RlZFNjZW5lSWRzKFtdKTsKICAgIH0KICB9KTsKCiAgY29uc3QgYW5hbHl6ZU11dGF0aW9uID0gdHJwYy5sb2NhdGlvblJlY3JlYXRpb24uYW5hbHl6ZVZpZGVvLnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKGRhdGEpID0+IHsKICAgICAgc2V0U2VsZWN0ZWRMb2NhdGlvbklkKGRhdGEubG9jYXRpb25JZCk7CiAgICAgIHNldFVwbG9hZGluZyhmYWxzZSk7CiAgICAgIHV0aWxzLmxvY2F0aW9uUmVjcmVhdGlvbi5saXN0LmludmFsaWRhdGUoKTsKICAgICAgc2V0VmlldygidXBsb2FkIik7CiAgICB9CiAgfSk7CgogIGNvbnN0IGFwcGx5RW52TXV0YXRpb24gPSB0cnBjLmxvY2F0aW9uUmVjcmVhdGlvbi5hcHBseUVudmlyb25tZW50LnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKCkgPT4gewogICAgICB1dGlscy5sb2NhdGlvblJlY3JlYXRpb24ubGlzdC5pbnZhbGlkYXRlKCk7CiAgICB9CiAgfSk7CgogIGNvbnN0IGRlbGV0ZU11dGF0aW9uID0gdHJwYy5sb2NhdGlvblJlY3JlYXRpb24uZGVsZXRlLnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKCkgPT4gewogICAgICB1dGlscy5sb2NhdGlvblJlY3JlYXRpb24ubGlzdC5pbnZhbGlkYXRlKCk7CiAgICAgIGlmIChzZWxlY3RlZExvY2F0aW9uSWQpIHNldFNlbGVjdGVkTG9jYXRpb25JZChudWxsKTsKICAgIH0KICB9KTsKCiAgY29uc3QgaGFuZGxlVXBsb2FkID0gYXN5bmMgKCkgPT4gewogICAgaWYgKCF2aWRlb1VybCB8fCAhbG9jYXRpb25OYW1lKSByZXR1cm47CiAgICBzZXRVcGxvYWRpbmcodHJ1ZSk7CiAgICBhbmFseXplTXV0YXRpb24ubXV0YXRlKHsKICAgICAgcHJvamVjdElkOiBwcm9qZWN0SWQsCiAgICAgIHZpZGVvVXJsLAogICAgICBsb2NhdGlvbk5hbWUKICAgIH0pOwogIH07CgogIGNvbnN0IGhhbmRsZUFwcGx5RW52ID0gKCkgPT4gewogICAgaWYgKCFzZWxlY3RlZExvY2F0aW9uSWQpIHJldHVybjsKICAgIGFwcGx5RW52TXV0YXRpb24ubXV0YXRlKHsKICAgICAgbG9jYXRpb25JZDogc2VsZWN0ZWRMb2NhdGlvbklkLAogICAgICAuLi5lbnZTZXR0aW5ncyBhcyBhbnkKICAgIH0pOwogICAgCiAgICBpZiAoc2VsZWN0ZWRTY2VuZUlkcy5sZW5ndGggPiAwKSB7CiAgICAgIGFzc2lnbk11dGF0aW9uLm11dGF0ZSh7CiAgICAgICAgbG9jYXRpb25JZDogc2VsZWN0ZWRMb2NhdGlvbklkLAogICAgICAgIHNjZW5lSWRzOiBzZWxlY3RlZFNjZW5lSWRzCiAgICAgIH0pOwogICAgfQogIH07CgogIGNvbnN0IHRvZ2dsZVNjZW5lID0gKGlkOiBudW1iZXIpID0+IHsKICAgIHNldFNlbGVjdGVkU2NlbmVJZHMocHJldiA9PiAKICAgICAgcHJldi5pbmNsdWRlcyhpZCkgPyBwcmV2LmZpbHRlcihzID0+IHMgIT09IGlkKSA6IFsuLi5wcmV2LCBpZF0KICAgICk7CiAgfTsKCiAgY29uc3Qgc2VsZWN0TG9jYXRpb24gPSAobG9jOiBhbnkpID0+IHsKICAgIHNldFNlbGVjdGVkTG9jYXRpb25JZChsb2MuaWQpOwogICAgc2V0RW52U2V0dGluZ3MoewogICAgICB0aW1lT2ZEYXk6IGxvYy5iZXN0VGltZU9mRGF5IHx8ICJhZnRlcm5vb24iLAogICAgICB3ZWF0aGVyOiBsb2Mud2VhdGhlclByZWZlcmVuY2VzPy5bMF0gfHwgImNsZWFyIiwKICAgICAgbGlnaHRpbmc6ICJuYXR1cmFsIgogICAgfSk7CiAgICBzZXRWaWV3KCJ1cGxvYWQiKTsKICB9OwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTZ4bCBteC1hdXRvIHAtOCB0ZXh0LXdoaXRlIG1pbi1oLXNjcmVlbiIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIG1iLTggYm9yZGVyLWIgYm9yZGVyLXppbmMtODAwIHBiLTYiPgogICAgICAgIDxkaXY+CiAgICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTR4bCBmb250LWJvbGQgdHJhY2tpbmctdGlnaHRlciBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyI+CiAgICAgICAgICAgIDxNYXBQaW4gY2xhc3NOYW1lPSJ0ZXh0LWJsdWUtNTAwIHctMTAgaC0xMCIgLz4KICAgICAgICAgICAgTE9DQVRJT04gUkVDUkVBVElPTgogICAgICAgICAgPC9oMT4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC16aW5jLTQwMCBtdC0yIHRleHQtbGciPlJlY3JlYXRlIHJlYWwtd29ybGQgc2V0dGluZ3Mgd2l0aCBBSS1kcml2ZW4gZW52aXJvbm1lbnRhbCBjb250cm9scy48L3A+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTQiPgogICAgICAgICAgPGJ1dHRvbiAKICAgICAgICAgICAgb25DbGljaz17KCkgPT4gbmF2aWdhdGUoYC9wcm9qZWN0cy8ke3Byb2plY3RJZH0vc2NlbmVzYCl9CiAgICAgICAgICAgIGNsYXNzTmFtZT0icHgtNiBweS0yIGJvcmRlciBib3JkZXItemluYy03MDAgaG92ZXI6YmctemluYy05MDAgcm91bmRlZC1mdWxsIHRyYW5zaXRpb24tYWxsIGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIgogICAgICAgICAgPgogICAgICAgICAgICBCYWNrIHRvIFNjZW5lcwogICAgICAgICAgPC9idXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTQgbWItOCI+CiAgICAgICAgPGJ1dHRvbiAKICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldFZpZXcoImdhbGxlcnkiKX0KICAgICAgICAgIGNsYXNzTmFtZT17YHB4LTYgcHktMiByb3VuZGVkLWZ1bGwgZm9udC1ib2xkIHRyYW5zaXRpb24tYWxsICR7dmlldyA9PT0gImdhbGxlcnkiID8gImJnLWJsdWUtNjAwIHRleHQtd2hpdGUiIDogImJnLXppbmMtOTAwIHRleHQtemluYy01MDAgaG92ZXI6YmctemluYy04MDAifWB9CiAgICAgICAgPgogICAgICAgICAgTXkgTG9jYXRpb25zCiAgICAgICAgPC9idXR0b24+CiAgICAgICAgPGJ1dHRvbiAKICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgc2V0VmlldygidXBsb2FkIik7CiAgICAgICAgICAgIHNldFNlbGVjdGVkTG9jYXRpb25JZChudWxsKTsKICAgICAgICAgIH19CiAgICAgICAgICBjbGFzc05hbWU9e2BweC02IHB5LTIgcm91bmRlZC1mdWxsIGZvbnQtYm9sZCB0cmFuc2l0aW9uLWFsbCAke3ZpZXcgPT09ICJ1cGxvYWQiICYmICFzZWxlY3RlZExvY2F0aW9uSWQgPyAiYmctYmx1ZS02MDAgdGV4dC13aGl0ZSIgOiAiYmctemluYy05MDAgdGV4dC16aW5jLTUwMCBob3ZlcjpiZy16aW5jLTgwMCJ9YH0KICAgICAgICA+CiAgICAgICAgICBOZXcgUmVjcmVhdGlvbgogICAgICAgIDwvYnV0dG9uPgogICAgICA8L2Rpdj4KCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIGxnOmdyaWQtY29scy0zIGdhcC04Ij4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibGc6Y29sLXNwYW4tMiBzcGFjZS15LTYiPgogICAgICAgICAge3ZpZXcgPT09ICJnYWxsZXJ5IiA/ICgKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgbWQ6Z3JpZC1jb2xzLTIgZ2FwLTQiPgogICAgICAgICAgICAgIHtsb2FkaW5nTG9jYXRpb25zID8gKAogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNvbC1zcGFuLTIgcHktMjAgdGV4dC1jZW50ZXIgdGV4dC16aW5jLTUwMCI+TG9hZGluZyB5b3VyIGxvY2F0aW9ucy4uLjwvZGl2PgogICAgICAgICAgICAgICkgOiBsb2NhdGlvbnNMaXN0Py5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY29sLXNwYW4tMiBweS0yMCB0ZXh0LWNlbnRlciBiZy16aW5jLTkwMC8zMCByb3VuZGVkLTN4bCBib3JkZXIgYm9yZGVyLWRhc2hlZCBib3JkZXItemluYy04MDAiPgogICAgICAgICAgICAgICAgICA8TWFwUGluIGNsYXNzTmFtZT0idy0xMiBoLTEyIHRleHQtemluYy03MDAgbXgtYXV0byBtYi00IiAvPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtemluYy01MDAiPk5vIGxvY2F0aW9ucyBmb3VuZC4gVXBsb2FkIGEgdmlkZW8gdG8gZ2V0IHN0YXJ0ZWQuPC9wPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICAgIGxvY2F0aW9uc0xpc3Q/Lm1hcCgobG9jKSA9PiAoCiAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXtsb2MuaWR9IGNsYXNzTmFtZT0iYmctemluYy05MDAvNTAgYm9yZGVyIGJvcmRlci16aW5jLTgwMCByb3VuZGVkLTN4bCBwLTYgaG92ZXI6Ym9yZGVyLWJsdWUtNTAwLzUwIHRyYW5zaXRpb24tYWxsIGdyb3VwIj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBqdXN0aWZ5LWJldHdlZW4gaXRlbXMtc3RhcnQgbWItNCI+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJ0ZXh0LXhsIGZvbnQtYm9sZCI+e2xvYy5uYW1lfTwvaDM+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNTAwIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgbXQtMSI+e2xvYy5sb2NhdGlvblR5cGUgfHwgIkludGVyaW9yIn08L3A+CiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPXtgcHgtMyBweS0xIHJvdW5kZWQtZnVsbCB0ZXh0LVsxMHB4XSBmb250LWJsYWNrIHVwcGVyY2FzZSAke2xvYy5haVJlY3JlYXRpb25TdGF0dXMgPT09ICdjb21wbGV0ZWQnID8gJ2JnLWdyZWVuLTUwMC8xMCB0ZXh0LWdyZWVuLTUwMCcgOiAnYmctYmx1ZS01MDAvMTAgdGV4dC1ibHVlLTUwMCd9YH0+CiAgICAgICAgICAgICAgICAgICAgICAgIHtsb2MuYWlSZWNyZWF0aW9uU3RhdHVzfQogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIgbXQtNiI+CiAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIAogICAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZWxlY3RMb2NhdGlvbihsb2MpfQogICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImZsZXgtMSBiZy16aW5jLTgwMCBob3ZlcjpiZy16aW5jLTcwMCBweS0yIHJvdW5kZWQteGwgdGV4dC1zbSBmb250LWJvbGQgdHJhbnNpdGlvbi1hbGwiCiAgICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgIEVkaXQgRW52aXJvbm1lbnQKICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiAKICAgICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gZGVsZXRlTXV0YXRpb24ubXV0YXRlKHsgbG9jYXRpb25JZDogbG9jLmlkIH0pfQogICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InB4LTQgYmctcmVkLTUwMC8xMCBob3ZlcjpiZy1yZWQtNTAwLzIwIHRleHQtcmVkLTUwMCBweS0yIHJvdW5kZWQteGwgdHJhbnNpdGlvbi1hbGwiCiAgICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgIERlbGV0ZQogICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgKSkKICAgICAgICAgICAgICApfQogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICkgOiAoCiAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgey8qIFN0ZXAgMTogVXBsb2FkIFZpZGVvICovfQogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy16aW5jLTkwMC81MCBwLTggcm91bmRlZC0zeGwgYm9yZGVyIGJvcmRlci16aW5jLTgwMCBiYWNrZHJvcC1ibHVyLXNtIj4KICAgICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtMnhsIGZvbnQtc2VtaWJvbGQgbWItNiBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgICAgIDxWaWRlbyBjbGFzc05hbWU9InRleHQtYmx1ZS00MDAiIC8+CiAgICAgICAgICAgICAgICAgIHtzZWxlY3RlZExvY2F0aW9uSWQgPyAiTG9jYXRpb24gRGV0YWlscyIgOiAiMS4gVXBsb2FkIExvY2F0aW9uIFJlZmVyZW5jZSJ9CiAgICAgICAgICAgICAgICA8L2gyPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNCI+CiAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgPGxhYmVsIGNsYXNzTmFtZT0iYmxvY2sgdGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LXppbmMtNTAwIG1iLTIgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+TG9jYXRpb24gTmFtZTwvbGFiZWw+CiAgICAgICAgICAgICAgICAgICAgPGlucHV0IAogICAgICAgICAgICAgICAgICAgICAgdHlwZT0idGV4dCIKICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJlLmcuLCBKZXJyeSdzIEFwYXJ0bWVudCwgVGhlIEJ1bmR5IEhvdXNlIgogICAgICAgICAgICAgICAgICAgICAgdmFsdWU9e2xvY2F0aW9uTmFtZSB8fCAoc2VsZWN0ZWRMb2NhdGlvbklkID8gbG9jYXRpb25zTGlzdD8uZmluZChsID0+IGwuaWQgPT09IHNlbGVjdGVkTG9jYXRpb25JZCk/Lm5hbWUgOiAiIil9CiAgICAgICAgICAgICAgICAgICAgICByZWFkT25seT17ISFzZWxlY3RlZExvY2F0aW9uSWR9CiAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldExvY2F0aW9uTmFtZShlLnRhcmdldC52YWx1ZSl9CiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBiZy1ibGFjayBib3JkZXIgYm9yZGVyLXppbmMtODAwIHJvdW5kZWQteGwgcC00IGZvY3VzOnJpbmctMiBmb2N1czpyaW5nLWJsdWUtNTAwIG91dGxpbmUtbm9uZSB0cmFuc2l0aW9uLWFsbCIKICAgICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgeyFzZWxlY3RlZExvY2F0aW9uSWQgJiYgKAogICAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgICA8bGFiZWwgY2xhc3NOYW1lPSJibG9jayB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRleHQtemluYy01MDAgbWItMiB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij5WaWRlbyBVUkwgKFMzIG9yIFJlZmVyZW5jZSk8L2xhYmVsPgogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTMiPgogICAgICAgICAgICAgICAgICAgICAgICA8aW5wdXQgCiAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZT0idGV4dCIKICAgICAgICAgICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0iaHR0cHM6Ly8uLi4iCiAgICAgICAgICAgICAgICAgICAgICAgICAgdmFsdWU9e3ZpZGVvVXJsfQogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0VmlkZW9VcmwoZS50YXJnZXQudmFsdWUpfQogICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iZmxleC0xIGJnLWJsYWNrIGJvcmRlciBib3JkZXItemluYy04MDAgcm91bmRlZC14bCBwLTQgZm9jdXM6cmluZy0yIGZvY3VzOnJpbmctYmx1ZS01MDAgb3V0bGluZS1ub25lIHRyYW5zaXRpb24tYWxsIgogICAgICAgICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIAogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9e2hhbmRsZVVwbG9hZH0KICAgICAgICAgICAgICAgICAgICAgICAgICBkaXNhYmxlZD17dXBsb2FkaW5nIHx8ICF2aWRlb1VybH0KICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImJnLWJsdWUtNjAwIGhvdmVyOmJnLWJsdWUtNTAwIGRpc2FibGVkOm9wYWNpdHktNTAgcHgtOCByb3VuZGVkLXhsIGZvbnQtYm9sZCB0cmFuc2l0aW9uLWFsbCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiIKICAgICAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgICAgIHt1cGxvYWRpbmcgPyA8WmFwIGNsYXNzTmFtZT0iYW5pbWF0ZS1zcGluIiAvPiA6IDxVcGxvYWQgLz59CiAgICAgICAgICAgICAgICAgICAgICAgICAgQU5BTFlaRQogICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgIHthbmFseXplTXV0YXRpb24uaXNTdWNjZXNzICYmICFzZWxlY3RlZExvY2F0aW9uSWQgJiYgKAogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibXQtNiBwLTQgYmctYmx1ZS01MDAvMTAgYm9yZGVyIGJvcmRlci1ibHVlLTUwMC8yMCByb3VuZGVkLTJ4bCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyB0ZXh0LWJsdWUtNDAwIj4KICAgICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTYgaC02IiAvPgogICAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9ImZvbnQtYm9sZCI+QW5hbHlzaXMgVW5kZXJ3YXk8L3A+CiAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20iPkFJIGlzIGV4dHJhY3RpbmcgYXJjaGl0ZWN0dXJhbCBkZXRhaWxzIGZyb20geW91ciB2aWRlby48L3A+CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgICAgey8qIFN0ZXAgMjogRW52aXJvbm1lbnQgQ29udHJvbHMgKi99CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9e2BiZy16aW5jLTkwMC81MCBwLTggcm91bmRlZC0zeGwgYm9yZGVyIGJvcmRlci16aW5jLTgwMCBiYWNrZHJvcC1ibHVyLXNtIHRyYW5zaXRpb24tYWxsICR7IXNlbGVjdGVkTG9jYXRpb25JZCA/ICdvcGFjaXR5LTUwIHBvaW50ZXItZXZlbnRzLW5vbmUnIDogJyd9YH0+CiAgICAgICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LTJ4bCBmb250LXNlbWlib2xkIG1iLTYgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgICA8U2V0dGluZ3MgY2xhc3NOYW1lPSJ0ZXh0LXB1cnBsZS00MDAiIC8+CiAgICAgICAgICAgICAgICAgIDIuIEVudmlyb25tZW50YWwgQ29udHJvbHMKICAgICAgICAgICAgICAgIDwvaDI+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMSBtZDpncmlkLWNvbHMtMyBnYXAtNiI+CiAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgPGxhYmVsIGNsYXNzTmFtZT0iYmxvY2sgdGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LXppbmMtNTAwIG1iLTQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+VGltZSBvZiBEYXk8L2xhYmVsPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0yIGdhcC0yIj4KICAgICAgICAgICAgICAgICAgICAgIHtbImRhd24iLCAibW9ybmluZyIsICJhZnRlcm5vb24iLCAiZXZlbmluZyIsICJuaWdodCIsICJnb2xkZW4taG91ciJdLm1hcCgodCkgPT4gKAogICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICAgICAgICAgICAga2V5PXt0fQogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldEVudlNldHRpbmdzKHsuLi5lbnZTZXR0aW5ncywgdGltZU9mRGF5OiB0fSl9CiAgICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgcC0zIHJvdW5kZWQteGwgYm9yZGVyIHRyYW5zaXRpb24tYWxsIGNhcGl0YWxpemUgdGV4dC1zbSAke2VudlNldHRpbmdzLnRpbWVPZkRheSA9PT0gdCA/ICdib3JkZXItcHVycGxlLTUwMCBiZy1wdXJwbGUtNTAwLzEwIHRleHQtcHVycGxlLTQwMCcgOiAnYm9yZGVyLXppbmMtODAwIGhvdmVyOmJvcmRlci16aW5jLTYwMCd9YH0KICAgICAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgICAgIHt0LnJlcGxhY2UoJy0nLCAnICcpfQogICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgICA8bGFiZWwgY2xhc3NOYW1lPSJibG9jayB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRleHQtemluYy01MDAgbWItNCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij5XZWF0aGVyPC9sYWJlbD4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgICB7WyJjbGVhciIsICJjbG91ZHkiLCAicmFpbnkiLCAic3Rvcm15IiwgInNub3d5IiwgImZvZ2d5IiwgIndpbmR5Il0ubWFwKCh3KSA9PiAoCiAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICAgICAgICAgICAgICBrZXk9e3d9CiAgICAgICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0RW52U2V0dGluZ3Moey4uLmVudlNldHRpbmdzLCB3ZWF0aGVyOiB3fSl9CiAgICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgcC0zIHJvdW5kZWQteGwgYm9yZGVyIHRyYW5zaXRpb24tYWxsIGNhcGl0YWxpemUgdGV4dC1zbSAke2VudlNldHRpbmdzLndlYXRoZXIgPT09IHcgPyAnYm9yZGVyLWJsdWUtNTAwIGJnLWJsdWUtNTAwLzEwIHRleHQtYmx1ZS00MDAnIDogJ2JvcmRlci16aW5jLTgwMCBob3Zlcjpib3JkZXItemluYy02MDAnfWB9CiAgICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAgICB7d30KICAgICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgPGxhYmVsIGNsYXNzTmFtZT0iYmxvY2sgdGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LXppbmMtNTAwIG1iLTQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+TGlnaHRpbmc8L2xhYmVsPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0yIGdhcC0yIj4KICAgICAgICAgICAgICAgICAgICAgIHtbIm5hdHVyYWwiLCAiZHJhbWF0aWMiLCAic29mdCIsICJuZW9uIiwgImNhbmRsZWxpZ2h0IiwgInN0dWRpbyIsICJiYWNrbGl0IiwgInNpbGhvdWV0dGUiXS5tYXAoKGwpID0+ICgKICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICAgICAgICAgIGtleT17bH0KICAgICAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRFbnZTZXR0aW5ncyh7Li4uZW52U2V0dGluZ3MsIGxpZ2h0aW5nOiBsfSl9CiAgICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgcC0zIHJvdW5kZWQteGwgYm9yZGVyIHRyYW5zaXRpb24tYWxsIGNhcGl0YWxpemUgdGV4dC1zbSAke2VudlNldHRpbmdzLmxpZ2h0aW5nID09PSBsID8gJ2JvcmRlci15ZWxsb3ctNTAwIGJnLXllbGxvdy01MDAvMTAgdGV4dC15ZWxsb3ctNDAwJyA6ICdib3JkZXItemluYy04MDAgaG92ZXI6Ym9yZGVyLXppbmMtNjAwJ31gfQogICAgICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgICAge2x9CiAgICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibXQtOCBib3JkZXItdCBib3JkZXItemluYy04MDAgcHQtOCI+CiAgICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQteGwgZm9udC1ib2xkIG1iLTQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgICAgIDxDaGVja0NpcmNsZSBjbGFzc05hbWU9InRleHQtZ3JlZW4tNDAwIiAvPgogICAgICAgICAgICAgICAgICAgIDMuIEFzc2lnbiB0byBTY2VuZXMKICAgICAgICAgICAgICAgICAgPC9oMz4KICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtNDAwIHRleHQtc20gbWItNCI+U2VsZWN0IHRoZSBzY2VuZXMgd2hlcmUgdGhpcyByZWNyZWF0ZWQgbG9jYXRpb24gd2lsbCBiZSB1c2VkLjwvcD4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTMgZ2FwLTMgbWF4LWgtWzIwMHB4XSBvdmVyZmxvdy15LWF1dG8gcC0yIGJnLWJsYWNrLzQwIHJvdW5kZWQteGwgYm9yZGVyIGJvcmRlci16aW5jLTgwMCI+CiAgICAgICAgICAgICAgICAgICAge3NjZW5lcy5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtemluYy02MDAgdGV4dC14cyBpdGFsaWMgcC00Ij5ObyBzY2VuZXMgZm91bmQgaW4gdGhpcyBwcm9qZWN0LjwvcD4KICAgICAgICAgICAgICAgICAgICApIDogKAogICAgICAgICAgICAgICAgICAgICAgc2NlbmVzLm1hcCgocykgPT4gKAogICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICAgICAgICAgICAga2V5PXtzLmlkfQogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHRvZ2dsZVNjZW5lKHMuaWQpfQogICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17YGZsZXggaXRlbXMtY2VudGVyIGdhcC0zIHAtMyByb3VuZGVkLXhsIGJvcmRlciB0cmFuc2l0aW9uLWFsbCB0ZXh0LWxlZnQgJHtzZWxlY3RlZFNjZW5lSWRzLmluY2x1ZGVzKHMuaWQpID8gJ2JvcmRlci1ncmVlbi01MDAgYmctZ3JlZW4tNTAwLzEwIHRleHQtZ3JlZW4tNDAwJyA6ICdib3JkZXItemluYy04MDAgaG92ZXI6Ym9yZGVyLXppbmMtNzAwJ31gfQogICAgICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9e2B3LTQgaC00IHJvdW5kZWQgYm9yZGVyIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyICR7c2VsZWN0ZWRTY2VuZUlkcy5pbmNsdWRlcyhzLmlkKSA/ICdiZy1ncmVlbi01MDAgYm9yZGVyLWdyZWVuLTUwMCcgOiAnYm9yZGVyLXppbmMtNjAwJ31gfT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtzZWxlY3RlZFNjZW5lSWRzLmluY2x1ZGVzKHMuaWQpICYmIDxDaGVja0NpcmNsZSBjbGFzc05hbWU9InctMyBoLTMgdGV4dC1ibGFjayIgLz59CiAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRydW5jYXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyBmb250LWJvbGQgdHJ1bmNhdGUiPlNjZW5lIHtzLm9yZGVySW5kZXggKyAxfTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gdGV4dC16aW5jLTUwMCB0cnVuY2F0ZSI+e3MudGl0bGUgfHwgIlVudGl0bGVkIn08L3A+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgKSkKICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgICAgIDxidXR0b24gCiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9e2hhbmRsZUFwcGx5RW52fQogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBtdC04IGJnLXdoaXRlIHRleHQtYmxhY2sgZm9udC1ibGFjayBweS00IHJvdW5kZWQtMnhsIGhvdmVyOmJnLXppbmMtMjAwIHRyYW5zaXRpb24tYWxsIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgZ2FwLTIiCiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIHsoYXBwbHlFbnZNdXRhdGlvbi5pc1BlbmRpbmcgfHwgYXNzaWduTXV0YXRpb24uaXNQZW5kaW5nKSA/IDxaYXAgY2xhc3NOYW1lPSJhbmltYXRlLXNwaW4iIC8+IDogIlVwZGF0ZSAmIEFzc2lnbiB0byBTY2VuZXMifQogICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvPgogICAgICAgICAgKX0KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIEluZm8gU2lkZWJhciAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS02Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy1ncmFkaWVudC10by1iciBmcm9tLXppbmMtOTAwIHRvLWJsYWNrIHAtOCByb3VuZGVkLTN4bCBib3JkZXIgYm9yZGVyLXppbmMtODAwIj4KICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC14bCBmb250LWJvbGQgbWItNCI+SG93IGl0IHdvcmtzPC9oMz4KICAgICAgICAgICAgPHVsIGNsYXNzTmFtZT0ic3BhY2UteS00IHRleHQtemluYy00MDAgdGV4dC1zbSI+CiAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0iZmxleCBnYXAtMyI+CiAgICAgICAgICAgICAgICA8Q2hldnJvblJpZ2h0IGNsYXNzTmFtZT0idGV4dC1ibHVlLTUwMCBmbGV4LXNocmluay0wIiAvPgogICAgICAgICAgICAgICAgVXBsb2FkIGEgMTAtMzBzIHZpZGVvIHdhbGstdGhyb3VnaCBvZiBhbnkgcmVhbCBsb2NhdGlvbi4KICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggZ2FwLTMiPgogICAgICAgICAgICAgICAgPENoZXZyb25SaWdodCBjbGFzc05hbWU9InRleHQtYmx1ZS01MDAgZmxleC1zaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgIEFJIGFuYWx5emVzIGdlb21ldHJ5LCBmdXJuaXR1cmUsIGFuZCBsaWdodGluZyBjaGFyYWN0ZXJpc3RpY3MuCiAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJmbGV4IGdhcC0zIj4KICAgICAgICAgICAgICAgIDxDaGV2cm9uUmlnaHQgY2xhc3NOYW1lPSJ0ZXh0LWJsdWUtNTAwIGZsZXgtc2hyaW5rLTAiIC8+CiAgICAgICAgICAgICAgICBBIGRpZ2l0YWwgdHdpbiBpcyBjcmVhdGVkIGZvciB5b3VyIHNjZW5lcy4KICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggZ2FwLTMiPgogICAgICAgICAgICAgICAgPENoZXZyb25SaWdodCBjbGFzc05hbWU9InRleHQtYmx1ZS01MDAgZmxleC1zaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgIFVzZSBlbnZpcm9ubWVudGFsIGNvbnRyb2xzIHRvIGNoYW5nZSB3ZWF0aGVyIGFuZCB0aW1lIGluc3RhbnRseS4KICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICA8L3VsPgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImJnLWJsdWUtNjAwLzEwIHAtOCByb3VuZGVkLTN4bCBib3JkZXIgYm9yZGVyLWJsdWUtNTAwLzIwIj4KICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC1sZyBmb250LWJvbGQgbWItMiBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgPEFsZXJ0Q2lyY2xlIGNsYXNzTmFtZT0idGV4dC1ibHVlLTQwMCIgLz4KICAgICAgICAgICAgICBQcm8gVGlwCiAgICAgICAgICAgIDwvaDM+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWJsdWUtMzAwLzgwIGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgU3RlYWR5LCBzbG93LXBhbm5pbmcgdmlkZW9zIHdpdGggZ29vZCBsaWdodGluZyB5aWVsZCB0aGUgbW9zdCBhY2N1cmF0ZSByZWNyZWF0aW9ucy4gQXZvaWQgZmFzdCBtb3ZlbWVudHMgb3IgYmx1cnJ5IHNob3RzLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9OwoKZXhwb3J0IGRlZmF1bHQgTG9jYXRpb25SZWNyZWF0aW9uOwo=
+import React, { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { 
+  Upload, 
+  MapPin, 
+  Sun, 
+  Moon, 
+  CloudRain, 
+  Wind, 
+  Zap, 
+  CheckCircle, 
+  AlertCircle,
+  Video,
+  ChevronRight,
+  Settings
+} from "lucide-react";
+
+import { useParams, useLocation } from "wouter";
+
+const LocationRecreation: React.FC = () => {
+  const params = useParams<{ projectId: string }>();
+  const [, navigate] = useLocation();
+  const projectId = parseInt(params?.projectId || "0");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [view, setView] = useState<"upload" | "gallery">("gallery");
+  
+  const [envSettings, setEnvSettings] = useState({
+    timeOfDay: "afternoon",
+    weather: "clear",
+    lighting: "natural"
+  });
+  const [selectedSceneIds, setSelectedSceneIds] = useState<number[]>([]);
+
+  const utils = trpc.useContext();
+  const { data: locationsList, isLoading: loadingLocations } = trpc.locationRecreation.list.useQuery({ 
+    projectId: projectId 
+  });
+
+  const { data: scenes = [] } = trpc.scene.listByProject.useQuery({
+    projectId: projectId
+  });
+
+  const assignMutation = trpc.locationRecreation.assignToScenes.useMutation({
+    onSuccess: () => {
+      toast.success("Location assigned to selected scenes");
+      setSelectedSceneIds([]);
+    }
+  });
+
+  const analyzeMutation = trpc.locationRecreation.analyzeVideo.useMutation({
+    onSuccess: (data) => {
+      setSelectedLocationId(data.locationId);
+      setUploading(false);
+      utils.locationRecreation.list.invalidate();
+      setView("upload");
+    }
+  });
+
+  const applyEnvMutation = trpc.locationRecreation.applyEnvironment.useMutation({
+    onSuccess: () => {
+      utils.locationRecreation.list.invalidate();
+    }
+  });
+
+  const deleteMutation = trpc.locationRecreation.delete.useMutation({
+    onSuccess: () => {
+      utils.locationRecreation.list.invalidate();
+      if (selectedLocationId) setSelectedLocationId(null);
+    }
+  });
+
+  const handleUpload = async () => {
+    if (!videoUrl || !locationName) return;
+    setUploading(true);
+    analyzeMutation.mutate({
+      projectId: projectId,
+      videoUrl,
+      locationName
+    });
+  };
+
+  const handleApplyEnv = () => {
+    if (!selectedLocationId) return;
+    applyEnvMutation.mutate({
+      locationId: selectedLocationId,
+      ...envSettings as any
+    });
+    
+    if (selectedSceneIds.length > 0) {
+      assignMutation.mutate({
+        locationId: selectedLocationId,
+        sceneIds: selectedSceneIds
+      });
+    }
+  };
+
+  const toggleScene = (id: number) => {
+    setSelectedSceneIds(prev => 
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    );
+  };
+
+  const selectLocation = (loc: any) => {
+    setSelectedLocationId(loc.id);
+    setEnvSettings({
+      timeOfDay: loc.bestTimeOfDay || "afternoon",
+      weather: loc.weatherPreferences?.[0] || "clear",
+      lighting: "natural"
+    });
+    setView("upload");
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto p-8 text-white min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="flex items-center justify-between mb-8 border-b border-zinc-800 pb-6">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tighter flex items-center gap-3">
+            <MapPin className="text-blue-500 w-10 h-10" />
+            LOCATION RECREATION
+          </h1>
+          <p className="text-zinc-400 mt-2 text-lg">Recreate real-world settings with AI-driven environmental controls.</p>
+        </div>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => navigate(`/projects/${projectId}/scenes`)}
+            className="px-6 py-2 border border-zinc-700 hover:bg-zinc-900 rounded-full transition-all flex items-center gap-2"
+          >
+            Back to Scenes
+          </button>
+        </div>
+      </div>
+
+      <div className="flex gap-4 mb-8">
+        <button 
+          onClick={() => setView("gallery")}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "gallery" ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+        >
+          My Locations
+        </button>
+        <button 
+          onClick={() => {
+            setView("upload");
+            setSelectedLocationId(null);
+          }}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "upload" && !selectedLocationId ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+        >
+          New Recreation
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          {view === "gallery" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {loadingLocations ? (
+                <div className="col-span-2 py-20 text-center text-zinc-500">Loading your locations...</div>
+              ) : locationsList?.length === 0 ? (
+                <div className="col-span-2 py-20 text-center bg-zinc-900/30 rounded-3xl border border-dashed border-zinc-800">
+                  <MapPin className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500">No locations found. Upload a video to get started.</p>
+                </div>
+              ) : (
+                locationsList?.map((loc) => (
+                  <div key={loc.id} className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 hover:border-blue-500/50 transition-all group">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold">{loc.name}</h3>
+                        <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{loc.locationType || "Interior"}</p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${loc.aiRecreationStatus === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                        {loc.aiRecreationStatus}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-6">
+                      <button 
+                        onClick={() => selectLocation(loc)}
+                        className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-sm font-bold transition-all"
+                      >
+                        Edit Environment
+                      </button>
+                      <button 
+                        onClick={() => deleteMutation.mutate({ locationId: loc.id })}
+                        className="px-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 py-2 rounded-xl transition-all"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Step 1: Upload Video */}
+              <div className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                  <Video className="text-blue-400" />
+                  {selectedLocationId ? "Location Details" : "1. Upload Location Reference"}
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Location Name</label>
+                    <input 
+                      type="text"
+                      placeholder="e.g., Jerry's Apartment, The Bundy House"
+                      value={locationName || (selectedLocationId ? locationsList?.find(l => l.id === selectedLocationId)?.name : "")}
+                      readOnly={!!selectedLocationId}
+                      onChange={(e) => setLocationName(e.target.value)}
+                      className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    />
+                  </div>
+                  {!selectedLocationId && (
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Video URL (S3 or Reference)</label>
+                      <div className="flex gap-3">
+                        <input 
+                          type="text"
+                          placeholder="https://..."
+                          value={videoUrl}
+                          onChange={(e) => setVideoUrl(e.target.value)}
+                          className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        />
+                        <button 
+                          onClick={handleUpload}
+                          disabled={uploading || !videoUrl}
+                          className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 rounded-xl font-bold transition-all flex items-center gap-2"
+                        >
+                          {uploading ? <Zap className="animate-spin" /> : <Upload />}
+                          ANALYZE
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {analyzeMutation.isSuccess && !selectedLocationId && (
+                  <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-3 text-blue-400">
+                    <CheckCircle className="w-6 h-6" />
+                    <div>
+                      <p className="font-bold">Analysis Underway</p>
+                      <p className="text-sm">AI is extracting architectural details from your video.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 2: Environment Controls */}
+              <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                  <Settings className="text-purple-400" />
+                  2. Environmental Controls
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Time of Day</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["dawn", "morning", "afternoon", "evening", "night", "golden-hour"].map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => setEnvSettings({...envSettings, timeOfDay: t})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {t.replace('-', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Weather</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"].map((w) => (
+                        <button
+                          key={w}
+                          onClick={() => setEnvSettings({...envSettings, weather: w})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {w}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Lighting</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"].map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => setEnvSettings({...envSettings, lighting: l})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8 border-t border-zinc-800 pt-8">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <CheckCircle className="text-green-400" />
+                    3. Assign to Scenes
+                  </h3>
+                  <p className="text-zinc-400 text-sm mb-4">Select the scenes where this recreated location will be used.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[200px] overflow-y-auto p-2 bg-black/40 rounded-xl border border-zinc-800">
+                    {scenes.length === 0 ? (
+                      <p className="text-zinc-600 text-xs italic p-4">No scenes found in this project.</p>
+                    ) : (
+                      scenes.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => toggleScene(s.id)}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-zinc-800 hover:border-zinc-700'}`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
+                            {selectedSceneIds.includes(s.id) && <CheckCircle className="w-3 h-3 text-black" />}
+                          </div>
+                          <div className="truncate">
+                            <p className="text-xs font-bold truncate">Scene {s.orderIndex + 1}</p>
+                            <p className="text-[10px] text-zinc-500 truncate">{s.title || "Untitled"}</p>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleApplyEnv}
+                  className="w-full mt-8 text-black font-black py-4 rounded-2xl transition-all uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  {(applyEnvMutation.isPending || assignMutation.isPending) ? <Zap className="animate-spin" /> : "Update & Assign to Scenes"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Info Sidebar */}
+        <div className="space-y-6">
+          <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-3xl border border-zinc-800">
+            <h3 className="text-xl font-bold mb-4">How it works</h3>
+            <ul className="space-y-4 text-zinc-400 text-sm">
+              <li className="flex gap-3">
+                <ChevronRight className="text-blue-500 flex-shrink-0" />
+                Upload a 10-30s video walk-through of any real location.
+              </li>
+              <li className="flex gap-3">
+                <ChevronRight className="text-blue-500 flex-shrink-0" />
+                AI analyzes geometry, furniture, and lighting characteristics.
+              </li>
+              <li className="flex gap-3">
+                <ChevronRight className="text-blue-500 flex-shrink-0" />
+                A digital twin is created for your scenes.
+              </li>
+              <li className="flex gap-3">
+                <ChevronRight className="text-blue-500 flex-shrink-0" />
+                Use environmental controls to change weather and time instantly.
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-blue-600/10 p-8 rounded-3xl border border-blue-500/20">
+            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+              <AlertCircle className="text-blue-400" />
+              Pro Tip
+            </h3>
+            <p className="text-sm text-blue-300/80 leading-relaxed">
+              Steady, slow-panning videos with good lighting yield the most accurate recreations. Avoid fast movements or blurry shots.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LocationRecreation;
