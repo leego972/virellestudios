@@ -154,7 +154,6 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
             {/* Drag hint */}
             <div className="absolute inset-x-0 bottom-[-18px] text-center text-[8px] text-muted-foreground/30">drag to adjust</div>
           </div>
-        </div>
         {/* Controls */}
         <div className="w-full space-y-2 px-1">
           <div className="space-y-1">
@@ -349,7 +348,6 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
     const activeLutName = LUT_LIBRARY.flatMap(c=>c.luts).find(l=>l.id===gs.activeLut)?.name || LEGACY_PRESETS.find(p=>p.name===gs.activeLut)?.label || null;
 
     return (
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b14 60%,#07070a 100%)" }}>
         {/* Header */}
         <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
