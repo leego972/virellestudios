@@ -2,7 +2,7 @@
    * UserInventoryPage.tsx
    * Shows all active wardrobe leases for the signed-in user.
    * Items / collections appear here after a successful Stripe Checkout on the Wardrobe Marketplace.
-   * v2 Ã¢ÂÂ Added "Assign to Character" dialog so directors can pin leased items to characters
+   * v2 — Added "Assign to Character" dialog so directors can pin leased items to characters
    *       in a specific project and scene range directly from their inventory.
    */
   import { useState } from "react";
@@ -57,7 +57,7 @@
   export default function UserInventoryPage() {
     const [, setLocation] = useLocation();
 
-    // Ã¢ÂÂÃ¢ÂÂ Assign dialog state Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+    // ── Assign dialog state ─────────────────────────────────────────────────────
     const [assignTarget, setAssignTarget] = useState<AssignTarget | null>(null);
     const [assignProjectId, setAssignProjectId] = useState<string>("");
     const [assignCharacterId, setAssignCharacterId] = useState<string>("");
@@ -74,7 +74,7 @@
       setNotes("");
     };
 
-    // Ã¢ÂÂÃ¢ÂÂ Queries Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+    // ── Queries ─────────────────────────────────────────────────────────────────
     const { data: leases, isLoading } = trpc.wardrobeMarket.leasing.myInventory.useQuery();
     const { data: projects } = trpc.project.list.useQuery(undefined, { enabled: !!assignTarget });
     const { data: characters } = trpc.character.listByProject.useQuery(
@@ -82,10 +82,10 @@
       { enabled: !!assignProjectId && Number(assignProjectId) > 0 }
     );
 
-    // Ã¢ÂÂÃ¢ÂÂ Assign mutation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+    // ── Assign mutation ──────────────────────────────────────────────────────────
     const assignMutation = trpc.wardrobeMarket.director.assign.useMutation({
       onSuccess: () => {
-        toast.success("Wardrobe item assigned to character Ã¢ÂÂ it will appear in every scene generation for the selected range.");
+        toast.success("Wardrobe item assigned to character — it will appear in every scene generation for the selected range.");
         resetAssign();
       },
       onError: (err: { message: string }) => toast.error(err.message || "Failed to assign item"),
@@ -262,12 +262,12 @@
           {/* Footer hint */}
           {active.length > 0 && (
             <p className="text-center text-xs text-muted-foreground/50 pb-4">
-              Use the <strong>Assign</strong> button to pin items to characters Ã¢ÂÂ the AI locks that costume into every scene generation for the selected range.
+              Use the <strong>Assign</strong> button to pin items to characters — the AI locks that costume into every scene generation for the selected range.
             </p>
           )}
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Assign to Character Dialog Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ── Assign to Character Dialog ─────────────────────────────────────── */}
         <Dialog open={!!assignTarget} onOpenChange={(open) => !open && resetAssign()}>
           <DialogContent className="max-w-md glass-dark">
             <DialogHeader>
@@ -288,7 +288,7 @@
                   <Label className="text-xs font-semibold">Project</Label>
                   <Select value={assignProjectId} onValueChange={(v) => { setAssignProjectId(v); setAssignCharacterId(""); }}>
                     <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
-                      <SelectValue placeholder="Select a projectÃ¢ÂÂ¦" />
+                      <SelectValue placeholder="Select a project…" />
                     </SelectTrigger>
                     <SelectContent>
                       {(projects ?? []).map((p: any) => (
@@ -306,7 +306,7 @@
                   <Label className="text-xs font-semibold">Character</Label>
                   <Select value={assignCharacterId} onValueChange={setAssignCharacterId} disabled={!assignProjectId}>
                     <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
-                      <SelectValue placeholder={assignProjectId ? "Select a characterÃ¢ÂÂ¦" : "Select a project first"} />
+                      <SelectValue placeholder={assignProjectId ? "Select a character…" : "Select a project first"} />
                     </SelectTrigger>
                     <SelectContent>
                       {(characters ?? []).map((c: any) => (
@@ -344,7 +344,7 @@
                     />
                   </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground">Use 1Ã¢ÂÂ999 to cover the entire film. Adjust to target specific acts.</p>
+                <p className="text-[10px] text-muted-foreground">Use 1–999 to cover the entire film. Adjust to target specific acts.</p>
 
                 {/* Notes */}
                 <div className="space-y-1.5">
@@ -368,7 +368,7 @@
                 onClick={handleAssign}
                 disabled={assignMutation.isPending || !assignProjectId || !assignCharacterId}
               >
-                {assignMutation.isPending ? "AssigningÃ¢ÂÂ¦" : "Assign to Character"}
+                {assignMutation.isPending ? "Assigning…" : "Assign to Character"}
               </Button>
             </DialogFooter>
           </DialogContent>
