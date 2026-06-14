@@ -12,7 +12,7 @@ interface SiteHeadProps {
 
 const BRAND = "Virelle Studios";
 const DEFAULT_DESC = "The unified AI film production studio — script to screen in one platform. Casting, scenes, scoring, VFX, distribution & funding.";
-const DEFAULT_IMG = "https://virelle.life/og-default.jpg";
+const DEFAULT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663446819082/CAkcwNccSUcizneMbEWnnU/virelle-og-image-Qh4eXQVhsEMQW9syLK6aSw.png";
 const SITE_URL = "https://virelle.life";
 
 function setMeta(name: string, content: string, attr: "name" | "property" = "name") {
