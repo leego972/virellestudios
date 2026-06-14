@@ -231,11 +231,11 @@ export default function Distribute() {
 
       {/* Phase 2: Analytics Snapshot (only shown when film page is published) */}
       {promoStatus?.isPublished && filmPageStats && (
-        <Card className="border-amber-500/20 bg-amber-500/5">
-          <CardHeader className="pb-2">
+        <Card className="border-amber-500/20 bg-amber-500/5 glass-card">
+          <CardHeader className="pb-2 glass-card">
             <div className="flex items-center gap-2">
               <BarChart2 className="w-4 h-4 text-amber-500" />
-              <CardTitle className="text-sm gradient-text-gold">Film Page Analytics</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold glass-card">Film Page Analytics</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -259,9 +259,9 @@ export default function Distribute() {
 
       {/* Readiness Checklist */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3 glass-card">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base gradient-text-gold">Distribution Readiness</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card">Distribution Readiness</CardTitle>
             <Badge
               variant={isFullyReady ? "default" : "secondary"}
               className={isFullyReady ? "bg-green-600" : ""}
@@ -349,17 +349,17 @@ export default function Distribute() {
               const exportUrl = (promoStatus as any)?.[`${platform.key}Url`] || null;
               return (
                 <Card key={platform.key} className={`border ${platform.bg}`}>
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-2 glass-card">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <platform.icon className={`w-5 h-5 ${platform.color}`} />
-                        <CardTitle className="text-sm gradient-text-gold">{platform.label}</CardTitle>
+                        <CardTitle className="text-sm gradient-text-gold glass-card">{platform.label}</CardTitle>
                       </div>
                       {done && <Badge className="bg-green-600 text-xs">Done</Badge>}
                     </div>
-                    <CardDescription className="text-xs">{platform.description}</CardDescription>
+                    <CardDescription className="text-xs glass-card">{platform.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-2">
+                  <CardContent className="space-y-2 glass-card">
                     <Button
                       size="sm"
                       variant={done ? "outline" : "default"}
@@ -448,7 +448,7 @@ export default function Distribute() {
             <div className="space-y-3">
               {(promoAssets as any[]).map((asset: any) => (
                 <Card key={asset.id}>
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-2 glass-card">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs capitalize">

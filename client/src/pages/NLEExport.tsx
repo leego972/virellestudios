@@ -252,8 +252,8 @@ function NLEExportInner() {
         {/* Export Options */}
         <div>
           <h2 className="text-sm font-medium mb-3 gradient-text-gold">Include in Export</h2>
-          <Card className="border-amber-500/20">
-            <CardContent className="pt-4">
+          <Card className="border-amber-500/20 glass-card">
+            <CardContent className="pt-4 glass-card">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {Object.entries(includeOptions).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-2">
@@ -274,8 +274,8 @@ function NLEExportInner() {
 
         {/* Export Preview */}
         {exportComplete && (
-          <Card className="border-green-500/40 bg-green-500/5">
-            <CardContent className="pt-4">
+          <Card className="border-green-500/40 bg-green-500/5 glass-card">
+            <CardContent className="pt-4 glass-card">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="w-8 h-8 text-green-400 flex-shrink-0" />
                 <div>

@@ -221,11 +221,11 @@ function VFXSuiteInner() {
 
         {/* Settings Panel */}
         <div className="space-y-4">
-          <Card className="border-amber-500/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle>
+          <Card className="border-amber-500/20 glass-card">
+            <CardHeader className="pb-2 glass-card">
+              <CardTitle className="text-sm gradient-text-gold glass-card">Processing Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 glass-card">
               <div>
                 <div className="flex justify-between mb-1">
                   <Label className="text-xs text-muted-foreground">Effect Intensity</Label>
@@ -285,9 +285,9 @@ function VFXSuiteInner() {
           </Card>
 
           {selectedOps.length > 0 && (
-            <Card className="border-amber-500/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm gradient-text-gold">Selected Operations</CardTitle>
+            <Card className="border-amber-500/20 glass-card">
+              <CardHeader className="pb-2 glass-card">
+                <CardTitle className="text-sm gradient-text-gold glass-card">Selected Operations</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1">

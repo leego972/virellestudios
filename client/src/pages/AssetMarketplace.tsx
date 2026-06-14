@@ -186,7 +186,7 @@ export default function AssetMarketplace() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredAssets.map((asset) => (
-              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group">
+              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card">
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
                     <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -207,7 +207,7 @@ export default function AssetMarketplace() {
                     )}
                   </div>
                 </div>
-                <CardContent className="p-4 space-y-3">
+                <CardContent className="p-4 space-y-3 glass-card">
                   <div>
                     <h3 className="font-bold text-sm line-clamp-1">{asset.name}</h3>
                     <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">{asset.author}</p>

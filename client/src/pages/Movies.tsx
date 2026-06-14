@@ -350,7 +350,7 @@ export default function Movies() {
   const renderMovieCard = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
+      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card"
       onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
       <div className="relative aspect-video bg-muted">
@@ -438,7 +438,7 @@ export default function Movies() {
           </div>
         )}
       </div>
-      <CardContent className="p-4">
+      <CardContent className="p-4 glass-card">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h3 className="font-medium truncate">{movie.title}</h3>
@@ -516,10 +516,10 @@ export default function Movies() {
   const renderMovieRow = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
+      className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card"
       onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
-      <CardContent className="p-3 flex items-center gap-4">
+      <CardContent className="p-3 flex items-center gap-4 glass-card">
         <div className="w-24 h-16 rounded-md overflow-hidden bg-muted shrink-0 relative group">
           {movie.thumbnailUrl ? (
             <img
@@ -714,7 +714,7 @@ export default function Movies() {
       {!activeFolder && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
-            <CardContent className="p-4 flex items-center gap-3">
+            <CardContent className="p-4 flex items-center gap-3 glass-card">
               <div className="p-2 rounded-lg bg-amber-400/10">
                 <Folder className="h-5 w-5 text-primary" />
               </div>
@@ -725,7 +725,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-emerald-500/30 ${typeFilter === 'film' ? 'ring-1 ring-emerald-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'film' ? null : 'film')}>
-            <CardContent className="p-4 flex items-center gap-3">
+            <CardContent className="p-4 flex items-center gap-3 glass-card">
               <div className="p-2 rounded-lg bg-emerald-500/10">
                 <Clapperboard className="h-5 w-5 text-emerald-400" />
               </div>
@@ -738,7 +738,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-blue-500/30 ${typeFilter === 'scene' ? 'ring-1 ring-blue-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'scene' ? null : 'scene')}>
-            <CardContent className="p-4 flex items-center gap-3">
+            <CardContent className="p-4 flex items-center gap-3 glass-card">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Film className="h-5 w-5 text-blue-400" />
               </div>
@@ -751,7 +751,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-amber-500/30 ${typeFilter === 'trailer' ? 'ring-1 ring-amber-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'trailer' ? null : 'trailer')}>
-            <CardContent className="p-4 flex items-center gap-3">
+            <CardContent className="p-4 flex items-center gap-3 glass-card">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Play className="h-5 w-5 text-amber-400" />
               </div>
@@ -813,7 +813,7 @@ export default function Movies() {
                         return (
                           <Card
                             key={folderName}
-                            className="overflow-hidden cursor-pointer group hover:ring-1 hover:ring-primary/30 transition-all"
+                            className="overflow-hidden cursor-pointer group hover:ring-1 hover:ring-primary/30 transition-all glass-card"
                             onClick={() => {
                               setActiveFolder(folderName);
                               setSearchQuery("");
@@ -884,13 +884,13 @@ export default function Movies() {
                         return (
                           <Card
                             key={folderName}
-                            className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all"
+                            className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card"
                             onClick={() => {
                               setActiveFolder(folderName);
                               setSearchQuery("");
                             }}
                           >
-                            <CardContent className="p-3 flex items-center gap-4">
+                            <CardContent className="p-3 flex items-center gap-4 glass-card">
                               <div className="w-12 h-12 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                                 <Folder className="h-6 w-6 text-primary" />
                               </div>

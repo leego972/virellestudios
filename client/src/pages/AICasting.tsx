@@ -613,14 +613,14 @@ function AICastingInner() {
         <div className="space-y-4">
           {/* Chemistry Pairs (Signature mode only) */}
           {castMode === "signature" && (
-            <Card className="border-amber-500/10 bg-amber-950/10">
-              <CardHeader className="pb-2 pt-3 px-4">
-                <CardTitle className="text-xs flex items-center gap-2 text-amber-300">
+            <Card className="border-amber-500/10 bg-amber-950/10 glass-card">
+              <CardHeader className="pb-2 pt-3 px-4 glass-card">
+                <CardTitle className="text-xs flex items-center gap-2 text-amber-300 glass-card">
                   <Heart className="w-3 h-3" />
                   Ready-made chemistry
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 pb-3 space-y-2">
+              <CardContent className="px-4 pb-3 space-y-2 glass-card">
                 {[
                   { pair: ["sig-julian-vance", "sig-elena-rostova"], label: "Dangerous Tension", desc: "Ice meets fire" },
                   { pair: ["sig-julian-vance", "sig-sofia-reyes"], label: "Combustible Romance", desc: "Highest viral potential" },
@@ -647,14 +647,14 @@ function AICastingInner() {
             </Card>
           )}
 
-          <Card className="border-amber-500/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+          <Card className="border-amber-500/20 glass-card">
+            <CardHeader className="pb-2 glass-card">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 Performance Direction
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 glass-card">
               <div>
                 <Label className="text-xs text-muted-foreground mb-1 block">Performance Style</Label>
                 <Select value={performanceStyle} onValueChange={setPerformanceStyle}>
@@ -744,9 +744,9 @@ function AICastingInner() {
           </Card>
 
           {selectedActors.length > 0 && (
-            <Card className="border-amber-500/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+            <Card className="border-amber-500/20 glass-card">
+              <CardHeader className="pb-2 glass-card">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                   <Zap className="w-4 h-4 text-amber-400" />
                   Selected Cast ({selectedActors.length})
                 </CardTitle>

@@ -1231,11 +1231,11 @@ function AdPosterMakerInner() {
               </div>
 
               {selectedElement && (
-                <Card className="border-primary/20 bg-amber-400/5">
-                  <CardHeader className="pb-2 pt-3 px-3">
-                    <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider gradient-text-gold">Edit Selected Layer</CardTitle>
+                <Card className="border-primary/20 bg-amber-400/5 glass-card">
+                  <CardHeader className="pb-2 pt-3 px-3 glass-card">
+                    <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider gradient-text-gold glass-card">Edit Selected Layer</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 px-3 pb-3">
+                  <CardContent className="space-y-3 px-3 pb-3 glass-card">
                     <div>
                       <Label className="text-xs">Content</Label>
                       <Textarea value={selectedElement.text} onChange={(e) => updateTextElement(selectedElement.id, { text: e.target.value })} rows={2} className="text-sm mt-1" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />

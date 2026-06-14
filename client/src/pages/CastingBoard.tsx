@@ -228,7 +228,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
             const signed = !!s.consent.signedAt;
             return (
               <Card key={c.id}>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 glass-card">
                   <div className="flex items-start gap-3">
                     {c.photoUrl ? (
                       <img
@@ -242,7 +242,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+                      <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
                         <span className="truncate">{c.name}</span>
                         {c.role && (
                           <Badge variant="outline" className="text-[10px] shrink-0">
@@ -250,7 +250,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                           </Badge>
                         )}
                       </CardTitle>
-                      <CardDescription className="line-clamp-2">{c.description || "No bio yet."}</CardDescription>
+                      <CardDescription className="line-clamp-2 glass-card">{c.description || "No bio yet."}</CardDescription>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2">
@@ -272,7 +272,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 glass-card">
                   {/* Actor attach */}
                   <div className="grid grid-cols-2 gap-2">
                     <div>

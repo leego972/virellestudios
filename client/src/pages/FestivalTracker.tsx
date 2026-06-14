@@ -156,16 +156,16 @@ export default function FestivalTracker() {
           const status = tracking[f.name];
           return (
             <Card key={f.name} className={status ? "border-amber-500/30" : ""}>
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-2 glass-card">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
-                    <CardTitle className="text-base leading-snug gradient-text-gold">{f.name}</CardTitle>
-                    <CardDescription className="text-xs flex items-center gap-1"><Globe2 className="h-3 w-3" />{f.city}, {f.country} · Tier {f.tier}</CardDescription>
+                    <CardTitle className="text-base leading-snug gradient-text-gold glass-card">{f.name}</CardTitle>
+                    <CardDescription className="text-xs flex items-center gap-1 glass-card"><Globe2 className="h-3 w-3" />{f.city}, {f.country} · Tier {f.tier}</CardDescription>
                   </div>
                   {status && <Badge className={STATUS_COLORS[status] + " border-0 whitespace-nowrap"}>{STATUS_LABELS[status]}</Badge>}
                 </div>
               </CardHeader>
-              <CardContent className="space-y-2 text-xs pb-4">
+              <CardContent className="space-y-2 text-xs pb-4 glass-card">
                 <div className="flex flex-wrap gap-1">
                   {f.formats.map((x) => <Badge key={x} variant="outline" className="text-[10px]">{x}</Badge>)}
                 </div>

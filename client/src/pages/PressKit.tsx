@@ -93,12 +93,12 @@ export default function PressKit() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-1">
-        <Card className="print:hidden">
+        <Card className="print:hidden glass-card">
           <CardHeader>
-            <CardTitle className="gradient-text-gold">EPK Inputs</CardTitle>
+            <CardTitle className="gradient-text-gold glass-card">EPK Inputs</CardTitle>
             <CardDescription>Fill in the fields. Preview updates live. Export, print, or paste into your distribution emails.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 glass-card">
             <div className="space-y-1.5"><Label>Tagline</Label><Input value={kit.tagline} onChange={(e) => update("tagline", e.target.value)} placeholder='"In a city of glass, the truth has cracks."' /></div>
             <div className="space-y-1.5"><Label>Short Synopsis (50-100 words)</Label><Textarea rows={3} value={kit.synopsisShort} onChange={(e) => update("synopsisShort", e.target.value)} /></div>
             <div className="space-y-1.5"><Label>Long Synopsis (250-400 words)</Label><Textarea rows={6} value={kit.synopsisLong} onChange={(e) => update("synopsisLong", e.target.value)} /></div>
@@ -127,8 +127,8 @@ export default function PressKit() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border border-white/10 text-foreground print:bg-white print:text-black print:shadow-none print:border-none lg:col-span-1 print:col-span-1">
-          <CardContent className="p-8 prose max-w-none">
+        <Card className="bg-white/5 border border-white/10 text-foreground print:bg-white print:text-black print:shadow-none print:border-none lg:col-span-1 print:col-span-1 glass-card">
+          <CardContent className="p-8 prose max-w-none glass-card">
             <div className="space-y-1 mb-6">
               <div className="text-xs uppercase tracking-widest text-amber-700">Electronic Press Kit</div>
               <h1 className="text-3xl font-serif !mb-1 gradient-text-gold">{project?.title || "Untitled Project"}</h1>

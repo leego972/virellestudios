@@ -137,19 +137,19 @@ import { useState } from "react";
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((bg: any) => (
-              <Card key={bg.id} className="relative group">
-                <CardHeader className="pb-2">
+              <Card key={bg.id} className="relative group glass-card">
+                <CardHeader className="pb-2 glass-card">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">
                         {TYPE_ICONS[bg.backgroundType as BgType] ?? <MapPin className="w-4 h-4 text-amber-400/70" />}
                       </span>
-                      <CardTitle className="text-base gradient-text-gold">{bg.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold glass-card">{bg.name}</CardTitle>
                     </div>
                     <Badge variant="secondary">{TYPE_LABELS[bg.backgroundType as BgType] ?? bg.backgroundType}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 glass-card">
                   {bg.description && <p className="text-sm text-muted-foreground line-clamp-3">{bg.description}</p>}
                   {(bg.vehicleMake || bg.vehicleModel || bg.vehicleColor) && (
                     <p className="text-xs font-mono bg-muted px-2 py-1 rounded">

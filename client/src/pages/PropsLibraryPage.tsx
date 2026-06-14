@@ -115,16 +115,16 @@ import { useState } from "react";
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((prop: any) => (
               <Card key={prop.id}>
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 glass-card">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4 text-muted-foreground" />
-                      <CardTitle className="text-base gradient-text-gold">{prop.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold glass-card">{prop.name}</CardTitle>
                     </div>
                     <Badge variant="outline">{prop.category}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 glass-card">
                   {prop.description && (
                     <p className="text-sm text-muted-foreground line-clamp-3">{prop.description}</p>
                   )}

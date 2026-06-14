@@ -106,8 +106,8 @@ export default function Credits() {
       {/* ─── Balance Summary Cards ─── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Current Balance */}
-        <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1">
-          <CardContent className="pt-6">
+        <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1 glass-card">
+          <CardContent className="pt-6 glass-card">
             {summaryLoading ? (
               <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
             ) : (
@@ -130,7 +130,7 @@ export default function Credits() {
 
         {/* Monthly Allocation */}
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 glass-card">
             {summaryLoading ? (
               <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
             ) : (
@@ -157,7 +157,7 @@ export default function Credits() {
 
         {/* Next Renewal */}
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 glass-card">
             {summaryLoading ? (
               <div className="h-16 bg-white/5 rounded-lg animate-pulse" />
             ) : (
@@ -213,8 +213,8 @@ export default function Credits() {
 
       {/* ─── Transaction History ─── */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg gradient-text-gold">Transaction History</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between pb-3 glass-card">
+          <CardTitle className="text-lg gradient-text-gold glass-card">Transaction History</CardTitle>
           {total > 0 && (
             <span className="text-sm text-muted-foreground">
               {total.toLocaleString()} total
@@ -328,7 +328,7 @@ export default function Credits() {
       {/* ─── How Credits Work ─── */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base gradient-text-gold">How Credits Work</CardTitle>
+          <CardTitle className="text-base gradient-text-gold glass-card">How Credits Work</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">

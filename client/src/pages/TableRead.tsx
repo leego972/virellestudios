@@ -157,9 +157,9 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 
         {step === "input" && (
           <div className="space-y-4">
-            <Card className="border-border/40 bg-black/20">
-              <CardHeader><CardTitle className="text-base gradient-text-gold">Paste Your Script</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
+            <Card className="border-border/40 bg-black/20 glass-card">
+              <CardHeader><CardTitle className="text-base gradient-text-gold glass-card">Paste Your Script</CardTitle></CardHeader>
+              <CardContent className="space-y-4 glass-card">
                 <p className="text-xs text-muted-foreground">Use standard screenplay format: character names in ALL CAPS on their own line, followed by dialogue on the next line. Scene headings start with INT. or EXT.</p>
                 <Textarea className="h-72 font-mono text-xs" value={scriptText} onChange={e => setScriptText(e.target.value)} placeholder="INT. LOCATION - TIME\n\nACTION DESCRIPTION\n\nCHARACTER NAME\nDialogue text here." />
                 <Button onClick={parseAndProceed} className="w-full"><Wand2 className="h-4 w-4 mr-2" />Parse Script & Assign Voices</Button>
@@ -170,9 +170,9 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 
         {step === "voices" && (
           <div className="space-y-4">
-            <Card className="border-border/40 bg-black/20">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Users className="h-5 w-5 text-primary" />Assign Voices to Characters</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
+            <Card className="border-border/40 bg-black/20 glass-card">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Users className="h-5 w-5 text-primary" />Assign Voices to Characters</CardTitle></CardHeader>
+              <CardContent className="space-y-3 glass-card">
                 {characters.map(char => (
                   <div key={char.name} className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-black shrink-0" style={{ background: char.color }}>{char.name.charAt(0)}</div>

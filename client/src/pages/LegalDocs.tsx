@@ -373,8 +373,8 @@ import { useState } from "react";
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">{cat}</h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {TEMPLATES.filter(t => t.category === cat).map(t => (
-                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group" onClick={() => handleSelect(t)}>
-                      <CardContent className="p-4 space-y-2">
+                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card" onClick={() => handleSelect(t)}>
+                      <CardContent className="p-4 space-y-2 glass-card">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>
                           <span className="font-medium text-sm">{t.title}</span>
@@ -397,8 +397,8 @@ import { useState } from "react";
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-4">
                 <Card>
-                  <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
+                  <CardContent className="space-y-4 glass-card">
                     {selected.fields.map(f => (
                       <div key={f.key} className="space-y-1.5">
                         <Label className="text-xs">{f.label}</Label>
@@ -424,7 +424,7 @@ import { useState } from "react";
                       <Button size="sm" onClick={handleDownload}><Download className="h-3.5 w-3.5 mr-1" />Download</Button>
                     </div>
                   </div>
-                  <Card><CardContent className="p-4"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
+                  <Card><CardContent className="p-4 glass-card"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
                   <p className="text-[10px] text-muted-foreground">⚠️ This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
                 </div>
               )}

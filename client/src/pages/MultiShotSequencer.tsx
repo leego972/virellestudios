@@ -99,8 +99,8 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     };
 
     return (
-      <Card className="border border-amber-500/20 bg-black/40">
-        <CardHeader className="pb-2">
+      <Card className="border border-amber-500/20 bg-black/40 glass-card">
+        <CardHeader className="pb-2 glass-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <GripVertical className="w-4 h-4 text-muted-foreground" />
@@ -127,7 +127,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3 pt-0">
+        <CardContent className="space-y-3 pt-0 glass-card">
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Duration (seconds)</Label>
             <div className="flex items-center gap-3">
@@ -423,14 +423,14 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         <div className="max-w-6xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Left: Camera Rig + Cast Setup */}
           <div className="col-span-1 space-y-4">
-            <Card className="border-amber-500/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+            <Card className="border-amber-500/20 glass-card">
+              <CardHeader className="pb-2 glass-card">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                   <Camera className="w-4 h-4 text-amber-400" />
                   Camera Rig Setup
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 glass-card">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Camera Body / Sensor</Label>
                   <Select value={cameraBody} onValueChange={setCameraBody}>
@@ -497,9 +497,9 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 
             {/* Scene Cast — select characters that appear anywhere in this scene */}
             {characters.length > 0 && (
-              <Card className="border-amber-500/20">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+              <Card className="border-amber-500/20 glass-card">
+                <CardHeader className="pb-2 glass-card">
+                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                     <Users className="w-4 h-4 text-amber-400" />
                     Scene Cast
                   </CardTitle>
@@ -528,14 +528,14 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               </Card>
             )}
 
-            <Card className="border-amber-500/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+            <Card className="border-amber-500/20 glass-card">
+              <CardHeader className="pb-2 glass-card">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                   <Clock className="w-4 h-4 text-amber-400" />
                   Sequence Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 glass-card">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Total Shots</span>
                   <span className="text-amber-400 font-medium">{shots.length} / {maxShots}</span>

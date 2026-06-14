@@ -73,8 +73,8 @@ import { useState, useMemo } from "react";
         {/* Budget input + top picks */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
-            <CardHeader><CardTitle className="text-sm gradient-text-gold">Your Production Budget</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+            <CardHeader><CardTitle className="text-sm gradient-text-gold glass-card">Your Production Budget</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <div className="space-y-1.5">
                 <Label>Total Budget (USD equivalent)</Label>
                 <Input placeholder="e.g. 500000" value={budget} onChange={e => setBudget(e.target.value)} type="number" min="0" />
@@ -92,8 +92,8 @@ import { useState, useMemo } from "react";
               )}
             </CardContent>
           </Card>
-          <Card className="bg-amber-400/5 border-primary/20">
-            <CardContent className="p-4 space-y-2">
+          <Card className="bg-amber-400/5 border-primary/20 glass-card">
+            <CardContent className="p-4 space-y-2 glass-card">
               <p className="text-sm font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" />Top 3 Incentives Right Now</p>
               {top3.map((j, i) => (
                 <div key={j.name} className="flex items-center gap-3 p-2 rounded-lg bg-background/60">
@@ -150,9 +150,9 @@ import { useState, useMemo } from "react";
         </div>
 
         {selected && (
-          <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold"><span>{selected.name}, {selected.country} — {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
-            <CardContent className="space-y-2">
+          <Card className="border-primary/30 glass-card">
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card"><span>{selected.name}, {selected.country} — {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
+            <CardContent className="space-y-2 glass-card">
               <p className="text-sm text-muted-foreground">{selected.notes}</p>
               <div className="flex gap-4 text-xs">
                 <span><span className="text-muted-foreground">Max Rebate:</span> <span className="font-medium">{selected.maxRebate}</span></span>

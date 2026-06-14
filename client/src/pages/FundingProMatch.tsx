@@ -41,7 +41,7 @@ export default function FundingProMatch() {
       </div>
 
       <Card>
-        <CardContent className="pt-4 flex items-center gap-3">
+        <CardContent className="pt-4 flex items-center gap-3 glass-card">
           <Label className="text-sm shrink-0">Project:</Label>
           <Select value={activeId ? String(activeId) : ""} onValueChange={v => setProjectId(Number(v))}>
             <SelectTrigger className="max-w-md"><SelectValue placeholder="Choose a project to score against…" /></SelectTrigger>
@@ -54,7 +54,7 @@ export default function FundingProMatch() {
       </Card>
 
       {!activeId ? (
-        <Card><CardContent className="pt-6 text-center text-muted-foreground">Select a project above to see ranked matches, your shortlist, and the application tracker.</CardContent></Card>
+        <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">Select a project above to see ranked matches, your shortlist, and the application tracker.</CardContent></Card>
       ) : (
         <Tabs defaultValue="match" className="space-y-3">
           <TabsList>
@@ -86,10 +86,10 @@ function MatchTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
         <div className="text-xs text-muted-foreground">Sources scored on country fit, stage, type, and synopsis keyword overlap. Top results first.</div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 glass-card">
         <div className="flex flex-wrap gap-2 items-end">
           <div><Label className="text-xs">Country filter</Label><Select value={country || "all"} onValueChange={v => setCountry(v === "all" ? "" : v)}>
             <SelectTrigger className="w-56"><SelectValue placeholder="All countries" /></SelectTrigger>
@@ -144,11 +144,11 @@ function SavedTab({ projectId }: { projectId: number }) {
   const toggleSaved = trpc.funding.toggleSaved.useMutation({ onSuccess: () => saved.refetch() });
   const ids = new Set((saved.data || []) as number[]);
   const sources = (all.data || []).filter((s: any) => ids.has(s.id));
-  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground">No shortlisted sources yet — save matches from the AI Match Score tab.</CardContent></Card>;
+  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">No shortlisted sources yet — save matches from the AI Match Score tab.</CardContent></Card>;
   return (
     <Card>
-      <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
-      <CardContent className="space-y-2">
+      <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
+      <CardContent className="space-y-2 glass-card">
         {sources.map((s: any) => (
           <div key={s.id} className="border border-border rounded-lg p-3 flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -179,18 +179,18 @@ function AppsTab() {
     setStatusDialog(null);
   };
   const list = (apps.data || []) as any[];
-  if (list.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground">No applications submitted yet. Submitted applications will appear here automatically with status tracking.</CardContent></Card>;
+  if (list.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">No applications submitted yet. Submitted applications will appear here automatically with status tracking.</CardContent></Card>;
   const counts = list.reduce((acc: any, a: any) => { acc[a.status] = (acc[a.status] || 0) + 1; return acc; }, {});
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
         {Object.keys(STATUS_META).map(k => (
-          <Card key={k}><CardContent className="pt-3 pb-3"><div className="text-[10px] uppercase text-muted-foreground">{STATUS_META[k].label}</div><div className="text-xl font-bold">{counts[k] || 0}</div></CardContent></Card>
+          <Card key={k}><CardContent className="pt-3 pb-3 glass-card"><div className="text-[10px] uppercase text-muted-foreground">{STATUS_META[k].label}</div><div className="text-xl font-bold">{counts[k] || 0}</div></CardContent></Card>
         ))}
       </div>
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
+        <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
+        <CardContent className="space-y-2 glass-card">
           {list.slice().reverse().map((a: any) => {
             const meta = STATUS_META[a.status] || STATUS_META.submitted;
             const Icon = meta.icon;
@@ -254,10 +254,10 @@ function AutofillTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
         <div className="text-xs text-muted-foreground">Pick a funder; we'll draft tailored application copy from your project bible. Costs ~3 credits.</div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 glass-card">
         <div className="flex gap-2 items-end">
           <div className="flex-1"><Label className="text-xs">Funding source</Label>
             <Select value={sourceId ? String(sourceId) : ""} onValueChange={v => { setSourceId(Number(v)); setDraft(null); }}>

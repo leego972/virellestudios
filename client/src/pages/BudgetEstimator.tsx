@@ -99,8 +99,8 @@ function TotalActualsRow({ budget }: { budget: any }) {
   const hot = pct > 5;
   const cold = pct < -5;
   return (
-    <Card className="bg-muted/40 border-2">
-      <CardContent className="p-4">
+    <Card className="bg-muted/40 border-2 glass-card">
+      <CardContent className="p-4 glass-card">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold">Hot-cost roll-up</p>
@@ -304,7 +304,7 @@ export default function BudgetEstimator() {
 
             {/* Total Summary */}
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-6 glass-card">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Estimated Budget</p>
@@ -327,8 +327,8 @@ export default function BudgetEstimator() {
 
             {/* Visual Breakdown Bar */}
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium gradient-text-gold">Budget Distribution</CardTitle>
+              <CardHeader className="pb-3 glass-card">
+                <CardTitle className="text-sm font-medium gradient-text-gold glass-card">Budget Distribution</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex h-8 rounded-lg overflow-hidden">
@@ -362,7 +362,7 @@ export default function BudgetEstimator() {
                 const isExpanded = expandedCategories.has(key);
                 const pct = activeBudget.totalEstimate ? (cat.estimate / activeBudget.totalEstimate) * 100 : 0;
                 return (
-                  <Card key={key} className="overflow-hidden">
+                  <Card key={key} className="overflow-hidden glass-card">
                     <button
                       className="w-full text-left p-4 flex items-center justify-between hover:bg-accent/30 transition-colors"
                       onClick={() => toggleCategory(key)}
@@ -411,8 +411,8 @@ export default function BudgetEstimator() {
             {/* AI Analysis */}
             {activeBudget.aiAnalysis && (
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
+                <CardHeader className="pb-3 glass-card">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold glass-card">
                     <TrendingUp className="h-4 w-4" /> Budget Analysis
                   </CardTitle>
                 </CardHeader>

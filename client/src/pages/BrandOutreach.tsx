@@ -193,12 +193,12 @@ export default function BrandOutreach() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Brands */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 glass-card">
           <CardHeader>
-            <CardTitle className="text-base gradient-text-gold">Brands & Sponsor Desks</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card">Brands & Sponsor Desks</CardTitle>
             <CardDescription>Pick one to draft outreach.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 glass-card">
             <Input
               placeholder="Search brands…"
               value={search}
@@ -254,9 +254,9 @@ export default function BrandOutreach() {
         </Card>
 
         {/* AI outreach drafter */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 glass-card">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
               <Sparkles className="h-4 w-4" /> Outreach Drafter
             </CardTitle>
             <CardDescription>
@@ -265,7 +265,7 @@ export default function BrandOutreach() {
                 : "Pick a brand on the left to start."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 glass-card">
             <div className="grid md:grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Contact name (optional)</Label>

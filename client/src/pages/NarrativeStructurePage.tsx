@@ -111,11 +111,11 @@ import { useState } from "react";
     const set = (k: string, v: string) => setForm((f: any) => ({ ...(f ?? current), [k]: v }));
 
     return (
-      <Card className="border-primary/30">
-        <CardHeader className="pb-3">
+      <Card className="border-primary/30 glass-card">
+        <CardHeader className="pb-3 glass-card">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-primary" />
-            <CardTitle className="text-base gradient-text-gold">Visual DNA Lock</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card">Visual DNA Lock</CardTitle>
             <Badge variant="outline" className="text-xs">Project-wide</Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -123,7 +123,7 @@ import { useState } from "react";
             Once set, this is your film's visual fingerprint.
           </p>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 glass-card">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs">Cinematographer / Style Reference</Label>
@@ -228,12 +228,12 @@ import { useState } from "react";
             ) : (
               <div className="space-y-4">
                 {[...acts].sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0)).map((act: any) => (
-                  <Card key={act.id} className="border-l-4 border-l-primary">
-                    <CardHeader className="pb-2">
+                  <Card key={act.id} className="border-l-4 border-l-primary glass-card">
+                    <CardHeader className="pb-2 glass-card">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Badge variant="outline" className="text-xs font-mono">ACT {act.orderIndex}</Badge>
-                          <CardTitle className="text-base gradient-text-gold">{act.name}</CardTitle>
+                          <CardTitle className="text-base gradient-text-gold glass-card">{act.name}</CardTitle>
                         </div>
                         <div className="flex gap-1">
                           <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditing(act)}>

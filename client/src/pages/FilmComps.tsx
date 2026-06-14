@@ -97,7 +97,7 @@ import { useState, useMemo } from "react";
             { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "—", icon: <Star className="h-4 w-4" /> },
           ].map(s => (
             <Card key={s.label}>
-              <CardContent className="p-3 flex items-center gap-2">
+              <CardContent className="p-3 flex items-center gap-2 glass-card">
                 <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary shrink-0">{s.icon}</div>
                 <div className="min-w-0"><p className="font-bold text-base truncate">{s.value}</p><p className="text-[10px] text-muted-foreground truncate">{s.label}</p></div>
               </CardContent>
@@ -130,9 +130,9 @@ import { useState, useMemo } from "react";
         </div>
 
         {selected && (
-          <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+          <Card className="border-primary/30 glass-card">
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                 {[["Budget", selected.budget],["Domestic", selected.domestic],["Worldwide", selected.worldwide],["Distributor", selected.distribution],["Festival", selected.festivalRun],["Tone", selected.tone]].map(([k, v]) => (
                   <div key={k}><p className="text-xs text-muted-foreground">{k}</p><p className="font-medium text-xs mt-0.5">{v}</p></div>

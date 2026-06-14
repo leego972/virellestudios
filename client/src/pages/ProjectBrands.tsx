@@ -181,8 +181,8 @@ export default function ProjectBrands() {
             const m = policyMeta[p];
             const Icon = m.icon;
             return (
-              <Card key={p} className="bg-zinc-900/40 border-zinc-800">
-                <CardContent className="p-4">
+              <Card key={p} className="bg-zinc-900/40 border-zinc-800 glass-card">
+                <CardContent className="p-4 glass-card">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-4 h-4 text-zinc-300" />
                     <span className="text-xs uppercase tracking-wider text-zinc-400">{m.label}</span>
@@ -202,8 +202,8 @@ export default function ProjectBrands() {
             <Skeleton className="h-16 bg-zinc-900" />
           </div>
         ) : brands.length === 0 ? (
-          <Card className="bg-zinc-900/40 border-zinc-800">
-            <CardContent className="p-10 text-center">
+          <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
+            <CardContent className="p-10 text-center glass-card">
               <Tag className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
               <h3 className="text-lg font-medium mb-1">No brands defined</h3>
               <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
@@ -220,8 +220,8 @@ export default function ProjectBrands() {
             {brands.map((b: any) => {
               const m = policyMeta[(b.policy ?? "allowed") as Policy];
               return (
-                <Card key={b.id} className="bg-zinc-900/40 border-zinc-800">
-                  <CardContent className="p-4 flex items-center gap-3">
+                <Card key={b.id} className="bg-zinc-900/40 border-zinc-800 glass-card">
+                  <CardContent className="p-4 flex items-center gap-3 glass-card">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium truncate">{b.name}</span>

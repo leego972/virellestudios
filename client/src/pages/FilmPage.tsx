@@ -431,7 +431,7 @@ export default function FilmPage() {
                 .slice(0, 3)
                 .map((f: any) => (
                   <Link key={f.slug} href={`/films/${f.slug}`}>
-                    <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden">
+                    <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card">
                       <div className="aspect-video bg-zinc-800 relative overflow-hidden">
                         {f.thumbnailUrl ? (
                           <img
@@ -446,7 +446,7 @@ export default function FilmPage() {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       </div>
-                      <CardContent className="p-3">
+                      <CardContent className="p-3 glass-card">
                         <p className="text-sm font-medium truncate">{f.title}</p>
                         {f.creatorName && (
                           <p className="text-xs text-zinc-500 mt-0.5">{f.creatorName}</p>

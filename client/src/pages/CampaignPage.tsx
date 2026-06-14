@@ -200,8 +200,8 @@ import { useRoute, useLocation } from "wouter";
               )}
 
               {/* About the model */}
-              <Card className="border-amber-500/20 bg-amber-500/5">
-                <CardContent className="pt-4 pb-4">
+              <Card className="border-amber-500/20 bg-amber-500/5 glass-card">
+                <CardContent className="pt-4 pb-4 glass-card">
                   <div className="flex gap-3">
                     {campaign.fundingModel === "all_or_nothing" ? (
                       <Target className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
@@ -248,7 +248,7 @@ import { useRoute, useLocation } from "wouter";
                         onClick={() => !isFull && setSelectedReward(isSelected ? null : reward.id)}
                         className={`cursor-pointer transition-all ${isFull ? "opacity-50 cursor-not-allowed" : ""} ${isSelected ? "border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/50" : "hover:border-amber-500/40"}`}
                       >
-                        <CardContent className="pt-4 pb-4 space-y-2">
+                        <CardContent className="pt-4 pb-4 space-y-2 glass-card">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-amber-400">{fmtAud(reward.amountCents)}</span>
                             {isSelected && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
@@ -273,7 +273,7 @@ import { useRoute, useLocation } from "wouter";
 
               {/* Custom amount */}
               <Card>
-                <CardContent className="pt-4 pb-4 space-y-3">
+                <CardContent className="pt-4 pb-4 space-y-3 glass-card">
                   <p className="text-sm font-semibold">{selectedReward ? "Or enter a different amount" : "Back this project"}</p>
                   <div className="flex items-center gap-2 rounded-md border px-3 py-1.5 bg-background focus-within:ring-1 ring-amber-500">
                     <span className="text-muted-foreground text-sm">A$</span>

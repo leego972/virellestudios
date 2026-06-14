@@ -16,8 +16,8 @@ import {
 // ─── Stat card ───────────────────────────────────────────────────────────────
 function StatCard({ label, value, icon: Icon, color }: { label: string; value: number | string; icon: any; color: string }) {
   return (
-    <Card className="bg-neutral-900 border-neutral-800">
-      <CardContent className="pt-6">
+    <Card className="bg-neutral-900 border-neutral-800 glass-card">
+      <CardContent className="pt-6 glass-card">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-neutral-400">{label}</p>
@@ -54,8 +54,8 @@ function SubmissionsPanel() {
   return (
     <div className="space-y-3">
       {pending.map((sub: any) => (
-        <Card key={sub.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
+        <Card key={sub.id} className="bg-neutral-900 border-neutral-800 glass-card">
+          <CardContent className="pt-4 glass-card">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-white truncate">{sub.projectTitle || `Project #${sub.projectId}`}</p>
@@ -123,8 +123,8 @@ function AbuseFlagsPanel() {
   return (
     <div className="space-y-3">
       {flags.map((flag: any) => (
-        <Card key={flag.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
+        <Card key={flag.id} className="bg-neutral-900 border-neutral-800 glass-card">
+          <CardContent className="pt-4 glass-card">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -202,8 +202,8 @@ function ShowcaseCurationPanel() {
   return (
     <div className="space-y-3">
       {topFilms.map((film: any) => (
-        <Card key={film.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
+        <Card key={film.id} className="bg-neutral-900 border-neutral-800 glass-card">
+          <CardContent className="pt-4 glass-card">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               {film.thumbnailUrl && (
                 <img src={film.thumbnailUrl} alt={film.title} className="w-24 h-14 object-cover rounded" />

@@ -124,7 +124,7 @@ import { useLocation } from "wouter";
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i}><CardContent className="p-0">
+                <Card key={i}><CardContent className="p-0 glass-card">
                   <Skeleton className="h-44 rounded-t-lg" />
                   <div className="p-4 space-y-2">
                     <Skeleton className="h-5 w-3/4" />
@@ -153,7 +153,7 @@ import { useLocation } from "wouter";
                 return (
                   <Card
                     key={campaign.id}
-                    className="overflow-hidden cursor-pointer hover:border-amber-500/40 hover:shadow-md hover:shadow-amber-500/10 transition-all group"
+                    className="overflow-hidden cursor-pointer hover:border-amber-500/40 hover:shadow-md hover:shadow-amber-500/10 transition-all group glass-card"
                     onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
                   >
                     <div className="relative h-44 overflow-hidden bg-black/40">
@@ -185,7 +185,7 @@ import { useLocation } from "wouter";
                         </Badge>
                       </div>
                     </div>
-                    <CardContent className="p-4 space-y-3">
+                    <CardContent className="p-4 space-y-3 glass-card">
                       <div>
                         <h3 className="font-bold text-sm leading-snug line-clamp-2 group-hover:text-amber-400 transition-colors">{campaign.title}</h3>
                         {campaign.tagline && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{campaign.tagline}</p>}

@@ -129,16 +129,16 @@ import { useState } from "react";
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4 mt-4">
-              <Card><CardContent className="p-4"><p className="text-sm italic text-muted-foreground mb-3">"{activeSeries.logline}"</p>{activeSeries.premise && <><Separator className="mb-3" /><p className="text-sm text-muted-foreground">{activeSeries.premise}</p></>}</CardContent></Card>
-              {activeSeries.toneAndStyle && <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Tone & Style</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{activeSeries.toneAndStyle}</p></CardContent></Card>}
+              <Card><CardContent className="p-4 glass-card"><p className="text-sm italic text-muted-foreground mb-3">"{activeSeries.logline}"</p>{activeSeries.premise && <><Separator className="mb-3" /><p className="text-sm text-muted-foreground">{activeSeries.premise}</p></>}</CardContent></Card>
+              {activeSeries.toneAndStyle && <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card">Tone & Style</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{activeSeries.toneAndStyle}</p></CardContent></Card>}
             </TabsContent>
 
             <TabsContent value="world" className="mt-4">
-              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Globe className="h-4 w-4 text-primary" />World Building</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.worldBuilding || "No world building notes yet. Edit the bible to add them."}</p></CardContent></Card>
+              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><Globe className="h-4 w-4 text-primary" />World Building</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.worldBuilding || "No world building notes yet. Edit the bible to add them."}</p></CardContent></Card>
             </TabsContent>
 
             <TabsContent value="characters" className="mt-4">
-              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Users className="h-4 w-4 text-primary" />Main Characters</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.mainCharacters || "No character notes yet. Edit the bible to add them."}</p></CardContent></Card>
+              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><Users className="h-4 w-4 text-primary" />Main Characters</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.mainCharacters || "No character notes yet. Edit the bible to add them."}</p></CardContent></Card>
             </TabsContent>
 
             <TabsContent value="episodes" className="space-y-4 mt-4">
@@ -151,8 +151,8 @@ import { useState } from "react";
                   {season.arc && <p className="text-xs text-muted-foreground mb-3 italic">{season.arc}</p>}
                   <div className="space-y-2">
                     {season.episodes.map(ep => (
-                      <Card key={ep.id} className="hover:border-primary/30 transition-colors">
-                        <CardContent className="p-3 flex items-start gap-3">
+                      <Card key={ep.id} className="hover:border-primary/30 transition-colors glass-card">
+                        <CardContent className="p-3 flex items-start gap-3 glass-card">
                           <span className="text-xs font-bold text-primary bg-amber-400/10 rounded px-1.5 py-0.5 shrink-0">S{season.number}E{ep.number}</span>
                           <div className="flex-1 min-w-0">
                             {editingEpisode?.ep.id === ep.id ? (
@@ -233,8 +233,8 @@ import { useState } from "react";
           {series.map(s => {
             const totalEps = s.seasons.reduce((t, season) => t + season.episodes.length, 0);
             return (
-              <Card key={s.id} className="cursor-pointer hover:border-primary/50 transition-colors group" onClick={() => setActiveSeries(s)}>
-                <CardContent className="p-4 space-y-2">
+              <Card key={s.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card" onClick={() => setActiveSeries(s)}>
+                <CardContent className="p-4 space-y-2 glass-card">
                   <div className="flex items-start justify-between gap-2">
                     <span className="font-semibold truncate group-hover:text-primary transition-colors">{s.title}</span>
                     <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100" onClick={e => { e.stopPropagation(); deleteSeries(s.id); }}><Trash2 className="h-3 w-3 text-destructive" /></Button>

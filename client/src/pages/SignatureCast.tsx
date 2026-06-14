@@ -764,7 +764,7 @@ import { useState } from "react";
                   <Card key={actor.id}
                     className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer group`}
                     onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-5 glass-card">
                       <div className={`w-full aspect-[3/4] rounded-xl mb-4 overflow-hidden relative bg-gradient-to-b ${actor.gradient}`}>
                         {actorPortrait(actor.id) ? (
                           <img src={actorPortrait(actor.id)!} alt={actor.name}
@@ -934,7 +934,7 @@ import { useState } from "react";
                       <Card key={actor.id}
                         className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
                         onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
-                        <CardContent className="p-5">
+                        <CardContent className="p-5 glass-card">
                           <div className="flex gap-4">
                             <div className={`w-20 h-28 shrink-0 rounded-xl overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
                               {actorPortrait(actor.id) ? (
@@ -1029,7 +1029,7 @@ import { useState } from "react";
                       <Card key={actor.id}
                         className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
                         onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
-                        <CardContent className="p-4">
+                        <CardContent className="p-4 glass-card">
                           <div className="flex gap-3">
                             <div className={`w-14 h-20 shrink-0 rounded-lg overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
                               {actorPortrait(actor.id) ? (
@@ -1110,7 +1110,7 @@ import { useState } from "react";
                       <Card key={actor.id}
                         className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
                         onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
-                        <CardContent className="p-4">
+                        <CardContent className="p-4 glass-card">
                           <div className="flex gap-3 items-start">
                             <div className={`w-12 h-16 shrink-0 rounded-lg overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
                               {actorPortrait(actor.id) ? (

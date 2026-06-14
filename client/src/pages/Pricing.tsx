@@ -403,9 +403,9 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl gradient-text-gold">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold glass-card">{tier.displayName}</CardTitle>
                   </div>
-                  <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
+                  <CardDescription className="min-h-[3rem] glass-card">{tier.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
@@ -415,7 +415,7 @@ export default function Pricing() {
                     {tier.credits.toLocaleString()} credits/mo included
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1">
+                <CardContent className="flex-1 glass-card">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -457,15 +457,15 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl gradient-text-gold">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold glass-card">{tier.displayName}</CardTitle>
                   </div>
-                  <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
+                  <CardDescription className="min-h-[3rem] glass-card">{tier.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">{tier.priceDisplay}</span>
                     <span className="text-muted-foreground ml-1">{tier.priceNote}</span>
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1">
+                <CardContent className="flex-1 glass-card">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -559,9 +559,9 @@ export default function Pricing() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {CREDIT_PACKS.map((pack) => (
               <Card key={pack.id} className={`border-zinc-800 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 glass-card">
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg gradient-text-gold">{pack.label}</CardTitle>
+                    <CardTitle className="text-lg gradient-text-gold glass-card">{pack.label}</CardTitle>
                     {pack.popular && <Badge className="bg-amber-600">Best Value</Badge>}
                   </div>
                   <div className="text-2xl font-bold mt-2">{formatAUD(pack.price)}</div>

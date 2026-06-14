@@ -126,8 +126,8 @@ export default function AdminSignatureCast() {
             { label: "Active Licenses", value: entitlements?.length ?? "—", icon: CheckCircle2, color: "text-blue-400" },
             { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "—", icon: TrendingUp, color: "text-purple-400" },
           ].map(({ label, value, icon: Icon, color }) => (
-            <Card key={label} className="border-zinc-800 bg-zinc-900/50">
-              <CardContent className="p-4 flex items-center gap-3">
+            <Card key={label} className="border-zinc-800 bg-zinc-900/50 glass-card">
+              <CardContent className="p-4 flex items-center gap-3 glass-card">
                 <Icon className={`w-5 h-5 ${color}`} />
                 <div>
                   <p className="text-xs text-zinc-500">{label}</p>
@@ -148,9 +148,9 @@ export default function AdminSignatureCast() {
 
           {/* ── ACTOR CONFIG TAB ── */}
           <TabsContent value="actors" className="mt-4">
-            <Card className="border-zinc-800">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
+            <Card className="border-zinc-800 glass-card">
+              <CardHeader className="pb-3 glass-card">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
               <CardContent>
                 {/* Portrait Generation */}
@@ -302,9 +302,9 @@ export default function AdminSignatureCast() {
 
           {/* ── PRICING TAB ── */}
           <TabsContent value="pricing" className="mt-4">
-            <Card className="border-zinc-800">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">License Pricing by Tier (AUD)</CardTitle>
+            <Card className="border-zinc-800 glass-card">
+              <CardHeader className="pb-3 glass-card">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">License Pricing by Tier (AUD)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -351,9 +351,9 @@ export default function AdminSignatureCast() {
 
           {/* ── ACTIVE LICENSES TAB ── */}
           <TabsContent value="entitlements" className="mt-4">
-            <Card className="border-zinc-800">
-              <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">All Active Actor Licenses</CardTitle>
+            <Card className="border-zinc-800 glass-card">
+              <CardHeader className="pb-3 flex flex-row items-center justify-between glass-card">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">All Active Actor Licenses</CardTitle>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -415,9 +415,9 @@ export default function AdminSignatureCast() {
 
           {/* ── ANALYTICS TAB ── */}
           <TabsContent value="analytics" className="mt-4">
-            <Card className="border-zinc-800">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">Revenue & Conversion Analytics</CardTitle>
+            <Card className="border-zinc-800 glass-card">
+              <CardHeader className="pb-3 glass-card">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">Revenue & Conversion Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 {!analytics ? (

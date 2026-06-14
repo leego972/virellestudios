@@ -136,15 +136,15 @@ import { useState, useMemo } from "react";
         {/* Summary */}
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           {[["Total Items", summary.total],["Owned", summary.owned],["Rented", summary.rented],["Still Needed", summary.needed],["Checked Out", summary.checkedOut]].map(([l, v]) => (
-            <Card key={l as string}><CardContent className="p-3 text-center"><p className="text-xl font-bold">{v}</p><p className="text-[10px] text-muted-foreground">{l}</p></CardContent></Card>
+            <Card key={l as string}><CardContent className="p-3 text-center glass-card"><p className="text-xl font-bold">{v}</p><p className="text-[10px] text-muted-foreground">{l}</p></CardContent></Card>
           ))}
         </div>
 
         {/* Add / Edit form */}
         {editing && (
-          <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base gradient-text-gold">{editing.id && items.find(i => i.id === editing.id) ? "Edit Item" : "Add Equipment"}</CardTitle></CardHeader>
-            <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Card className="border-primary/30 glass-card">
+            <CardHeader><CardTitle className="text-base gradient-text-gold glass-card">{editing.id && items.find(i => i.id === editing.id) ? "Edit Item" : "Add Equipment"}</CardTitle></CardHeader>
+            <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 glass-card">
               <div className="space-y-1.5 sm:col-span-2 lg:col-span-1"><Label>Item Name *</Label><Input placeholder="Sony FX3 Camera Body" value={editing.name ?? ""} onChange={e => setEditing(p => ({ ...p, name: e.target.value }))} /></div>
               <div className="space-y-1.5"><Label>Category</Label><Select value={editing.category ?? "other"} onValueChange={v => setEditing(p => ({ ...p, category: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{CATEGORIES.map(c => <SelectItem key={c.key} value={c.key}>{c.icon} {c.label}</SelectItem>)}</SelectContent></Select></div>
               <div className="space-y-1.5"><Label>Ownership</Label><Select value={editing.ownership ?? "rented"} onValueChange={v => setEditing(p => ({ ...p, ownership: v as OwnershipType }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="owned">Owned</SelectItem><SelectItem value="rented">Rented</SelectItem><SelectItem value="borrowed">Borrowed</SelectItem><SelectItem value="needed">Still Needed</SelectItem></SelectContent></Select></div>
@@ -181,7 +181,7 @@ import { useState, useMemo } from "react";
             <div className="space-y-2">
               {cat.items.map(item => (
                 <Card key={item.id} className={`transition-colors ${item.checkedOut ? "opacity-60" : "hover:border-primary/30"}`}>
-                  <CardContent className="p-3 flex items-start gap-3">
+                  <CardContent className="p-3 flex items-start gap-3 glass-card">
                     <button onClick={() => toggle(item.id)} className="mt-0.5 shrink-0">{item.checkedOut ? <CheckSquare className="h-4 w-4 text-primary" /> : <Square className="h-4 w-4 text-muted-foreground" />}</button>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">

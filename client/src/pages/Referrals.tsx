@@ -123,11 +123,11 @@ export default function Referrals() {
       </div>
 
       {/* Referral Link Card */}
-      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20">
+      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20 glass-card">
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold">Your Referral Link</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold glass-card">Your Referral Link</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 glass-card">
           {isLoading ? (
             <div className="h-12 bg-white/5 rounded-lg animate-pulse" />
           ) : (
@@ -184,8 +184,8 @@ export default function Referrals() {
           ? "border-green-500/20 bg-green-600/5"
           : "border-border/50"
         }>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+          <CardHeader className="pb-3 glass-card">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
               <Tag className="h-4 w-4 text-green-400" />
               Your Promo Code
             </CardTitle>
@@ -223,7 +223,7 @@ export default function Referrals() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 glass-card">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Users className="h-5 w-5 text-blue-400" />
@@ -236,7 +236,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 glass-card">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-green-500/10">
                 <TrendingUp className="h-5 w-5 text-green-400" />
@@ -249,7 +249,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 glass-card">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Zap className="h-5 w-5 text-amber-400" />
@@ -264,14 +264,14 @@ export default function Referrals() {
       </div>
 
       {/* Milestone Progress */}
-      <Card className="border-amber-500/20">
+      <Card className="border-amber-500/20 glass-card">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold glass-card">
             <Trophy className="h-5 w-5 text-amber-400" />
             Milestone Rewards
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-5 glass-card">
           {successful < MILESTONES[MILESTONES.length - 1].count && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -333,7 +333,7 @@ export default function Referrals() {
       {/* How It Works */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold">How It Works</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold glass-card">How It Works</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -368,7 +368,7 @@ export default function Referrals() {
       {stats?.referrals && stats.referrals.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg gradient-text-gold">Referral History</CardTitle>
+            <CardTitle className="text-lg gradient-text-gold glass-card">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

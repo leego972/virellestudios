@@ -500,9 +500,9 @@ export default function Landing() {
               </h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden">
+              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden glass-card">
                 <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
-                <CardContent className="p-8">
+                <CardContent className="p-8 glass-card">
                   <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
                     <Film className="h-7 w-7 text-amber-400" />
                   </div>
@@ -521,9 +521,9 @@ export default function Landing() {
                   <p className="text-xs font-semibold text-amber-400">Perfect for: Indie filmmakers, content creators, YouTube channels</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden">
+              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden glass-card">
                 <div className="h-1.5 bg-gradient-to-r from-purple-400 to-violet-500" />
-                <CardContent className="p-8">
+                <CardContent className="p-8 glass-card">
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
                     <Sparkles className="h-7 w-7 text-purple-400" />
                   </div>
@@ -727,7 +727,7 @@ export default function Landing() {
                 { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
                 <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 glass-card">
                     <h3 className="text-xl font-bold mb-2">{plan.tier}</h3>
                     <div className="mb-1">
                       <span className="text-3xl font-black text-white">{plan.price}</span>

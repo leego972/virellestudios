@@ -207,12 +207,12 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
     <div className="space-y-6 max-w-4xl">
       {/* Production World */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Globe className="h-4 w-4 text-amber-500" />Production World
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <FieldGroup label="Era / Time Period">
             <SelectField value={era} onValueChange={setEra} placeholder="Select era..." options={constants?.eras || []} />
           </FieldGroup>
@@ -233,12 +233,12 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
 
       {/* Camera Package */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Camera className="h-4 w-4 text-blue-500" />Camera Package
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <FieldGroup label="Camera System">
             <SelectField value={camera} onValueChange={setCamera} placeholder="Select camera..." options={constants?.cameras || []} />
           </FieldGroup>
@@ -261,12 +261,12 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
 
       {/* Colour & Look */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Palette className="h-4 w-4 text-purple-500" />Colour & Look
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <div className="sm:col-span-2">
             <FieldGroup label="Colour Grade Style">
               <SelectField value={grade} onValueChange={setGrade} placeholder="Select grade style..." options={constants?.colorGradeStyles || []} />
@@ -286,12 +286,12 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
 
       {/* Camera Movement & Lighting */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Film className="h-4 w-4 text-green-500" />Camera Movement & Lighting
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <FieldGroup label="Camera Movement Style">
             <SelectField value={movement} onValueChange={setMovement} placeholder="Select movement..." options={constants?.movementStyles || []} />
           </FieldGroup>
@@ -312,12 +312,12 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
 
       {/* Sound & Music */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Zap className="h-4 w-4 text-orange-500" />Sound Design & Music
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <FieldGroup label="Sound Design Direction">
             <SelectField value={sound} onValueChange={setSound} placeholder="Select direction..." options={constants?.soundDesignDirections || []} />
           </FieldGroup>
@@ -341,13 +341,13 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
 
       {/* DNA Result */}
       {dnaResult?.visualDnaPrompt && (
-        <Card className="border-amber-500/30 bg-amber-500/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <Card className="border-amber-500/30 bg-amber-500/5 glass-card">
+          <CardHeader className="pb-2 glass-card">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
               <Star className="h-4 w-4 text-amber-500" />Visual DNA
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 glass-card">
             {dnaResult.eraSignature && <ResultBlock label="Era Signature" value={dnaResult.eraSignature} />}
             {dnaResult.summary && <ResultBlock label="Production Identity" value={dnaResult.summary} />}
             <ResultBlock label="Visual DNA Prompt" value={dnaResult.visualDnaPrompt} copyable />
@@ -548,7 +548,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
           const isExpanded = expandedId === loc.id;
           const enriched = enrichResults[loc.id];
           return (
-            <Card key={loc.id} className="overflow-hidden">
+            <Card key={loc.id} className="overflow-hidden glass-card">
               <div className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-1.5">
@@ -767,7 +767,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
           const prompted = promptResults[v.id];
           const vehicleLabel = [v.year, v.make, v.model].filter(Boolean).join(" ");
           return (
-            <Card key={v.id} className="overflow-hidden">
+            <Card key={v.id} className="overflow-hidden glass-card">
               <div className="p-4 space-y-2">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
@@ -870,12 +870,12 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
   return (
     <div className="space-y-5 max-w-4xl">
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <CloudSun className="h-4 w-4 text-sky-500" />Atmospheric Conditions
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4 glass-card">
           <FieldGroup label="Time of Day *">
             <SelectField value={timeOfDay} onValueChange={setTimeOfDay} placeholder="Select time..." options={constants?.timeOfDayOptions || []} />
           </FieldGroup>
@@ -913,12 +913,12 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
             <Film className="h-4 w-4 text-indigo-500" />Scene Context
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 glass-card">
           <FieldGroup label="Genre / Tone">
             <SelectField value={genre} onValueChange={setGenre} placeholder="Genre..." options={GENRES} />
           </FieldGroup>
@@ -960,13 +960,13 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
       </Button>
 
       {result && (
-        <Card className="border-sky-500/30 bg-sky-500/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
+        <Card className="border-sky-500/30 bg-sky-500/5 glass-card">
+          <CardHeader className="pb-2 glass-card">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card">
               <CloudSun className="h-4 w-4 text-sky-500" />Atmosphere Profile
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 glass-card">
             <ResultBlock label="Atmosphere" value={result.atmosphereDescription} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <ResultBlock label="Lighting Conditions" value={result.lightingConditions} />
@@ -1261,7 +1261,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
             const catColor = CAT_COLORS[item.category] || "bg-muted text-muted-foreground border-border";
             const isAnalysing = analyseMutation.isPending && (analyseMutation.variables as any)?.itemId === item.id;
             return (
-              <Card key={item.id} className="overflow-hidden group hover:ring-1 hover:ring-violet-400/50 transition-all">
+              <Card key={item.id} className="overflow-hidden group hover:ring-1 hover:ring-violet-400/50 transition-all glass-card">
                 {/* Image */}
                 <div className="relative aspect-square bg-muted/30 overflow-hidden cursor-pointer"
                   onClick={() => setExpandedId(isExpanded ? null : item.id)}>
@@ -1435,12 +1435,12 @@ function ShotListTab({ projectId }: { projectId: number }) {
 
       {/* Generator form */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+        <CardHeader className="pb-3 glass-card">
+          <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
             <Wand2 className="h-4 w-4 text-violet-500" />Generate New Shot List
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 glass-card">
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <FieldGroup label="Scene Name *">
@@ -1476,10 +1476,10 @@ function ShotListTab({ projectId }: { projectId: number }) {
 
       {/* Generated results */}
       {generatedShots.length > 0 && (
-        <Card className="border-violet-200 bg-violet-50/30">
-          <CardHeader className="pb-2">
+        <Card className="border-violet-200 bg-violet-50/30 glass-card">
+          <CardHeader className="pb-2 glass-card">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                 <Sparkles className="h-4 w-4 text-violet-500" />
                 {generatedShots.length} shots — {totalDuration(generatedShots)} screen time
               </CardTitle>
@@ -1494,7 +1494,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-0 glass-card">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
@@ -1746,17 +1746,17 @@ function ScheduleTab({ projectId }: { projectId: number }) {
           ))}
           {displayDays.length > 0 && (
             <div className="grid grid-cols-3 gap-3 pt-2">
-              <Card className="p-3 text-center">
+              <Card className="p-3 text-center glass-card">
                 <p className="text-2xl font-bold text-violet-700">{displayDays.length}</p>
                 <p className="text-xs text-muted-foreground">Shoot Days</p>
               </Card>
-              <Card className="p-3 text-center">
+              <Card className="p-3 text-center glass-card">
                 <p className="text-2xl font-bold text-violet-700">
                   {new Set(displayDays.map((d: any) => d.locationName)).size}
                 </p>
                 <p className="text-xs text-muted-foreground">Locations Used</p>
               </Card>
-              <Card className="p-3 text-center">
+              <Card className="p-3 text-center glass-card">
                 <p className="text-2xl font-bold text-violet-700">
                   {displayDays.reduce((a: number, d: any) => a + (Array.isArray(d.scenes) ? d.scenes.length : 0), 0)}
                 </p>
@@ -2066,7 +2066,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
         <div className="lg:col-span-2 space-y-4">
           {/* Quick presets */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Quick Presets</CardTitle></CardHeader>
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Quick Presets</CardTitle></CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-1.5">
                 {TITLE_PRESETS.map((p, i) => (
@@ -2084,8 +2084,8 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Background image */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Background Image</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Background Image</CardTitle></CardHeader>
+            <CardContent className="space-y-2 glass-card">
               <div
                 className={["border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-violet-400 transition-colors",
                   bgDataUrl ? "border-violet-300 bg-violet-50/20" : "border-muted"].join(" ")}
@@ -2117,8 +2117,8 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Text content */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Text Content</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Text Content</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <Textarea value={overlayText} onChange={e => setOverlayText(e.target.value)}
                 rows={3} className="text-sm font-mono resize-none"
                 placeholder={"TO BE CONTINUED...\nor\nGUEST STAR\nJOHN DOE"} />
@@ -2128,8 +2128,8 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Style options */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Style</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Style</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <FieldGroup label="Text Style">
                 <Select value={textStyle} onValueChange={setTextStyle}>
                   <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
@@ -2168,8 +2168,8 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Overlay options */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Image Effects</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+            <CardHeader className="pb-2 glass-card"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60 glass-card">Image Effects</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="dimCheck" checked={overlayDim} onChange={e => setOverlayDim(e.target.checked)} className="rounded" />
                 <label htmlFor="dimCheck" className="text-xs">Darken background</label>

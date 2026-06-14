@@ -149,9 +149,9 @@ export default function SharePreview() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Card className="max-w-md w-full">
+        <Card className="max-w-md w-full glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold">
+            <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold glass-card">
               <AlertCircle className="h-5 w-5" />
               Link expired or invalid
             </CardTitle>
@@ -215,7 +215,7 @@ export default function SharePreview() {
         )}
 
         {active && (
-          <Card className="mb-6 overflow-hidden">
+          <Card className="mb-6 overflow-hidden glass-card">
             <ReviewerCommentBox
               projectId={projectId}
               token={token}
@@ -241,7 +241,7 @@ export default function SharePreview() {
               )}
               <ScreenerWatermark name={reviewerName} />
             </div>
-            <CardContent className="p-4">
+            <CardContent className="p-4 glass-card">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h3 className="font-semibold">Scene {active.sceneNumber} — {active.title}</h3>
@@ -269,7 +269,7 @@ export default function SharePreview() {
 
         {scenes.length === 0 ? (
           <Card>
-            <CardContent className="p-8 text-center text-sm text-muted-foreground">
+            <CardContent className="p-8 text-center text-sm text-muted-foreground glass-card">
               No scenes generated yet. Check back soon.
             </CardContent>
           </Card>
@@ -307,7 +307,7 @@ export default function SharePreview() {
                     )}
                   </div>
                 </div>
-                <CardContent className="p-3">
+                <CardContent className="p-3 glass-card">
                   <div className="text-xs text-muted-foreground mb-1">Scene {s.sceneNumber}</div>
                   <h3 className="font-medium text-sm truncate">{s.title}</h3>
                   {s.description && (

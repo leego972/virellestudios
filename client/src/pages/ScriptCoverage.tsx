@@ -145,8 +145,8 @@ import { useState } from "react";
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <Card>
-                <CardHeader><CardTitle className="text-base gradient-text-gold">Script Details</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
+                <CardHeader><CardTitle className="text-base gradient-text-gold glass-card">Script Details</CardTitle></CardHeader>
+                <CardContent className="space-y-4 glass-card">
                   <div className="space-y-1.5"><Label>Title</Label><Input placeholder="Untitled Script" value={scriptTitle} onChange={e => setScriptTitle(e.target.value)} /></div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5"><Label>Genre</Label><Input placeholder="Drama, Thriller…" value={genre} onChange={e => setGenre(e.target.value)} /></div>
@@ -171,7 +171,7 @@ import { useState } from "react";
                 <Button variant="outline" onClick={showSample}>View Sample</Button>
               </div>
             </div>
-            <Card className="flex flex-col justify-center items-center p-8 text-center border-dashed">
+            <Card className="flex flex-col justify-center items-center p-8 text-center border-dashed glass-card">
               <FileSearch className="h-12 w-12 text-muted-foreground/30 mb-4" />
               <p className="font-medium">Your coverage report will appear here</p>
               <p className="text-sm text-muted-foreground mt-1">Paste your script and click Generate Coverage, or view a sample report to see what to expect.</p>
@@ -195,25 +195,25 @@ import { useState } from "react";
               </div>
             </div>
 
-            <Card><CardContent className="p-4"><p className="text-sm italic text-muted-foreground">"{report.logline}"</p></CardContent></Card>
+            <Card><CardContent className="p-4 glass-card"><p className="text-sm italic text-muted-foreground">"{report.logline}"</p></CardContent></Card>
 
             <div className="grid gap-6 lg:grid-cols-3">
-              <Card className="lg:col-span-1">
-                <CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><BarChart3 className="h-4 w-4 text-primary" />Scores</CardTitle></CardHeader>
-                <CardContent className="space-y-3">
+              <Card className="lg:col-span-1 glass-card">
+                <CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><BarChart3 className="h-4 w-4 text-primary" />Scores</CardTitle></CardHeader>
+                <CardContent className="space-y-3 glass-card">
                   {Object.entries(report.scores).map(([k, v]) => <ScoreBar key={k} label={k.charAt(0).toUpperCase() + k.slice(1)} value={v} />)}
                   <Separator />
                   <div className="flex justify-between text-sm font-medium"><span>Overall</span><span>{Math.round(Object.values(report.scores).reduce((a, b) => a + b, 0) / 7)}/100</span></div>
                 </CardContent>
               </Card>
               <div className="lg:col-span-2 space-y-4">
-                <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Premise Analysis</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.premise}</p></CardContent></Card>
+                <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card">Premise Analysis</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.premise}</p></CardContent></Card>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500 gradient-text-gold"><CheckCircle className="h-4 w-4" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
-                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">−</span>{w}</li>)}</ul></CardContent></Card>
+                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500 gradient-text-gold glass-card"><CheckCircle className="h-4 w-4" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
+                  <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500 glass-card"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">−</span>{w}</li>)}</ul></CardContent></Card>
                 </div>
-                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><MessageSquare className="h-4 w-4 text-primary" />Synopsis Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.synopsisNotes}</p></CardContent></Card>
-                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Star className="h-4 w-4 text-primary" />Reader Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.notes}</p></CardContent></Card>
+                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><MessageSquare className="h-4 w-4 text-primary" />Synopsis Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.synopsisNotes}</p></CardContent></Card>
+                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card"><Star className="h-4 w-4 text-primary" />Reader Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.notes}</p></CardContent></Card>
               </div>
             </div>
           </div>

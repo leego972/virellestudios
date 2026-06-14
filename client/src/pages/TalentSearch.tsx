@@ -763,9 +763,9 @@ import { useState, useEffect } from "react";
               const ac = getAccent(actor.accentColor);
               return (
                 <Card key={actor.id}
-                  className="bg-zinc-900/50 border border-white/5 hover:border-white/15 transition-all cursor-pointer group overflow-hidden"
+                  className="bg-zinc-900/50 border border-white/5 hover:border-white/15 transition-all cursor-pointer group overflow-hidden glass-card"
                   onClick={() => setSelectedActor(actor)}>
-                  <CardContent className="p-0">
+                  <CardContent className="p-0 glass-card">
                     {/* Portrait */}
                     <div className="relative">
                       <ActorPortrait actor={actor} size="card" />

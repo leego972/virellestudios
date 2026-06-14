@@ -156,7 +156,7 @@ import { useState } from "react";
             <div className="space-y-3">
               {filteredPosts.map(post => (
                 <Card key={post.id} className={`hover:border-primary/40 transition-colors cursor-pointer ${post.pinned ? "border-primary/20" : ""}`}>
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 glass-card">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-9 w-9 shrink-0 mt-0.5">
                         <AvatarFallback className="text-xs font-bold bg-amber-400/10 text-primary">{post.avatar}</AvatarFallback>
@@ -201,8 +201,8 @@ import { useState } from "react";
           <TabsContent value="events" className="space-y-3 mt-4">
             <p className="text-sm text-muted-foreground">Upcoming industry events, film markets, and festivals.</p>
             {EVENTS.map(ev => (
-              <Card key={ev.title} className="hover:border-primary/30 transition-colors">
-                <CardContent className="p-4 flex items-center gap-4">
+              <Card key={ev.title} className="hover:border-primary/30 transition-colors glass-card">
+                <CardContent className="p-4 flex items-center gap-4 glass-card">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center text-primary shrink-0">
                     {ev.type === "Festival" ? <Film className="h-5 w-5" /> : <Megaphone className="h-5 w-5" />}
                   </div>
@@ -227,8 +227,8 @@ import { useState } from "react";
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {filteredResources.map(r => (
-                <Card key={r.title} className="hover:border-primary/40 transition-colors">
-                  <CardContent className="p-3 space-y-1.5">
+                <Card key={r.title} className="hover:border-primary/40 transition-colors glass-card">
+                  <CardContent className="p-3 space-y-1.5 glass-card">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold text-sm">{r.title}</span>
                       <Badge variant="outline" className="text-[10px] shrink-0">{r.category}</Badge>

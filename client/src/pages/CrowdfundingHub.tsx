@@ -371,7 +371,7 @@ function CrowdfundingHubInner() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
                 <Film className="h-4 w-4 text-amber-400" /> My Campaigns
               </CardTitle>
               <CardDescription>Your crowdfunding campaigns launched on Virelle.</CardDescription>
@@ -414,7 +414,7 @@ function CrowdfundingHubInner() {
                 return (
                   <Card
                     key={campaign.id}
-                    className="overflow-hidden hover:border-amber-500/40 transition-colors group"
+                    className="overflow-hidden hover:border-amber-500/40 transition-colors group glass-card"
                   >
                     {campaign.posterUrl ? (
                       <div
@@ -435,7 +435,7 @@ function CrowdfundingHubInner() {
                         <Film className="w-8 h-8 text-amber-500/30" />
                       </div>
                     )}
-                    <CardContent className="p-3 space-y-2">
+                    <CardContent className="p-3 space-y-2 glass-card">
                       <div
                         className="flex items-start justify-between gap-2 cursor-pointer"
                         onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
@@ -528,12 +528,12 @@ function CrowdfundingHubInner() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Platforms list */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 glass-card">
           <CardHeader>
-            <CardTitle className="text-base gradient-text-gold">Platforms</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card">Platforms</CardTitle>
             <CardDescription>Curated from the Funding Directory.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 glass-card">
             <Input
               placeholder="Search platforms…"
               value={search}
@@ -574,9 +574,9 @@ function CrowdfundingHubInner() {
         </Card>
 
         {/* AI campaign builder */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 glass-card">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
               <Sparkles className="h-4 w-4" /> AI Campaign Builder
             </CardTitle>
             <CardDescription>
@@ -585,7 +585,7 @@ function CrowdfundingHubInner() {
                 : "Open from a project to generate AI copy."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 glass-card">
             <div className="grid md:grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Format</Label>

@@ -82,9 +82,9 @@ export default function Contacts() {
         </div>
 
         {open && (
-          <Card className="bg-zinc-950 border-zinc-800">
-            <CardHeader><CardTitle className="text-base gradient-text-gold">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+          <Card className="bg-zinc-950 border-zinc-800 glass-card">
+            <CardHeader><CardTitle className="text-base gradient-text-gold glass-card">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
                 <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st AD…" className="bg-zinc-900 border-zinc-800" /></div>
@@ -114,15 +114,15 @@ export default function Contacts() {
         {isLoading ? (
           <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Loading…</div>
         ) : (contacts as any[]).length === 0 ? (
-          <Card className="bg-zinc-950 border-zinc-800">
-            <CardContent className="p-8 text-center text-sm text-zinc-500">No contacts yet. Add your first crew member above.</CardContent>
+          <Card className="bg-zinc-950 border-zinc-800 glass-card">
+            <CardContent className="p-8 text-center text-sm text-zinc-500 glass-card">No contacts yet. Add your first crew member above.</CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {Object.entries(grouped).map(([dept, list]) => (
-              <Card key={dept} className="bg-zinc-950 border-zinc-800">
-                <CardHeader className="pb-2"><CardTitle className="text-sm uppercase tracking-wide text-amber-500">{dept}</CardTitle></CardHeader>
-                <CardContent className="p-0">
+              <Card key={dept} className="bg-zinc-950 border-zinc-800 glass-card">
+                <CardHeader className="pb-2 glass-card"><CardTitle className="text-sm uppercase tracking-wide text-amber-500 glass-card">{dept}</CardTitle></CardHeader>
+                <CardContent className="p-0 glass-card">
                   <table className="w-full text-sm">
                     <thead className="text-xs text-zinc-400 bg-zinc-900/40">
                       <tr><th className="px-3 py-2 text-left">Name</th><th className="px-3 py-2 text-left">Role</th><th className="px-3 py-2 text-left">Call</th><th className="px-3 py-2 text-left">Contact</th><th className="px-3 py-2"></th></tr>

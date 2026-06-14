@@ -490,7 +490,7 @@ export default function DesignerWardrobePage() {
     const Icon = meta?.icon ?? Package;
     return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card key={it.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden flex flex-col">
+      <Card key={it.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden flex flex-col glass-card">
         <div className="aspect-[4/5] bg-zinc-950 relative overflow-hidden">
           {it.primaryImageUrl ? (
             <img
@@ -520,7 +520,7 @@ export default function DesignerWardrobePage() {
             </div>
           ) : null}
         </div>
-        <CardContent className="p-3 flex-1 flex flex-col">
+        <CardContent className="p-3 flex-1 flex flex-col glass-card">
           <div className="font-medium text-sm truncate">{it.name}</div>
           {it.subcategory ? (
             <div className="text-xs text-zinc-500 truncate">{it.subcategory}</div>
@@ -704,8 +704,8 @@ export default function DesignerWardrobePage() {
             {publicItemsQ.isLoading ? (
               renderItemSkeletons(8)
             ) : browseItems.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800">
-                <CardContent className="p-10 text-center">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
+                <CardContent className="p-10 text-center glass-card">
                   <Shirt className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">Nothing in this category yet</h3>
                   <p className="text-sm text-zinc-400 max-w-md mx-auto">
@@ -737,8 +737,8 @@ export default function DesignerWardrobePage() {
             {myItemsQ.isLoading ? (
               renderItemSkeletons(4)
             ) : myItems.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800">
-                <CardContent className="p-10 text-center">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
+                <CardContent className="p-10 text-center glass-card">
                   <Package className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">Your wardrobe is empty</h3>
                   <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
@@ -776,8 +776,8 @@ export default function DesignerWardrobePage() {
               </Button>
             </div>
             {!profile ? (
-              <Card className="bg-zinc-900/40 border-amber-800/40">
-                <CardContent className="p-6 text-sm text-amber-200">
+              <Card className="bg-zinc-900/40 border-amber-800/40 glass-card">
+                <CardContent className="p-6 text-sm text-amber-200 glass-card">
                   Set up your designer profile first — it becomes the byline on
                   every collection you publish.
                 </CardContent>
@@ -789,8 +789,8 @@ export default function DesignerWardrobePage() {
                 <Skeleton className="h-40 bg-zinc-900" />
               </div>
             ) : myCollections.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800">
-                <CardContent className="p-10 text-center">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
+                <CardContent className="p-10 text-center glass-card">
                   <Folder className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">No collections yet</h3>
                   <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
@@ -802,7 +802,7 @@ export default function DesignerWardrobePage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {myCollections.map((c: any) => (
-                  <Card key={c.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden">
+                  <Card key={c.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden glass-card">
                     <div className="aspect-[16/9] bg-zinc-950 relative overflow-hidden">
                       {c.coverImageUrl ? (
                         <img src={c.coverImageUrl} alt={c.name} className="w-full h-full object-cover" loading="lazy" />
@@ -812,7 +812,7 @@ export default function DesignerWardrobePage() {
                         </div>
                       )}
                     </div>
-                    <CardContent className="p-3">
+                    <CardContent className="p-3 glass-card">
                       <div className="font-medium">{c.name}</div>
                       <div className="text-xs text-zinc-500">{c.collectionType?.replace(/_/g, " ")}{c.season ? ` · ${c.season}` : ""}{c.year ? ` · ${c.year}` : ""}</div>
                       {c.description ? (
@@ -835,8 +835,8 @@ export default function DesignerWardrobePage() {
               {projectAssignmentsQ.isLoading ? (
                 <Skeleton className="h-32 bg-zinc-900" />
               ) : (projectAssignmentsQ.data ?? []).length === 0 ? (
-                <Card className="bg-zinc-900/40 border-zinc-800">
-                  <CardContent className="p-10 text-center">
+                <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
+                  <CardContent className="p-10 text-center glass-card">
                     <Link2 className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                     <h3 className="text-lg font-medium mb-1">No wardrobe attached yet</h3>
                     <p className="text-sm text-zinc-400 max-w-md mx-auto">
@@ -860,8 +860,8 @@ export default function DesignerWardrobePage() {
                       ? (projectScenesQ.data?.find((s: any) => s.id === a.sceneId))
                       : null;
                     return (
-                      <Card key={a.id} className="bg-zinc-900/40 border-zinc-800">
-                        <CardContent className="p-3 flex items-center gap-3">
+                      <Card key={a.id} className="bg-zinc-900/40 border-zinc-800 glass-card">
+                        <CardContent className="p-3 flex items-center gap-3 glass-card">
                           <div className="w-14 h-14 rounded bg-zinc-950 flex items-center justify-center overflow-hidden flex-shrink-0">
                             {item?.primaryImageUrl ? (
                               <img src={item.primaryImageUrl} alt="" className="w-full h-full object-cover" />

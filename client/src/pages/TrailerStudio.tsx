@@ -551,9 +551,9 @@ function TrailerStudioInner() {
 
           {/* Generated Result */}
           {generatedResult && (
-            <Card className="mt-6 border-green-500/30 bg-green-500/5">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
+            <Card className="mt-6 border-green-500/30 bg-green-500/5 glass-card">
+              <CardHeader className="pb-2 glass-card">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card">
                   <Sparkles className="h-4 w-4 text-green-400" />
                   Generated: {generatedResult.trailerTitle}
                 </CardTitle>
