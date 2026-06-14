@@ -111,11 +111,11 @@ import { useState } from "react";
     const set = (k: string, v: string) => setForm((f: any) => ({ ...(f ?? current), [k]: v }));
 
     return (
-      <Card className="border-primary/30 glass-card">
-        <CardHeader className="pb-3 glass-card">
+      <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5">
+        <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-amber-400" />
-            <CardTitle className="text-base gradient-text-gold glass-card">Visual DNA Lock</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Visual DNA Lock</CardTitle>
             <Badge variant="outline" className="text-xs">Project-wide</Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -123,7 +123,7 @@ import { useState } from "react";
             Once set, this is your film's visual fingerprint.
           </p>
         </CardHeader>
-        <CardContent className="space-y-3 glass-card">
+        <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs">Cinematographer / Style Reference</Label>
@@ -154,7 +154,7 @@ import { useState } from "react";
           <div>
             <Label className="text-xs">Visual Notes</Label>
             <Textarea value={current.visualNotes ?? ""} onChange={e => set("visualNotes", e.target.value)}
-              placeholder="Any additional visual direction to enforce across all scenesâ¦" rows={2} />
+              placeholder="Any additional visual direction to enforce across all scenesÃ¢ÂÂ¦" rows={2} />
           </div>
           <Button size="sm" onClick={() => upsertMut?.mutate?.({ projectId, ...(form ?? current) })}>
             <Lock className="w-3 h-3 mr-1" />Lock Visual DNA
@@ -228,12 +228,12 @@ import { useState } from "react";
             ) : (
               <div className="space-y-4">
                 {[...acts].sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0)).map((act: any) => (
-                  <Card key={act.id} className="border-l-4 border-l-primary glass-card">
-                    <CardHeader className="pb-2 glass-card">
+                  <Card key={act.id} className="border-l-4 border-l-primary glass-card shadow-lg shadow-amber-500/5">
+                    <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Badge variant="outline" className="text-xs font-mono">ACT {act.orderIndex}</Badge>
-                          <CardTitle className="text-base gradient-text-gold glass-card">{act.name}</CardTitle>
+                          <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{act.name}</CardTitle>
                         </div>
                         <div className="flex gap-1">
                           <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditing(act)}>

@@ -46,10 +46,10 @@ import {
 import { toast } from "sonner";
 import type { FundingSource } from "../../../drizzle/schema";
 
-// âââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 interface AppForm {
-  // Â§ 2 â Applicant & Project Identification
+  // ÃÂ§ 2 Ã¢ÂÂ Applicant & Project Identification
   applicantLegalName: string;
   tradingName: string;
   companyCountry: string;
@@ -69,21 +69,21 @@ interface AppForm {
   comparableTitles: string;
   festivalStrategy: string;
   currentStatus: string;
-  // Â§ 3 â Story Materials
+  // ÃÂ§ 3 Ã¢ÂÂ Story Materials
   logline: string;
   shortSynopsis: string;
   longSynopsis: string;
   treatment: string;
   seriesOverview: string;
   sampleCutNotes: string;
-  // Â§ 4 â Creative & Editorial Case
+  // ÃÂ§ 4 Ã¢ÂÂ Creative & Editorial Case
   directorStatement: string;
   producerStatement: string;
   writerStatement: string;
   creativeApproach: string;
   editorialIntention: string;
   culturalConsultation: string;
-  // Â§ 5 â Rights, Chain of Title & Clearances
+  // ÃÂ§ 5 Ã¢ÂÂ Rights, Chain of Title & Clearances
   rightsType: string;
   rightsHolder: string;
   applicantRightsPosition: string;
@@ -92,7 +92,7 @@ interface AppForm {
   lifeRightsReleases: string;
   legalCounsel: string;
   outstandingRightsIssues: string;
-  // Â§ 6 â Key Creative & Producing Team
+  // ÃÂ§ 6 Ã¢ÂÂ Key Creative & Producing Team
   directorName: string;
   producerName: string;
   writerName: string;
@@ -102,7 +102,7 @@ interface AppForm {
   composer: string;
   execProducer: string;
   teamBios: string;
-  // Â§ 7 â Budget, Financing & Recoupment
+  // ÃÂ§ 7 Ã¢ÂÂ Budget, Financing & Recoupment
   totalBudget: string;
   projectCurrency: string;
   fundingRequested: string;
@@ -126,7 +126,7 @@ interface AppForm {
   budgetInsuranceLegalAccounting: string;
   budgetMarketingFestivals: string;
   budgetContingency: string;
-  // Â§ 8 â Market, Audience & Distribution Plan
+  // ÃÂ§ 8 Ã¢ÂÂ Market, Audience & Distribution Plan
   primaryReleasePathway: string;
   marketAttachments: string;
   audienceStrategy: string;
@@ -134,7 +134,7 @@ interface AppForm {
   territoryFocus: string;
   distributionConversations: string;
   impactOutreachPlan: string;
-  // Â§ 9 â Production Readiness
+  // ÃÂ§ 9 Ã¢ÂÂ Production Readiness
   currentMaterialsComplete: string;
   estimatedPrepStart: string;
   estimatedPrincipalPhotography: string;
@@ -143,14 +143,14 @@ interface AppForm {
   productionRisks: string;
   insuranceEO: string;
   accessibilitySustainability: string;
-  // Â§ 10 â Short-Form Portal Answers
+  // ÃÂ§ 10 Ã¢ÂÂ Short-Form Portal Answers
   whyTimely: string;
   whyTeamUnique: string;
   whatChangedSinceLastApplication: string;
   whatMilestoneWillFundingUnlock: string;
   biggestCreativeRisk: string;
   biggestFinancingRisk: string;
-  // Â§ 11 â Attachment Checklist
+  // ÃÂ§ 11 Ã¢ÂÂ Attachment Checklist
   hasScript: boolean;
   hasSynopsisTreatment: boolean;
   hasDirectorStatement: boolean;
@@ -204,7 +204,7 @@ const EMPTY_FORM: AppForm = {
   additionalNotes: "",
 };
 
-// âââ HTML document builder for download âââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ HTML document builder for download Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function buildDownloadHtml(form: AppForm, source: FundingSource): string {
   const f = (label: string, val: string) =>
@@ -214,13 +214,13 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
   const sec = (title: string, body: string) =>
     body.trim() ? `<div class="section"><div class="sec-title">${title}</div>${body}</div>` : "";
   const chk = (label: string, checked: boolean) =>
-    `<div class="chk ${checked ? "done" : ""}">${checked ? "â" : "â"} ${label}</div>`;
+    `<div class="chk ${checked ? "done" : ""}">${checked ? "Ã¢ÂÂ" : "Ã¢ÂÂ"} ${label}</div>`;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Funding Application â ${form.projectTitle} â ${source.organization}</title>
+<title>Funding Application Ã¢ÂÂ ${form.projectTitle} Ã¢ÂÂ ${source.organization}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -260,13 +260,13 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
 <div class="page">
   <div class="header">
     <h1>${source.packTitle || "Global Film Funding Application"}</h1>
-    <div class="sub">Professional submission package compiled via Virelle Studios${source.packType ? " Â· " + source.packType : ""}</div>
-    <div class="badge">Virelle Studios â Film Funding Portal</div>
+    <div class="sub">Professional submission package compiled via Virelle Studios${source.packType ? " ÃÂ· " + source.packType : ""}</div>
+    <div class="badge">Virelle Studios Ã¢ÂÂ Film Funding Portal</div>
   </div>
 
   <div class="target-box">
     <div class="org">Applying to: ${source.organization}</div>
-    <div class="country">${source.country}${source.type ? " Â· " + source.type : ""}${source.primaryLanguage ? " Â· Application language: " + source.primaryLanguage : ""}</div>
+    <div class="country">${source.country}${source.type ? " ÃÂ· " + source.type : ""}${source.primaryLanguage ? " ÃÂ· Application language: " + source.primaryLanguage : ""}</div>
     ${source.officialSite ? `<div class="site">Official site: <a href="${source.officialSite}" style="color:#d97706">${source.officialSite}</a></div>` : ""}
   </div>
 
@@ -281,16 +281,16 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
   </div>` : ""}
 
   <div class="notice">
-    <strong>Professional Working Pack â Important Notice.</strong> This framework is structured around recurring requirements published by representative official bodies, including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute â covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required by the target fund.
+    <strong>Professional Working Pack Ã¢ÂÂ Important Notice.</strong> This framework is structured around recurring requirements published by representative official bodies, including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute Ã¢ÂÂ covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required by the target fund.
     <br><br>
-    <strong>Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only â official terminology should be cross-checked against the fund's published guidelines.
+    <strong>Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only Ã¢ÂÂ official terminology should be cross-checked against the fund's published guidelines.
     <br><br>
     This document is for manual submission only. Virelle Studios compiles and organises your application package; it does not submit on your behalf. Each funding body has its own portal, page limits, and upload rules.
   </div>
 
   <div class="body">
 
-    ${sec("Â§ 2 â Applicant & Project Identification", `
+    ${sec("ÃÂ§ 2 Ã¢ÂÂ Applicant & Project Identification", `
       <div class="grid-2">
         ${f("Legal Applicant Name", form.applicantLegalName)}
         ${f("Trading / Company Name", form.tradingName)}
@@ -314,16 +314,16 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${f("Current Status", form.currentStatus)}
     `)}
 
-    ${sec("Â§ 3 â Story Materials", `
+    ${sec("ÃÂ§ 3 Ã¢ÂÂ Story Materials", `
       ${h("Logline", form.logline)}
-      ${h("Short Synopsis (100â250 words)", form.shortSynopsis)}
+      ${h("Short Synopsis (100Ã¢ÂÂ250 words)", form.shortSynopsis)}
       ${h("Long Synopsis (including ending)", form.longSynopsis)}
       ${h("Treatment / Director's Treatment", form.treatment)}
       ${h("Series Overview (if applicable)", form.seriesOverview)}
       ${h("Sample / Current Cut Notes", form.sampleCutNotes)}
     `)}
 
-    ${sec("Â§ 4 â Creative & Editorial Case", `
+    ${sec("ÃÂ§ 4 Ã¢ÂÂ Creative & Editorial Case", `
       ${h("Director Statement", form.directorStatement)}
       ${h("Producer Statement", form.producerStatement)}
       ${h("Writer Statement", form.writerStatement)}
@@ -332,7 +332,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Cultural / Community Consultation", form.culturalConsultation)}
     `)}
 
-    ${sec("Â§ 5 â Rights, Chain of Title & Clearances", `
+    ${sec("ÃÂ§ 5 Ã¢ÂÂ Rights, Chain of Title & Clearances", `
       <div class="grid-2">
         ${f("Rights Type", form.rightsType)}
         ${f("Rights Holder(s)", form.rightsHolder)}
@@ -345,7 +345,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Outstanding Rights Issues", form.outstandingRightsIssues)}
     `)}
 
-    ${sec("Â§ 6 â Key Creative & Producing Team", `
+    ${sec("ÃÂ§ 6 Ã¢ÂÂ Key Creative & Producing Team", `
       <table>
         <thead><tr><th>Role</th><th>Name</th></tr></thead>
         <tbody>
@@ -362,7 +362,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Team Bios / Company Profile", form.teamBios)}
     `)}
 
-    ${sec("Â§ 7 â Budget, Financing & Recoupment", `
+    ${sec("ÃÂ§ 7 Ã¢ÂÂ Budget, Financing & Recoupment", `
       <div class="grid-2">
         ${f("Project Currency", form.projectCurrency || "USD")}
         ${f("Total Project Budget", form.totalBudget)}
@@ -401,7 +401,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ` : ""}
     `)}
 
-    ${sec("Â§ 8 â Market, Audience & Distribution Plan", `
+    ${sec("ÃÂ§ 8 Ã¢ÂÂ Market, Audience & Distribution Plan", `
       ${f("Primary Release Pathway", form.primaryReleasePathway)}
       ${f("Market Attachments", form.marketAttachments)}
       ${f("Audience Strategy", form.audienceStrategy)}
@@ -411,7 +411,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Impact / Outreach Plan", form.impactOutreachPlan)}
     `)}
 
-    ${sec("Â§ 9 â Production Readiness", `
+    ${sec("ÃÂ§ 9 Ã¢ÂÂ Production Readiness", `
       <div class="grid-2">
         ${f("Current Materials Complete", form.currentMaterialsComplete)}
         ${f("Estimated Prep Start", form.estimatedPrepStart)}
@@ -424,7 +424,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Production Risks", form.productionRisks)}
     `)}
 
-    ${sec("Â§ 10 â Short-Form Portal Answers", `
+    ${sec("ÃÂ§ 10 Ã¢ÂÂ Short-Form Portal Answers", `
       ${h("Why is this project timely now?", form.whyTimely)}
       ${h("Why is this team uniquely positioned to make it?", form.whyTeamUnique)}
       ${h("What changed since the last application or draft?", form.whatChangedSinceLastApplication)}
@@ -433,7 +433,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
       ${h("Biggest financing risk and how you will close it", form.biggestFinancingRisk)}
     `)}
 
-    ${sec("Â§ 11 â Attachment Checklist", `
+    ${sec("ÃÂ§ 11 Ã¢ÂÂ Attachment Checklist", `
       <div class="chk-grid">
         ${chk("Script / screenplay or sample scenes", form.hasScript)}
         ${chk("Synopsis and treatment", form.hasSynopsisTreatment)}
@@ -468,7 +468,7 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
 </html>`;
 }
 
-// âââ Application Modal âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Application Modal Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 const STEPS = [
   { id: 1, label: "Applicant & Project" },
@@ -516,7 +516,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
     a.download = `funding-application_${form.projectTitle.replace(/\s+/g, "-") || "project"}_${source.organization.replace(/\s+/g, "-")}.html`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Application downloaded â open in browser and print to PDF");
+    toast.success("Application downloaded Ã¢ÂÂ open in browser and print to PDF");
   };
 
   const handleSubmit = () => {
@@ -695,15 +695,15 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
               {source.packTitle || "Global Film Funding Application"}
             </DialogTitle>
             <DialogDescription className="text-xs">
-              Applying to <strong>{source.organization}</strong> Â· {source.country}
-              {source.packType && <> Â· <span className="text-amber-400">{source.packType}</span></>}
-              {source.primaryLanguage && <> Â· Application language: {source.primaryLanguage}</>}
+              Applying to <strong>{source.organization}</strong> ÃÂ· {source.country}
+              {source.packType && <> ÃÂ· <span className="text-amber-400">{source.packType}</span></>}
+              {source.primaryLanguage && <> ÃÂ· Application language: {source.primaryLanguage}</>}
             </DialogDescription>
           </DialogHeader>
 
           {/* Professional working-pack notice */}
           <div className="mt-3 rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2 text-[11px] text-blue-300/80 leading-relaxed">
-            <strong className="text-blue-300">Professional Working Pack.</strong> This framework is structured around recurring requirements published by representative official bodies â including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute â covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
+            <strong className="text-blue-300">Professional Working Pack.</strong> This framework is structured around recurring requirements published by representative official bodies Ã¢ÂÂ including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute Ã¢ÂÂ covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
             {" "}<strong className="text-blue-300">Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only.
           </div>
           {/* Step progress */}
@@ -736,11 +736,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
-          {/* ââ Step 1: Applicant & Project Identification ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 1: Applicant & Project Identification Ã¢ÂÂÃ¢ÂÂ */}
           {step === 1 && (
             <div className="space-y-5">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 2 â Applicant & Project Identification.</strong> Use your exact legal name as it appears on company documents. Fields marked * are required.
+                <strong>ÃÂ§ 2 Ã¢ÂÂ Applicant & Project Identification.</strong> Use your exact legal name as it appears on company documents. Fields marked * are required.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
@@ -799,7 +799,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Running Time / Episode Count</Label>
-                  <Input value={form.runningTime} onChange={(e) => set("runningTime", e.target.value)} placeholder="e.g. 95 min / 6 Ã 45 min" className="h-9 text-sm" />
+                  <Input value={form.runningTime} onChange={(e) => set("runningTime", e.target.value)} placeholder="e.g. 95 min / 6 ÃÂ 45 min" className="h-9 text-sm" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Primary Language(s)</Label>
@@ -823,8 +823,8 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Comparable Titles <span className="text-muted-foreground">(2â5 comps with year and relevance)</span></Label>
-                <Textarea value={form.comparableTitles} onChange={(e) => set("comparableTitles", e.target.value)} placeholder="e.g. Parasite (2019) â class tension, ensemble; Moonlight (2016) â intimate character study" rows={2} className="text-sm resize-none" />
+                <Label className="text-xs">Comparable Titles <span className="text-muted-foreground">(2Ã¢ÂÂ5 comps with year and relevance)</span></Label>
+                <Textarea value={form.comparableTitles} onChange={(e) => set("comparableTitles", e.target.value)} placeholder="e.g. Parasite (2019) Ã¢ÂÂ class tension, ensemble; Moonlight (2016) Ã¢ÂÂ intimate character study" rows={2} className="text-sm resize-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Festival / Market Strategy</Label>
@@ -837,24 +837,24 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 2: Story Materials ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 2: Story Materials Ã¢ÂÂÃ¢ÂÂ */}
           {step === 2 && (
             <div className="space-y-4">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 3 â Story Materials.</strong> Write for a reviewer, not a pitch. Full story shape, not marketing copy. Include the ending in the long synopsis.
+                <strong>ÃÂ§ 3 Ã¢ÂÂ Story Materials.</strong> Write for a reviewer, not a pitch. Full story shape, not marketing copy. Include the ending in the long synopsis.
               </p>
               <div className="space-y-1.5">
-                <Label className="text-xs">Logline * <span className="text-muted-foreground">(1â2 sentences: hook, protagonist, central conflict, stakes)</span></Label>
-                <Textarea value={form.logline} onChange={(e) => set("logline", e.target.value)} placeholder="A morally compromised detective in Lagos must choose between exposing a corrupt general or protecting his family â as the bodies pile up and the clock runs out." rows={2} className="text-sm resize-none" />
+                <Label className="text-xs">Logline * <span className="text-muted-foreground">(1Ã¢ÂÂ2 sentences: hook, protagonist, central conflict, stakes)</span></Label>
+                <Textarea value={form.logline} onChange={(e) => set("logline", e.target.value)} placeholder="A morally compromised detective in Lagos must choose between exposing a corrupt general or protecting his family Ã¢ÂÂ as the bodies pile up and the clock runs out." rows={2} className="text-sm resize-none" />
                 <p className="text-[10px] text-right text-muted-foreground">{form.logline.length} chars</p>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Short Synopsis * <span className="text-muted-foreground">(100â250 words â full story shape, not marketing copy)</span></Label>
+                <Label className="text-xs">Short Synopsis * <span className="text-muted-foreground">(100Ã¢ÂÂ250 words Ã¢ÂÂ full story shape, not marketing copy)</span></Label>
                 <Textarea value={form.shortSynopsis} onChange={(e) => set("shortSynopsis", e.target.value)} placeholder="Write the full story arc including the protagonist's journey, key turning points, and emotional core..." rows={5} className="text-sm resize-none" />
                 <p className="text-[10px] text-right text-muted-foreground">{form.shortSynopsis.length} chars (min 50)</p>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Long Synopsis <span className="text-muted-foreground">(approx. 1 page â include ending)</span></Label>
+                <Label className="text-xs">Long Synopsis <span className="text-muted-foreground">(approx. 1 page Ã¢ÂÂ include ending)</span></Label>
                 <Textarea value={form.longSynopsis} onChange={(e) => set("longSynopsis", e.target.value)} placeholder="Full narrative including all major plot points, character arcs, and the ending..." rows={6} className="text-sm resize-none" />
               </div>
               <div className="space-y-1.5">
@@ -862,7 +862,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <Textarea value={form.treatment} onChange={(e) => set("treatment", e.target.value)} placeholder="Describe the visual language, tone, structural approach, and directorial POV..." rows={4} className="text-sm resize-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Series Overview <span className="text-muted-foreground">(if applicable â season arc, episode engine, future potential)</span></Label>
+                <Label className="text-xs">Series Overview <span className="text-muted-foreground">(if applicable Ã¢ÂÂ season arc, episode engine, future potential)</span></Label>
                 <Textarea value={form.seriesOverview} onChange={(e) => set("seriesOverview", e.target.value)} placeholder="Season arc, episode structure, and future season potential..." rows={3} className="text-sm resize-none" />
               </div>
               <div className="space-y-1.5">
@@ -872,11 +872,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 3: Creative & Editorial Case ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 3: Creative & Editorial Case Ã¢ÂÂÃ¢ÂÂ */}
           {step === 3 && (
             <div className="space-y-4">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 4 â Creative & Editorial Case.</strong> These statements are the creative heart of your application. Be specific, personal, and honest about your approach.
+                <strong>ÃÂ§ 4 Ã¢ÂÂ Creative & Editorial Case.</strong> These statements are the creative heart of your application. Be specific, personal, and honest about your approach.
               </p>
               <div className="space-y-1.5">
                 <Label className="text-xs">Director Statement <span className="text-muted-foreground">(why this story, why now, visual language, tone, access or authorship)</span></Label>
@@ -905,11 +905,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 4: Rights & Team ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 4: Rights & Team Ã¢ÂÂÃ¢ÂÂ */}
           {step === 4 && (
             <div className="space-y-5">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 5 â Rights, Chain of Title & Clearances.</strong> Complete this section carefully. Many funds require a clear description of chain of title. Disclose all outstanding issues.
+                <strong>ÃÂ§ 5 Ã¢ÂÂ Rights, Chain of Title & Clearances.</strong> Complete this section carefully. Many funds require a clear description of chain of title. Disclose all outstanding issues.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
@@ -917,7 +917,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                   <Select value={form.rightsType} onValueChange={(v) => set("rightsType", v)}>
                     <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>
-                      {["Original Screenplay", "Adapted â Novel / Book", "Adapted â Article / Journalism", "Life Rights", "Remake Rights", "Archive-Driven", "Commissioned", "Other"].map((t) => (
+                      {["Original Screenplay", "Adapted Ã¢ÂÂ Novel / Book", "Adapted Ã¢ÂÂ Article / Journalism", "Life Rights", "Remake Rights", "Archive-Driven", "Commissioned", "Other"].map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
                     </SelectContent>
@@ -962,7 +962,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
 
               <div className="border-t border-border pt-4">
                 <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-4">
-                  <strong>Â§ 6 â Key Creative & Producing Team.</strong> Attach concise bios (75â150 words each). Include notable awards, grosses, and festival premieres.
+                  <strong>ÃÂ§ 6 Ã¢ÂÂ Key Creative & Producing Team.</strong> Attach concise bios (75Ã¢ÂÂ150 words each). Include notable awards, grosses, and festival premieres.
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
@@ -982,18 +982,18 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                   ))}
                 </div>
                 <div className="space-y-1.5 mt-3">
-                  <Label className="text-xs">Team Bios / Company Profile <span className="text-muted-foreground">(75â150 words per key person)</span></Label>
+                  <Label className="text-xs">Team Bios / Company Profile <span className="text-muted-foreground">(75Ã¢ÂÂ150 words per key person)</span></Label>
                   <Textarea value={form.teamBios} onChange={(e) => set("teamBios", e.target.value)} placeholder="Brief bios for director, producer, writer, and key cast. Include relevant credits, awards, and festival selections..." rows={4} className="text-sm resize-none" />
                 </div>
               </div>
             </div>
           )}
 
-          {/* ââ Step 5: Budget & Finance ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 5: Budget & Finance Ã¢ÂÂÃ¢ÂÂ */}
           {step === 5 && (
             <div className="space-y-5">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 7 â Budget, Financing & Recoupment.</strong> Budget and finance materials must reconcile across the form, budget top sheet, finance plan, and any portal fields. Use the same currency throughout.
+                <strong>ÃÂ§ 7 Ã¢ÂÂ Budget, Financing & Recoupment.</strong> Budget and finance materials must reconcile across the form, budget top sheet, finance plan, and any portal fields. Use the same currency throughout.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
@@ -1050,7 +1050,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
               </div>
 
               <div className="border-t border-border pt-4">
-                <p className="text-xs text-muted-foreground mb-3 font-medium">Budget Top Sheet â Line Items</p>
+                <p className="text-xs text-muted-foreground mb-3 font-medium">Budget Top Sheet Ã¢ÂÂ Line Items</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { key: "budgetDevelopment", label: "Development" },
@@ -1076,11 +1076,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 6: Market & Distribution ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 6: Market & Distribution Ã¢ÂÂÃ¢ÂÂ */}
           {step === 6 && (
             <div className="space-y-4">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 8 â Market, Audience & Distribution Plan.</strong> Demonstrate commercial awareness. Reviewers want to know your project can reach an audience.
+                <strong>ÃÂ§ 8 Ã¢ÂÂ Market, Audience & Distribution Plan.</strong> Demonstrate commercial awareness. Reviewers want to know your project can reach an audience.
               </p>
               <div className="space-y-1.5">
                 <Label className="text-xs">Primary Release Pathway</Label>
@@ -1120,11 +1120,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 7: Production Readiness ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 7: Production Readiness Ã¢ÂÂÃ¢ÂÂ */}
           {step === 7 && (
             <div className="space-y-4">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 9 â Production Readiness.</strong> Demonstrate that the project is executable. Reviewers need to believe you can deliver.
+                <strong>ÃÂ§ 9 Ã¢ÂÂ Production Readiness.</strong> Demonstrate that the project is executable. Reviewers need to believe you can deliver.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2 space-y-1.5">
@@ -1163,11 +1163,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 8: Short-Form Portal Answers ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 8: Short-Form Portal Answers Ã¢ÂÂÃ¢ÂÂ */}
           {step === 8 && (
             <div className="space-y-4">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 10 â Short-Form Portal Answers.</strong> These are the questions most commonly asked in online portals. Answer concisely and specifically â avoid generic responses.
+                <strong>ÃÂ§ 10 Ã¢ÂÂ Short-Form Portal Answers.</strong> These are the questions most commonly asked in online portals. Answer concisely and specifically Ã¢ÂÂ avoid generic responses.
               </p>
               {[
                 { key: "whyTimely", label: "Why is this project timely now?", placeholder: "What is happening in the world, in culture, or in the industry that makes this the right moment for this film?" },
@@ -1191,11 +1191,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </div>
           )}
 
-          {/* ââ Step 9: Checklist & Submit ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Step 9: Checklist & Submit Ã¢ÂÂÃ¢ÂÂ */}
           {step === 9 && (
             <div className="space-y-5">
               <p className="text-xs text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                <strong>Â§ 11 â Attachment Checklist.</strong> Mark which supporting materials you have prepared. Each fund has different requirements â check their portal before submitting.
+                <strong>ÃÂ§ 11 Ã¢ÂÂ Attachment Checklist.</strong> Mark which supporting materials you have prepared. Each fund has different requirements Ã¢ÂÂ check their portal before submitting.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {[
@@ -1307,7 +1307,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
   );
 }
 
-// âââ Funding Source Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Funding Source Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function FundingCard({ source, onApply }: { source: FundingSource; onApply: () => void }) {
   const typeColors: Record<string, string> = {
@@ -1332,7 +1332,7 @@ function FundingCard({ source, onApply }: { source: FundingSource; onApply: () =
     .replace("Public arts fund", "Arts Fund");
 
   return (
-    <div className="group rounded-xl border border-border bg-card/60 hover:border-amber-500/30 hover:bg-card/80 transition-all duration-200 p-4 flex flex-col gap-3 glass-card">
+    <div className="group rounded-xl border border-border bg-card/60 hover:border-amber-500/30 hover:bg-card/80 transition-all duration-200 p-4 flex flex-col gap-3 glass-card shadow-lg shadow-amber-500/5">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold leading-tight truncate">{source.organization}</h3>
@@ -1412,7 +1412,7 @@ function FundingCard({ source, onApply }: { source: FundingSource; onApply: () =
   );
 }
 
-// âââ Main Page âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 export default function FundingDirectory() {
   const { user } = useAuth();
@@ -1488,7 +1488,7 @@ export default function FundingDirectory() {
             Global Film Funding Directory
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            {sources.length} funding sources across {countries.length} countries â grants, incentives, and co-production funds worldwide.
+            {sources.length} funding sources across {countries.length} countries Ã¢ÂÂ grants, incentives, and co-production funds worldwide.
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -1496,14 +1496,14 @@ export default function FundingDirectory() {
             Paid Members Only
           </Badge>
           <button onClick={() => setLocation("/funding-pro")} className="text-xs px-3 py-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 transition-colors flex items-center gap-1.5">
-            â¨ AI Match & Application Tracker â
+            Ã¢ÂÂ¨ AI Match & Application Tracker Ã¢ÂÂ
           </button>
         </div>
       </div>
 
       {/* Professional Working-Pack Notice */}
       <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-4 py-3 text-xs text-blue-300/80 leading-relaxed">
-        <strong className="text-blue-300">Professional Working Pack.</strong> This directory and application framework is structured around recurring requirements published by representative official bodies â including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute â covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
+        <strong className="text-blue-300">Professional Working Pack.</strong> This directory and application framework is structured around recurring requirements published by representative official bodies Ã¢ÂÂ including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute Ã¢ÂÂ covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
         {" "}<strong className="text-blue-300">Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only.
       </div>
 
@@ -1580,9 +1580,9 @@ export default function FundingDirectory() {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground">Represent a funding body, screen agency, or incentive programme?</p>
           <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-            Virelle Studios maintains an independently curated global directory of public and private film finance vehicles â covering grants, soft money, co-production treaties, tax incentives, and broadcaster-backed funds. If your organisation is not yet listed, or if your fund's eligibility criteria, funding rounds, or submission windows have changed, we invite you to submit your details for consideration. Send your fund profile, official mandate, and any relevant programme documentation to{" "}
+            Virelle Studios maintains an independently curated global directory of public and private film finance vehicles Ã¢ÂÂ covering grants, soft money, co-production treaties, tax incentives, and broadcaster-backed funds. If your organisation is not yet listed, or if your fund's eligibility criteria, funding rounds, or submission windows have changed, we invite you to submit your details for consideration. Send your fund profile, official mandate, and any relevant programme documentation to{" "}
             <a
-              href="mailto:studiosvirelle@gmail.com?subject=Fund%20Listing%20Submission%20â%20Virelle%20Studios%20Global%20Directory"
+              href="mailto:studiosvirelle@gmail.com?subject=Fund%20Listing%20Submission%20Ã¢ÂÂ%20Virelle%20Studios%20Global%20Directory"
               className="text-amber-400 hover:text-amber-300 underline underline-offset-2 font-medium"
             >
               studiosvirelle@gmail.com

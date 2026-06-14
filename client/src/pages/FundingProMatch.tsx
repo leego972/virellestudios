@@ -33,28 +33,28 @@ export default function FundingProMatch() {
   return (
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="container max-w-7xl mx-auto p-4 space-y-4">
-      <SiteHead title="Funding — Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
+      <SiteHead title="Funding â Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
       <div className="flex items-center gap-3">
         <Button size="sm" variant="ghost" onClick={() => setLocation("/funding")}><ArrowLeft className="h-4 w-4 mr-1.5" />Back to Directory</Button>
-        <h1 className="text-2xl font-bold gradient-text-gold">Funding — Pro Match & Tracker</h1>
+        <h1 className="text-2xl font-bold gradient-text-gold">Funding â Pro Match & Tracker</h1>
         <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/40">v4</Badge>
       </div>
 
       <Card>
-        <CardContent className="pt-4 flex items-center gap-3 glass-card">
+        <CardContent className="pt-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
           <Label className="text-sm shrink-0">Project:</Label>
           <Select value={activeId ? String(activeId) : ""} onValueChange={v => setProjectId(Number(v))}>
-            <SelectTrigger className="max-w-md"><SelectValue placeholder="Choose a project to score against…" /></SelectTrigger>
+            <SelectTrigger className="max-w-md"><SelectValue placeholder="Choose a project to score againstâ¦" /></SelectTrigger>
             <SelectContent>
               {(projects.data || []).map((p: any) => <SelectItem key={p.id} value={String(p.id)}>{p.title || p.name || `Project ${p.id}`}</SelectItem>)}
             </SelectContent>
           </Select>
-          {projects.isLoading && <div className="text-xs text-muted-foreground">loading projects…</div>}
+          {projects.isLoading && <div className="text-xs text-muted-foreground">loading projectsâ¦</div>}
         </CardContent>
       </Card>
 
       {!activeId ? (
-        <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">Select a project above to see ranked matches, your shortlist, and the application tracker.</CardContent></Card>
+        <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card shadow-lg shadow-amber-500/5">Select a project above to see ranked matches, your shortlist, and the application tracker.</CardContent></Card>
       ) : (
         <Tabs defaultValue="match" className="space-y-3">
           <TabsList>
@@ -86,17 +86,17 @@ function MatchTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
         <div className="text-xs text-muted-foreground">Sources scored on country fit, stage, type, and synopsis keyword overlap. Top results first.</div>
       </CardHeader>
-      <CardContent className="space-y-3 glass-card">
+      <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
         <div className="flex flex-wrap gap-2 items-end">
           <div><Label className="text-xs">Country filter</Label><Select value={country || "all"} onValueChange={v => setCountry(v === "all" ? "" : v)}>
             <SelectTrigger className="w-56"><SelectValue placeholder="All countries" /></SelectTrigger>
             <SelectContent><SelectItem value="all">All countries</SelectItem>{(countries.data || []).map((c: any) => <SelectItem key={c.country} value={c.country}>{c.country}</SelectItem>)}</SelectContent>
           </Select></div>
           <div><Label className="text-xs">Top N</Label><Input type="number" value={limit} onChange={e => setLimit(Math.min(100, Math.max(1, Number(e.target.value) || 25)))} className="w-24" /></div>
-          {matches.isFetching && <div className="text-xs text-muted-foreground">scoring…</div>}
+          {matches.isFetching && <div className="text-xs text-muted-foreground">scoringâ¦</div>}
         </div>
         {matches.data?.length === 0 && <div className="text-sm text-muted-foreground py-6 text-center">No matches above threshold. Try removing the country filter or filling in your project's genre/synopsis to improve scoring.</div>}
         <div className="space-y-2">
@@ -144,11 +144,11 @@ function SavedTab({ projectId }: { projectId: number }) {
   const toggleSaved = trpc.funding.toggleSaved.useMutation({ onSuccess: () => saved.refetch() });
   const ids = new Set((saved.data || []) as number[]);
   const sources = (all.data || []).filter((s: any) => ids.has(s.id));
-  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">No shortlisted sources yet — save matches from the AI Match Score tab.</CardContent></Card>;
+  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card shadow-lg shadow-amber-500/5">No shortlisted sources yet â save matches from the AI Match Score tab.</CardContent></Card>;
   return (
     <Card>
-      <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
-      <CardContent className="space-y-2 glass-card">
+      <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
+      <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
         {sources.map((s: any) => (
           <div key={s.id} className="border border-border rounded-lg p-3 flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -179,18 +179,18 @@ function AppsTab() {
     setStatusDialog(null);
   };
   const list = (apps.data || []) as any[];
-  if (list.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card">No applications submitted yet. Submitted applications will appear here automatically with status tracking.</CardContent></Card>;
+  if (list.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card shadow-lg shadow-amber-500/5">No applications submitted yet. Submitted applications will appear here automatically with status tracking.</CardContent></Card>;
   const counts = list.reduce((acc: any, a: any) => { acc[a.status] = (acc[a.status] || 0) + 1; return acc; }, {});
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
         {Object.keys(STATUS_META).map(k => (
-          <Card key={k}><CardContent className="pt-3 pb-3 glass-card"><div className="text-[10px] uppercase text-muted-foreground">{STATUS_META[k].label}</div><div className="text-xl font-bold">{counts[k] || 0}</div></CardContent></Card>
+          <Card key={k}><CardContent className="pt-3 pb-3 glass-card shadow-lg shadow-amber-500/5"><div className="text-[10px] uppercase text-muted-foreground">{STATUS_META[k].label}</div><div className="text-xl font-bold">{counts[k] || 0}</div></CardContent></Card>
         ))}
       </div>
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
-        <CardContent className="space-y-2 glass-card">
+        <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
+        <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
           {list.slice().reverse().map((a: any) => {
             const meta = STATUS_META[a.status] || STATUS_META.submitted;
             const Icon = meta.icon;
@@ -198,15 +198,15 @@ function AppsTab() {
               <div key={a.id} className="border border-border rounded-lg p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold">{a.projectTitle} → {a.organization}</div>
-                    <div className="text-xs text-muted-foreground">{a.country} · submitted {new Date(a.submittedAt).toLocaleDateString()}{a.updatedAt && ` · updated ${new Date(a.updatedAt).toLocaleDateString()}`}</div>
+                    <div className="font-semibold">{a.projectTitle} â {a.organization}</div>
+                    <div className="text-xs text-muted-foreground">{a.country} Â· submitted {new Date(a.submittedAt).toLocaleDateString()}{a.updatedAt && ` Â· updated ${new Date(a.updatedAt).toLocaleDateString()}`}</div>
                     {a.notes && <div className="text-xs text-muted-foreground mt-1.5 italic">"{a.notes}"</div>}
                   </div>
                   <Badge className={meta.color}><Icon className="h-3 w-3 mr-1" />{meta.label}</Badge>
                 </div>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {Object.keys(STATUS_META).map(k => k !== a.status && (
-                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => setStatusDialog({ appId: a.id, status: k, label: STATUS_META[k].label, notes: a.notes || "" })} aria-label={`Change status to ${STATUS_META[k].label}`}>→ {STATUS_META[k].label}</Button>
+                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => setStatusDialog({ appId: a.id, status: k, label: STATUS_META[k].label, notes: a.notes || "" })} aria-label={`Change status to ${STATUS_META[k].label}`}>â {STATUS_META[k].label}</Button>
                   ))}
                 </div>
               </div>
@@ -254,22 +254,22 @@ function AutofillTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
         <div className="text-xs text-muted-foreground">Pick a funder; we'll draft tailored application copy from your project bible. Costs ~3 credits.</div>
       </CardHeader>
-      <CardContent className="space-y-3 glass-card">
+      <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
         <div className="flex gap-2 items-end">
           <div className="flex-1"><Label className="text-xs">Funding source</Label>
             <Select value={sourceId ? String(sourceId) : ""} onValueChange={v => { setSourceId(Number(v)); setDraft(null); }}>
-              <SelectTrigger><SelectValue placeholder="Pick a funder…" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Pick a funderâ¦" /></SelectTrigger>
               <SelectContent>{(sources.data || []).slice(0, 200).map((s: any) => <SelectItem key={s.id} value={String(s.id)}>{s.organization} ({s.country})</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <Button onClick={() => sourceId && autofill.mutate({ projectId, fundingSourceId: sourceId })} disabled={!sourceId || autofill.isPending}>
-            <Sparkles className="h-3.5 w-3.5 mr-1.5" />{autofill.isPending ? "Drafting…" : "Generate Draft"}
+            <Sparkles className="h-3.5 w-3.5 mr-1.5" />{autofill.isPending ? "Draftingâ¦" : "Generate Draft"}
           </Button>
         </div>
-        {src && <div className="text-xs text-muted-foreground border border-border rounded p-2"><strong>{src.organization}</strong> — {src.supports || src.eligibility || "—"}</div>}
+        {src && <div className="text-xs text-muted-foreground border border-border rounded p-2"><strong>{src.organization}</strong> â {src.supports || src.eligibility || "â"}</div>}
         {draft && (
           <div className="space-y-2">
             {Object.entries(draft).map(([k, v]: [string, any]) => (

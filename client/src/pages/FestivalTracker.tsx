@@ -34,21 +34,21 @@ const FESTIVALS: Festival[] = [
   { name: "New York Film Festival", city: "New York", country: "USA", tier: "Premiere", formats: ["Feature", "Short", "Doc"], earlyDeadline: "May", regularDeadline: "Jun", notificationWindow: "Late Jul", feeUSD: "Free (selective)", premiereRule: "Flexible", url: "https://www.filmlinc.org/nyff" },
   { name: "Locarno Film Festival", city: "Locarno", country: "Switzerland", tier: "A", formats: ["Feature", "Short"], earlyDeadline: "Mar", regularDeadline: "Apr", notificationWindow: "Late Jun", feeUSD: "Free", premiereRule: "World/Intl Premiere", url: "https://www.locarnofestival.ch" },
   { name: "International Film Festival Rotterdam (IFFR)", city: "Rotterdam", country: "Netherlands", tier: "Premiere", formats: ["Feature", "Short"], earlyDeadline: "Aug", regularDeadline: "Oct", notificationWindow: "Mid-Dec", feeUSD: "Free", premiereRule: "World/Intl Premiere", url: "https://iffr.com" },
-  { name: "San Sebastián Film Festival", city: "San Sebastián", country: "Spain", tier: "A", formats: ["Feature", "Short"], earlyDeadline: "Apr", regularDeadline: "Jun", notificationWindow: "Late Jul", feeUSD: "Free", premiereRule: "World Premiere", url: "https://www.sansebastianfestival.com" },
+  { name: "San SebastiÃ¡n Film Festival", city: "San SebastiÃ¡n", country: "Spain", tier: "A", formats: ["Feature", "Short"], earlyDeadline: "Apr", regularDeadline: "Jun", notificationWindow: "Late Jul", feeUSD: "Free", premiereRule: "World Premiere", url: "https://www.sansebastianfestival.com" },
   { name: "Karlovy Vary International Film Festival", city: "Karlovy Vary", country: "Czechia", tier: "A", formats: ["Feature", "Short"], earlyDeadline: "Mar", regularDeadline: "Apr", notificationWindow: "Mid-Jun", feeUSD: "Free", premiereRule: "Intl Premiere", url: "https://www.kviff.com" },
-  { name: "BFI London Film Festival", city: "London", country: "UK", tier: "Premiere", formats: ["Feature", "Short", "Doc"], earlyDeadline: "May", regularDeadline: "Jun", notificationWindow: "Late Aug", feeUSD: "£35-£70", premiereRule: "UK Premiere", url: "https://www.bfi.org.uk/london-film-festival" },
+  { name: "BFI London Film Festival", city: "London", country: "UK", tier: "Premiere", formats: ["Feature", "Short", "Doc"], earlyDeadline: "May", regularDeadline: "Jun", notificationWindow: "Late Aug", feeUSD: "Â£35-Â£70", premiereRule: "UK Premiere", url: "https://www.bfi.org.uk/london-film-festival" },
   { name: "Busan International Film Festival", city: "Busan", country: "South Korea", tier: "A", formats: ["Feature", "Short", "Doc"], earlyDeadline: "Apr", regularDeadline: "Jul", notificationWindow: "Mid-Sep", feeUSD: "Free", premiereRule: "Asian Premiere", url: "https://www.biff.kr" },
   { name: "Tokyo International Film Festival", city: "Tokyo", country: "Japan", tier: "A", formats: ["Feature", "Short"], earlyDeadline: "Jun", regularDeadline: "Aug", notificationWindow: "Late Sep", feeUSD: "Free", premiereRule: "Asian Premiere", url: "https://www.tiff-jp.net" },
-  { name: "Sitges - International Fantastic Film Festival", city: "Sitges", country: "Spain", tier: "Genre", formats: ["Feature", "Short"], earlyDeadline: "Apr", regularDeadline: "Jun", notificationWindow: "Late Aug", feeUSD: "€25-€60", premiereRule: "Flexible", url: "https://sitgesfilmfestival.com" },
+  { name: "Sitges - International Fantastic Film Festival", city: "Sitges", country: "Spain", tier: "Genre", formats: ["Feature", "Short"], earlyDeadline: "Apr", regularDeadline: "Jun", notificationWindow: "Late Aug", feeUSD: "â¬25-â¬60", premiereRule: "Flexible", url: "https://sitgesfilmfestival.com" },
   { name: "Fantasia International Film Festival", city: "Montreal", country: "Canada", tier: "Genre", formats: ["Feature", "Short"], earlyDeadline: "Mar", regularDeadline: "Apr", notificationWindow: "Mid-Jun", feeUSD: "$30-$60", premiereRule: "Flexible", url: "https://fantasiafestival.com" },
   { name: "Beyond Fest", city: "Los Angeles", country: "USA", tier: "Genre", formats: ["Feature", "Short"], earlyDeadline: "Jun", regularDeadline: "Jul", notificationWindow: "Late Aug", feeUSD: "$30-$50", premiereRule: "Flexible", url: "https://beyondfest.com" },
   { name: "IDFA - International Documentary Festival Amsterdam", city: "Amsterdam", country: "Netherlands", tier: "Doc", formats: ["Doc"], earlyDeadline: "Jun", regularDeadline: "Aug", notificationWindow: "Late Oct", feeUSD: "Free", premiereRule: "Intl Premiere", url: "https://www.idfa.nl" },
   { name: "Hot Docs", city: "Toronto", country: "Canada", tier: "Doc", formats: ["Doc"], earlyDeadline: "Sep", regularDeadline: "Nov", notificationWindow: "Mid-Mar", feeUSD: "$50-$95", premiereRule: "Flexible", url: "https://www.hotdocs.ca" },
   { name: "DOC NYC", city: "New York", country: "USA", tier: "Doc", formats: ["Doc"], earlyDeadline: "May", regularDeadline: "Jul", notificationWindow: "Mid-Sep", feeUSD: "$50-$95", premiereRule: "NY Premiere", url: "https://www.docnyc.net" },
-  { name: "Sheffield DocFest", city: "Sheffield", country: "UK", tier: "Doc", formats: ["Doc"], earlyDeadline: "Dec", regularDeadline: "Feb", notificationWindow: "Mid-Apr", feeUSD: "£40-£80", premiereRule: "Flexible", url: "https://www.sheffdocfest.com" },
+  { name: "Sheffield DocFest", city: "Sheffield", country: "UK", tier: "Doc", formats: ["Doc"], earlyDeadline: "Dec", regularDeadline: "Feb", notificationWindow: "Mid-Apr", feeUSD: "Â£40-Â£80", premiereRule: "Flexible", url: "https://www.sheffdocfest.com" },
   { name: "CPH:DOX", city: "Copenhagen", country: "Denmark", tier: "Doc", formats: ["Doc"], earlyDeadline: "Oct", regularDeadline: "Dec", notificationWindow: "Mid-Feb", feeUSD: "Free", premiereRule: "Flexible", url: "https://cphdox.dk" },
   { name: "True/False Film Fest", city: "Columbia, MO", country: "USA", tier: "Doc", formats: ["Doc"], earlyDeadline: "Sep", regularDeadline: "Nov", notificationWindow: "Late Dec", feeUSD: "$30-$50", premiereRule: "Flexible", url: "https://truefalse.org" },
-  { name: "Visions du Réel", city: "Nyon", country: "Switzerland", tier: "Doc", formats: ["Doc"], earlyDeadline: "Oct", regularDeadline: "Dec", notificationWindow: "Mid-Feb", feeUSD: "Free", premiereRule: "Intl Premiere", url: "https://www.visionsdureel.ch" },
+  { name: "Visions du RÃ©el", city: "Nyon", country: "Switzerland", tier: "Doc", formats: ["Doc"], earlyDeadline: "Oct", regularDeadline: "Dec", notificationWindow: "Mid-Feb", feeUSD: "Free", premiereRule: "Intl Premiere", url: "https://www.visionsdureel.ch" },
   { name: "Clermont-Ferrand Short Film Festival", city: "Clermont-Ferrand", country: "France", tier: "Short", formats: ["Short"], earlyDeadline: "Aug", regularDeadline: "Sep", notificationWindow: "Mid-Dec", feeUSD: "Free", premiereRule: "Flexible", url: "https://clermont-filmfest.org" },
   { name: "Palm Springs International ShortFest", city: "Palm Springs", country: "USA", tier: "Short", formats: ["Short"], earlyDeadline: "Feb", regularDeadline: "Apr", notificationWindow: "Late May", feeUSD: "$45-$90", premiereRule: "Flexible (Oscar-qualifying)", url: "https://www.psfilmfest.org/shortfest" },
   { name: "Aspen Shortsfest", city: "Aspen", country: "USA", tier: "Short", formats: ["Short"], earlyDeadline: "Sep", regularDeadline: "Nov", notificationWindow: "Mid-Feb", feeUSD: "$45-$75", premiereRule: "Flexible (Oscar-qualifying)", url: "https://www.aspenfilm.org" },
@@ -125,7 +125,7 @@ export default function FestivalTracker() {
           <Button variant="ghost" size="sm" className="min-h-[44px]"><ArrowLeft className="h-4 w-4 mr-2" />Dashboard</Button>
         </Link>
         <div>
-          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 · Release & Promote</div>
+          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 8 Â· Release & Promote</div>
           <h1 className="font-serif text-3xl flex items-center gap-2 gradient-text-gold"><Trophy className="h-6 w-6 text-amber-400" /> Festival Tracker</h1>
           <p className="text-sm text-muted-foreground">Curated directory of {FESTIVALS.length} festivals worldwide. Tracking saved on this device.</p>
         </div>
@@ -140,7 +140,7 @@ export default function FestivalTracker() {
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[240px]">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search festivals, cities, formats…" className="pl-9 min-h-[44px]" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search festivals, cities, formatsâ¦" className="pl-9 min-h-[44px]" />
         </div>
         <div className="flex gap-1 flex-wrap">
           {tiers.map((t) => (
@@ -156,16 +156,16 @@ export default function FestivalTracker() {
           const status = tracking[f.name];
           return (
             <Card key={f.name} className={status ? "border-amber-500/30" : ""}>
-              <CardHeader className="pb-2 glass-card">
+              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
-                    <CardTitle className="text-base leading-snug gradient-text-gold glass-card">{f.name}</CardTitle>
-                    <CardDescription className="text-xs flex items-center gap-1 glass-card"><Globe2 className="h-3 w-3" />{f.city}, {f.country} · Tier {f.tier}</CardDescription>
+                    <CardTitle className="text-base leading-snug gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{f.name}</CardTitle>
+                    <CardDescription className="text-xs flex items-center gap-1 glass-card shadow-lg shadow-amber-500/5"><Globe2 className="h-3 w-3" />{f.city}, {f.country} Â· Tier {f.tier}</CardDescription>
                   </div>
                   {status && <Badge className={STATUS_COLORS[status] + " border-0 whitespace-nowrap"}>{STATUS_LABELS[status]}</Badge>}
                 </div>
               </CardHeader>
-              <CardContent className="space-y-2 text-xs pb-4 glass-card">
+              <CardContent className="space-y-2 text-xs pb-4 glass-card shadow-lg shadow-amber-500/5">
                 <div className="flex flex-wrap gap-1">
                   {f.formats.map((x) => <Badge key={x} variant="outline" className="text-[10px]">{x}</Badge>)}
                 </div>

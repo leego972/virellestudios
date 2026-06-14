@@ -132,7 +132,7 @@ export default function CastingBoard() {
 
   function continuityLevel(scs: number[]): { color: string; label: string } {
     if (scs.length === 0) return { color: "bg-muted text-muted-foreground", label: "No scenes" };
-    if (scs.length >= 8) return { color: "bg-amber-500/20 text-amber-700 dark:text-amber-300", label: `${scs.length} scenes — strict` };
+    if (scs.length >= 8) return { color: "bg-amber-500/20 text-amber-700 dark:text-amber-300", label: `${scs.length} scenes â strict` };
     if (scs.length >= 3) return { color: "bg-blue-500/20 text-blue-700 dark:text-blue-300", label: `${scs.length} scenes` };
     return { color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300", label: `${scs.length} scene${scs.length === 1 ? "" : "s"}` };
   }
@@ -170,14 +170,14 @@ export default function CastingBoard() {
         projectId,
         message: `[CastingSides:${charId}]\n\nWrite a 1-page audition "sides" for the role of ${ch.name}${ch.role ? ` (${ch.role})` : ""} from "${project?.title || "Untitled"}".
 
-Character notes: ${ch.description || "—"}
-Backstory: ${(ch as any).backstory || "—"}
-Motivations: ${(ch as any).motivations || "—"}
+Character notes: ${ch.description || "â"}
+Backstory: ${(ch as any).backstory || "â"}
+Motivations: ${(ch as any).motivations || "â"}
 
 Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, an action heading, parentheticals where needed. End with one stage direction that reveals subtext. The scene should let the reader showcase a clear emotional turn.`,
       });
       // pick the AI text out of the response
-      const text = (res as any)?.assistant?.content || (res as any)?.content || "(generated — check Director Chat)";
+      const text = (res as any)?.assistant?.content || (res as any)?.content || "(generated â check Director Chat)";
       setSides((p) => ({ ...p, [charId]: typeof text === "string" ? text : JSON.stringify(text) }));
       toast.success(`Sides drafted for ${ch.name}.`);
     } catch (e: any) {
@@ -209,7 +209,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
       <div>
         <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Casting Board</h1>
         <p className="text-muted-foreground mt-1">
-          {characters?.length ?? 0} role{characters?.length === 1 ? "" : "s"} · attach actors, draft sides, and lock consent.
+          {characters?.length ?? 0} role{characters?.length === 1 ? "" : "s"} Â· attach actors, draft sides, and lock consent.
         </p>
       </div>
 
@@ -217,7 +217,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
         <CinematicEmptyState
           quoteSeed="casting-board"
           title="No cast to call yet"
-          description="The Casting Board is where roles meet performers — once you've built characters, you'll attach actors, draft sides, and lock consent here. Build your cast first."
+          description="The Casting Board is where roles meet performers â once you've built characters, you'll attach actors, draft sides, and lock consent here. Build your cast first."
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
@@ -228,7 +228,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
             const signed = !!s.consent.signedAt;
             return (
               <Card key={c.id}>
-                <CardHeader className="pb-3 glass-card">
+                <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
                   <div className="flex items-start gap-3">
                     {c.photoUrl ? (
                       <img
@@ -242,7 +242,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+                      <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                         <span className="truncate">{c.name}</span>
                         {c.role && (
                           <Badge variant="outline" className="text-[10px] shrink-0">
@@ -250,7 +250,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                           </Badge>
                         )}
                       </CardTitle>
-                      <CardDescription className="line-clamp-2 glass-card">{c.description || "No bio yet."}</CardDescription>
+                      <CardDescription className="line-clamp-2 glass-card shadow-lg shadow-amber-500/5">{c.description || "No bio yet."}</CardDescription>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2">
@@ -268,11 +268,11 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                       variant="secondary"
                     >
                       <ShieldCheck className="h-3 w-3 mr-1" />
-                      Consent {cs.done}/{cs.total}{signed ? " · signed" : ""}
+                      Consent {cs.done}/{cs.total}{signed ? " Â· signed" : ""}
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4 glass-card">
+                <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
                   {/* Actor attach */}
                   <div className="grid grid-cols-2 gap-2">
                     <div>
@@ -293,7 +293,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                     </div>
                     <div className="col-span-2">
                       <Label className="text-xs">Headshot URL</Label>
-                      <Input value={s.headshotUrl} onChange={(e) => update(c.id, { headshotUrl: e.target.value })} placeholder="https://…" />
+                      <Input value={s.headshotUrl} onChange={(e) => update(c.id, { headshotUrl: e.target.value })} placeholder="https://â¦" />
                     </div>
                     <div className="col-span-2">
                       <Label className="text-xs">Casting notes</Label>
@@ -328,7 +328,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                           />
                           <span>
                             <span className="font-medium">{f.label}</span>
-                            <span className="text-muted-foreground"> — {f.help}</span>
+                            <span className="text-muted-foreground"> â {f.help}</span>
                           </span>
                         </label>
                       ))}

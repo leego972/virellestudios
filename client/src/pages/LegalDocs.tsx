@@ -82,7 +82,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "ownerName", label: "Property Owner / Manager Name", placeholder: "John Doe" },
         { key: "propertyAddress", label: "Property Address", placeholder: "123 Main St, Los Angeles, CA 90001" },
-        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15Ã¢ÂÂ16, 2025" },
+        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15ÃÂ¢ÃÂÃÂ16, 2025" },
         { key: "compensation", label: "Compensation (if any)", placeholder: "$500 per day / No compensation" },
       ],
       template: (d) => `LOCATION RELEASE AGREEMENT
@@ -136,7 +136,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "actorName", label: "Actor Name", placeholder: "Jane Smith" },
         { key: "roleName", label: "Character / Role", placeholder: "Detective Sarah Cole" },
-        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10Ã¢ÂÂ20, 2025" },
+        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10ÃÂ¢ÃÂÃÂ20, 2025" },
         { key: "compensation", label: "Compensation", placeholder: "$500/day SAG Ultra Low Budget" },
         { key: "creditPosition", label: "Screen Credit", placeholder: 'Starring / "Jane Smith as Detective Sarah Cole"' },
       ],
@@ -244,7 +244,7 @@ import { useState } from "react";
   From: ${d.yourName || "[YOUR NAME/COMPANY]"}
   To: Licensing Department, ${d.publisher || "[PUBLISHER]"}
 
-  RE: Sync Licence Request Ã¢ÂÂ "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
+  RE: Sync Licence Request ÃÂ¢ÃÂÃÂ "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
 
   Dear Licensing Team,
 
@@ -373,8 +373,8 @@ import { useState } from "react";
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">{cat}</h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {TEMPLATES.filter(t => t.category === cat).map(t => (
-                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card" onClick={() => handleSelect(t)}>
-                      <CardContent className="p-4 space-y-2 glass-card">
+                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card shadow-lg shadow-amber-500/5" onClick={() => handleSelect(t)}>
+                      <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>
                           <span className="font-medium text-sm">{t.title}</span>
@@ -397,8 +397,8 @@ import { useState } from "react";
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-4">
                 <Card>
-                  <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
-                  <CardContent className="space-y-4 glass-card">
+                  <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
+                  <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
                     {selected.fields.map(f => (
                       <div key={f.key} className="space-y-1.5">
                         <Label className="text-xs">{f.label}</Label>
@@ -410,7 +410,7 @@ import { useState } from "react";
                       </div>
                     ))}
                     <Button className="w-full" onClick={handleGenerate} disabled={generating}>
-                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />GeneratingÃ¢ÂÂ¦</> : "Generate Document"}
+                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />GeneratingÃÂ¢ÃÂÃÂ¦</> : "Generate Document"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -424,8 +424,8 @@ import { useState } from "react";
                       <Button size="sm" onClick={handleDownload}><Download className="h-3.5 w-3.5 mr-1" />Download</Button>
                     </div>
                   </div>
-                  <Card><CardContent className="p-4 glass-card"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
-                  <p className="text-[10px] text-muted-foreground">Ã¢ÂÂ Ã¯Â¸Â This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
+                  <Card><CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
+                  <p className="text-[10px] text-muted-foreground">ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
                 </div>
               )}
             </div>

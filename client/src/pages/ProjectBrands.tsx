@@ -160,16 +160,16 @@ export default function ProjectBrands() {
               <Tag className="w-7 h-7 text-amber-400" />
               Brands
               {projectQ.data?.title ? (
-                <span className="text-zinc-500 font-normal">— {projectQ.data.title}</span>
+                <span className="text-zinc-500 font-normal">â {projectQ.data.title}</span>
               ) : null}
             </h1>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
               Tell the AI which real-world brands may, must, or must never appear
               in this film. Storefronts, billboards, signage, vehicles, drinks,
-              clothing — every shot generator (scenes, trailers, posters,
+              clothing â every shot generator (scenes, trailers, posters,
               storyboards) reads this list before drawing.
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Free to manage — costs no credits.</p>
+            <p className="text-xs text-zinc-500 mt-1">Free to manage â costs no credits.</p>
           </div>
           <Button onClick={openNew} className="bg-amber-500 hover:bg-amber-400 text-black">
             <Plus className="w-4 h-4 mr-1" /> Add brand
@@ -181,8 +181,8 @@ export default function ProjectBrands() {
             const m = policyMeta[p];
             const Icon = m.icon;
             return (
-              <Card key={p} className="bg-zinc-900/40 border-zinc-800 glass-card">
-                <CardContent className="p-4 glass-card">
+              <Card key={p} className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-4 h-4 text-zinc-300" />
                     <span className="text-xs uppercase tracking-wider text-zinc-400">{m.label}</span>
@@ -202,8 +202,8 @@ export default function ProjectBrands() {
             <Skeleton className="h-16 bg-zinc-900" />
           </div>
         ) : brands.length === 0 ? (
-          <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
-            <CardContent className="p-10 text-center glass-card">
+          <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
               <Tag className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
               <h3 className="text-lg font-medium mb-1">No brands defined</h3>
               <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
@@ -220,8 +220,8 @@ export default function ProjectBrands() {
             {brands.map((b: any) => {
               const m = policyMeta[(b.policy ?? "allowed") as Policy];
               return (
-                <Card key={b.id} className="bg-zinc-900/40 border-zinc-800 glass-card">
-                  <CardContent className="p-4 flex items-center gap-3 glass-card">
+                <Card key={b.id} className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                  <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium truncate">{b.name}</span>
@@ -275,7 +275,7 @@ export default function ProjectBrands() {
             <div>
               <Label className="text-zinc-300">Brand name *</Label>
               <Input
-                placeholder="Nike, Pepsi, Shell, In-N-Out…"
+                placeholder="Nike, Pepsi, Shell, In-N-Outâ¦"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 className="bg-zinc-950 border-zinc-800 mt-1"
@@ -286,7 +286,7 @@ export default function ProjectBrands() {
               <div>
                 <Label className="text-zinc-300">Category</Label>
                 <Input
-                  placeholder="apparel, beverage, vehicle, signage…"
+                  placeholder="apparel, beverage, vehicle, signageâ¦"
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className="bg-zinc-950 border-zinc-800 mt-1"
@@ -302,9 +302,9 @@ export default function ProjectBrands() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
-                    <SelectItem value="allowed">Allowed — may appear</SelectItem>
-                    <SelectItem value="required">Required — must appear</SelectItem>
-                    <SelectItem value="forbidden">Forbidden — never show</SelectItem>
+                    <SelectItem value="allowed">Allowed â may appear</SelectItem>
+                    <SelectItem value="required">Required â must appear</SelectItem>
+                    <SelectItem value="forbidden">Forbidden â never show</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

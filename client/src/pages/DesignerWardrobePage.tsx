@@ -54,12 +54,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-/* ────────────────────────────────────────────────────────────────────────── *
- * v6.77 — Designer Wardrobe page
+/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ *
+ * v6.77 â Designer Wardrobe page
  *
  * One unified page surfaced at TWO routes:
- *   /designer-wardrobe                       → standalone library
- *   /projects/:projectId/wardrobe            → project-scoped (adds the
+ *   /designer-wardrobe                       â standalone library
+ *   /projects/:projectId/wardrobe            â project-scoped (adds the
  *                                              "Project" tab with attach/
  *                                              assignment management)
  *
@@ -70,8 +70,8 @@ import { toast } from "sonner";
  * displays, set dressing, and background-extra wardrobe.
  *
  * Premium dark amber-on-zinc styling consistent with ProjectBrands and the
- * rest of the studio. Free to manage — no credits charged on this page.
- * ────────────────────────────────────────────────────────────────────────── */
+ * rest of the studio. Free to manage â no credits charged on this page.
+ * ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 
 type WardrobeType =
   | "fashion" | "costume" | "period_costume" | "uniform" | "fantasy_sci_fi"
@@ -134,13 +134,13 @@ const LICENSE_TYPES = [
 ];
 
 const VISIBILITY_OPTIONS = [
-  { value: "public",       label: "Public — listed in browse" },
-  { value: "unlisted",     label: "Unlisted — link only" },
+  { value: "public",       label: "Public â listed in browse" },
+  { value: "unlisted",     label: "Unlisted â link only" },
   { value: "project_only", label: "This project only" },
-  { value: "private",      label: "Private — only me" },
+  { value: "private",      label: "Private â only me" },
 ];
 
-/* ─── Item form state ─── */
+/* âââ Item form state âââ */
 
 interface ItemForm {
   name: string;
@@ -182,7 +182,7 @@ function csvToArr(s: string): string[] | undefined {
   return arr.length ? arr : undefined;
 }
 
-/* ─── Profile form state ─── */
+/* âââ Profile form state âââ */
 
 interface ProfileForm {
   brandName: string;
@@ -202,7 +202,7 @@ const emptyProfile: ProfileForm = {
   logoUrl: "", visibility: "public",
 };
 
-/* ─── Collection form state ─── */
+/* âââ Collection form state âââ */
 
 interface CollectionForm {
   name: string;
@@ -223,7 +223,7 @@ const emptyCollection: CollectionForm = {
   visibility: "public", licenseType: "reference_only", licenseNotes: "",
 };
 
-/* ────────────────────────────────────────────────────────────────────────── */
+/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 
 export default function DesignerWardrobePage() {
   const params = useParams<{ projectId?: string }>();
@@ -232,7 +232,7 @@ export default function DesignerWardrobePage() {
 
   const utils = trpc.useUtils();
 
-  /* ─── Queries ─── */
+  /* âââ Queries âââ */
   const profileQ = trpc.designerWardrobe.getMyProfile.useQuery();
   const myItemsQ = trpc.designerWardrobe.listWardrobeItems.useQuery({ scope: "mine", limit: 200 });
   const publicItemsQ = trpc.designerWardrobe.listWardrobeItems.useQuery({ scope: "public", limit: 200 });
@@ -254,7 +254,7 @@ export default function DesignerWardrobePage() {
     { enabled: inProjectMode },
   );
 
-  /* ─── Mutations ─── */
+  /* âââ Mutations âââ */
   const upsertProfile = trpc.designerWardrobe.upsertProfile.useMutation({
     onSuccess: () => {
       utils.designerWardrobe.getMyProfile.invalidate();
@@ -312,7 +312,7 @@ export default function DesignerWardrobePage() {
     onError: (e) => toast.error(e.message),
   });
 
-  /* ─── Local state ─── */
+  /* âââ Local state âââ */
   const [tab, setTab] = useState<string>(inProjectMode ? "project" : "browse");
   const [browseFilter, setBrowseFilter] = useState<WardrobeType | "all">("all");
 
@@ -334,7 +334,7 @@ export default function DesignerWardrobePage() {
   const [attachAssignType, setAttachAssignType] = useState<string>("character_wardrobe");
   const [attachNotes, setAttachNotes] = useState<string>("");
 
-  /* ─── Derived ─── */
+  /* âââ Derived âââ */
   const myItems = myItemsQ.data ?? [];
   const publicItems = publicItemsQ.data ?? [];
   const collections = collectionsQ.data ?? [];
@@ -351,7 +351,7 @@ export default function DesignerWardrobePage() {
     [collections, profile],
   );
 
-  /* ─── Handlers ─── */
+  /* âââ Handlers âââ */
   const openEditProfile = () => {
     if (profile) {
       setProfileForm({
@@ -483,14 +483,14 @@ export default function DesignerWardrobePage() {
     }
   };
 
-  /* ─── Renderers ─── */
+  /* âââ Renderers âââ */
 
   const renderItemCard = (it: any, opts?: { showAttach?: boolean; showDelete?: boolean }) => {
     const meta = CATEGORY_BY_ID.get(it.wardrobeType as WardrobeType);
     const Icon = meta?.icon ?? Package;
     return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card key={it.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden flex flex-col glass-card">
+      <Card key={it.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden flex flex-col glass-card shadow-lg shadow-amber-500/5">
         <div className="aspect-[4/5] bg-zinc-950 relative overflow-hidden">
           {it.primaryImageUrl ? (
             <img
@@ -520,7 +520,7 @@ export default function DesignerWardrobePage() {
             </div>
           ) : null}
         </div>
-        <CardContent className="p-3 flex-1 flex flex-col glass-card">
+        <CardContent className="p-3 flex-1 flex flex-col glass-card shadow-lg shadow-amber-500/5">
           <div className="font-medium text-sm truncate">{it.name}</div>
           {it.subcategory ? (
             <div className="text-xs text-zinc-500 truncate">{it.subcategory}</div>
@@ -576,7 +576,7 @@ export default function DesignerWardrobePage() {
     </div>
   );
 
-  /* ─── Page ─── */
+  /* âââ Page âââ */
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -611,7 +611,7 @@ export default function DesignerWardrobePage() {
                   <Building2 className="w-4 h-4 text-amber-400" />
                 )}
                 <span className="text-amber-200 font-medium">{profile.brandName}</span>
-                <span className="text-zinc-500">·</span>
+                <span className="text-zinc-500">Â·</span>
                 <span className="text-zinc-400">{profile.profileType?.replace(/_/g, " ")}</span>
                 <Pencil className="w-3 h-3 text-zinc-500" />
               </button>
@@ -634,7 +634,7 @@ export default function DesignerWardrobePage() {
             <Shirt className="w-7 h-7 text-amber-400" />
             Designer Wardrobe
             {inProjectMode && projectQ.data?.title ? (
-              <span className="text-zinc-500 font-normal">— {projectQ.data.title}</span>
+              <span className="text-zinc-500 font-normal">â {projectQ.data.title}</span>
             ) : null}
           </h1>
           <p className="text-sm text-zinc-400 mt-1 max-w-3xl">
@@ -643,10 +643,10 @@ export default function DesignerWardrobePage() {
             bags, shoes, hats), fabrics, shopfront / boutique displays,
             background-extra wardrobe, and fashion-led set dressing.
             {inProjectMode
-              ? " Browse, then attach items to characters or scenes — the AI will read every attachment when generating shots."
+              ? " Browse, then attach items to characters or scenes â the AI will read every attachment when generating shots."
               : " Build your designer presence, organize collections, and publish wardrobe references for productions to use."}
           </p>
-          <p className="text-xs text-zinc-500 mt-1">Free to manage — no credits charged on this page.</p>
+          <p className="text-xs text-zinc-500 mt-1">Free to manage â no credits charged on this page.</p>
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
@@ -667,7 +667,7 @@ export default function DesignerWardrobePage() {
             ) : null}
           </TabsList>
 
-          {/* ─── Browse ─── */}
+          {/* âââ Browse âââ */}
           <TabsContent value="browse" className="mt-4">
             <div className="flex flex-wrap gap-2 mb-4">
               <button
@@ -704,12 +704,12 @@ export default function DesignerWardrobePage() {
             {publicItemsQ.isLoading ? (
               renderItemSkeletons(8)
             ) : browseItems.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
-                <CardContent className="p-10 text-center glass-card">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
                   <Shirt className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">Nothing in this category yet</h3>
                   <p className="text-sm text-zinc-400 max-w-md mx-auto">
-                    Be the first to publish wardrobe to the public library — open
+                    Be the first to publish wardrobe to the public library â open
                     My Items and add a new piece, then set its visibility to Public.
                   </p>
                 </CardContent>
@@ -721,7 +721,7 @@ export default function DesignerWardrobePage() {
             )}
           </TabsContent>
 
-          {/* ─── My Items ─── */}
+          {/* âââ My Items âââ */}
           <TabsContent value="mine" className="mt-4">
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-zinc-400">
@@ -737,12 +737,12 @@ export default function DesignerWardrobePage() {
             {myItemsQ.isLoading ? (
               renderItemSkeletons(4)
             ) : myItems.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
-                <CardContent className="p-10 text-center glass-card">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
                   <Package className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">Your wardrobe is empty</h3>
                   <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
-                    Add fashion pieces, costumes, accessories, fabrics — anything
+                    Add fashion pieces, costumes, accessories, fabrics â anything
                     a director might dress a character or a shop window with.
                   </p>
                   <Button
@@ -760,7 +760,7 @@ export default function DesignerWardrobePage() {
             )}
           </TabsContent>
 
-          {/* ─── Collections ─── */}
+          {/* âââ Collections âââ */}
           <TabsContent value="collections" className="mt-4">
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-zinc-400">
@@ -776,9 +776,9 @@ export default function DesignerWardrobePage() {
               </Button>
             </div>
             {!profile ? (
-              <Card className="bg-zinc-900/40 border-amber-800/40 glass-card">
-                <CardContent className="p-6 text-sm text-amber-200 glass-card">
-                  Set up your designer profile first — it becomes the byline on
+              <Card className="bg-zinc-900/40 border-amber-800/40 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-6 text-sm text-amber-200 glass-card shadow-lg shadow-amber-500/5">
+                  Set up your designer profile first â it becomes the byline on
                   every collection you publish.
                 </CardContent>
               </Card>
@@ -789,12 +789,12 @@ export default function DesignerWardrobePage() {
                 <Skeleton className="h-40 bg-zinc-900" />
               </div>
             ) : myCollections.length === 0 ? (
-              <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
-                <CardContent className="p-10 text-center glass-card">
+              <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
                   <Folder className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1">No collections yet</h3>
                   <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
-                    Group your wardrobe into collections — a season, a costume
+                    Group your wardrobe into collections â a season, a costume
                     set for a film, a shopfront capsule, a textile catalogue.
                   </p>
                 </CardContent>
@@ -802,7 +802,7 @@ export default function DesignerWardrobePage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {myCollections.map((c: any) => (
-                  <Card key={c.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden glass-card">
+                  <Card key={c.id} className="bg-zinc-900/40 border-zinc-800 overflow-hidden glass-card shadow-lg shadow-amber-500/5">
                     <div className="aspect-[16/9] bg-zinc-950 relative overflow-hidden">
                       {c.coverImageUrl ? (
                         <img src={c.coverImageUrl} alt={c.name} className="w-full h-full object-cover" loading="lazy" />
@@ -812,9 +812,9 @@ export default function DesignerWardrobePage() {
                         </div>
                       )}
                     </div>
-                    <CardContent className="p-3 glass-card">
+                    <CardContent className="p-3 glass-card shadow-lg shadow-amber-500/5">
                       <div className="font-medium">{c.name}</div>
-                      <div className="text-xs text-zinc-500">{c.collectionType?.replace(/_/g, " ")}{c.season ? ` · ${c.season}` : ""}{c.year ? ` · ${c.year}` : ""}</div>
+                      <div className="text-xs text-zinc-500">{c.collectionType?.replace(/_/g, " ")}{c.season ? ` Â· ${c.season}` : ""}{c.year ? ` Â· ${c.year}` : ""}</div>
                       {c.description ? (
                         <div className="text-xs text-zinc-400 mt-1 line-clamp-2">{c.description}</div>
                       ) : null}
@@ -825,18 +825,18 @@ export default function DesignerWardrobePage() {
             )}
           </TabsContent>
 
-          {/* ─── Project Wardrobe ─── */}
+          {/* âââ Project Wardrobe âââ */}
           {inProjectMode ? (
             <TabsContent value="project" className="mt-4">
               <div className="mb-2 text-sm text-zinc-400">
-                Wardrobe attached to this project — every attachment is fed to the
+                Wardrobe attached to this project â every attachment is fed to the
                 AI when it generates the matching scene or character.
               </div>
               {projectAssignmentsQ.isLoading ? (
                 <Skeleton className="h-32 bg-zinc-900" />
               ) : (projectAssignmentsQ.data ?? []).length === 0 ? (
-                <Card className="bg-zinc-900/40 border-zinc-800 glass-card">
-                  <CardContent className="p-10 text-center glass-card">
+                <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                  <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
                     <Link2 className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                     <h3 className="text-lg font-medium mb-1">No wardrobe attached yet</h3>
                     <p className="text-sm text-zinc-400 max-w-md mx-auto">
@@ -860,8 +860,8 @@ export default function DesignerWardrobePage() {
                       ? (projectScenesQ.data?.find((s: any) => s.id === a.sceneId))
                       : null;
                     return (
-                      <Card key={a.id} className="bg-zinc-900/40 border-zinc-800 glass-card">
-                        <CardContent className="p-3 flex items-center gap-3 glass-card">
+                      <Card key={a.id} className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+                        <CardContent className="p-3 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
                           <div className="w-14 h-14 rounded bg-zinc-950 flex items-center justify-center overflow-hidden flex-shrink-0">
                             {item?.primaryImageUrl ? (
                               <img src={item.primaryImageUrl} alt="" className="w-full h-full object-cover" />
@@ -881,7 +881,7 @@ export default function DesignerWardrobePage() {
                             </div>
                             <div className="text-xs text-zinc-500 mt-0.5">
                               {charName ? `Character: ${charName}` : null}
-                              {sceneRef ? `Scene #${sceneRef.sceneNumber ?? sceneRef.id}${sceneRef.title ? ` — ${sceneRef.title}` : ""}` : null}
+                              {sceneRef ? `Scene #${sceneRef.sceneNumber ?? sceneRef.id}${sceneRef.title ? ` â ${sceneRef.title}` : ""}` : null}
                             </div>
                             {a.placementNotes ? (
                               <div className="text-xs text-zinc-400 mt-1 line-clamp-1">{a.placementNotes}</div>
@@ -908,7 +908,7 @@ export default function DesignerWardrobePage() {
         </Tabs>
       </div>
 
-      {/* ─── Profile dialog ─── */}
+      {/* âââ Profile dialog âââ */}
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
@@ -1034,7 +1034,7 @@ export default function DesignerWardrobePage() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Collection dialog ─── */}
+      {/* âââ Collection dialog âââ */}
       <Dialog open={collectionOpen} onOpenChange={setCollectionOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
@@ -1050,7 +1050,7 @@ export default function DesignerWardrobePage() {
               <Input
                 value={collectionForm.name}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="e.g. SS27, The Lighthouse — Costumes"
+                placeholder="e.g. SS27, The Lighthouse â Costumes"
                 className="bg-zinc-950 border-zinc-800 mt-1"
               />
             </div>
@@ -1174,13 +1174,13 @@ export default function DesignerWardrobePage() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Item dialog ─── */}
+      {/* âââ Item dialog âââ */}
       <Dialog open={itemOpen} onOpenChange={setItemOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Add wardrobe item</DialogTitle>
             <DialogDescription className="text-zinc-400">
-              Anything a director might dress a character, set, or extra with —
+              Anything a director might dress a character, set, or extra with â
               from a couture gown to a single hat to a roll of fabric.
             </DialogDescription>
           </DialogHeader>
@@ -1354,7 +1354,7 @@ export default function DesignerWardrobePage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
-                    <SelectItem value="none">— None —</SelectItem>
+                    <SelectItem value="none">â None â</SelectItem>
                     {myCollections.map((c: any) => (
                       <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
                     ))}
@@ -1376,7 +1376,7 @@ export default function DesignerWardrobePage() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Attach dialog ─── */}
+      {/* âââ Attach dialog âââ */}
       <Dialog open={attachOpen} onOpenChange={setAttachOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
           <DialogHeader>
@@ -1448,7 +1448,7 @@ export default function DesignerWardrobePage() {
                     <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800 max-h-72">
                       {(projectScenesQ.data ?? []).map((s: any) => (
                         <SelectItem key={s.id} value={String(s.id)}>
-                          Scene {s.sceneNumber ?? s.id}{s.title ? ` — ${s.title}` : ""}
+                          Scene {s.sceneNumber ?? s.id}{s.title ? ` â ${s.title}` : ""}
                         </SelectItem>
                       ))}
                     </SelectContent>

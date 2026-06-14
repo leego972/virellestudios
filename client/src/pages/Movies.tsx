@@ -67,7 +67,7 @@ const TYPE_COLORS: Record<MovieType, string> = {
 };
 
 function formatDuration(seconds: number | null | undefined): string {
-  if (!seconds) return "Ã¢ÂÂ";
+  if (!seconds) return "ÃÂ¢ÃÂÃÂ";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
@@ -77,7 +77,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes) return "Ã¢ÂÂ";
+  if (!bytes) return "ÃÂ¢ÃÂÃÂ";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024)
@@ -106,7 +106,7 @@ type MovieItem = {
   updatedAt: Date;
 };
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ YouTube Export Modal Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ YouTube Export Modal ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 function YouTubeExportModal({
   movie,
   open,
@@ -146,8 +146,8 @@ function YouTubeExportModal({
     setTitle(movie.title);
     setDescription(
       movie.description
-        ? `${movie.description}\n\nCreated with Virelle Studios Ã¢ÂÂ AI-powered cinema.\nhttps://virelle.life`
-        : `Created with Virelle Studios Ã¢ÂÂ AI-powered cinema.\nhttps://virelle.life`
+        ? `${movie.description}\n\nCreated with Virelle Studios ÃÂ¢ÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
+        : `Created with Virelle Studios ÃÂ¢ÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
     );
   }
 
@@ -234,7 +234,7 @@ function YouTubeExportModal({
               }
             >
               <PlayCircle className="h-4 w-4" />
-              {exportMutation.isPending ? "UploadingÃ¢ÂÂ¦" : "Upload to YouTube"}
+              {exportMutation.isPending ? "UploadingÃÂ¢ÃÂÃÂ¦" : "Upload to YouTube"}
             </Button>
           )}
         </DialogFooter>
@@ -350,7 +350,7 @@ export default function Movies() {
   const renderMovieCard = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card"
+      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card shadow-lg shadow-amber-500/5"
       onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
       <div className="relative aspect-video bg-muted">
@@ -438,7 +438,7 @@ export default function Movies() {
           </div>
         )}
       </div>
-      <CardContent className="p-4 glass-card">
+      <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h3 className="font-medium truncate">{movie.title}</h3>
@@ -516,10 +516,10 @@ export default function Movies() {
   const renderMovieRow = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card"
+      className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card shadow-lg shadow-amber-500/5"
       onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
-      <CardContent className="p-3 flex items-center gap-4 glass-card">
+      <CardContent className="p-3 flex items-center gap-4 glass-card shadow-lg shadow-amber-500/5">
         <div className="w-24 h-16 rounded-md overflow-hidden bg-muted shrink-0 relative group">
           {movie.thumbnailUrl ? (
             <img
@@ -642,7 +642,7 @@ export default function Movies() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 {folderContents.length} item
-                {folderContents.length !== 1 ? "s" : ""} Ã¢ÂÂ{" "}
+                {folderContents.length !== 1 ? "s" : ""} ÃÂ¢ÃÂÃÂ{" "}
                 {folderContents.filter((m) => m.type === "scene").length} scenes
                 {folderContents.filter((m) => m.type === "trailer").length > 0 &&
                   `, ${folderContents.filter((m) => m.type === "trailer").length} trailer${folderContents.filter((m) => m.type === "trailer").length !== 1 ? "s" : ""}`}
@@ -714,7 +714,7 @@ export default function Movies() {
       {!activeFolder && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
-            <CardContent className="p-4 flex items-center gap-3 glass-card">
+            <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
               <div className="p-2 rounded-lg bg-amber-400/10">
                 <Folder className="h-5 w-5 text-amber-400" />
               </div>
@@ -725,7 +725,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-emerald-500/30 ${typeFilter === 'film' ? 'ring-1 ring-emerald-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'film' ? null : 'film')}>
-            <CardContent className="p-4 flex items-center gap-3 glass-card">
+            <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
               <div className="p-2 rounded-lg bg-emerald-500/10">
                 <Clapperboard className="h-5 w-5 text-emerald-400" />
               </div>
@@ -738,7 +738,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-blue-500/30 ${typeFilter === 'scene' ? 'ring-1 ring-blue-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'scene' ? null : 'scene')}>
-            <CardContent className="p-4 flex items-center gap-3 glass-card">
+            <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Film className="h-5 w-5 text-blue-400" />
               </div>
@@ -751,7 +751,7 @@ export default function Movies() {
             </CardContent>
           </Card>
           <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-amber-500/30 ${typeFilter === 'trailer' ? 'ring-1 ring-amber-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'trailer' ? null : 'trailer')}>
-            <CardContent className="p-4 flex items-center gap-3 glass-card">
+            <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Play className="h-5 w-5 text-amber-400" />
               </div>
@@ -813,7 +813,7 @@ export default function Movies() {
                         return (
                           <Card
                             key={folderName}
-                            className="overflow-hidden cursor-pointer group hover:ring-1 hover:ring-primary/30 transition-all glass-card"
+                            className="overflow-hidden cursor-pointer group hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5"
                             onClick={() => {
                               setActiveFolder(folderName);
                               setSearchQuery("");
@@ -884,13 +884,13 @@ export default function Movies() {
                         return (
                           <Card
                             key={folderName}
-                            className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card"
+                            className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5"
                             onClick={() => {
                               setActiveFolder(folderName);
                               setSearchQuery("");
                             }}
                           >
-                            <CardContent className="p-3 flex items-center gap-4 glass-card">
+                            <CardContent className="p-3 flex items-center gap-4 glass-card shadow-lg shadow-amber-500/5">
                               <div className="w-12 h-12 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                                 <Folder className="h-6 w-6 text-amber-400" />
                               </div>

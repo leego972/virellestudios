@@ -99,7 +99,7 @@ export default function CreditsEditor() {
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">{project?.title} â Credits</h1>
+              <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">{project?.title} Ã¢ÂÂ Credits</h1>
               <p className="text-xs text-muted-foreground">{allCredits?.length || 0} credits</p>
             </div>
           </div>
@@ -164,8 +164,8 @@ export default function CreditsEditor() {
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
         {/* Opening Credits */}
         <Card>
-          <CardHeader className="pb-3 glass-card">
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
               <Film className="h-4 w-4 text-amber-400" />
               Opening Credits
             </CardTitle>
@@ -205,8 +205,8 @@ export default function CreditsEditor() {
 
         {/* Closing Credits */}
         <Card>
-          <CardHeader className="pb-3 glass-card">
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
               <Award className="h-4 w-4 text-amber-400" />
               Closing Credits
             </CardTitle>
@@ -246,11 +246,11 @@ export default function CreditsEditor() {
 
         {/* Preview */}
         {(allCredits?.length || 0) > 0 && (
-          <Card className="bg-black text-white border-0 glass-card">
-            <CardHeader className="pb-3 glass-card">
-              <CardTitle className="text-base text-center /80 gradient-text-gold glass-card">Credits Preview</CardTitle>
+          <Card className="bg-black text-white border-0 glass-card shadow-lg shadow-amber-500/5">
+            <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+              <CardTitle className="text-base text-center /80 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Credits Preview</CardTitle>
             </CardHeader>
-            <CardContent className="text-center space-y-6 py-8 glass-card">
+            <CardContent className="text-center space-y-6 py-8 glass-card shadow-lg shadow-amber-500/5">
               {openingCredits.length > 0 && (
                 <div className="space-y-4">
                   {openingCredits.map(c => (

@@ -64,7 +64,7 @@ export default function ResetPassword() {
               <Film className="w-7 h-7 text-white" />
             </div>
           </div>
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
                 <XCircle className="w-6 h-6 text-red-500" />
@@ -94,7 +94,7 @@ export default function ResetPassword() {
               <Film className="w-7 h-7 text-white" />
             </div>
           </div>
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
                 <XCircle className="w-6 h-6 text-red-500" />
@@ -124,7 +124,7 @@ export default function ResetPassword() {
               <Film className="w-7 h-7 text-white" />
             </div>
           </div>
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
                 <CheckCircle2 className="w-6 h-6 text-green-500" />
@@ -170,7 +170,7 @@ export default function ResetPassword() {
           </div>
         </div>
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card">
+        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl gradient-text-gold">Reset password</CardTitle>
             <CardDescription>Enter your new password below</CardDescription>
@@ -183,7 +183,7 @@ export default function ResetPassword() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"
@@ -208,7 +208,7 @@ export default function ResetPassword() {
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"

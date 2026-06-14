@@ -105,7 +105,7 @@ export default function SecurityDashboard() {
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md glass-card">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card shadow-lg shadow-amber-500/5">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
@@ -156,7 +156,7 @@ export default function SecurityDashboard() {
         </div>
       ) : stats ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -169,7 +169,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
@@ -182,7 +182,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
@@ -195,7 +195,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
@@ -208,7 +208,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
@@ -221,7 +221,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -234,7 +234,7 @@ export default function SecurityDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80 col-span-2 glass-card">
+          <Card className="border-border/50 bg-card/80 col-span-2 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -251,7 +251,7 @@ export default function SecurityDashboard() {
       ) : null}
 
       {/* Flagged Users */}
-      <Card className="border-border/50 bg-card/80 glass-card">
+      <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <AlertTriangle className="w-5 h-5 text-orange-500" />
@@ -324,7 +324,7 @@ export default function SecurityDashboard() {
       </Card>
 
       {/* Lock User Action */}
-      <Card className="border-border/50 bg-card/80 glass-card">
+      <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <Lock className="w-5 h-5 text-red-500" />
@@ -383,7 +383,7 @@ export default function SecurityDashboard() {
       </Card>
 
       {/* Security Events */}
-      <Card className="border-border/50 bg-card/80 glass-card">
+      <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
@@ -458,7 +458,7 @@ export default function SecurityDashboard() {
       </Card>
 
       {/* Audit Log */}
-      <Card className="border-border/50 bg-card/80 glass-card">
+      <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
@@ -525,7 +525,7 @@ export default function SecurityDashboard() {
                         )}
                       </td>
                       <td className="py-2 px-3 text-xs text-muted-foreground max-w-[200px] truncate">
-                        {entry.details ? JSON.stringify(entry.details) : "—"}
+                        {entry.details ? JSON.stringify(entry.details) : "â"}
                       </td>
                     </tr>
                   ))}

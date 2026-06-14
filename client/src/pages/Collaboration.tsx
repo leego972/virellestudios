@@ -91,7 +91,7 @@ export default function Collaboration() {
       setInviteEmail("");
       toast.success("Invitation created");
     },
-    onError: () => toast.error("We couldn't send that invite â check the email address and try again."),
+    onError: () => toast.error("We couldn't send that invite Ã¢ÂÂ check the email address and try again."),
   });
 
   const updateRoleMutation = trpc.collaboration.updateRole.useMutation({
@@ -182,7 +182,7 @@ export default function Collaboration() {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <Card>
-            <CardContent className="p-4 glass-card">
+            <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
                   <Users className="h-5 w-5 text-green-500" />
@@ -195,7 +195,7 @@ export default function Collaboration() {
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 glass-card">
+            <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
                   <Clock className="h-5 w-5 text-yellow-500" />
@@ -208,7 +208,7 @@ export default function Collaboration() {
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 glass-card">
+            <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center">
                   <Shield className="h-5 w-5 text-amber-400" />
@@ -223,9 +223,9 @@ export default function Collaboration() {
         </div>
 
         {/* Roles Guide */}
-        <Card className="mb-6 glass-card">
-          <CardHeader className="pb-3 glass-card">
-            <CardTitle className="text-sm gradient-text-gold glass-card">Team Roles</CardTitle>
+        <Card className="mb-6 glass-card shadow-lg shadow-amber-500/5">
+          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Team Roles</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
@@ -258,7 +258,7 @@ export default function Collaboration() {
                 const RoleIcon = roleConfig?.icon || Eye;
                 return (
                   <Card key={member.id}>
-                    <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-2 flex-wrap glass-card">
+                    <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-2 flex-wrap glass-card shadow-lg shadow-amber-500/5">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="h-9 w-9 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0">
                           <RoleIcon className={`h-4 w-4 ${roleConfig?.color || ""}`} />
@@ -321,8 +321,8 @@ export default function Collaboration() {
               {pendingInvites.map((invite) => {
                 const roleConfig = ROLE_CONFIG[invite.role as keyof typeof ROLE_CONFIG];
                 return (
-                  <Card key={invite.id} className="border-dashed glass-card">
-                    <CardContent className="p-4 flex items-center justify-between glass-card">
+                  <Card key={invite.id} className="border-dashed glass-card shadow-lg shadow-amber-500/5">
+                    <CardContent className="p-4 flex items-center justify-between glass-card shadow-lg shadow-amber-500/5">
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-full bg-yellow-500/10 flex items-center justify-center">
                           <Mail className="h-4 w-4 text-yellow-500" />
@@ -383,8 +383,8 @@ export default function Collaboration() {
             </h3>
             <div className="space-y-2">
               {declinedInvites.map((invite) => (
-                <Card key={invite.id} className="opacity-60 glass-card">
-                  <CardContent className="p-4 flex items-center justify-between glass-card">
+                <Card key={invite.id} className="opacity-60 glass-card shadow-lg shadow-amber-500/5">
+                  <CardContent className="p-4 flex items-center justify-between glass-card shadow-lg shadow-amber-500/5">
                     <div className="flex items-center gap-3">
                       <div className="h-9 w-9 rounded-full bg-red-500/10 flex items-center justify-center">
                         <XCircle className="h-4 w-4 text-red-500" />
@@ -414,8 +414,8 @@ export default function Collaboration() {
 
         {/* Empty State */}
         {teamMembers.length === 0 && (
-          <Card className="border-dashed glass-card">
-            <CardContent className="p-12 text-center glass-card">
+          <Card className="border-dashed glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="p-12 text-center glass-card shadow-lg shadow-amber-500/5">
               <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">No Team Members Yet</h3>
               <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
@@ -460,10 +460,10 @@ export default function Collaboration() {
               <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Viewer â View-only access</SelectItem>
-                  <SelectItem value="editor">Editor â Edit scenes & scripts</SelectItem>
-                  <SelectItem value="producer">Producer â Manage production</SelectItem>
-                  <SelectItem value="director">Director â Full creative control</SelectItem>
+                  <SelectItem value="viewer">Viewer Ã¢ÂÂ View-only access</SelectItem>
+                  <SelectItem value="editor">Editor Ã¢ÂÂ Edit scenes & scripts</SelectItem>
+                  <SelectItem value="producer">Producer Ã¢ÂÂ Manage production</SelectItem>
+                  <SelectItem value="director">Director Ã¢ÂÂ Full creative control</SelectItem>
                 </SelectContent>
               </Select>
             </div>

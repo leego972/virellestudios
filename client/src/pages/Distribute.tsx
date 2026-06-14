@@ -48,7 +48,7 @@ const PLATFORM_CONFIGS = [
     key: "tiktok" as const,
     label: "TikTok",
     icon: TikTokIcon,
-    description: "Vertical 9:16 · 60s max",
+    description: "Vertical 9:16 Â· 60s max",
     color: "text-pink-500",
     bg: "bg-pink-500/10 border-pink-500/20",
   },
@@ -56,7 +56,7 @@ const PLATFORM_CONFIGS = [
     key: "instagram" as const,
     label: "Camera Reels",
     icon: Camera,
-    description: "Vertical 9:16 · 90s max",
+    description: "Vertical 9:16 Â· 90s max",
     color: "text-purple-500",
     bg: "bg-purple-500/10 border-purple-500/20",
   },
@@ -64,7 +64,7 @@ const PLATFORM_CONFIGS = [
     key: "youtubeShorts" as const,
     label: "YouTube Shorts",
     icon: PlayCircle,
-    description: "Vertical 9:16 · 60s max",
+    description: "Vertical 9:16 Â· 60s max",
     color: "text-red-500",
     bg: "bg-red-500/10 border-red-500/20",
   },
@@ -72,7 +72,7 @@ const PLATFORM_CONFIGS = [
     key: "square" as const,
     label: "Square Cut",
     icon: Share2,
-    description: "Square 1:1 · All platforms",
+    description: "Square 1:1 Â· All platforms",
     color: "text-blue-500",
     bg: "bg-blue-500/10 border-blue-500/20",
   },
@@ -175,7 +175,7 @@ export default function Distribute() {
   // Phase 2: Submit for feature (admin curation)
   const submitForFeatureMutation = trpc.submissions.submit.useMutation({
     onSuccess: () => {
-      toast.success("Submitted for editorial review! Our team will review your film within 5–7 business days.");
+      toast.success("Submitted for editorial review! Our team will review your film within 5â7 business days.");
     },
     onError: (e) => toast.error(e.message),
   });
@@ -211,7 +211,7 @@ export default function Distribute() {
   return (
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
-      <SiteHead title="Distribute" description="Promote, package and ship your AI film — promo packs, festival submissions, and one-click distribution." />
+      <SiteHead title="Distribute" description="Promote, package and ship your AI film â promo packs, festival submissions, and one-click distribution." />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Link href={`/projects/${projectId}`}>
@@ -231,11 +231,11 @@ export default function Distribute() {
 
       {/* Phase 2: Analytics Snapshot (only shown when film page is published) */}
       {promoStatus?.isPublished && filmPageStats && (
-        <Card className="border-amber-500/20 bg-amber-500/5 glass-card">
-          <CardHeader className="pb-2 glass-card">
+        <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5">
+          <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
             <div className="flex items-center gap-2">
               <BarChart2 className="w-4 h-4 text-amber-500" />
-              <CardTitle className="text-sm gradient-text-gold glass-card">Film Page Analytics</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Film Page Analytics</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -259,9 +259,9 @@ export default function Distribute() {
 
       {/* Readiness Checklist */}
       <Card>
-        <CardHeader className="pb-3 glass-card">
+        <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base gradient-text-gold glass-card">Distribution Readiness</CardTitle>
+            <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Distribution Readiness</CardTitle>
             <Badge
               variant={isFullyReady ? "default" : "secondary"}
               className={isFullyReady ? "bg-green-600" : ""}
@@ -310,7 +310,7 @@ export default function Distribute() {
                   disabled={submitForFeatureMutation.isPending}
                 >
                   <Star className="w-3.5 h-3.5" />
-                  {submitForFeatureMutation.isPending ? "Submitting…" : "Submit for Feature"}
+                  {submitForFeatureMutation.isPending ? "Submittingâ¦" : "Submit for Feature"}
                 </Button>
               </div>
             </div>
@@ -338,7 +338,7 @@ export default function Distribute() {
           </TabsTrigger>
         </TabsList>
 
-        {/* ── Exports Tab ── */}
+        {/* ââ Exports Tab ââ */}
         <TabsContent value="exports" className="space-y-4 mt-4">
           <p className="text-sm text-muted-foreground">
             Every export automatically prepends the <strong>VirElle Studios opener</strong> as opening credits.
@@ -349,17 +349,17 @@ export default function Distribute() {
               const exportUrl = (promoStatus as any)?.[`${platform.key}Url`] || null;
               return (
                 <Card key={platform.key} className={`border ${platform.bg}`}>
-                  <CardHeader className="pb-2 glass-card">
+                  <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <platform.icon className={`w-5 h-5 ${platform.color}`} />
-                        <CardTitle className="text-sm gradient-text-gold glass-card">{platform.label}</CardTitle>
+                        <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{platform.label}</CardTitle>
                       </div>
                       {done && <Badge className="bg-green-600 text-xs">Done</Badge>}
                     </div>
-                    <CardDescription className="text-xs glass-card">{platform.description}</CardDescription>
+                    <CardDescription className="text-xs glass-card shadow-lg shadow-amber-500/5">{platform.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-2 glass-card">
+                  <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
                     <Button
                       size="sm"
                       variant={done ? "outline" : "default"}
@@ -412,7 +412,7 @@ export default function Distribute() {
           </div>
         </TabsContent>
 
-        {/* ── Promo Copy Tab ── */}
+        {/* ââ Promo Copy Tab ââ */}
         <TabsContent value="assets" className="space-y-4 mt-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
@@ -448,7 +448,7 @@ export default function Distribute() {
             <div className="space-y-3">
               {(promoAssets as any[]).map((asset: any) => (
                 <Card key={asset.id}>
-                  <CardHeader className="pb-2 glass-card">
+                  <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs capitalize">
@@ -489,7 +489,7 @@ export default function Distribute() {
           )}
         </TabsContent>
 
-        {/* ── Film Page Tab ── */}
+        {/* ââ Film Page Tab ââ */}
         <TabsContent value="filmpage" className="space-y-5 mt-4">
           <p className="text-sm text-muted-foreground">
             Create a public landing page for your film at{" "}
@@ -614,7 +614,7 @@ export default function Distribute() {
           </div>
         </TabsContent>
 
-        {/* ── Phase 2: Creator Profile Tab ── */}
+        {/* ââ Phase 2: Creator Profile Tab ââ */}
         <TabsContent value="profile" className="space-y-5 mt-4">
           <p className="text-sm text-muted-foreground">
             Set up your public creator profile at{" "}

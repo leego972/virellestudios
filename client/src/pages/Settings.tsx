@@ -24,8 +24,8 @@ function useQueryParam(key: string) {
 }
 
 const PROVIDER_ICONS: Record<string, string> = {
-  runway: "ð¬", fal: "â¡", replicate: "ð", openai: "ð¤", luma: "ð", huggingface: "ð¤",
-  elevenlabs: "ðï¸", suno: "ðµ", seedance: "ð", google: "ð", veo3: "ð¥", did: "ð§",
+  runway: "Ã°ÂÂÂ¬", fal: "Ã¢ÂÂ¡", replicate: "Ã°ÂÂÂ", openai: "Ã°ÂÂ¤Â", luma: "Ã°ÂÂÂ", huggingface: "Ã°ÂÂ¤Â",
+  elevenlabs: "Ã°ÂÂÂÃ¯Â¸Â", suno: "Ã°ÂÂÂµ", seedance: "Ã°ÂÂÂ", google: "Ã°ÂÂÂ", veo3: "Ã°ÂÂÂ¥", did: "Ã°ÂÂ§Â",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -62,195 +62,195 @@ const VOICE_MUSIC_PROVIDERS = [
 ];
 
 const COUNTRIES = [
-  { code: "AF", name: "Afghanistan", flag: "ð¦ð«" },
-  { code: "AL", name: "Albania", flag: "ð¦ð±" },
-  { code: "DZ", name: "Algeria", flag: "ð©ð¿" },
-  { code: "AD", name: "Andorra", flag: "ð¦ð©" },
-  { code: "AO", name: "Angola", flag: "ð¦ð´" },
-  { code: "AG", name: "Antigua and Barbuda", flag: "ð¦ð¬" },
-  { code: "AR", name: "Argentina", flag: "ð¦ð·" },
-  { code: "AM", name: "Armenia", flag: "ð¦ð²" },
-  { code: "AU", name: "Australia", flag: "ð¦ðº" },
-  { code: "AT", name: "Austria", flag: "ð¦ð¹" },
-  { code: "AZ", name: "Azerbaijan", flag: "ð¦ð¿" },
-  { code: "BS", name: "Bahamas", flag: "ð§ð¸" },
-  { code: "BH", name: "Bahrain", flag: "ð§ð­" },
-  { code: "BD", name: "Bangladesh", flag: "ð§ð©" },
-  { code: "BB", name: "Barbados", flag: "ð§ð§" },
-  { code: "BY", name: "Belarus", flag: "ð§ð¾" },
-  { code: "BE", name: "Belgium", flag: "ð§ðª" },
-  { code: "BZ", name: "Belize", flag: "ð§ð¿" },
-  { code: "BJ", name: "Benin", flag: "ð§ð¯" },
-  { code: "BT", name: "Bhutan", flag: "ð§ð¹" },
-  { code: "BO", name: "Bolivia", flag: "ð§ð´" },
-  { code: "BA", name: "Bosnia and Herzegovina", flag: "ð§ð¦" },
-  { code: "BW", name: "Botswana", flag: "ð§ð¼" },
-  { code: "BR", name: "Brazil", flag: "ð§ð·" },
-  { code: "BN", name: "Brunei", flag: "ð§ð³" },
-  { code: "BG", name: "Bulgaria", flag: "ð§ð¬" },
-  { code: "BF", name: "Burkina Faso", flag: "ð§ð«" },
-  { code: "BI", name: "Burundi", flag: "ð§ð®" },
-  { code: "CV", name: "Cabo Verde", flag: "ð¨ð»" },
-  { code: "KH", name: "Cambodia", flag: "ð°ð­" },
-  { code: "CM", name: "Cameroon", flag: "ð¨ð²" },
-  { code: "CA", name: "Canada", flag: "ð¨ð¦" },
-  { code: "CF", name: "Central African Republic", flag: "ð¨ð«" },
-  { code: "TD", name: "Chad", flag: "ð¹ð©" },
-  { code: "CL", name: "Chile", flag: "ð¨ð±" },
-  { code: "CN", name: "China", flag: "ð¨ð³" },
-  { code: "CO", name: "Colombia", flag: "ð¨ð´" },
-  { code: "KM", name: "Comoros", flag: "ð°ð²" },
-  { code: "CG", name: "Congo", flag: "ð¨ð¬" },
-  { code: "CR", name: "Costa Rica", flag: "ð¨ð·" },
-  { code: "HR", name: "Croatia", flag: "ð­ð·" },
-  { code: "CU", name: "Cuba", flag: "ð¨ðº" },
-  { code: "CY", name: "Cyprus", flag: "ð¨ð¾" },
-  { code: "CZ", name: "Czech Republic", flag: "ð¨ð¿" },
-  { code: "DK", name: "Denmark", flag: "ð©ð°" },
-  { code: "DJ", name: "Djibouti", flag: "ð©ð¯" },
-  { code: "DM", name: "Dominica", flag: "ð©ð²" },
-  { code: "DO", name: "Dominican Republic", flag: "ð©ð´" },
-  { code: "EC", name: "Ecuador", flag: "ðªð¨" },
-  { code: "EG", name: "Egypt", flag: "ðªð¬" },
-  { code: "SV", name: "El Salvador", flag: "ð¸ð»" },
-  { code: "GQ", name: "Equatorial Guinea", flag: "ð¬ð¶" },
-  { code: "ER", name: "Eritrea", flag: "ðªð·" },
-  { code: "EE", name: "Estonia", flag: "ðªðª" },
-  { code: "SZ", name: "Eswatini", flag: "ð¸ð¿" },
-  { code: "ET", name: "Ethiopia", flag: "ðªð¹" },
-  { code: "FJ", name: "Fiji", flag: "ð«ð¯" },
-  { code: "FI", name: "Finland", flag: "ð«ð®" },
-  { code: "FR", name: "France", flag: "ð«ð·" },
-  { code: "GA", name: "Gabon", flag: "ð¬ð¦" },
-  { code: "GM", name: "Gambia", flag: "ð¬ð²" },
-  { code: "GE", name: "Georgia", flag: "ð¬ðª" },
-  { code: "DE", name: "Germany", flag: "ð©ðª" },
-  { code: "GH", name: "Ghana", flag: "ð¬ð­" },
-  { code: "GR", name: "Greece", flag: "ð¬ð·" },
-  { code: "GD", name: "Grenada", flag: "ð¬ð©" },
-  { code: "GT", name: "Guatemala", flag: "ð¬ð¹" },
-  { code: "GN", name: "Guinea", flag: "ð¬ð³" },
-  { code: "GW", name: "Guinea-Bissau", flag: "ð¬ð¼" },
-  { code: "GY", name: "Guyana", flag: "ð¬ð¾" },
-  { code: "HT", name: "Haiti", flag: "ð­ð¹" },
-  { code: "HN", name: "Honduras", flag: "ð­ð³" },
-  { code: "HU", name: "Hungary", flag: "ð­ðº" },
-  { code: "IS", name: "Iceland", flag: "ð®ð¸" },
-  { code: "IN", name: "India", flag: "ð®ð³" },
-  { code: "ID", name: "Indonesia", flag: "ð®ð©" },
-  { code: "IR", name: "Iran", flag: "ð®ð·" },
-  { code: "IQ", name: "Iraq", flag: "ð®ð¶" },
-  { code: "IE", name: "Ireland", flag: "ð®ðª" },
-  { code: "IL", name: "Israel", flag: "ð®ð±" },
-  { code: "IT", name: "Italy", flag: "ð®ð¹" },
-  { code: "JM", name: "Jamaica", flag: "ð¯ð²" },
-  { code: "JP", name: "Japan", flag: "ð¯ðµ" },
-  { code: "JO", name: "Jordan", flag: "ð¯ð´" },
-  { code: "KZ", name: "Kazakhstan", flag: "ð°ð¿" },
-  { code: "KE", name: "Kenya", flag: "ð°ðª" },
-  { code: "KI", name: "Kiribati", flag: "ð°ð®" },
-  { code: "KW", name: "Kuwait", flag: "ð°ð¼" },
-  { code: "KG", name: "Kyrgyzstan", flag: "ð°ð¬" },
-  { code: "LA", name: "Laos", flag: "ð±ð¦" },
-  { code: "LV", name: "Latvia", flag: "ð±ð»" },
-  { code: "LB", name: "Lebanon", flag: "ð±ð§" },
-  { code: "LS", name: "Lesotho", flag: "ð±ð¸" },
-  { code: "LR", name: "Liberia", flag: "ð±ð·" },
-  { code: "LY", name: "Libya", flag: "ð±ð¾" },
-  { code: "LI", name: "Liechtenstein", flag: "ð±ð®" },
-  { code: "LT", name: "Lithuania", flag: "ð±ð¹" },
-  { code: "LU", name: "Luxembourg", flag: "ð±ðº" },
-  { code: "MG", name: "Madagascar", flag: "ð²ð¬" },
-  { code: "MW", name: "Malawi", flag: "ð²ð¼" },
-  { code: "MY", name: "Malaysia", flag: "ð²ð¾" },
-  { code: "MV", name: "Maldives", flag: "ð²ð»" },
-  { code: "ML", name: "Mali", flag: "ð²ð±" },
-  { code: "MT", name: "Malta", flag: "ð²ð¹" },
-  { code: "MH", name: "Marshall Islands", flag: "ð²ð­" },
-  { code: "MR", name: "Mauritania", flag: "ð²ð·" },
-  { code: "MU", name: "Mauritius", flag: "ð²ðº" },
-  { code: "MX", name: "Mexico", flag: "ð²ð½" },
-  { code: "FM", name: "Micronesia", flag: "ð«ð²" },
-  { code: "MD", name: "Moldova", flag: "ð²ð©" },
-  { code: "MC", name: "Monaco", flag: "ð²ð¨" },
-  { code: "MN", name: "Mongolia", flag: "ð²ð³" },
-  { code: "ME", name: "Montenegro", flag: "ð²ðª" },
-  { code: "MA", name: "Morocco", flag: "ð²ð¦" },
-  { code: "MZ", name: "Mozambique", flag: "ð²ð¿" },
-  { code: "MM", name: "Myanmar", flag: "ð²ð²" },
-  { code: "NA", name: "Namibia", flag: "ð³ð¦" },
-  { code: "NR", name: "Nauru", flag: "ð³ð·" },
-  { code: "NP", name: "Nepal", flag: "ð³ðµ" },
-  { code: "NL", name: "Netherlands", flag: "ð³ð±" },
-  { code: "NZ", name: "New Zealand", flag: "ð³ð¿" },
-  { code: "NI", name: "Nicaragua", flag: "ð³ð®" },
-  { code: "NE", name: "Niger", flag: "ð³ðª" },
-  { code: "NG", name: "Nigeria", flag: "ð³ð¬" },
-  { code: "NO", name: "Norway", flag: "ð³ð´" },
-  { code: "OM", name: "Oman", flag: "ð´ð²" },
-  { code: "PK", name: "Pakistan", flag: "ðµð°" },
-  { code: "PW", name: "Palau", flag: "ðµð¼" },
-  { code: "PA", name: "Panama", flag: "ðµð¦" },
-  { code: "PG", name: "Papua New Guinea", flag: "ðµð¬" },
-  { code: "PY", name: "Paraguay", flag: "ðµð¾" },
-  { code: "PE", name: "Peru", flag: "ðµðª" },
-  { code: "PH", name: "Philippines", flag: "ðµð­" },
-  { code: "PL", name: "Poland", flag: "ðµð±" },
-  { code: "PT", name: "Portugal", flag: "ðµð¹" },
-  { code: "QA", name: "Qatar", flag: "ð¶ð¦" },
-  { code: "RO", name: "Romania", flag: "ð·ð´" },
-  { code: "RU", name: "Russia", flag: "ð·ðº" },
-  { code: "RW", name: "Rwanda", flag: "ð·ð¼" },
-  { code: "KN", name: "Saint Kitts and Nevis", flag: "ð°ð³" },
-  { code: "LC", name: "Saint Lucia", flag: "ð±ð¨" },
-  { code: "VC", name: "Saint Vincent and the Grenadines", flag: "ð»ð¨" },
-  { code: "WS", name: "Samoa", flag: "ð¼ð¸" },
-  { code: "SM", name: "San Marino", flag: "ð¸ð²" },
-  { code: "ST", name: "Sao Tome and Principe", flag: "ð¸ð¹" },
-  { code: "SA", name: "Saudi Arabia", flag: "ð¸ð¦" },
-  { code: "SN", name: "Senegal", flag: "ð¸ð³" },
-  { code: "RS", name: "Serbia", flag: "ð·ð¸" },
-  { code: "SC", name: "Seychelles", flag: "ð¸ð¨" },
-  { code: "SL", name: "Sierra Leone", flag: "ð¸ð±" },
-  { code: "SG", name: "Singapore", flag: "ð¸ð¬" },
-  { code: "SK", name: "Slovakia", flag: "ð¸ð°" },
-  { code: "SI", name: "Slovenia", flag: "ð¸ð®" },
-  { code: "SB", name: "Solomon Islands", flag: "ð¸ð§" },
-  { code: "SO", name: "Somalia", flag: "ð¸ð´" },
-  { code: "ZA", name: "South Africa", flag: "ð¿ð¦" },
-  { code: "SS", name: "South Sudan", flag: "ð¸ð¸" },
-  { code: "ES", name: "Spain", flag: "ðªð¸" },
-  { code: "LK", name: "Sri Lanka", flag: "ð±ð°" },
-  { code: "SD", name: "Sudan", flag: "ð¸ð©" },
-  { code: "SR", name: "Suriname", flag: "ð¸ð·" },
-  { code: "SE", name: "Sweden", flag: "ð¸ðª" },
-  { code: "CH", name: "Switzerland", flag: "ð¨ð­" },
-  { code: "SY", name: "Syria", flag: "ð¸ð¾" },
-  { code: "TW", name: "Taiwan", flag: "ð¹ð¼" },
-  { code: "TJ", name: "Tajikistan", flag: "ð¹ð¯" },
-  { code: "TZ", name: "Tanzania", flag: "ð¹ð¿" },
-  { code: "TH", name: "Thailand", flag: "ð¹ð­" },
-  { code: "TL", name: "Timor-Leste", flag: "ð¹ð±" },
-  { code: "TG", name: "Togo", flag: "ð¹ð¬" },
-  { code: "TO", name: "Tonga", flag: "ð¹ð´" },
-  { code: "TT", name: "Trinidad and Tobago", flag: "ð¹ð¹" },
-  { code: "TN", name: "Tunisia", flag: "ð¹ð³" },
-  { code: "TR", name: "Turkey", flag: "ð¹ð·" },
-  { code: "TM", name: "Turkmenistan", flag: "ð¹ð²" },
-  { code: "TV", name: "Tuvalu", flag: "ð¹ð»" },
-  { code: "UG", name: "Uganda", flag: "ðºð¬" },
-  { code: "UA", name: "Ukraine", flag: "ðºð¦" },
-  { code: "AE", name: "United Arab Emirates", flag: "ð¦ðª" },
-  { code: "GB", name: "United Kingdom", flag: "ð¬ð§" },
-  { code: "US", name: "United States", flag: "ðºð¸" },
-  { code: "UY", name: "Uruguay", flag: "ðºð¾" },
-  { code: "UZ", name: "Uzbekistan", flag: "ðºð¿" },
-  { code: "VU", name: "Vanuatu", flag: "ð»ðº" },
-  { code: "VE", name: "Venezuela", flag: "ð»ðª" },
-  { code: "VN", name: "Vietnam", flag: "ð»ð³" },
-  { code: "YE", name: "Yemen", flag: "ð¾ðª" },
-  { code: "ZM", name: "Zambia", flag: "ð¿ð²" },
-  { code: "ZW", name: "Zimbabwe", flag: "ð¿ð¼" },
+  { code: "AF", name: "Afghanistan", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ«" },
+  { code: "AL", name: "Albania", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ±" },
+  { code: "DZ", name: "Algeria", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ¿" },
+  { code: "AD", name: "Andorra", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ©" },
+  { code: "AO", name: "Angola", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ´" },
+  { code: "AG", name: "Antigua and Barbuda", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ¬" },
+  { code: "AR", name: "Argentina", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ·" },
+  { code: "AM", name: "Armenia", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ²" },
+  { code: "AU", name: "Australia", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂº" },
+  { code: "AT", name: "Austria", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ¹" },
+  { code: "AZ", name: "Azerbaijan", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ¿" },
+  { code: "BS", name: "Bahamas", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¸" },
+  { code: "BH", name: "Bahrain", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ­" },
+  { code: "BD", name: "Bangladesh", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ©" },
+  { code: "BB", name: "Barbados", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ§" },
+  { code: "BY", name: "Belarus", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¾" },
+  { code: "BE", name: "Belgium", flag: "Ã°ÂÂÂ§Ã°ÂÂÂª" },
+  { code: "BZ", name: "Belize", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¿" },
+  { code: "BJ", name: "Benin", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¯" },
+  { code: "BT", name: "Bhutan", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¹" },
+  { code: "BO", name: "Bolivia", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ´" },
+  { code: "BA", name: "Bosnia and Herzegovina", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¦" },
+  { code: "BW", name: "Botswana", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¼" },
+  { code: "BR", name: "Brazil", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ·" },
+  { code: "BN", name: "Brunei", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ³" },
+  { code: "BG", name: "Bulgaria", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ¬" },
+  { code: "BF", name: "Burkina Faso", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ«" },
+  { code: "BI", name: "Burundi", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ®" },
+  { code: "CV", name: "Cabo Verde", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ»" },
+  { code: "KH", name: "Cambodia", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ­" },
+  { code: "CM", name: "Cameroon", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ²" },
+  { code: "CA", name: "Canada", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¦" },
+  { code: "CF", name: "Central African Republic", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ«" },
+  { code: "TD", name: "Chad", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ©" },
+  { code: "CL", name: "Chile", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ±" },
+  { code: "CN", name: "China", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ³" },
+  { code: "CO", name: "Colombia", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ´" },
+  { code: "KM", name: "Comoros", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ²" },
+  { code: "CG", name: "Congo", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¬" },
+  { code: "CR", name: "Costa Rica", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ·" },
+  { code: "HR", name: "Croatia", flag: "Ã°ÂÂÂ­Ã°ÂÂÂ·" },
+  { code: "CU", name: "Cuba", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂº" },
+  { code: "CY", name: "Cyprus", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¾" },
+  { code: "CZ", name: "Czech Republic", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¿" },
+  { code: "DK", name: "Denmark", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ°" },
+  { code: "DJ", name: "Djibouti", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ¯" },
+  { code: "DM", name: "Dominica", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ²" },
+  { code: "DO", name: "Dominican Republic", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ´" },
+  { code: "EC", name: "Ecuador", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¨" },
+  { code: "EG", name: "Egypt", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¬" },
+  { code: "SV", name: "El Salvador", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ»" },
+  { code: "GQ", name: "Equatorial Guinea", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ¶" },
+  { code: "ER", name: "Eritrea", flag: "Ã°ÂÂÂªÃ°ÂÂÂ·" },
+  { code: "EE", name: "Estonia", flag: "Ã°ÂÂÂªÃ°ÂÂÂª" },
+  { code: "SZ", name: "Eswatini", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¿" },
+  { code: "ET", name: "Ethiopia", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¹" },
+  { code: "FJ", name: "Fiji", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ¯" },
+  { code: "FI", name: "Finland", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ®" },
+  { code: "FR", name: "France", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ·" },
+  { code: "GA", name: "Gabon", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ¦" },
+  { code: "GM", name: "Gambia", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ²" },
+  { code: "GE", name: "Georgia", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂª" },
+  { code: "DE", name: "Germany", flag: "Ã°ÂÂÂ©Ã°ÂÂÂª" },
+  { code: "GH", name: "Ghana", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ­" },
+  { code: "GR", name: "Greece", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ·" },
+  { code: "GD", name: "Grenada", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ©" },
+  { code: "GT", name: "Guatemala", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ¹" },
+  { code: "GN", name: "Guinea", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ³" },
+  { code: "GW", name: "Guinea-Bissau", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ¼" },
+  { code: "GY", name: "Guyana", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ¾" },
+  { code: "HT", name: "Haiti", flag: "Ã°ÂÂÂ­Ã°ÂÂÂ¹" },
+  { code: "HN", name: "Honduras", flag: "Ã°ÂÂÂ­Ã°ÂÂÂ³" },
+  { code: "HU", name: "Hungary", flag: "Ã°ÂÂÂ­Ã°ÂÂÂº" },
+  { code: "IS", name: "Iceland", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¸" },
+  { code: "IN", name: "India", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  { code: "ID", name: "Indonesia", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ©" },
+  { code: "IR", name: "Iran", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ·" },
+  { code: "IQ", name: "Iraq", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¶" },
+  { code: "IE", name: "Ireland", flag: "Ã°ÂÂÂ®Ã°ÂÂÂª" },
+  { code: "IL", name: "Israel", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ±" },
+  { code: "IT", name: "Italy", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¹" },
+  { code: "JM", name: "Jamaica", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂ²" },
+  { code: "JP", name: "Japan", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂµ" },
+  { code: "JO", name: "Jordan", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂ´" },
+  { code: "KZ", name: "Kazakhstan", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ¿" },
+  { code: "KE", name: "Kenya", flag: "Ã°ÂÂÂ°Ã°ÂÂÂª" },
+  { code: "KI", name: "Kiribati", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ®" },
+  { code: "KW", name: "Kuwait", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ¼" },
+  { code: "KG", name: "Kyrgyzstan", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ¬" },
+  { code: "LA", name: "Laos", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ¦" },
+  { code: "LV", name: "Latvia", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ»" },
+  { code: "LB", name: "Lebanon", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ§" },
+  { code: "LS", name: "Lesotho", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ¸" },
+  { code: "LR", name: "Liberia", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ·" },
+  { code: "LY", name: "Libya", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ¾" },
+  { code: "LI", name: "Liechtenstein", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ®" },
+  { code: "LT", name: "Lithuania", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ¹" },
+  { code: "LU", name: "Luxembourg", flag: "Ã°ÂÂÂ±Ã°ÂÂÂº" },
+  { code: "MG", name: "Madagascar", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¬" },
+  { code: "MW", name: "Malawi", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¼" },
+  { code: "MY", name: "Malaysia", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¾" },
+  { code: "MV", name: "Maldives", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ»" },
+  { code: "ML", name: "Mali", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ±" },
+  { code: "MT", name: "Malta", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¹" },
+  { code: "MH", name: "Marshall Islands", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ­" },
+  { code: "MR", name: "Mauritania", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ·" },
+  { code: "MU", name: "Mauritius", flag: "Ã°ÂÂÂ²Ã°ÂÂÂº" },
+  { code: "MX", name: "Mexico", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ½" },
+  { code: "FM", name: "Micronesia", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ²" },
+  { code: "MD", name: "Moldova", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ©" },
+  { code: "MC", name: "Monaco", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¨" },
+  { code: "MN", name: "Mongolia", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ³" },
+  { code: "ME", name: "Montenegro", flag: "Ã°ÂÂÂ²Ã°ÂÂÂª" },
+  { code: "MA", name: "Morocco", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¦" },
+  { code: "MZ", name: "Mozambique", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¿" },
+  { code: "MM", name: "Myanmar", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ²" },
+  { code: "NA", name: "Namibia", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¦" },
+  { code: "NR", name: "Nauru", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ·" },
+  { code: "NP", name: "Nepal", flag: "Ã°ÂÂÂ³Ã°ÂÂÂµ" },
+  { code: "NL", name: "Netherlands", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ±" },
+  { code: "NZ", name: "New Zealand", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¿" },
+  { code: "NI", name: "Nicaragua", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ®" },
+  { code: "NE", name: "Niger", flag: "Ã°ÂÂÂ³Ã°ÂÂÂª" },
+  { code: "NG", name: "Nigeria", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
+  { code: "NO", name: "Norway", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ´" },
+  { code: "OM", name: "Oman", flag: "Ã°ÂÂÂ´Ã°ÂÂÂ²" },
+  { code: "PK", name: "Pakistan", flag: "Ã°ÂÂÂµÃ°ÂÂÂ°" },
+  { code: "PW", name: "Palau", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¼" },
+  { code: "PA", name: "Panama", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¦" },
+  { code: "PG", name: "Papua New Guinea", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¬" },
+  { code: "PY", name: "Paraguay", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¾" },
+  { code: "PE", name: "Peru", flag: "Ã°ÂÂÂµÃ°ÂÂÂª" },
+  { code: "PH", name: "Philippines", flag: "Ã°ÂÂÂµÃ°ÂÂÂ­" },
+  { code: "PL", name: "Poland", flag: "Ã°ÂÂÂµÃ°ÂÂÂ±" },
+  { code: "PT", name: "Portugal", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¹" },
+  { code: "QA", name: "Qatar", flag: "Ã°ÂÂÂ¶Ã°ÂÂÂ¦" },
+  { code: "RO", name: "Romania", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ´" },
+  { code: "RU", name: "Russia", flag: "Ã°ÂÂÂ·Ã°ÂÂÂº" },
+  { code: "RW", name: "Rwanda", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ¼" },
+  { code: "KN", name: "Saint Kitts and Nevis", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ³" },
+  { code: "LC", name: "Saint Lucia", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ¨" },
+  { code: "VC", name: "Saint Vincent and the Grenadines", flag: "Ã°ÂÂÂ»Ã°ÂÂÂ¨" },
+  { code: "WS", name: "Samoa", flag: "Ã°ÂÂÂ¼Ã°ÂÂÂ¸" },
+  { code: "SM", name: "San Marino", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ²" },
+  { code: "ST", name: "Sao Tome and Principe", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¹" },
+  { code: "SA", name: "Saudi Arabia", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¦" },
+  { code: "SN", name: "Senegal", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ³" },
+  { code: "RS", name: "Serbia", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ¸" },
+  { code: "SC", name: "Seychelles", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¨" },
+  { code: "SL", name: "Sierra Leone", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ±" },
+  { code: "SG", name: "Singapore", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¬" },
+  { code: "SK", name: "Slovakia", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ°" },
+  { code: "SI", name: "Slovenia", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ®" },
+  { code: "SB", name: "Solomon Islands", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ§" },
+  { code: "SO", name: "Somalia", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ´" },
+  { code: "ZA", name: "South Africa", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦" },
+  { code: "SS", name: "South Sudan", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¸" },
+  { code: "ES", name: "Spain", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¸" },
+  { code: "LK", name: "Sri Lanka", flag: "Ã°ÂÂÂ±Ã°ÂÂÂ°" },
+  { code: "SD", name: "Sudan", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ©" },
+  { code: "SR", name: "Suriname", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ·" },
+  { code: "SE", name: "Sweden", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂª" },
+  { code: "CH", name: "Switzerland", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ­" },
+  { code: "SY", name: "Syria", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¾" },
+  { code: "TW", name: "Taiwan", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ¼" },
+  { code: "TJ", name: "Tajikistan", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ¯" },
+  { code: "TZ", name: "Tanzania", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ¿" },
+  { code: "TH", name: "Thailand", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ­" },
+  { code: "TL", name: "Timor-Leste", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ±" },
+  { code: "TG", name: "Togo", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ¬" },
+  { code: "TO", name: "Tonga", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ´" },
+  { code: "TT", name: "Trinidad and Tobago", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ¹" },
+  { code: "TN", name: "Tunisia", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ³" },
+  { code: "TR", name: "Turkey", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ·" },
+  { code: "TM", name: "Turkmenistan", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ²" },
+  { code: "TV", name: "Tuvalu", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ»" },
+  { code: "UG", name: "Uganda", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¬" },
+  { code: "UA", name: "Ukraine", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¦" },
+  { code: "AE", name: "United Arab Emirates", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂª" },
+  { code: "GB", name: "United Kingdom", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ§" },
+  { code: "US", name: "United States", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¸" },
+  { code: "UY", name: "Uruguay", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¾" },
+  { code: "UZ", name: "Uzbekistan", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¿" },
+  { code: "VU", name: "Vanuatu", flag: "Ã°ÂÂÂ»Ã°ÂÂÂº" },
+  { code: "VE", name: "Venezuela", flag: "Ã°ÂÂÂ»Ã°ÂÂÂª" },
+  { code: "VN", name: "Vietnam", flag: "Ã°ÂÂÂ»Ã°ÂÂÂ³" },
+  { code: "YE", name: "Yemen", flag: "Ã°ÂÂÂ¾Ã°ÂÂÂª" },
+  { code: "ZM", name: "Zambia", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ²" },
+  { code: "ZW", name: "Zimbabwe", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¼" },
 ];
 
 export default function Settings() {
@@ -394,10 +394,10 @@ export default function Settings() {
           <TabsTrigger value="connected-platforms" className="text-xs gap-1 flex-shrink-0 py-2 data-[state=active]:text-amber-400"><Share2 className="h-3 w-3" />Platforms</TabsTrigger>
         </TabsList>
 
-        {/* âââ Profile Tab âââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Profile Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="profile" className="space-y-6 mt-6">
           {/* Account Info */}
-          <Card className="bg-card/50 glass-card">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <User className="h-4 w-4 text-amber-400" />
@@ -449,20 +449,20 @@ export default function Settings() {
                     }}
                     className="h-9 text-sm bg-background/50 border border-input rounded-md px-3 w-full"
                   >
-                    <option value="en">ðºð¸ English</option>
-                    <option value="he">ð®ð± ×¢××¨××ª (Hebrew)</option>
-                    <option value="ar">ð¸ð¦ Ø§ÙØ¹Ø±Ø¨ÙØ© (Arabic)</option>
-                    <option value="fr">ð«ð· FranÃ§ais</option>
-                    <option value="es">ðªð¸ EspaÃ±ol</option>
-                    <option value="de">ð©ðª Deutsch</option>
-                    <option value="zh">ð¨ð³ ä¸­æ (Chinese)</option>
-                    <option value="ja">ð¯ðµ æ¥æ¬èª (Japanese)</option>
-                    <option value="ko">ð°ð· íêµ­ì´ (Korean)</option>
-                    <option value="pt">ð§ð· PortuguÃªs</option>
-                    <option value="ru">ð·ðº Ð ÑÑÑÐºÐ¸Ð¹</option>
-                    <option value="hi">ð®ð³ à¤¹à¤¿à¤¨à¥à¤¦à¥ (Hindi)</option>
-                    <option value="tr">ð¹ð· TÃ¼rkÃ§e</option>
-                    <option value="it">ð®ð¹ Italiano</option>
+                    <option value="en">Ã°ÂÂÂºÃ°ÂÂÂ¸ English</option>
+                    <option value="he">Ã°ÂÂÂ®Ã°ÂÂÂ± ÃÂ¢ÃÂÃÂ¨ÃÂÃÂª (Hebrew)</option>
+                    <option value="ar">Ã°ÂÂÂ¸Ã°ÂÂÂ¦ ÃÂ§ÃÂÃÂ¹ÃÂ±ÃÂ¨ÃÂÃÂ© (Arabic)</option>
+                    <option value="fr">Ã°ÂÂÂ«Ã°ÂÂÂ· FranÃÂ§ais</option>
+                    <option value="es">Ã°ÂÂÂªÃ°ÂÂÂ¸ EspaÃÂ±ol</option>
+                    <option value="de">Ã°ÂÂÂ©Ã°ÂÂÂª Deutsch</option>
+                    <option value="zh">Ã°ÂÂÂ¨Ã°ÂÂÂ³ Ã¤Â¸Â­Ã¦ÂÂ (Chinese)</option>
+                    <option value="ja">Ã°ÂÂÂ¯Ã°ÂÂÂµ Ã¦ÂÂ¥Ã¦ÂÂ¬Ã¨ÂªÂ (Japanese)</option>
+                    <option value="ko">Ã°ÂÂÂ°Ã°ÂÂÂ· Ã­ÂÂÃªÂµÂ­Ã¬ÂÂ´ (Korean)</option>
+                    <option value="pt">Ã°ÂÂÂ§Ã°ÂÂÂ· PortuguÃÂªs</option>
+                    <option value="ru">Ã°ÂÂÂ·Ã°ÂÂÂº ÃÂ ÃÂÃÂÃÂÃÂºÃÂ¸ÃÂ¹</option>
+                    <option value="hi">Ã°ÂÂÂ®Ã°ÂÂÂ³ Ã Â¤Â¹Ã Â¤Â¿Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¦Ã Â¥Â (Hindi)</option>
+                    <option value="tr">Ã°ÂÂÂ¹Ã°ÂÂÂ· TÃÂ¼rkÃÂ§e</option>
+                    <option value="it">Ã°ÂÂÂ®Ã°ÂÂÂ¹ Italiano</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
@@ -480,7 +480,7 @@ export default function Settings() {
           </Card>
 
           {/* Location */}
-          <Card className="bg-card/50 glass-card">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <MapPin className="h-4 w-4 text-blue-400" />
@@ -511,7 +511,7 @@ export default function Settings() {
           </Card>
 
           {/* Professional */}
-          <Card className="bg-card/50 glass-card">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Briefcase className="h-4 w-4 text-purple-400" />
@@ -567,7 +567,7 @@ export default function Settings() {
           </Card>
 
           {/* Subscription Info */}
-          <Card className="bg-card/50 glass-card">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Sparkles className="h-4 w-4 text-amber-400" />
@@ -581,7 +581,7 @@ export default function Settings() {
                 </Badge>
                 {profile?.role === "admin" && <Badge className="bg-red-500/20 text-red-400">Admin</Badge>}
                 <span className="text-xs text-muted-foreground">
-                  Member since {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "â"}
+                  Member since {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "Ã¢ÂÂ"}
                 </span>
               </div>
             </CardContent>
@@ -596,9 +596,9 @@ export default function Settings() {
           </div>
         </TabsContent>
 
-        {/* âââ Security Tab âââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Security Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="security" className="space-y-6 mt-6">
-          <Card className="bg-card/50 glass-card">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Lock className="h-4 w-4 text-amber-400" />
@@ -628,14 +628,14 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          <Card className="border-muted glass-card">
+          <Card className="border-muted glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="py-4">
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Security</p>
                   <p className="text-xs text-muted-foreground">
-                    Your API keys are encoded and stored securely. They are never exposed in the frontend â only
+                    Your API keys are encoded and stored securely. They are never exposed in the frontend Ã¢ÂÂ only
                     the server uses them to make video generation requests on your behalf. You can remove any key at any time.
                   </p>
                 </div>
@@ -644,15 +644,15 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
-        {/* âââ Billing Tab âââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Billing Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="billing" className="space-y-6 mt-6">
           <BillingTab profile={profile} />
         </TabsContent>
 
-        {/* âââ API Keys Tab âââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ API Keys Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="api-keys" className="space-y-6 mt-6">
           {/* Getting Started Guide */}
-          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-600/5 glass-card">
+          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-600/5 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-amber-400">
                 <Sparkles className="w-5 h-5" />
@@ -665,7 +665,7 @@ export default function Settings() {
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">1</div>
                   <div>
                     <p className="font-medium text-foreground">Get Your Own API Key</p>
-                    <p className="text-sm text-muted-foreground">Sign up with a video provider below. Your key is billed directly to you â we never charge for API usage.</p>
+                    <p className="text-sm text-muted-foreground">Sign up with a video provider below. Your key is billed directly to you Ã¢ÂÂ we never charge for API usage.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -710,7 +710,7 @@ export default function Settings() {
           </Card>
 
           {/* Recommended Providers */}
-          <Card className="border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5 glass-card">
+          <Card className="border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-400 gradient-text-gold">
                 <Star className="w-5 h-5" />
@@ -722,7 +722,7 @@ export default function Settings() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="p-4 rounded-lg border border-purple-500/20 bg-purple-500/5">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">ð¬</span>
+                    <span className="text-2xl">Ã°ÂÂÂ¬</span>
                     <div>
                       <p className="font-bold text-foreground">Runway ML</p>
                       <Badge variant="outline" className="text-xs border-purple-500/30 text-purple-400">Best Quality</Badge>
@@ -735,7 +735,7 @@ export default function Settings() {
                 </div>
                 <div className="p-4 rounded-lg border border-blue-500/20 bg-blue-500/5">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">â¡</span>
+                    <span className="text-2xl">Ã¢ÂÂ¡</span>
                     <div>
                       <p className="font-bold text-foreground">fal.ai</p>
                       <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-400">Best Value</Badge>
@@ -750,20 +750,20 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          {/* Language Model (LLM) API Key â Venice */}
+          {/* Language Model (LLM) API Key Ã¢ÂÂ Venice */}
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
               <Sparkles className="w-5 h-5 text-violet-400" />
               Language Model (LLM) API Key
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Powers script writing, scene breakdowns, the Director's Assistant chat, and acts as a graceful storyboard fallback when video providers fail. <strong className="text-foreground">Venice AI is preferred</strong> â it's tried before any other LLM provider.
+              Powers script writing, scene breakdowns, the Director's Assistant chat, and acts as a graceful storyboard fallback when video providers fail. <strong className="text-foreground">Venice AI is preferred</strong> Ã¢ÂÂ it's tried before any other LLM provider.
             </p>
-            <Card className="border from-violet-500/20 to-purple-600/10 border-violet-500/30 bg-gradient-to-br glass-card">
+            <Card className="border from-violet-500/20 to-purple-600/10 border-violet-500/30 bg-gradient-to-br glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
-                    <span className="text-xl">ð£</span>
+                    <span className="text-xl">Ã°ÂÂÂ£</span>
                     Venice AI (preferred LLM)
                     {configuredKeys['venice' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
                   </CardTitle>
@@ -777,11 +777,11 @@ export default function Settings() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Info className="w-3 h-3" />
                   <span>Models: llama-3.3-70b, llama-3.1-405b, qwen-2.5-coder-32b</span>
-                  <span className="mx-1">â¢</span>
+                  <span className="mx-1">Ã¢ÂÂ¢</span>
                   <span>Pricing: Pro plan includes API credits; pay-as-you-go available</span>
                 </div>
                 <div className="flex gap-2">
-                  <Input type="password" placeholder={configuredKeys['venice' as keyof typeof configuredKeys] ? "â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢" : "Paste your Venice AI API key here..."} value={keyInputs['venice'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, venice: e.target.value }))} className="font-mono text-sm" />
+                  <Input type="password" placeholder={configuredKeys['venice' as keyof typeof configuredKeys] ? "Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢" : "Paste your Venice AI API key here..."} value={keyInputs['venice'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, venice: e.target.value }))} className="font-mono text-sm" />
                   <Button size="sm" onClick={() => { const v = (keyInputs['venice'] || '').trim(); if (!v) return; setSavingProvider('venice'); saveKeyMutation.mutate({ provider: 'venice' as any, key: v }); }} disabled={!(keyInputs['venice'] || '').trim() || savingProvider === 'venice'}>
                     {savingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                   </Button>
@@ -819,7 +819,7 @@ export default function Settings() {
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
-                          <span className="text-xl">{PROVIDER_ICONS[provider.id] || "ð"}</span>
+                          <span className="text-xl">{PROVIDER_ICONS[provider.id] || "Ã°ÂÂÂ"}</span>
                           {provider.name}
                           {isConfigured && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
                           {isPreferred && <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30"><Zap className="w-3 h-3 mr-1" />Preferred</Badge>}
@@ -834,11 +834,11 @@ export default function Settings() {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Info className="w-3 h-3" />
                         <span>Models: {provider.models}</span>
-                        <span className="mx-1">â¢</span>
+                        <span className="mx-1">Ã¢ÂÂ¢</span>
                         <span>Pricing: {provider.pricing}</span>
                       </div>
                       <div className="flex gap-2">
-                        <Input type="password" placeholder={isConfigured ? "â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
+                        <Input type="password" placeholder={isConfigured ? "Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
                         <Button size="sm" onClick={() => { if (!inputValue.trim()) return; setSavingProvider(provider.id); saveKeyMutation.mutate({ provider: provider.id, key: inputValue.trim() }); }} disabled={!inputValue.trim() || savingProvider === provider.id}>
                           {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                         </Button>
@@ -887,7 +887,7 @@ export default function Settings() {
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
-                          <span className="text-xl">{PROVIDER_ICONS[provider.id] || "ð"}</span>
+                          <span className="text-xl">{PROVIDER_ICONS[provider.id] || "Ã°ÂÂÂ"}</span>
                           {provider.name}
                           {isConfigured && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
                         </CardTitle>
@@ -901,11 +901,11 @@ export default function Settings() {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Info className="w-3 h-3" />
                         <span>Models: {provider.models}</span>
-                        <span className="mx-1">â¢</span>
+                        <span className="mx-1">Ã¢ÂÂ¢</span>
                         <span>Pricing: {provider.pricing}</span>
                       </div>
                       <div className="flex gap-2">
-                        <Input type="password" placeholder={isConfigured ? "â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
+                        <Input type="password" placeholder={isConfigured ? "Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
                         <Button size="sm" onClick={() => { if (!inputValue.trim()) return; setSavingProvider(provider.id); saveKeyMutation.mutate({ provider: provider.id as any, key: inputValue.trim() }); }} disabled={!inputValue.trim() || savingProvider === provider.id}>
                           {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                         </Button>
@@ -932,17 +932,17 @@ export default function Settings() {
           {/* Nano Banana Image Generation */}
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 gradient-text-gold">
-              <span className="text-xl">ð</span>
+              <span className="text-xl">Ã°ÂÂÂ</span>
               Nano Banana Image Generation
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
               Google's Nano Banana is the most advanced AI image generation with <strong className="text-foreground">perfect text rendering</strong>. Ideal for logos, titles, posters, and reference frames.
             </p>
-            <Card className="border from-amber-500/20 to-amber-600/10 border-amber-500/30 bg-gradient-to-br glass-card">
+            <Card className="border from-amber-500/20 to-amber-600/10 border-amber-500/30 bg-gradient-to-br glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
-                    <span className="text-xl">ð</span>
+                    <span className="text-xl">Ã°ÂÂÂ</span>
                     Google Gemini (Nano Banana 2)
                     {configuredKeys['google' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
                   </CardTitle>
@@ -950,17 +950,17 @@ export default function Settings() {
                     Get API Key <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
-                <CardDescription>Nano Banana 2 &amp; Nano Banana Pro â Google's native image generation with accurate text rendering, photorealistic quality, and up to 4K resolution.</CardDescription>
+                <CardDescription>Nano Banana 2 &amp; Nano Banana Pro Ã¢ÂÂ Google's native image generation with accurate text rendering, photorealistic quality, and up to 4K resolution.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Info className="w-3 h-3" />
                   <span>Models: Nano Banana 2 (Fast), Nano Banana Pro (Highest Quality)</span>
-                  <span className="mx-1">â¢</span>
+                  <span className="mx-1">Ã¢ÂÂ¢</span>
                   <span>Pricing: Free tier available</span>
                 </div>
                 <div className="flex gap-2">
-                  <Input type="password" placeholder={configuredKeys['google' as keyof typeof configuredKeys] ? "â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢â¢" : "Paste your Google Gemini API key here..."} value={keyInputs['google'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, google: e.target.value }))} className="font-mono text-sm" />
+                  <Input type="password" placeholder={configuredKeys['google' as keyof typeof configuredKeys] ? "Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢" : "Paste your Google Gemini API key here..."} value={keyInputs['google'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, google: e.target.value }))} className="font-mono text-sm" />
                   <Button size="sm" onClick={() => { if (!(keyInputs['google'] || '').trim()) return; setSavingProvider('google'); saveKeyMutation.mutate({ provider: 'google', key: (keyInputs['google'] || '').trim() }); }} disabled={!(keyInputs['google'] || '').trim() || savingProvider === 'google'}>
                     {savingProvider === 'google' ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : "Save"}
                   </Button>
@@ -995,7 +995,7 @@ export default function Settings() {
                 ].map((s) => (
                   <div key={s.n} className="flex gap-3 items-start">
                     <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs flex-shrink-0">{s.n}</div>
-                    <p className="text-sm text-muted-foreground"><strong className="text-foreground">{s.t}</strong> â {s.d}</p>
+                    <p className="text-sm text-muted-foreground"><strong className="text-foreground">{s.t}</strong> Ã¢ÂÂ {s.d}</p>
                   </div>
                 ))}
               </div>
@@ -1003,7 +1003,7 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
-        {/* âââ Connected Platforms Tab âââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Connected Platforms Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="connected-platforms" className="space-y-6 mt-6">
           <ConnectedPlatformsTab />
         </TabsContent>
@@ -1012,12 +1012,12 @@ export default function Settings() {
   );
 }
 
-// âââ Connected Platforms Tab âââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Connected Platforms Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const SOCIAL_PLATFORMS = [
   {
     id: "instagram" as const,
     name: "Instagram",
-    icon: "ð¸",
+    icon: "Ã°ÂÂÂ¸",
     color: "from-pink-500/20 to-purple-600/10 border-pink-500/30",
     description: "Publish film posters and Reels directly to your Instagram Business account.",
     docsUrl: "https://developers.facebook.com/docs/instagram-api/",
@@ -1030,7 +1030,7 @@ const SOCIAL_PLATFORMS = [
   {
     id: "tiktok" as const,
     name: "TikTok",
-    icon: "ðµ",
+    icon: "Ã°ÂÂÂµ",
     color: "from-cyan-500/20 to-teal-600/10 border-cyan-500/30",
     description: "Post short video ads and film trailers to your TikTok creator account.",
     docsUrl: "https://developers.tiktok.com/doc/content-posting-api-get-started/",
@@ -1043,7 +1043,7 @@ const SOCIAL_PLATFORMS = [
   {
     id: "facebook" as const,
     name: "Facebook",
-    icon: "ð±",
+    icon: "Ã°ÂÂÂ±",
     color: "from-blue-500/20 to-blue-700/10 border-blue-500/30",
     description: "Share film posters and video ads to your Facebook Page.",
     docsUrl: "https://developers.facebook.com/docs/pages-api/",
@@ -1055,7 +1055,7 @@ const SOCIAL_PLATFORMS = [
   {
     id: "discord" as const,
     name: "Discord",
-    icon: "ð¬",
+    icon: "Ã°ÂÂÂ¬",
     color: "from-indigo-500/20 to-indigo-700/10 border-indigo-500/30",
     description: "Post film announcements and media to your Discord server channel.",
     docsUrl: "https://discord.com/developers/docs/intro",
@@ -1068,7 +1068,7 @@ const SOCIAL_PLATFORMS = [
   {
     id: "youtube" as const,
     name: "YouTube",
-    icon: "ð¥",
+    icon: "Ã°ÂÂÂ¥",
     color: "from-red-500/20 to-red-700/10 border-red-500/30",
     description: "Upload film trailers and video ads directly to your YouTube channel.",
     docsUrl: "https://developers.google.com/youtube/v3/guides/uploading_a_video",
@@ -1080,7 +1080,7 @@ const SOCIAL_PLATFORMS = [
   },
 ];
 
-// âââ BillingTab Component âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ BillingTab Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function BillingTab({ profile }: { profile: any }) {
   const [loadingPortal, setLoadingPortal] = useState(false);
   const billingPortalMutation = trpc.subscription.createBillingPortal.useMutation({
@@ -1117,7 +1117,7 @@ function BillingTab({ profile }: { profile: any }) {
   return (
     <div className="space-y-6">
       {/* Current Plan Card */}
-      <Card className="bg-card/50 glass-card">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4 text-amber-400" />
@@ -1133,7 +1133,7 @@ function BillingTab({ profile }: { profile: any }) {
             {profile?.role === "admin" && <Badge className="bg-red-500/20 text-red-400">Admin</Badge>}
           </div>
           <p className="text-xs text-muted-foreground">
-            Member since {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "â"}
+            Member since {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "Ã¢ÂÂ"}
           </p>
           {isPaid && (
             <div className="pt-2">
@@ -1172,7 +1172,7 @@ function BillingTab({ profile }: { profile: any }) {
       <ActiveTalentLicenses subscriptionTier={tier} />
 
       {/* Credits Summary */}
-      <Card className="bg-card/50 glass-card">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Zap className="h-4 w-4 text-amber-400" />
@@ -1185,7 +1185,7 @@ function BillingTab({ profile }: { profile: any }) {
         <CardContent>
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-amber-400">
-              {profile?.role === "admin" ? "â" : (profile?.credits ?? 0).toLocaleString()}
+              {profile?.role === "admin" ? "Ã¢ÂÂ" : (profile?.credits ?? 0).toLocaleString()}
             </span>
             <span className="text-sm text-muted-foreground">credits remaining</span>
           </div>
@@ -1202,7 +1202,7 @@ function BillingTab({ profile }: { profile: any }) {
   );
 }
 
-// âââ Active Talent Licenses Panel ââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Active Talent Licenses Panel Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const PLAN_CAST_ACCESS: Record<string, string[]> = {
   none:        [],
   free:        [],
@@ -1233,7 +1233,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
   const hasCastAccess = planAccess.length > 0;
 
   return (
-    <Card className="bg-card/50 glass-card">
+    <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
           <Film className="h-4 w-4 text-amber-400" />
@@ -1272,7 +1272,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
           )}
         </div>
 
-        {/* Individual licenses section â live data */}
+        {/* Individual licenses section Ã¢ÂÂ live data */}
         <ActiveTalentLicensesList />
 
         {/* Usage terms reminder */}
@@ -1284,7 +1284,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
           </div>
           <div className="flex items-start gap-2 text-xs text-zinc-600">
             <XCircle className="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" />
-            Pornographic content, explicit sex acts, adult-industry use â prohibited
+            Pornographic content, explicit sex acts, adult-industry use Ã¢ÂÂ prohibited
           </div>
         </div>
 
@@ -1308,7 +1308,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
   );
 }
 
-// âââ ACTIVE TALENT LICENSES LIST (live tRPC data) ââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ ACTIVE TALENT LICENSES LIST (live tRPC data) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ActiveTalentLicensesList() {
   const { data: entitlements, isLoading } = trpc.signatureCast.myEntitlements.useQuery(undefined, {
     retry: false,
@@ -1345,7 +1345,7 @@ function ActiveTalentLicensesList() {
             <div className="min-w-0">
               <p className="text-sm font-medium text-white truncate">{e.actorId}</p>
               <p className="text-xs text-zinc-500">
-                {e.licenseType} license{e.projectId ? ` Â· Project ${e.projectId}` : ""}
+                {e.licenseType} license{e.projectId ? ` ÃÂ· Project ${e.projectId}` : ""}
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -1400,7 +1400,7 @@ function ConnectedPlatformsTab() {
 
   return (
     <div className="min-h-screen space-y-6 px-4 py-4" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card className="bg-card/50 glass-card">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Share2 className="h-4 w-4 text-amber-400" />
@@ -1438,7 +1438,7 @@ function ConnectedPlatformsTab() {
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">{platform.description}</p>
                       {status?.lastError && (
-                        <p className="text-xs text-red-400 mt-1">â ï¸ {status.lastError}</p>
+                        <p className="text-xs text-red-400 mt-1">Ã¢ÂÂ Ã¯Â¸Â {status.lastError}</p>
                       )}
                       {status?.lastPublishedAt && (
                         <p className="text-xs text-muted-foreground mt-1">Last published: {new Date(status.lastPublishedAt).toLocaleDateString()}</p>

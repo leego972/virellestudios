@@ -136,7 +136,7 @@ export default function LocationScout() {
                     <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     <Button variant="outline" size="sm" onClick={addTag}>Add</Button>
                   </div>
-                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ×</Badge>)}</div>}
+                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} Ã</Badge>)}</div>}
                 </div>
                 <Button className="w-full" onClick={() => createMutation.mutate({ projectId, name, address: address || undefined, locationType: locationType || undefined, description: description || undefined, notes: notes || undefined, tags })} disabled={!name || createMutation.isPending}>
                   {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
@@ -153,14 +153,14 @@ export default function LocationScout() {
             <h2 className="text-lg font-medium mb-4 flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-amber-400" /> AI Suggested Locations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {suggestMutation.data.locations.map((loc: any, i: number) => (
-                <Card key={i} className="border-primary/20 bg-amber-400/5 glass-card">
-                  <CardHeader className="pb-2 glass-card">
+                <Card key={i} className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5">
+                  <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-base gradient-text-gold glass-card">{loc.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{loc.name}</CardTitle>
                       <Badge variant="outline" className="text-xs">{loc.locationType}</Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-2 glass-card">
+                  <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
                     <p className="text-sm text-muted-foreground">{loc.description}</p>
                     <p className="text-xs text-muted-foreground"><span className="font-medium">Visual:</span> {loc.visualStyle}</p>
                     <p className="text-xs text-muted-foreground"><span className="font-medium">Notes:</span> {loc.practicalNotes}</p>
@@ -198,7 +198,7 @@ export default function LocationScout() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((loc: any) => (
-              <Card key={loc.id} className="group glass-card">
+              <Card key={loc.id} className="group glass-card shadow-lg shadow-amber-500/5">
                 {/* Reference image area */}
                 {(loc.referenceImages as string[] || []).length > 0 ? (
                   <div className="h-40 overflow-hidden rounded-t-lg">
@@ -209,16 +209,16 @@ export default function LocationScout() {
                     <MapPin className="h-8 w-8 text-muted-foreground/20" />
                   </div>
                 )}
-                <CardHeader className="pb-2 glass-card">
+                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-base gradient-text-gold glass-card">{loc.name}</CardTitle>
+                    <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{loc.name}</CardTitle>
                     <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })} aria-label={`Delete location ${loc.name}`}>
                       <Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
                     </Button>
                   </div>
                   {loc.locationType && <Badge variant="outline" className="text-xs w-fit">{loc.locationType}</Badge>}
                 </CardHeader>
-                <CardContent className="space-y-2 glass-card">
+                <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
                   {loc.address && <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{loc.address}</p>}
                   {loc.description && <p className="text-sm text-muted-foreground line-clamp-2">{loc.description}</p>}
                   {loc.notes && <p className="text-xs text-muted-foreground/70 italic">{loc.notes}</p>}

@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-// ─── ACTOR REGISTRY (mirrors server signatureCast.ts) ──────────────────────
+// âââ ACTOR REGISTRY (mirrors server signatureCast.ts) ââââââââââââââââââââââ
 const ACTOR_REGISTRY = [
   { id: "julian-vance",    name: "Julian Vance",        tier: "flagship", commercialEligible: true,  featured: true,  retired: false, restricted: false },
   { id: "elena-rostova",   name: "Elena Rostova",       tier: "flagship", commercialEligible: true,  featured: true,  retired: false, restricted: false },
@@ -121,13 +121,13 @@ export default function AdminSignatureCast() {
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Total Unlocks", value: analytics?.totalUnlocks ?? "—", icon: Unlock, color: "text-amber-400" },
-            { label: "Revenue (AUD)", value: analytics?.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(0)}` : "—", icon: DollarSign, color: "text-emerald-400" },
-            { label: "Active Licenses", value: entitlements?.length ?? "—", icon: CheckCircle2, color: "text-blue-400" },
-            { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "—", icon: TrendingUp, color: "text-purple-400" },
+            { label: "Total Unlocks", value: analytics?.totalUnlocks ?? "â", icon: Unlock, color: "text-amber-400" },
+            { label: "Revenue (AUD)", value: analytics?.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(0)}` : "â", icon: DollarSign, color: "text-emerald-400" },
+            { label: "Active Licenses", value: entitlements?.length ?? "â", icon: CheckCircle2, color: "text-blue-400" },
+            { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "â", icon: TrendingUp, color: "text-purple-400" },
           ].map(({ label, value, icon: Icon, color }) => (
-            <Card key={label} className="border-zinc-800 bg-zinc-900/50 glass-card">
-              <CardContent className="p-4 flex items-center gap-3 glass-card">
+            <Card key={label} className="border-zinc-800 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5">
+              <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5">
                 <Icon className={`w-5 h-5 ${color}`} />
                 <div>
                   <p className="text-xs text-zinc-500">{label}</p>
@@ -146,11 +146,11 @@ export default function AdminSignatureCast() {
             <TabsTrigger value="analytics" className="text-sm data-[state=active]:text-amber-400">Analytics</TabsTrigger>
           </TabsList>
 
-          {/* ── ACTOR CONFIG TAB ── */}
+          {/* ââ ACTOR CONFIG TAB ââ */}
           <TabsContent value="actors" className="mt-4">
-            <Card className="border-zinc-800 glass-card">
-              <CardHeader className="pb-3 glass-card">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
+            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Actor Registry â Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
               <CardContent>
                 {/* Portrait Generation */}
@@ -270,8 +270,8 @@ export default function AdminSignatureCast() {
                               {actor.restricted && <Badge className="bg-red-500/10 text-red-400 border border-red-500/20 text-xs"><AlertTriangle className="w-2.5 h-2.5 mr-1" />Restricted</Badge>}
                             </div>
                             <p className="text-xs text-zinc-500 mt-0.5">
-                              {actor.commercialEligible ? "✓ Commercial eligible" : "✗ Non-commercial only"}
-                              {" · "}ID: {actor.id}
+                              {actor.commercialEligible ? "â Commercial eligible" : "â Non-commercial only"}
+                              {" Â· "}ID: {actor.id}
                             </p>
                           </div>
                           <Button
@@ -300,11 +300,11 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ── PRICING TAB ── */}
+          {/* ââ PRICING TAB ââ */}
           <TabsContent value="pricing" className="mt-4">
-            <Card className="border-zinc-800 glass-card">
-              <CardHeader className="pb-3 glass-card">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">License Pricing by Tier (AUD)</CardTitle>
+            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">License Pricing by Tier (AUD)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -332,7 +332,7 @@ export default function AdminSignatureCast() {
                 <div className="mt-4 p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
                   <p className="text-xs text-zinc-400">
                     <strong className="text-white">Commercial = Creator + A$79 add-on.</strong>{" "}
-                    Episodic = Creator × 4. Prices are configured in{" "}
+                    Episodic = Creator Ã 4. Prices are configured in{" "}
                     <code className="text-amber-400">server/_core/signatureCast.ts</code> and provisioned to Stripe on server boot.
                   </p>
                 </div>
@@ -349,11 +349,11 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ── ACTIVE LICENSES TAB ── */}
+          {/* ââ ACTIVE LICENSES TAB ââ */}
           <TabsContent value="entitlements" className="mt-4">
-            <Card className="border-zinc-800 glass-card">
-              <CardHeader className="pb-3 flex flex-row items-center justify-between glass-card">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">All Active Actor Licenses</CardTitle>
+            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3 flex flex-row items-center justify-between glass-card shadow-lg shadow-amber-500/5">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">All Active Actor Licenses</CardTitle>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -396,12 +396,12 @@ export default function AdminSignatureCast() {
                                 {e.licenseType}
                               </Badge>
                             </td>
-                            <td className="py-2 text-zinc-500">{e.projectId ?? "—"}</td>
+                            <td className="py-2 text-zinc-500">{e.projectId ?? "â"}</td>
                             <td className="py-2 text-right text-white font-mono">
-                              {e.amountPaidAud ? `A$${(e.amountPaidAud / 100).toFixed(2)}` : "—"}
+                              {e.amountPaidAud ? `A$${(e.amountPaidAud / 100).toFixed(2)}` : "â"}
                             </td>
                             <td className="py-2 text-right text-zinc-500">
-                              {e.createdAt ? new Date(e.createdAt).toLocaleDateString() : "—"}
+                              {e.createdAt ? new Date(e.createdAt).toLocaleDateString() : "â"}
                             </td>
                           </tr>
                         ))}
@@ -413,17 +413,17 @@ export default function AdminSignatureCast() {
             </Card>
           </TabsContent>
 
-          {/* ── ANALYTICS TAB ── */}
+          {/* ââ ANALYTICS TAB ââ */}
           <TabsContent value="analytics" className="mt-4">
-            <Card className="border-zinc-800 glass-card">
-              <CardHeader className="pb-3 glass-card">
-                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card">Revenue & Conversion Analytics</CardTitle>
+            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Revenue & Conversion Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 {!analytics ? (
                   <div className="text-center py-8 text-zinc-500">
                     <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Analytics loading…</p>
+                    <p className="text-sm">Analytics loadingâ¦</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -434,7 +434,7 @@ export default function AdminSignatureCast() {
                         { label: "Checkouts Started", value: analytics.checkoutsStarted ?? 0 },
                         { label: "Checkouts Completed", value: analytics.checkoutsCompleted ?? 0 },
                         { label: "Total Revenue (AUD)", value: analytics.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(2)}` : "A$0" },
-                        { label: "Avg License Value", value: analytics.avgLicenseValue ? `A$${(analytics.avgLicenseValue / 100).toFixed(2)}` : "—" },
+                        { label: "Avg License Value", value: analytics.avgLicenseValue ? `A$${(analytics.avgLicenseValue / 100).toFixed(2)}` : "â" },
                       ].map(({ label, value }) => (
                         <div key={label} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
                           <p className="text-xs text-zinc-500">{label}</p>

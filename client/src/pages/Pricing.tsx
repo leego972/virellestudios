@@ -12,8 +12,8 @@ import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
-// âââ Tier Definitions ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// All prices in AUD. Three public tiers: Indie, Creator, Industry â all self-serve.
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Tier Definitions Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// All prices in AUD. Three public tiers: Indie, Creator, Industry Ã¢ÂÂ all self-serve.
 // Legacy DB keys independent/creator/studio all resolve to Industry.
 
 const SELF_SERVE_TIERS = [
@@ -109,7 +109,7 @@ const SELF_SERVE_TIERS = [
   },
 ];
 
-// Enterprise / custom-pricing tier (contact sales â not shown in main grid)
+// Enterprise / custom-pricing tier (contact sales Ã¢ÂÂ not shown in main grid)
 const ENTERPRISE_TIERS = [
   {
     id: "industry",
@@ -153,33 +153,33 @@ const CREDIT_PACKS = [
 ];
 
 const CREDIT_COSTS = [
-  { action: "Create New Project", cost: 0, icon: "ð" },
-  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "ð¬" },
-  { action: "Generate Scene Video (â¤45s)", cost: 10, icon: "ð¥" },
-  { action: "Regenerate Scene Video", cost: 8, icon: "ð" },
-  { action: "Generate Preview Image", cost: 3, icon: "ð¼ï¸" },
-  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "ð¸" },
-  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "ð¹" },
-  { action: "Virelle AI Chat (per message)", cost: 2, icon: "ð¬" },
-  { action: "AI Script Writer", cost: 8, icon: "ð" },
-  { action: "AI Storyboard Generation", cost: 8, icon: "ð¨" },
-  { action: "AI Dialogue Polish", cost: 5, icon: "ð£ï¸" },
-  { action: "AI Continuity Check", cost: 5, icon: "ð" },
-  { action: "AI Shot List Generation", cost: 5, icon: "ð" },
-  { action: "Trailer Generation", cost: 20, icon: "ðï¸" },
-  { action: "Ad/Poster Generation", cost: 5, icon: "ð¼ï¸" },
-  { action: "Subtitle Generation", cost: 8, icon: "ð¬" },
-  { action: "Export Final Film", cost: 8, icon: "ð¾" },
-  { action: "Budget Estimator", cost: 5, icon: "ð°" },
-  { action: "Location Scout", cost: 3, icon: "ð" },
-  { action: "Mood Board", cost: 3, icon: "ð¨" },
-  { action: "Color Grading Plan", cost: 4, icon: "ð" },
-  { action: "Sound Effects (AI)", cost: 5, icon: "ð" },
-  { action: "ADR Suggestions", cost: 5, icon: "ðï¸" },
-  { action: "Foley Suggestions", cost: 5, icon: "ðµ" },
-  { action: "Score Cues", cost: 8, icon: "ð¼" },
-  { action: "Mix Summary Export", cost: 2, icon: "ðï¸" },
-  { action: "Funding Application", cost: 10, icon: "ð¼" },
+  { action: "Create New Project", cost: 0, icon: "Ã°ÂÂÂ" },
+  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "Ã°ÂÂÂ¬" },
+  { action: "Generate Scene Video (Ã¢ÂÂ¤45s)", cost: 10, icon: "Ã°ÂÂÂ¥" },
+  { action: "Regenerate Scene Video", cost: 8, icon: "Ã°ÂÂÂ" },
+  { action: "Generate Preview Image", cost: 3, icon: "Ã°ÂÂÂ¼Ã¯Â¸Â" },
+  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "Ã°ÂÂÂ¸" },
+  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "Ã°ÂÂÂ¹" },
+  { action: "Virelle AI Chat (per message)", cost: 2, icon: "Ã°ÂÂÂ¬" },
+  { action: "AI Script Writer", cost: 8, icon: "Ã°ÂÂÂ" },
+  { action: "AI Storyboard Generation", cost: 8, icon: "Ã°ÂÂÂ¨" },
+  { action: "AI Dialogue Polish", cost: 5, icon: "Ã°ÂÂÂ£Ã¯Â¸Â" },
+  { action: "AI Continuity Check", cost: 5, icon: "Ã°ÂÂÂ" },
+  { action: "AI Shot List Generation", cost: 5, icon: "Ã°ÂÂÂ" },
+  { action: "Trailer Generation", cost: 20, icon: "Ã°ÂÂÂÃ¯Â¸Â" },
+  { action: "Ad/Poster Generation", cost: 5, icon: "Ã°ÂÂÂ¼Ã¯Â¸Â" },
+  { action: "Subtitle Generation", cost: 8, icon: "Ã°ÂÂÂ¬" },
+  { action: "Export Final Film", cost: 8, icon: "Ã°ÂÂÂ¾" },
+  { action: "Budget Estimator", cost: 5, icon: "Ã°ÂÂÂ°" },
+  { action: "Location Scout", cost: 3, icon: "Ã°ÂÂÂ" },
+  { action: "Mood Board", cost: 3, icon: "Ã°ÂÂÂ¨" },
+  { action: "Color Grading Plan", cost: 4, icon: "Ã°ÂÂÂ" },
+  { action: "Sound Effects (AI)", cost: 5, icon: "Ã°ÂÂÂ" },
+  { action: "ADR Suggestions", cost: 5, icon: "Ã°ÂÂÂÃ¯Â¸Â" },
+  { action: "Foley Suggestions", cost: 5, icon: "Ã°ÂÂÂµ" },
+  { action: "Score Cues", cost: 8, icon: "Ã°ÂÂÂ¼" },
+  { action: "Mix Summary Export", cost: 2, icon: "Ã°ÂÂÂÃ¯Â¸Â" },
+  { action: "Funding Application", cost: 10, icon: "Ã°ÂÂÂ¼" },
 ];
 
 const FAQ = [
@@ -189,7 +189,7 @@ const FAQ = [
   },
   {
     q: "How do credits work?",
-    a: "Credits are consumed each time you use a generative feature â such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
+    a: "Credits are consumed each time you use a generative feature Ã¢ÂÂ such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
   },
   {
     q: "Can I cancel my subscription?",
@@ -201,7 +201,7 @@ const FAQ = [
   },
   {
     q: "Do unused credits roll over?",
-    a: "Yes â all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
+    a: "Yes Ã¢ÂÂ all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
   },
   {
     q: "What payment methods are accepted?",
@@ -210,7 +210,7 @@ const FAQ = [
 ];
 
 export default function Pricing() {
-  // Read URL params â source=mobile means the user came from the mobile app
+  // Read URL params Ã¢ÂÂ source=mobile means the user came from the mobile app
   const urlParams = new URLSearchParams(window.location.search);
   const urlSource = urlParams.get("source") ?? "";
   const urlTier = urlParams.get("tier") ?? "";
@@ -325,13 +325,13 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen text-white selection:bg-amber-500/30" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios â from Free to Studio. AI film production from $0 to enterprise scale." />
+      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios Ã¢ÂÂ from Free to Studio. AI film production from $0 to enterprise scale." />
 
-          {/* ââ Founding Director urgency banner ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Founding Director urgency banner Ã¢ÂÂÃ¢ÂÂ */}
           <div className="sticky top-0 z-40 bg-amber-500 text-black py-2 px-4 text-center text-xs font-bold tracking-wide">
-            <span className="mr-2">ð¬</span>
-            Founding Director Offer â 50% off your first year on any annual Creator or Industry plan.
-            <span className="ml-2 opacity-70">Early access pricing Â· Limited availability.</span>
+            <span className="mr-2">Ã°ÂÂÂ¬</span>
+            Founding Director Offer Ã¢ÂÂ 50% off your first year on any annual Creator or Industry plan.
+            <span className="ml-2 opacity-70">Early access pricing ÃÂ· Limited availability.</span>
           </div>
       <GoldWatermarkLaunch />
       
@@ -352,11 +352,11 @@ export default function Pricing() {
             {/* Trust badges */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 mb-2">
               {[
-                { icon: "â", label: "Cancel anytime" },
-                { icon: "â", label: "Credits never expire" },
-                { icon: "â", label: "100% commercial ownership" },
-                { icon: "â", label: "BYOK support" },
-              { icon: "ð¡", label: "14-day money-back guarantee" },
+                { icon: "Ã¢ÂÂ", label: "Cancel anytime" },
+                { icon: "Ã¢ÂÂ", label: "Credits never expire" },
+                { icon: "Ã¢ÂÂ", label: "100% commercial ownership" },
+                { icon: "Ã¢ÂÂ", label: "BYOK support" },
+              { icon: "Ã°ÂÂÂ¡", label: "14-day money-back guarantee" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="text-emerald-400 font-bold">{icon}</span>
@@ -403,9 +403,9 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl gradient-text-gold glass-card">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{tier.displayName}</CardTitle>
                   </div>
-                  <CardDescription className="min-h-[3rem] glass-card">{tier.description}</CardDescription>
+                  <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5">{tier.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
@@ -415,7 +415,7 @@ export default function Pricing() {
                     {tier.credits.toLocaleString()} credits/mo included
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1 glass-card">
+                <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -457,15 +457,15 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl gradient-text-gold glass-card">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{tier.displayName}</CardTitle>
                   </div>
-                  <CardDescription className="min-h-[3rem] glass-card">{tier.description}</CardDescription>
+                  <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5">{tier.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">{tier.priceDisplay}</span>
                     <span className="text-muted-foreground ml-1">{tier.priceNote}</span>
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1 glass-card">
+                <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5">
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -559,9 +559,9 @@ export default function Pricing() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {CREDIT_PACKS.map((pack) => (
               <Card key={pack.id} className={`border-zinc-800 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
-                <CardHeader className="pb-2 glass-card">
+                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg gradient-text-gold glass-card">{pack.label}</CardTitle>
+                    <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{pack.label}</CardTitle>
                     {pack.popular && <Badge className="bg-amber-600">Best Value</Badge>}
                   </div>
                   <div className="text-2xl font-bold mt-2">{formatAUD(pack.price)}</div>

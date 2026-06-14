@@ -431,7 +431,7 @@ export default function CampaignManager() {
         <TabsContent value="campaigns" className="space-y-4 mt-4">
           {campaigns.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 glass-card">
+              <CardContent className="flex flex-col items-center justify-center py-12 glass-card shadow-lg shadow-amber-500/5">
                 <Megaphone className="h-12 w-12 text-muted-foreground/30 mb-4" />
                 <h3 className="text-lg font-medium">No campaigns yet</h3>
                 <p className="text-muted-foreground text-sm mt-1">Create your first advertising campaign to get started</p>
@@ -459,10 +459,10 @@ export default function CampaignManager() {
                       <StatusBadge status={campaign.status} />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
+                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂ· {campaign.schedule}
+                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.schedule}
                     </p>
                   </button>
                 ))}
@@ -475,9 +475,9 @@ export default function CampaignManager() {
                     <CardHeader>
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <div>
-                          <CardTitle className="gradient-text-gold glass-card">{selectedCampaign.name}</CardTitle>
+                          <CardTitle className="gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
-                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
+                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2 flex-wrap">
@@ -528,7 +528,7 @@ export default function CampaignManager() {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-6 glass-card">
+                    <CardContent className="space-y-6 glass-card shadow-lg shadow-amber-500/5">
                       {/* Stats Row */}
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/50 rounded-lg text-center">
@@ -652,7 +652,7 @@ export default function CampaignManager() {
                   </Card>
                 ) : (
                   <Card>
-                    <CardContent className="flex flex-col items-center justify-center py-12 glass-card">
+                    <CardContent className="flex flex-col items-center justify-center py-12 glass-card shadow-lg shadow-amber-500/5">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mb-3" />
                       <p className="text-muted-foreground text-sm">Select a campaign to view details</p>
                     </CardContent>
@@ -667,15 +667,15 @@ export default function CampaignManager() {
         <TabsContent value="quick-generate" className="space-y-4 mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 gradient-text-gold glass-card">
+              <CardTitle className="flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                 <Zap className="h-5 w-5 text-amber-400" />
                 Quick Content Generator
               </CardTitle>
               <CardDescription>
-                Generate ad copy for a single platform instantly ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ no campaign needed
+                Generate ad copy for a single platform instantly ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no campaign needed
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 glass-card">
+            <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Platform</Label>
@@ -825,25 +825,25 @@ export default function CampaignManager() {
               {/* Stats Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <Card>
-                  <CardContent className="p-4 text-center glass-card">
+                  <CardContent className="p-4 text-center glass-card shadow-lg shadow-amber-500/5">
                     <p className="text-3xl font-bold text-amber-400">{(analytics as any)?.totalCampaigns || 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Total Campaigns</p>
                   </CardContent>
                 </Card>
                 <Card>
-                  <CardContent className="p-4 text-center glass-card">
+                  <CardContent className="p-4 text-center glass-card shadow-lg shadow-amber-500/5">
                     <p className="text-3xl font-bold text-amber-400">{(analytics as any)?.totalPosts || analytics?.totals?.impressions || 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Total Posts</p>
                   </CardContent>
                 </Card>
                 <Card>
-                  <CardContent className="p-4 text-center glass-card">
+                  <CardContent className="p-4 text-center glass-card shadow-lg shadow-amber-500/5">
                     <p className="text-3xl font-bold text-emerald-400">{(analytics as any)?.successRate || analytics?.avgCtr || 0}%</p>
                     <p className="text-xs text-muted-foreground mt-1">Success Rate</p>
                   </CardContent>
                 </Card>
                 <Card>
-                  <CardContent className="p-4 text-center glass-card">
+                  <CardContent className="p-4 text-center glass-card shadow-lg shadow-amber-500/5">
                     <p className="text-3xl font-bold text-blue-400">{platforms.length}</p>
                     <p className="text-xs text-muted-foreground mt-1">Available Platforms</p>
                   </CardContent>
@@ -854,7 +854,7 @@ export default function CampaignManager() {
                 {/* Platform Breakdown */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                       <Globe className="h-4 w-4 text-amber-400" />
                       Platform Breakdown
                     </CardTitle>
@@ -863,7 +863,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.platformBreakdown || Object.entries(analytics?.byPlatform || {})).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -888,7 +888,7 @@ export default function CampaignManager() {
                 {/* Content Type Breakdown */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                       <Sparkles className="h-4 w-4 text-amber-400" />
                       Content Type Performance
                     </CardTitle>
@@ -897,7 +897,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.contentTypeBreakdown || []).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -923,7 +923,7 @@ export default function CampaignManager() {
               {/* Recent Activity */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                     <Clock className="h-4 w-4 text-amber-400" />
                     Recent Activity
                   </CardTitle>
@@ -932,7 +932,7 @@ export default function CampaignManager() {
                   {((analytics as any)?.recentActivity || analytics?.rows || []).length === 0 ? (
                     <div className="text-center py-8">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ start posting to see your history here</p>
+                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ start posting to see your history here</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -942,7 +942,7 @@ export default function CampaignManager() {
                             <StatusBadge status={activity.status} />
                             <div>
                               <p className="text-sm font-medium">{activity.campaign}</p>
-                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
+                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
                             </div>
                           </div>
                           <span className="text-xs text-muted-foreground">
@@ -956,9 +956,9 @@ export default function CampaignManager() {
               </Card>
 
               {/* Advertising Tips */}
-              <Card className="border-primary/20 bg-amber-400/5 glass-card">
+              <Card className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                     <TrendingUp className="h-4 w-4 text-amber-400" />
                     Free Advertising Tips
                   </CardTitle>
@@ -968,7 +968,7 @@ export default function CampaignManager() {
                     {[
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
-                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
+                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
                       { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },
@@ -1001,8 +1001,8 @@ export default function CampaignManager() {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {(catPlatforms as any[]).map((p: any) => (
-                    <Card key={p.id} className="overflow-hidden hover:border-primary/30 transition-colors glass-card">
-                      <CardContent className="p-4 space-y-2 glass-card">
+                    <Card key={p.id} className="overflow-hidden hover:border-primary/30 transition-colors glass-card shadow-lg shadow-amber-500/5">
+                      <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5">
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium text-sm">{p.name}</h4>
                           <Badge variant="outline" className="text-[10px]">{p.type}</Badge>

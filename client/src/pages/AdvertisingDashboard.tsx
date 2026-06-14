@@ -1,5 +1,5 @@
 /**
- * Advertising Dashboard — VirÉlle Studios
+ * Advertising Dashboard â VirÃlle Studios
  *
  * Full-featured advertising management interface:
  *  - Live campaign performance overview
@@ -28,7 +28,7 @@ import {
   Film, Sparkles, ExternalLink, Copy, ChevronDown, ChevronUp,
 } from "lucide-react";
 
-// ─── Platform Meta ─────────────────────────────────────────────────────────
+// âââ Platform Meta âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PLATFORM_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   instagram: { label: "Instagram", color: "text-purple-400", icon: <Camera className="w-4 h-4" /> },
   tiktok: { label: "TikTok", color: "text-pink-400", icon: <Video className="w-4 h-4" /> },
@@ -39,7 +39,7 @@ const PLATFORM_META: Record<string, { label: string; color: string; icon: React.
   pinterest: { label: "Pinterest", color: "text-rose-400", icon: <Share2 className="w-4 h-4" /> },
 };
 
-// ─── Status Badge ──────────────────────────────────────────────────────────
+// âââ Status Badge ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; className: string }> = {
     draft: { label: "Draft", className: "border-zinc-500/50 text-zinc-400 bg-zinc-500/10" },
@@ -58,7 +58,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// ─── Metric Card ───────────────────────────────────────────────────────────
+// âââ Metric Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   icon: React.ReactNode;
   label: string;
@@ -67,7 +67,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   color?: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80 glass-card">
+    <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-1">
           <span className={color}>{icon}</span>
@@ -80,7 +80,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   );
 }
 
-// ─── Content Queue Item ────────────────────────────────────────────────────
+// âââ Content Queue Item ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting }: {
   item: any;
   onApprove: (id: number) => void;
@@ -100,11 +100,11 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
             <p className="font-medium text-sm truncate">{item.title || item.headline || "Untitled"}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-xs ${platformMeta.color}`}>{platformMeta.label}</span>
-              <span className="text-xs text-muted-foreground">•</span>
+              <span className="text-xs text-muted-foreground">â¢</span>
               <span className="text-xs text-muted-foreground">{item.contentType || "post"}</span>
               {item.qualityScore != null && (
                 <>
-                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-xs text-muted-foreground">â¢</span>
                   <span className={`text-xs font-medium ${item.qualityScore >= 75 ? "text-emerald-400" : item.qualityScore >= 50 ? "text-yellow-400" : "text-red-400"}`}>
                     Quality: {item.qualityScore}/100
                   </span>
@@ -188,7 +188,7 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────
+// âââ Main Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function AdvertisingDashboard() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -204,7 +204,7 @@ export default function AdvertisingDashboard() {
   const [approvingId, setApprovingId] = useState<number | null>(null);
   const [rejectingId, setRejectingId] = useState<number | null>(null);
 
-  // ─── Queries ─────────────────────────────────────────────────────────────
+  // âââ Queries âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const dashboardQuery = trpc.advertising.getDashboard.useQuery(undefined, { refetchInterval: 15000 });
   const performanceQuery = trpc.advertising.getPerformance.useQuery({ days: 30 });
   const activityQuery = trpc.advertising.getActivity.useQuery({ limit: 20 });
@@ -215,10 +215,10 @@ export default function AdvertisingDashboard() {
   const tiktokStatsQuery = trpc.advertising.getTikTokStats.useQuery();
   const strategiesQuery = trpc.advertising.getStrategies.useQuery();
 
-  // ─── Mutations ────────────────────────────────────────────────────────────
+  // âââ Mutations ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const runCycleMutation = trpc.advertising.runCycle.useMutation({
     onSuccess: () => {
-      toast.success("Advertising cycle complete — new content generated and queued");
+      toast.success("Advertising cycle complete â new content generated and queued");
       utils.advertising.getDashboard.invalidate();
       utils.advertising.getContentQueue.invalidate();
       utils.advertising.getActivity.invalidate();
@@ -259,11 +259,11 @@ export default function AdvertisingDashboard() {
     onError: (err) => toast.error(err.message || "Video generation failed"),
   });
 
-  // ─── Access Guard ─────────────────────────────────────────────────────────
+  // âââ Access Guard âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md glass-card">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card shadow-lg shadow-amber-500/5">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
@@ -294,7 +294,7 @@ export default function AdvertisingDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
+      {/* âââ Header ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
@@ -302,7 +302,7 @@ export default function AdvertisingDashboard() {
             Advertising Dashboard
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Autonomous ad generation, distribution, and performance tracking for VirÉlle Studios
+            Autonomous ad generation, distribution, and performance tracking for VirÃlle Studios
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -330,27 +330,27 @@ export default function AdvertisingDashboard() {
         </div>
       </div>
 
-      {/* ─── KPI Row ─────────────────────────────────────────────────────── */}
+      {/* âââ KPI Row âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           icon={<BarChart3 className="w-4 h-4" />}
           label="Total Impressions"
-          value={performance?.paid?.totalImpressions?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalImpressions?.toLocaleString() ?? "—"}
+          value={performance?.paid?.totalImpressions?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalImpressions?.toLocaleString() ?? "â"}
           sub="Last 30 days"
           color="text-amber-400"
         />
         <MetricCard
           icon={<MousePointer className="w-4 h-4" />}
           label="Total Clicks"
-          value={performance?.paid?.totalClicks?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalClicks?.toLocaleString() ?? "—"}
-          sub={`CTR: ${performance?.paid?.ctr ?? (dashboard?.performance as any)?.paid?.ctr ?? "—"}`}
+          value={performance?.paid?.totalClicks?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalClicks?.toLocaleString() ?? "â"}
+          sub={`CTR: ${performance?.paid?.ctr ?? (dashboard?.performance as any)?.paid?.ctr ?? "â"}`}
           color="text-blue-400"
         />
         <MetricCard
           icon={<Activity className="w-4 h-4" />}
           label="Engagements"
-          value={performance?.paid?.totalConversions?.toLocaleString() ?? "—"}
-          sub={`Conv. Rate: ${performance?.paid?.conversionRate ?? "—"}`}
+          value={performance?.paid?.totalConversions?.toLocaleString() ?? "â"}
+          sub={`Conv. Rate: ${performance?.paid?.conversionRate ?? "â"}`}
           color="text-purple-400"
         />
         <MetricCard
@@ -362,7 +362,7 @@ export default function AdvertisingDashboard() {
         />
       </div>
 
-      {/* ─── Tabs ────────────────────────────────────────────────────────── */}
+      {/* âââ Tabs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-card/50 border border-border/50">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -372,11 +372,11 @@ export default function AdvertisingDashboard() {
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
 
-        {/* ─── Overview Tab ──────────────────────────────────────────────── */}
+        {/* âââ Overview Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="overview" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Platform Performance */}
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <TrendingUp className="w-4 h-4 text-amber-400" />
@@ -409,7 +409,7 @@ export default function AdvertisingDashboard() {
             </Card>
 
             {/* Autonomous Status */}
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Zap className="w-4 h-4 text-amber-400" />
@@ -448,7 +448,7 @@ export default function AdvertisingDashboard() {
 
           {/* Recent Activity Summary */}
           {activityQuery.data && activityQuery.data.length > 0 && (
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Activity className="w-4 h-4 text-amber-400" />
@@ -463,7 +463,7 @@ export default function AdvertisingDashboard() {
                       <div>
                         <p className="text-sm">{item.description || item.action}</p>
                         <p className="text-xs text-muted-foreground">
-                          {item.createdAt ? new Date(item.createdAt).toLocaleString() : "—"}
+                          {item.createdAt ? new Date(item.createdAt).toLocaleString() : "â"}
                         </p>
                       </div>
                     </div>
@@ -474,7 +474,7 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* ─── Content Queue Tab ─────────────────────────────────────────── */}
+        {/* âââ Content Queue Tab âââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="queue" className="space-y-4 mt-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
@@ -502,7 +502,7 @@ export default function AdvertisingDashboard() {
               <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
             </div>
           ) : contentQueueQuery.data?.items?.length === 0 ? (
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="py-12 text-center">
                 <Film className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-muted-foreground">No {queueFilter === "all" ? "" : queueFilter} content in queue</p>
@@ -532,11 +532,11 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* ─── TikTok Tab ────────────────────────────────────────────────── */}
+        {/* âââ TikTok Tab ââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="tiktok" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* TikTok Status */}
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Video className="w-4 h-4 text-pink-400" />
@@ -564,11 +564,11 @@ export default function AdvertisingDashboard() {
                   <>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Account</span>
-                      <span className="text-sm font-medium">@{tiktok.creatorInfo.creatorNickname || "—"}</span>
+                      <span className="text-sm font-medium">@{tiktok.creatorInfo.creatorNickname || "â"}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Followers</span>
-                      <span className="text-sm font-medium">{(tiktok.creatorInfo as any).followerCount?.toLocaleString() ?? "—"}</span>
+                      <span className="text-sm font-medium">{(tiktok.creatorInfo as any).followerCount?.toLocaleString() ?? "â"}</span>
                     </div>
                   </>
                 )}
@@ -600,19 +600,19 @@ export default function AdvertisingDashboard() {
             </Card>
 
             {/* Generate Ad Video */}
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   Generate Ad Video
                 </CardTitle>
-                <CardDescription>Create a cinematic AI video ad for VirÉlle Studios</CardDescription>
+                <CardDescription>Create a cinematic AI video ad for VirÃlle Studios</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   {[
                     { topic: "AI filmmaking revolution 2026", label: "AI Revolution" },
-                    { topic: "Cinematic scene generation with VirÉlle", label: "Scene Generation" },
+                    { topic: "Cinematic scene generation with VirÃlle", label: "Scene Generation" },
                     { topic: "From script to screen in minutes with AI", label: "Script to Screen" },
                     { topic: "Hollywood quality films without a Hollywood budget", label: "Hollywood Quality" },
                   ].map(({ topic, label }) => (
@@ -620,7 +620,7 @@ export default function AdvertisingDashboard() {
                       key={topic}
                       variant="outline"
                       className="w-full justify-start border-border/50 hover:bg-amber-500/10 hover:border-amber-500/30 text-sm h-9"
-                      onClick={() => generateVideoMutation.mutate({ topic, cta: "Try VirÉlle Studios free" })}
+                      onClick={() => generateVideoMutation.mutate({ topic, cta: "Try VirÃlle Studios free" })}
                       disabled={generateVideoMutation.isPending}
                     >
                       {generateVideoMutation.isPending ? (
@@ -638,7 +638,7 @@ export default function AdvertisingDashboard() {
 
           {/* Recent TikTok Posts */}
           {tiktok?.recentPosts && tiktok.recentPosts.length > 0 && (
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base gradient-text-gold">Recent TikTok Posts</CardTitle>
               </CardHeader>
@@ -648,7 +648,7 @@ export default function AdvertisingDashboard() {
                     <div key={i} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm truncate">{post.caption || post.description || "TikTok post"}</p>
-                        <p className="text-xs text-muted-foreground">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "—"}</p>
+                        <p className="text-xs text-muted-foreground">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "â"}</p>
                       </div>
                       <div className="flex items-center gap-3 ml-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{post.viewCount?.toLocaleString() ?? 0}</span>
@@ -662,16 +662,16 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* ─── Strategy Tab ──────────────────────────────────────────────── */}
+        {/* âââ Strategy Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="strategy" className="space-y-4 mt-4">
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Target className="w-4 h-4 text-amber-400" />
                 Platform Strategy Overview
               </CardTitle>
               <CardDescription>
-                Autonomous advertising strategy for VirÉlle Studios across all channels
+                Autonomous advertising strategy for VirÃlle Studios across all channels
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -728,8 +728,8 @@ export default function AdvertisingDashboard() {
           </Card>
 
 
-            {/* ─── Platform Playbook ────────────────────────────────────────── */}
-            <Card className="border-border/50 bg-card/80 glass-card">
+            {/* âââ Platform Playbook ââââââââââââââââââââââââââââââââââââââââââ */}
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Briefcase className="w-4 h-4 text-amber-400" />
@@ -742,12 +742,12 @@ export default function AdvertisingDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {[
-                    { platform: "tiktok",        freq: "2–3× / day",  formats: ["60s vertical", "trending audio", "behind-the-scenes"],  ctr: "1.6%" },
-                    { platform: "instagram",     freq: "1× / day",    formats: ["Reels", "Carousel", "Story poll"],                      ctr: "0.9%" },
-                    { platform: "youtube_shorts",freq: "4–5× / week", formats: ["Shorts < 60s", "Trailer teaser", "Process reveal"],     ctr: "0.5%" },
-                    { platform: "facebook",      freq: "1× / day",    formats: ["Video post", "Event promo", "Link + image"],            ctr: "0.7%" },
-                    { platform: "x_twitter",     freq: "3–5× / day",  formats: ["Thread", "GIF clip", "Poll"],                          ctr: "0.4%" },
-                    { platform: "linkedin",      freq: "3× / week",   formats: ["Article", "Milestone post", "Behind-the-lens"],        ctr: "0.6%" },
+                    { platform: "tiktok",        freq: "2â3Ã / day",  formats: ["60s vertical", "trending audio", "behind-the-scenes"],  ctr: "1.6%" },
+                    { platform: "instagram",     freq: "1Ã / day",    formats: ["Reels", "Carousel", "Story poll"],                      ctr: "0.9%" },
+                    { platform: "youtube_shorts",freq: "4â5Ã / week", formats: ["Shorts < 60s", "Trailer teaser", "Process reveal"],     ctr: "0.5%" },
+                    { platform: "facebook",      freq: "1Ã / day",    formats: ["Video post", "Event promo", "Link + image"],            ctr: "0.7%" },
+                    { platform: "x_twitter",     freq: "3â5Ã / day",  formats: ["Thread", "GIF clip", "Poll"],                          ctr: "0.4%" },
+                    { platform: "linkedin",      freq: "3Ã / week",   formats: ["Article", "Milestone post", "Behind-the-lens"],        ctr: "0.6%" },
                   ].map(({ platform, freq, formats, ctr }) => {
                     const meta = PLATFORM_META[platform] || { label: platform, color: "text-zinc-400", icon: null };
                     return (
@@ -776,7 +776,7 @@ export default function AdvertisingDashboard() {
 
             {/* Strategy Overview from Advertising Orchestrator */}
           {dashboard?.strategy && (
-            <Card className="border-border/50 bg-card/80 glass-card">
+            <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base gradient-text-gold">Current Campaign Strategy</CardTitle>
               </CardHeader>
@@ -794,9 +794,9 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* ─── Activity Tab ──────────────────────────────────────────────── */}
+        {/* âââ Activity Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="activity" className="space-y-4 mt-4">
-          <Card className="border-border/50 bg-card/80 glass-card">
+          <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Activity className="w-4 h-4 text-amber-400" />
@@ -841,7 +841,7 @@ export default function AdvertisingDashboard() {
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground flex-shrink-0">
-                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : "—"}
+                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : "â"}
                       </span>
                     </div>
                   ))}
@@ -861,7 +861,7 @@ export default function AdvertisingDashboard() {
   );
 }
 
-// ─── Missing import ────────────────────────────────────────────────────────
+// âââ Missing import ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function Heart({ className }: { className?: string }) {
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>

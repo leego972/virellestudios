@@ -20,7 +20,7 @@ export default function AssetMarketplace() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<AssetCategory>("all");
 
-  // ── Real Data Fetching ──────────────────────────────────────────────────────
+  // ââ Real Data Fetching ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const { data: wardrobeItems = [], isLoading: loadingWardrobe } = trpc.wardrobeMarket.marketplace.searchItems.useQuery(
     { limit: 100 },
     { enabled: category === "all" || category === "wardrobes" }
@@ -31,7 +31,7 @@ export default function AssetMarketplace() {
     { enabled: category === "all" || category === "funding" }
   );
 
-  // ── Unified Data Mapping ────────────────────────────────────────────────────
+  // ââ Unified Data Mapping ââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const allAssets = useMemo(() => {
     const assets: any[] = [];
 
@@ -88,7 +88,7 @@ export default function AssetMarketplace() {
                     (category === "funding" && loadingFunding) ||
                     (category === "all" && (loadingWardrobe || loadingFunding));
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  // ââ Handlers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const handleBuyWardrobe = () => {
     setLocation(`/wardrobe-marketplace`);
     toast.info("Redirecting to Lamalo Fashions...");
@@ -186,7 +186,7 @@ export default function AssetMarketplace() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredAssets.map((asset) => (
-              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card">
+              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card shadow-lg shadow-amber-500/5">
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
                     <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -207,7 +207,7 @@ export default function AssetMarketplace() {
                     )}
                   </div>
                 </div>
-                <CardContent className="p-4 space-y-3 glass-card">
+                <CardContent className="p-4 space-y-3 glass-card shadow-lg shadow-amber-500/5">
                   <div>
                     <h3 className="font-bold text-sm line-clamp-1">{asset.name}</h3>
                     <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">{asset.author}</p>

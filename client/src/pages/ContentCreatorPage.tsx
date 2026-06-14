@@ -1,5 +1,5 @@
 /**
- * VirÉlle Studios — Content Creator Page
+ * VirÃlle Studios â Content Creator Page
  *
  * Full-featured AI content generation dashboard with:
  * - Studio: generate platform-optimised content with SEO integration
@@ -34,7 +34,7 @@ import {
   Search, Filter, Download, Upload, Settings, Info,
 } from "lucide-react";
 
-// ─── Platform Icons & Labels ──────────────────────────────────────────────────
+// âââ Platform Icons & Labels ââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PLATFORM_META: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
   tiktok: { label: "TikTok", color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", icon: <Video className="h-4 w-4" /> },
   instagram: { label: "Camera", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4 text-amber-400/70" /> },
@@ -82,13 +82,13 @@ const CONTENT_TYPES = [
   { value: "thread", label: "Thread" },
 ];
 
-// ─── Stat Card ────────────────────────────────────────────────────────────────
+// âââ Stat Card ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function StatCard({ label, value, icon, color = "text-blue-400", trend }: {
   label: string; value: string | number; icon: React.ReactNode; color?: string; trend?: string;
 }) {
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-    <Card className="bg-card/50 border-border/50 glass-card">
+    <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-muted-foreground">{label}</span>
@@ -101,7 +101,7 @@ function StatCard({ label, value, icon, color = "text-blue-400", trend }: {
   );
 }
 
-// ─── Platform Badge ───────────────────────────────────────────────────────────
+// âââ Platform Badge âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function PlatformBadge({ platform }: { platform: string }) {
   const meta = PLATFORM_META[platform] || { label: platform, color: "text-gray-400", bg: "bg-gray-500/10 border-gray-500/20", icon: <Globe className="h-4 w-4" /> };
   return (
@@ -112,7 +112,7 @@ function PlatformBadge({ platform }: { platform: string }) {
   );
 }
 
-// ─── Status Badge ─────────────────────────────────────────────────────────────
+// âââ Status Badge âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function StatusBadge({ status }: { status: string }) {
   const meta = STATUS_META[status] || STATUS_META.draft;
   return (
@@ -123,7 +123,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// ─── Score Bar ────────────────────────────────────────────────────────────────
+// âââ Score Bar ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ScoreBar({ label, score, color = "bg-blue-500" }: { label: string; score: number; color?: string }) {
   return (
     <div className="space-y-1">
@@ -138,7 +138,7 @@ function ScoreBar({ label, score, color = "bg-blue-500" }: { label: string; scor
   );
 }
 
-// ─── Content Piece Card ───────────────────────────────────────────────────────
+// âââ Content Piece Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: {
   piece: any;
   onApprove: (id: number) => void;
@@ -150,7 +150,7 @@ function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: 
   const hashtags = Array.isArray(piece.hashtags) ? piece.hashtags : [];
 
   return (
-    <Card className="bg-card/50 border-border/50 hover:border-border transition-colors glass-card">
+    <Card className="bg-card/50 border-border/50 hover:border-border transition-colors glass-card shadow-lg shadow-amber-500/5">
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 flex-wrap">
@@ -265,7 +265,7 @@ function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: 
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function ContentCreatorPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("studio");
@@ -315,7 +315,7 @@ export default function ContentCreatorPage() {
     );
   }
 
-  // ─── Queries ──────────────────────────────────────────────────────────────
+  // âââ Queries ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const dashboardQuery = trpc.contentCreator.dashboard.useQuery(undefined, { refetchInterval: 30000 });
   const campaignsQuery = trpc.contentCreator.listCampaigns.useQuery({ limit: 50 });
   const piecesQuery = trpc.contentCreator.listPieces.useQuery({
@@ -326,7 +326,7 @@ export default function ContentCreatorPage() {
   const seoBriefsQuery = trpc.contentCreator.getSeoContentBriefs.useQuery({ count: 5 });
   const analyticsQuery = trpc.contentCreator.getAnalytics.useQuery({});
 
-  // ─── Mutations ────────────────────────────────────────────────────────────
+  // âââ Mutations ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const generateMutation = trpc.contentCreator.generatePiece.useMutation({
     onSuccess: (data) => {
       setGeneratedContent(data);
@@ -395,7 +395,7 @@ export default function ContentCreatorPage() {
     onError: (err) => toast.error(err.message),
   });
 
-  // ─── Handlers ─────────────────────────────────────────────────────────────
+  // âââ Handlers âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const handleGenerate = () => {
     generateMutation.mutate({
       platform: platform as any,
@@ -470,7 +470,7 @@ export default function ContentCreatorPage() {
             Content Creator
           </h1>
           <p className="text-muted-foreground text-sm mt-0.5">
-            AI-powered content for 15 platforms — SEO-driven, TikTok-ready, brand-aligned
+            AI-powered content for 15 platforms â SEO-driven, TikTok-ready, brand-aligned
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -526,11 +526,11 @@ export default function ContentCreatorPage() {
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
-        {/* ─── Studio Tab ─────────────────────────────────────────────────────── */}
+        {/* âââ Studio Tab âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="studio" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Generator Panel */}
-            <Card className="bg-card/50 border-border/50 glass-card">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Sparkles className="h-4 w-4 text-blue-400 text-amber-400/70" />
@@ -642,7 +642,7 @@ export default function ContentCreatorPage() {
             {/* Generated Content Preview */}
             <div className="space-y-4">
               {generatedContent ? (
-                <Card className="bg-card/50 border-border/50 glass-card">
+                <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                       <CheckCircle className="h-4 w-4 text-emerald-400" />
@@ -701,7 +701,7 @@ export default function ContentCreatorPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <Card className="bg-card/50 border-border/50 border-dashed glass-card">
+                <Card className="bg-card/50 border-border/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
                   <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                     <Sparkles className="h-10 w-10 text-muted-foreground mb-3" />
                     <p className="text-sm text-muted-foreground">Generated content will appear here</p>
@@ -711,7 +711,7 @@ export default function ContentCreatorPage() {
               )}
 
               {/* SEO Briefs */}
-              <Card className="bg-card/50 border-border/50 glass-card">
+              <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                     <Search className="h-4 w-4 text-blue-400" />
@@ -723,7 +723,7 @@ export default function ContentCreatorPage() {
                   {seoBriefsQuery.isLoading ? (
                     <p className="text-xs text-muted-foreground">Loading SEO briefs...</p>
                   ) : seoBriefsQuery.data?.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No SEO briefs available — configure your SEO engine first.</p>
+                    <p className="text-xs text-muted-foreground">No SEO briefs available â configure your SEO engine first.</p>
                   ) : (
                     seoBriefsQuery.data?.slice(0, 4).map((brief: any, i: number) => (
                       <div
@@ -751,7 +751,7 @@ export default function ContentCreatorPage() {
           </div>
         </TabsContent>
 
-        {/* ─── Queue Tab ──────────────────────────────────────────────────────── */}
+        {/* âââ Queue Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="queue" className="space-y-4 mt-4">
           <div className="flex items-center gap-3 flex-wrap">
             <Select value={queuePlatformFilter || "all"} onValueChange={v => setQueuePlatformFilter(v === "all" ? undefined : v)}>
@@ -781,11 +781,11 @@ export default function ContentCreatorPage() {
           {piecesQuery.isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[...Array(4)].map((_, i) => (
-                <Card key={i} className="bg-card/50 border-border/50 animate-pulse h-32 glass-card" />
+                <Card key={i} className="bg-card/50 border-border/50 animate-pulse h-32 glass-card shadow-lg shadow-amber-500/5" />
               ))}
             </div>
           ) : pieces.length === 0 ? (
-            <Card className="bg-card/50 border-border/50 border-dashed glass-card">
+            <Card className="bg-card/50 border-border/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                 <FileText className="h-10 w-10 text-muted-foreground mb-3" />
                 <p className="text-sm text-muted-foreground">No content pieces yet</p>
@@ -839,7 +839,7 @@ export default function ContentCreatorPage() {
           </Dialog>
         </TabsContent>
 
-        {/* ─── Campaigns Tab ──────────────────────────────────────────────────── */}
+        {/* âââ Campaigns Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="campaigns" className="space-y-4 mt-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold gradient-text-gold">Content Campaigns</h2>
@@ -906,10 +906,10 @@ export default function ContentCreatorPage() {
           {/* Campaigns List */}
           {campaignsQuery.isLoading ? (
             <div className="space-y-2">
-              {[...Array(3)].map((_, i) => <Card key={i} className="h-20 animate-pulse bg-card/50 border-border/50 glass-card" />)}
+              {[...Array(3)].map((_, i) => <Card key={i} className="h-20 animate-pulse bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5" />)}
             </div>
           ) : campaigns.length === 0 ? (
-            <Card className="bg-card/50 border-border/50 border-dashed glass-card">
+            <Card className="bg-card/50 border-border/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                 <Target className="h-10 w-10 text-muted-foreground mb-3" />
                 <p className="text-sm text-muted-foreground">No campaigns yet</p>
@@ -921,7 +921,7 @@ export default function ContentCreatorPage() {
           ) : (
             <div className="space-y-3">
               {campaigns.map((campaign: any) => (
-                <Card key={campaign.id} className="bg-card/50 border-border/50 glass-card">
+                <Card key={campaign.id} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
@@ -976,7 +976,7 @@ export default function ContentCreatorPage() {
 
           {/* Bulk Generate Panel */}
           {campaigns.length > 0 && (
-            <Card className="bg-card/50 border-border/50 glass-card">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                   <Zap className="h-4 w-4 text-yellow-400" />
@@ -1034,10 +1034,10 @@ export default function ContentCreatorPage() {
           )}
         </TabsContent>
 
-        {/* ─── TikTok Hub Tab ─────────────────────────────────────────────────── */}
+        {/* âââ TikTok Hub Tab âââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="tiktok" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-card/50 border-border/50 glass-card">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Video className="h-4 w-4 text-pink-400" />
@@ -1113,7 +1113,7 @@ export default function ContentCreatorPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 border-border/50 glass-card">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base gradient-text-gold">TikTok Performance</CardTitle>
               </CardHeader>
@@ -1140,7 +1140,7 @@ export default function ContentCreatorPage() {
           </div>
         </TabsContent>
 
-        {/* ─── Analytics Tab ──────────────────────────────────────────────────── */}
+        {/* âââ Analytics Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="analytics" className="space-y-4 mt-4">
           {analytics ? (
             <>
@@ -1154,7 +1154,7 @@ export default function ContentCreatorPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="bg-card/50 border-border/50 glass-card">
+                <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm gradient-text-gold">Performance by Platform</CardTitle>
                   </CardHeader>
@@ -1180,7 +1180,7 @@ export default function ContentCreatorPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-card/50 border-border/50 glass-card">
+                <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm gradient-text-gold">Key Metrics</CardTitle>
                   </CardHeader>
@@ -1209,7 +1209,7 @@ export default function ContentCreatorPage() {
 
               {/* Top Performing */}
               {dashboard?.topPerformingPieces && dashboard.topPerformingPieces.length > 0 && (
-                <Card className="bg-card/50 border-border/50 glass-card">
+                <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                       <Star className="h-4 w-4 text-yellow-400 text-amber-400/70" />
@@ -1234,7 +1234,7 @@ export default function ContentCreatorPage() {
               )}
             </>
           ) : (
-            <Card className="bg-card/50 border-border/50 border-dashed glass-card">
+            <Card className="bg-card/50 border-border/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                 <BarChart3 className="h-10 w-10 text-muted-foreground mb-3" />
                 <p className="text-sm text-muted-foreground">No analytics data yet</p>

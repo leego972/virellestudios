@@ -57,7 +57,7 @@ export default function Referrals() {
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join Virelle Studios — AI Film Production",
+        title: "Join Virelle Studios â AI Film Production",
         text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
@@ -79,7 +79,7 @@ export default function Referrals() {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `🎬 Join me on Virelle Studios — the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+      `ð¬ Join me on Virelle Studios â the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
     );
     window.open("https://wa.me/?text=" + text, "_blank");
   };
@@ -123,11 +123,11 @@ export default function Referrals() {
       </div>
 
       {/* Referral Link Card */}
-      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20 glass-card">
+      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold glass-card">Your Referral Link</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Your Referral Link</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 glass-card">
+        <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
           {isLoading ? (
             <div className="h-12 bg-white/5 rounded-lg animate-pulse" />
           ) : (
@@ -184,8 +184,8 @@ export default function Referrals() {
           ? "border-green-500/20 bg-green-600/5"
           : "border-border/50"
         }>
-          <CardHeader className="pb-3 glass-card">
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card">
+          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
               <Tag className="h-4 w-4 text-green-400" />
               Your Promo Code
             </CardTitle>
@@ -223,7 +223,7 @@ export default function Referrals() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardContent className="pt-6 glass-card">
+          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Users className="h-5 w-5 text-blue-400" />
@@ -236,7 +236,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 glass-card">
+          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-green-500/10">
                 <TrendingUp className="h-5 w-5 text-green-400" />
@@ -249,7 +249,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 glass-card">
+          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Zap className="h-5 w-5 text-amber-400" />
@@ -264,14 +264,14 @@ export default function Referrals() {
       </div>
 
       {/* Milestone Progress */}
-      <Card className="border-amber-500/20 glass-card">
+      <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold glass-card">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
             <Trophy className="h-5 w-5 text-amber-400" />
             Milestone Rewards
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-5 glass-card">
+        <CardContent className="space-y-5 glass-card shadow-lg shadow-amber-500/5">
           {successful < MILESTONES[MILESTONES.length - 1].count && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -333,7 +333,7 @@ export default function Referrals() {
       {/* How It Works */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold glass-card">How It Works</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5">How It Works</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -368,7 +368,7 @@ export default function Referrals() {
       {stats?.referrals && stats.referrals.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg gradient-text-gold glass-card">Referral History</CardTitle>
+            <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
