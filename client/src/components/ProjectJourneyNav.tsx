@@ -62,7 +62,7 @@ const STAGES: Stage[] = [
     key: "characters",
     number: 2,
     title: "Casting Studio",
-    blurb: "Photo or description Ã¢ÂÂ consistent screen-ready actor",
+    blurb: "Photo or description → consistent screen-ready actor",
     icon: Users,
     hrefFor: (id) => `/projects/${id}/casting-board`,
     isDone: (s) => s.characterCount >= 1,
@@ -198,7 +198,7 @@ export function ProjectJourneyNav({
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                Stage {currentStage.number} of {STAGES.length} ÃÂ· {completedCount} complete
+                Stage {currentStage.number} of {STAGES.length} · {completedCount} complete
               </span>
               <span>{percent}%</span>
             </div>
