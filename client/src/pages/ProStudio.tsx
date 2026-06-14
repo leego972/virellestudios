@@ -370,8 +370,8 @@ function RenderHistoryTab() {
       </div>
 
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Top Cost Drivers</CardTitle></CardHeader>
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Top Cost Drivers</CardTitle></CardHeader>
+        <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="space-y-1.5">
             {(summary.data?.byAction || []).slice(0, 12).map(a => (
               <div key={a.action} className="flex items-center justify-between text-xs border-b py-1.5">
@@ -384,8 +384,8 @@ function RenderHistoryTab() {
       </Card>
 
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Recent Render Activity</CardTitle></CardHeader>
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Recent Render Activity</CardTitle></CardHeader>
+        <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="space-y-1 max-h-[60vh] overflow-y-auto">
             {(list.data || []).map(r => (
               <div key={r.id} className="flex items-center justify-between text-xs py-1.5 border-b">

@@ -347,7 +347,7 @@ pre{white-space:pre-wrap;font:inherit}
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Users className="h-4 w-4" /> Day-out-of-days
             </CardTitle>
-            <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
+            <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full text-xs">

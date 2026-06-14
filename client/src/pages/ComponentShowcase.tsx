@@ -996,7 +996,7 @@ export default function ComponentsShowcase() {
                   </CollapsibleTrigger>
                 </CardHeader>
                 <CollapsibleContent>
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+                  <CardContent className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
                     <div className="space-y-2">
                       <div className="rounded-md border px-4 py-3 font-mono text-sm">
                         @radix-ui/primitives
