@@ -34,7 +34,7 @@ interface Props {
 }
 
 /**
- * v6.63 â Strip board: classic film-production scheduling view. Each shoot
+ * v6.63 — Strip board: classic film-production scheduling view. Each shoot
  * day is a column with its scenes stacked as colored "strips" (color by
  * INT/EXT). Unscheduled scenes sit in a sidebar; click arrows to assign /
  * unassign / reorder. (Drag-drop is intentionally avoided to keep things
@@ -78,7 +78,7 @@ export default function StripBoard({ projectId, scenes, days, locations = [] }: 
       {/* Unscheduled column */}
       <div className="bg-[#07070e] border border-[rgba(255,255,255,0.07)] rounded-lg p-3 h-fit lg:max-h-[70vh] lg:overflow-auto">
         <div className="text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-2">
-          Unscheduled Â· {unscheduled.length}
+          Unscheduled · {unscheduled.length}
         </div>
         {unscheduled.length === 0 ? (
           <div className="text-xs text-zinc-500 italic py-2">All scenes scheduled.</div>
@@ -91,7 +91,7 @@ export default function StripBoard({ projectId, scenes, days, locations = [] }: 
                     <div className="font-mono text-zinc-300">#{s.sceneNumber || s.id}</div>
                     <div className="text-zinc-100 truncate">{s.title || s.description?.slice(0, 60) || "Untitled"}</div>
                     <div className="text-[10px] text-zinc-400 mt-0.5">
-                      {s.intExt || "â"} Â· {s.timeOfDay || "â"}
+                      {s.intExt || "—"} · {s.timeOfDay || "—"}
                     </div>
                   </div>
                   {days.length > 0 && (
@@ -103,7 +103,7 @@ export default function StripBoard({ projectId, scenes, days, locations = [] }: 
                       }}
                       className="bg-[rgba(255,255,255,0.02)] border border-zinc-700 rounded text-[10px] px-1 py-0.5"
                     >
-                      <option value="">â Dayâ¦</option>
+                      <option value="">→ Day…</option>
                       {days.map((d) => (
                         <option key={d.id} value={d.id}>Day {d.dayNumber}</option>
                       ))}
@@ -151,7 +151,7 @@ export default function StripBoard({ projectId, scenes, days, locations = [] }: 
                               <div className="font-mono text-zinc-300">#{s.sceneNumber || s.id}</div>
                               <div className="text-zinc-100 truncate">{s.title || s.description?.slice(0, 60) || "Untitled"}</div>
                               <div className="text-[10px] text-zinc-400 mt-0.5">
-                                {s.intExt || "â"} Â· {s.timeOfDay || "â"}
+                                {s.intExt || "—"} · {s.timeOfDay || "—"}
                               </div>
                             </div>
                             <div className="flex flex-col gap-0.5">
