@@ -1156,9 +1156,9 @@ export default function ComponentsShowcase() {
                     </HoverCardTrigger>
                     <HoverCardContent>
                       <div className="space-y-2">
-                        <h4 className="text-sm font-semibold">@nextjs</h4>
+                        <h4 className="text-sm font-semibold gradient-text-gold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ created and maintained by
+                          The React Framework ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ created and maintained by
                           @vercel.
                         </p>
                       </div>

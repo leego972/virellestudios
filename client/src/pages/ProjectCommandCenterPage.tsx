@@ -1,4 +1,4 @@
-// v6.68 Phase 2 — Project Command Center.
+// v6.68 Phase 2 â Project Command Center.
 // Single page where users can see what is missing in their film and what to do
 // next. All data is derived server-side from the existing tables; no
 // expensive AI work is triggered from this view.
@@ -7,7 +7,7 @@ import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import SiteHead from "@/components/SiteHead";
 import ElementsPanel from "@/components/ElementsPanel";
-// v6.74 — Continuity warnings rollup. Sits next to ElementsPanel so users
+// v6.74 â Continuity warnings rollup. Sits next to ElementsPanel so users
 // see what's missing per scene at a glance before spending video credits.
 import ContinuityWarningsPanel from "@/components/ContinuityWarningsPanel";
 
@@ -46,7 +46,7 @@ export default function ProjectCommandCenterPage() {
 
   return (
     <div className="min-h-screen text-zinc-100 px-6 py-8" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title={`Command Center — ${project?.title ?? "Project"}`} />
+      <SiteHead title={`Command Center â ${project?.title ?? "Project"}`} />
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="flex items-end justify-between flex-wrap gap-3">
           <div>
@@ -69,7 +69,7 @@ export default function ProjectCommandCenterPage() {
         </header>
 
         {(projectQ.isLoading || healthQ.isLoading) && (
-          <div className="text-sm text-zinc-500">Loading project health…</div>
+          <div className="text-sm text-zinc-500">Loading project healthâ¦</div>
         )}
 
         {h && (
@@ -189,7 +189,7 @@ export default function ProjectCommandCenterPage() {
                   ok={h.isEpisodic}
                   label={
                     h.isEpisodic
-                      ? "Episodic project — Auto Recap available"
+                      ? "Episodic project â Auto Recap available"
                       : "Standalone project (Auto Recap is for episodic only)"
                   }
                 />
@@ -199,53 +199,53 @@ export default function ProjectCommandCenterPage() {
                       href={`/projects/${projectId}/auto-recap`}
                       className="text-xs underline text-zinc-300 hover:text-white"
                     >
-                      Open Auto Recap →
+                      Open Auto Recap â
                     </Link>
                   </div>
                 )}
               </Card>
             </div>
-            {/* v6.69 — Production Elements + Script Breakdown shortcuts. */}
+            {/* v6.69 â Production Elements + Script Breakdown shortcuts. */}
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
                 <ElementsPanel projectId={projectId} />
               </div>
               <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5 flex flex-col">
-                <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">Quick actions</h2>
+                <h2 className="text-sm uppercase tracking-wider mb-3 gradient-text-gold">Quick actions</h2>
                 <Link
                   href={`/projects/${projectId}/script-breakdown`}
                   className="text-sm text-amber-300 hover:underline mb-2"
                 >
-                  Run script-to-scene breakdown →
+                  Run script-to-scene breakdown â
                 </Link>
                 <Link
                   href={`/projects/${projectId}/pitch-deck`}
                   className="text-sm text-amber-300 hover:underline mb-2"
                 >
-                  Open pitch deck →
+                  Open pitch deck â
                 </Link>
                 <Link
                   href={`/projects/${projectId}/brands`}
                   className="text-sm text-amber-300 hover:underline mb-2"
                 >
-                  Manage allowed brands →
+                  Manage allowed brands â
                 </Link>
                 <Link
                   href={`/projects/${projectId}/wardrobe`}
                   className="text-sm text-amber-300 hover:underline mb-2"
                 >
-                  Designer Wardrobe (costumes, fashion, props) →
+                  Designer Wardrobe (costumes, fashion, props) â
                 </Link>
                 <Link
                   href={`/awaiting-review`}
                   className="text-sm text-amber-300 hover:underline"
                 >
-                  Awaiting your review →
+                  Awaiting your review â
                 </Link>
               </div>
             </div>
-            {/* v6.74 Phase 4 — Continuity warnings panel. Sits BELOW the
-                Elements panel so the order is: what's there → what's missing.
+            {/* v6.74 Phase 4 â Continuity warnings panel. Sits BELOW the
+                Elements panel so the order is: what's there â what's missing.
                 The panel is a pure read; no expensive work is triggered. */}
             <div className="mt-4">
               <ContinuityWarningsPanel projectId={projectId} />
@@ -260,7 +260,7 @@ export default function ProjectCommandCenterPage() {
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5">
-      <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3 gradient-text-gold">{title}</h2>
+      <h2 className="text-sm uppercase tracking-wider mb-3 gradient-text-gold">{title}</h2>
       <div className="space-y-1.5">{children}</div>
     </section>
   );

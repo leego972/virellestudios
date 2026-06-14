@@ -5,7 +5,7 @@ import { Film, Layers, Play, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
- * Collections — Public page for a creator's film collection/slate.
+ * Collections â Public page for a creator's film collection/slate.
  * Route: /collections/:slug
  */
 export default function Collections() {
@@ -29,27 +29,27 @@ export default function Collections() {
 
   useEffect(() => {
     if (!collection) return;
-    document.title = `${collection.title} — VirElle Studios`;
+    document.title = `${collection.title} â VirElle Studios`;
     const setMeta = (name: string, content: string, prop = false) => {
       const attr = prop ? "property" : "name";
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
       if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
       el.setAttribute("content", content);
     };
-    setMeta("description", collection.description || `${collection.title} — a film collection on VirElle Studios`);
-    setMeta("og:title", `${collection.title} — VirElle Studios`, true);
-    setMeta("og:description", collection.description || `${collection.title} — a film collection on VirElle Studios`, true);
+    setMeta("description", collection.description || `${collection.title} â a film collection on VirElle Studios`);
+    setMeta("og:title", `${collection.title} â VirElle Studios`, true);
+    setMeta("og:description", collection.description || `${collection.title} â a film collection on VirElle Studios`, true);
     if (collection.coverImageUrl) setMeta("og:image", collection.coverImageUrl, true);
     setMeta("og:url", `${window.location.origin}/collections/${slug}`, true);
     setMeta("og:type", "website", true);
     setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", `${collection.title} — VirElle Studios`);
+    setMeta("twitter:title", `${collection.title} â VirElle Studios`);
   }, [collection, slug]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-neutral-400 text-sm animate-pulse">Loading collection…</div>
+        <div className="text-neutral-400 text-sm animate-pulse">Loading collectionâ¦</div>
       </div>
     );
   }
@@ -161,7 +161,7 @@ export default function Collections() {
                       </div>
                     </div>
                     <div className="p-3">
-                      <h3 className="text-sm font-semibold truncate">{item.filmTitle}</h3>
+                      <h3 className="text-sm font-semibold truncate gradient-text-gold">{item.filmTitle}</h3>
                     </div>
                   </div>
                 </Link>
@@ -174,7 +174,7 @@ export default function Collections() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-neutral-800/60 px-4 py-6 mt-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> — AI Cinema Platform</span>
+          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> â AI Cinema Platform</span>
           <div className="flex items-center gap-4">
             <Link href="/showcase" className="hover:text-neutral-300 transition-colors">Showcase</Link>
             <Link href="/privacy" className="hover:text-neutral-300 transition-colors">Privacy</Link>

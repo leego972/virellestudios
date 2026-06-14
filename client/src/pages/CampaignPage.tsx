@@ -225,7 +225,7 @@ import { useRoute, useLocation } from "wouter";
               {/* Video */}
               {campaign.videoUrl && (
                 <div>
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Pitch Video</h3>
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">Pitch Video</h3>
                   <div className="aspect-video rounded-xl overflow-hidden bg-black/40">
                     <iframe src={campaign.videoUrl} className="w-full h-full" allowFullScreen title="Campaign pitch video" />
                   </div>
@@ -233,12 +233,12 @@ import { useRoute, useLocation } from "wouter";
               )}
             </div>
 
-            {/* Sidebar â Rewards + Back */}
+            {/* Sidebar Ã¢ÂÂ Rewards + Back */}
             <div className="space-y-4">
               {/* Reward tiers */}
               {rewards.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Choose a Reward</h3>
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider gradient-text-gold">Choose a Reward</h3>
                   {rewards.map((reward) => {
                     const isFull = reward.limitCount !== null && reward.claimedCount >= reward.limitCount;
                     const isSelected = selectedReward === reward.id;
@@ -296,20 +296,20 @@ import { useRoute, useLocation } from "wouter";
                       onClick={handleBack}
                     >
                       {backing ? (
-                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />Processingâ¦</span>
+                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃ¢ÂÂ¦</span>
                       ) : (
                         <span className="flex items-center gap-2"><Heart className="w-4 h-4" />Back this project</span>
                       )}
                     </Button>
                   ) : (
                     <Button className="w-full" variant="outline" disabled>
-                      {campaign.status === "funded" ? "ð Funded â Campaign Closed" : "Campaign Ended"}
+                      {campaign.status === "funded" ? "Ã°ÂÂÂ Funded Ã¢ÂÂ Campaign Closed" : "Campaign Ended"}
                     </Button>
                   )}
 
                   {isActive && (
                     <p className="text-xs text-center text-muted-foreground">
-                      Virelle charges a 7% platform fee Â· Powered by Stripe
+                      Virelle charges a 7% platform fee ÃÂ· Powered by Stripe
                     </p>
                   )}
                 </CardContent>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * CreatorProfile — Public page for a Virelle Studios creator or studio.
+ * CreatorProfile â Public page for a Virelle Studios creator or studio.
  * Route: /creators/:slug
  */
 export default function CreatorProfile() {
@@ -31,7 +31,7 @@ export default function CreatorProfile() {
   // Set OG meta tags
   useEffect(() => {
     if (!profile) return;
-    document.title = `${profile.displayName} — VirElle Studios`;
+    document.title = `${profile.displayName} â VirElle Studios`;
     const setMeta = (name: string, content: string, prop = false) => {
       const attr = prop ? "property" : "name";
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -39,20 +39,20 @@ export default function CreatorProfile() {
       el.setAttribute("content", content);
     };
     setMeta("description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`);
-    setMeta("og:title", `${profile.displayName} — VirElle Studios`, true);
+    setMeta("og:title", `${profile.displayName} â VirElle Studios`, true);
     setMeta("og:description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`, true);
     if (profile.avatarUrl) setMeta("og:image", profile.avatarUrl, true);
     setMeta("og:url", `${window.location.origin}/creators/${slug}`, true);
     setMeta("og:type", "profile", true);
     setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", `${profile.displayName} — VirElle Studios`);
+    setMeta("twitter:title", `${profile.displayName} â VirElle Studios`);
     setMeta("twitter:description", profile.bio || `${profile.displayName}'s creator profile on VirElle Studios`);
   }, [profile, slug]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-neutral-400 text-sm animate-pulse">Loading profile…</div>
+        <div className="text-neutral-400 text-sm animate-pulse">Loading profileâ¦</div>
       </div>
     );
   }
@@ -219,7 +219,7 @@ export default function CreatorProfile() {
                     </div>
                     {/* Info */}
                     <div className="p-3">
-                      <h3 className="text-sm font-semibold truncate">{film.title}</h3>
+                      <h3 className="text-sm font-semibold truncate gradient-text-gold">{film.title}</h3>
                       {film.description && (
                         <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{film.description}</p>
                       )}
@@ -245,7 +245,7 @@ export default function CreatorProfile() {
               {collections.map((col: any) => (
                 <Link key={col.id} href={`/collections/${col.slug}`}>
                   <div className="group rounded-lg overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-yellow-600/50 transition-all cursor-pointer p-4">
-                    <h3 className="text-sm font-semibold mb-1">{col.title}</h3>
+                    <h3 className="text-sm font-semibold mb-1 gradient-text-gold">{col.title}</h3>
                     {col.description && (
                       <p className="text-xs text-neutral-400 line-clamp-2">{col.description}</p>
                     )}
@@ -264,7 +264,7 @@ export default function CreatorProfile() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-neutral-800/60 px-4 py-6 mt-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> — AI Cinema Platform</span>
+          <span>Powered by <span style={{ color: "#d4af37" }}>VirElle Studios</span> â AI Cinema Platform</span>
           <div className="flex items-center gap-4">
             <Link href="/showcase" className="hover:text-neutral-300 transition-colors">Showcase</Link>
             <Link href="/privacy" className="hover:text-neutral-300 transition-colors">Privacy</Link>

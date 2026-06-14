@@ -91,7 +91,7 @@ export default function Collaboration() {
       setInviteEmail("");
       toast.success("Invitation created");
     },
-    onError: () => toast.error("We couldn't send that invite ÃÂ¢ÃÂÃÂ check the email address and try again."),
+    onError: () => toast.error("We couldn't send that invite ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ check the email address and try again."),
   });
 
   const updateRoleMutation = trpc.collaboration.updateRole.useMutation({
@@ -248,7 +248,7 @@ export default function Collaboration() {
         {/* Active Members */}
         {activeMembers.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-medium mb-3 flex items-center gap-2 gradient-text-gold">
               <CheckCircle className="h-4 w-4 text-green-500" />
               Active Team Members ({activeMembers.length})
             </h3>
@@ -313,7 +313,7 @@ export default function Collaboration() {
         {/* Pending Invites */}
         {pendingInvites.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-medium mb-3 flex items-center gap-2 gradient-text-gold">
               <Clock className="h-4 w-4 text-yellow-500" />
               Pending Invitations ({pendingInvites.length})
             </h3>
@@ -377,7 +377,7 @@ export default function Collaboration() {
         {/* Declined */}
         {declinedInvites.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-medium mb-3 flex items-center gap-2 gradient-text-gold">
               <XCircle className="h-4 w-4 text-red-500" />
               Declined ({declinedInvites.length})
             </h3>
@@ -460,10 +460,10 @@ export default function Collaboration() {
               <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Viewer ÃÂ¢ÃÂÃÂ View-only access</SelectItem>
-                  <SelectItem value="editor">Editor ÃÂ¢ÃÂÃÂ Edit scenes & scripts</SelectItem>
-                  <SelectItem value="producer">Producer ÃÂ¢ÃÂÃÂ Manage production</SelectItem>
-                  <SelectItem value="director">Director ÃÂ¢ÃÂÃÂ Full creative control</SelectItem>
+                  <SelectItem value="viewer">Viewer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ View-only access</SelectItem>
+                  <SelectItem value="editor">Editor ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Edit scenes & scripts</SelectItem>
+                  <SelectItem value="producer">Producer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Manage production</SelectItem>
+                  <SelectItem value="director">Director ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Full creative control</SelectItem>
                 </SelectContent>
               </Select>
             </div>

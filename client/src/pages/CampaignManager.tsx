@@ -455,14 +455,14 @@ export default function CampaignManager() {
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-medium text-sm truncate">{campaign.name}</h3>
+                      <h3 className="font-medium text-sm truncate gradient-text-gold">{campaign.name}</h3>
                       <StatusBadge status={campaign.status} />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
+                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.schedule}
+                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.schedule}
                     </p>
                   </button>
                 ))}
@@ -477,7 +477,7 @@ export default function CampaignManager() {
                         <div>
                           <CardTitle className="gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
-                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
+                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2 flex-wrap">
@@ -547,7 +547,7 @@ export default function CampaignManager() {
 
                       {/* Platforms */}
                       <div>
-                        <h4 className="text-sm font-medium mb-2">Target Platforms</h4>
+                        <h4 className="text-sm font-medium mb-2 gradient-text-gold">Target Platforms</h4>
                         <div className="flex flex-wrap gap-2">
                           {selectedCampaign.platforms.map((pId: string) => {
                             const p = platforms.find((pl: any) => pl.id === pId);
@@ -564,7 +564,7 @@ export default function CampaignManager() {
                       {/* Generated Content */}
                       {(selectedCampaign.generatedContent || []).length > 0 && (
                         <div>
-                          <h4 className="text-sm font-medium mb-2">Generated Content ({(selectedCampaign.generatedContent || []).length})</h4>
+                          <h4 className="text-sm font-medium mb-2 gradient-text-gold">Generated Content ({(selectedCampaign.generatedContent || []).length})</h4>
                           <div className="space-y-3">
                             {(selectedCampaign.generatedContent || []).map((content: any, idx: number) => {
                               const p = platforms.find((pl: any) => pl.id === content.platformId);
@@ -622,7 +622,7 @@ export default function CampaignManager() {
                       {/* Post History */}
                       {(selectedCampaign.postHistory || []).length > 0 && (
                         <div>
-                          <h4 className="text-sm font-medium mb-2">Post History</h4>
+                          <h4 className="text-sm font-medium mb-2 gradient-text-gold">Post History</h4>
                           <div className="space-y-2">
                             {(selectedCampaign.postHistory || []).map((post: any, idx: number) => (
                               <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
@@ -672,7 +672,7 @@ export default function CampaignManager() {
                 Quick Content Generator
               </CardTitle>
               <CardDescription>
-                Generate ad copy for a single platform instantly ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no campaign needed
+                Generate ad copy for a single platform instantly ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no campaign needed
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
@@ -863,7 +863,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.platformBreakdown || Object.entries(analytics?.byPlatform || {})).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -897,7 +897,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.contentTypeBreakdown || []).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -932,7 +932,7 @@ export default function CampaignManager() {
                   {((analytics as any)?.recentActivity || analytics?.rows || []).length === 0 ? (
                     <div className="text-center py-8">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ start posting to see your history here</p>
+                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ start posting to see your history here</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -942,7 +942,7 @@ export default function CampaignManager() {
                             <StatusBadge status={activity.status} />
                             <div>
                               <p className="text-sm font-medium">{activity.campaign}</p>
-                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
+                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
                             </div>
                           </div>
                           <span className="text-xs text-muted-foreground">
@@ -968,7 +968,7 @@ export default function CampaignManager() {
                     {[
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
-                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
+                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
                       { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },
@@ -1004,7 +1004,7 @@ export default function CampaignManager() {
                     <Card key={p.id} className="overflow-hidden hover:border-primary/30 transition-colors glass-card shadow-lg shadow-amber-500/5">
                       <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">{p.name}</h4>
+                          <h4 className="font-medium text-sm gradient-text-gold">{p.name}</h4>
                           <Badge variant="outline" className="text-[10px]">{p.type}</Badge>
                         </div>
                         <p className="text-xs text-muted-foreground">{p.description}</p>
