@@ -617,7 +617,6 @@ export default function Movies() {
   );
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="space-y-4 sm:space-y-6 px-4 py-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1027,7 +1026,6 @@ export default function Movies() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
-  </div>
   </div>
   );
 }

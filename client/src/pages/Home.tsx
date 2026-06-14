@@ -672,8 +672,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 </button>
               ))}
             </div>
-          </div>
-        </div>
+          
+        
 
         {/* Delete confirm */}
         <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
@@ -702,8 +702,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
-                    </div>
+      
+                    
     );
   }
   

@@ -27,7 +27,6 @@ export default function ProStudio() {
   if (!projectId) return <div className="p-8 text-sm text-muted-foreground">Invalid project.</div>;
 
   return (
-    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="max-w-6xl mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
         <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
@@ -406,7 +405,6 @@ function RenderHistoryTab() {
         </CardContent>
       </Card>
         </div>
-  </div>
   </div>
   );
 }

@@ -96,7 +96,6 @@ export default function PitchLab() {
   }
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="container mx-auto p-4 max-w-6xl space-y-6">
       <div className="flex items-center gap-3">
         <Link href={`/projects/${projectId}`}>
@@ -197,6 +196,5 @@ export default function PitchLab() {
       </Tabs>
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={1} />}
       </div>
-  </div>
   );
 }

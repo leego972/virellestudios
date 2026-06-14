@@ -356,7 +356,6 @@ export default function Characters() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-6xl mx-auto space-y-6 py-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -1399,7 +1398,6 @@ export default function Characters() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
-  </div>
   </div>
   );
 }

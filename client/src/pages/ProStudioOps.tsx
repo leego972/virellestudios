@@ -135,7 +135,6 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
   const burnColor = burn == null ? "text-muted-foreground" : burn > 90 ? "text-rose-400" : burn > 70 ? "text-amber-400" : "text-emerald-400";
   const readyColor = d.readiness > 80 ? "text-emerald-400" : d.readiness > 50 ? "text-amber-400" : "text-rose-400";
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-7xl mx-auto space-y-4 px-4 py-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card><CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
@@ -970,6 +969,5 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
         </CardContent>
       </Card>
         </div>
-  </div>
   );
 }

@@ -1472,7 +1472,6 @@ export default function FundingDirectory() {
   const hasFilters = search || selectedCountry !== "all" || selectedType !== "all";
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-6xl mx-auto space-y-6 py-6 px-4">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -1602,7 +1601,6 @@ export default function FundingDirectory() {
         />
       )}
         </div>
-  </div>
   </div>
   );
 }

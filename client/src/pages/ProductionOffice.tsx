@@ -235,7 +235,6 @@ pre{white-space:pre-wrap;font:inherit}
   }
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="container max-w-7xl py-6 space-y-6">
       <div className="flex items-center justify-between">
         <Link href={`/projects/${projectId}`}>
@@ -690,6 +689,5 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
         </div>
       </CardContent>
     </Card>
-  </div>
   );
 }

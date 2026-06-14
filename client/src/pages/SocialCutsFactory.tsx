@@ -165,7 +165,6 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
   }
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="container max-w-6xl py-6 space-y-6">
       <div className="flex items-center justify-between">
         <Link href={`/projects/${projectId}`}>
@@ -273,6 +272,5 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       )}
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
       </div>
-  </div>
   );
 }

@@ -87,7 +87,6 @@ function StatCard({ label, value, icon, color = "text-blue-400", trend }: {
   label: string; value: string | number; icon: React.ReactNode; color?: string; trend?: string;
 }) {
   return (
-    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">

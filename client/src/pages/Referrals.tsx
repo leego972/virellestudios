@@ -396,8 +396,8 @@ export default function Referrals() {
       )}
 
     </div>
-                </div>
-  </div>
-  </div>
+                
+  
+  
   );
 }

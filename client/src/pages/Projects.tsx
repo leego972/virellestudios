@@ -130,7 +130,6 @@ export default function Projects() {
   }, [projects]);
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
       <SiteHead title="Projects" description="Manage all your AI film productions in one place ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -475,6 +474,5 @@ export default function Projects() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
-  </div>
   );
 }

@@ -31,7 +31,6 @@ export default function FundingProMatch() {
   const activeId = projectId ?? firstId ?? null;
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="container max-w-7xl mx-auto p-4 space-y-4">
       <SiteHead title="Funding Ã¢ÂÂ Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
       <div className="flex items-center gap-3">
@@ -282,6 +281,5 @@ function AutofillTab({ projectId }: { projectId: number }) {
         )}
       </CardContent>
     </Card>
-  </div>
   );
 }

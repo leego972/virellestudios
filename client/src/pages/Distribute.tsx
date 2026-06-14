@@ -209,7 +209,6 @@ export default function Distribute() {
   }
 
   return (
-    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
       <SiteHead title="Distribute" description="Promote, package and ship your AI film Ã¢ÂÂ promo packs, festival submissions, and one-click distribution." />
       {/* Header */}
@@ -671,7 +670,6 @@ export default function Distribute() {
         </TabsContent>
       </Tabs>
         </div>
-  </div>
   </div>
   );
 }

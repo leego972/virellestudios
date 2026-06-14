@@ -162,7 +162,6 @@ export default function DialogueEditor() {
   const conversationView = dialogueList.sort((a, b) => a.orderIndex - b.orderIndex);
 
   return (
-    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Header */}
       <div className="border-b sticky top-0 z-20" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
@@ -334,7 +333,6 @@ export default function DialogueEditor() {
             </Card>
           </div>
         </div>
-      </div>
 
       {/* Add Dialogue Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
