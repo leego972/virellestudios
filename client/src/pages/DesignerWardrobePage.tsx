@@ -490,7 +490,7 @@ export default function DesignerWardrobePage() {
     const Icon = meta?.icon ?? Package;
     return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card key={it.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 overflow-hidden flex flex-col glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card key={it.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 overflow-hidden flex flex-col glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <div className="aspect-[4/5] bg-zinc-950 relative overflow-hidden">
           {it.primaryImageUrl ? (
             <img
@@ -650,7 +650,7 @@ export default function DesignerWardrobePage() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="bg-zinc-900/60 border border-zinc-800">
+          <TabsList className="bg-zinc-900/60 border border-amber-500/20">
             <TabsTrigger value="browse" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               <Eye className="w-4 h-4 mr-1" /> Browse Library
             </TabsTrigger>
@@ -675,7 +675,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
                   browseFilter === "all"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-zinc-800 hover:border-amber-700/60"
+                    : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 All
@@ -691,7 +691,7 @@ export default function DesignerWardrobePage() {
                     className={`px-3 py-1.5 rounded-full text-xs border inline-flex items-center gap-1 transition-colors ${
                       active
                         ? "bg-amber-500 text-black border-amber-500"
-                        : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-zinc-800 hover:border-amber-700/60"
+                        : "bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
                     }`}
                   >
                     <Icon className="w-3 h-3" />
@@ -704,7 +704,7 @@ export default function DesignerWardrobePage() {
             {publicItemsQ.isLoading ? (
               renderItemSkeletons(8)
             ) : browseItems.length === 0 ? (
-              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Shirt className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1 gradient-text-gold">Nothing in this category yet</h3>
@@ -737,7 +737,7 @@ export default function DesignerWardrobePage() {
             {myItemsQ.isLoading ? (
               renderItemSkeletons(4)
             ) : myItems.length === 0 ? (
-              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Package className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1 gradient-text-gold">Your wardrobe is empty</h3>
@@ -789,7 +789,7 @@ export default function DesignerWardrobePage() {
                 <Skeleton className="h-40 bg-zinc-900" />
               </div>
             ) : myCollections.length === 0 ? (
-              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Folder className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                   <h3 className="text-lg font-medium mb-1 gradient-text-gold">No collections yet</h3>
@@ -802,7 +802,7 @@ export default function DesignerWardrobePage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {myCollections.map((c: any) => (
-                  <Card key={c.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                  <Card key={c.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className="aspect-[16/9] bg-zinc-950 relative overflow-hidden">
                       {c.coverImageUrl ? (
                         <img src={c.coverImageUrl} alt={c.name} className="w-full h-full object-cover" loading="lazy" />
@@ -835,7 +835,7 @@ export default function DesignerWardrobePage() {
               {projectAssignmentsQ.isLoading ? (
                 <Skeleton className="h-32 bg-zinc-900" />
               ) : (projectAssignmentsQ.data ?? []).length === 0 ? (
-                <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <Card className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <Link2 className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
                     <h3 className="text-lg font-medium mb-1 gradient-text-gold">No wardrobe attached yet</h3>
@@ -860,7 +860,7 @@ export default function DesignerWardrobePage() {
                       ? (projectScenesQ.data?.find((s: any) => s.id === a.sceneId))
                       : null;
                     return (
-                      <Card key={a.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                      <Card key={a.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                         <CardContent className="p-3 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                           <div className="w-14 h-14 rounded bg-zinc-950 flex items-center justify-center overflow-hidden flex-shrink-0">
                             {item?.primaryImageUrl ? (
@@ -910,7 +910,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Profile dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">{profile ? "Edit designer profile" : "Set up your designer profile"}</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -925,7 +925,7 @@ export default function DesignerWardrobePage() {
                 value={profileForm.brandName}
                 onChange={(e) => setProfileForm((f) => ({ ...f, brandName: e.target.value }))}
                 placeholder="e.g. Maison Aurora, Atelier 12, Costume Hall"
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -935,7 +935,7 @@ export default function DesignerWardrobePage() {
                   value={profileForm.displayName}
                   onChange={(e) => setProfileForm((f) => ({ ...f, displayName: e.target.value }))}
                   placeholder="optional"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -944,10 +944,10 @@ export default function DesignerWardrobePage() {
                   value={profileForm.profileType}
                   onValueChange={(v) => setProfileForm((f) => ({ ...f, profileType: v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     {PROFILE_TYPES.map((t) => (
                       <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                     ))}
@@ -961,7 +961,7 @@ export default function DesignerWardrobePage() {
                 value={profileForm.bio}
                 onChange={(e) => setProfileForm((f) => ({ ...f, bio: e.target.value }))}
                 placeholder="What you make, who you dress, where you're based"
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[70px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[70px]"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -971,7 +971,7 @@ export default function DesignerWardrobePage() {
                   value={profileForm.website}
                   onChange={(e) => setProfileForm((f) => ({ ...f, website: e.target.value }))}
                   placeholder="https://"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -980,7 +980,7 @@ export default function DesignerWardrobePage() {
                   value={profileForm.instagram}
                   onChange={(e) => setProfileForm((f) => ({ ...f, instagram: e.target.value }))}
                   placeholder="@handle"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
             </div>
@@ -991,7 +991,7 @@ export default function DesignerWardrobePage() {
                   value={profileForm.contactEmail}
                   onChange={(e) => setProfileForm((f) => ({ ...f, contactEmail: e.target.value }))}
                   placeholder="hello@studio.com"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1000,7 +1000,7 @@ export default function DesignerWardrobePage() {
                   value={profileForm.logoUrl}
                   onChange={(e) => setProfileForm((f) => ({ ...f, logoUrl: e.target.value }))}
                   placeholder="https://"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
             </div>
@@ -1010,10 +1010,10 @@ export default function DesignerWardrobePage() {
                 value={profileForm.visibility}
                 onValueChange={(v) => setProfileForm((f) => ({ ...f, visibility: v as any }))}
               >
-                <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                   <SelectItem value="public">Public</SelectItem>
                   <SelectItem value="unlisted">Unlisted</SelectItem>
                   <SelectItem value="private">Private</SelectItem>
@@ -1036,7 +1036,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Collection dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={collectionOpen} onOpenChange={setCollectionOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">New collection</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1051,7 +1051,7 @@ export default function DesignerWardrobePage() {
                 value={collectionForm.name}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="e.g. SS27, The Lighthouse ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Costumes"
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
             <div>
@@ -1059,7 +1059,7 @@ export default function DesignerWardrobePage() {
               <Textarea
                 value={collectionForm.description}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, description: e.target.value }))}
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[60px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[60px]"
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -1069,10 +1069,10 @@ export default function DesignerWardrobePage() {
                   value={collectionForm.collectionType}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, collectionType: v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     {COLLECTION_TYPES.map((t) => (
                       <SelectItem key={t} value={t}>{t.replace(/_/g, " ")}</SelectItem>
                     ))}
@@ -1085,7 +1085,7 @@ export default function DesignerWardrobePage() {
                   value={collectionForm.season}
                   onChange={(e) => setCollectionForm((f) => ({ ...f, season: e.target.value }))}
                   placeholder="SS27"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1095,7 +1095,7 @@ export default function DesignerWardrobePage() {
                   onChange={(e) => setCollectionForm((f) => ({ ...f, year: e.target.value }))}
                   inputMode="numeric"
                   placeholder="2027"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
             </div>
@@ -1105,7 +1105,7 @@ export default function DesignerWardrobePage() {
                 value={collectionForm.styleTags}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, styleTags: e.target.value }))}
                 placeholder="minimalist, baroque, streetwear"
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
             <div>
@@ -1114,7 +1114,7 @@ export default function DesignerWardrobePage() {
                 value={collectionForm.coverImageUrl}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, coverImageUrl: e.target.value }))}
                 placeholder="https://"
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -1124,10 +1124,10 @@ export default function DesignerWardrobePage() {
                   value={collectionForm.visibility}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, visibility: v as any }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     <SelectItem value="public">Public</SelectItem>
                     <SelectItem value="unlisted">Unlisted</SelectItem>
                     <SelectItem value="private">Private</SelectItem>
@@ -1140,10 +1140,10 @@ export default function DesignerWardrobePage() {
                   value={collectionForm.licenseType}
                   onValueChange={(v) => setCollectionForm((f) => ({ ...f, licenseType: v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     {LICENSE_TYPES.map((l) => (
                       <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
                     ))}
@@ -1157,7 +1157,7 @@ export default function DesignerWardrobePage() {
                 value={collectionForm.licenseNotes}
                 onChange={(e) => setCollectionForm((f) => ({ ...f, licenseNotes: e.target.value }))}
                 placeholder="Any usage restrictions productions should respect"
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[50px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[50px]"
               />
             </div>
           </div>
@@ -1176,7 +1176,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Item dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={itemOpen} onOpenChange={setItemOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Add wardrobe item</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1191,7 +1191,7 @@ export default function DesignerWardrobePage() {
                 <Input
                   value={itemForm.name}
                   onChange={(e) => setItemForm((f) => ({ ...f, name: e.target.value }))}
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1200,10 +1200,10 @@ export default function DesignerWardrobePage() {
                   value={itemForm.wardrobeType}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, wardrobeType: v as WardrobeType }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800 max-h-72">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20 max-h-72">
                     {ALL_CATEGORIES.map((c) => (
                       <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
                     ))}
@@ -1218,7 +1218,7 @@ export default function DesignerWardrobePage() {
                   value={itemForm.subcategory}
                   onChange={(e) => setItemForm((f) => ({ ...f, subcategory: e.target.value }))}
                   placeholder="e.g. trench coat, signet ring, silk crepe"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1227,7 +1227,7 @@ export default function DesignerWardrobePage() {
                   value={itemForm.era}
                   onChange={(e) => setItemForm((f) => ({ ...f, era: e.target.value }))}
                   placeholder="1920s, contemporary, far-future"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
             </div>
@@ -1236,7 +1236,7 @@ export default function DesignerWardrobePage() {
               <Textarea
                 value={itemForm.description}
                 onChange={(e) => setItemForm((f) => ({ ...f, description: e.target.value }))}
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[60px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[60px]"
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -1246,7 +1246,7 @@ export default function DesignerWardrobePage() {
                   value={itemForm.colors}
                   onChange={(e) => setItemForm((f) => ({ ...f, colors: e.target.value }))}
                   placeholder="ivory, burgundy"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1255,7 +1255,7 @@ export default function DesignerWardrobePage() {
                   value={itemForm.materials}
                   onChange={(e) => setItemForm((f) => ({ ...f, materials: e.target.value }))}
                   placeholder="silk, leather, brass"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -1264,7 +1264,7 @@ export default function DesignerWardrobePage() {
                   value={itemForm.styleTags}
                   onChange={(e) => setItemForm((f) => ({ ...f, styleTags: e.target.value }))}
                   placeholder="minimalist, baroque"
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
             </div>
@@ -1274,7 +1274,7 @@ export default function DesignerWardrobePage() {
                 value={itemForm.primaryImageUrl}
                 onChange={(e) => setItemForm((f) => ({ ...f, primaryImageUrl: e.target.value }))}
                 placeholder="https://"
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
             <div>
@@ -1283,7 +1283,7 @@ export default function DesignerWardrobePage() {
                 value={itemForm.referencePrompt}
                 onChange={(e) => setItemForm((f) => ({ ...f, referencePrompt: e.target.value }))}
                 placeholder="Concise visual description used when this item is attached to a scene or character."
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[60px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[60px]"
               />
             </div>
 
@@ -1297,7 +1297,7 @@ export default function DesignerWardrobePage() {
                   ["brandPlacementAllowed",   "Brand label may be visible"],
                   ["commercialUseAllowed",    "Commercial production OK"],
                 ] as const).map(([k, label]) => (
-                  <div key={k} className="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded px-3 py-2">
+                  <div key={k} className="flex items-center justify-between bg-zinc-950 border border-amber-500/20 rounded px-3 py-2">
                     <span className="text-xs text-zinc-300">{label}</span>
                     <Switch
                       checked={(itemForm as any)[k]}
@@ -1315,10 +1315,10 @@ export default function DesignerWardrobePage() {
                   value={itemForm.licenseType}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, licenseType: v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     {LICENSE_TYPES.map((l) => (
                       <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
                     ))}
@@ -1331,10 +1331,10 @@ export default function DesignerWardrobePage() {
                   value={itemForm.visibility}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, visibility: v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     {VISIBILITY_OPTIONS.map((v) => (
                       <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
                     ))}
@@ -1350,10 +1350,10 @@ export default function DesignerWardrobePage() {
                   value={itemForm.collectionId || "none"}
                   onValueChange={(v) => setItemForm((f) => ({ ...f, collectionId: v === "none" ? "" : v }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     <SelectItem value="none">ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ None ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</SelectItem>
                     {myCollections.map((c: any) => (
                       <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
@@ -1378,7 +1378,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Attach dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={attachOpen} onOpenChange={setAttachOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Attach to project</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1392,7 +1392,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-2 rounded border text-sm ${
                   attachKind === "character"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-zinc-950 text-zinc-300 border-zinc-800 hover:border-amber-700/60"
+                    : "bg-zinc-950 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 <User className="w-4 h-4 inline mr-1" /> Character
@@ -1402,7 +1402,7 @@ export default function DesignerWardrobePage() {
                 className={`px-3 py-2 rounded border text-sm ${
                   attachKind === "scene"
                     ? "bg-amber-500 text-black border-amber-500"
-                    : "bg-zinc-950 text-zinc-300 border-zinc-800 hover:border-amber-700/60"
+                    : "bg-zinc-950 text-zinc-300 border-amber-500/20 hover:border-amber-700/60"
                 }`}
               >
                 <Sofa className="w-4 h-4 inline mr-1" /> Scene
@@ -1414,10 +1414,10 @@ export default function DesignerWardrobePage() {
                 <div>
                   <Label className="text-zinc-300">Character</Label>
                   <Select value={attachCharId} onValueChange={setAttachCharId}>
-                    <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue placeholder="Pick a character" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                       {(projectCharsQ.data ?? []).map((c: any) => (
                         <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
                       ))}
@@ -1427,10 +1427,10 @@ export default function DesignerWardrobePage() {
                 <div>
                   <Label className="text-zinc-300">Type</Label>
                   <Select value={attachAssignType} onValueChange={setAttachAssignType}>
-                    <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                       <SelectItem value="character_wardrobe">Everyday wardrobe</SelectItem>
                       <SelectItem value="character_costume">Costume (period / special)</SelectItem>
                     </SelectContent>
@@ -1442,10 +1442,10 @@ export default function DesignerWardrobePage() {
                 <div>
                   <Label className="text-zinc-300">Scene</Label>
                   <Select value={attachSceneId} onValueChange={setAttachSceneId}>
-                    <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue placeholder="Pick a scene" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800 max-h-72">
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20 max-h-72">
                       {(projectScenesQ.data ?? []).map((s: any) => (
                         <SelectItem key={s.id} value={String(s.id)}>
                           Scene {s.sceneNumber ?? s.id}{s.title ? ` ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${s.title}` : ""}
@@ -1457,10 +1457,10 @@ export default function DesignerWardrobePage() {
                 <div>
                   <Label className="text-zinc-300">Type</Label>
                   <Select value={attachAssignType} onValueChange={setAttachAssignType}>
-                    <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                       <SelectItem value="scene_set_dressing">Set dressing</SelectItem>
                       <SelectItem value="shopfront_display">Shopfront / boutique display</SelectItem>
                       <SelectItem value="background_extra">Background extra wardrobe</SelectItem>
@@ -1476,10 +1476,10 @@ export default function DesignerWardrobePage() {
             <div>
               <Label className="text-zinc-300">Usage mode</Label>
               <Select value={attachUsage} onValueChange={setAttachUsage}>
-                <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                   <SelectItem value="reference">Reference</SelectItem>
                   <SelectItem value="must_match">Must match exactly</SelectItem>
                   <SelectItem value="inspired_by">Inspired by</SelectItem>
@@ -1497,7 +1497,7 @@ export default function DesignerWardrobePage() {
                 value={attachNotes}
                 onChange={(e) => setAttachNotes(e.target.value)}
                 placeholder="e.g. only in the cafe scene, worn open over the white shirt"
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[60px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[60px]"
               />
             </div>
           </div>

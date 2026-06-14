@@ -125,7 +125,7 @@ export default function BillingSuccess() {
 
         {/* What's next (web only) */}
         {!mobileRedirecting && (
-          <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
+          <div className="border border-amber-500/20 rounded-2xl p-6 text-left space-y-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
             <h2 className="text-sm font-semibold text-amber-400/70 uppercase tracking-wider gradient-text-gold">What's next</h2>
             {isTopUp ? (
               <ul className="space-y-3 text-sm text-zinc-300">
@@ -173,7 +173,7 @@ export default function BillingSuccess() {
             </Button>
             <Button
               variant="outline"
-              className="border-zinc-700 hover:bg-amber-500/10"
+              className="border-amber-500/20 hover:bg-amber-500/10"
               onClick={() => setLocation("/pricing")}
             >
               View Pricing

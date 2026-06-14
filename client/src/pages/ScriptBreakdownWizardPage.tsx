@@ -184,7 +184,7 @@ export default function ScriptBreakdownWizardPage() {
                 ? "border-amber-500 text-amber-300"
                 : step > n
                 ? "border-emerald-700 text-emerald-300"
-                : "border-zinc-800 text-zinc-500"
+                : "border-amber-500/20 text-zinc-500"
             }`}
           >
             Step {n} Ã¢ÂÂ{" "}
@@ -194,7 +194,7 @@ export default function ScriptBreakdownWizardPage() {
       </ol>
 
       {step === 1 && (
-        <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4">
+        <div className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
           <div className="text-sm text-zinc-300 mb-2">
             Paste a script or use the project's saved script. Nothing will be
             written to your project until you approve in step 3.
@@ -213,7 +213,7 @@ export default function ScriptBreakdownWizardPage() {
             onChange={(e) => setScript(e.target.value)}
             placeholder="Paste your screenplay hereÃ¢ÂÂ¦"
             rows={14}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded p-3 text-sm font-mono"
+            className="w-full bg-zinc-950 border border-amber-500/20 rounded p-3 text-sm font-mono"
           />
           <div className="mt-3 flex items-center justify-between">
             <div className="text-xs text-zinc-500">
@@ -251,7 +251,7 @@ export default function ScriptBreakdownWizardPage() {
 
           {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Section 1: Story Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
           {(storyTitle || storyLogline || storyGenre || storyTone || storyThemes.length > 0) && (
-            <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
+            <details className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100">
                 Story
               </summary>
@@ -283,7 +283,7 @@ export default function ScriptBreakdownWizardPage() {
 
           {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Section 2: Characters Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
           {proposedChars.length > 0 && (
-            <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
+            <details className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
                 <span>Characters ÃÂ· {acceptedChars.length} / {proposedChars.length} selected</span>
               </summary>
@@ -320,7 +320,7 @@ export default function ScriptBreakdownWizardPage() {
 
           {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Section 3: Locations Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
           {proposedLocs.length > 0 && (
-            <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
+            <details className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
                 <span>Locations ÃÂ· {acceptedLocs.length} / {proposedLocs.length} selected</span>
               </summary>
@@ -357,7 +357,7 @@ export default function ScriptBreakdownWizardPage() {
 
           {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Section 4: Props Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
           {proposedProps.length > 0 && (
-            <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4" open>
+            <details className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow" open>
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100 flex items-center justify-between">
                 <span>Props ÃÂ· {acceptedProps.length} / {proposedProps.length} selected</span>
               </summary>
@@ -387,7 +387,7 @@ export default function ScriptBreakdownWizardPage() {
           )}
 
           {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Section 5: Scenes Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
-          <details className="bg-zinc-900/60 border border-zinc-800 rounded-lg" open>
+          <details className="bg-zinc-900/60 border border-amber-500/20 rounded-lg" open>
             <summary className="cursor-pointer p-4 text-sm font-semibold text-zinc-100">
               Scenes ÃÂ· {accepted.length} / {proposed.length} selected
             </summary>
@@ -463,7 +463,7 @@ export default function ScriptBreakdownWizardPage() {
               already has scenes; in fresh projects there's nothing to
               replace so we hide the choice entirely. */}
           {existingSceneCount > 0 && (
-            <div className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border border-zinc-800 rounded p-3 space-y-2">
+            <div className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border border-amber-500/20 rounded p-3 space-y-2">
               <div className="text-xs text-zinc-300">
                 This project already has <strong>{existingSceneCount}</strong> scene
                 {existingSceneCount === 1 ? "" : "s"}. How should these be applied?
@@ -598,7 +598,7 @@ export default function ScriptBreakdownWizardPage() {
           </div>
 
           {applyMut.data?.summary && (
-            <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4 space-y-3">
+            <div className="border border-amber-500/20 rounded-lg p-4 space-y-3 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
               <div className="text-sm font-semibold text-zinc-100">Summary</div>
               {(applyMut.data.summary.reusedCharacters.length > 0 ||
                 applyMut.data.summary.newCharacters.length > 0 ||

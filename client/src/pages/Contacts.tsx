@@ -82,24 +82,24 @@ export default function Contacts() {
         </div>
 
         {open && (
-          <Card className="bg-zinc-950 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
-                <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st ADÃÂ¢ÃÂÃÂ¦" className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-amber-500/20" /></div>
+                <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st ADÃÂ¢ÃÂÃÂ¦" className="bg-zinc-900 border-amber-500/20" /></div>
                 <div>
                   <label className="text-xs text-zinc-400">Department</label>
-                  <select value={form.department} onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))} className="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-sm">
+                  <select value={form.department} onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))} className="w-full bg-zinc-900 border border-amber-500/20 rounded px-2 py-1.5 text-sm">
                     <option value="">ÃÂ¢ÃÂÃÂ</option>
                     {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
                 </div>
-                <div><label className="text-xs text-zinc-400">Call time override</label><Input type="time" value={form.callTimeOverride} onChange={(e) => setForm((f) => ({ ...f, callTimeOverride: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
-                <div><label className="text-xs text-zinc-400">Email</label><Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
-                <div><label className="text-xs text-zinc-400">Phone</label><Input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Call time override</label><Input type="time" value={form.callTimeOverride} onChange={(e) => setForm((f) => ({ ...f, callTimeOverride: e.target.value }))} className="bg-zinc-900 border-amber-500/20" /></div>
+                <div><label className="text-xs text-zinc-400">Email</label><Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="bg-zinc-900 border-amber-500/20" /></div>
+                <div><label className="text-xs text-zinc-400">Phone</label><Input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="bg-zinc-900 border-amber-500/20" /></div>
               </div>
-              <div><label className="text-xs text-zinc-400">Notes</label><Textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={2} className="bg-zinc-900 border-zinc-800 text-sm" /></div>
+              <div><label className="text-xs text-zinc-400">Notes</label><Textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={2} className="bg-zinc-900 border-amber-500/20 text-sm" /></div>
               <div className="flex gap-2 pt-1">
                 <Button size="sm" disabled={createMut.isPending || updateMut.isPending} onClick={save} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
                   {(createMut.isPending || updateMut.isPending) && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 text-amber-400" />}
@@ -114,13 +114,13 @@ export default function Contacts() {
         {isLoading ? (
           <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />LoadingÃÂ¢ÃÂÃÂ¦</div>
         ) : (contacts as any[]).length === 0 ? (
-          <Card className="bg-zinc-950 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No contacts yet. Add your first crew member above.</CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {Object.entries(grouped).map(([dept, list]) => (
-              <Card key={dept} className="bg-zinc-950 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card key={dept} className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardTitle className="text-sm uppercase tracking-wide text-amber-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{dept}</CardTitle></CardHeader>
                 <CardContent className="p-0 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <table className="w-full text-sm">
@@ -129,7 +129,7 @@ export default function Contacts() {
                     </thead>
                     <tbody>
                       {list.map((c) => (
-                        <tr key={c.id} className="border-t border-zinc-800 hover:bg-amber-500/10/40">
+                        <tr key={c.id} className="border-t border-amber-500/20 hover:bg-amber-500/10/40">
                           <td className="px-3 py-2 font-medium">{c.name}</td>
                           <td className="px-3 py-2 text-zinc-300">{c.role || "ÃÂ¢ÃÂÃÂ"}</td>
                           <td className="px-3 py-2 font-mono text-xs">{c.callTimeOverride || "ÃÂ¢ÃÂÃÂ"}</td>

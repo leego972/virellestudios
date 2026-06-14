@@ -969,7 +969,7 @@ export default function DirectorCut() {
                         value={selectedScene.localNotes}
                         onChange={(e) => updateScene(selectedIdx!, { localNotes: e.target.value })}
                         placeholder="Add notes for this scene..."
-                        className="text-xs min-h-[80px] bg-zinc-900 border-zinc-700 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                        className="text-xs min-h-[80px] bg-zinc-900 border-amber-500/20 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
 
                     <Separator className="bg-white/10" />
@@ -1058,7 +1058,7 @@ export default function DirectorCut() {
                         value={retakeText}
                         onChange={(e) => setRetakeText(e.target.value)}
                         placeholder="e.g. The lighting is too dark ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ make it golden hour. The character should be running, not walking. Add more crowd in the background..."
-                        className="text-xs min-h-[120px] bg-zinc-900 border-zinc-700 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                        className="text-xs min-h-[120px] bg-zinc-900 border-amber-500/20 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
 
                     <div className="space-y-2">
@@ -1122,7 +1122,7 @@ export default function DirectorCut() {
                         value={selectedScene.transitionType}
                         onValueChange={(v) => updateScene(selectedIdx!, { transitionType: v })}
                       >
-                        <SelectTrigger className="h-8 text-xs bg-zinc-900 border-zinc-700">
+                        <SelectTrigger className="h-8 text-xs bg-zinc-900 border-amber-500/20">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1182,7 +1182,7 @@ export default function DirectorCut() {
                             className={`p-2 rounded text-[10px] text-center border transition-all
                               ${selectedScene.transitionType === opt.value
                                 ? "bg-amber-400/20 border-primary/60 text-amber-400"
-                                : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}
+                                : "bg-zinc-900 border-amber-500/20 text-zinc-400 hover:border-zinc-500"}`}
                             onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}
                           >
                             {opt.label}
@@ -1290,7 +1290,7 @@ export default function DirectorCut() {
                       <Separator className="bg-white/10" />
                       <div>
                         <Label className="text-[11px] text-zinc-500 mb-1.5 block">Director Notes</Label>
-                        <Textarea value={selectedScene.localNotes} onChange={(e) => updateScene(selectedIdx!, { localNotes: e.target.value })} placeholder="Add notes..." className="text-xs min-h-[60px] bg-zinc-900 border-zinc-700 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                        <Textarea value={selectedScene.localNotes} onChange={(e) => updateScene(selectedIdx!, { localNotes: e.target.value })} placeholder="Add notes..." className="text-xs min-h-[60px] bg-zinc-900 border-amber-500/20 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5 hover:border-amber-500/50 hover:text-amber-400" onClick={() => generatePreviewMutation.mutate({ sceneId: selectedScene.id })} disabled={generatePreviewMutation.isPending}>
@@ -1311,7 +1311,7 @@ export default function DirectorCut() {
                   {panelMode === "retake" && (
                     <div className="space-y-3">
                       <p className="text-xs font-semibold text-white flex items-center gap-1.5"><Flag className="w-3 h-3 text-amber-400" /> Request Retake</p>
-                      <Textarea value={retakeText} onChange={(e) => setRetakeText(e.target.value)} placeholder="Describe what needs to change..." className="text-xs min-h-[100px] bg-zinc-900 border-zinc-700 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                      <Textarea value={retakeText} onChange={(e) => setRetakeText(e.target.value)} placeholder="Describe what needs to change..." className="text-xs min-h-[100px] bg-zinc-900 border-amber-500/20 resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                       <Button className="w-full h-8 text-xs gap-1.5 bg-amber-600 hover:bg-amber-500 text-black font-semibold" onClick={submitRetake} disabled={updateSceneMutation.isPending}>
                         <Flag className="w-3 h-3" /> Save Retake
                       </Button>
@@ -1321,7 +1321,7 @@ export default function DirectorCut() {
                     <div className="space-y-3">
                       <p className="text-xs font-semibold text-white flex items-center gap-1.5"><SplitSquareHorizontal className="w-3 h-3 text-amber-400" /> Transition</p>
                       <Select value={selectedScene.transitionType} onValueChange={(v) => updateScene(selectedIdx!, { transitionType: v })}>
-                        <SelectTrigger className="h-8 text-xs bg-zinc-900 border-zinc-700"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-8 text-xs bg-zinc-900 border-amber-500/20"><SelectValue /></SelectTrigger>
                         <SelectContent>{TRANSITION_OPTIONS.map((opt) => (<SelectItem key={opt.value} value={opt.value} className="text-xs">{opt.label}</SelectItem>))}</SelectContent>
                       </Select>
                       <div>
@@ -1333,7 +1333,7 @@ export default function DirectorCut() {
                       </div>
                       <div className="grid grid-cols-3 gap-1.5">
                         {TRANSITION_OPTIONS.map((opt) => (
-                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-amber-400/20 border-primary/60 text-amber-400" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
+                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-amber-400/20 border-primary/60 text-amber-400" : "bg-zinc-900 border-amber-500/20 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
                         ))}
                       </div>
                     </div>

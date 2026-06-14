@@ -1101,7 +1101,7 @@ import { useState } from "react";
             {/* Standard tier */}
             {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "standard").length > 0 && (
               <div>
-                <p className="text-xs text-zinc-400/70 font-semibold uppercase tracking-widest mb-5 text-center">Standard Cast</p>
+                <p className="text-xs text-amber-400/60/70 font-semibold uppercase tracking-widest mb-5 text-center">Standard Cast</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "standard").map((actor) => {
                     const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;

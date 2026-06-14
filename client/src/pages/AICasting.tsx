@@ -819,7 +819,7 @@ function SignatureActorCard({
       onClick={isLocked ? onUnlock : onToggle}
       className={`w-full text-left p-4 rounded-lg border transition-all relative ${
         isLocked
-          ? "border-zinc-700/40 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 opacity-70 hover:opacity-90 hover:border-amber-500/30"
+          ? "border-amber-500/20/40 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 opacity-70 hover:opacity-90 hover:border-amber-500/30"
           : selected
           ? "border-amber-500 bg-amber-500/10"
           : "border-border/40 bg-black/20 hover:border-amber-500/40"
@@ -887,7 +887,7 @@ function UnlockModal({
   const prices = TIER_PRICES[actor.tier] ?? TIER_PRICES.standard;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-zinc-900 border border-zinc-700/60 rounded-xl max-w-md w-full p-6 space-y-5">
+      <div className="border border-amber-500/20/60 rounded-xl max-w-md w-full p-6 space-y-5 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-lg font-bold gradient-text-gold">{actor.name}</h2>
@@ -903,7 +903,7 @@ function UnlockModal({
           <button
             onClick={() => onCheckout("creator")}
             disabled={isLoading}
-            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all group"
+            className="w-full text-left p-3 rounded-lg border border-amber-500/20/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all group"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -916,7 +916,7 @@ function UnlockModal({
           <button
             onClick={() => onCheckout("commercial")}
             disabled={isLoading}
-            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
+            className="w-full text-left p-3 rounded-lg border border-amber-500/20/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -929,7 +929,7 @@ function UnlockModal({
           <button
             onClick={() => onCheckout("episodic")}
             disabled={isLoading}
-            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
+            className="w-full text-left p-3 rounded-lg border border-amber-500/20/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -940,7 +940,7 @@ function UnlockModal({
             </div>
           </button>
         </div>
-        <p className="text-xs text-zinc-600 border-t border-zinc-800 pt-3">
+        <p className="text-xs text-zinc-600 border-t border-amber-500/20 pt-3">
           Provocative scenes yes. Pornography no. Explicit sexual content prohibited.
           Professional cinematic use only. <a href="/terms" className="text-zinc-500 underline">Full terms</a>.
         </p>

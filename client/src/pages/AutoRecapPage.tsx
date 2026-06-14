@@ -157,7 +157,7 @@ export default function AutoRecapPage() {
         )}
 
         {isEpisodic && episodes.length < 2 && (
-          <div className="border border-zinc-700 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 text-sm text-zinc-300">
+          <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 text-sm text-zinc-300">
             You need at least two rendered film-type episodes in this project before you can
             generate a recap. Render the next episode and one previous episode first.
           </div>
@@ -177,7 +177,7 @@ export default function AutoRecapPage() {
                     setTargetMovieId(v);
                     setSourceMovieIds(sourceMovieIds.filter((s) => s !== v));
                   }}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm"
+                  className="w-full bg-zinc-900 border border-amber-500/20 rounded px-3 py-2 text-sm"
                 >
                   <option value="">Pick an episodeÃÂ¢ÃÂÃÂ¦</option>
                   {episodes.map((m) => (
@@ -192,7 +192,7 @@ export default function AutoRecapPage() {
                 <label className="block text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                   Source episodes (recap material)
                 </label>
-                <div className="space-y-1 max-h-56 overflow-auto border border-zinc-800 rounded p-2 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40">
+                <div className="space-y-1 max-h-56 overflow-auto border border-amber-500/20 rounded p-2 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40">
                   {episodes
                     .filter((m) => m.id !== targetMovieId)
                     .map((m) => (
@@ -222,7 +222,7 @@ export default function AutoRecapPage() {
                   <select
                     value={lengthSeconds}
                     onChange={(e) => setLengthSeconds(parseInt(e.target.value, 10) as Length)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm"
+                    className="w-full bg-zinc-900 border border-amber-500/20 rounded px-2 py-1.5 text-sm"
                   >
                     <option value={60}>60s</option>
                     <option value={90}>90s</option>
@@ -236,7 +236,7 @@ export default function AutoRecapPage() {
                   <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value as Style)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm"
+                    className="w-full bg-zinc-900 border border-amber-500/20 rounded px-2 py-1.5 text-sm"
                   >
                     <option value="cinematic">Cinematic</option>
                     <option value="suspenseful">Suspenseful</option>
@@ -252,7 +252,7 @@ export default function AutoRecapPage() {
                   <select
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value as Resolution)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm"
+                    className="w-full bg-zinc-900 border border-amber-500/20 rounded px-2 py-1.5 text-sm"
                   >
                     <option value="720p">720p</option>
                     <option value="1080p">1080p</option>
@@ -302,7 +302,7 @@ export default function AutoRecapPage() {
             </section>
 
             <section className="space-y-4">
-              <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
+              <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
                 <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                   Estimate
                 </div>
@@ -366,7 +366,7 @@ export default function AutoRecapPage() {
               )}
 
               {recapDetail.data && (
-                <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 space-y-3">
+                <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="text-xs uppercase tracking-wider text-amber-400/60">
                       Recap #{recapDetail.data.recap.id}
@@ -531,7 +531,7 @@ export default function AutoRecapPage() {
               )}
 
               {existingRecaps.data && existingRecaps.data.length > 0 && (
-                <div className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
+                <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4">
                   <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                     Earlier recaps for this episode
                   </div>

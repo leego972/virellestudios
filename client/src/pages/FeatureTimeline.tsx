@@ -141,7 +141,7 @@ function SceneCard({
   return (
     <div className={`group border rounded-lg transition-all duration-200 ${
       isExcluded
-        ? "border-zinc-800 bg-zinc-900/30 opacity-60"
+        ? "border-amber-500/20 bg-zinc-900/30 opacity-60"
         : "border-amber-500/20 bg-zinc-900/60 hover:border-zinc-600"
     }`}>
       <div className="flex items-center gap-2 px-3 py-2.5">
@@ -343,7 +343,7 @@ function ActGroupPanel({
         }, 0);
 
         return (
-          <div key={act.id} className="rounded-lg border border-zinc-800 overflow-hidden">
+          <div key={act.id} className="rounded-lg border border-amber-500/20 overflow-hidden">
             {/* Act header */}
             <div
               className="flex items-center justify-between px-3 py-2"
@@ -398,7 +398,7 @@ function ActGroupPanel({
         const unassigned = cutScenes.filter((cs) => !assignedActNums.has(cs.actNumber));
         if (unassigned.length === 0) return null;
         return (
-          <div className="rounded-lg border border-zinc-800/50 overflow-hidden">
+          <div className="rounded-lg border border-amber-500/20/50 overflow-hidden">
             <div className="flex items-center gap-2 px-3 py-2 border-l-2 border-amber-500/20">
               <span className="text-xs font-semibold text-zinc-500">Unassigned</span>
               <Badge variant="outline" className="text-[10px] border-amber-500/20 text-zinc-500">{unassigned.length}</Badge>
@@ -625,7 +625,7 @@ export default function FeatureTimeline() {
   return (
     <div className="min-h-screen text-zinc-100 flex flex-col" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-zinc-950/95 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-amber-500/20 bg-zinc-950/95 backdrop-blur sticky top-0 z-20">
         <div className="container py-3 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => setLocation(`/projects/${projId}`)}>
@@ -682,8 +682,8 @@ export default function FeatureTimeline() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cut list */}
-        <aside className="w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 flex flex-col">
-          <div className="p-3 border-b border-zinc-800">
+        <aside className="w-64 shrink-0 border-r border-amber-500/20 bg-zinc-950 flex flex-col">
+          <div className="p-3 border-b border-amber-500/20">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-amber-400/60">Cuts</p>
           </div>
           <ScrollArea className="flex-1">
@@ -769,7 +769,7 @@ export default function FeatureTimeline() {
           ) : (
             <>
               {/* Cut toolbar */}
-              <div className="border-b border-zinc-800 bg-zinc-950/80 px-4 py-2.5 flex items-center justify-between gap-4 flex-wrap">
+              <div className="border-b border-amber-500/20 bg-zinc-950/80 px-4 py-2.5 flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3">
                   <div>
                     <span className="text-sm font-semibold text-zinc-100">{activeCut?.name || "Loading..."}</span>
@@ -788,7 +788,7 @@ export default function FeatureTimeline() {
 
                 <div className="flex items-center gap-2">
                   {/* Runtime counter */}
-                  <div className="font-mono text-sm text-blue-400 bg-zinc-900 px-3 py-1 rounded border border-zinc-800">
+                  <div className="font-mono text-sm text-blue-400 bg-zinc-900 px-3 py-1 rounded border border-amber-500/20">
                     {formatTimecode(totalDuration)}
                   </div>
                   <span className="text-xs text-zinc-500">{includedScenes.length} scenes</span>
@@ -852,7 +852,7 @@ export default function FeatureTimeline() {
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-                <div className="border-b border-zinc-800 px-4">
+                <div className="border-b border-amber-500/20 px-4">
                   <TabsList className="bg-transparent border-0 h-9 gap-1">
                     <TabsTrigger value="timeline" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <Clapperboard size={12} className="mr-1" /> Timeline
@@ -925,7 +925,7 @@ export default function FeatureTimeline() {
                       </div>
 
                       {actGroupsList.length === 0 ? (
-                        <div className="text-center py-8 border border-dashed border-zinc-800 rounded-lg">
+                        <div className="text-center py-8 border border-dashed border-amber-500/20 rounded-lg">
                           <BarChart3 size={24} className="text-zinc-700 mx-auto mb-2" />
                           <p className="text-sm text-zinc-500">No act structure defined</p>
                           <p className="text-xs text-zinc-600 mt-1">Use AI to generate an act structure based on your scenes.</p>
@@ -937,7 +937,7 @@ export default function FeatureTimeline() {
                             const actDuration = actScenes.reduce((sum, cs) => sum + Math.max(0, (cs.scene?.duration || 0) - cs.trimIn - cs.trimOut), 0);
                             const pct = totalDuration > 0 ? (actDuration / totalDuration) * 100 : 0;
                             return (
-                              <div key={act.id} className="rounded-lg border border-zinc-800 p-3">
+                              <div key={act.id} className="rounded-lg border border-amber-500/20 p-3">
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: act.colorCode || "#3b82f6" }} />
@@ -989,7 +989,7 @@ export default function FeatureTimeline() {
                         </Button>
                       </div>
                       {summary?.continuityRecordsCount === 0 ? (
-                        <div className="text-center py-8 border border-dashed border-zinc-800 rounded-lg">
+                        <div className="text-center py-8 border border-dashed border-amber-500/20 rounded-lg">
                           <Eye size={24} className="text-zinc-700 mx-auto mb-2" />
                           <p className="text-sm text-zinc-500">No continuity records</p>
                           <p className="text-xs text-zinc-600 mt-1">Generate AI continuity records for wardrobe, props, and character states.</p>
@@ -1025,7 +1025,7 @@ export default function FeatureTimeline() {
                               { label: "Music", value: summary.audioPlan.musicBus },
                               { label: "Effects", value: summary.audioPlan.effectsBus },
                             ].map((bus) => (
-                              <div key={bus.label} className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
+                              <div key={bus.label} className="rounded-lg p-3 border border-amber-500/20 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                                 <p className="text-[10px] text-zinc-500 mb-1">{bus.label}</p>
                                 <Progress value={(bus.value || 0) * 100} className="h-1.5 bg-amber-500/20" />
                                 <p className="font-mono text-xs text-zinc-400 mt-1">{((bus.value || 0) * 100).toFixed(0)}%</p>
@@ -1033,14 +1033,14 @@ export default function FeatureTimeline() {
                             ))}
                           </div>
                           {summary.audioPlan.audioPassNotes && (
-                            <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
+                            <div className="rounded-lg p-3 border border-amber-500/20 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                               <p className="text-[10px] text-zinc-500 mb-1">Notes</p>
                               <p className="text-xs text-zinc-300">{summary.audioPlan.audioPassNotes}</p>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-center py-8 border border-dashed border-zinc-800 rounded-lg">
+                        <div className="text-center py-8 border border-dashed border-amber-500/20 rounded-lg">
                           <Music size={24} className="text-zinc-700 mx-auto mb-2" />
                           <p className="text-sm text-zinc-500">No audio plan yet</p>
                           <p className="text-xs text-zinc-600 mt-1">Configure voice assignments, music cues, and mix settings in the Audio Plan.</p>
@@ -1072,7 +1072,7 @@ export default function FeatureTimeline() {
                         </Button>
                       </div>
                       {!summary?.characterArcs?.length ? (
-                        <div className="text-center py-8 border border-dashed border-zinc-800 rounded-lg">
+                        <div className="text-center py-8 border border-dashed border-amber-500/20 rounded-lg">
                           <Users size={24} className="text-zinc-700 mx-auto mb-2" />
                           <p className="text-sm text-zinc-500">No character arcs</p>
                           <p className="text-xs text-zinc-600 mt-1">Generate AI character arc analyses for all characters in this project.</p>
@@ -1080,7 +1080,7 @@ export default function FeatureTimeline() {
                       ) : (
                         <div className="space-y-3">
                           {summary.characterArcs.map((arc: any) => (
-                            <div key={arc.id} className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
+                            <div key={arc.id} className="rounded-lg p-3 border border-amber-500/20 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-medium text-zinc-200">Character #{arc.characterId}</span>
                                 <Badge variant="outline" className="text-[10px] border-amber-500/20 text-zinc-400">{arc.arcType}</Badge>
@@ -1243,7 +1243,7 @@ export default function FeatureTimeline() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="bg-zinc-800/50 rounded-lg p-3 border border-amber-500/20">
+            <div className="rounded-lg p-3 border border-amber-500/20 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-zinc-400">Scenes with video</span>
                 <span className="text-zinc-200 font-mono">{scenesWithVideo} / {includedScenes.length}</span>

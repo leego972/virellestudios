@@ -116,7 +116,7 @@ const LocationRecreation: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-8 text-white min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <div className="flex items-center justify-between mb-8 border-b border-zinc-800 pb-6">
+      <div className="flex items-center justify-between mb-8 border-b border-amber-500/20 pb-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tighter flex items-center gap-3 gradient-text-gold">
             <MapPin className="text-blue-500 w-10 h-10" />
@@ -127,7 +127,7 @@ const LocationRecreation: React.FC = () => {
         <div className="flex gap-4">
           <button 
             onClick={() => navigate(`/projects/${projectId}/scenes`)}
-            className="px-6 py-2 border border-zinc-700 hover:bg-amber-500/10 rounded-full transition-all flex items-center gap-2"
+            className="px-6 py-2 border border-amber-500/20 hover:bg-amber-500/10 rounded-full transition-all flex items-center gap-2"
           >
             Back to Scenes
           </button>
@@ -159,13 +159,13 @@ const LocationRecreation: React.FC = () => {
               {loadingLocations ? (
                 <div className="col-span-2 py-20 text-center text-zinc-500">Loading your locations...</div>
               ) : locationsList?.length === 0 ? (
-                <div className="col-span-2 py-20 text-center bg-zinc-900/30 rounded-3xl border border-dashed border-zinc-800">
+                <div className="col-span-2 py-20 text-center bg-zinc-900/30 rounded-3xl border border-dashed border-amber-500/20">
                   <MapPin className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
                   <p className="text-zinc-500">No locations found. Upload a video to get started.</p>
                 </div>
               ) : (
                 locationsList?.map((loc) => (
-                  <div key={loc.id} className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 hover:border-blue-500/50 transition-all group">
+                  <div key={loc.id} className="border border-amber-500/20 rounded-3xl p-6 hover:border-blue-500/50 transition-all group glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-bold gradient-text-gold">{loc.name}</h3>
@@ -178,7 +178,7 @@ const LocationRecreation: React.FC = () => {
                     <div className="flex gap-2 mt-6">
                       <button 
                         onClick={() => selectLocation(loc)}
-                        className="flex-1 bg-zinc-800 hover:bg-amber-500/10 py-2 rounded-xl text-sm font-bold transition-all"
+                        className="flex-1 hover:bg-amber-500/10 py-2 rounded-xl text-sm font-bold transition-all glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow"
                       >
                         Edit Environment
                       </button>
@@ -196,7 +196,7 @@ const LocationRecreation: React.FC = () => {
           ) : (
             <>
               {/* Step 1: Upload Video */}
-              <div className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm">
+              <div className="p-8 rounded-3xl border border-amber-500/20 backdrop-blur-sm glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                 <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 gradient-text-gold">
                   <Video className="text-blue-400" />
                   {selectedLocationId ? "Location Details" : "1. Upload Location Reference"}
@@ -210,7 +210,7 @@ const LocationRecreation: React.FC = () => {
                       value={locationName || (selectedLocationId ? locationsList?.find(l => l.id === selectedLocationId)?.name : "")}
                       readOnly={!!selectedLocationId}
                       onChange={(e) => setLocationName(e.target.value)}
-                      className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
+                      className="w-full bg-black border border-amber-500/20 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
                     />
                   </div>
                   {!selectedLocationId && (
@@ -222,7 +222,7 @@ const LocationRecreation: React.FC = () => {
                           placeholder="https://..."
                           value={videoUrl}
                           onChange={(e) => setVideoUrl(e.target.value)}
-                          className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
+                          className="flex-1 bg-black border border-amber-500/20 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
                         />
                         <button 
                           onClick={handleUpload}
@@ -249,7 +249,7 @@ const LocationRecreation: React.FC = () => {
               </div>
 
               {/* Step 2: Environment Controls */}
-              <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
+              <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-amber-500/20 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
                 <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 gradient-text-gold">
                   <Settings className="text-purple-400" />
                   2. Environmental Controls
@@ -262,7 +262,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={t}
                           onClick={() => setEnvSettings({...envSettings, timeOfDay: t})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
                         >
                           {t.replace('-', ' ')}
                         </button>
@@ -276,7 +276,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={w}
                           onClick={() => setEnvSettings({...envSettings, weather: w})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
                         >
                           {w}
                         </button>
@@ -290,7 +290,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={l}
                           onClick={() => setEnvSettings({...envSettings, lighting: l})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
                         >
                           {l}
                         </button>
@@ -304,7 +304,7 @@ const LocationRecreation: React.FC = () => {
                     3. Assign to Scenes
                   </h3>
                   <p className="text-zinc-400 text-sm mb-4">Select the scenes where this recreated location will be used.</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[200px] overflow-y-auto p-2 bg-black/40 rounded-xl border border-zinc-800">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[200px] overflow-y-auto p-2 bg-black/40 rounded-xl border border-amber-500/20">
                     {scenes.length === 0 ? (
                       <p className="text-zinc-600 text-xs italic p-4">No scenes found in this project.</p>
                     ) : (
@@ -312,7 +312,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={s.id}
                           onClick={() => toggleScene(s.id)}
-                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-zinc-800 hover:border-zinc-700'}`}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-amber-500/20 hover:border-amber-500/20'}`}
                         >
                           <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
                             {selectedSceneIds.includes(s.id) && <CheckCircle className="w-3 h-3 text-black" />}
@@ -340,7 +340,7 @@ const LocationRecreation: React.FC = () => {
 
         {/* Info Sidebar */}
         <div className="space-y-6">
-          <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-3xl border border-zinc-800">
+          <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-3xl border border-amber-500/20">
             <h3 className="text-xl font-bold mb-4 gradient-text-gold">How it works</h3>
             <ul className="space-y-4 text-zinc-400 text-sm">
               <li className="flex gap-3">

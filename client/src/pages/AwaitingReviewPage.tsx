@@ -23,11 +23,11 @@ export default function AwaitingReviewPage() {
       ) : q.error ? (
         <div className="text-sm text-rose-300">{q.error.message}</div>
       ) : items.length === 0 ? (
-        <div className="bg-zinc-900/60 border border-zinc-800 rounded p-6 text-center text-sm text-zinc-400">
+        <div className="bg-zinc-900/60 border border-amber-500/20 rounded p-6 text-center text-sm text-zinc-400">
           You're all caught up. Nothing is waiting for review.
         </div>
       ) : (
-        <ul className="bg-zinc-900/60 border border-zinc-800 rounded divide-y divide-zinc-800">
+        <ul className="bg-zinc-900/60 border border-amber-500/20 rounded divide-y divide-zinc-800">
           {items.map((it) => (
             <li key={it.id} className="p-3 hover:bg-amber-500/10">
               <Link href={`/projects/${it.projectId}/scenes`}>

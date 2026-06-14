@@ -181,11 +181,11 @@ export default function ProjectBrands() {
             const m = policyMeta[p];
             const Icon = m.icon;
             return (
-              <Card key={p} className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card key={p} className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-4 h-4 text-zinc-300" />
-                    <span className="text-xs uppercase tracking-wider text-zinc-400">{m.label}</span>
+                    <span className="text-xs uppercase tracking-wider text-amber-400/60">{m.label}</span>
                   </div>
                   <div className="text-2xl font-semibold">{counts[p]}</div>
                   <div className="text-xs text-zinc-500 mt-1">{m.blurb}</div>
@@ -202,7 +202,7 @@ export default function ProjectBrands() {
             <Skeleton className="h-16 bg-zinc-900" />
           </div>
         ) : brands.length === 0 ? (
-          <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <Tag className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
               <h3 className="text-lg font-medium mb-1 gradient-text-gold">No brands defined</h3>
@@ -220,7 +220,7 @@ export default function ProjectBrands() {
             {brands.map((b: any) => {
               const m = policyMeta[(b.policy ?? "allowed") as Policy];
               return (
-                <Card key={b.id} className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <Card key={b.id} className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -262,7 +262,7 @@ export default function ProjectBrands() {
       </div>
 
       <Dialog open={open} onOpenChange={(o) => (o ? setOpen(o) : closeDialog())}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">{editingId ? "Edit brand" : "Add brand"}</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -278,7 +278,7 @@ export default function ProjectBrands() {
                 placeholder="Nike, Pepsi, Shell, In-N-OutÃÂ¢ÃÂÃÂ¦"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="bg-zinc-950 border-zinc-800 mt-1"
+                className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
 
@@ -289,7 +289,7 @@ export default function ProjectBrands() {
                   placeholder="apparel, beverage, vehicle, signageÃÂ¢ÃÂÃÂ¦"
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                  className="bg-zinc-950 border-zinc-800 mt-1"
+                  className="bg-zinc-950 border-amber-500/20 mt-1"
                 />
               </div>
               <div>
@@ -298,10 +298,10 @@ export default function ProjectBrands() {
                   value={form.policy}
                   onValueChange={(v) => setForm((f) => ({ ...f, policy: v as Policy }))}
                 >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 mt-1">
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
                     <SelectItem value="allowed">Allowed ÃÂ¢ÃÂÃÂ may appear</SelectItem>
                     <SelectItem value="required">Required ÃÂ¢ÃÂÃÂ must appear</SelectItem>
                     <SelectItem value="forbidden">Forbidden ÃÂ¢ÃÂÃÂ never show</SelectItem>
@@ -316,7 +316,7 @@ export default function ProjectBrands() {
                 placeholder="e.g. only on background billboards, not in close-ups; the hero never drinks it."
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                className="bg-zinc-950 border-zinc-800 mt-1 min-h-[80px]"
+                className="bg-zinc-950 border-amber-500/20 mt-1 min-h-[80px]"
               />
             </div>
           </div>

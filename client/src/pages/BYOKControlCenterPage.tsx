@@ -76,7 +76,7 @@ export default function BYOKControlCenterPage() {
           </p>
         </header>
 
-        <section className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-5">
+        <section className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-5">
           <h2 className="text-sm uppercase tracking-wider mb-3 gradient-text-gold">
             Configured providers
           </h2>
@@ -87,7 +87,7 @@ export default function BYOKControlCenterPage() {
               return (
                 <li
                   key={p.id}
-                  className="flex items-center justify-between text-sm py-2 border-b border-zinc-800/60 last:border-b-0"
+                  className="flex items-center justify-between text-sm py-2 border-b border-amber-500/20/60 last:border-b-0"
                 >
                   <div>
                     <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function BYOKControlCenterPage() {
           </p>
         </section>
 
-        <section className="border border-zinc-800 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-5">
+        <section className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-5">
           <h2 className="text-sm uppercase tracking-wider mb-3 gradient-text-gold">
             Preferences
           </h2>
@@ -149,7 +149,7 @@ export default function BYOKControlCenterPage() {
           <select
             value={preferredVideo || (status.preferredVideoProvider ?? "")}
             onChange={(e) => setPreferredVideo(e.target.value)}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+            className="w-full bg-zinc-950 border border-amber-500/20 rounded px-3 py-2 text-sm mb-4"
           >
             <option value="">Auto (let Virelle choose)</option>
             {VIDEO_PROVIDERS.map((p) => (
@@ -165,7 +165,7 @@ export default function BYOKControlCenterPage() {
           <select
             value={preferredLlm || (status.preferredLlmProvider ?? "")}
             onChange={(e) => setPreferredLlm(e.target.value)}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+            className="w-full bg-zinc-950 border border-amber-500/20 rounded px-3 py-2 text-sm mb-4"
           >
             <option value="">Auto (let Virelle choose)</option>
             {LLM_PROVIDERS.map((p) => (
@@ -179,7 +179,7 @@ export default function BYOKControlCenterPage() {
           <select
             value={fallbackMode}
             onChange={(e) => setFallbackMode(e.target.value as FallbackMode)}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
+            className="w-full bg-zinc-950 border border-amber-500/20 rounded px-3 py-2 text-sm mb-4"
           >
             <option value="byok_only">Use my key only ÃÂ¢ÃÂÃÂ never fall back</option>
             <option value="byok_with_consent">

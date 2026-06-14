@@ -320,7 +320,7 @@ export default function FilmPage() {
 
         {/* Creator card with profile link */}
         {fp.showCreatorName && fp.creatorName && (
-          <div className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800">
+          <div className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-900/80 border border-amber-500/20">
             <Avatar className="w-14 h-14 shrink-0">
               <AvatarImage src={fp.creatorAvatar} />
               <AvatarFallback className="bg-amber-500 text-black font-bold text-lg">
@@ -333,7 +333,7 @@ export default function FilmPage() {
             </div>
             {fp.creatorSlug && (
               <Link href={`/creators/${fp.creatorSlug}`}>
-                <Button size="sm" variant="outline" className="gap-1.5 border-zinc-700 text-zinc-300 hover:text-white shrink-0 hover:border-amber-500/50 hover:text-amber-400">
+                <Button size="sm" variant="outline" className="gap-1.5 border-amber-500/20 text-zinc-300 hover:text-white shrink-0 hover:border-amber-500/50 hover:text-amber-400">
                   <User className="w-3.5 h-3.5" />
                   View Profile
                 </Button>
@@ -346,7 +346,7 @@ export default function FilmPage() {
         {Object.keys(credits).length > 0 && (
           <div>
             <h2 className="text-lg font-semibold mb-3 text-amber-400 gradient-text-gold">Credits</h2>
-            <div className="rounded-xl border border-zinc-800 overflow-hidden">
+            <div className="rounded-xl border border-amber-500/20 overflow-hidden">
               {Object.entries(credits).map(([role, name], i) => (
                 <div
                   key={role}
@@ -374,7 +374,7 @@ export default function FilmPage() {
               {scenes.map((scene: any, i: number) => (
                 <div
                   key={scene.id || i}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/60 border border-amber-500/20 hover:border-zinc-600 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400 shrink-0">
                     {i + 1}
@@ -396,7 +396,7 @@ export default function FilmPage() {
 
         {/* Behind the Film (collapsible) */}
         {behindTheFilm && (
-          <div className="rounded-xl border border-zinc-800 overflow-hidden">
+          <div className="rounded-xl border border-amber-500/20 overflow-hidden">
             <button
               className="w-full flex items-center justify-between px-5 py-4 bg-zinc-900/60 hover:bg-amber-500/10 transition-colors text-left"
               onClick={() => setShowBehindFilm((v) => !v)}
@@ -431,7 +431,7 @@ export default function FilmPage() {
                 .slice(0, 3)
                 .map((f: any) => (
                   <Link key={f.slug} href={`/films/${f.slug}`}>
-                    <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+                    <Card className="bg-zinc-900 border-amber-500/20 hover:border-zinc-600 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
                       <div className="aspect-video bg-zinc-800 relative overflow-hidden">
                         {f.thumbnailUrl ? (
                           <img
@@ -486,7 +486,7 @@ export default function FilmPage() {
               </Button>
             </a>
             <Link href="/showcase">
-              <Button variant="outline" className="gap-2 border-zinc-700 text-zinc-300 hover:text-white w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
+              <Button variant="outline" className="gap-2 border-amber-500/20 text-zinc-300 hover:text-white w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
                 <Film className="w-4 h-4" />
                 Browse Showcase
               </Button>
