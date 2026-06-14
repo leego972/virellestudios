@@ -508,7 +508,10 @@ export function planSubShots(
   return subShots;
 }
 
-// ─── Camera Angle Variations ───* Extract the last frame from a video file and upload to S3.
+// ─── Camera Angle Variations ───
+
+/**
+ * Extract the last frame from a video file and upload to S3.
  * This frame is used as the reference image for the next clip's generation.
  */
 async function extractLastFrame(videoUrl: string, projectId: number, sceneId: number): Promise<string | undefined> {
