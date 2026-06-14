@@ -395,7 +395,7 @@ export default function Register() {
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
         <GoldWatermarkLaunch />
         <div className="w-full max-w-lg relative z-10">
-          <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card hover:shadow-amber-500/20 transition-shadow">
+          <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-5">
               <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center">
                 <Check className="w-8 h-8 text-amber-500" />

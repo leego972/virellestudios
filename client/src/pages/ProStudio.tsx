@@ -69,7 +69,7 @@ function StyleBibleTab({ projectId }: { projectId: number }) {
   const referenceUrlsText = (current.referenceUrls || []).join("\n");
 
   return (
-    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
       <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base gradient-text-gold">Project Visual Identity</CardTitle>
         <p className="text-xs text-muted-foreground">Locked guidelines that every generated asset should respect. Useful for handing off to AI prompts and human collaborators alike.</p>

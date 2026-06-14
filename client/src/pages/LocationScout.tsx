@@ -153,7 +153,7 @@ export default function LocationScout() {
             <h2 className="text-lg font-medium mb-4 flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-amber-400" /> AI Suggested Locations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {suggestMutation.data.locations.map((loc: any, i: number) => (
-                <Card key={i} className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <Card key={i} className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                   <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{loc.name}</CardTitle>

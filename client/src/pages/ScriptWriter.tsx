@@ -1159,7 +1159,7 @@ export default function ScriptWriter() {
         <div className="flex-1 flex justify-center py-8 px-4">
           <div className="w-full max-w-[700px]">
             {/* Screenplay page */}
-            <Card className="bg-card border border-border shadow-lg min-h-[800px] p-8 md:p-12 font-mono text-sm leading-relaxed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="bg-card border border-border shadow-lg min-h-[800px] p-8 md:p-12 font-mono text-sm leading-relaxed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               {/* Title page header */}
               <div className="text-center mb-8 pb-6 border-b border-border/50">
                 <h1 className="text-xl font-bold uppercase tracking-widest text-gold-shimmer">{title || "Untitled"}</h1>

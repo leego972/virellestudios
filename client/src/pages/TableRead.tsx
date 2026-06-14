@@ -157,7 +157,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 
         {step === "input" && (
           <div className="space-y-4">
-            <Card className="border-border/40 bg-black/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-border/40 bg-black/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Paste Your Script</CardTitle></CardHeader>
               <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <p className="text-xs text-muted-foreground">Use standard screenplay format: character names in ALL CAPS on their own line, followed by dialogue on the next line. Scene headings start with INT. or EXT.</p>

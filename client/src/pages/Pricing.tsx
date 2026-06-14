@@ -403,7 +403,7 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">{tier.displayName}</CardTitle>
                   </div>
                   <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.description}</CardDescription>
                   <div className="mt-4">

@@ -149,7 +149,7 @@ export default function SharePreview() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Card className="max-w-md w-full glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="max-w-md w-full glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <AlertCircle className="h-5 w-5" />

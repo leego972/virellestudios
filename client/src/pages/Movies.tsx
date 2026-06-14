@@ -350,7 +350,7 @@ export default function Movies() {
   const renderMovieCard = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
+      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow"
       onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
       <div className="relative aspect-video bg-muted">

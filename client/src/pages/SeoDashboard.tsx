@@ -64,7 +64,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   color?: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+    <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-1">
           <span className={color}>{icon}</span>

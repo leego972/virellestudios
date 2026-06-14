@@ -138,7 +138,7 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-7xl mx-auto space-y-4 px-4 py-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card><CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card><CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <div className="text-xs text-muted-foreground">Production Readiness</div>
           <div className={`text-3xl font-bold ${readyColor}`}>{d.readiness}%</div>
           <div className="text-[11px] text-muted-foreground mt-1">{d.scenes.withVideo}/{d.scenes.total} scenes rendered</div>

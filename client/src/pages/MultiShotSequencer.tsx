@@ -99,7 +99,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     };
 
     return (
-      <Card className="border border-amber-500/20 bg-black/40 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card className="border border-amber-500/20 bg-black/40 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
         <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

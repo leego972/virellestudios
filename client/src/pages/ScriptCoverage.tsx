@@ -145,7 +145,7 @@ import { useState } from "react";
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <Card>
-                <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Script Details</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">Script Details</CardTitle></CardHeader>
                 <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="space-y-1.5"><Label>Title</Label><Input placeholder="Untitled Script" value={scriptTitle} onChange={e => setScriptTitle(e.target.value)} /></div>
                   <div className="grid grid-cols-2 gap-3">

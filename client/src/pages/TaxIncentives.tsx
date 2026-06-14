@@ -73,7 +73,7 @@ import { useState, useMemo } from "react";
         {/* Budget input + top picks */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
-            <CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Your Production Budget</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">Your Production Budget</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="space-y-1.5">
                 <Label>Total Budget (USD equivalent)</Label>

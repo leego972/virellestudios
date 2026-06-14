@@ -110,7 +110,7 @@ export default function Referrals() {
 
       {/* Reward Banner */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <div className="text-3xl font-black text-amber-400">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits you earn</div>
           <div className="text-xs text-amber-400/60 mt-0.5">per successful signup</div>

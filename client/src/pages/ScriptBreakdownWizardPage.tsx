@@ -194,7 +194,7 @@ export default function ScriptBreakdownWizardPage() {
       </ol>
 
       {step === 1 && (
-        <div className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
+        <div className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow gold-glow">
           <div className="text-sm text-zinc-300 mb-2">
             Paste a script or use the project's saved script. Nothing will be
             written to your project until you approve in step 3.

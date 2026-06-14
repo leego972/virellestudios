@@ -64,7 +64,7 @@ export default function ResetPassword() {
               <Film className="w-7 h-7 text-white" />
             </div>
           </div>
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
                 <XCircle className="w-6 h-6 text-red-500" />

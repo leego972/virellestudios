@@ -764,7 +764,7 @@ import { useState } from "react";
                   <Card key={actor.id}
                     className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer group`}
                     onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
-                    <CardContent className="p-5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                    <CardContent className="p-5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                       <div className={`w-full aspect-[3/4] rounded-xl mb-4 overflow-hidden relative bg-gradient-to-b ${actor.gradient}`}>
                         {actorPortrait(actor.id) ? (
                           <img src={actorPortrait(actor.id)!} alt={actor.name}

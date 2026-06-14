@@ -161,7 +161,7 @@
                 {collections.map((lease: any) => (
                   <div
                     key={lease.id}
-                    className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 hover:border-amber-500/20 transition-colors glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
+                    className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 hover:border-amber-500/20 transition-colors glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow"
                   >
                     <div className="h-14 w-20 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
                       <Package className="h-6 w-6 text-muted-foreground/30" />

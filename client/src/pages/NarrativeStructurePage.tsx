@@ -111,7 +111,7 @@ import { useState } from "react";
     const set = (k: string, v: string) => setForm((f: any) => ({ ...(f ?? current), [k]: v }));
 
     return (
-      <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
         <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-amber-400" />

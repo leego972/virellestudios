@@ -112,7 +112,7 @@ export default function PitchLab() {
         </div>
       </div>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
         <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="gradient-text-gold">Project Brief</CardTitle>
           <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>

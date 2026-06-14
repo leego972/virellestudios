@@ -207,7 +207,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
     <div className="space-y-6 max-w-4xl">
       {/* Production World */}
       <Card>
-        <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <Globe className="h-4 w-4 text-amber-500" />Production World
           </CardTitle>

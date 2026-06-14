@@ -955,7 +955,7 @@ export default function SceneEditor() {
 
       {/* Timeline */}
       {scenes && scenes.length > 0 && (
-        <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider gradient-text-gold">Timeline</CardTitle>
           </CardHeader>

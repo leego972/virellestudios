@@ -93,7 +93,7 @@ export default function PressKit() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-1">
-        <Card className="print:hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="print:hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader>
             <CardTitle className="gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">EPK Inputs</CardTitle>
             <CardDescription>Fill in the fields. Preview updates live. Export, print, or paste into your distribution emails.</CardDescription>

@@ -150,7 +150,7 @@ function LiveActionPlateInner() {
       <div className="max-w-5xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left: Upload & Mode */}
         <div className="space-y-4">
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <Upload className="w-4 h-4 text-amber-400" />

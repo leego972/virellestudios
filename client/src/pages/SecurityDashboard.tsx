@@ -105,7 +105,7 @@ export default function SecurityDashboard() {
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />

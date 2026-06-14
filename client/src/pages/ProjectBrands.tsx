@@ -181,7 +181,7 @@ export default function ProjectBrands() {
             const m = policyMeta[p];
             const Icon = m.icon;
             return (
-              <Card key={p} className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card key={p} className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-4 h-4 text-zinc-300" />

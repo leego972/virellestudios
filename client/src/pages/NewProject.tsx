@@ -265,7 +265,7 @@ export default function NewProject() {
 
         {/* Quick Generate form */}
         {mode === "quick" && (
-          <Card className="bg-card/50 border-primary/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="bg-card/50 border-primary/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-amber-400" />

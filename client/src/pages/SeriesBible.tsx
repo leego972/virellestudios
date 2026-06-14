@@ -129,7 +129,7 @@ import { useState } from "react";
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4 mt-4">
-              <Card><CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><p className="text-sm italic text-muted-foreground mb-3">"{activeSeries.logline}"</p>{activeSeries.premise && <><Separator className="mb-3" /><p className="text-sm text-muted-foreground">{activeSeries.premise}</p></>}</CardContent></Card>
+              <Card><CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow"><p className="text-sm italic text-muted-foreground mb-3">"{activeSeries.logline}"</p>{activeSeries.premise && <><Separator className="mb-3" /><p className="text-sm text-muted-foreground">{activeSeries.premise}</p></>}</CardContent></Card>
               {activeSeries.toneAndStyle && <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Tone & Style</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{activeSeries.toneAndStyle}</p></CardContent></Card>}
             </TabsContent>
 

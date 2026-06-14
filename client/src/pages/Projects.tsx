@@ -224,7 +224,7 @@ export default function Projects() {
       )}
 
       {isError ? (
-        <Card className="bg-card/50 border-destructive/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="bg-card/50 border-destructive/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardContent className="p-12 flex flex-col items-center text-center">
             <Film className="h-10 w-10 text-destructive/40 mb-3" />
             <p className="text-sm font-medium text-foreground/80 mb-1">We couldn't load your projects</p>
@@ -452,7 +452,7 @@ export default function Projects() {
       )}
 
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="glass-dark">
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="gradient-text-gold">Delete project?</AlertDialogTitle>
             <AlertDialogDescription>

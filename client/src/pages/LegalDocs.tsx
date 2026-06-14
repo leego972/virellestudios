@@ -373,7 +373,7 @@ import { useState } from "react";
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 gradient-text-gold">{cat}</h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {TEMPLATES.filter(t => t.category === cat).map(t => (
-                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => handleSelect(t)}>
+                    <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow" onClick={() => handleSelect(t)}>
                       <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-400/20 transition-colors">{t.icon}</div>

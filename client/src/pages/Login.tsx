@@ -89,7 +89,7 @@ export default function Login() {
           </div>
 
           {/* Login Card */}
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-xl text-center gradient-text-gold">Sign In</CardTitle>
               <CardDescription className="text-center">Enter your email and password to continue</CardDescription>

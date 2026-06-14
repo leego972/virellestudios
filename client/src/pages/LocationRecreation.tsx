@@ -165,7 +165,7 @@ const LocationRecreation: React.FC = () => {
                 </div>
               ) : (
                 locationsList?.map((loc) => (
-                  <div key={loc.id} className="border border-amber-500/20 rounded-3xl p-6 hover:border-blue-500/50 transition-all group glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
+                  <div key={loc.id} className="border border-amber-500/20 rounded-3xl p-6 hover:border-blue-500/50 transition-all group glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow gold-glow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-bold gradient-text-gold">{loc.name}</h3>
