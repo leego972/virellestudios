@@ -136,7 +136,7 @@ export default function LocationScout() {
                     <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     <Button variant="outline" size="sm" onClick={addTag}>Add</Button>
                   </div>
-                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} Ã</Badge>)}</div>}
+                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ÃÂ</Badge>)}</div>}
                 </div>
                 <Button className="w-full" onClick={() => createMutation.mutate({ projectId, name, address: address || undefined, locationType: locationType || undefined, description: description || undefined, notes: notes || undefined, tags })} disabled={!name || createMutation.isPending}>
                   {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
@@ -192,7 +192,7 @@ export default function LocationScout() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <MapPin className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-muted-foreground">No locations yet</h3>
+            <h3 className="text-lg font-medium text-muted-foreground gradient-text-gold">No locations yet</h3>
             <p className="text-sm text-muted-foreground/60 mt-1">Add locations manually or let AI suggest them</p>
           </div>
         ) : (

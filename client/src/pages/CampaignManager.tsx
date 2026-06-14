@@ -433,7 +433,7 @@ export default function CampaignManager() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 glass-card shadow-lg shadow-amber-500/5">
                 <Megaphone className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                <h3 className="text-lg font-medium">No campaigns yet</h3>
+                <h3 className="text-lg font-medium gradient-text-gold">No campaigns yet</h3>
                 <p className="text-muted-foreground text-sm mt-1">Create your first advertising campaign to get started</p>
                 <Button className="mt-4" onClick={() => setShowCreateDialog(true)}>
                   <Plus className="h-4 w-4 mr-2" /> Create Campaign
@@ -459,10 +459,10 @@ export default function CampaignManager() {
                       <StatusBadge status={campaign.status} />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
+                      {campaign.platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.contentType.replace(/_/g, " ")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.schedule}
+                      {(campaign.postHistory || []).length} posts ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {campaign.schedule}
                     </p>
                   </button>
                 ))}
@@ -477,7 +477,7 @@ export default function CampaignManager() {
                         <div>
                           <CardTitle className="gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
-                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
+                            {selectedCampaign.contentType.replace(/_/g, " ")} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {selectedCampaign.schedule}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2 flex-wrap">
@@ -672,7 +672,7 @@ export default function CampaignManager() {
                 Quick Content Generator
               </CardTitle>
               <CardDescription>
-                Generate ad copy for a single platform instantly ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no campaign needed
+                Generate ad copy for a single platform instantly ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no campaign needed
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
@@ -863,7 +863,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.platformBreakdown || Object.entries(analytics?.byPlatform || {})).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -897,7 +897,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.contentTypeBreakdown || []).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -932,7 +932,7 @@ export default function CampaignManager() {
                   {((analytics as any)?.recentActivity || analytics?.rows || []).length === 0 ? (
                     <div className="text-center py-8">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ start posting to see your history here</p>
+                      <p className="text-sm text-muted-foreground">No recent activity ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ start posting to see your history here</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -942,7 +942,7 @@ export default function CampaignManager() {
                             <StatusBadge status={activity.status} />
                             <div>
                               <p className="text-sm font-medium">{activity.campaign}</p>
-                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
+                              <p className="text-xs text-muted-foreground">{activity.platformName} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {activity.contentPreview}</p>
                             </div>
                           </div>
                           <span className="text-xs text-muted-foreground">
@@ -968,7 +968,7 @@ export default function CampaignManager() {
                     {[
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
-                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
+                      { tip: "Use 3-5 hashtags on Instagram ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ more than 10 actually reduces reach" },
                       { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },
@@ -994,7 +994,7 @@ export default function CampaignManager() {
             const CategoryIcon = CATEGORY_ICONS[category] || Globe;
             return (
               <div key={category}>
-                <h3 className="text-lg font-medium flex items-center gap-2 mb-3">
+                <h3 className="text-lg font-medium flex items-center gap-2 mb-3 gradient-text-gold">
                   <CategoryIcon className="h-5 w-5 text-amber-400" />
                   {CATEGORY_LABELS[category] || category}
                   <Badge variant="secondary" className="text-xs">{(catPlatforms as any[]).length}</Badge>

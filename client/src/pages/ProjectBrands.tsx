@@ -160,16 +160,16 @@ export default function ProjectBrands() {
               <Tag className="w-7 h-7 text-amber-400" />
               Brands
               {projectQ.data?.title ? (
-                <span className="text-zinc-500 font-normal">â {projectQ.data.title}</span>
+                <span className="text-zinc-500 font-normal">Ã¢ÂÂ {projectQ.data.title}</span>
               ) : null}
             </h1>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
               Tell the AI which real-world brands may, must, or must never appear
               in this film. Storefronts, billboards, signage, vehicles, drinks,
-              clothing â every shot generator (scenes, trailers, posters,
+              clothing Ã¢ÂÂ every shot generator (scenes, trailers, posters,
               storyboards) reads this list before drawing.
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Free to manage â costs no credits.</p>
+            <p className="text-xs text-zinc-500 mt-1">Free to manage Ã¢ÂÂ costs no credits.</p>
           </div>
           <Button onClick={openNew} className="bg-amber-500 hover:bg-amber-400 text-black">
             <Plus className="w-4 h-4 mr-1" /> Add brand
@@ -205,7 +205,7 @@ export default function ProjectBrands() {
           <Card className="bg-zinc-900/40 border-zinc-800 glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="p-10 text-center glass-card shadow-lg shadow-amber-500/5">
               <Tag className="w-10 h-10 mx-auto text-zinc-600 mb-3" />
-              <h3 className="text-lg font-medium mb-1">No brands defined</h3>
+              <h3 className="text-lg font-medium mb-1 gradient-text-gold">No brands defined</h3>
               <p className="text-sm text-zinc-400 mb-4 max-w-md mx-auto">
                 Without a list, the AI invents generic signage. Add the brands
                 your story needs (or wants to keep out) to lock in continuity.
@@ -275,7 +275,7 @@ export default function ProjectBrands() {
             <div>
               <Label className="text-zinc-300">Brand name *</Label>
               <Input
-                placeholder="Nike, Pepsi, Shell, In-N-Outâ¦"
+                placeholder="Nike, Pepsi, Shell, In-N-OutÃ¢ÂÂ¦"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 className="bg-zinc-950 border-zinc-800 mt-1"
@@ -286,7 +286,7 @@ export default function ProjectBrands() {
               <div>
                 <Label className="text-zinc-300">Category</Label>
                 <Input
-                  placeholder="apparel, beverage, vehicle, signageâ¦"
+                  placeholder="apparel, beverage, vehicle, signageÃ¢ÂÂ¦"
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className="bg-zinc-950 border-zinc-800 mt-1"
@@ -302,9 +302,9 @@ export default function ProjectBrands() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 text-zinc-100 border-zinc-800">
-                    <SelectItem value="allowed">Allowed â may appear</SelectItem>
-                    <SelectItem value="required">Required â must appear</SelectItem>
-                    <SelectItem value="forbidden">Forbidden â never show</SelectItem>
+                    <SelectItem value="allowed">Allowed Ã¢ÂÂ may appear</SelectItem>
+                    <SelectItem value="required">Required Ã¢ÂÂ must appear</SelectItem>
+                    <SelectItem value="forbidden">Forbidden Ã¢ÂÂ never show</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -91,7 +91,7 @@ export default function Collaboration() {
       setInviteEmail("");
       toast.success("Invitation created");
     },
-    onError: () => toast.error("We couldn't send that invite Ã¢ÂÂ check the email address and try again."),
+    onError: () => toast.error("We couldn't send that invite ÃÂ¢ÃÂÃÂ check the email address and try again."),
   });
 
   const updateRoleMutation = trpc.collaboration.updateRole.useMutation({
@@ -417,7 +417,7 @@ export default function Collaboration() {
           <Card className="border-dashed glass-card shadow-lg shadow-amber-500/5">
             <CardContent className="p-12 text-center glass-card shadow-lg shadow-amber-500/5">
               <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No Team Members Yet</h3>
+              <h3 className="text-lg font-medium mb-2 gradient-text-gold">No Team Members Yet</h3>
               <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
                 Invite writers, editors, producers, and other collaborators to work together on this film project.
               </p>
@@ -460,10 +460,10 @@ export default function Collaboration() {
               <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Viewer Ã¢ÂÂ View-only access</SelectItem>
-                  <SelectItem value="editor">Editor Ã¢ÂÂ Edit scenes & scripts</SelectItem>
-                  <SelectItem value="producer">Producer Ã¢ÂÂ Manage production</SelectItem>
-                  <SelectItem value="director">Director Ã¢ÂÂ Full creative control</SelectItem>
+                  <SelectItem value="viewer">Viewer ÃÂ¢ÃÂÃÂ View-only access</SelectItem>
+                  <SelectItem value="editor">Editor ÃÂ¢ÃÂÃÂ Edit scenes & scripts</SelectItem>
+                  <SelectItem value="producer">Producer ÃÂ¢ÃÂÃÂ Manage production</SelectItem>
+                  <SelectItem value="director">Director ÃÂ¢ÃÂÃÂ Full creative control</SelectItem>
                 </SelectContent>
               </Select>
             </div>

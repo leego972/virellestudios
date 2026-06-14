@@ -73,7 +73,7 @@ function CinematicBackground() {
   );
 }
 
-/* Gold watermark Ã¢ÂÂ large, fixed, perfectly centered, stays on screen while scrolling */
+/* Gold watermark ÃÂ¢ÃÂÃÂ large, fixed, perfectly centered, stays on screen while scrolling */
 function GoldWatermark() {
   return (
     <div
@@ -111,12 +111,12 @@ export default function Landing() {
     <div className="min-h-screen text-white selection:bg-amber-500/30 relative" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
       <SiteHead
         title="The unified AI film production studio"
-        description="Virelle Studios Ã¢ÂÂ script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
+        description="Virelle Studios ÃÂ¢ÃÂÃÂ script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
         jsonLd={{ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Virelle Studios", applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Unified AI film production platform" }}
       />
       <GoldWatermark />
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Navigation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Navigation ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10 py-3" : "bg-transparent py-6"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
@@ -183,7 +183,7 @@ export default function Landing() {
       </nav>
 
       <main>
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 1. Hero Section Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 1. Hero Section ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
           <CinematicBackground />
           {/* Subtle radial glow */}
@@ -225,7 +225,7 @@ export default function Landing() {
 
             {/* No-risk micro-copy */}
             <p className="text-xs text-white/30 mb-10 -mt-6 tracking-wide">
-              7-day free trial ÃÂ· No credit card required ÃÂ· Cancel anytime
+              7-day free trial ÃÂÃÂ· No credit card required ÃÂÃÂ· Cancel anytime
             </p>
 
             {/* App download strip */}
@@ -268,7 +268,7 @@ export default function Landing() {
                 ))}
               </div>
 
-            {/* Product stats Ã¢ÂÂ verifiable platform facts */}
+            {/* Product stats ÃÂ¢ÃÂÃÂ verifiable platform facts */}
             <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 mt-10 mb-2">
               {[
                 { value: "130+", label: "Subtitle Languages" },
@@ -285,7 +285,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 1.5 The Showrunner Showcase Proof Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 1.5 The Showrunner Showcase Proof ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           <section
             className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10"
             style={{ background: "linear-gradient(180deg, #000 0%, #0a0800 40%, #000 100%)" }}
@@ -305,7 +305,7 @@ export default function Landing() {
               <div className="flex justify-center mb-8">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold uppercase tracking-wider">
                   <Film className="h-3.5 w-3.5" />
-                  Featured Showcase ÃÂ· The Showrunner
+                  Featured Showcase ÃÂÃÂ· The Showrunner
                 </div>
               </div>
 
@@ -319,7 +319,7 @@ export default function Landing() {
                 </p>
               </div>
 
-              {/* Proof line Ã¢ÂÂ high-contrast quote card */}
+              {/* Proof line ÃÂ¢ÃÂÃÂ high-contrast quote card */}
               <div
                 className="relative rounded-2xl border border-amber-500/25 p-8 md:p-10 mb-10 text-center overflow-hidden"
                 style={{ background: "linear-gradient(160deg, #0c0c0c 0%, #110f05 100%)" }}
@@ -373,7 +373,7 @@ export default function Landing() {
             </div>
           </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 1b. Platform Stats / Trust Strip Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 1b. Platform Stats / Trust Strip ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-white/[0.06] bg-white/[0.015]">
           <div className="max-w-5xl mx-auto">
             <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/20 font-semibold mb-8">
@@ -381,7 +381,7 @@ export default function Landing() {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 text-center mb-8">
               {([
-                { stat: "5+",   label: "AI video providers",   sub: "Runway ÃÂ· Sora ÃÂ· Veo3 ÃÂ· Kling ÃÂ· fal.ai" },
+                { stat: "5+",   label: "AI video providers",   sub: "Runway ÃÂÃÂ· Sora ÃÂÃÂ· Veo3 ÃÂÃÂ· Kling ÃÂÃÂ· fal.ai" },
                 { stat: "130+", label: "Export languages",     sub: "Context-aware professional subtitles" },
                 { stat: "100%", label: "Commercial ownership", sub: "No royalties, no licensing fees" },
                 { stat: "4K",   label: "Max export res",       sub: "Plus ProRes for professional NLEs" },
@@ -401,7 +401,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 2. How It Works Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 2. How It Works ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
@@ -410,7 +410,7 @@ export default function Landing() {
                 The Pipeline
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">
-                Concept to Complete Film Ã¢ÂÂ{" "}
+                Concept to Complete Film ÃÂ¢ÃÂÃÂ{" "}
                 <span className="text-amber-400">4 Steps</span>
               </h2>
             </div>
@@ -418,7 +418,7 @@ export default function Landing() {
               {[
                 { step: "01", time: "5 min", title: "Write Your Concept", desc: "Describe your film in plain language. Genre, tone, characters, story arc.", color: "amber" },
                 { step: "02", time: "10 min", title: "AI Writes the Screenplay", desc: "Full Hollywood-format script with scene breakdowns, dialogue, and stage directions.", color: "purple" },
-                { step: "03", time: "3Ã¢ÂÂ8 hrs", title: "Scenes Generate", desc: "60Ã¢ÂÂ90 scenes rendered with clip chaining, voice acting, and an original score.", color: "blue" },
+                { step: "03", time: "3ÃÂ¢ÃÂÃÂ8 hrs", title: "Scenes Generate", desc: "60ÃÂ¢ÃÂÃÂ90 scenes rendered with clip chaining, voice acting, and an original score.", color: "blue" },
                 { step: "04", time: "Instant", title: "Export Final Cut", desc: "Download your complete film as MP4 or ProRes. 100% commercially yours.", color: "green" },
               ].map((s) => (
                 <div key={s.step} className="relative text-center">
@@ -435,7 +435,7 @@ export default function Landing() {
         </section>
 
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 2b. Get Your API Keys Ã¢ÂÂ provider shortcuts Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 2b. Get Your API Keys ÃÂ¢ÃÂÃÂ provider shortcuts ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section id="get-keys" className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
@@ -447,15 +447,15 @@ export default function Landing() {
                 Connect Your AI Providers
               </h2>
               <p className="mt-3 text-sm text-white/50 max-w-xl mx-auto">
-                Register, grab your keys from the links below, paste them in Settings Ã¢ÂÂ API Keys. You pay the AI providers directly at cost Ã¢ÂÂ no Virelle markup.
+                Register, grab your keys from the links below, paste them in Settings ÃÂ¢ÃÂÃÂ API Keys. You pay the AI providers directly at cost ÃÂ¢ÃÂÃÂ no Virelle markup.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {([
-                { name: "fal.ai",         tag: "Video ÃÂ· Recommended",  note: "~$0.40/clip ÃÂ· Fastest setup",       url: "https://fal.ai/dashboard/keys",                   color: "emerald", required: false },
-                { name: "ElevenLabs",     tag: "Voice & SFX ÃÂ· Required", note: "Free tier Ã¢ÂÂ required for all sound", url: "https://elevenlabs.io/app/settings/api-keys",   color: "violet",  required: true  },
-                { name: "Runway",         tag: "Video ÃÂ· Premium",       note: "~$0.50/clip ÃÂ· Cinematic quality",   url: "https://app.runwayml.com/settings",               color: "blue",    required: false },
-                { name: "OpenAI",         tag: "Script Writing",        note: "~$0.01/scene ÃÂ· GPT-4o",            url: "https://platform.openai.com/api-keys",            color: "amber",   required: false },
+                { name: "fal.ai",         tag: "Video ÃÂÃÂ· Recommended",  note: "~$0.40/clip ÃÂÃÂ· Fastest setup",       url: "https://fal.ai/dashboard/keys",                   color: "emerald", required: false },
+                { name: "ElevenLabs",     tag: "Voice & SFX ÃÂÃÂ· Required", note: "Free tier ÃÂ¢ÃÂÃÂ required for all sound", url: "https://elevenlabs.io/app/settings/api-keys",   color: "violet",  required: true  },
+                { name: "Runway",         tag: "Video ÃÂÃÂ· Premium",       note: "~$0.50/clip ÃÂÃÂ· Cinematic quality",   url: "https://app.runwayml.com/settings",               color: "blue",    required: false },
+                { name: "OpenAI",         tag: "Script Writing",        note: "~$0.01/scene ÃÂÃÂ· GPT-4o",            url: "https://platform.openai.com/api-keys",            color: "amber",   required: false },
                 { name: "Google AI Studio", tag: "LLM + Veo 3 Video",  note: "Free tier available",               url: "https://aistudio.google.com/apikey",              color: "amber",   required: false },
                 { name: "Suno",           tag: "Music Scores",          note: "Free tier available",               url: "https://app.suno.ai/account",                    color: "pink",    required: false },
               ] as const).map((p) => (
@@ -485,12 +485,12 @@ export default function Landing() {
               ))}
             </div>
             <p className="text-center text-xs text-white/20 mt-6">
-              Keys are stored encrypted and never shared. Add or update them anytime in Settings Ã¢ÂÂ API Keys.
+              Keys are stored encrypted and never shared. Add or update them anytime in Settings ÃÂ¢ÃÂÃÂ API Keys.
             </p>
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 3. Two Core Use Cases Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 3. Two Core Use Cases ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -508,10 +508,10 @@ export default function Landing() {
                   </div>
                   <h3 className="text-xl font-bold mb-2 gradient-text-gold">Full AI Film Generation</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">
-                    Describe your movie concept and Virelle generates the entire film Ã¢ÂÂ screenplay, 60Ã¢ÂÂ90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, and scene-to-scene continuity.
+                    Describe your movie concept and Virelle generates the entire film ÃÂ¢ÃÂÃÂ screenplay, 60ÃÂ¢ÃÂÃÂ90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, and scene-to-scene continuity.
                   </p>
                   <div className="space-y-3 mb-8">
-                    {["Up to 90-minute feature films", "4Ã¢ÂÂ8 AI video clips per scene, stitched seamlessly", "AI voice acting for all dialogue with 35 emotions", "AI-generated film score matched to every scene", "Character consistency across all scenes via DNA Lock"].map(f => (
+                    {["Up to 90-minute feature films", "4ÃÂ¢ÃÂÃÂ8 AI video clips per scene, stitched seamlessly", "AI voice acting for all dialogue with 35 emotions", "AI-generated film score matched to every scene", "Character consistency across all scenes via DNA Lock"].map(f => (
                       <div key={f} className="flex items-start gap-2 text-sm">
                         <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
                         <span className="text-white/80">{f}</span>
@@ -546,7 +546,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 3b. Signature Cast Teaser Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 3b. Signature Cast Teaser ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -589,7 +589,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 4. Key Differentiators Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 4. Key Differentiators ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -609,7 +609,7 @@ export default function Landing() {
                   <Cpu className="h-6 w-6 text-amber-400" />
                 </div>
                 <h4 className="text-lg font-bold mb-3 gradient-text-gold">BYOK Architecture</h4>
-                <p className="text-sm text-white/50 leading-relaxed">Your AI keys, your costs. Connect fal.ai, Runway, ElevenLabs, OpenAI and more Ã¢ÂÂ Virelle orchestrates them without any markup. You pay providers directly.counts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
+                <p className="text-sm text-white/50 leading-relaxed">Your AI keys, your costs. Connect fal.ai, Runway, ElevenLabs, OpenAI and more ÃÂ¢ÃÂÃÂ Virelle orchestrates them without any markup. You pay providers directly.counts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
               </div>
               <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
                 <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6">
@@ -622,13 +622,13 @@ export default function Landing() {
           </div>
         </section>
 
-                {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 4b. Clips are not a production Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+                {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 4b. Clips are not a production ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 gradient-text-gold">Clips are not a production.</h2>
                 <p className="text-white/50 max-w-2xl mx-auto text-sm leading-relaxed">
-                  AI video generators can create individual shots. Virelle is built for the full production workflow Ã¢ÂÂ story, cast, scene continuity, trailer structure, poster direction, music notes, funding targets, and export-ready production packages.
+                  AI video generators can create individual shots. Virelle is built for the full production workflow ÃÂ¢ÃÂÃÂ story, cast, scene continuity, trailer structure, poster direction, music notes, funding targets, and export-ready production packages.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
@@ -658,7 +658,7 @@ export default function Landing() {
             </div>
           </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 4c. What filmmakers build Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 4c. What filmmakers build ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.015] border-t border-white/10">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
@@ -669,21 +669,21 @@ export default function Landing() {
                 {[
                   {
                     type: "Indie Short",
-                    tag: "5Ã¢ÂÂ12 min",
+                    tag: "5ÃÂ¢ÃÂÃÂ12 min",
                     ring: false,
                     border: "border-amber-500/20",
                     items: ["AI cast + character continuity", "Scene generation + storyboard", "Trailer + poster package", "Funding directory match"],
                   },
                   {
                     type: "Series Pilot",
-                    tag: "22Ã¢ÂÂ45 min",
+                    tag: "22ÃÂ¢ÃÂÃÂ45 min",
                     ring: true,
                     border: "border-purple-500/20",
                     items: ["Series bible + character arcs", "Multi-episode script breakdown", "Production schedule + budget", "Pitch deck export"],
                   },
                   {
                     type: "Brand Commercial",
-                    tag: "15Ã¢ÂÂ60 sec",
+                    tag: "15ÃÂ¢ÃÂÃÂ60 sec",
                     ring: false,
                     border: "border-sky-500/20",
                     items: ["AI voice acting + sound design", "Colour grade + VFX pass", "Multi-platform ad export", "Campaign manager"],
@@ -708,7 +708,7 @@ export default function Landing() {
             </div>
           </section>
 
-            {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 5. Pricing Preview Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+            {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 5. Pricing Preview ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -717,7 +717,7 @@ export default function Landing() {
                 Transparent Pricing
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">Production Tiers</h2>
-              <p className="mt-3 text-sm text-white/50">7-day free trial on all plans. Bring your own API keys Ã¢ÂÂ you pay providers directly, no markup.</p>
+              <p className="mt-3 text-sm text-white/50">7-day free trial on all plans. Bring your own API keys ÃÂ¢ÃÂÃÂ you pay providers directly, no markup.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
@@ -764,13 +764,13 @@ export default function Landing() {
             </div>
             <div className="text-center mt-6">
               <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-amber-400 hover:text-amber-300 transition-colors">
-                View Full Pricing & Feature Comparison Ã¢ÂÂ
+                View Full Pricing & Feature Comparison ÃÂ¢ÃÂÃÂ
               </button>
             </div>
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 6. Download App Section Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 6. Download App Section ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-6">
@@ -781,7 +781,7 @@ export default function Landing() {
               Take Your Studio Everywhere
             </h2>
             <p className="text-white/60 mb-10 max-w-xl mx-auto">
-              The full Virelle Studios experience on iOS and Android. Monitor renders, review scenes, manage projects, and export Ã¢ÂÂ all from your phone.
+              The full Virelle Studios experience on iOS and Android. Monitor renders, review scenes, manage projects, and export ÃÂ¢ÃÂÃÂ all from your phone.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
@@ -809,11 +809,11 @@ export default function Landing() {
                 </div>
               </button>
             </div>
-            <p className="text-xs text-white/30 mt-6">7-day free trial included. Connect your own AI keys (fal.ai, ElevenLabs, OpenAI, etc.) Ã¢ÂÂ Virelle never charges you for AI usage.</p>
+            <p className="text-xs text-white/30 mt-6">7-day free trial included. Connect your own AI keys (fal.ai, ElevenLabs, OpenAI, etc.) ÃÂ¢ÃÂÃÂ Virelle never charges you for AI usage.</p>
           </div>
         </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 7. FAQ Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 7. FAQ ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
@@ -821,12 +821,12 @@ export default function Landing() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                { title: "How long does it take?", answer: "A full 90-minute film takes 4Ã¢ÂÂ8 hours to generate from a written concept. Individual scenes generate in 3Ã¢ÂÂ6 minutes each." },
+                { title: "How long does it take?", answer: "A full 90-minute film takes 4ÃÂ¢ÃÂÃÂ8 hours to generate from a written concept. Individual scenes generate in 3ÃÂ¢ÃÂÃÂ6 minutes each." },
                 { title: "What exactly does it generate?", answer: "Screenplay, scene-by-scene video clips, AI voice acting, original film score, scene-to-scene continuity, and a final stitched cut." },
                 { title: "What rights do I get?", answer: "You own 100% of all outputs commercially. No royalties, no licensing fees, no platform watermarks on exports." },
                 { title: "What AI models are used?", answer: "Runway Gen-4.5, Sora 2, Kling 3.0, Veo 3, and fal.ai for video. ElevenLabs v3 for voice. Suno v4 for scores." },
                 { title: "Do I need to pay to use it?", answer: "You can register for free and explore the platform. All AI generation features require an active subscription plan." },
-                { title: "Is there a mobile app?", answer: "Yes Ã¢ÂÂ Virelle Studios for iOS is live on the App Store. The Android app and a native desktop client are in active development. Your subscription works across every platform, and the web app at virelle.life is fully responsive in the meantime." },
+                { title: "Is there a mobile app?", answer: "Yes ÃÂ¢ÃÂÃÂ Virelle Studios for iOS is live on the App Store. The Android app and a native desktop client are in active development. Your subscription works across every platform, and the web app at virelle.life is fully responsive in the meantime." },
               ].map(q => (
                 <div key={q.title}>
                   <p className="text-sm font-bold mb-2 text-white">{q.title}</p>
@@ -838,7 +838,7 @@ export default function Landing() {
         </section>
 
         
-          {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Lamalo Virtual Wardrobe Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Lamalo Virtual Wardrobe ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           <section className="relative py-28 px-4 sm:px-6 lg:px-8 border-t border-white/10 overflow-hidden bg-black">
             {/* Ambient glow */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none" />
@@ -850,7 +850,7 @@ export default function Landing() {
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-black uppercase tracking-widest">
                   <Shirt className="h-3.5 w-3.5" />
-                  Lamalo Fashion Ã¢ÂÂ In-House Virtual Label
+                  Lamalo Fashion ÃÂ¢ÃÂÃÂ In-House Virtual Label
                 </div>
               </div>
 
@@ -863,7 +863,7 @@ export default function Landing() {
                 <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
                   Ask any AI to dress a character in a{" "}
                   <span className="text-white/80 italic">"red bomber jacket"</span>{" "}
-                  and it works Ã¢ÂÂ once. By scene 40, that jacket has drifted to burgundy. By scene 60, it's maroon. By scene 80, it's gone.
+                  and it works ÃÂ¢ÃÂÃÂ once. By scene 40, that jacket has drifted to burgundy. By scene 60, it's maroon. By scene 80, it's gone.
                   We built <span className="text-amber-400 font-semibold">Lamalo</span> to fix that.
                 </p>
               </div>
@@ -872,21 +872,21 @@ export default function Landing() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                 {[
                   {
-                    icon: "Ã°ÂÂÂ¯",
+                    icon: "ÃÂ°ÃÂÃÂÃÂ¯",
                     title: "Production-grade reference prompts",
-                    body: "Every Lamalo item ships with a precise visual specification Ã¢ÂÂ fabric, cut, silhouette, and exact colour Ã¢ÂÂ baked directly into the generation pipeline. The AI isn't guessing. It knows exactly what it's supposed to render.",
+                    body: "Every Lamalo item ships with a precise visual specification ÃÂ¢ÃÂÃÂ fabric, cut, silhouette, and exact colour ÃÂ¢ÃÂÃÂ baked directly into the generation pipeline. The AI isn't guessing. It knows exactly what it's supposed to render.",
                     accent: "amber",
                   },
                   {
-                    icon: "Ã°ÂÂÂ¨",
+                    icon: "ÃÂ°ÃÂÃÂÃÂ¨",
                     title: "Each colour is a separate purchase",
-                    body: "A white tee and a black tee are two distinct items in the catalogue. When you assign a colour to a character, the AI locks that exact shade across every scene they appear in Ã¢ÂÂ no drift, no interpretation, no surprises.",
+                    body: "A white tee and a black tee are two distinct items in the catalogue. When you assign a colour to a character, the AI locks that exact shade across every scene they appear in ÃÂ¢ÃÂÃÂ no drift, no interpretation, no surprises.",
                     accent: "purple",
                   },
                   {
-                    icon: "Ã°ÂÂÂ¬",
+                    icon: "ÃÂ°ÃÂÃÂÃÂ¬",
                     title: "Automatic scene-to-scene continuity",
-                    body: "Assign an outfit to a character and it follows them through the entire film. Scene 3 to scene 87 Ã¢ÂÂ same jacket, same colour, same fit. Our pipeline injects a Costume Lock into every generation call so the AI never forgets.",
+                    body: "Assign an outfit to a character and it follows them through the entire film. Scene 3 to scene 87 ÃÂ¢ÃÂÃÂ same jacket, same colour, same fit. Our pipeline injects a Costume Lock into every generation call so the AI never forgets.",
                     accent: "blue",
                   },
                 ].map((p) => (
@@ -910,15 +910,15 @@ export default function Landing() {
                 style={{ background: "linear-gradient(135deg, #0c0900 0%, #0f0d02 50%, #080808 100%)" }}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                  {/* Left Ã¢ÂÂ copy */}
+                  {/* Left ÃÂ¢ÃÂÃÂ copy */}
                   <div className="p-8 md:p-10 flex flex-col justify-center">
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23 collections ÃÂ· 1,400+ items</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23 collections ÃÂÃÂ· 1,400+ items</p>
                     <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight gradient-text-gold">
                       Menswear. Womenswear. Kids. Sport.<br />
                       <span className="text-amber-400">From 30 cents per item.</span>
                     </h3>
                     <p className="text-sm text-white/50 leading-relaxed mb-6">
-                      Everyday basics, performance sport (soccer, basketball, hockey, AFL, football), formalwear, swimwear, footwear, eyewear, watches, and accessories Ã¢ÂÂ each piece AI-designed and pre-tested for consistent on-screen rendering across skin tones and lighting conditions.
+                      Everyday basics, performance sport (soccer, basketball, hockey, AFL, football), formalwear, swimwear, footwear, eyewear, watches, and accessories ÃÂ¢ÃÂÃÂ each piece AI-designed and pre-tested for consistent on-screen rendering across skin tones and lighting conditions.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
@@ -938,14 +938,14 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  {/* Right Ã¢ÂÂ item sample grid */}
+                  {/* Right ÃÂ¢ÃÂÃÂ item sample grid */}
                   <div className="border-t md:border-t-0 md:border-l border-amber-500/10 p-6 grid grid-cols-3 gap-2 content-start">
                     {[
-                      { label: "Menswear", tag: "Shirts ÃÂ· Trousers ÃÂ· Footwear", color: "from-blue-900/40 to-blue-800/20" },
-                      { label: "Womenswear", tag: "Dresses ÃÂ· Blouses ÃÂ· Footwear", color: "from-purple-900/40 to-purple-800/20" },
-                      { label: "Kids / Teens", tag: "All ages ÃÂ· Footwear included", color: "from-teal-900/40 to-teal-800/20" },
-                      { label: "Costume / Professional", tag: "Police ÃÂ· Nurse ÃÂ· Firefighter ÃÂ· Ambo", color: "from-orange-900/40 to-orange-800/20" },
-                      { label: "Accessories", tag: "Jewellery ÃÂ· Sunglasses ÃÂ· Handbags", color: "from-yellow-900/40 to-yellow-800/20" },
+                      { label: "Menswear", tag: "Shirts ÃÂÃÂ· Trousers ÃÂÃÂ· Footwear", color: "from-blue-900/40 to-blue-800/20" },
+                      { label: "Womenswear", tag: "Dresses ÃÂÃÂ· Blouses ÃÂÃÂ· Footwear", color: "from-purple-900/40 to-purple-800/20" },
+                      { label: "Kids / Teens", tag: "All ages ÃÂÃÂ· Footwear included", color: "from-teal-900/40 to-teal-800/20" },
+                      { label: "Costume / Professional", tag: "Police ÃÂÃÂ· Nurse ÃÂÃÂ· Firefighter ÃÂÃÂ· Ambo", color: "from-orange-900/40 to-orange-800/20" },
+                      { label: "Accessories", tag: "Jewellery ÃÂÃÂ· Sunglasses ÃÂÃÂ· Handbags", color: "from-yellow-900/40 to-yellow-800/20" },
                     ].map((cat) => (
                       <div
                         key={cat.label}
@@ -967,7 +967,7 @@ export default function Landing() {
                 <div className="flex-1">
                   <p className="text-sm font-bold text-white mb-1">Designers: your clothes go through the same pipeline.</p>
                   <p className="text-xs text-white/45 leading-relaxed max-w-2xl">
-                    Upload your collection to the Virelle marketplace and we run every item through the same production-grade optimisation process Ã¢ÂÂ reference prompt calibration, colour variant separation, and scene continuity integration. Your customers get the same locked, drift-free results as Lamalo. Premium rendering, your brand.
+                    Upload your collection to the Virelle marketplace and we run every item through the same production-grade optimisation process ÃÂ¢ÃÂÃÂ reference prompt calibration, colour variant separation, and scene continuity integration. Your customers get the same locked, drift-free results as Lamalo. Premium rendering, your brand.
                   </p>
                 </div>
                 <button
@@ -981,7 +981,7 @@ export default function Landing() {
             </div>
           </section>
 
-                  {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 7.5 Ã¢ÂÂ Founding Designer Partner Program Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+                  {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 7.5 ÃÂ¢ÃÂÃÂ Founding Designer Partner Program ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10">
             <div className="absolute inset-0 bg-gradient-to-br from-black via-amber-950/10 to-black" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.07)_0%,transparent_70%)] pointer-events-none" />
@@ -993,16 +993,16 @@ export default function Landing() {
               <div className="text-center mb-16">
                 <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 rounded-full px-4 py-1.5 text-amber-400 text-xs font-black uppercase tracking-widest mb-6">
                   {foundingStatus?.foundingActive === false
-                      ? "Ã¢ÂÂ Founding Program Closed Ã¢ÂÂ Now Standard Membership"
+                      ? "ÃÂ¢ÃÂÃÂ Founding Program Closed ÃÂ¢ÃÂÃÂ Now Standard Membership"
                       : foundingStatus?.spotsRemaining !== undefined
-                        ? `Ã¢ÂÂ Founding Partner Ã¢ÂÂ ${foundingStatus.spotsRemaining} of ${foundingStatus.totalSpots} spots left`
-                        : "Ã¢ÂÂ Limited Ã¢ÂÂ Founding Designer Partner Program"}
+                        ? `ÃÂ¢ÃÂÃÂ Founding Partner ÃÂ¢ÃÂÃÂ ${foundingStatus.spotsRemaining} of ${foundingStatus.totalSpots} spots left`
+                        : "ÃÂ¢ÃÂÃÂ Limited ÃÂ¢ÃÂÃÂ Founding Designer Partner Program"}
                 </div>
                 <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-none gradient-text-gold">
                   GET IN <span className="text-amber-400">FIRST.</span>
                 </h2>
                 <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
-                  For the first group of approved designers, Virelle.life is offering an exclusive founding membership Ã¢ÂÂ
+                  For the first group of approved designers, Virelle.life is offering an exclusive founding membership ÃÂ¢ÃÂÃÂ
                   reduced entry cost, priority placement, and a front-row seat inside the AI production economy.
                 </p>
               </div>
@@ -1026,8 +1026,8 @@ export default function Landing() {
                     <span className="text-white/40 text-xl mb-1">/year</span>
                   </div>
                   {foundingStatus?.foundingActive === false
-                      ? "Standard annual membership ÃÂ· Cancel anytime"
-                      : "Founding price ÃÂ· First year only ÃÂ· Renews at standard rate ÃÂ· Cancel anytime"}
+                      ? "Standard annual membership ÃÂÃÂ· Cancel anytime"
+                      : "Founding price ÃÂÃÂ· First year only ÃÂÃÂ· Renews at standard rate ÃÂÃÂ· Cancel anytime"}
                 </div>
               </div>
                 {foundingStatus?.foundingActive !== false && foundingStatus?.spotsRemaining !== undefined && (
@@ -1040,14 +1040,14 @@ export default function Landing() {
               {/* 8-benefit grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
                 {([
-                  { icon: "Ã°ÂÂÂ°", title: "50% Off First Year", desc: "A$150 instead of A$299 Ã¢ÂÂ your lowest cost to enter the marketplace ever." },
-                  { icon: "Ã°ÂÂÂ", title: "95% of Every Lease", desc: "Keep 95 cents from every dollar earned. Just a 5% platform commission." },
-                  { icon: "Ã¢Â­Â", title: "Priority Placement", desc: "Founding designers appear first in the directory Ã¢ÂÂ ahead of all standard members." },
-                  { icon: "Ã°ÂÂÂ¬", title: "Featured Spotlights", desc: "Your brand featured across Virelle.life campaigns and production newsletters." },
-                  { icon: "Ã°ÂÂÂ", title: "Pieces or Collections", desc: "Upload individual items or entire collections Ã¢ÂÂ mix and match as you like." },
-                  { icon: "Ã°ÂÂ¤Â", title: "Early AI Access", desc: "First access to AI-assisted production briefs and automated wardrobe casting calls." },
-                  { icon: "Ã°ÂÂÂ", title: "Production Credits", desc: "Get credited when your pieces are used in eligible Virelle.life productions." },
-                  { icon: "Ã°ÂÂÂ", title: "Global Reach, Day One", desc: "Discoverable by film productions worldwide from the moment you publish." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ°", title: "50% Off First Year", desc: "A$150 instead of A$299 ÃÂ¢ÃÂÃÂ your lowest cost to enter the marketplace ever." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ", title: "95% of Every Lease", desc: "Keep 95 cents from every dollar earned. Just a 5% platform commission." },
+                  { icon: "ÃÂ¢ÃÂ­ÃÂ", title: "Priority Placement", desc: "Founding designers appear first in the directory ÃÂ¢ÃÂÃÂ ahead of all standard members." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ¬", title: "Featured Spotlights", desc: "Your brand featured across Virelle.life campaigns and production newsletters." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ", title: "Pieces or Collections", desc: "Upload individual items or entire collections ÃÂ¢ÃÂÃÂ mix and match as you like." },
+                  { icon: "ÃÂ°ÃÂÃÂ¤ÃÂ", title: "Early AI Access", desc: "First access to AI-assisted production briefs and automated wardrobe casting calls." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ", title: "Production Credits", desc: "Get credited when your pieces are used in eligible Virelle.life productions." },
+                  { icon: "ÃÂ°ÃÂÃÂÃÂ", title: "Global Reach, Day One", desc: "Discoverable by film productions worldwide from the moment you publish." },
                 ] as const).map((b) => (
                   <div key={b.title} className="bg-white/3 border border-white/8 rounded-2xl p-5 hover:border-amber-500/25 hover:bg-white/5 transition-all">
                     <div className="text-2xl mb-3">{b.icon}</div>
@@ -1063,20 +1063,20 @@ export default function Landing() {
                   onClick={() => setLocation("/designer-register")}
                   className="bg-amber-500 hover:bg-amber-600 text-black font-black px-12 h-14 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
                 >
-                Apply as Founding Partner Ã¢ÂÂ {foundingStatus?.foundingActive === false ? "A$299/yr" : "A$150/yr"}
+                Apply as Founding Partner ÃÂ¢ÃÂÃÂ {foundingStatus?.foundingActive === false ? "A$299/yr" : "A$150/yr"}
                 </Button>
                 <p className="text-white/30 text-xs mt-4">
-                  Limited spots ÃÂ· First come, first served ÃÂ· Direct Stripe Connect bank payouts
+                  Limited spots ÃÂÃÂ· First come, first served ÃÂÃÂ· Direct Stripe Connect bank payouts
                 </p>
               </div>
 
-              {/* For productions Ã¢ÂÂ compact divider */}
+              {/* For productions ÃÂ¢ÃÂÃÂ compact divider */}
               <div className="border-t border-white/8 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <p className="text-white/35 text-xs font-bold uppercase tracking-wider mb-1">Already a filmmaker?</p>
-                  <h3 className="text-xl font-black">Browse the Wardrobe Marketplace</h3>
+                  <h3 className="text-xl font-black gradient-text-gold">Browse the Wardrobe Marketplace</h3>
                   <p className="text-white/40 text-sm mt-1">
-                    Lease designer collections Ã¢ÂÂ they appear in your characters for AI scene generation.
+                    Lease designer collections ÃÂ¢ÃÂÃÂ they appear in your characters for AI scene generation.
                   </p>
                 </div>
                 <Button
@@ -1091,7 +1091,7 @@ export default function Landing() {
             </div>
           </section>
 
-        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ 8. Final CTA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ 8. Final CTA ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
         <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -1110,7 +1110,7 @@ export default function Landing() {
         </section>
       </main>
 
-      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Footer Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Footer ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-2.5">
@@ -1126,7 +1126,7 @@ export default function Landing() {
             </button>
             <button onClick={() => setLocation("/contact")} className="hover:text-white transition-colors">Contact</button>
           </div>
-          <p className="text-[10px] text-white/30 font-medium">ÃÂ© 2026 Virelle Studios. All rights reserved.</p>
+          <p className="text-[10px] text-white/30 font-medium">ÃÂÃÂ© 2026 Virelle Studios. All rights reserved.</p>
         </div>
       </footer>
     </div>

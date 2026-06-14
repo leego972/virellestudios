@@ -1097,7 +1097,7 @@ export default function ComponentsShowcase() {
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Dimensions</h4>
+                        <h4 className="font-medium leading-none gradient-text-gold">Dimensions</h4>
                         <p className="text-sm text-muted-foreground">
                           Set the dimensions for the layer.
                         </p>
@@ -1158,7 +1158,7 @@ export default function ComponentsShowcase() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-semibold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework ÃÂ¢ÃÂÃÂ created and maintained by
+                          The React Framework ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ created and maintained by
                           @vercel.
                         </p>
                       </div>

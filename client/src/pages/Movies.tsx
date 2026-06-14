@@ -67,7 +67,7 @@ const TYPE_COLORS: Record<MovieType, string> = {
 };
 
 function formatDuration(seconds: number | null | undefined): string {
-  if (!seconds) return "ÃÂ¢ÃÂÃÂ";
+  if (!seconds) return "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
@@ -77,7 +77,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes) return "ÃÂ¢ÃÂÃÂ";
+  if (!bytes) return "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024)
@@ -106,7 +106,7 @@ type MovieItem = {
   updatedAt: Date;
 };
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ YouTube Export Modal ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ YouTube Export Modal ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
 function YouTubeExportModal({
   movie,
   open,
@@ -146,8 +146,8 @@ function YouTubeExportModal({
     setTitle(movie.title);
     setDescription(
       movie.description
-        ? `${movie.description}\n\nCreated with Virelle Studios ÃÂ¢ÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
-        : `Created with Virelle Studios ÃÂ¢ÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
+        ? `${movie.description}\n\nCreated with Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
+        : `Created with Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI-powered cinema.\nhttps://virelle.life`
     );
   }
 
@@ -234,7 +234,7 @@ function YouTubeExportModal({
               }
             >
               <PlayCircle className="h-4 w-4" />
-              {exportMutation.isPending ? "UploadingÃÂ¢ÃÂÃÂ¦" : "Upload to YouTube"}
+              {exportMutation.isPending ? "UploadingÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦" : "Upload to YouTube"}
             </Button>
           )}
         </DialogFooter>
@@ -441,7 +441,7 @@ export default function Movies() {
       <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-medium truncate">{movie.title}</h3>
+            <h3 className="font-medium truncate gradient-text-gold">{movie.title}</h3>
             {movie.description && (
               <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                 {movie.description}
@@ -542,7 +542,7 @@ export default function Movies() {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium truncate">{movie.title}</h3>
+            <h3 className="font-medium truncate gradient-text-gold">{movie.title}</h3>
             <Badge
               className={`${TYPE_COLORS[movie.type as MovieType]} border text-[10px] shrink-0`}
             >
@@ -642,7 +642,7 @@ export default function Movies() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 {folderContents.length} item
-                {folderContents.length !== 1 ? "s" : ""} ÃÂ¢ÃÂÃÂ{" "}
+                {folderContents.length !== 1 ? "s" : ""} ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ{" "}
                 {folderContents.filter((m) => m.type === "scene").length} scenes
                 {folderContents.filter((m) => m.type === "trailer").length > 0 &&
                   `, ${folderContents.filter((m) => m.type === "trailer").length} trailer${folderContents.filter((m) => m.type === "trailer").length !== 1 ? "s" : ""}`}
@@ -895,7 +895,7 @@ export default function Movies() {
                                 <Folder className="h-6 w-6 text-amber-400" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="font-medium truncate">
+                                <h3 className="font-medium truncate gradient-text-gold">
                                   {folderName}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
@@ -957,7 +957,7 @@ export default function Movies() {
           {filteredFolderContents.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <FolderOpen className="h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-medium">Folder is empty</h3>
+              <h3 className="text-lg font-medium gradient-text-gold">Folder is empty</h3>
               <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                 {searchQuery
                   ? "No items match your search."
