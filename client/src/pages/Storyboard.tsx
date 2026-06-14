@@ -5,10 +5,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
   import { trpc } from "@/lib/trpc";
   import { useParams, useLocation } from "wouter";
   import {
-    Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera,
+    Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera, Sparkles, Zap,
     Sun, Cloud, Palette, Download, Play, Film, ChevronRight,
   } from "lucide-react";
   import { useState } from "react";
+import { toast } from "sonner";
   import MediaPlayer from "@/components/MediaPlayer";
   import { getLoginUrl } from "@/const";
   import { NextStageCTA } from "@/components/NextStageCTA";
@@ -316,7 +317,14 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <Button size="sm" onClick={autoGenerateAllPanels} disabled={autoGenRunning}
+              className="gap-2 h-8 text-xs"
+              style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
+              {autoGenRunning
+                ? <><Loader2 className="h-3 w-3 animate-spin" />Generating {autoGenProgress.done}/{autoGenProgress.total}</>
+                : <><Sparkles className="h-3 w-3" />Auto-generate Panels</>}
+            </Button>
+        <div className="flex items-center gap-2">
               <div className="flex items-center border border-border/40 rounded-lg overflow-hidden h-8">
                 <button onClick={() => setViewMode("grid")} className={`h-full px-2.5 flex items-center transition-colors ${viewMode==="grid" ? "text-white" : "text-muted-foreground/50 hover:text-muted-foreground"}`} style={{ background: viewMode==="grid" ? "rgba(212,175,55,0.12)" : "transparent" }}>
                   <Grid3X3 className="h-3.5 w-3.5" />
