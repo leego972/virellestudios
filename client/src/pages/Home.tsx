@@ -23,7 +23,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   import { JOURNEY_STAGES } from "@/lib/journeyStages";
 
   function GettingStartedChecklist({ onShowGuide }: { onShowGuide: () => void }) {
-    const { isDone } = useOnboardingChecklist();
+    const { allDone: isDone } = useOnboardingChecklist();
     if (isDone) return null;
     return (
       <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 flex items-center justify-between gap-4">
