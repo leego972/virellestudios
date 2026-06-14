@@ -131,7 +131,7 @@ export default function PressKit() {
           <CardContent className="p-8 prose max-w-none">
             <div className="space-y-1 mb-6">
               <div className="text-xs uppercase tracking-widest text-amber-700">Electronic Press Kit</div>
-              <h1 className="text-3xl font-serif !mb-1">{project?.title || "Untitled Project"}</h1>
+              <h1 className="text-3xl font-serif !mb-1 gradient-text-gold">{project?.title || "Untitled Project"}</h1>
               {kit.tagline && <p className="text-lg italic !mt-0">{kit.tagline}</p>}
             </div>
             {kit.synopsisShort && (
