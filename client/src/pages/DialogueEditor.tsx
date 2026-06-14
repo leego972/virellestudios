@@ -226,7 +226,7 @@ export default function DialogueEditor() {
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6">
           {/* Scene Sidebar */}
           <div className="sm:col-span-3">
-            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Scenes</CardTitle>
               </CardHeader>

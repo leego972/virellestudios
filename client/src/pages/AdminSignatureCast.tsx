@@ -126,7 +126,7 @@ export default function AdminSignatureCast() {
             { label: "Active Licenses", value: entitlements?.length ?? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: CheckCircle2, color: "text-blue-400" },
             { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: TrendingUp, color: "text-purple-400" },
           ].map(({ label, value, icon: Icon, color }) => (
-            <Card key={label} className="border-amber-500/20 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card key={label} className="border-amber-500/20 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <Icon className={`w-5 h-5 ${color}`} />
                 <div>

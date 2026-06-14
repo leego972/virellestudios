@@ -99,7 +99,7 @@ function TotalActualsRow({ budget }: { budget: any }) {
   const hot = pct > 5;
   const cold = pct < -5;
   return (
-    <Card className="bg-muted/40 border-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+    <Card className="bg-muted/40 border-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
       <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <div className="flex items-center justify-between">
           <div>

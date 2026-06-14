@@ -26,7 +26,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
     const { allDone: isDone } = useOnboardingChecklist();
     if (isDone) return null;
     return (
-      <div className="rounded-xl border border-primary/20 bg-amber-400/5 px-4 py-3 flex items-center justify-between gap-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <div className="rounded-xl border border-primary/20 bg-amber-400/5 px-4 py-3 flex items-center justify-between gap-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-amber-400" />
@@ -677,7 +677,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
         {/* Delete confirm */}
         <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
-          <AlertDialogContent className="glass-dark">
+          <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="gradient-text-gold">Delete project?</AlertDialogTitle>
               <AlertDialogDescription>This will permanently delete the project and all its scenes. This action cannot be undone.</AlertDialogDescription>
@@ -691,7 +691,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
         {/* Needs project alert */}
         <AlertDialog open={showNeedsProjectAlert} onOpenChange={setShowNeedsProjectAlert}>
-          <AlertDialogContent className="glass-dark">
+          <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="gradient-text-gold">Select a project first</AlertDialogTitle>
               <AlertDialogDescription>This tool requires an active project. Select a project from the dropdown in the pipeline header, or create a new one.</AlertDialogDescription>

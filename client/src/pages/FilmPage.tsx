@@ -431,7 +431,7 @@ export default function FilmPage() {
                 .slice(0, 3)
                 .map((f: any) => (
                   <Link key={f.slug} href={`/films/${f.slug}`}>
-                    <Card className="bg-zinc-900 border-amber-500/20 hover:border-amber-500/20 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+                    <Card className="bg-zinc-900 border-amber-500/20 hover:border-amber-500/20 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
                       <div className="aspect-video bg-zinc-800 relative overflow-hidden">
                         {f.thumbnailUrl ? (
                           <img

@@ -164,7 +164,7 @@ export default function CreditsEditor() {
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
         {/* Opening Credits */}
         <Card>
-          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <Film className="h-4 w-4 text-amber-400" />
               Opening Credits

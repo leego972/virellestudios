@@ -613,7 +613,7 @@ function AICastingInner() {
         <div className="space-y-4">
           {/* Chemistry Pairs (Signature mode only) */}
           {castMode === "signature" && (
-            <Card className="border-amber-500/10 bg-amber-950/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-amber-500/10 bg-amber-950/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardHeader className="pb-2 pt-3 px-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardTitle className="text-xs flex items-center gap-2 text-amber-300 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Heart className="w-3 h-3" />

@@ -48,7 +48,7 @@ export default function ForgotPassword() {
           </div>
         </div>
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           {submitted ? (
             <>
               <CardHeader className="space-y-1 pb-4 text-center">

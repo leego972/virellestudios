@@ -1231,7 +1231,7 @@ function AdPosterMakerInner() {
               </div>
 
               {selectedElement && (
-                <Card className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <Card className="border-primary/20 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                   <CardHeader className="pb-2 pt-3 px-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardTitle className="text-xs font-semibold text-amber-400 uppercase tracking-wider gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Edit Selected Layer</CardTitle>
                   </CardHeader>

@@ -431,7 +431,7 @@ export default function CampaignManager() {
         <TabsContent value="campaigns" className="space-y-4 mt-4">
           {campaigns.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardContent className="flex flex-col items-center justify-center py-12 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <Megaphone className="h-12 w-12 text-muted-foreground/30 mb-4" />
                 <h3 className="text-lg font-medium gradient-text-gold">No campaigns yet</h3>
                 <p className="text-muted-foreground text-sm mt-1">Create your first advertising campaign to get started</p>

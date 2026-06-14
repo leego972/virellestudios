@@ -136,7 +136,7 @@ import { useState, useMemo } from "react";
         {/* Summary */}
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           {[["Total Items", summary.total],["Owned", summary.owned],["Rented", summary.rented],["Still Needed", summary.needed],["Checked Out", summary.checkedOut]].map(([l, v]) => (
-            <Card key={l as string}><CardContent className="p-3 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><p className="text-xl font-bold">{v}</p><p className="text-[10px] text-muted-foreground">{l}</p></CardContent></Card>
+            <Card key={l as string}><CardContent className="p-3 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow"><p className="text-xl font-bold">{v}</p><p className="text-[10px] text-muted-foreground">{l}</p></CardContent></Card>
           ))}
         </div>
 

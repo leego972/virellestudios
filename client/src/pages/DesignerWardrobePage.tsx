@@ -490,7 +490,7 @@ export default function DesignerWardrobePage() {
     const Icon = meta?.icon ?? Package;
     return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card key={it.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 overflow-hidden flex flex-col glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card key={it.id} className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border-amber-500/20 overflow-hidden flex flex-col glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
         <div className="aspect-[4/5] bg-zinc-950 relative overflow-hidden">
           {it.primaryImageUrl ? (
             <img

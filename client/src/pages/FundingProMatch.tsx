@@ -41,7 +41,7 @@ export default function FundingProMatch() {
       </div>
 
       <Card>
-        <CardContent className="pt-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <CardContent className="pt-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <Label className="text-sm shrink-0">Project:</Label>
           <Select value={activeId ? String(activeId) : ""} onValueChange={v => setProjectId(Number(v))}>
             <SelectTrigger className="max-w-md"><SelectValue placeholder="Choose a project to score againstÃ¢ÂÂ¦" /></SelectTrigger>

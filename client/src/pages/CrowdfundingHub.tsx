@@ -371,7 +371,7 @@ function CrowdfundingHubInner() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <Film className="h-4 w-4 text-amber-400" /> My Campaigns
               </CardTitle>
               <CardDescription>Your crowdfunding campaigns launched on Virelle.</CardDescription>

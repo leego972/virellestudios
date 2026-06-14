@@ -193,7 +193,7 @@ export default function BrandOutreach() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Brands */}
-        <Card className="lg:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="lg:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader>
             <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Brands & Sponsor Desks</CardTitle>
             <CardDescription>Pick one to draft outreach.</CardDescription>

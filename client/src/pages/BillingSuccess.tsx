@@ -125,7 +125,7 @@ export default function BillingSuccess() {
 
         {/* What's next (web only) */}
         {!mobileRedirecting && (
-          <div className="border border-amber-500/20 rounded-2xl p-6 text-left space-y-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
+          <div className="border border-amber-500/20 rounded-2xl p-6 text-left space-y-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow gold-glow">
             <h2 className="text-sm font-semibold text-amber-400/70 uppercase tracking-wider gradient-text-gold">What's next</h2>
             {isTopUp ? (
               <ul className="space-y-3 text-sm text-zinc-300">

@@ -1332,7 +1332,7 @@ function FundingCard({ source, onApply }: { source: FundingSource; onApply: () =
     .replace("Public arts fund", "Arts Fund");
 
   return (
-    <div className="group rounded-xl border border-border bg-card/60 hover:border-amber-500/30 hover:bg-card/80 transition-all duration-200 p-4 flex flex-col gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+    <div className="group rounded-xl border border-border bg-card/60 hover:border-amber-500/30 hover:bg-card/80 transition-all duration-200 p-4 flex flex-col gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold leading-tight truncate gradient-text-gold">{source.organization}</h3>

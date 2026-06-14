@@ -234,7 +234,7 @@ export default function AdminOutreach() {
           { label: "Campaigns Sent", value: campaigns.filter(c => c.status === "sent").length, icon: Send, color: "text-amber-400" },
           { label: "Emails Delivered", value: campaigns.reduce((a, c) => a + (c.sentCount || 0), 0), icon: Mail, color: "text-purple-400" },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card key={stat.label} className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-card flex items-center justify-center flex-shrink-0">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />

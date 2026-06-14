@@ -59,7 +59,7 @@ export default function ActivityTimeline() {
         {isLoading ? (
           <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />LoadingÃ¢ÂÂ¦</div>
         ) : (events as any[]).length === 0 ? (
-          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
+          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
         ) : (
           <div className="space-y-2">
             {(events as any[]).map((e) => {

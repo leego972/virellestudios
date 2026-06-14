@@ -82,7 +82,7 @@ export default function Contacts() {
         </div>
 
         {open && (
-          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader><CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
             <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

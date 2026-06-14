@@ -415,7 +415,7 @@ export default function Characters() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i} className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card key={i} className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardContent className="p-4">
                 <Skeleton className="aspect-[3/4] w-full rounded-md mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />

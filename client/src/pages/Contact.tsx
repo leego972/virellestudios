@@ -53,7 +53,7 @@ export default function Contact() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Card className="max-w-md w-full text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="max-w-md w-full text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardContent className="pt-10 pb-8 space-y-4">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
             <h2 className="text-2xl font-bold gradient-text-gold">Message Sent</h2>

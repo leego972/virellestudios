@@ -78,7 +78,7 @@ import React, { useState } from "react";
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="bg-white/5 border-white/10 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
               <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Shirt className="h-5 w-5 text-amber-400" />Seed Marketplace</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm text-white/60 mb-4">Seed all 28+ Lamalo Fashion collections and wardrobe items.</p>

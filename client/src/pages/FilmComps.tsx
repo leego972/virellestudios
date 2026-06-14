@@ -97,7 +97,7 @@ import { useState, useMemo } from "react";
             { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ", icon: <Star className="h-4 w-4" /> },
           ].map(s => (
             <Card key={s.label}>
-              <CardContent className="p-3 flex items-center gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardContent className="p-3 flex items-center gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 shrink-0">{s.icon}</div>
                 <div className="min-w-0"><p className="font-bold text-base truncate">{s.value}</p><p className="text-[10px] text-muted-foreground truncate">{s.label}</p></div>
               </CardContent>

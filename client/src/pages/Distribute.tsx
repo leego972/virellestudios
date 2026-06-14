@@ -231,7 +231,7 @@ export default function Distribute() {
 
       {/* Phase 2: Analytics Snapshot (only shown when film page is published) */}
       {promoStatus?.isPublished && filmPageStats && (
-        <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <div className="flex items-center gap-2">
               <BarChart2 className="w-4 h-4 text-amber-500" />

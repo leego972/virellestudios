@@ -200,7 +200,7 @@ import { useRoute, useLocation } from "wouter";
               )}
 
               {/* About the model */}
-              <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <Card className="border-amber-500/20 bg-amber-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <CardContent className="pt-4 pb-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex gap-3">
                     {campaign.fundingModel === "all_or_nothing" ? (

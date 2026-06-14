@@ -156,7 +156,7 @@ export default function FestivalTracker() {
           const status = tracking[f.name];
           return (
             <Card key={f.name} className={status ? "border-amber-500/30" : ""}>
-              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
                     <CardTitle className="text-base leading-snug gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{f.name}</CardTitle>

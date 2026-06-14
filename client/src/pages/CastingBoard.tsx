@@ -228,7 +228,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
             const signed = !!s.consent.signedAt;
             return (
               <Card key={c.id}>
-                <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                   <div className="flex items-start gap-3">
                     {c.photoUrl ? (
                       <img
