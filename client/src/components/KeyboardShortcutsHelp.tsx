@@ -9,7 +9,7 @@ const GROUPS: ShortcutGroup[] = [
   {
     title: "Global",
     rows: [
-      { keys: ["â", "K"], label: "Open command palette / search" },
+      { keys: ["⌘", "K"], label: "Open command palette / search" },
       { keys: ["?"], label: "Show this keyboard help" },
       { keys: ["g", "h"], label: "Go to Home dashboard" },
       { keys: ["g", "p"], label: "Go to Projects" },
@@ -34,7 +34,7 @@ const GROUPS: ShortcutGroup[] = [
   {
     title: "Scene editor",
     rows: [
-      { keys: ["â", "S"], label: "Save scene now" },
+      { keys: ["⌘", "S"], label: "Save scene now" },
       { keys: ["Esc"], label: "Close editor without saving" },
     ],
   },
