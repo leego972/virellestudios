@@ -15,7 +15,7 @@ import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListO
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Live Presence Bar (heartbeats every 12s, polls every 6s) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Live Presence Bar (heartbeats every 12s, polls every 6s) ─── */
 function PresenceBar({ projectId, tab }: { projectId: number; tab: string }) {
   const heartbeat = trpc.presence.heartbeat.useMutation();
   const list = trpc.presence.list.useQuery({ projectId }, { refetchInterval: 6000 });
@@ -38,7 +38,7 @@ function PresenceBar({ projectId, tab }: { projectId: number; tab: string }) {
         {users.slice(0, 6).map((u: any, i: number) => {
           const initial = (u.email || "?").charAt(0).toUpperCase();
           return (
-            <div key={i} title={`${u.email || "user"} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ${u.tab || ""}`} className="h-6 w-6 rounded-full bg-emerald-600/80 text-white text-[10px] flex items-center justify-center border border-background ring-1 ring-emerald-400/30">
+            <div key={i} title={`${u.email || "user"} · ${u.tab || ""}`} className="h-6 w-6 rounded-full bg-emerald-600/80 text-white text-[10px] flex items-center justify-center border border-background ring-1 ring-emerald-400/30">
               {initial}
             </div>
           );
@@ -57,7 +57,7 @@ export default function ProStudioOps() {
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  // ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Pro NLE keyboard shortcuts (only when not typing in form fields) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+  // ─── Pro NLE keyboard shortcuts (only when not typing in form fields) ───
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
@@ -69,7 +69,7 @@ export default function ProStudioOps() {
         "a": "approvals", "b": "budget",
       };
       if (map[e.key]) { setActiveTab(map[e.key]); e.preventDefault(); }
-      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· D Dashboard ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· F Frames ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Q Queue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· P Deliverables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· L Locks ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· A Approvals ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· B Budget ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· X Cuts"); e.preventDefault(); }
+      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · L Locks · A Approvals · B Budget · X Cuts"); e.preventDefault(); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -84,7 +84,7 @@ export default function ProStudioOps() {
         <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gold-shimmer">Studio Operations</h1>
-          <p className="text-xs text-muted-foreground">Pro production workflow ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· live multi-user collab ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· server-enforced render budget ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· NLE shortcuts (press ?)</p>
+          <p className="text-xs text-muted-foreground">Pro production workflow · live multi-user collab · server-enforced render budget · NLE shortcuts (press ?)</p>
         </div>
         <PresenceBar projectId={projectId} tab={activeTab} />
       </div>
@@ -126,11 +126,11 @@ export default function ProStudioOps() {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Studio Dashboard: single pane of glass for production readiness ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Studio Dashboard: single pane of glass for production readiness ─── */
 function StudioDashboardTab({ projectId }: { projectId: number }) {
   const summary = trpc.studioDashboard.summary.useQuery({ projectId }, { refetchInterval: 8000 });
   const d = summary.data as any;
-  if (!d) return <div className="p-6 text-sm text-muted-foreground">Loading studio metricsÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</div>;
+  if (!d) return <div className="p-6 text-sm text-muted-foreground">Loading studio metrics…</div>;
   const burn = d.spend.burnPct;
   const burnColor = burn == null ? "text-muted-foreground" : burn > 90 ? "text-rose-400" : burn > 70 ? "text-amber-400" : "text-emerald-400";
   const readyColor = d.readiness > 80 ? "text-emerald-400" : d.readiness > 50 ? "text-amber-400" : "text-rose-400";
@@ -146,9 +146,9 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
           <div className="text-xs text-muted-foreground">Render Queue</div>
           <div className="text-3xl font-bold gradient-text-gold">{d.queue.queued + d.queue.running}</div>
           <div className="text-[11px] text-muted-foreground mt-1">
-            <span className="text-blue-400">{d.queue.running} running</span> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· <span>{d.queue.queued} queued</span>
-            {d.queue.failed > 0 && <span className="text-rose-400"> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {d.queue.failed} failed</span>}
-            {d.queue.paused > 0 && <span className="text-amber-400"> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {d.queue.paused} paused</span>}
+            <span className="text-blue-400">{d.queue.running} running</span> · <span>{d.queue.queued} queued</span>
+            {d.queue.failed > 0 && <span className="text-rose-400"> · {d.queue.failed} failed</span>}
+            {d.queue.paused > 0 && <span className="text-amber-400"> · {d.queue.paused} paused</span>}
           </div>
         </CardContent></Card>
         <Card><CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -172,16 +172,16 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
               <div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5"><DollarSign className="h-3 w-3" />Money saved</div>
                 <div className="text-3xl font-bold text-emerald-400 gradient-text-gold">${d.savings.moneySavedUsd.toLocaleString()}</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">vs ${d.savings.tradEquivalentUsd.toLocaleString()} traditional ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· spent ${d.savings.spentUsd.toLocaleString()}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">vs ${d.savings.tradEquivalentUsd.toLocaleString()} traditional · spent ${d.savings.spentUsd.toLocaleString()}</div>
               </div>
               <div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Clock className="h-3 w-3" />Time saved</div>
                 <div className="text-3xl font-bold text-teal-400 gradient-text-gold">{d.savings.timeSavedDays} days</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">{d.savings.renderedScenes} scenes rendered ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ~1 shoot day each</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{d.savings.renderedScenes} scenes rendered · ~1 shoot day each</div>
               </div>
               <div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Sparkles className="h-3 w-3" />Cost multiplier</div>
-                <div className="text-3xl font-bold text-violet-300 gradient-text-gold">{d.savings.savingsMultiplier ? `${d.savings.savingsMultiplier}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ` : "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}</div>
+                <div className="text-3xl font-bold text-violet-300 gradient-text-gold">{d.savings.savingsMultiplier ? `${d.savings.savingsMultiplier}×` : "—"}</div>
                 <div className="text-[11px] text-muted-foreground mt-0.5">cheaper than shooting traditional</div>
               </div>
             </div>
@@ -202,19 +202,19 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
             <Calculator className="h-5 w-5 text-violet-400" />
             <div>
               <div className="text-xs text-muted-foreground">Production Cost Forecast</div>
-              <div className="text-base font-semibold">{d.forecast.unrenderedScenes} scenes left to render ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· est <span className="text-violet-300">{d.forecast.estimatedCredits} credits</span></div>
+              <div className="text-base font-semibold">{d.forecast.unrenderedScenes} scenes left to render · est <span className="text-violet-300">{d.forecast.estimatedCredits} credits</span></div>
             </div>
           </div>
           <div className="text-[11px] text-muted-foreground">
-            {d.spend.dailyCap != null ? `ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${Math.ceil(d.forecast.estimatedCredits / d.spend.dailyCap)} day(s) at current daily cap` : "No daily cap set"}
-            {d.scenes.locked > 0 && <span className="ml-3 text-amber-400">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {d.scenes.locked} locked scene(s)</span>}
+            {d.spend.dailyCap != null ? `≈ ${Math.ceil(d.forecast.estimatedCredits / d.spend.dailyCap)} day(s) at current daily cap` : "No daily cap set"}
+            {d.scenes.locked > 0 && <span className="ml-3 text-amber-400">· 🔒 {d.scenes.locked} locked scene(s)</span>}
           </div>
         </CardContent></Card>
       )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><MessageSquare className="h-4 w-4" />Frame Reviews</CardTitle></CardHeader><CardContent>
-          <div className="flex items-baseline gap-3"><div className="text-2xl font-bold gradient-text-gold">{d.comments.open}</div><div className="text-xs text-muted-foreground">open ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {d.comments.resolved} resolved</div></div>
-          {d.comments.open > 0 && <div className="text-[11px] text-amber-400 mt-1">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  awaiting director attention</div>}
+          <div className="flex items-baseline gap-3"><div className="text-2xl font-bold gradient-text-gold">{d.comments.open}</div><div className="text-xs text-muted-foreground">open · {d.comments.resolved} resolved</div></div>
+          {d.comments.open > 0 && <div className="text-[11px] text-amber-400 mt-1">⚠ awaiting director attention</div>}
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Package className="h-4 w-4" />Deliverables</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold gradient-text-gold">{d.deliverables.ready}/{d.deliverables.total}</div><div className="text-xs text-muted-foreground">ready</div></div>
@@ -222,13 +222,13 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Scale className="h-4 w-4" />Clearances</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold gradient-text-gold">{d.clearances.total - d.clearances.pending}/{d.clearances.total}</div><div className="text-xs text-muted-foreground">cleared</div></div>
-          {d.clearances.pending > 0 && <div className="text-[11px] text-rose-400 mt-1">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  {d.clearances.pending} blocking distribution</div>}
+          {d.clearances.pending > 0 && <div className="text-[11px] text-rose-400 mt-1">⚠ {d.clearances.pending} blocking distribution</div>}
         </CardContent></Card>
       </div>
       {d.queue.cap?.pauseOnExceed && (
         <Card className="border-emerald-500/30 bg-emerald-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div className="text-xs text-emerald-400 font-medium flex items-center gap-2"><Zap className="h-3.5 w-3.5" />Render Queue Executor active</div>
-          <div className="text-[11px] text-muted-foreground mt-1">Server-side enforcement: per-job cap {d.queue.cap.perJobCredits ?? "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}cr ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· daily cap {d.queue.cap.dailyCredits ?? "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}cr ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· jobs over cap will be rejected at the generation chokepoint.</div>
+          <div className="text-[11px] text-muted-foreground mt-1">Server-side enforcement: per-job cap {d.queue.cap.perJobCredits ?? "—"}cr · daily cap {d.queue.cap.dailyCredits ?? "—"}cr · jobs over cap will be rejected at the generation chokepoint.</div>
         </CardContent></Card>
       )}
     </div>
@@ -239,7 +239,7 @@ function useScenes(projectId: number) {
   return trpc.scene.listByProject.useQuery({ projectId });
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Frame Comments ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Frame Comments ─── */
 function FrameCommentsTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const all = trpc.frameComments.list.useQuery({ projectId }, { refetchInterval: 6000 });
@@ -265,7 +265,7 @@ function FrameCommentsTab({ projectId }: { projectId: number }) {
           {sceneList.map(s => (
             <button key={s.id} onClick={() => { setSel(s.id); setDraft(null); }} className={`w-full text-left p-2 rounded text-xs hover:bg-muted/50 ${sceneId === s.id ? "bg-muted/70 ring-1 ring-primary/30" : ""}`}>
               <div className="font-medium truncate">{s.title || s.name || `Scene ${s.id}`}</div>
-              <div className="text-[10px] text-muted-foreground">{(map.get(s.id) || []).length} comments ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {(map.get(s.id) || []).filter(c => c.status === "open").length} open</div>
+              <div className="text-[10px] text-muted-foreground">{(map.get(s.id) || []).length} comments · {(map.get(s.id) || []).filter(c => c.status === "open").length} open</div>
             </button>
           ))}
         </CardContent>
@@ -307,7 +307,7 @@ function FrameCommentsTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Color Pipeline ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Color Pipeline ─── */
 function ColorTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const all = trpc.colorPipeline.list.useQuery({ projectId });
@@ -350,7 +350,7 @@ function ColorTab({ projectId }: { projectId: number }) {
           ))}
           <div><Label className="text-xs">Saturation</Label><Input type="number" step="0.01" value={live.saturation} onChange={e => setDraft({ ...live, saturation: Number(e.target.value) })} className="h-8 text-xs font-mono max-w-[120px]" /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div><Label className="text-xs">LUT Name</Label><Input value={live.lutName || ""} onChange={e => setDraft({ ...live, lutName: e.target.value })} placeholder="Arri LogC ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Rec709" className="h-8 text-xs" /></div>
+            <div><Label className="text-xs">LUT Name</Label><Input value={live.lutName || ""} onChange={e => setDraft({ ...live, lutName: e.target.value })} placeholder="Arri LogC → Rec709" className="h-8 text-xs" /></div>
             <div><Label className="text-xs">LUT URL</Label><Input value={live.lutUrl || ""} onChange={e => setDraft({ ...live, lutUrl: e.target.value })} placeholder="https://....cube" className="h-8 text-xs" /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -368,7 +368,7 @@ function ColorTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Asset Versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Asset Versions ─── */
 function AssetVersionsTab({ projectId }: { projectId: number }) {
   const list = trpc.assetVersions.list.useQuery({ projectId });
   const snap = trpc.assetVersions.snapshot.useMutation({ onSuccess: () => { toast.success("Snapshot saved"); list.refetch(); } });
@@ -382,7 +382,7 @@ function AssetVersionsTab({ projectId }: { projectId: number }) {
           <div><Label className="text-xs">Asset Type</Label>
             <Select value={form.assetType} onValueChange={v => setForm({ ...form, assetType: v })}><SelectTrigger className="h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent>{["script","schedule","budget","edl","audio_stems","color_grade"].map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent></Select>
           </div>
-          <div><Label className="text-xs">Version Label</Label><Input value={form.label} onChange={e => setForm({ ...form, label: e.target.value })} placeholder="v3 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ investor draft" className="h-8 text-xs" /></div>
+          <div><Label className="text-xs">Version Label</Label><Input value={form.label} onChange={e => setForm({ ...form, label: e.target.value })} placeholder="v3 — investor draft" className="h-8 text-xs" /></div>
           <div><Label className="text-xs">Payload URL (optional)</Label><Input value={form.payloadUrl} onChange={e => setForm({ ...form, payloadUrl: e.target.value })} placeholder="https://...pdf / .fdx / .edl" className="h-8 text-xs" /></div>
           <div><Label className="text-xs">Checksum (optional)</Label><Input value={form.checksum} onChange={e => setForm({ ...form, checksum: e.target.value })} placeholder="sha256:..." className="h-8 text-xs font-mono" /></div>
           <div><Label className="text-xs">Notes</Label><Textarea rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="text-xs" /></div>
@@ -406,7 +406,7 @@ function AssetVersionsTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Render Queue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Render Queue ─── */
 function RenderQueueTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const q = trpc.renderQueue.get.useQuery({ projectId }, { refetchInterval: 8000 });
@@ -415,11 +415,11 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
   const audit = trpc.auditLog.append.useMutation();
   const runBulk = (action: "pauseAll"|"resumeAll"|"retryFailed"|"clearDone"|"startAllQueued") => { bulk.mutate({ projectId, action }); audit.mutate({ projectId, event: { action: `renderQueue.bulk.${action}`, summary: `Bulk ${action}` } }); };
   const runVid = trpc.scene.generateVideo.useMutation({
-    onSuccess: () => { toast.success("Render kicked off ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ credits deducted, video generation in progress."); q.refetch(); },
+    onSuccess: () => { toast.success("Render kicked off — credits deducted, video generation in progress."); q.refetch(); },
     onError: (err: any) => { toast.error(err?.message || "Render failed"); q.refetch(); },
   });
   const runNow = (job: any) => {
-    if (!job.sceneId) { toast.error("This job has no scene attached ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ set sceneId first."); return; }
+    if (!job.sceneId) { toast.error("This job has no scene attached — set sceneId first."); return; }
     runVid.mutate({ sceneId: job.sceneId });
     audit.mutate({ projectId, event: { action: "renderQueue.runNow", targetType: "scene", targetId: String(job.sceneId), summary: `Run now: ${job.label}` } });
   };
@@ -431,7 +431,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
   const addJob = () => setDraft({ ...live, jobs: [...live.jobs, { id: uid(), label: "New render", sceneId: null, priority: "normal", model: "sora-2-pro", estimatedCredits: 50, maxRetries: 2, scheduledAt: null, status: "queued" }] });
   const removeJob = (i: number) => setDraft({ ...live, jobs: live.jobs.filter((_: any, j: number) => j !== i) });
   const moveUp = (i: number) => { if (i === 0) return; const jobs = [...live.jobs]; [jobs[i-1], jobs[i]] = [jobs[i], jobs[i-1]]; setDraft({ ...live, jobs }); };
-  const persist = () => { save.mutate({ projectId, data: live }); audit.mutate({ projectId, event: { action: "renderQueue.save", summary: `Queue: ${live.jobs.length} jobs, cap=${live.cap?.dailyCredits || "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}/day` } }); setDraft(null); };
+  const persist = () => { save.mutate({ projectId, data: live }); audit.mutate({ projectId, event: { action: "renderQueue.save", summary: `Queue: ${live.jobs.length} jobs, cap=${live.cap?.dailyCredits || "—"}/day` } }); setDraft(null); };
   const dailyEstimate = live.jobs.filter((j: any) => j.status === "queued" || j.status === "running").reduce((s: number, j: any) => s + j.estimatedCredits, 0);
   const overCap = live.cap?.dailyCredits != null && dailyEstimate > live.cap.dailyCredits;
 
@@ -444,7 +444,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
           <div className="flex items-end gap-2 pb-1 data-[state=checked]:bg-amber-500"><Switch checked={!!live.cap?.pauseOnExceed} onCheckedChange={c => updateCap({ pauseOnExceed: c })} /><span className="text-xs">Pause queue if over cap</span></div>
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Queue ({live.jobs.length} jobs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· est {dailyEstimate} cr {overCap && <span className="text-rose-400">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  over cap</span>})</CardTitle>
+      <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Queue ({live.jobs.length} jobs · est {dailyEstimate} cr {overCap && <span className="text-rose-400">⚠ over cap</span>})</CardTitle>
         <div className="flex flex-wrap gap-1">
           <Button size="sm" variant="outline" onClick={() => runBulk("startAllQueued")} disabled={bulk.isPending}><Play className="h-3.5 w-3.5 mr-1" />Start All</Button>
           <Button size="sm" variant="outline" onClick={() => runBulk("pauseAll")} disabled={bulk.isPending}><Pause className="h-3.5 w-3.5 mr-1" />Pause All</Button>
@@ -458,7 +458,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
           {live.jobs.map((j: any, i: number) => (
             <div key={j.id} className="border rounded p-2 grid grid-cols-12 gap-2 min-w-[600px] items-center text-xs">
               <Input value={j.label} onChange={e => updateJob(i, { label: e.target.value })} className="h-8 text-xs col-span-3" />
-              <Select value={j.sceneId == null ? "none" : String(j.sceneId)} onValueChange={v => updateJob(i, { sceneId: v === "none" ? null : Number(v) })}><SelectTrigger className="h-8 text-xs col-span-2 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none" className="text-xs">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no scene ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</SelectItem>{(scenes.data || []).map((s: any) => <SelectItem key={s.id} value={String(s.id)} className="text-xs">{s.title || `Scene ${s.id}`}</SelectItem>)}</SelectContent></Select>
+              <Select value={j.sceneId == null ? "none" : String(j.sceneId)} onValueChange={v => updateJob(i, { sceneId: v === "none" ? null : Number(v) })}><SelectTrigger className="h-8 text-xs col-span-2 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none" className="text-xs">— no scene —</SelectItem>{(scenes.data || []).map((s: any) => <SelectItem key={s.id} value={String(s.id)} className="text-xs">{s.title || `Scene ${s.id}`}</SelectItem>)}</SelectContent></Select>
               <Select value={j.priority} onValueChange={v => updateJob(i, { priority: v })}><SelectTrigger className="h-8 text-xs col-span-1 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger><SelectContent>{["low","normal","high","urgent"].map(p => <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>)}</SelectContent></Select>
               <Input value={j.model} onChange={e => updateJob(i, { model: e.target.value })} className="h-8 text-xs col-span-2" placeholder="model" />
               <Input type="number" value={j.estimatedCredits} onChange={e => updateJob(i, { estimatedCredits: Number(e.target.value) })} className="h-8 text-xs col-span-1 font-mono" />
@@ -467,7 +467,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
                 {(j.status === "queued" || j.status === "failed" || j.status === "paused") && (
                   <Button size="icon" variant="ghost" className="h-7 w-7" title="Run now (charge & generate)" onClick={() => runNow(j)} disabled={runVid.isPending} aria-label="Run job now (charge and generate)"><Sparkles className="h-3 w-3 text-violet-400" aria-hidden="true" /></Button>
                 )}
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => moveUp(i)} aria-label="Move job up in queue"><span aria-hidden="true">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span></Button>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => moveUp(i)} aria-label="Move job up in queue"><span aria-hidden="true">↑</span></Button>
                 <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeJob(i)} aria-label="Remove job from queue"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
               </div>
             </div>
@@ -479,7 +479,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Deliverables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Deliverables ─── */
 function DeliverablesTab({ projectId }: { projectId: number }) {
   const list = trpc.deliverables.list.useQuery({ projectId });
   const save = trpc.deliverables.save.useMutation({ onSuccess: () => { toast.success("Deliverables saved"); list.refetch(); } });
@@ -525,7 +525,7 @@ function DeliverablesTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Clearances ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Clearances ─── */
 function ClearancesTab({ projectId }: { projectId: number }) {
   const list = trpc.clearances.list.useQuery({ projectId });
   const save = trpc.clearances.save.useMutation({ onSuccess: () => { toast.success("Clearances saved"); list.refetch(); } });
@@ -570,7 +570,7 @@ function ClearancesTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Distribution ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Distribution ─── */
 function DistributionTab({ projectId }: { projectId: number }) {
   const list = trpc.distributionTargets.list.useQuery({ projectId });
   const save = trpc.distributionTargets.save.useMutation({ onSuccess: () => { toast.success("Distribution saved"); list.refetch(); } });
@@ -608,7 +608,7 @@ function DistributionTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Audit Log ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Audit Log ─── */
 function AuditTab({ projectId }: { projectId: number }) {
   const list = trpc.auditLog.list.useQuery({ projectId, limit: 500 });
   const download = () => { if (!list.data) return; const blob = new Blob([JSON.stringify(list.data, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `audit-log-project-${projectId}.json`; a.click(); URL.revokeObjectURL(a.href); };
@@ -630,7 +630,7 @@ function AuditTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Proxy Chain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Proxy Chain ─── */
 function ProxyTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const all = trpc.proxyChain.list.useQuery({ projectId });
@@ -644,7 +644,7 @@ function ProxyTab({ projectId }: { projectId: number }) {
   const persist = (id: number) => { const d = get(id); save.mutate({ projectId, sceneId: id, data: d }); audit.mutate({ projectId, event: { action: "proxyChain.save", targetType: "scene", targetId: String(id), summary: `proxy=${d.proxyStatus} master=${d.masterStatus}` } }); const next = { ...drafts }; delete next[id]; setDrafts(next); };
 
   return (
-    <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Proxy ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Master Conform</CardTitle><p className="text-xs text-muted-foreground">Edit on 1/4-res proxies, conform to full-res master only on final pass.</p></CardHeader>
+    <Card><CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Proxy → Master Conform</CardTitle><p className="text-xs text-muted-foreground">Edit on 1/4-res proxies, conform to full-res master only on final pass.</p></CardHeader>
       <CardContent className="space-y-2 max-h-[70vh] overflow-y-auto glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         {((scenes.data || []) as any[]).map(s => {
           const d = get(s.id); const dirty = drafts[s.id] != null;
@@ -665,7 +665,7 @@ function ProxyTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Cuts & Transitions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Cuts & Transitions ─── */
 function CutsTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const all = trpc.timelineCuts.list.useQuery({ projectId });
@@ -709,7 +709,7 @@ function CutsTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Scene Locks: prevent accidental re-renders of approved scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Scene Locks: prevent accidental re-renders of approved scenes ─── */
 function LocksTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const list = trpc.sceneLocks.list.useQuery({ projectId }, { refetchInterval: 10000 });
@@ -725,7 +725,7 @@ function LocksTab({ projectId }: { projectId: number }) {
     if (!lockDialog) return;
     const reason = lockDialog.reason.trim() || "approved";
     toggle.mutate({ projectId, sceneId: lockDialog.sceneId, locked: true, reason });
-    audit.mutate({ projectId, event: { action: "sceneLock.lock", targetType: "scene", targetId: String(lockDialog.sceneId), summary: `Locked: ${lockDialog.label} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${reason}` } });
+    audit.mutate({ projectId, event: { action: "sceneLock.lock", targetType: "scene", targetId: String(lockDialog.sceneId), summary: `Locked: ${lockDialog.label} — ${reason}` } });
     setLockDialog(null);
   };
   const onToggle = (sceneId: number, locked: boolean, label: string) => {
@@ -736,7 +736,7 @@ function LocksTab({ projectId }: { projectId: number }) {
     toggle.mutate({ projectId, sceneId, locked: false });
     audit.mutate({ projectId, event: { action: "sceneLock.unlock", targetType: "scene", targetId: String(sceneId), summary: `Unlocked: ${label}` } });
   };
-  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No scenes yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create scenes first to lock approved renders.</CardContent></Card>;
+  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No scenes yet — create scenes first to lock approved renders.</CardContent></Card>;
   const lockedCount = locks.filter(l => l.locked).length;
   return (
     <Card>
@@ -757,10 +757,10 @@ function LocksTab({ projectId }: { projectId: number }) {
                 </div>
                 {isLocked && lk && (
                   <div className="text-[11px] text-muted-foreground mt-0.5 ml-5">
-                    ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {lk.reason || "locked"} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· by {lk.lockedBy || "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"} {lk.lockedAt ? `ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ${new Date(lk.lockedAt).toLocaleString()}` : ""}
+                    🔒 {lk.reason || "locked"} · by {lk.lockedBy || "—"} {lk.lockedAt ? `· ${new Date(lk.lockedAt).toLocaleString()}` : ""}
                   </div>
                 )}
-                {!isLocked && s.videoUrl && <div className="text-[11px] text-emerald-400/70 mt-0.5 ml-5">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ has render ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ consider locking once approved</div>}
+                {!isLocked && s.videoUrl && <div className="text-[11px] text-emerald-400/70 mt-0.5 ml-5">✓ has render — consider locking once approved</div>}
               </div>
               <Switch className="data-[state=checked]:bg-amber-500" checked={isLocked} onCheckedChange={(v) => onToggle(s.id, v, s.title || `Scene ${s.order ?? s.id}`)} disabled={toggle.isPending} />
             </div>
@@ -772,7 +772,7 @@ function LocksTab({ projectId }: { projectId: number }) {
         <DialogContent className="glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Lock scene "{lockDialog?.label}"</DialogTitle>
-            <DialogDescription>Provide a reason ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ this is recorded in the audit log and shown next to the lock.</DialogDescription>
+            <DialogDescription>Provide a reason — this is recorded in the audit log and shown next to the lock.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <Label htmlFor="lock-reason">Lock reason</Label>
@@ -795,7 +795,7 @@ function LocksTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 3-Tier Approval Chain (director ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ producer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ exec, auto-locks on full sign-off) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── 3-Tier Approval Chain (director → producer → exec, auto-locks on full sign-off) ─── */
 function ApprovalsTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const list = trpc.approvals.get.useQuery({ projectId }, { refetchInterval: 10000 });
@@ -810,10 +810,10 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
     if (!rejectDialog) return;
     const note = rejectDialog.note.trim();
     setOne.mutate({ projectId, sceneId: rejectDialog.sceneId, role: rejectDialog.role, state: "rejected", note });
-    audit.mutate({ projectId, event: { action: "approval.rejected", targetType: "scene", targetId: String(rejectDialog.sceneId), summary: `${rejectDialog.role.toUpperCase()} rejected: ${rejectDialog.label}${note ? ` ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${note}` : ""}` } });
+    audit.mutate({ projectId, event: { action: "approval.rejected", targetType: "scene", targetId: String(rejectDialog.sceneId), summary: `${rejectDialog.role.toUpperCase()} rejected: ${rejectDialog.label}${note ? ` — ${note}` : ""}` } });
     setRejectDialog(null);
   };
-  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No scenes yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ create scenes first to route them through approval.</CardContent></Card>;
+  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No scenes yet — create scenes first to route them through approval.</CardContent></Card>;
   const apply = (sceneId: number, role: "director"|"producer"|"exec", state: "approved"|"rejected"|"pending", label: string) => {
     if (state === "rejected") {
       setRejectDialog({ sceneId, role, label, note: "" });
@@ -831,7 +831,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
     <Card>
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CheckCheck className="h-4 w-4" />3-Tier Approval Chain</CardTitle>
-        <div className="text-xs text-muted-foreground">Director ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Producer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Executive. When all three approve, scene <strong>auto-locks</strong> against further renders.</div>
+        <div className="text-xs text-muted-foreground">Director → Producer → Executive. When all three approve, scene <strong>auto-locks</strong> against further renders.</div>
       </CardHeader>
       <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <div className="grid grid-cols-12 gap-2 min-w-[600px] px-2 text-[10px] uppercase text-muted-foreground tracking-wider">
@@ -848,7 +848,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
             <div key={s.id} className={`grid grid-cols-12 gap-2 min-w-[600px] items-center p-2 rounded border ${all ? "border-emerald-500/40 bg-emerald-500/5" : "border-border bg-card/50"}`}>
               <div className="col-span-4 min-w-0">
                 <div className="text-sm font-medium truncate">Scene {s.order ?? s.id}: {s.title || s.description?.slice(0, 50) || "(untitled)"}</div>
-                {all && <div className="text-[10px] text-emerald-400 mt-0.5">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ fully approved ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ auto-locked</div>}
+                {all && <div className="text-[10px] text-emerald-400 mt-0.5">🔒 fully approved → auto-locked</div>}
               </div>
               {(["director","producer","exec"] as const).map(role => (
                 <div key={role} className="col-span-2 flex items-center justify-center gap-1">
@@ -881,7 +881,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
               rows={3}
               value={rejectDialog?.note || ""}
               onChange={(e) => setRejectDialog((s) => s ? { ...s, note: e.target.value } : s)}
-              placeholder="e.g. Continuity issue in shot 3, lighting needs grade passÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦"
+              placeholder="e.g. Continuity issue in shot 3, lighting needs grade pass…"
               autoFocus
             />
           </div>
@@ -895,7 +895,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
   );
 }
 
-/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Studio Budget + Director-facing Savings Tracker ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */
+/* ─── Studio Budget + Director-facing Savings Tracker ─── */
 function StudioBudgetTab({ projectId }: { projectId: number }) {
   const q = trpc.studioBudget.get.useQuery({ projectId }, { refetchInterval: 10000 });
   const save = trpc.studioBudget.set.useMutation({
@@ -905,7 +905,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
   const audit = trpc.auditLog.append.useMutation();
   const [draft, setDraft] = useState<any | null>(null);
   const live = draft ?? q.data;
-  if (!live) return <div className="p-6 text-sm text-muted-foreground">Loading budgetÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</div>;
+  if (!live) return <div className="p-6 text-sm text-muted-foreground">Loading budget…</div>;
   const update = (patch: any) => setDraft({ ...live, ...patch });
   const updateStage = (k: string, v: number) => setDraft({ ...live, byStage: { ...live.byStage, [k]: v } });
   const persist = () => {
@@ -924,16 +924,16 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
             <div>
               <div className="text-xs text-muted-foreground flex items-center gap-1.5"><DollarSign className="h-3 w-3" />Money saved</div>
               <div className="text-4xl font-bold text-emerald-400 gradient-text-gold">${s.moneySavedUsd.toLocaleString()}</div>
-              <div className="text-[11px] text-muted-foreground mt-1">vs ${s.tradEquivalentUsd.toLocaleString()} at industry rates ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· you spent ${live.spentUsd.toLocaleString()} ({live.spentCredits} credits)</div>
+              <div className="text-[11px] text-muted-foreground mt-1">vs ${s.tradEquivalentUsd.toLocaleString()} at industry rates · you spent ${live.spentUsd.toLocaleString()} ({live.spentCredits} credits)</div>
             </div>
             <div>
               <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Clock className="h-3 w-3" />Time saved</div>
               <div className="text-4xl font-bold text-teal-400 gradient-text-gold">{s.timeSavedDays} <span className="text-xl">days</span></div>
-              <div className="text-[11px] text-muted-foreground mt-1">{s.timeSavedHours.toLocaleString()} hours ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {s.renderedScenes} scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {live.tradHoursPerScene}h shoot day</div>
+              <div className="text-[11px] text-muted-foreground mt-1">{s.timeSavedHours.toLocaleString()} hours · {s.renderedScenes} scenes × {live.tradHoursPerScene}h shoot day</div>
             </div>
             <div>
               <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Sparkles className="h-3 w-3" />Cost multiplier</div>
-              <div className="text-4xl font-bold text-violet-300 gradient-text-gold">{s.savingsMultiplier ? `${s.savingsMultiplier}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ` : "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"}</div>
+              <div className="text-4xl font-bold text-violet-300 gradient-text-gold">{s.savingsMultiplier ? `${s.savingsMultiplier}×` : "—"}</div>
               <div className="text-[11px] text-muted-foreground mt-1">cheaper than traditional production</div>
             </div>
           </CardContent>
@@ -955,7 +955,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
                 <div key={k}><Label className="text-[10px] capitalize">{k.replace(/([A-Z])/g, " $1")}</Label><Input type="number" value={v} onChange={e => updateStage(k, Number(e.target.value))} className="h-8 text-sm" /></div>
               ))}
             </div>
-            <div className="text-[11px] text-muted-foreground text-right">Stage sum: ${stageSum.toLocaleString()}{Math.abs(stageSum - live.totalBudget) > 1 && <span className="ml-2 text-amber-400">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  doesn't equal total ({live.totalBudget})</span>}</div>
+            <div className="text-[11px] text-muted-foreground text-right">Stage sum: ${stageSum.toLocaleString()}{Math.abs(stageSum - live.totalBudget) > 1 && <span className="ml-2 text-amber-400">⚠ doesn't equal total ({live.totalBudget})</span>}</div>
           </div>
           <div className="space-y-1 pt-3 border-t border-border/40">
             <Label className="text-xs uppercase tracking-wider text-muted-foreground text-amber-400/60">Industry savings benchmarks (used for ROI calc)</Label>
