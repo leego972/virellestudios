@@ -160,7 +160,7 @@ export default function Collaboration() {
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-semibold truncate">Project Collaboration</h1>
+                <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">Project Collaboration</h1>
                 <p className="text-xs text-muted-foreground truncate">{project.data?.title}</p>
               </div>
             </div>
