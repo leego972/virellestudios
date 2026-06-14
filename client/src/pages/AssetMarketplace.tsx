@@ -105,7 +105,7 @@ export default function AssetMarketplace() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="text-white/60 hover:text-white">
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5 text-amber-400/70" />
             </Button>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-amber-500 rounded flex items-center justify-center">
@@ -209,7 +209,7 @@ export default function AssetMarketplace() {
                 </div>
                 <CardContent className="p-4 space-y-3">
                   <div>
-                    <h3 className="font-bold text-sm line-clamp-1 ">{asset.name}</h3>
+                    <h3 className="font-bold text-sm line-clamp-1">{asset.name}</h3>
                     <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">{asset.author}</p>
                   </div>
                   

@@ -224,7 +224,7 @@ import { useState, useRef } from "react";
         <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => setLocation(`/projects/${projectId}`)} className="gap-2 text-muted-foreground h-8"><ArrowLeft className="h-4 w-4" />Back</Button>
+              <Button variant="ghost" size="sm" onClick={() => setLocation(`/projects/${projectId}`)} className="gap-2 text-muted-foreground h-8"><ArrowLeft className="h-4 w-4 text-amber-400/70" />Back</Button>
               <div className="h-5 w-px bg-border/40" />
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg,#ec4899,#f43f5e)" }}>
