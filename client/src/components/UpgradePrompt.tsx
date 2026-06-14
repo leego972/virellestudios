@@ -37,7 +37,7 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
     price: "A$1,490/month or A$14,900/year",
     credits: "6,000 credits/month included",
   },
-  // Legacy aliases â all resolve to Industry
+  // Legacy aliases — all resolve to Industry
   creator: {
     name: "Industry",
     icon: Film,
@@ -67,7 +67,7 @@ function normaliseTier(tier: string): string {
   return tier;
 }
 
-// Tier-aware button class â matches Pricing.tsx tier colors
+// Tier-aware button class — matches Pricing.tsx tier colors
 function tierButtonClass(normTier: string): string {
   if (normTier === "indie")       return "bg-emerald-600 hover:bg-emerald-500 text-white";
   if (normTier === "amateur")     return "bg-amber-600 hover:bg-amber-500 text-white";
@@ -115,7 +115,7 @@ export function UpgradePrompt({
             className={`${btnClass} shrink-0`}
             onClick={() => {
               window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
-                `Virelle Studios â ${tier.name} Enquiry`
+                `Virelle Studios — ${tier.name} Enquiry`
               )}`;
             }}
           >
@@ -149,8 +149,8 @@ export function UpgradePrompt({
             </CardTitle>
             <CardDescription className="text-xs mt-0.5">
               {isContactSales
-                ? `Available on ${tier.name} â contact sales for pricing`
-                : `Available from ${tier.name} â ${tier.price}`}
+                ? `Available on ${tier.name} — contact sales for pricing`
+                : `Available from ${tier.name} — ${tier.price}`}
             </CardDescription>
           </div>
         </div>
@@ -171,7 +171,7 @@ export function UpgradePrompt({
           </div>
         </div>
 
-        {/* Tier progression â 3 public tiers */}
+        {/* Tier progression — 3 public tiers */}
         <div className="grid grid-cols-3 gap-1 text-center">
           {[
             { key: "indie",       badgeKey: "indie" as const,    label: "Indie",    color: "text-blue-400",    bg: "bg-blue-500/10" },
@@ -197,7 +197,7 @@ export function UpgradePrompt({
               className={`w-full ${tierButtonClass(normTier)}`}
               onClick={() => {
                 window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
-                  `Virelle Studios â ${tier.name} Enquiry`
+                  `Virelle Studios — ${tier.name} Enquiry`
                 )}`;
               }}
             >
@@ -222,7 +222,7 @@ export function UpgradePrompt({
               Upgrade to {tier.name}
             </Button>
             <p className="text-[10px] text-muted-foreground text-center">
-              Annual plans save ~17% Â· Founding members save 50% off first year
+              Annual plans save ~17% · Founding members save 50% off first year
             </p>
           </div>
         )}
@@ -245,7 +245,7 @@ export function FeatureGate({ children, feature, requiredTier, currentTier, hasA
 }
 
 /**
- * Small inline badge showing membership tier â uses Hollywood branded badge images.
+ * Small inline badge showing membership tier — uses Hollywood branded badge images.
  */
 export function IndieBadge() {
   return (
