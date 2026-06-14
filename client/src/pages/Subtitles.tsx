@@ -89,7 +89,6 @@ import { useState } from "react";
     const [signNotes, setSignNotes] = useState<Array<{ sceneId: string; notes: string }>>([]);
 
     const { data: tracks, isLoading } = trpc.subtitle.listByProject.useQuery({ projectId }, { enabled: !!projectId });
-    const { data: scenes } = trpc.project.getScenes?.useQuery?.({ projectId }, { enabled: !!projectId }) ?? { data: null };
 
     const createMutation = trpc.subtitle.create.useMutation({
       onSuccess: (d) => { toast.success("Track created"); utils.subtitle.listByProject.invalidate(); setShowAddTrack(false); setSelectedTrackId(d.id); },
