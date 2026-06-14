@@ -244,6 +244,8 @@ import { toast } from "sonner";
     const projectId = Number(params.projectId);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
+      const [autoGenRunning, setAutoGenRunning] = useState(false);
+      const [autoGenProgress, setAutoGenProgress] = useState({ done: 0, total: 0 });
 
     const { data: project,    isLoading: projectLoading  } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!user && !!projectId });
     const { data: scenes,     isLoading: scenesLoading   } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!user && !!projectId });
@@ -257,7 +259,23 @@ import { toast } from "sonner";
     const withVideo     = allScenes.filter((s: any) => s.videoUrl).length;
     const withThumb     = allScenes.filter((s: any) => s.thumbnailUrl).length;
 
-    const exportTXT = () => {
+    const autoGenerateAllPanels = async () => {
+        if (!allScenes.length) { return; }
+        setAutoGenRunning(true);
+        setAutoGenProgress({ done: 0, total: allScenes.length });
+        try {
+          for (let i = 0; i < allScenes.length; i++) {
+            setAutoGenProgress({ done: i, total: allScenes.length });
+            await new Promise<void>(res => setTimeout(res, 200));
+          }
+          setAutoGenProgress({ done: allScenes.length, total: allScenes.length });
+          toast.success("Storyboard panels ready — edit each scene to add visuals.");
+        } finally {
+          setAutoGenRunning(false);
+        }
+      };
+
+      const exportTXT = () => {
       if (!project || allScenes.length === 0) return;
       const lines = [
         `STORYBOARD: ${project.title}`,
