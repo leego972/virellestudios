@@ -291,6 +291,14 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     };
   }
 
+  // Groq free tier — Llama 3.3 70B with tool calling (free at console.groq.com)
+  if (ENV.groqApiKey) {
+    return {
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: ENV.groqApiKey,
+      model: "llama-3.3-70b-versatile",
+    };
+  }
   // Final fallback: Forge API (built-in)
   if (ENV.forgeApiKey) {
     const baseUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
@@ -303,14 +311,6 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     };
   }
 
-  // Groq free tier — Llama 3.3 70B with tool calling (free at console.groq.com)
-  if (ENV.groqApiKey) {
-    return {
-      url: "https://api.groq.com/openai/v1/chat/completions",
-      apiKey: ENV.groqApiKey,
-      model: "llama-3.3-70b-versatile",
-    };
-  }
 
   // Final free fallback: Pollinations (no key needed, no tool support)
   return {
