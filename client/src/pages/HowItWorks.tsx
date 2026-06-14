@@ -13,21 +13,21 @@ const STEPS = [
   {
     number: "01",
     title: "Write Your Concept",
-    description: "Start with a title, genre, and a short description of your film or scene. You can be as detailed or as brief as you like ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Virelle's AI adapts to your level of direction.",
+    description: "Start with a title, genre, and a short description of your film or scene. You can be as detailed or as brief as you like — Virelle's AI adapts to your level of direction.",
     details: [
-      "Describe your story in plain language ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ no technical knowledge required",
+      "Describe your story in plain language — no technical knowledge required",
       "Set genre, tone, rating, and target duration",
       "Define characters with names, descriptions, and personality traits",
       "Specify visual style, colour palette, and cinematic references",
     ],
     icon: FileText,
     color: "amber",
-    time: "5ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ15 minutes",
+    time: "5–15 minutes",
   },
   {
     number: "02",
     title: "AI Generates Your Screenplay",
-    description: "Virelle's AI Script Writer breaks your concept into a full screenplay ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ scenes, dialogue, stage directions, and character arcs ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ all faithful to your original vision.",
+    description: "Virelle's AI Script Writer breaks your concept into a full screenplay — scenes, dialogue, stage directions, and character arcs — all faithful to your original vision.",
     details: [
       "Full scene-by-scene breakdown with descriptions",
       "Dialogue written in your characters' voices",
@@ -36,7 +36,7 @@ const STEPS = [
     ],
     icon: BookOpen,
     color: "amber",
-    time: "1ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ3 minutes",
+    time: "1–3 minutes",
   },
   {
     number: "03",
@@ -50,21 +50,21 @@ const STEPS = [
     ],
     icon: Image,
     color: "purple",
-    time: "2ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ5 minutes per scene",
+    time: "2–5 minutes per scene",
   },
   {
     number: "04",
     title: "Generate Scene Videos",
-    description: "Convert each scene into a cinematic video clip using your choice of AI video provider ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Runway, fal.ai, or Google Veo 3. Each clip is generated to your exact specifications.",
+    description: "Convert each scene into a cinematic video clip using your choice of AI video provider — Runway, fal.ai, or Google Veo 3. Each clip is generated to your exact specifications.",
     details: [
       "Choice of Runway Gen-4, fal.ai, or Google Veo 3",
-      "Bring your own API keys ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ your generation costs, your control",
+      "Bring your own API keys — your generation costs, your control",
       "Up to 4K resolution, 24/30/60fps",
       "Scene-to-scene character and visual continuity",
     ],
     icon: Video,
     color: "blue",
-    time: "30ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ120 seconds per scene",
+    time: "30–120 seconds per scene",
   },
   {
     number: "05",
@@ -102,7 +102,7 @@ const DELIVERABLES = [
   { icon: Video, label: "Scene Video Clips", desc: "Individual MP4 clips for every scene at your chosen resolution" },
   { icon: Film, label: "Assembled Film", desc: "Complete film with all scenes stitched, audio mixed, and titles applied" },
   { icon: Music, label: "Original Soundtrack", desc: "AI-composed score matched to your film's emotional arc" },
-  { icon: Mic, label: "Voice Acting Tracks", desc: "Individual character audio files ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ 35 emotion states, per-emotion ElevenLabs tuning" },
+  { icon: Mic, label: "Voice Acting Tracks", desc: "Individual character audio files — 35 emotion states, per-emotion ElevenLabs tuning" },
   { icon: Clapperboard, label: "Trailer", desc: "Cinematic trailer cut from your best scenes with title cards" },
   { icon: Layers, label: "Post-Production Mix", desc: "ADR, Foley, Score Cues, and three-bus audio mix (Dialogue / Music / Effects)" },
   { icon: Layers, label: "Shot List & Credits", desc: "Production-ready shot list and formatted credits roll" },
@@ -111,7 +111,7 @@ const DELIVERABLES = [
 const OWNERSHIP = [
   {
     title: "You own everything you create",
-    desc: "All outputs ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ scripts, images, video clips, soundtracks, and assembled films ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ are yours. Virelle does not claim any rights to content generated on your account.",
+    desc: "All outputs — scripts, images, video clips, soundtracks, and assembled films — are yours. Virelle does not claim any rights to content generated on your account.",
     icon: Shield,
   },
   {
@@ -121,12 +121,12 @@ const OWNERSHIP = [
   },
   {
     title: "Your API keys, your costs",
-    desc: "Virelle uses a BYOK (Bring Your Own Key) model for video generation. Your Runway, fal.ai, or Google Veo 3 API keys are used directly ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Virelle never marks up your generation costs.",
+    desc: "Virelle uses a BYOK (Bring Your Own Key) model for video generation. Your Runway, fal.ai, or Google Veo 3 API keys are used directly — Virelle never marks up your generation costs.",
     icon: Star,
   },
   {
     title: "Revision policy",
-    desc: "You can regenerate any scene, rewrite any dialogue, or re-score any sequence at any time. Credits are consumed per generation ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ unused credits roll over for 90 days.",
+    desc: "You can regenerate any scene, rewrite any dialogue, or re-score any sequence at any time. Credits are consumed per generation — unused credits roll over for 90 days.",
     icon: RefreshCw,
   },
 ];
@@ -134,13 +134,13 @@ const OWNERSHIP = [
 const WORKFLOWS = [
   {
     title: "Self-Directed",
-    desc: "You control every decision. Virelle executes your instructions precisely ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ no unsolicited creative changes.",
+    desc: "You control every decision. Virelle executes your instructions precisely — no unsolicited creative changes.",
     icon: Wand2,
     color: "amber",
   },
   {
     title: "AI-Assisted",
-    desc: "Grant creative leeway and Virelle's AI acts as a co-director ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ suggesting scene improvements, visual upgrades, and pacing adjustments.",
+    desc: "Grant creative leeway and Virelle's AI acts as a co-director — suggesting scene improvements, visual upgrades, and pacing adjustments.",
     icon: Sparkles,
     color: "purple",
   },
@@ -157,7 +157,7 @@ export default function HowItWorks() {
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="How It Works ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Virelle Studios" description="See how Virelle Studios turns your concept into a complete film in minutes ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ script, storyboard, characters, sound, subtitles, and funding application in one platform." />
+      <SiteHead title="How It Works — Virelle Studios" description="See how Virelle Studios turns your concept into a complete film in minutes — script, storyboard, characters, sound, subtitles, and funding application in one platform." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -188,7 +188,7 @@ export default function HowItWorks() {
             </span>
           </h1>
           <p className="text-lg text-foreground/70 leading-relaxed mb-8">
-            A professional AI-assisted production workflow ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ from your first idea to a finished, distributable film. Every step is under your direction.
+            A professional AI-assisted production workflow — from your first idea to a finished, distributable film. Every step is under your direction.
           </p>
           <div className="flex items-center justify-center gap-6 text-sm text-foreground/60">
             <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-amber-400" /> Full film in hours, not months</span>
@@ -203,7 +203,7 @@ export default function HowItWorks() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">The Production Pipeline</h2>
-            <p className="text-foreground/60 max-w-xl mx-auto">Six stages from concept to finished film. You control the pace ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ move through stages in sequence or jump back to refine any step.</p>
+            <p className="text-foreground/60 max-w-xl mx-auto">Six stages from concept to finished film. You control the pace — move through stages in sequence or jump back to refine any step.</p>
           </div>
           <div className="space-y-8">
             {STEPS.map((step, i) => {
@@ -262,7 +262,7 @@ export default function HowItWorks() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold mb-3 gradient-text-gold">Three Ways to Direct</h2>
-            <p className="text-foreground/60">Choose how much creative control you hand to the AI ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ or keep it all yourself.</p>
+            <p className="text-foreground/60">Choose how much creative control you hand to the AI — or keep it all yourself.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {WORKFLOWS.map((w) => {
@@ -293,7 +293,7 @@ export default function HowItWorks() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">What You Receive</h2>
-            <p className="text-foreground/60 max-w-xl mx-auto">Every project produces a full suite of production-ready assets ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ not just video clips.</p>
+            <p className="text-foreground/60 max-w-xl mx-auto">Every project produces a full suite of production-ready assets — not just video clips.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {DELIVERABLES.map((d) => {
@@ -349,10 +349,10 @@ export default function HowItWorks() {
               <div>
                 <h3 className="text-xl font-bold mb-2 gradient-text-gold">How BYOK Works</h3>
                 <p className="text-foreground/70 leading-relaxed mb-4">
-                  Virelle uses a <strong>Bring Your Own Key</strong> model for AI video generation. You connect your own Runway, fal.ai, or Google Veo 3 API account in Settings. When you generate a video, Virelle sends the request directly to your API account ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ you pay your provider's rates, not ours.
+                  Virelle uses a <strong>Bring Your Own Key</strong> model for AI video generation. You connect your own Runway, fal.ai, or Google Veo 3 API account in Settings. When you generate a video, Virelle sends the request directly to your API account — you pay your provider's rates, not ours.
                 </p>
                 <p className="text-foreground/70 leading-relaxed mb-4">
-                  This means your video generation costs are transparent, predictable, and never marked up. Virelle credits cover the platform's AI features ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ script writing, image generation, chat, analysis ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ not the video generation itself.
+                  This means your video generation costs are transparent, predictable, and never marked up. Virelle credits cover the platform's AI features — script writing, image generation, chat, analysis — not the video generation itself.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                   {[
