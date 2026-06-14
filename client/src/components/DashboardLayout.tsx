@@ -233,7 +233,7 @@ export default function DashboardLayout({
   const PUBLIC_ROUTES = [
     '/about', '/faq', '/solutions', '/download', '/app',
     '/how-it-works', '/welcome', '/login', '/register', '/pricing',
-    '/contact', '/blog', '/terms', '/privacy', '/acceptable-use',
+    '/contact', '/blog', '/press', '/changelog', '/terms', '/privacy', '/acceptable-use',
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
     '/signature-cast', '/talent-search',
