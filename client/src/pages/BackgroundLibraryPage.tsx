@@ -15,7 +15,7 @@ import { useState } from "react";
   type BgType = "location" | "vehicle" | "vessel" | "aircraft";
 
   const TYPE_ICONS: Record<BgType, React.ReactNode> = {
-    location: <MapPin className="w-4 h-4" />,
+    location: <MapPin className="w-4 h-4 text-amber-400/70" />,
     vehicle:  <Car className="w-4 h-4" />,
     vessel:   <Ship className="w-4 h-4" />,
     aircraft: <Plane className="w-4 h-4" />,
@@ -142,7 +142,7 @@ import { useState } from "react";
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">
-                        {TYPE_ICONS[bg.backgroundType as BgType] ?? <MapPin className="w-4 h-4" />}
+                        {TYPE_ICONS[bg.backgroundType as BgType] ?? <MapPin className="w-4 h-4 text-amber-400/70" />}
                       </span>
                       <CardTitle className="text-base">{bg.name}</CardTitle>
                     </div>

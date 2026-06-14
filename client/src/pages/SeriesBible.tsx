@@ -226,7 +226,7 @@ import { useState } from "react";
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Tv className="h-6 w-6 text-primary" />Series Bible</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Tv className="h-6 w-6 text-primary" />Series Bible</h1>
           <Button onClick={() => setEditingSeries({ ...DEFAULT_SERIES, id: Date.now().toString(), seasons: [{ id: Date.now().toString(), number: 1, arc: "", episodes: [] }] })}><Plus className="h-4 w-4 mr-2" />New Series</Button>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

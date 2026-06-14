@@ -75,7 +75,7 @@ import { useState } from "react";
       id: "location",
       title: "Location Release Form",
       description: "Permission to film on private property with liability and rights provisions.",
-      icon: <MapPin className="h-5 w-5" />,
+      icon: <MapPin className="h-5 w-5 text-amber-400/70" />,
       category: "Production",
       fields: [
         { key: "productionCompany", label: "Production Company", placeholder: "Virelle Productions LLC" },
@@ -227,7 +227,7 @@ import { useState } from "react";
       id: "sync",
       title: "Sync Licence Request Template",
       description: "Letter to a music publisher requesting sync rights for a specific track.",
-      icon: <Music className="h-5 w-5" />,
+      icon: <Music className="h-5 w-5 text-amber-400/70" />,
       category: "Post-Production",
       fields: [
         { key: "yourName", label: "Your Name / Company", placeholder: "Virelle Productions LLC" },
