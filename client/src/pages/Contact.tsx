@@ -76,7 +76,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ sales, support, partnerships, and press inquiries." />
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios — sales, support, partnerships, and press inquiries." />
       {/* Header */}
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
