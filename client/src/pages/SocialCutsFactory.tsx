@@ -26,22 +26,22 @@ const FORMATS: Record<Format, { label: string; ratio: string; runtime: string; p
   vertical: {
     label: "Vertical",
     ratio: "9:16",
-    runtime: "15ÃÂ¢ÃÂÃÂ60s",
-    platforms: "TikTok ÃÂÃÂ· Reels ÃÂÃÂ· Shorts",
+    runtime: "15–60s",
+    platforms: "TikTok · Reels · Shorts",
     icon: Smartphone,
   },
   square: {
     label: "Square",
     ratio: "1:1",
-    runtime: "30ÃÂ¢ÃÂÃÂ60s",
-    platforms: "Instagram feed ÃÂÃÂ· LinkedIn",
+    runtime: "30–60s",
+    platforms: "Instagram feed · LinkedIn",
     icon: Square,
   },
   horizontal: {
     label: "Horizontal",
     ratio: "16:9",
-    runtime: "30ÃÂ¢ÃÂÃÂ90s",
-    platforms: "YouTube ÃÂÃÂ· X ÃÂÃÂ· pre-roll",
+    runtime: "30–90s",
+    platforms: "YouTube · X · pre-roll",
     icon: Monitor,
   },
 };
@@ -89,7 +89,7 @@ export default function SocialCutsFactory() {
     const want = `[SocialCut:${format}:${angle}]`;
     for (const m of (history ?? []).slice().reverse()) {
       if ((m as any).role === "assistant" && ((m as any).content || "").startsWith("# ")) {
-        // any AI response is fine ÃÂ¢ÃÂÃÂ show most recent
+        // any AI response is fine — show most recent
       }
     }
     // pick the most recent assistant whose preceding user message tag matches
@@ -121,7 +121,7 @@ export default function SocialCutsFactory() {
         .slice(0, 8)
         .map(
           (s: any, i: number) =>
-            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"} ÃÂ¢ÃÂÃÂ ${s.timeOfDay || "?"} ${s.locationType || s.city || ""} ÃÂ¢ÃÂÃÂ ${s.mood || ""}\n  ${s.description || ""}`
+            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"} — ${s.timeOfDay || "?"} ${s.locationType || s.city || ""} — ${s.mood || ""}\n  ${s.description || ""}`
         )
         .join("\n\n");
 
@@ -129,20 +129,20 @@ export default function SocialCutsFactory() {
       const prompt = `Plan a ${fmt.label} (${fmt.ratio}) social cut for "${project?.title || "Untitled"}".
 Target platforms: ${fmt.platforms}. Runtime: ${fmt.runtime}.
 Creative angle: ${angle}
-Hook (ÃÂ¢ÃÂÃÂ¤8 words to grab in 0ÃÂ¢ÃÂÃÂ2s): "${hook}"
+Hook (≤8 words to grab in 0–2s): "${hook}"
 CTA: "${cta}"
 
 Available source scenes:
 ${sceneSummary}
 
 Output a clean markdown brief with these sections:
-1. **Hook (0ÃÂ¢ÃÂÃÂ2s)** ÃÂ¢ÃÂÃÂ exact on-screen text + which source scene + visual choice
-2. **Beats (2ÃÂ¢ÃÂÃÂ${format === "vertical" ? "30" : "60"}s)** ÃÂ¢ÃÂÃÂ bullet list of 4ÃÂ¢ÃÂÃÂ6 cuts, each with timestamp, source scene #, the moment, and any text overlay
-3. **CTA outro** ÃÂ¢ÃÂÃÂ text + duration
-4. **Captions** ÃÂ¢ÃÂÃÂ 4 caption variants (one tease, one stat-style, one dialogue lift, one question), each ÃÂ¢ÃÂÃÂ¤140 chars
-5. **Hashtags** ÃÂ¢ÃÂÃÂ 8 ranked
-6. **Thumbnail concept** ÃÂ¢ÃÂÃÂ 1-line description for first frame
-7. **Audio direction** ÃÂ¢ÃÂÃÂ ${format === "vertical" ? "trending-sound brief + dialogue mix note" : "score brief + dialogue mix note"}
+1. **Hook (0–2s)** — exact on-screen text + which source scene + visual choice
+2. **Beats (2–${format === "vertical" ? "30" : "60"}s)** — bullet list of 4–6 cuts, each with timestamp, source scene #, the moment, and any text overlay
+3. **CTA outro** — text + duration
+4. **Captions** — 4 caption variants (one tease, one stat-style, one dialogue lift, one question), each ≤140 chars
+5. **Hashtags** — 8 ranked
+6. **Thumbnail concept** — 1-line description for first frame
+7. **Audio direction** — ${format === "vertical" ? "trending-sound brief + dialogue mix note" : "score brief + dialogue mix note"}
 
 Be concrete: name actual scene numbers from the list above. No fluff.`;
 
@@ -180,7 +180,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Social Cuts Factory</h1>
         <p className="text-muted-foreground mt-1">
-          Generate platform-ready cut briefs from your scenes ÃÂ¢ÃÂÃÂ vertical for TikTok/Reels, square for IG, horizontal for YouTube.
+          Generate platform-ready cut briefs from your scenes — vertical for TikTok/Reels, square for IG, horizontal for YouTube.
         </p>
       </div>
 
@@ -239,7 +239,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
             </div>
           </div>
           <div>
-            <Label className="text-xs">Hook (ÃÂ¢ÃÂÃÂ¤8 words, must work in first 2 seconds)</Label>
+            <Label className="text-xs">Hook (≤8 words, must work in first 2 seconds)</Label>
             <Input value={hook} onChange={(e) => setHook(e.target.value)} placeholder="What if you couldn't trust your own memories?" />
           </div>
           <div>
@@ -259,7 +259,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div>
               <CardTitle className="text-base gradient-text-gold">Latest brief</CardTitle>
-              <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{FORMATS[format].label} ÃÂÃÂ· {angle}</CardDescription>
+              <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{FORMATS[format].label} · {angle}</CardDescription>
             </div>
             <Button onClick={() => copy(lastBrief)} size="sm" variant="ghost" className="gap-2">
               <Copy className="h-3 w-3" /> Copy
