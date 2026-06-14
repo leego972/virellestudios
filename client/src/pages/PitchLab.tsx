@@ -105,17 +105,17 @@ export default function PitchLab() {
           </Button>
         </Link>
         <div>
-          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 1 · Idea & Pitch</div>
+          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 1 Â· Idea & Pitch</div>
           <h1 className="font-serif text-3xl flex items-center gap-2 gradient-text-gold">
             <Lightbulb className="h-6 w-6 text-amber-400" /> Pitch Lab
           </h1>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
+      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="gradient-text-gold">Project Brief</CardTitle>
-          <CardDescription>One brief drives every artifact below — logline, synopsis, treatment, and pitch deck.</CardDescription>
+          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
@@ -148,7 +148,7 @@ export default function PitchLab() {
               rows={3}
               value={brief.premise}
               onChange={(e) => setBrief({ ...brief, premise: e.target.value })}
-              placeholder="A grieving roboticist builds a copy of her late daughter — and slowly loses the ability to tell which one is real."
+              placeholder="A grieving roboticist builds a copy of her late daughter â and slowly loses the ability to tell which one is real."
             />
           </div>
         </CardContent>
@@ -181,7 +181,7 @@ export default function PitchLab() {
                 )}
               </div>
             </div>
-            <Card>
+            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="p-6">
                 {lastByKind[kind] ? (
                   <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">{lastByKind[kind]}</pre>

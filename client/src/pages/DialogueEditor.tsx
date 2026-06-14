@@ -31,48 +31,48 @@ const EMOTION_GROUPS: Record<string, string[]> = {
 
 const EMOTION_DELIVERY_NOTES: Record<string, string> = {
   neutral: "Natural, conversational delivery",
-  happy: "Warm and upbeat Ã¢ÂÂ smile in the voice",
-  cheerful: "Bright and energetic Ã¢ÂÂ light, bouncy delivery",
-  excited: "Fast and breathless Ã¢ÂÂ energy spilling over",
-  loving: "Slow and tender Ã¢ÂÂ intimate, close delivery",
-  hopeful: "Measured and earnest Ã¢ÂÂ vulnerability beneath the hope",
-  confident: "Deliberate and commanding Ã¢ÂÂ no hesitation",
+  happy: "Warm and upbeat ÃÂ¢ÃÂÃÂ smile in the voice",
+  cheerful: "Bright and energetic ÃÂ¢ÃÂÃÂ light, bouncy delivery",
+  excited: "Fast and breathless ÃÂ¢ÃÂÃÂ energy spilling over",
+  loving: "Slow and tender ÃÂ¢ÃÂÃÂ intimate, close delivery",
+  hopeful: "Measured and earnest ÃÂ¢ÃÂÃÂ vulnerability beneath the hope",
+  confident: "Deliberate and commanding ÃÂ¢ÃÂÃÂ no hesitation",
   proud: "Elevated and self-assured",
-  sad: "Heavy and slow Ã¢ÂÂ words cost something to say",
-  crying: "Broken and halting Ã¢ÂÂ voice cracks on key words",
-  grief: "Hollow and devastated Ã¢ÂÂ barely audible at times",
-  angry: "Clipped and tense Ã¢ÂÂ controlled rage is more frightening than shouting",
-  aggressive: "Loud and driving Ã¢ÂÂ physical aggression in the voice",
-  shouting: "Full-volume shout Ã¢ÂÂ raw and uncontrolled",
-  bitter: "Cold and deliberate Ã¢ÂÂ every word chosen to sting",
-  contemptuous: "Dismissive and slow Ã¢ÂÂ the other person isn't worth full effort",
-  disgusted: "Clipped and recoiling Ã¢ÂÂ physical revulsion in the voice",
-  threatening: "Quiet and slow Ã¢ÂÂ the quieter the voice, the more dangerous",
-  fearful: "Uneven and catching Ã¢ÂÂ fear makes the voice unreliable",
-  panicked: "Very fast and breathless Ã¢ÂÂ words trip over each other",
-  nervous: "Halting with small pauses Ã¢ÂÂ the mind working faster than the mouth",
-  surprised: "Starts fast then slows Ã¢ÂÂ the brain catching up to the mouth",
-  shocked: "Slow and halting Ã¢ÂÂ the mind has gone blank",
-  cold: "Flat and even Ã¢ÂÂ emotion has been deliberately removed",
-  resigned: "Slow and flat Ã¢ÂÂ they've stopped fighting",
-  grumpy: "Clipped and muttered Ã¢ÂÂ low-level irritation throughout",
-  tired: "Slow and low Ã¢ÂÂ every word is an effort",
-  bored: "Monotone and trailing Ã¢ÂÂ they'd rather be anywhere else",
-  confused: "Halting with rising intonation Ã¢ÂÂ thinking out loud",
-  sarcastic: "Deliberate and exaggerated Ã¢ÂÂ the performance is the point",
-  mocking: "Exaggerated and sing-song Ã¢ÂÂ cruelty dressed as humour",
-  pleading: "Raw and urgent Ã¢ÂÂ dignity abandoned",
-  desperate: "Fast and cracking Ã¢ÂÂ nothing held back",
-  whisper: "Barely above breath Ã¢ÂÂ intimate and close",
-  seductive: "Slow and low Ã¢ÂÂ every word chosen for effect",
+  sad: "Heavy and slow ÃÂ¢ÃÂÃÂ words cost something to say",
+  crying: "Broken and halting ÃÂ¢ÃÂÃÂ voice cracks on key words",
+  grief: "Hollow and devastated ÃÂ¢ÃÂÃÂ barely audible at times",
+  angry: "Clipped and tense ÃÂ¢ÃÂÃÂ controlled rage is more frightening than shouting",
+  aggressive: "Loud and driving ÃÂ¢ÃÂÃÂ physical aggression in the voice",
+  shouting: "Full-volume shout ÃÂ¢ÃÂÃÂ raw and uncontrolled",
+  bitter: "Cold and deliberate ÃÂ¢ÃÂÃÂ every word chosen to sting",
+  contemptuous: "Dismissive and slow ÃÂ¢ÃÂÃÂ the other person isn't worth full effort",
+  disgusted: "Clipped and recoiling ÃÂ¢ÃÂÃÂ physical revulsion in the voice",
+  threatening: "Quiet and slow ÃÂ¢ÃÂÃÂ the quieter the voice, the more dangerous",
+  fearful: "Uneven and catching ÃÂ¢ÃÂÃÂ fear makes the voice unreliable",
+  panicked: "Very fast and breathless ÃÂ¢ÃÂÃÂ words trip over each other",
+  nervous: "Halting with small pauses ÃÂ¢ÃÂÃÂ the mind working faster than the mouth",
+  surprised: "Starts fast then slows ÃÂ¢ÃÂÃÂ the brain catching up to the mouth",
+  shocked: "Slow and halting ÃÂ¢ÃÂÃÂ the mind has gone blank",
+  cold: "Flat and even ÃÂ¢ÃÂÃÂ emotion has been deliberately removed",
+  resigned: "Slow and flat ÃÂ¢ÃÂÃÂ they've stopped fighting",
+  grumpy: "Clipped and muttered ÃÂ¢ÃÂÃÂ low-level irritation throughout",
+  tired: "Slow and low ÃÂ¢ÃÂÃÂ every word is an effort",
+  bored: "Monotone and trailing ÃÂ¢ÃÂÃÂ they'd rather be anywhere else",
+  confused: "Halting with rising intonation ÃÂ¢ÃÂÃÂ thinking out loud",
+  sarcastic: "Deliberate and exaggerated ÃÂ¢ÃÂÃÂ the performance is the point",
+  mocking: "Exaggerated and sing-song ÃÂ¢ÃÂÃÂ cruelty dressed as humour",
+  pleading: "Raw and urgent ÃÂ¢ÃÂÃÂ dignity abandoned",
+  desperate: "Fast and cracking ÃÂ¢ÃÂÃÂ nothing held back",
+  whisper: "Barely above breath ÃÂ¢ÃÂÃÂ intimate and close",
+  seductive: "Slow and low ÃÂ¢ÃÂÃÂ every word chosen for effect",
 };
 
 const PACING_OPTIONS = [
   { value: "normal", label: "Normal", hint: "Natural conversational pace" },
   { value: "slow", label: "Slow", hint: "Deliberate, heavy, or grief-stricken" },
   { value: "fast", label: "Fast", hint: "Excited, panicked, or urgent" },
-  { value: "staccato", label: "Staccato", hint: "Each word clipped and separate Ã¢ÂÂ anger, emphasis" },
-  { value: "trailing", label: "Trailing off", hint: "Voice fades at the end Ã¢ÂÂ resignation, exhaustion" },
+  { value: "staccato", label: "Staccato", hint: "Each word clipped and separate ÃÂ¢ÃÂÃÂ anger, emphasis" },
+  { value: "trailing", label: "Trailing off", hint: "Voice fades at the end ÃÂ¢ÃÂÃÂ resignation, exhaustion" },
 ];
 
 const EMOTIONS = Object.values(EMOTION_GROUPS).flat();
@@ -226,7 +226,7 @@ export default function DialogueEditor() {
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6">
           {/* Scene Sidebar */}
           <div className="sm:col-span-3">
-            <Card>
+            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Scenes</CardTitle>
               </CardHeader>
@@ -249,14 +249,14 @@ export default function DialogueEditor() {
                       }`}
                     >
                       <div className="font-medium">{scene.title || `Scene ${scene.orderIndex + 1}`}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{scene.timeOfDay} ÃÂ· {scene.mood || "neutral"}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{scene.timeOfDay} ÃÂÃÂ· {scene.mood || "neutral"}</div>
                     </button>
                   ))}
                   {sceneList.length === 0 && (
                     <div className="px-4 py-8 text-center">
                       <p className="text-sm font-medium text-foreground/80">No scenes to write for yet</p>
                       <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                        Create your scenes in the Scene Editor first Ã¢ÂÂ they'll appear here ready for dialogue.
+                        Create your scenes in the Scene Editor first ÃÂ¢ÃÂÃÂ they'll appear here ready for dialogue.
                       </p>
                     </div>
                   )}
@@ -267,7 +267,7 @@ export default function DialogueEditor() {
 
           {/* Dialogue Conversation View */}
           <div className="sm:col-span-9">
-            <Card>
+            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
@@ -276,7 +276,7 @@ export default function DialogueEditor() {
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
                 <ScrollArea className="h-[calc(100vh-18rem)]">
                   {conversationView.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground">
@@ -392,7 +392,7 @@ export default function DialogueEditor() {
                             setEmotion(result.emotion);
                             setPacing(result.pacing);
                             setDirection(result.direction);
-                            toast.success(`AI detected: ${result.emotion} Ã¢ÂÂ ${result.reasoning}`);
+                            toast.success(`AI detected: ${result.emotion} ÃÂ¢ÃÂÃÂ ${result.reasoning}`);
                           } catch { toast.error("Could not infer emotion"); }
                           finally { setInferringEmotion(false); }
                         }}
@@ -445,7 +445,7 @@ export default function DialogueEditor() {
             <div>
               <Label>Acting Direction</Label>
               <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. jaw tight, eyes not leaving the door" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
-              <p className="text-xs text-muted-foreground mt-1">Physical, specific, actable Ã¢ÂÂ this guides the voice performance</p>
+              <p className="text-xs text-muted-foreground mt-1">Physical, specific, actable ÃÂ¢ÃÂÃÂ this guides the voice performance</p>
             </div>
             <Button
               className="w-full"

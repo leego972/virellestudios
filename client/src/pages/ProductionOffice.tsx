@@ -79,7 +79,7 @@ export default function ProductionOffice() {
     { enabled: hasProject, refetchInterval: 4000 }
   );
 
-  // ââ Stripboard: group scenes into shoot days ââ
+  // Ã¢ÂÂÃ¢ÂÂ Stripboard: group scenes into shoot days Ã¢ÂÂÃ¢ÂÂ
   const [shootDays, setShootDays] = useState<number>(5);
   const [startDate, setStartDate] = useState<string>(() =>
     new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
@@ -115,7 +115,7 @@ export default function ProductionOffice() {
     return days;
   }, [sortedScenes, shootDays, startDate]);
 
-  // ââ Day-out-of-days for cast ââ
+  // Ã¢ÂÂÃ¢ÂÂ Day-out-of-days for cast Ã¢ÂÂÃ¢ÂÂ
   const dood = useMemo(() => {
     if (!characters || stripboard.length === 0) return [];
     return characters.map((c: any) => {
@@ -130,7 +130,7 @@ export default function ProductionOffice() {
     });
   }, [characters, stripboard]);
 
-  // ââ AI call sheet ââ
+  // Ã¢ÂÂÃ¢ÂÂ AI call sheet Ã¢ÂÂÃ¢ÂÂ
   const [callDayIdx, setCallDayIdx] = useState(0);
   const [crewCallTime, setCrewCallTime] = useState("06:30");
   const [unitBase, setUnitBase] = useState("");
@@ -172,13 +172,13 @@ export default function ProductionOffice() {
       const sceneList = day.scenes
         .map(
           (s: any, i: number) =>
-            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"}\n  Location: ${s.locationType || s.city || "TBD"}\n  Time of day: ${s.timeOfDay || "TBD"} Â· Duration: ${fmtDuration(s.duration)}\n  ${s.description || ""}`
+            `Scene ${s.orderIndex ?? i + 1}: ${s.title || "Untitled"}\n  Location: ${s.locationType || s.city || "TBD"}\n  Time of day: ${s.timeOfDay || "TBD"} ÃÂ· Duration: ${fmtDuration(s.duration)}\n  ${s.description || ""}`
         )
         .join("\n\n");
 
       const prompt = `Generate a professional one-page film call sheet (markdown) for "${project?.title || "Untitled"}".
 
-Shoot day: Day ${day.day} of ${stripboard.length} Â· Date: ${day.date}
+Shoot day: Day ${day.day} of ${stripboard.length} ÃÂ· Date: ${day.date}
 General crew call: ${crewCallTime}
 Unit base / parking: ${unitBase || "TBD"}
 Locations covered today: ${[...new Set(day.scenes.map((s: any) => s.locationType || s.city || "TBD"))].join(", ")}
@@ -199,7 +199,7 @@ Sections required (in order):
 7. Safety notes & nearest hospital placeholder
 8. Emergency contacts placeholder
 
-Output clean markdown only â no commentary.`;
+Output clean markdown only Ã¢ÂÂ no commentary.`;
 
       await sendMessage.mutateAsync({
         projectId,
@@ -257,11 +257,11 @@ pre{white-space:pre-wrap;font:inherit}
       </div>
 
       {/* Schedule controls */}
-      <Card>
-        <CardHeader>
+      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
-          <CardDescription>
-            {sortedScenes.length} scenes Â· estimated total runtime{" "}
+          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+            {sortedScenes.length} scenes ÃÂ· estimated total runtime{" "}
             {fmtDuration(sortedScenes.reduce((acc: number, s: any) => acc + (s.duration || 0), 0))}.
           </CardDescription>
         </CardHeader>
@@ -289,13 +289,13 @@ pre{white-space:pre-wrap;font:inherit}
       </Card>
 
       {/* Stripboard */}
-      <Card>
-        <CardHeader>
+      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Calendar className="h-4 w-4" /> Stripboard
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {stripboard.map((day) => (
               <div key={day.day} className="border rounded-lg p-3 space-y-2 bg-muted/20">
@@ -304,13 +304,13 @@ pre{white-space:pre-wrap;font:inherit}
                   <Badge variant="outline" className="text-[10px]">{day.date}</Badge>
                 </div>
                 {day.scenes.length === 0 ? (
-                  <p className="text-xs text-muted-foreground italic">â hold day â</p>
+                  <p className="text-xs text-muted-foreground italic">Ã¢ÂÂ hold day Ã¢ÂÂ</p>
                 ) : (
                   day.scenes.map((s: any) => (
                     <div key={s.id} className="text-xs border rounded p-2 bg-[#07070e] space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium truncate">
-                          #{s.orderIndex ?? "?"} Â· {s.title || "Untitled"}
+                          #{s.orderIndex ?? "?"} ÃÂ· {s.title || "Untitled"}
                         </span>
                         <span className="flex items-center gap-1 text-muted-foreground shrink-0">
                           <Clock className="h-3 w-3" />
@@ -319,7 +319,7 @@ pre{white-space:pre-wrap;font:inherit}
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          {timeIcon(s.timeOfDay)} {s.timeOfDay || "â"}
+                          {timeIcon(s.timeOfDay)} {s.timeOfDay || "Ã¢ÂÂ"}
                         </span>
                         <span className="flex items-center gap-1 truncate">
                           <MapPin className="h-3 w-3" />
@@ -334,7 +334,7 @@ pre{white-space:pre-wrap;font:inherit}
             {stripboard.length === 0 && (
               <div className="py-8 col-span-full text-center">
                 <p className="text-sm text-foreground/80 font-medium">Stripboard empty</p>
-                <p className="text-xs text-muted-foreground mt-1">Write your script in the Scene Editor â locations, time of day and characters will roll up here automatically.</p>
+                <p className="text-xs text-muted-foreground mt-1">Write your script in the Scene Editor Ã¢ÂÂ locations, time of day and characters will roll up here automatically.</p>
               </div>
             )}
           </div>
@@ -343,12 +343,12 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* Day-out-of-days */}
       {dood.length > 0 && (
-        <Card>
-          <CardHeader>
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Users className="h-4 w-4" /> Day-out-of-days
             </CardTitle>
-            <CardDescription>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
+            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -374,7 +374,7 @@ pre{white-space:pre-wrap;font:inherit}
                         {working ? (
                           <span className="inline-block w-4 h-4 rounded bg-amber-500 text-white text-[10px] leading-4">W</span>
                         ) : (
-                          <span className="text-muted-foreground/40">Â·</span>
+                          <span className="text-muted-foreground/40">ÃÂ·</span>
                         )}
                       </td>
                     ))}
@@ -388,12 +388,12 @@ pre{white-space:pre-wrap;font:inherit}
       )}
 
       {/* AI call sheet */}
-      <Card>
-        <CardHeader>
+      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4" /> AI Call Sheet
           </CardTitle>
-          <CardDescription>Pick a day and generate a print-ready one-pager.</CardDescription>
+          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>Pick a day and generate a print-ready one-pager.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-3 gap-3">
@@ -407,7 +407,7 @@ pre{white-space:pre-wrap;font:inherit}
                 <SelectContent>
                   {stripboard.map((d, i) => (
                     <SelectItem key={d.day} value={String(i)}>
-                      Day {d.day} â {d.date} ({d.scenes.length} scn)
+                      Day {d.day} Ã¢ÂÂ {d.date} ({d.scenes.length} scn)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -448,7 +448,7 @@ pre{white-space:pre-wrap;font:inherit}
         </CardContent>
       </Card>
 
-      {/* ââ Daily Production Report (DPR) â pro-studio wrap report ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Daily Production Report (DPR) Ã¢ÂÂ pro-studio wrap report Ã¢ÂÂÃ¢ÂÂ */}
       {!!projectId && stripboard.length > 0 && (
         <DailyProductionReport
           projectId={projectId}
@@ -458,7 +458,7 @@ pre{white-space:pre-wrap;font:inherit}
         />
       )}
 
-      {/* ââ Chain of Title â clearance / rights tracker ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Chain of Title Ã¢ÂÂ clearance / rights tracker Ã¢ÂÂÃ¢ÂÂ */}
       {!!projectId && <ChainOfTitleSection projectId={projectId} />}
 
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
@@ -466,7 +466,7 @@ pre{white-space:pre-wrap;font:inherit}
   );
 }
 
-// ââ Daily Production Report (DPR) âââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Daily Production Report (DPR) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 // After each shoot day, an AD logs scenes shot, hours worked, meal
 // breaks, weather, and any incidents. Insurance, payroll, completion
 // bond, and post-production planning all depend on these reports.
@@ -512,14 +512,14 @@ ${day.scenes.map((s: any) => `- Sc ${s.sceneNumber || s.id} ${s.title || ""} (${
 Generate a clean, distributor-grade DPR in markdown with:
 1. Header: production title, date, day X of Y, location, weather (assume seasonal)
 2. Scenes shot vs scheduled (assume all scheduled were shot unless noted)
-3. Setups / takes summary (estimate professional norms â 6-12 setups/day)
+3. Setups / takes summary (estimate professional norms Ã¢ÂÂ 6-12 setups/day)
 4. Crew/cast call vs actual wrap time (12-hour day baseline)
 5. Meal breaks (breakfast 7am, lunch ~6 hrs after call, no second meal penalty)
 6. Script pages shot vs scheduled
-7. Camera reports â media transferred, backup status (assume A/B + LTO)
+7. Camera reports Ã¢ÂÂ media transferred, backup status (assume A/B + LTO)
 8. Sound / continuity / makeup notes (typical)
-9. Safety incidents (none â clean day)
-10. Producer's notes â outstanding items, tomorrow's priorities
+9. Safety incidents (none Ã¢ÂÂ clean day)
+10. Producer's notes Ã¢ÂÂ outstanding items, tomorrow's priorities
 
 Output clean markdown only, no commentary.`;
       await sendMessage.mutateAsync({ projectId, message: prompt });
@@ -533,7 +533,7 @@ Output clean markdown only, no commentary.`;
   }
 
   return (
-    <Card>
+    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
           <ClipboardList className="h-4 w-4" />
@@ -552,7 +552,7 @@ Output clean markdown only, no commentary.`;
             </SelectTrigger>
             <SelectContent>
               {stripboard.map((d: any, i: number) => (
-                <SelectItem key={i} value={String(i)}>Day {d.day} â {d.date}</SelectItem>
+                <SelectItem key={i} value={String(i)}>Day {d.day} Ã¢ÂÂ {d.date}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -571,7 +571,7 @@ Output clean markdown only, no commentary.`;
   );
 }
 
-// ââ Chain of Title ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Chain of Title Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 // Distributors, festivals, and streamers will not accept a film without
 // proof every right has been cleared. This is the producer's checklist.
 const COT_TEMPLATE = [
@@ -628,7 +628,7 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
   const dirty = items != null;
 
   return (
-    <Card>
+    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
@@ -637,10 +637,10 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
               Chain of Title
             </CardTitle>
             <CardDescription className="text-xs">
-              Rights & clearances tracker â required by distributors, festivals, streamers and E&O insurers.
+              Rights & clearances tracker Ã¢ÂÂ required by distributors, festivals, streamers and E&O insurers.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="text-xs">{cleared}/{COT_TEMPLATE.length} cleared Â· {pct}%</Badge>
+          <Badge variant="outline" className="text-xs">{cleared}/{COT_TEMPLATE.length} cleared ÃÂ· {pct}%</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -661,7 +661,7 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
             </div>
             <div className="flex gap-2">
               <Input
-                placeholder="Notes (party, contract date, payment termsâ¦)"
+                placeholder="Notes (party, contract date, payment termsÃ¢ÂÂ¦)"
                 value={item.notes || ""}
                 onChange={(e) => update(item.key, { notes: e.target.value.slice(0, 2000) })}
                 className="h-7 text-xs flex-1"
