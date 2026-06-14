@@ -1,1 +1,243 @@
-aW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwppbXBvcnQgeyB1c2VSb3V0ZSwgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IEFycm93TGVmdCwgQ2FsZW5kYXIsIEV5ZSwgVGFnLCBTaGFyZTIsIEJvb2tPcGVuIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IEJhZGdlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2JhZGdlIjsKaW1wb3J0IExlZWdvRm9vdGVyTGF1bmNoIGZyb20gIkAvY29tcG9uZW50cy9MZWVnb0Zvb3RlckxhdW5jaCI7CmltcG9ydCB7IHVzZUVmZmVjdCB9IGZyb20gInJlYWN0IjsKCmNvbnN0IENBVEVHT1JZX0xBQkVMUzogUmVjb3JkPHN0cmluZywgc3RyaW5nPiA9IHsKICAiYWktZmlsbW1ha2luZyI6ICJBSSBGaWxtbWFraW5nIiwKICAiY2luZW1hdG9ncmFwaHkiOiAiQ2luZW1hdG9ncmFwaHkgJiBWaXN1YWxzIiwKICAiaW5kdXN0cnktdHJlbmRzIjogIkluZHVzdHJ5IFRyZW5kcyIsCiAgInR1dG9yaWFscyI6ICJUdXRvcmlhbHMgJiBIb3ctVG8iLAogICJiZWhpbmQtdGhlLXNjZW5lcyI6ICJCZWhpbmQgdGhlIFNjZW5lcyIsCn07CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBCbG9nQXJ0aWNsZSgpIHsKICBjb25zdCBbLCBwYXJhbXNdID0gdXNlUm91dGUoIi9ibG9nLzpzbHVnIik7CiAgY29uc3Qgc2x1ZyA9IHBhcmFtcz8uc2x1ZyB8fCAiIjsKCiAgY29uc3QgeyBkYXRhOiBhcnRpY2xlLCBpc0xvYWRpbmcsIGVycm9yIH0gPSB0cnBjLmJsb2cuYnlTbHVnLnVzZVF1ZXJ5KAogICAgeyBzbHVnIH0sCiAgICB7IGVuYWJsZWQ6ICEhc2x1ZyB9CiAgKTsKCiAgLy8gVXBkYXRlIHBhZ2UgdGl0bGUgYW5kIG1ldGEgZm9yIFNFTwogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoYXJ0aWNsZSkgewogICAgICBkb2N1bWVudC50aXRsZSA9IGAke2FydGljbGUubWV0YVRpdGxlIHx8IGFydGljbGUudGl0bGV9IHwgVmlyw4lsbGUgU3R1ZGlvcyBCbG9nYDsKICAgICAgLy8gVXBkYXRlIG1ldGEgZGVzY3JpcHRpb24KICAgICAgbGV0IG1ldGFEZXNjID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignbWV0YVtuYW1lPSJkZXNjcmlwdGlvbiJdJyk7CiAgICAgIGlmICghbWV0YURlc2MpIHsKICAgICAgICBtZXRhRGVzYyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoIm1ldGEiKTsKICAgICAgICBtZXRhRGVzYy5zZXRBdHRyaWJ1dGUoIm5hbWUiLCAiZGVzY3JpcHRpb24iKTsKICAgICAgICBkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKG1ldGFEZXNjKTsKICAgICAgfQogICAgICBtZXRhRGVzYy5zZXRBdHRyaWJ1dGUoImNvbnRlbnQiLCBhcnRpY2xlLm1ldGFEZXNjcmlwdGlvbiB8fCBhcnRpY2xlLmV4Y2VycHQgfHwgIiIpOwogICAgfQogICAgcmV0dXJuICgpID0+IHsKICAgICAgZG9jdW1lbnQudGl0bGUgPSAiVmlyw4lsbGUgU3R1ZGlvcyI7CiAgICB9OwogIH0sIFthcnRpY2xlXSk7CgogIGNvbnN0IGZvcm1hdERhdGUgPSAoZGF0ZTogc3RyaW5nIHwgRGF0ZSB8IG51bGwpID0+IHsKICAgIGlmICghZGF0ZSkgcmV0dXJuICIiOwogICAgcmV0dXJuIG5ldyBEYXRlKGRhdGUpLnRvTG9jYWxlRGF0ZVN0cmluZygiZW4tVVMiLCB7CiAgICAgIHllYXI6ICJudW1lcmljIiwKICAgICAgbW9udGg6ICJsb25nIiwKICAgICAgZGF5OiAibnVtZXJpYyIsCiAgICB9KTsKICB9OwoKICBjb25zdCBoYW5kbGVTaGFyZSA9ICgpID0+IHsKICAgIGlmIChuYXZpZ2F0b3Iuc2hhcmUpIHsKICAgICAgbmF2aWdhdG9yLnNoYXJlKHsKICAgICAgICB0aXRsZTogYXJ0aWNsZT8udGl0bGUgfHwgIlZpcsOJbGxlIFN0dWRpb3MgQmxvZyIsCiAgICAgICAgdGV4dDogYXJ0aWNsZT8uZXhjZXJwdCB8fCAiIiwKICAgICAgICB1cmw6IHdpbmRvdy5sb2NhdGlvbi5ocmVmLAogICAgICB9KS5jYXRjaCgoKSA9PiB7fSk7CiAgICB9IGVsc2UgewogICAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh3aW5kb3cubG9jYXRpb24uaHJlZik7CiAgICB9CiAgfTsKCiAgLy8gU2ltcGxlIE1hcmtkb3duIHRvIEhUTUwgcmVuZGVyZXIuCiAgLy8gSGFyZGVuZWQgYWdhaW5zdCBYU1M6IGlucHV0IGlzIEhUTUwtZXNjYXBlZCBGSVJTVCwgc28gYW55IHJhdyA8c2NyaXB0PiwKICAvLyA8aWZyYW1lPiwgb3Igb24qPSBhdHRyaWJ1dGVzIGluIGFydGljbGUgY29udGVudCByZW5kZXIgYXMgcGxhaW4gdGV4dC4KICAvLyBMaW5rIFVSTHMgYXJlIHZhbGlkYXRlZCB0byBhbGxvdyBvbmx5IGh0dHAocykvbWFpbHRvIOKAlCBgamF2YXNjcmlwdDpgIGFuZAogIC8vIGBkYXRhOmAgVVJJcyBiZWNvbWUgaGFybWxlc3MgIiMiIHBsYWNlaG9sZGVycy4KICBjb25zdCByZW5kZXJNYXJrZG93biA9IChtZDogc3RyaW5nKSA9PiB7CiAgICBjb25zdCBlc2NhcGVIdG1sID0gKHM6IHN0cmluZykgPT4KICAgICAgcy5yZXBsYWNlKC8mL2csICImYW1wOyIpCiAgICAgICAucmVwbGFjZSgvPC9nLCAiJmx0OyIpCiAgICAgICAucmVwbGFjZSgvPi9nLCAiJmd0OyIpCiAgICAgICAucmVwbGFjZSgvIi9nLCAiJnF1b3Q7IikKICAgICAgIC5yZXBsYWNlKC8nL2csICImIzM5OyIpOwogICAgY29uc3Qgc2FmZVVybCA9IChyYXc6IHN0cmluZykgPT4gewogICAgICBjb25zdCB1cmwgPSByYXcudHJpbSgpOwogICAgICAvLyBBbGxvdyBzYW1lLW9yaWdpbiAvIHJlbGF0aXZlIHBhdGhzIGFuZCBleHBsaWNpdCBzYWZlIHNjaGVtZXMgb25seS4KICAgICAgaWYgKC9eKGh0dHBzPzp8bWFpbHRvOnxcL3wjKS9pLnRlc3QodXJsKSkgcmV0dXJuIHVybC5yZXBsYWNlKC8iL2csICIlMjIiKTsKICAgICAgcmV0dXJuICIjIjsKICAgIH07CgogICAgLy8gMS4gRXNjYXBlIEVWRVJZVEhJTkcgZmlyc3Qgc28gdXNlciBjb250ZW50IGNhbiBuZXZlciBpbmplY3QgSFRNTC4KICAgIGxldCBodG1sID0gZXNjYXBlSHRtbChtZCkKICAgICAgLy8gMi4gQXBwbHkgbWFya2Rvd24gdHJhbnNmb3JtcyBvbiB0aGUgc2FmZSwgZXNjYXBlZCBzdHJpbmcuCiAgICAgIC8vIEhlYWRlcnMKICAgICAgLnJlcGxhY2UoL14jIyMgKC4qJCkvZ20sICc8aDMgY2xhc3M9InRleHQteGwgZm9udC1ib2xkIG10LTggbWItMyB0ZXh0LXdoaXRlIj4kMTwvaDM+JykKICAgICAgLnJlcGxhY2UoL14jIyAoLiokKS9nbSwgJzxoMiBjbGFzcz0idGV4dC0yeGwgZm9udC1ib2xkIG10LTEwIG1iLTQgdGV4dC13aGl0ZSI+JDE8L2gyPicpCiAgICAgIC5yZXBsYWNlKC9eIyAoLiokKS9nbSwgJzxoMSBjbGFzcz0idGV4dC0zeGwgZm9udC1ib2xkIG10LTEwIG1iLTQgdGV4dC13aGl0ZSI+JDE8L2gxPicpCiAgICAgIC8vIEJvbGQgYW5kIGl0YWxpYwogICAgICAucmVwbGFjZSgvXCpcKlwqKC4qPylcKlwqXCovZywgJzxzdHJvbmc+PGVtPiQxPC9lbT48L3N0cm9uZz4nKQogICAgICAucmVwbGFjZSgvXCpcKiguKj8pXCpcKi9nLCAnPHN0cm9uZyBjbGFzcz0idGV4dC13aGl0ZSI+JDE8L3N0cm9uZz4nKQogICAgICAucmVwbGFjZSgvXCooLio/KVwqL2csICc8ZW0+JDE8L2VtPicpCiAgICAgIC8vIFVub3JkZXJlZCBsaXN0cwogICAgICAucmVwbGFjZSgvXlwtICguKiQpL2dtLCAnPGxpIGNsYXNzPSJtbC00IG1iLTEiPiQxPC9saT4nKQogICAgICAucmVwbGFjZSgvXlwqICguKiQpL2dtLCAnPGxpIGNsYXNzPSJtbC00IG1iLTEiPiQxPC9saT4nKQogICAgICAvLyBPcmRlcmVkIGxpc3RzCiAgICAgIC5yZXBsYWNlKC9eXGQrXC4gKC4qJCkvZ20sICc8bGkgY2xhc3M9Im1sLTQgbWItMSBsaXN0LWRlY2ltYWwiPiQxPC9saT4nKQogICAgICAvLyBCbG9ja3F1b3RlcwogICAgICAucmVwbGFjZSgvXiZndDsgKC4qJCkvZ20sICc8YmxvY2txdW90ZSBjbGFzcz0iYm9yZGVyLWwtNCBib3JkZXItYW1iZXItNTAwIHBsLTQgcHktMiBteS00IHRleHQtd2hpdGUvNzAgaXRhbGljIj4kMTwvYmxvY2txdW90ZT4nKQogICAgICAvLyBDb2RlIGJsb2NrcwogICAgICAucmVwbGFjZSgvYGBgKFtcc1xTXSo/KWBgYC9nLCAnPHByZSBjbGFzcz0iYmctd2hpdGUvNSByb3VuZGVkLWxnIHAtNCBteS00IG92ZXJmbG93LXgtYXV0byB0ZXh0LXNtIHRleHQtd2hpdGUvODAiPjxjb2RlPiQxPC9jb2RlPjwvcHJlPicpCiAgICAgIC8vIElubGluZSBjb2RlCiAgICAgIC5yZXBsYWNlKC9gKC4qPylgL2csICc8Y29kZSBjbGFzcz0iYmctd2hpdGUvMTAgcHgtMS41IHB5LTAuNSByb3VuZGVkIHRleHQtYW1iZXItNDAwIHRleHQtc20iPiQxPC9jb2RlPicpCiAgICAgIC8vIExpbmtzIOKAlCBocmVmIGlzIHZhbGlkYXRlZCB0aHJvdWdoIHNhZmVVcmwsIGxhYmVsIHN0YXlzIGVzY2FwZWQKICAgICAgLnJlcGxhY2UoL1xbKFteXF1dKylcXVwoKFteKV0rKVwpL2csIChfbSwgbGFiZWw6IHN0cmluZywgdXJsOiBzdHJpbmcpID0+CiAgICAgICAgYDxhIGhyZWY9IiR7c2FmZVVybCh1cmwpfSIgY2xhc3M9InRleHQtYW1iZXItNDAwIGhvdmVyOnRleHQtYW1iZXItMzAwIHVuZGVybGluZSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIgbm9yZWZlcnJlciI+JHtsYWJlbH08L2E+YAogICAgICApCiAgICAgIC8vIEhvcml6b250YWwgcnVsZXMKICAgICAgLnJlcGxhY2UoL14tLS0kL2dtLCAnPGhyIGNsYXNzPSJib3JkZXItd2hpdGUvMTAgbXktOCIgLz4nKQogICAgICAvLyBQYXJhZ3JhcGhzIChkb3VibGUgbmV3bGluZXMpCiAgICAgIC5yZXBsYWNlKC9cblxuL2csICc8L3A+PHAgY2xhc3M9InRleHQtd2hpdGUvNzAgbGVhZGluZy1yZWxheGVkIG1iLTQiPicpOwoKICAgIHJldHVybiBgPHAgY2xhc3M9InRleHQtd2hpdGUvNzAgbGVhZGluZy1yZWxheGVkIG1iLTQiPiR7aHRtbH08L3A+YDsKICB9OwoKICBpZiAoaXNMb2FkaW5nKSB7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGJnLWJsYWNrIHRleHQtd2hpdGUgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhbmltYXRlLXB1bHNlIHRleHQtd2hpdGUvNDAiPkxvYWRpbmcgYXJ0aWNsZS4uLjwvZGl2PgogICAgICA8L2Rpdj4KICAgICk7CiAgfQoKICBpZiAoZXJyb3IgfHwgIWFydGljbGUpIHsKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4gYmctYmxhY2sgdGV4dC13aGl0ZSBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtNCI+CiAgICAgICAgPEJvb2tPcGVuIGNsYXNzTmFtZT0iaC0xMiB3LTEyIHRleHQtd2hpdGUvMjAiIC8+CiAgICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC14bCBmb250LXNlbWlib2xkIj5BcnRpY2xlIG5vdCBmb3VuZDwvaDI+CiAgICAgICAgPExpbmsgaHJlZj0iL2Jsb2ciPgogICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJnaG9zdCIgY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTQwMCI+CiAgICAgICAgICAgIDxBcnJvd0xlZnQgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIiIC8+CiAgICAgICAgICAgIEJhY2sgdG8gQmxvZwogICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgPC9MaW5rPgogICAgICA8L2Rpdj4KICAgICk7CiAgfQoKICBjb25zdCB0YWdzID0gQXJyYXkuaXNBcnJheShhcnRpY2xlLnRhZ3MpID8gYXJ0aWNsZS50YWdzIGFzIHN0cmluZ1tdIDogW107CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIHRleHQtd2hpdGUiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgey8qIEhlYWRlciAqL30KICAgICAgPGhlYWRlciBjbGFzc05hbWU9ImJvcmRlci1iIGJvcmRlci13aGl0ZS8xMCBiZy1ibGFjay84MCBiYWNrZHJvcC1ibHVyLXhsIHN0aWNreSB0b3AtMCB6LTUwIj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctNHhsIG14LWF1dG8gcHgtNCBzbTpweC02IHB5LTQgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyI+CiAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9ibG9nIj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzYwIGhvdmVyOnRleHQtd2hpdGUiPgogICAgICAgICAgICAgICAgPEFycm93TGVmdCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMSIgLz4KICAgICAgICAgICAgICAgIEJsb2cKICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgb25DbGljaz17aGFuZGxlU2hhcmV9IGNsYXNzTmFtZT0idGV4dC13aGl0ZS82MCBob3Zlcjp0ZXh0LXdoaXRlIj4KICAgICAgICAgICAgICA8U2hhcmUyIGNsYXNzTmFtZT0iaC00IHctNCBtci0xIiAvPgogICAgICAgICAgICAgIFNoYXJlCiAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8TGluayBocmVmPSIvcmVnaXN0ZXIiPgogICAgICAgICAgICAgIDxCdXR0b24gc2l6ZT0ic20iIGNsYXNzTmFtZT0iYmctYW1iZXItNjAwIGhvdmVyOmJnLWFtYmVyLTcwMCB0ZXh0LXdoaXRlIj5WaWV3IFBsYW5zPC9CdXR0b24+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgogICAgICA8L2hlYWRlcj4KCiAgICAgIHsvKiBBcnRpY2xlICovfQogICAgICA8YXJ0aWNsZSBjbGFzc05hbWU9Im1heC13LTN4bCBteC1hdXRvIHB4LTQgc206cHgtNiBweS0xMCBzbTpweS0xNiI+CiAgICAgICAgey8qIENhdGVnb3J5ICsgTWV0YSAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAgaXRlbXMtY2VudGVyIGdhcC0zIG1iLTYiPgogICAgICAgICAgPEJhZGdlIHZhcmlhbnQ9InNlY29uZGFyeSIgY2xhc3NOYW1lPSJiZy1hbWJlci02MDAvMjAgdGV4dC1hbWJlci00MDAgYm9yZGVyLTAiPgogICAgICAgICAgICB7Q0FURUdPUllfTEFCRUxTW2FydGljbGUuY2F0ZWdvcnldIHx8IGFydGljbGUuY2F0ZWdvcnl9CiAgICAgICAgICA8L0JhZGdlPgogICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMSB0ZXh0LXNtIHRleHQtd2hpdGUvNDAiPgogICAgICAgICAgICA8Q2FsZW5kYXIgY2xhc3NOYW1lPSJoLTMuNSB3LTMuNSIgLz4KICAgICAgICAgICAge2Zvcm1hdERhdGUoYXJ0aWNsZS5wdWJsaXNoZWRBdCl9CiAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIHRleHQtc20gdGV4dC13aGl0ZS80MCI+CiAgICAgICAgICAgIDxFeWUgY2xhc3NOYW1lPSJoLTMuNSB3LTMuNSIgLz4KICAgICAgICAgICAgeyhhcnRpY2xlLnZpZXdDb3VudCB8fCAwKSArIDF9IHZpZXdzCiAgICAgICAgICA8L3NwYW4+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBUaXRsZSAqL30KICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTN4bCBzbTp0ZXh0LTR4bCBsZzp0ZXh0LTV4bCBmb250LWJvbGQgbWItNCBsZWFkaW5nLXRpZ2h0Ij4KICAgICAgICAgIHthcnRpY2xlLnRpdGxlfQogICAgICAgIDwvaDE+CgogICAgICAgIHsvKiBTdWJ0aXRsZSAqL30KICAgICAgICB7YXJ0aWNsZS5zdWJ0aXRsZSAmJiAoCiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteGwgdGV4dC13aGl0ZS82MCBtYi04IGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgIHthcnRpY2xlLnN1YnRpdGxlfQogICAgICAgICAgPC9wPgogICAgICAgICl9CgogICAgICAgIHsvKiBDb3ZlciBJbWFnZSAqL30KICAgICAgICB7KGFydGljbGUgYXMgYW55KS5jb3ZlckltYWdlVXJsICYmICgKICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyb3VuZGVkLXhsIG92ZXJmbG93LWhpZGRlbiBtYi04IGJvcmRlciBib3JkZXItd2hpdGUvMTAiPgogICAgICAgICAgICA8aW1nIHNyYz17KGFydGljbGUgYXMgYW55KS5jb3ZlckltYWdlVXJsfSBhbHQ9e2FydGljbGUudGl0bGV9IGNsYXNzTmFtZT0idy1mdWxsIGgtNjQgc206aC04MCBvYmplY3QtY292ZXIiIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQoKICAgICAgICA8aHIgY2xhc3NOYW1lPSJib3JkZXItd2hpdGUvMTAgbWItOCIgLz4KCiAgICAgICAgey8qIENvbnRlbnQgKi99CiAgICAgICAgPGRpdgogICAgICAgICAgY2xhc3NOYW1lPSJwcm9zZSBwcm9zZS1pbnZlcnQgbWF4LXctbm9uZSBhcnRpY2xlLWNvbnRlbnQiCiAgICAgICAgICBkYW5nZXJvdXNseVNldElubmVySFRNTD17eyBfX2h0bWw6IHJlbmRlck1hcmtkb3duKGFydGljbGUuY29udGVudCkgfX0KICAgICAgICAvPgoKICAgICAgICB7LyogVGFncyAqL30KICAgICAgICB7dGFncy5sZW5ndGggPiAwICYmICgKICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtdC0xMCBwdC02IGJvcmRlci10IGJvcmRlci13aGl0ZS8xMCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiBmbGV4LXdyYXAiPgogICAgICAgICAgICAgIDxUYWcgY2xhc3NOYW1lPSJoLTQgdy00IHRleHQtd2hpdGUvNDAiIC8+CiAgICAgICAgICAgICAge3RhZ3MubWFwKCh0YWc6IHN0cmluZykgPT4gKAogICAgICAgICAgICAgICAgPEJhZGdlIGtleT17dGFnfSB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9ImJvcmRlci13aGl0ZS8yMCB0ZXh0LXdoaXRlLzUwIHRleHQteHMiPgogICAgICAgICAgICAgICAgICB7dGFnfQogICAgICAgICAgICAgICAgPC9CYWRnZT4KICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQoKICAgICAgICB7LyogQ1RBICovfQogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtdC0xMiBwLTYgc206cC04IHJvdW5kZWQtMnhsIGJnLWdyYWRpZW50LXRvLWJyIGZyb20tYW1iZXItNjAwLzEwIHRvLW9yYW5nZS02MDAvNSBib3JkZXIgYm9yZGVyLWFtYmVyLTUwMC8yMCB0ZXh0LWNlbnRlciI+CiAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJ0ZXh0LXhsIGZvbnQtYm9sZCBtYi0yIj5DcmVhdGUgWW91ciBPd24gQUkgRmlsbTwvaDM+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtd2hpdGUvNjAgbWItNCI+CiAgICAgICAgICAgIFR1cm4geW91ciBpZGVhcyBpbnRvIEhvbGx5d29vZC1xdWFsaXR5IGZpbG1zIHdpdGggVmlyw4lsbGUgU3R1ZGlvcycgQUkgZW5naW5lLgogICAgICAgICAgPC9wPgogICAgICAgICAgPExpbmsgaHJlZj0iL3JlZ2lzdGVyIj4KICAgICAgICAgICAgPEJ1dHRvbiBjbGFzc05hbWU9ImJnLWFtYmVyLTYwMCBob3ZlcjpiZy1hbWJlci03MDAgdGV4dC13aGl0ZSBweC02Ij4KICAgICAgICAgICAgICBTdGFydCBDcmVhdGluZyBOb3cKICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICA8L0xpbms+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvYXJ0aWNsZT4KCiAgICAgIDxMZWVnb0Zvb3RlckxhdW5jaCAvPgogICAgPC9kaXY+CiAgKTsKfQo=
+import { trpc } from "@/lib/trpc";
+import { useRoute, Link } from "wouter";
+import { ArrowLeft, Calendar, Eye, Tag, Share2, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import { useEffect } from "react";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  "ai-filmmaking": "AI Filmmaking",
+  "cinematography": "Cinematography & Visuals",
+  "industry-trends": "Industry Trends",
+  "tutorials": "Tutorials & How-To",
+  "behind-the-scenes": "Behind the Scenes",
+};
+
+export default function BlogArticle() {
+  const [, params] = useRoute("/blog/:slug");
+  const slug = params?.slug || "";
+
+  const { data: article, isLoading, error } = trpc.blog.bySlug.useQuery(
+    { slug },
+    { enabled: !!slug }
+  );
+
+  // Update page title and meta for SEO
+  useEffect(() => {
+    if (article) {
+      document.title = `${article.metaTitle || article.title} | VirÉlle Studios Blog`;
+      // Update meta description
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement("meta");
+        metaDesc.setAttribute("name", "description");
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute("content", article.metaDescription || article.excerpt || "");
+    }
+    return () => {
+      document.title = "VirÉlle Studios";
+    };
+  }, [article]);
+
+  const formatDate = (date: string | Date | null) => {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: article?.title || "VirÉlle Studios Blog",
+        text: article?.excerpt || "",
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
+  // Simple Markdown to HTML renderer.
+  // Hardened against XSS: input is HTML-escaped FIRST, so any raw <script>,
+  // <iframe>, or on*= attributes in article content render as plain text.
+  // Link URLs are validated to allow only http(s)/mailto — `javascript:` and
+  // `data:` URIs become harmless "#" placeholders.
+  const renderMarkdown = (md: string) => {
+    const escapeHtml = (s: string) =>
+      s.replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#39;");
+    const safeUrl = (raw: string) => {
+      const url = raw.trim();
+      // Allow same-origin / relative paths and explicit safe schemes only.
+      if (/^(https?:|mailto:|\/|#)/i.test(url)) return url.replace(/"/g, "%22");
+      return "#";
+    };
+
+    // 1. Escape EVERYTHING first so user content can never inject HTML.
+    let html = escapeHtml(md)
+      // 2. Apply markdown transforms on the safe, escaped string.
+      // Headers
+      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold mt-8 mb-3 text-white">$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-10 mb-4 text-white">$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-10 mb-4 text-white">$1</h1>')
+      // Bold and italic
+      .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Unordered lists
+      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1">$1</li>')
+      .replace(/^\* (.*$)/gm, '<li class="ml-4 mb-1">$1</li>')
+      // Ordered lists
+      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>')
+      // Blockquotes
+      .replace(/^&gt; (.*$)/gm, '<blockquote class="border-l-4 border-amber-500 pl-4 py-2 my-4 text-white/70 italic">$1</blockquote>')
+      // Code blocks
+      .replace(/```([\s\S]*?)```/g, '<pre class="bg-white/5 rounded-lg p-4 my-4 overflow-x-auto text-sm text-white/80"><code>$1</code></pre>')
+      // Inline code
+      .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1.5 py-0.5 rounded text-amber-400 text-sm">$1</code>')
+      // Links — href is validated through safeUrl, label stays escaped
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label: string, url: string) =>
+        `<a href="${safeUrl(url)}" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">${label}</a>`
+      )
+      // Horizontal rules
+      .replace(/^---$/gm, '<hr class="border-white/10 my-8" />')
+      // Paragraphs (double newlines)
+      .replace(/\n\n/g, '</p><p class="text-white/70 leading-relaxed mb-4">');
+
+    return `<p class="text-white/70 leading-relaxed mb-4">${html}</p>`;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="animate-pulse text-white/40">Loading article...</div>
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        <BookOpen className="h-12 w-12 text-white/20" />
+        <h2 className="text-xl font-semibold">Article not found</h2>
+        <Link href="/blog">
+          <Button variant="ghost" className="text-amber-400">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Blog
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const tags = Array.isArray(article.tags) ? article.tags as string[] : [];
+
+  return (
+    <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      {/* Header */}
+      <header className="border-b border-white/10 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/blog">
+              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Blog
+              </Button>
+            </Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={handleShare} className="text-white/60 hover:text-white">
+              <Share2 className="h-4 w-4 mr-1" />
+              Share
+            </Button>
+            <Link href="/register">
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">View Plans</Button>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Article */}
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        {/* Category + Meta */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <Badge variant="secondary" className="bg-amber-600/20 text-amber-400 border-0">
+            {CATEGORY_LABELS[article.category] || article.category}
+          </Badge>
+          <span className="flex items-center gap-1 text-sm text-white/40">
+            <Calendar className="h-3.5 w-3.5" />
+            {formatDate(article.publishedAt)}
+          </span>
+          <span className="flex items-center gap-1 text-sm text-white/40">
+            <Eye className="h-3.5 w-3.5" />
+            {(article.viewCount || 0) + 1} views
+          </span>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight gradient-text-gold">
+          {article.title}
+        </h1>
+
+        {/* Subtitle */}
+        {article.subtitle && (
+          <p className="text-xl text-white/60 mb-8 leading-relaxed">
+            {article.subtitle}
+          </p>
+        )}
+
+        {/* Cover Image */}
+        {(article as any).coverImageUrl && (
+          <div className="rounded-xl overflow-hidden mb-8 border border-white/10">
+            <img src={(article as any).coverImageUrl} alt={article.title} className="w-full h-64 sm:h-80 object-cover" />
+          </div>
+        )}
+
+        <hr className="border-white/10 mb-8" />
+
+        {/* Content */}
+        <div
+          className="prose prose-invert max-w-none article-content"
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(article.content) }}
+        />
+
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="mt-10 pt-6 border-t border-white/10">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Tag className="h-4 w-4 text-white/40" />
+              {tags.map((tag: string) => (
+                <Badge key={tag} variant="outline" className="border-white/20 text-white/50 text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CTA */}
+        <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-amber-600/10 to-orange-600/5 border border-amber-500/20 text-center">
+          <h3 className="text-xl font-bold mb-2">Create Your Own AI Film</h3>
+          <p className="text-white/60 mb-4">
+            Turn your ideas into Hollywood-quality films with VirÉlle Studios' AI engine.
+          </p>
+          <Link href="/register">
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6">
+              Start Creating Now
+            </Button>
+          </Link>
+        </div>
+      </article>
+
+      <LeegoFooterLaunch />
+    </div>
+  );
+}
