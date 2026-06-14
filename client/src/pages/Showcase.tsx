@@ -190,7 +190,7 @@ export default function Showcase() {
       {/* Footer CTA */}
       <footer className="relative z-10 border-t border-neutral-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <Sparkles className="w-8 h-8 mx-auto mb-4" style={{ color: "#d4af37" }} />
+          <Sparkles className="w-8 h-8 mx-auto mb-4 text-amber-400 gold-glow" style={{ color: "#d4af37" }} />
           <h2 className="text-3xl md:text-4xl font-bold mb-4"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",

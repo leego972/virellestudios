@@ -268,7 +268,7 @@ export default function NewProject() {
           <Card className="bg-card/50 border-primary/20 glass-card">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-primary" />
+                <Zap className="h-4 w-4 text-amber-400" />
                 <CardTitle className="text-sm font-medium gradient-text-gold">Quick Generate — Just the Essentials</CardTitle>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Fill in a title and describe your film. Our AI Director handles the rest — screenplay, scenes, characters, and cinematography.</p>

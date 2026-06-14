@@ -582,7 +582,7 @@ import { useState, useRef } from "react";
                 <div className="rounded-2xl border p-6" style={{ borderColor: "rgba(236,72,153,0.3)", background: "linear-gradient(135deg,rgba(236,72,153,0.06) 0%,transparent 100%)" }}>
                   <div className="flex items-center gap-3 mb-5">
                     <div className="h-12 w-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center shrink-0">
-                      <Wand2 className="h-6 w-6 text-pink-400" />
+                      <Wand2 className="h-6 w-6 text-pink-400 text-amber-400 gold-glow" />
                     </div>
                     <div>
                       <h3 className="font-bold text-base gradient-text-gold">AI Sound Effect Generator</h3>

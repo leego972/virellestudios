@@ -561,7 +561,7 @@ export default function DialogueEditor() {
       <Dialog open={showAiScene} onOpenChange={setShowAiScene}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Wand2 className="h-5 w-5 text-primary" /> Generate Scene Dialogue</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Wand2 className="h-5 w-5 text-amber-400" /> Generate Scene Dialogue</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             AI will generate a complete dialogue sequence for the selected scene based on the film's plot, characters, and scene parameters.

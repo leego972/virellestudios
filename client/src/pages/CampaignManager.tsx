@@ -668,7 +668,7 @@ export default function CampaignManager() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 gradient-text-gold glass-card">
-                <Zap className="h-5 w-5 text-primary" />
+                <Zap className="h-5 w-5 text-amber-400" />
                 Quick Content Generator
               </CardTitle>
               <CardDescription>

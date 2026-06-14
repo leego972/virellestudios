@@ -525,7 +525,7 @@ export default function Landing() {
                 <div className="h-1.5 bg-gradient-to-r from-purple-400 to-violet-500" />
                 <CardContent className="p-8 glass-card">
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
-                    <Sparkles className="h-7 w-7 text-purple-400" />
+                    <Sparkles className="h-7 w-7 text-purple-400 text-amber-400 gold-glow" />
                   </div>
                   <h3 className="text-xl font-bold mb-2">VFX Scene Studio</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">

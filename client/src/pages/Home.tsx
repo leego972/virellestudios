@@ -500,7 +500,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 </div>
               )}
               <Button variant="outline" size="sm" className="text-xs gap-1.5" onClick={() => setLocation("/projects")}>
-                <Zap className="h-3.5 w-3.5 text-primary" />Quick Generate
+                <Zap className="h-3.5 w-3.5 text-amber-400" />Quick Generate
               </Button>
             </div>
           </div>

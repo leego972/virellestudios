@@ -1120,7 +1120,7 @@ export default function Characters() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
-              <Wand2 className="h-4 w-4 text-primary" />
+              <Wand2 className="h-4 w-4 text-amber-400" />
               AI Character Generator
             </DialogTitle>
             <DialogDescription className="text-xs mt-1">
