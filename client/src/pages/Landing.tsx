@@ -133,7 +133,8 @@ export default function Landing() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => setLocation("/showcase")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Showcase</button>
+            <button onClick={() => setLocation("/blog")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Blog</button>
+              <button onClick={() => setLocation("/showcase")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Showcase</button>
             <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Pricing</button>
             <button onClick={() => setLocation("/download")} className="text-sm font-bold text-white/60 hover:text-white transition-colors flex items-center gap-1">
               <Smartphone className="h-3.5 w-3.5" />
@@ -169,7 +170,8 @@ export default function Landing() {
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-amber-500/20 py-4 px-6 space-y-1 shadow-2xl">
-            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Showcase</button>
+            <button onClick={() => { setLocation("/blog"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Blog</button>
+              <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Showcase</button>
             <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Pricing</button>
             <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
             <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Industry</button>
