@@ -13,7 +13,7 @@ interface Props {
 }
 
 /**
- * v6.63 — Side-by-side version compare. Pulls saved alt versions from the
+ * v6.63 â Side-by-side version compare. Pulls saved alt versions from the
  * shotVersions store (keyed per scene). Synchronizes play/pause + scrubbing
  * across both video elements so the user can A/B compare cuts/takes.
  *
@@ -62,7 +62,7 @@ export default function VersionCompareDrawer({ projectId, sceneId, open, onClose
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-gradient-to-r from-zinc-900 to-zinc-950">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-amber-500" />
-            <h2 className="text-sm font-semibold text-zinc-100 gradient-text-gold">Compare versions — Scene {sceneId}</h2>
+            <h2 className="text-sm font-semibold gradient-text-gold">Compare versions â Scene {sceneId}</h2>
           </div>
           <Button size="sm" variant="ghost" onClick={onClose} className="h-8 w-8 p-0">
             <X className="w-4 h-4" />
@@ -71,7 +71,7 @@ export default function VersionCompareDrawer({ projectId, sceneId, open, onClose
 
         <div className="flex-1 overflow-auto p-4 space-y-4">
           {isLoading ? (
-            <div className="text-sm text-zinc-500 text-center py-8">Loading versions…</div>
+            <div className="text-sm text-zinc-500 text-center py-8">Loading versionsâ¦</div>
           ) : versions.length === 0 ? (
             <div className="text-sm text-zinc-500 text-center py-12 border border-dashed border-zinc-800 rounded">
               No saved alternate versions for this scene yet. Save a version from the regenerate panel to compare it here.

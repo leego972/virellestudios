@@ -55,13 +55,13 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // For chunk-load errors on first try â show spinner while auto-retrying
+      // For chunk-load errors on first try Ã¢ÂÂ show spinner while auto-retrying
       if (isChunkLoadError(this.state.error) && this.state.retryCount === 0) {
         return (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="flex flex-col items-center gap-3">
               <RotateCcw className="w-8 h-8 animate-spin text-amber-500" />
-              <p className="text-sm text-muted-foreground">Loading pageâ¦</p>
+              <p className="text-sm text-muted-foreground">Loading pageÃ¢ÂÂ¦</p>
             </div>
           </div>
         );
@@ -73,11 +73,11 @@ class ErrorBoundary extends Component<Props, State> {
               <AlertTriangle size={40} className="text-destructive" />
             </div>
 
-            <h2 className="text-2xl font-bold text-foreground mb-2 gradient-text-gold">
-              Cut â something broke on this take
+            <h2 className="text-2xl font-bold mb-2 gradient-text-gold">
+              Cut Ã¢ÂÂ something broke on this take
             </h2>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              The studio hit an unexpected error on this view. Your project work is autosaved â reload this page to roll again, or head back to the home screen.
+              The studio hit an unexpected error on this view. Your project work is autosaved Ã¢ÂÂ reload this page to roll again, or head back to the home screen.
             </p>
 
             {/* Show technical details only in development */}

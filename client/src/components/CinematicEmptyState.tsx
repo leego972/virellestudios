@@ -51,7 +51,7 @@ export default function CinematicEmptyState({
         </div>
       </div>
 
-      <h2 className="font-serif text-2xl sm:text-3xl text-white mb-2 tracking-tight gradient-text-gold">{title}</h2>
+      <h2 className="font-serif text-2xl sm:text-3xl mb-2 tracking-tight gradient-text-gold">{title}</h2>
       {description && (
         <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-md">{description}</p>
       )}
@@ -62,7 +62,7 @@ export default function CinematicEmptyState({
           "{quote.text}"
         </blockquote>
         <figcaption className="mt-2 text-[11px] uppercase tracking-[0.2em] text-primary/40">
-          — {quote.author}
+          â {quote.author}
         </figcaption>
       </figure>
     </div>

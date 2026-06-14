@@ -57,7 +57,7 @@ const STEPS = [
     title: "Welcome to Virelle Studios",
     subtitle: "Your AI-powered film production studio",
     description:
-      "Virelle Studios gives you everything you need to write, produce, and distribute a professional film — powered by AI. From script to screen in one place.",
+      "Virelle Studios gives you everything you need to write, produce, and distribute a professional film â powered by AI. From script to screen in one place.",
     tip: null,
     action: null,
   },
@@ -69,9 +69,9 @@ const STEPS = [
     title: "Connect Your Video API",
     subtitle: "Required to generate video scenes",
     description:
-      "To generate video, you need at least one API key. Virelle supports Google Veo3 (best quality), Runway, Replicate, and Pollinations (free). Add your key in Settings → API Keys.",
+      "To generate video, you need at least one API key. Virelle supports Google Veo3 (best quality), Runway, Replicate, and Pollinations (free). Add your key in Settings â API Keys.",
     tip: "Veo3 is recommended for cinematic quality. If you don't have a key yet, Pollinations is free and requires no sign-up.",
-    action: { label: "Go to Settings → API Keys", path: "/settings" },
+    action: { label: "Go to Settings â API Keys", path: "/settings" },
   },
   {
     id: "project",
@@ -83,7 +83,7 @@ const STEPS = [
     description:
       "Every film starts with a project. Give it a title, genre, and a one-sentence logline. The AI uses your logline to generate better scripts, scenes, and characters throughout production.",
     tip: "A strong logline: 'A [protagonist] must [goal] before [stakes].' The more specific, the better the AI output.",
-    action: { label: "Create a Project →", path: "/projects/new" },
+    action: { label: "Create a Project â", path: "/projects/new" },
   },
   {
     id: "generate",
@@ -94,7 +94,7 @@ const STEPS = [
     subtitle: "Let the AI write your film",
     description:
       "Inside your project, use the AI Script Writer to generate a full screenplay. Then use the Scene Editor to generate video clips for each scene. The Director's Assistant can help you refine everything with voice or text.",
-    tip: "Script generation costs 10 credits. Scene video generation costs vary by provider — Pollinations is free.",
+    tip: "Script generation costs 10 credits. Scene video generation costs vary by provider â Pollinations is free.",
     action: null,
   },
   {
@@ -119,7 +119,7 @@ const STEPS = [
     description:
       "Browse 94 international film funds in the Funding Directory and generate a professional application package. When your film is ready, use the Distribute tool to publish to streaming platforms.",
     tip: "Always verify exact requirements on each fund's live portal before submitting your application.",
-    action: { label: "Browse Funding Directory →", path: "/funding" },
+    action: { label: "Browse Funding Directory â", path: "/funding" },
   },
   {
     id: "assets",
@@ -129,9 +129,9 @@ const STEPS = [
     title: "Explore the Asset Marketplace",
     subtitle: "Premium packs for your production",
     description:
-      "The Asset Marketplace has premium cinematography packs, character bundles, score libraries, VFX packs, and professional prompt libraries — all designed to elevate your film's quality.",
+      "The Asset Marketplace has premium cinematography packs, character bundles, score libraries, VFX packs, and professional prompt libraries â all designed to elevate your film's quality.",
     tip: "Admins have free access to all assets. Free assets are available to all users with no purchase required.",
-    action: { label: "Browse Asset Marketplace →", path: "/marketplace" },
+    action: { label: "Browse Asset Marketplace â", path: "/marketplace" },
   },
   {
     id: "ready",
@@ -141,7 +141,7 @@ const STEPS = [
     title: "You're Ready to Create",
     subtitle: "Lights. Camera. Action.",
     description:
-      "That's everything you need to know. Your dashboard has a Getting Started checklist to track your progress. The Director's Assistant is always available to help — just tap the Assistant button.",
+      "That's everything you need to know. Your dashboard has a Getting Started checklist to track your progress. The Director's Assistant is always available to help â just tap the Assistant button.",
     tip: null,
     action: null,
   },
@@ -216,7 +216,7 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
               className="w-6 h-6 rounded-md"
             />
             <span className="text-xs font-semibold text-foreground/80">
-              {user?.name ? `Welcome, ${user.name.split(" ")[0]}` : "Virelle Studios"} — Getting Started
+              {user?.name ? `Welcome, ${user.name.split(" ")[0]}` : "Virelle Studios"} â Getting Started
             </span>
           </div>
           <button
@@ -247,7 +247,7 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
           </span>
         </div>
 
-        {/* Content — scrollable */}
+        {/* Content â scrollable */}
         <div className="overflow-y-auto flex-1 px-5 pb-2" style={{ minHeight: 0 }}>
           {/* Hero icon */}
           <div
@@ -262,7 +262,7 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
             <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: current.accent }}>
               {current.subtitle}
             </p>
-            <h2 className="text-lg font-bold text-foreground leading-tight gradient-text-gold">{current.title}</h2>
+            <h2 className="text-lg font-bold leading-tight gradient-text-gold">{current.title}</h2>
             <p className="text-sm text-muted-foreground leading-relaxed pt-1">{current.description}</p>
           </div>
 

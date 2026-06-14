@@ -4,13 +4,13 @@ import { Bell, Check, CheckCheck, Trash2, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const TYPE_ICONS: Record<string, string> = {
-  welcome: "ð¬",
-  generation_complete: "â¨",
-  export_complete: "ð¦",
-  subscription_change: "ð³",
-  referral_reward: "ð",
-  system: "ð¢",
-  tip: "ð¡",
+  welcome: "Ã°ÂÂÂ¬",
+  generation_complete: "Ã¢ÂÂ¨",
+  export_complete: "Ã°ÂÂÂ¦",
+  subscription_change: "Ã°ÂÂÂ³",
+  referral_reward: "Ã°ÂÂÂ",
+  system: "Ã°ÂÂÂ¢",
+  tip: "Ã°ÂÂÂ¡",
 };
 
 export default function NotificationBell() {
@@ -80,7 +80,7 @@ export default function NotificationBell() {
         <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 max-h-[480px] bg-[#0c0b18] border border-white/10 rounded-xl shadow-2xl z-[100] flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-            <h3 className="text-sm font-semibold text-white gradient-text-gold">Notifications</h3>
+            <h3 className="text-sm font-semibold gradient-text-gold">Notifications</h3>
             <div className="flex items-center gap-1">
               {count > 0 && (
                 <Button
@@ -116,7 +116,7 @@ export default function NotificationBell() {
                 >
                   {/* Icon */}
                   <div className="text-lg flex-shrink-0 mt-0.5">
-                    {TYPE_ICONS[(n as any).type || "system"] || "ð¢"}
+                    {TYPE_ICONS[(n as any).type || "system"] || "Ã°ÂÂÂ¢"}
                   </div>
 
                   {/* Content */}
