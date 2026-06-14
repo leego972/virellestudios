@@ -128,11 +128,11 @@ export default function PWAInstallPrompt() {
       {showIOSHint ? (
         <div className="mt-3 space-y-2 text-xs text-white/70">
           <div className="flex items-center gap-2">
-            <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">1</span>
+            <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-amber-400 text-[10px] font-bold flex items-center justify-center">1</span>
             Tap the <Share className="inline h-3.5 w-3.5 mx-0.5" /> Share button
           </div>
           <div className="flex items-center gap-2">
-            <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">2</span>
+            <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-amber-400 text-[10px] font-bold flex items-center justify-center">2</span>
             Choose <Plus className="inline h-3.5 w-3.5 mx-0.5" /> Add to Home Screen
           </div>
           <Button variant="ghost" size="sm" onClick={dismiss} className="w-full mt-2 h-9 text-xs text-white/60">
