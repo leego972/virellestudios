@@ -77,7 +77,7 @@ function ActualsRow({
           <span className="text-muted-foreground">vs estimate {formatCurrency(estimate)}</span>
           <span
             className={`font-semibold ${hot ? "text-red-500" : cold ? "text-amber-500" : "text-green-500"}`}
-            title={hot ? "Over budget Ã¢ÂÂ hot cost" : cold ? "Underspend Ã¢ÂÂ review estimate" : "On budget"}
+            title={hot ? "Over budget ÃÂ¢ÃÂÃÂ hot cost" : cold ? "Underspend ÃÂ¢ÃÂÃÂ review estimate" : "On budget"}
           >
             {variance >= 0 ? "+" : ""}{formatCurrency(variance)} ({pctOver >= 0 ? "+" : ""}{pctOver.toFixed(1)}%)
           </span>
@@ -107,7 +107,7 @@ function TotalActualsRow({ budget }: { budget: any }) {
             <p className="text-xs text-muted-foreground">Total actuals tracked across all categories</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold">{formatCurrency(totalActual)}</p>
+            <p className="text-2xl font-bold gradient-text-gold">{formatCurrency(totalActual)}</p>
             <p className={`text-sm font-medium ${hot ? "text-red-500" : cold ? "text-amber-500" : "text-green-500"}`}>
               {variance >= 0 ? "+" : ""}{formatCurrency(variance)} ({pct >= 0 ? "+" : ""}{pct.toFixed(1)}%) vs estimate
             </p>
@@ -152,7 +152,7 @@ export default function BudgetEstimator() {
       setSelectedBudgetId(data.id);
       toast.success("Budget estimate generated");
     },
-    onError: () => toast.error("Couldn't run the budget estimate this time Ã¢ÂÂ please try again in a moment."),
+    onError: () => toast.error("Couldn't run the budget estimate this time ÃÂ¢ÃÂÃÂ please try again in a moment."),
   });
 
   const deleteMutation = trpc.budget.delete.useMutation({
@@ -177,7 +177,7 @@ export default function BudgetEstimator() {
       cat.items.forEach((item) => {
         rows.push(`"${cat.label}","${item.name}",${item.cost},"${item.notes || ""}"`);
       });
-      rows.push(`"${cat.label} Ã¢ÂÂ Subtotal",,${cat.estimate},`);
+      rows.push(`"${cat.label} ÃÂ¢ÃÂÃÂ Subtotal",,${cat.estimate},`);
     });
     rows.push(`"TOTAL",,${activeBudget.totalEstimate},`);
     const blob = new Blob([rows.join("\n")], { type: "text/csv" });
@@ -202,11 +202,11 @@ export default function BudgetEstimator() {
       `${"-".repeat(60)}`,
     ];
     Object.entries(breakdown).forEach(([, cat]) => {
-      lines.push(`\n${cat.label.toUpperCase()} Ã¢ÂÂ ${formatCurrency(cat.estimate)}`);
+      lines.push(`\n${cat.label.toUpperCase()} ÃÂ¢ÃÂÃÂ ${formatCurrency(cat.estimate)}`);
       lines.push(`${"-".repeat(40)}`);
       cat.items.forEach((item) => {
         lines.push(`  ${item.name.padEnd(30)} ${formatCurrency(item.cost)}`);
-        if (item.notes) lines.push(`    Ã¢ÂÂ ${item.notes}`);
+        if (item.notes) lines.push(`    ÃÂ¢ÃÂÃÂ ${item.notes}`);
       });
     });
     lines.push(`\n${"-".repeat(60)}`);
@@ -296,7 +296,7 @@ export default function BudgetEstimator() {
                     size="sm"
                     onClick={() => setSelectedBudgetId(b.id)}
                   >
-                    {formatCurrency(b.totalEstimate || 0)} ÃÂ· {new Date(b.createdAt).toLocaleDateString()}
+                    {formatCurrency(b.totalEstimate || 0)} ÃÂÃÂ· {new Date(b.createdAt).toLocaleDateString()}
                   </Button>
                 ))}
               </div>
@@ -308,7 +308,7 @@ export default function BudgetEstimator() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Estimated Budget</p>
-                    <p className="text-4xl font-bold mt-1">{formatCurrency(activeBudget.totalEstimate || 0)}</p>
+                    <p className="text-4xl font-bold mt-1 gradient-text-gold">{formatCurrency(activeBudget.totalEstimate || 0)}</p>
                     <p className="text-sm text-muted-foreground mt-1">{activeBudget.currency || "USD"}</p>
                   </div>
                   <div className="flex gap-2">
@@ -390,7 +390,7 @@ export default function BudgetEstimator() {
                             <span className="text-sm font-medium ml-4 flex-shrink-0">{formatCurrency(item.cost)}</span>
                           </div>
                         ))}
-                        {/* Ã¢ÂÂÃ¢ÂÂ Hot-cost tracker: estimate vs actual Ã¢ÂÂÃ¢ÂÂ */}
+                        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Hot-cost tracker: estimate vs actual ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
                         <ActualsRow
                           budgetId={activeBudget.id}
                           categoryKey={key}

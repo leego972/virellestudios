@@ -57,7 +57,7 @@ export default function Referrals() {
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI Film Production",
+        title: "Join Virelle Studios ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI Film Production",
         text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
@@ -79,7 +79,7 @@ export default function Referrals() {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¬ Join me on Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+      `ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ Join me on Virelle Studios ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
     );
     window.open("https://wa.me/?text=" + text, "_blank");
   };
@@ -229,7 +229,7 @@ export default function Referrals() {
                 <Users className="h-5 w-5 text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats?.totalReferrals || 0}</p>
+                <p className="text-2xl font-bold gradient-text-gold">{stats?.totalReferrals || 0}</p>
                 <p className="text-sm text-muted-foreground">Link Clicks</p>
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function Referrals() {
                 <TrendingUp className="h-5 w-5 text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{successful}</p>
+                <p className="text-2xl font-bold gradient-text-gold">{successful}</p>
                 <p className="text-sm text-muted-foreground">Successful Signups</p>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function Referrals() {
                 <Zap className="h-5 w-5 text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{formatCredits(stats?.bonusCreditsEarned || 0)}</p>
+                <p className="text-2xl font-bold gradient-text-gold">{formatCredits(stats?.bonusCreditsEarned || 0)}</p>
                 <p className="text-sm text-muted-foreground">Credits Earned</p>
               </div>
             </div>
