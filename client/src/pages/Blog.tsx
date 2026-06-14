@@ -34,7 +34,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Filmmaker Blog & Insights" description="Articles, guides, and insights for AI-powered filmmaking â from script to screen." />
+      <SiteHead title="Filmmaker Blog & Insights" description="Articles, guides, and insights for AI-powered filmmaking — from script to screen." />
       {/* Header */}
       <header className="border-b border-amber-500/20 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -47,7 +47,7 @@ export default function Blog() {
             </Link>
             <div className="h-6 w-px bg-white/20" />
             <h1 className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-              VirÃlle Studios Blog
+              VirÉlle Studios Blog
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function Blog() {
           Insights on <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">AI Cinema</span>
         </h2>
         <p className="text-white/60 text-lg max-w-2xl mx-auto">
-          Explore the latest in AI filmmaking â from cinematic techniques and prompt engineering to industry trends and behind-the-scenes deep dives.
+          Explore the latest in AI filmmaking — from cinematic techniques and prompt engineering to industry trends and behind-the-scenes deep dives.
         </p>
       </section>
 
@@ -106,7 +106,7 @@ export default function Blog() {
           <div className="text-center py-20">
             <BookOpen className="h-12 w-12 text-white/20 mx-auto mb-4" />
             <h3 className="text-xl font-semibold /60 mb-2 gradient-text-gold">No articles yet</h3>
-            <p className="text-white/40">Check back soon â new articles are published automatically every day.</p>
+            <p className="text-white/40">Check back soon — new articles are published automatically every day.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -166,7 +166,7 @@ export default function Blog() {
       <section className="border-t border-amber-500/20 py-16 px-4 sm:px-6 text-center bg-gradient-to-b from-transparent to-amber-950/10">
         <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-gold-shimmer">Ready to Create Your Own AI Film?</h3>
         <p className="text-white/60 mb-6 max-w-lg mx-auto">
-          Join thousands of filmmakers using VirÃlle Studios to produce Hollywood-quality content with AI.
+          Join thousands of filmmakers using VirÉlle Studios to produce Hollywood-quality content with AI.
         </p>
         <Link href="/register">
           <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white px-8">
