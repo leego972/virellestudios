@@ -280,7 +280,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={exportCSV} disabled={shots.length===0} className="gap-2 h-8 text-xs border-border/50"><Download className="h-3.5 w-3.5" />CSV</Button>
+              <Button size="sm" variant="outline" onClick={exportCSV} disabled={shots.length===0} className="gap-2 h-8 text-xs border-border/50 hover:border-amber-500/50 hover:text-amber-400"><Download className="h-3.5 w-3.5" />CSV</Button>
               <Button size="sm" variant="outline" onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending} className="gap-2 h-8 text-xs border-border/50">
                 {generateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" /> : <Sparkles className="h-3.5 w-3.5" />}AI Generate
               </Button>

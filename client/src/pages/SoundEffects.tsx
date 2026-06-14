@@ -237,7 +237,7 @@ import { useState, useRef } from "react";
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={exportSpottingSheet} className="gap-2 h-8 text-xs border-border/50">
+              <Button size="sm" variant="outline" onClick={exportSpottingSheet} className="gap-2 h-8 text-xs border-border/50 hover:border-amber-500/50 hover:text-amber-400">
                 <FileText className="h-3.5 w-3.5" />Spotting Sheet
               </Button>
               <Button size="sm" onClick={() => setActiveTab("aigenerate")} className="gap-2 h-8 text-xs" style={{ background: "linear-gradient(135deg,#ec4899,#f43f5e)" }}>
@@ -475,7 +475,7 @@ import { useState, useRef } from "react";
                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Cue Number</Label>
                                     <div className="flex gap-2">
                                       <Input value={mix.cueNumber} onChange={e => saveMix(sfx, { cueNumber: e.target.value })} placeholder="SFX-001" className="h-8 text-xs bg-black/30 font-mono border-border/40 flex-1" />
-                                      <Button size="sm" variant="outline" className="h-8 px-2 text-[10px] shrink-0 border-border/40" onClick={() => saveMix(sfx, { cueNumber: getNextCue(allSfx) })}>Auto</Button>
+                                      <Button size="sm" variant="outline" className="h-8 px-2 text-[10px] shrink-0 border-border/40 hover:border-amber-500/50 hover:text-amber-400" onClick={() => saveMix(sfx, { cueNumber: getNextCue(allSfx) })}>Auto</Button>
                                     </div>
                                   </div>
                                 </div>
@@ -661,7 +661,7 @@ import { useState, useRef } from "react";
                     <p className="text-sm font-semibold">{uploading ? "Uploadingâ¦" : "Drop audio file or click to browse"}</p>
                     <p className="text-xs text-muted-foreground mt-1">WAV Â· MP3 Â· OGG Â· FLAC Â· AAC Â· M4A Â· Max 50 MB</p>
                   </div>
-                  <Button size="sm" variant="outline" className="gap-2 text-xs border-border/40" disabled={uploading}><Upload className="h-3.5 w-3.5" />Browse Files</Button>
+                  <Button size="sm" variant="outline" className="gap-2 text-xs border-border/40 hover:border-amber-500/50 hover:text-amber-400" disabled={uploading}><Upload className="h-3.5 w-3.5" />Browse Files</Button>
                 </div>
                 <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); e.target.value = ""; }} />
                 <div className="rounded-xl border p-4 space-y-2" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
@@ -684,7 +684,7 @@ import { useState, useRef } from "react";
                     <h3 className="font-bold text-sm gradient-text-gold">Production Spotting Sheet</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">Share with your sound designer, re-recording mixer, and post-production supervisor</p>
                   </div>
-                  <Button size="sm" variant="outline" onClick={exportSpottingSheet} className="gap-2 text-xs border-border/40">
+                  <Button size="sm" variant="outline" onClick={exportSpottingSheet} className="gap-2 text-xs border-border/40 hover:border-amber-500/50 hover:text-amber-400">
                     <Download className="h-3.5 w-3.5" />Export as CSV
                   </Button>
                 </div>

@@ -187,7 +187,7 @@ import { useState } from "react";
                 <div className="text-center py-12 text-muted-foreground">
                   <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-20" />
                   <p className="text-sm">No posts in this category yet.</p>
-                  <Button variant="outline" size="sm" className="mt-3" onClick={() => setNewPostOpen(true)}>Be the first to post</Button>
+                  <Button variant="outline" size="sm" className="mt-3 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setNewPostOpen(true)}>Be the first to post</Button>
                 </div>
               )}
             </div>
@@ -213,7 +213,7 @@ import { useState } from "react";
                       <span>{ev.location}</span>
                     </div>
                   </div>
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0"><ExternalLink className="h-3 w-3" />Visit</Button></a>
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0 hover:border-amber-500/50 hover:text-amber-400"><ExternalLink className="h-3 w-3" />Visit</Button></a>
                 </CardContent>
               </Card>
             ))}

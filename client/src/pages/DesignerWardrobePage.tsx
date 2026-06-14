@@ -535,7 +535,7 @@ export default function DesignerWardrobePage() {
               </Badge>
             ) : null}
             {Array.isArray(it.styleTags) && it.styleTags.slice(0, 2).map((t: string) => (
-              <Badge key={t} variant="outline" className="bg-zinc-800/40 text-zinc-300 border-zinc-700 text-[10px]">
+              <Badge key={t} variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
                 {t}
               </Badge>
             ))}

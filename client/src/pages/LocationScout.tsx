@@ -109,7 +109,7 @@ export default function LocationScout() {
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight gradient-text-gold">Location Scout</h1>
             <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Find and manage filming locations for your production</p>
           </div>
-          <Button variant="outline" className="shrink-0" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>
+          <Button variant="outline" className="shrink-0 hover:border-amber-500/50 hover:text-amber-400" onClick={() => suggestMutation.mutate({ projectId })} disabled={suggestMutation.isPending}>
             {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : <Sparkles className="h-4 w-4 mr-2 text-amber-400/70" />}
             AI Suggest
           </Button>
@@ -165,7 +165,7 @@ export default function LocationScout() {
                     <p className="text-xs text-muted-foreground"><span className="font-medium">Visual:</span> {loc.visualStyle}</p>
                     <p className="text-xs text-muted-foreground"><span className="font-medium">Notes:</span> {loc.practicalNotes}</p>
                     <div className="flex flex-wrap gap-1">{loc.tags?.map((t: string) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
-                    <Button size="sm" variant="outline" className="w-full mt-2" onClick={() => createMutation.mutate({ projectId, name: loc.name, locationType: loc.locationType, description: loc.description, notes: loc.practicalNotes, tags: loc.tags })}>
+                    <Button size="sm" variant="outline" className="w-full mt-2 hover:border-amber-500/50 hover:text-amber-400" onClick={() => createMutation.mutate({ projectId, name: loc.name, locationType: loc.locationType, description: loc.description, notes: loc.practicalNotes, tags: loc.tags })}>
                       <Plus className="h-3 w-3 mr-1" /> Save to Project
                     </Button>
                   </CardContent>
@@ -225,7 +225,7 @@ export default function LocationScout() {
                   {(loc.tags as string[] || []).length > 0 && (
                     <div className="flex flex-wrap gap-1">{(loc.tags as string[]).map((t: string) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
                   )}
-                  <Button size="sm" variant="outline" className="w-full" onClick={() => {
+                  <Button size="sm" variant="outline" className="w-full hover:border-amber-500/50 hover:text-amber-400" onClick={() => {
                     generateImageMutation.mutate({ description: `${loc.name}: ${loc.description || loc.locationType || ''}` }, {
                       onSuccess: (data) => {
                         toast.success("Reference image generated");

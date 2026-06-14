@@ -114,8 +114,8 @@ export default function PressKit() {
 
             <div className="flex flex-wrap gap-2 pt-2">
               <Button onClick={() => window.print()} className="min-h-[44px] bg-amber-600 hover:bg-amber-500 text-black"><Printer className="h-4 w-4 mr-2" />Print / Save as PDF</Button>
-              <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
-              <Button variant="outline" onClick={copyAll} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
+              <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px] hover:border-amber-500/50 hover:text-amber-400"><Download className="h-4 w-4 mr-2" />Export .md</Button>
+              <Button variant="outline" onClick={copyAll} className="min-h-[44px] hover:border-amber-500/50 hover:text-amber-400"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
               <Button variant="outline" onClick={() => setEmailDialog({ open: true, recipients: "" })} disabled={emailKit.isPending} className="min-h-[44px]" aria-label="Email press pack">
                 {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
               </Button>

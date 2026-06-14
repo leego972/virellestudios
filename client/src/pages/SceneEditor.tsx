@@ -909,7 +909,7 @@ export default function SceneEditor() {
             <Button
               size="sm"
               variant="outline"
-              className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
+              className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => setVideoPreviewSceneId(scenePlaylist[0].id)}
             >
               <Play className="h-4 w-4 sm:mr-1 fill-current" />
@@ -921,7 +921,7 @@ export default function SceneEditor() {
             <Button
               size="sm"
               variant="outline"
-              className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
+              className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10 hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => {
                 if (!projectId) return;
                 exportMutation.mutate({ projectId: Number(projectId), exportType: "scenes" });
@@ -1825,7 +1825,7 @@ export default function SceneEditor() {
                       </div>
                     </div>
                   ))}
-                  <Button type="button" variant="outline" size="sm" className="w-full" onClick={addExtra}>
+                  <Button type="button" variant="outline" size="sm" className="w-full hover:border-amber-500/50 hover:text-amber-400" onClick={addExtra}>
                     <Plus className="h-3 w-3 mr-1" /> Add Extra / Background Actor
                   </Button>
                 </div>
@@ -1884,7 +1884,7 @@ export default function SceneEditor() {
                       </div>
                     </div>
                   ))}
-                  <Button type="button" variant="outline" size="sm" className="w-full" onClick={addVoiceRole}>
+                  <Button type="button" variant="outline" size="sm" className="w-full hover:border-amber-500/50 hover:text-amber-400" onClick={addVoiceRole}>
                     <Plus className="h-3 w-3 mr-1" /> Add Voice-Only Role
                   </Button>
                 </div>
@@ -2385,7 +2385,7 @@ export default function SceneEditor() {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <div className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground"><ListChecks className="w-3.5 h-3.5" /> Shot list</div>
-                          <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCompareOpen(true)}>
+                          <Button type="button" size="sm" variant="outline" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => setCompareOpen(true)}>
                             <Layers className="w-3 h-3 mr-1" /> Compare versions
                           </Button>
                         </div>

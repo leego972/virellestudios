@@ -195,7 +195,7 @@ import { useState } from "react";
                   <SelectItem value="vtt" className="text-xs">WebVTT</SelectItem>
                 </SelectContent>
               </Select>
-              <Button size="sm" variant="outline" onClick={handleExport} className="gap-2">
+              <Button size="sm" variant="outline" onClick={handleExport} className="gap-2 hover:border-amber-500/50 hover:text-amber-400">
                 <Download className="h-4 w-4" />Export
               </Button>
             </div>
@@ -464,7 +464,7 @@ import { useState } from "react";
                       </div>
                     </div>
 
-                    <Button variant="outline" onClick={exportDeafTrack} className="w-full gap-2" disabled={!deafEntries.length}>
+                    <Button variant="outline" onClick={exportDeafTrack} className="w-full gap-2 hover:border-amber-500/50 hover:text-amber-400" disabled={!deafEntries.length}>
                       <Download className="h-4 w-4" />Export D/deaf Track (.vtt)
                     </Button>
                   </div>
@@ -534,7 +534,7 @@ import { useState } from "react";
                         placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue Ã¢ÂÂ interpreter prominent\nScene 3: Action sequence Ã¢ÂÂ maintain corner frame...`}
                         className="min-h-[200px] text-xs bg-background/50 resize-none"
                       />
-                      <Button size="sm" variant="outline" className="w-full gap-2">
+                      <Button size="sm" variant="outline" className="w-full gap-2 hover:border-amber-500/50 hover:text-amber-400">
                         <Download className="h-3.5 w-3.5" />Export {lang} Brief
                       </Button>
                     </div>

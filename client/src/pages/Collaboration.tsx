@@ -346,7 +346,7 @@ export default function Collaboration() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-8 text-xs"
+                          className="h-8 text-xs hover:border-amber-500/50 hover:text-amber-400"
                           onClick={() => {
                             const link = `${window.location.origin}/invite/${invite.inviteToken}`;
                             navigator.clipboard.writeText(link);

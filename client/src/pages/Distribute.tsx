@@ -424,7 +424,7 @@ export default function Distribute() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 hover:border-amber-500/50 hover:text-amber-400"
                   onClick={downloadPromoPack}
                 >
                   <Download className="w-3 h-3" />
@@ -434,7 +434,7 @@ export default function Distribute() {
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-2"
+                className="gap-2 hover:border-amber-500/50 hover:text-amber-400"
                 disabled={generateAssets.isPending}
                 onClick={() => generateAssets.mutate({ projectId })}
               >
@@ -634,7 +634,7 @@ export default function Distribute() {
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               <Link href="/settings?tab=profile">
-                <Button size="sm" variant="outline" className="gap-2 w-full sm:w-auto">
+                <Button size="sm" variant="outline" className="gap-2 w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
                   <User className="w-3.5 h-3.5" />
                   Set Up Profile
                 </Button>

@@ -36,7 +36,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <p className="text-xs text-muted-foreground">A few steps to set up your studio</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={onShowGuide} className="text-xs shrink-0">View checklist</Button>
+        <Button variant="outline" size="sm" onClick={onShowGuide} className="text-xs shrink-0 hover:border-amber-500/50 hover:text-amber-400">View checklist</Button>
       </div>
     );
   }
@@ -499,7 +499,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   </select>
                 </div>
               )}
-              <Button variant="outline" size="sm" className="text-xs gap-1.5" onClick={() => setLocation("/projects")}>
+              <Button variant="outline" size="sm" className="text-xs gap-1.5 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setLocation("/projects")}>
                 <Zap className="h-3.5 w-3.5 text-amber-400" />Quick Generate
               </Button>
             </div>
@@ -587,11 +587,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {project.status === "generating" && (
-                          <Button size="sm" variant="outline" className="h-7 px-2 text-xs text-red-400 border-red-500/30 hover:bg-red-500/10" onClick={(e) => { e.stopPropagation(); cancelMutation.mutate({ id: project.id }); }}>
+                          <Button size="sm" variant="outline" className="h-7 px-2 text-xs text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-amber-500/50 hover:text-amber-400" onClick={(e) => { e.stopPropagation(); cancelMutation.mutate({ id: project.id }); }}>
                             <Square className="h-3 w-3 mr-1" />Stop
                           </Button>
                         )}
-                        <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(project.id); }}>
+                        <Button size="sm" variant="outline" className="h-7 px-2 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(project.id); }}>
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>

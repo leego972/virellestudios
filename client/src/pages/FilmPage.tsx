@@ -133,7 +133,7 @@ export default function FilmPage() {
         <h1 className="text-2xl font-bold gradient-text-gold">Film Not Found</h1>
         <p className="text-zinc-500 text-sm text-center">This film page doesn't exist or hasn't been published yet.</p>
         <Link href="/showcase">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 hover:border-amber-500/50 hover:text-amber-400">
             <ArrowLeft className="w-4 h-4" />
             Browse Showcase
           </Button>
@@ -333,7 +333,7 @@ export default function FilmPage() {
             </div>
             {fp.creatorSlug && (
               <Link href={`/creators/${fp.creatorSlug}`}>
-                <Button size="sm" variant="outline" className="gap-1.5 border-zinc-700 text-zinc-300 hover:text-white shrink-0">
+                <Button size="sm" variant="outline" className="gap-1.5 border-zinc-700 text-zinc-300 hover:text-white shrink-0 hover:border-amber-500/50 hover:text-amber-400">
                   <User className="w-3.5 h-3.5" />
                   View Profile
                 </Button>
@@ -486,7 +486,7 @@ export default function FilmPage() {
               </Button>
             </a>
             <Link href="/showcase">
-              <Button variant="outline" className="gap-2 border-zinc-700 text-zinc-300 hover:text-white w-full sm:w-auto">
+              <Button variant="outline" className="gap-2 border-zinc-700 text-zinc-300 hover:text-white w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400">
                 <Film className="w-4 h-4" />
                 Browse Showcase
               </Button>

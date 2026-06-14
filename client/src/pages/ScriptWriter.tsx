@@ -1080,7 +1080,7 @@ export default function ScriptWriter() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-7 shrink-0"
+                className="text-xs h-7 shrink-0 hover:border-amber-500/50 hover:text-amber-400"
                 onClick={handleAiGenerateDirect}
                 disabled={aiLoading}
               >

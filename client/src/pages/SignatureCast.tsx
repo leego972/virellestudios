@@ -630,7 +630,7 @@ import { useState } from "react";
                 onClick={() => navigate("/signature-cast")}>
                 Browse Signature Cast
               </Button>
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5"
+              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400"
                 onClick={() => navigate("/register")}>
                 <Play className="mr-2 w-4 h-4" />Start Production
               </Button>
@@ -860,7 +860,7 @@ import { useState } from "react";
                     </div>
                     <div className="mt-3 pt-3 border-t border-white/5 flex gap-2" onClick={e => e.stopPropagation()}>
                       <Button size="sm" className="flex-1 bg-amber-500/90 hover:bg-amber-400 text-black text-xs font-semibold h-7 rounded-lg" onClick={(e) => openUnlock(e, actor)}><Lock className="w-3 h-3 mr-1" />Unlock</Button>
-                      <Button size="sm" variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2" onClick={(e) => { e.stopPropagation(); navigate(`/talent-search?actor=${actor.id}`); }}>Details</Button>
+                      <Button size="sm" variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2 hover:border-amber-500/50 hover:text-amber-400" onClick={(e) => { e.stopPropagation(); navigate(`/talent-search?actor=${actor.id}`); }}>Details</Button>
                     </div>
                   </div>
                 );
@@ -879,7 +879,7 @@ import { useState } from "react";
               </div>
               <p className="text-sm text-zinc-500">The standard-tier ensemble from Virelle's debut suburban-noir series.</p>
             </div>
-            <Button size="sm" variant="outline" className="border-white/10 text-zinc-400"
+            <Button size="sm" variant="outline" className="border-white/10 text-zinc-400 hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => navigate("/talent-search?tier=standard")}>
               Browse All <ChevronRight className="ml-1 w-3 h-3" />
             </Button>
@@ -1317,7 +1317,7 @@ import { useState } from "react";
               Browse Signature Cast
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5"
+            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => navigate("/register")}>
               Start Production
             </Button>
@@ -1378,7 +1378,7 @@ import { useState } from "react";
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       {isCheckingOut ? "Opening checkoutÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" : `License ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ A$${getUnlockPrice(unlockActor.tier, selectedLicense)}`}
                     </Button>
-                    <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5" onClick={() => { setUnlockActor(null); setIsCheckingOut(false); }}>Cancel</Button>
+                    <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400" onClick={() => { setUnlockActor(null); setIsCheckingOut(false); }}>Cancel</Button>
                   </div>
                 )}
                 <p className="text-xs text-zinc-600 text-center">Secure checkout via Stripe. Generation credits apply after unlock.</p>

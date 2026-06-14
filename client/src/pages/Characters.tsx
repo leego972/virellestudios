@@ -635,7 +635,7 @@ export default function Characters() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-10 px-4"
+                      className="h-10 px-4 hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() => setPersonSearchActive(personSearchQuery.trim())}
                       disabled={!personSearchQuery.trim()}
                     >
@@ -905,7 +905,7 @@ export default function Characters() {
                     <Button variant="outline" size="sm" onClick={() => { setDetailDialogOpen(false); openEdit(selectedChar); }}>
                       <Pencil className="h-3.5 w-3.5 mr-1" />Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => { setDetailDialogOpen(false); setDeleteId(selectedChar.id); }}>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:border-amber-500/50 hover:text-amber-400" onClick={() => { setDetailDialogOpen(false); setDeleteId(selectedChar.id); }}>
                       <Trash2 className="h-3.5 w-3.5 mr-1" />Delete
                     </Button>
                   </div>

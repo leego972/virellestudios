@@ -163,7 +163,7 @@ export default function AdminSignatureCast() {
                     <div className="flex gap-2 flex-wrap">
                       {(["flagship", "premium", "standard"] as const).map(tier => (
                         <Button key={tier} variant="outline" size="sm"
-                          className="border-violet-500/30 text-violet-300 hover:bg-violet-500/20 text-xs h-7"
+                          className="border-violet-500/30 text-violet-300 hover:bg-violet-500/20 text-xs h-7 hover:border-amber-500/50 hover:text-amber-400"
                           onClick={() => generateAllMutation.mutate({ tier })}
                           disabled={generateAllMutation.isPending}>
                           {tier.charAt(0).toUpperCase() + tier.slice(1)}
@@ -250,7 +250,7 @@ export default function AdminSignatureCast() {
                             </div>
                           </div>
                           <div className="col-span-2 md:col-span-4 flex gap-2 justify-end">
-                            <Button size="sm" variant="outline" onClick={cancelEdit} className="h-7 text-xs border-zinc-700">
+                            <Button size="sm" variant="outline" onClick={cancelEdit} className="h-7 text-xs border-zinc-700 hover:border-amber-500/50 hover:text-amber-400">
                               <X className="w-3 h-3 mr-1" /> Cancel
                             </Button>
                             <Button size="sm" onClick={() => saveEdit(actor.id)} className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400">

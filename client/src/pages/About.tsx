@@ -278,7 +278,7 @@ export default function About() {
               Claim Your Spot
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8" onClick={() => setLocation("/contact")}>
+            <Button size="lg" variant="outline" className="h-12 px-8 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setLocation("/contact")}>
               Talk to Us
             </Button>
           </div>

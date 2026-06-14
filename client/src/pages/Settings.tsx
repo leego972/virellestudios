@@ -793,7 +793,7 @@ export default function Settings() {
                 </div>
                 {configuredKeys['venice' as keyof typeof configuredKeys] && (
                   <div className="flex gap-2 pt-1">
-                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: 'venice' as any })}>
+                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-amber-500/50 hover:text-amber-400" onClick={() => removeKeyMutation.mutate({ provider: 'venice' as any })}>
                       <XCircle className="w-3 h-3 mr-1" />Remove Key
                     </Button>
                   </div>
@@ -852,11 +852,11 @@ export default function Settings() {
                         <div className="flex gap-2 pt-1">
                           {/* Only show Set as Preferred for actual video-generation providers */}
                           {!isPreferred && provider.canSetPreferred !== false && (
-                            <Button size="sm" variant="outline" className="text-xs" onClick={() => setPreferredMutation.mutate({ provider: provider.id as any })}>
+                            <Button size="sm" variant="outline" className="text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => setPreferredMutation.mutate({ provider: provider.id as any })}>
                               <Star className="w-3 h-3 mr-1" />Set as Preferred
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
+                          <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-amber-500/50 hover:text-amber-400" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
                             <XCircle className="w-3 h-3 mr-1" />Remove Key
                           </Button>
                         </div>
@@ -917,7 +917,7 @@ export default function Settings() {
                       </div>
                       {isConfigured && (
                         <div className="flex gap-2 pt-1">
-                          <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
+                          <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-amber-500/50 hover:text-amber-400" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
                             <XCircle className="w-3 h-3 mr-1" />Remove Key
                           </Button>
                         </div>
@@ -967,7 +967,7 @@ export default function Settings() {
                 </div>
                 {configuredKeys['google' as keyof typeof configuredKeys] && (
                   <div className="flex gap-2 pt-1">
-                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: 'google' as any })}>
+                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-amber-500/50 hover:text-amber-400" onClick={() => removeKeyMutation.mutate({ provider: 'google' as any })}>
                       <XCircle className="w-3 h-3 mr-1" />Remove Key
                     </Button>
                   </div>
@@ -1191,7 +1191,7 @@ function BillingTab({ profile }: { profile: any }) {
           </div>
           <div className="mt-4">
             <a href="/pricing?tab=topup">
-              <Button variant="outline" size="sm" className="text-xs gap-1">
+              <Button variant="outline" size="sm" className="text-xs gap-1 hover:border-amber-500/50 hover:text-amber-400">
                 <Zap className="h-3 w-3" />Buy Top-Up Pack
               </Button>
             </a>
@@ -1297,7 +1297,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
           </a>
           {!hasCastAccess && (
             <a href="/pricing">
-              <Button size="sm" variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 text-xs">
+              <Button size="sm" variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 text-xs hover:border-amber-500/50 hover:text-amber-400">
                 Upgrade for Cast Access
               </Button>
             </a>
@@ -1471,7 +1471,7 @@ function ConnectedPlatformsTab() {
                       </>
                     )}
                     <Button
-                      variant="outline" size="sm" className="h-7 text-xs gap-1"
+                      variant="outline" size="sm" className="h-7 text-xs gap-1 hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() => { if (isEditing) { setEditingPlatform(null); setFormValues({}); } else { setEditingPlatform(platform.id); setFormValues({}); } }}
                     >
                       {isEditing ? "Cancel" : status?.hasCredentials ? "Update" : "Connect"}
