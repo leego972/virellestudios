@@ -729,7 +729,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
             <div className="mt-5 flex flex-col sm:flex-row items-center gap-2">
               <Button
                 variant="outline"
-                className="border-white/20 text-white hover:bg-white/10 w-full sm:w-auto"
+                className="border-white/20 text-white hover:bg-white/10 w-full sm:w-auto hover:border-amber-500/50 hover:text-amber-400"
                 onClick={() => {
                   setHasError(false);
                   setIsLoading(true);

@@ -202,7 +202,7 @@ export function ProjectJourneyNav({
               </span>
               <span>{percent}%</span>
             </div>
-            <Progress value={percent} className="h-2" />
+            <Progress value={percent} className="h-2 [&>div]:bg-amber-500" />
           </div>
         </CardContent>
       </Card>

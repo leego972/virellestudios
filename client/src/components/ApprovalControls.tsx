@@ -52,7 +52,7 @@ export default function ApprovalControls({ kind, id, status, note, onChange }: P
       <div className="flex items-center gap-2 flex-wrap">
         <ApprovalBadge status={status} size="md" />
         {!open && (
-          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setOpen(true)}>
+          <Button size="sm" variant="outline" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => setOpen(true)}>
             Update approval
           </Button>
         )}
