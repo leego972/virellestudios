@@ -1,1 +1,355 @@
-aW1wb3J0IHsgdXNlTWVtbywgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IExpbmssIHVzZVBhcmFtcyB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IE5leHRTdGFnZUNUQSB9IGZyb20gIkAvY29tcG9uZW50cy9OZXh0U3RhZ2VDVEEiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlLCBDYXJkRGVzY3JpcHRpb24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvY2FyZCI7CmltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKaW1wb3J0IHsgTGFiZWwgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvbGFiZWwiOwppbXBvcnQgeyBUZXh0YXJlYSB9IGZyb20gIkAvY29tcG9uZW50cy91aS90ZXh0YXJlYSI7CmltcG9ydCB7IEJhZGdlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2JhZGdlIjsKaW1wb3J0IHsKICBBcnJvd0xlZnQsCiAgRXh0ZXJuYWxMaW5rLAogIFNwYXJrbGVzLAogIExvYWRlcjIsCiAgQ29weSwKICBNYWlsLAogIEJ1aWxkaW5nMiwKICBTZW5kLAp9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCB7IHRvYXN0IH0gZnJvbSAic29ubmVyIjsKCmNvbnN0IEJSQU5EX0tFWVdPUkRTID0gWwogICJicmFuZCIsCiAgInByb2R1Y3QgcGxhY2VtZW50IiwKICAic3BvbnNvcnNoaXAiLAogICJjby1tYXJrZXRpbmciLAogICJjby1icmFuZGVkIiwKICAiYWR2ZXJ0aXMiLAogICJpbnRlZ3JhdGlvbiIsCl07CgpmdW5jdGlvbiBpc0JyYW5kU291cmNlKHM6IGFueSk6IGJvb2xlYW4gewogIGNvbnN0IHBhY2sgPSAocy5wYWNrVHlwZSB8fCAiIikudG9Mb3dlckNhc2UoKTsKICBpZiAocGFjay5pbmNsdWRlcygiYnJhbmQiKSB8fCBwYWNrLmluY2x1ZGVzKCJzcG9uc29yIikpIHJldHVybiB0cnVlOwogIGNvbnN0IGhheXN0YWNrID0gYCR7cy5vcmdhbml6YXRpb24gfHwgIiJ9ICR7cy50eXBlIHx8ICIifSAke3Muc3VwcG9ydHMgfHwgIiJ9YC50b0xvd2VyQ2FzZSgpOwogIHJldHVybiBCUkFORF9LRVlXT1JEUy5zb21lKChrKSA9PiBoYXlzdGFjay5pbmNsdWRlcyhrKSk7Cn0KCmludGVyZmFjZSBCcmllZlN0YXRlIHsKICBjb250YWN0TmFtZTogc3RyaW5nOwogIGNvbnRhY3RSb2xlOiBzdHJpbmc7CiAgYnJhbmRGaXQ6IHN0cmluZzsKICBpbnRlZ3JhdGlvbklkZWE6IHN0cmluZzsKICBhc2s6IHN0cmluZzsKICBhdWRpZW5jZTogc3RyaW5nOwogIGZvcm1hdDogc3RyaW5nOwogIGdlbnJlOiBzdHJpbmc7Cn0KCmZ1bmN0aW9uIGJ1aWxkUHJvbXB0KGI6IEJyaWVmU3RhdGUsIHByb2plY3RUaXRsZTogc3RyaW5nLCBicmFuZDogYW55KSB7CiAgcmV0dXJuIGBXcml0ZSBhIHBlcnNvbmFsaXplZCBjb2xkLW91dHJlYWNoIGVtYWlsIHRvIGEgYnJhbmQgcGFydG5lcnNoaXBzIGNvbnRhY3QgYWJvdXQgYW4gaW50ZWdyYXRpb24gaW4gb3VyIHByb2plY3QuCgpQcm9qZWN0OiAiJHtwcm9qZWN0VGl0bGV9IgpGb3JtYXQ6ICR7Yi5mb3JtYXR9IMK3IEdlbnJlOiAke2IuZ2VucmV9CkF1ZGllbmNlOiAke2IuYXVkaWVuY2V9CgpCcmFuZDogJHticmFuZD8ub3JnYW5pemF0aW9uIHx8ICJbYnJhbmRdIn0KQnJhbmQgbm90ZXM6ICR7YnJhbmQ/LnN1cHBvcnRzIHx8ICJuL2EifQpDb250YWN0OiAke2IuY29udGFjdE5hbWUgfHwgIltOYW1lXSJ9ICgke2IuY29udGFjdFJvbGUgfHwgIkJyYW5kIFBhcnRuZXJzaGlwcyJ9KQpXaHkgdGhpcyBicmFuZCBmaXRzIHRoZSBzdG9yeTogJHtiLmJyYW5kRml0fQpJbnRlZ3JhdGlvbiBpZGVhOiAke2IuaW50ZWdyYXRpb25JZGVhfQpUaGUgYXNrIChlLmcuICQyNWsgY2FzaCArIHByb2R1Y3QsIG9yIGluLWtpbmQgb25seSk6ICR7Yi5hc2t9CgpDb25zdHJhaW50czog4omkMTgwIHdvcmRzLCBjb252ZXJzYXRpb25hbCBidXQgcHJlY2lzZSwgbGVhZCB3aXRoIHRoZSBicmFuZC1yZWxldmFudCBzdG9yeSBiZWF0IChub3QgdXMpLCBpbmNsdWRlIDEgc3BlY2lmaWMgaW50ZWdyYXRpb24gbW9tZW50LCBlbmQgd2l0aCBhIGNsZWFyIG5leHQgc3RlcCAoMTUtbWluIGNhbGwpLiBObyBlbW9qaXMsIG5vIGJ1enp3b3Jkcy4gU3ViamVjdCBsaW5lIG9uIHRoZSBmaXJzdCBsaW5lLmA7Cn0KCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEJyYW5kT3V0cmVhY2goKSB7CiAgY29uc3QgcGFyYW1zID0gdXNlUGFyYW1zPHsgcHJvamVjdElkPzogc3RyaW5nIH0+KCk7CiAgY29uc3QgcHJvamVjdElkID0gcGFyc2VJbnQocGFyYW1zLnByb2plY3RJZCB8fCAiMCIpOwogIGNvbnN0IGhhc1Byb2plY3QgPSAhIXByb2plY3RJZDsKCiAgY29uc3QgeyBkYXRhOiBzb3VyY2VzIH0gPSB0cnBjLmZ1bmRpbmcubGlzdC51c2VRdWVyeSh7fSk7CiAgY29uc3QgeyBkYXRhOiBwcm9qZWN0IH0gPSB0cnBjLnByb2plY3QuZ2V0LnVzZVF1ZXJ5KAogICAgeyBpZDogcHJvamVjdElkIH0sCiAgICB7IGVuYWJsZWQ6IGhhc1Byb2plY3QgfQogICk7CgogIGNvbnN0IGJyYW5kcyA9IHVzZU1lbW8oCiAgICAoKSA9PiAoc291cmNlcyA/PyBbXSkuZmlsdGVyKGlzQnJhbmRTb3VyY2UpLAogICAgW3NvdXJjZXNdCiAgKTsKCiAgY29uc3QgW3NlYXJjaCwgc2V0U2VhcmNoXSA9IHVzZVN0YXRlKCIiKTsKICBjb25zdCBmaWx0ZXJlZCA9IHVzZU1lbW8oKCkgPT4gewogICAgY29uc3QgcyA9IHNlYXJjaC50cmltKCkudG9Mb3dlckNhc2UoKTsKICAgIGlmICghcykgcmV0dXJuIGJyYW5kczsKICAgIHJldHVybiBicmFuZHMuZmlsdGVyKAogICAgICAocDogYW55KSA9PgogICAgICAgIChwLm9yZ2FuaXphdGlvbiB8fCAiIikudG9Mb3dlckNhc2UoKS5pbmNsdWRlcyhzKSB8fAogICAgICAgIChwLmNvdW50cnkgfHwgIiIpLnRvTG93ZXJDYXNlKCkuaW5jbHVkZXMocykgfHwKICAgICAgICAocC5zdXBwb3J0cyB8fCAiIikudG9Mb3dlckNhc2UoKS5pbmNsdWRlcyhzKQogICAgKTsKICB9LCBbYnJhbmRzLCBzZWFyY2hdKTsKCiAgY29uc3QgW3NlbGVjdGVkSWQsIHNldFNlbGVjdGVkSWRdID0gdXNlU3RhdGU8bnVtYmVyIHwgbnVsbD4obnVsbCk7CiAgY29uc3Qgc2VsZWN0ZWQgPSB1c2VNZW1vKAogICAgKCkgPT4gYnJhbmRzLmZpbmQoKGI6IGFueSkgPT4gYi5pZCA9PT0gc2VsZWN0ZWRJZCkgfHwgbnVsbCwKICAgIFticmFuZHMsIHNlbGVjdGVkSWRdCiAgKTsKCiAgY29uc3QgW2JyaWVmLCBzZXRCcmllZl0gPSB1c2VTdGF0ZTxCcmllZlN0YXRlPih7CiAgICBjb250YWN0TmFtZTogIiIsCiAgICBjb250YWN0Um9sZTogIkJyYW5kIFBhcnRuZXJzaGlwcyIsCiAgICBicmFuZEZpdDogIiIsCiAgICBpbnRlZ3JhdGlvbklkZWE6ICIiLAogICAgYXNrOiAiIiwKICAgIGF1ZGllbmNlOiAiIiwKICAgIGZvcm1hdDogIkZlYXR1cmUiLAogICAgZ2VucmU6ICIiLAogIH0pOwogIGNvbnN0IFtnZW5lcmF0aW5nLCBzZXRHZW5lcmF0aW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbZHJhZnQsIHNldERyYWZ0XSA9IHVzZVN0YXRlKCIiKTsKCiAgY29uc3Qgc2VuZE1lc3NhZ2UgPSB0cnBjLmRpcmVjdG9yQ2hhdC5zZW5kLnVzZU11dGF0aW9uKCk7CiAgY29uc3QgeyBkYXRhOiBoaXN0b3J5LCByZWZldGNoOiByZWZldGNoSGlzdG9yeSB9ID0gdHJwYy5kaXJlY3RvckNoYXQuaGlzdG9yeS51c2VRdWVyeSgKICAgIHsgcHJvamVjdElkIH0sCiAgICB7IGVuYWJsZWQ6IGhhc1Byb2plY3QsIHJlZmV0Y2hJbnRlcnZhbDogNDAwMCB9CiAgKTsKCiAgYXN5bmMgZnVuY3Rpb24gZ2VuZXJhdGUoKSB7CiAgICBpZiAoIWhhc1Byb2plY3QpIHsKICAgICAgdG9hc3QuZXJyb3IoIk9wZW4gdGhpcyBmcm9tIGEgcHJvamVjdCB0byBnZW5lcmF0ZSBjb3B5LiIpOwogICAgICByZXR1cm47CiAgICB9CiAgICBpZiAoIXNlbGVjdGVkKSB7CiAgICAgIHRvYXN0LmVycm9yKCJQaWNrIGEgYnJhbmQgb24gdGhlIGxlZnQgZmlyc3QuIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmICghYnJpZWYuYnJhbmRGaXQudHJpbSgpIHx8ICFicmllZi5pbnRlZ3JhdGlvbklkZWEudHJpbSgpKSB7CiAgICAgIHRvYXN0LmVycm9yKCJGaWxsIGluIGJyYW5kIGZpdCArIGludGVncmF0aW9uIGlkZWEuIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIHNldEdlbmVyYXRpbmcodHJ1ZSk7CiAgICB0cnkgewogICAgICBjb25zdCB0YWcgPSBgYnJhbmRPdXRyZWFjaDoke3NlbGVjdGVkLmlkfWA7CiAgICAgIGF3YWl0IHNlbmRNZXNzYWdlLm11dGF0ZUFzeW5jKHsKICAgICAgICBwcm9qZWN0SWQsCiAgICAgICAgbWVzc2FnZTogYFtCcmFuZE91dHJlYWNoOiR7c2VsZWN0ZWQuaWR9XVxuXG4ke2J1aWxkUHJvbXB0KGJyaWVmLCBwcm9qZWN0Py50aXRsZSB8fCAiVW50aXRsZWQiLCBzZWxlY3RlZCl9YCwKICAgICAgfSk7CiAgICAgIGNvbnN0IGZyZXNoID0gYXdhaXQgcmVmZXRjaEhpc3RvcnkoKTsKICAgICAgY29uc3QgbGF0ZXN0ID0gKGZyZXNoLmRhdGEgPz8gW10pCiAgICAgICAgLnNsaWNlKCkKICAgICAgICAucmV2ZXJzZSgpCiAgICAgICAgLmZpbmQoCiAgICAgICAgICAobTogYW55KSA9PgogICAgICAgICAgICBtLnJvbGUgPT09ICJhc3Npc3RhbnQiICYmCiAgICAgICAgICAgIChtLmNvbnRlbnQgfHwgIiIpLnRvU3RyaW5nKCkuaW5jbHVkZXMoIiIpLAogICAgICAgICk7CiAgICAgIGlmIChsYXRlc3QpIHNldERyYWZ0KChsYXRlc3QgYXMgYW55KS5jb250ZW50IGFzIHN0cmluZyk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIkRyYWZ0IHJlYWR5LiIpOwogICAgfSBjYXRjaCAoZTogYW55KSB7CiAgICAgIHRvYXN0LmVycm9yKGU/Lm1lc3NhZ2UgfHwgIkdlbmVyYXRpb24gZmFpbGVkLiIpOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0R2VuZXJhdGluZyhmYWxzZSk7CiAgICB9CiAgfQoKICBmdW5jdGlvbiBjb3B5KHRleHQ6IHN0cmluZykgewogICAgbmF2aWdhdG9yLmNsaXBib2FyZC53cml0ZVRleHQodGV4dCk7CiAgICB0b2FzdC5zdWNjZXNzKCJDb3BpZWQuIik7CiAgfQoKICBmdW5jdGlvbiBtYWlsdG8oKSB7CiAgICBpZiAoIWRyYWZ0IHx8ICFzZWxlY3RlZCkgcmV0dXJuOwogICAgY29uc3QgbGluZXMgPSBkcmFmdC5zcGxpdCgiXG4iKS5maWx0ZXIoKGwpID0+IGwudHJpbSgpKTsKICAgIGNvbnN0IHN1YmplY3QgPSAobGluZXNbMF0gfHwgIlBhcnRuZXJzaGlwIGlucXVpcnkiKS5yZXBsYWNlKC9ec3ViamVjdDpccyovaSwgIiIpOwogICAgY29uc3QgYm9keSA9IGxpbmVzLnNsaWNlKDEpLmpvaW4oIlxuIikudHJpbSgpOwogICAgY29uc3QgdXJsID0gYG1haWx0bzo/c3ViamVjdD0ke2VuY29kZVVSSUNvbXBvbmVudChzdWJqZWN0KX0mYm9keT0ke2VuY29kZVVSSUNvbXBvbmVudChib2R5KX1gOwogICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSB1cmw7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBwYi0xMCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgPGRpdiBjbGFzc05hbWU9ImNvbnRhaW5lciBtYXgtdy02eGwgcHktNiBzcGFjZS15LTYiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICA8TGluayBocmVmPXtoYXNQcm9qZWN0ID8gYC9wcm9qZWN0cy8ke3Byb2plY3RJZH1gIDogIi9mdW5kaW5nIn0+CiAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJnYXAtMiI+CiAgICAgICAgICAgIDxBcnJvd0xlZnQgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiBCYWNrCiAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICA8L0xpbms+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIHRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgIDxCdWlsZGluZzIgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiBCcmFuZCBPdXRyZWFjaCBEZXNrCiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdj4KICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTN4bCBmb250LWJvbGQgdHJhY2tpbmctdGlnaHQiPkJyYW5kIE91dHJlYWNoIERlc2s8L2gxPgogICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG10LTEiPgogICAgICAgICAge2JyYW5kcy5sZW5ndGh9IGJyYW5kICYgc3BvbnNvciBkZXNrcyDCtyBwaXRjaCB0YWlsb3JlZCBjb2xkIGVtYWlscyBmb3IgcHJvZHVjdCBwbGFjZW1lbnQsIGludGVncmF0aW9ucywgYW5kIGNvLW1hcmtldGluZy4KICAgICAgICA8L3A+CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgbGc6Z3JpZC1jb2xzLTMgZ2FwLTYiPgogICAgICAgIHsvKiBCcmFuZHMgKi99CiAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJsZzpjb2wtc3Bhbi0xIj4KICAgICAgICAgIDxDYXJkSGVhZGVyPgogICAgICAgICAgICA8Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1iYXNlIj5CcmFuZHMgJiBTcG9uc29yIERlc2tzPC9DYXJkVGl0bGU+CiAgICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24+UGljayBvbmUgdG8gZHJhZnQgb3V0cmVhY2guPC9DYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICA8L0NhcmRIZWFkZXI+CiAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJzcGFjZS15LTMiPgogICAgICAgICAgICA8SW5wdXQKICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0iU2VhcmNoIGJyYW5kc+KApiIKICAgICAgICAgICAgICB2YWx1ZT17c2VhcmNofQogICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0U2VhcmNoKGUudGFyZ2V0LnZhbHVlKX0KICAgICAgICAgICAgLz4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiBtYXgtaC1bNDgwcHhdIG92ZXJmbG93LXktYXV0byBwci0xIj4KICAgICAgICAgICAgICB7ZmlsdGVyZWQubWFwKChwOiBhbnkpID0+IHsKICAgICAgICAgICAgICAgIGNvbnN0IGFjdGl2ZSA9IHAuaWQgPT09IHNlbGVjdGVkSWQ7CiAgICAgICAgICAgICAgICByZXR1cm4gKAogICAgICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICAgICAga2V5PXtwLmlkfQogICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldFNlbGVjdGVkSWQocC5pZCl9CiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgdy1mdWxsIHRleHQtbGVmdCBwLTMgcm91bmRlZC1sZyBib3JkZXIgdHJhbnNpdGlvbi1jb2xvcnMgJHsKICAgICAgICAgICAgICAgICAgICAgIGFjdGl2ZQogICAgICAgICAgICAgICAgICAgICAgICA/ICJib3JkZXItcHJpbWFyeSBiZy1hY2NlbnQvNjAiCiAgICAgICAgICAgICAgICAgICAgICAgIDogImhvdmVyOmJvcmRlci1wcmltYXJ5LzUwIGhvdmVyOmJnLWFjY2VudC8zMCIKICAgICAgICAgICAgICAgICAgICB9YH0KICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGp1c3RpZnktYmV0d2VlbiBnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLXctMCI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb250LW1lZGl1bSB0ZXh0LXNtIHRydW5jYXRlIj57cC5vcmdhbml6YXRpb259PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCB0cnVuY2F0ZSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAge3AuY291bnRyeX17cC50eXBlID8gYCDCtyAke3AudHlwZX1gIDogIiJ9CiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICB7cC53ZWJzaXRlICYmICgKICAgICAgICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICAgICAgICBocmVmPXtwLndlYnNpdGV9CiAgICAgICAgICAgICAgICAgICAgICAgICAgdGFyZ2V0PSJfYmxhbmsiCiAgICAgICAgICAgICAgICAgICAgICAgICAgcmVsPSJub29wZW5lciBub3JlZmVycmVyIgogICAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eyhlKSA9PiBlLnN0b3BQcm9wYWdhdGlvbigpfQogICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0ic2hyaW5rLTAiCiAgICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAgICA8RXh0ZXJuYWxMaW5rIGNsYXNzTmFtZT0iaC0zIHctMyB0ZXh0LW11dGVkLWZvcmVncm91bmQgbXQtMC41IiAvPgogICAgICAgICAgICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIHtwLnN1cHBvcnRzICYmICgKICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0xLjUgbGluZS1jbGFtcC0yIj4KICAgICAgICAgICAgICAgICAgICAgICAge3Auc3VwcG9ydHN9CiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICk7CiAgICAgICAgICAgICAgfSl9CiAgICAgICAgICAgICAge2ZpbHRlcmVkLmxlbmd0aCA9PT0gMCAmJiAoCiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIHRleHQtY2VudGVyIHB5LTYiPgogICAgICAgICAgICAgICAgICBObyBicmFuZCBkZXNrcyBtYXRjaC4KICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICApfQogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgPC9DYXJkPgoKICAgICAgICB7LyogQUkgb3V0cmVhY2ggZHJhZnRlciAqL30KICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImxnOmNvbC1zcGFuLTIiPgogICAgICAgICAgPENhcmRIZWFkZXI+CiAgICAgICAgICAgIDxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LWJhc2UgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgIDxTcGFya2xlcyBjbGFzc05hbWU9ImgtNCB3LTQiIC8+IE91dHJlYWNoIERyYWZ0ZXIKICAgICAgICAgICAgPC9DYXJkVGl0bGU+CiAgICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICAgICAge3NlbGVjdGVkCiAgICAgICAgICAgICAgICA/IGBEcmFmdGluZyBmb3IgJHtzZWxlY3RlZC5vcmdhbml6YXRpb259LmAKICAgICAgICAgICAgICAgIDogIlBpY2sgYSBicmFuZCBvbiB0aGUgbGVmdCB0byBzdGFydC4ifQogICAgICAgICAgICA8L0NhcmREZXNjcmlwdGlvbj4KICAgICAgICAgIDwvQ2FyZEhlYWRlcj4KICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InNwYWNlLXktNCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIG1kOmdyaWQtY29scy0yIGdhcC0zIj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgPExhYmVsIGNsYXNzTmFtZT0idGV4dC14cyI+Q29udGFjdCBuYW1lIChvcHRpb25hbCk8L0xhYmVsPgogICAgICAgICAgICAgICAgPElucHV0IHZhbHVlPXticmllZi5jb250YWN0TmFtZX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCBjb250YWN0TmFtZTogZS50YXJnZXQudmFsdWUgfSl9IHBsYWNlaG9sZGVyPSJKb3JkYW4gTGVlIiAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXhzIj5Db250YWN0IHJvbGU8L0xhYmVsPgogICAgICAgICAgICAgICAgPElucHV0IHZhbHVlPXticmllZi5jb250YWN0Um9sZX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCBjb250YWN0Um9sZTogZS50YXJnZXQudmFsdWUgfSl9IC8+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgIDxMYWJlbCBjbGFzc05hbWU9InRleHQteHMiPkZvcm1hdDwvTGFiZWw+CiAgICAgICAgICAgICAgICA8SW5wdXQgdmFsdWU9e2JyaWVmLmZvcm1hdH0gb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCBmb3JtYXQ6IGUudGFyZ2V0LnZhbHVlIH0pfSAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXhzIj5HZW5yZTwvTGFiZWw+CiAgICAgICAgICAgICAgICA8SW5wdXQgdmFsdWU9e2JyaWVmLmdlbnJlfSBvbkNoYW5nZT17KGUpID0+IHNldEJyaWVmKHsgLi4uYnJpZWYsIGdlbnJlOiBlLnRhcmdldC52YWx1ZSB9KX0gLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWQ6Y29sLXNwYW4tMiI+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXhzIj5BdWRpZW5jZTwvTGFiZWw+CiAgICAgICAgICAgICAgICA8SW5wdXQgdmFsdWU9e2JyaWVmLmF1ZGllbmNlfSBvbkNoYW5nZT17KGUpID0+IHNldEJyaWVmKHsgLi4uYnJpZWYsIGF1ZGllbmNlOiBlLnRhcmdldC52YWx1ZSB9KX0gcGxhY2Vob2xkZXI9IlVyYmFuIDI1LTQ0LCBlY28tY3VyaW91cyIgLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWQ6Y29sLXNwYW4tMiI+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXhzIj5XaHkgdGhpcyBicmFuZCBmaXRzIHRoZSBzdG9yeSAqPC9MYWJlbD4KICAgICAgICAgICAgICAgIDxUZXh0YXJlYQogICAgICAgICAgICAgICAgICByb3dzPXsyfQogICAgICAgICAgICAgICAgICB2YWx1ZT17YnJpZWYuYnJhbmRGaXR9CiAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0QnJpZWYoeyAuLi5icmllZiwgYnJhbmRGaXQ6IGUudGFyZ2V0LnZhbHVlIH0pfQogICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0iVGhlIHByb3RhZ29uaXN0J3MgbGlmZXN0eWxlIC8gc2V0dGluZyBvdmVybGFwcyB3aXRoIHRoaXMgYnJhbmQncyBjdXN0b21lci4iCiAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtZDpjb2wtc3Bhbi0yIj4KICAgICAgICAgICAgICAgIDxMYWJlbCBjbGFzc05hbWU9InRleHQteHMiPkludGVncmF0aW9uIGlkZWEgKjwvTGFiZWw+CiAgICAgICAgICAgICAgICA8VGV4dGFyZWEKICAgICAgICAgICAgICAgICAgcm93cz17Mn0KICAgICAgICAgICAgICAgICAgdmFsdWU9e2JyaWVmLmludGVncmF0aW9uSWRlYX0KICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCBpbnRlZ3JhdGlvbklkZWE6IGUudGFyZ2V0LnZhbHVlIH0pfQogICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0iQSBzcGVjaWZpYyBzY2VuZSwgcHJvcCwgb3IgY28tbWFya2V0aW5nIG1vbWVudC4iCiAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtZDpjb2wtc3Bhbi0yIj4KICAgICAgICAgICAgICAgIDxMYWJlbCBjbGFzc05hbWU9InRleHQteHMiPlRoZSBhc2s8L0xhYmVsPgogICAgICAgICAgICAgICAgPElucHV0CiAgICAgICAgICAgICAgICAgIHZhbHVlPXticmllZi5hc2t9CiAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0QnJpZWYoeyAuLi5icmllZiwgYXNrOiBlLnRhcmdldC52YWx1ZSB9KX0KICAgICAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9IiQyNWsgKyBwcm9kdWN0LCBvciBpbi1raW5kIG9ubHkiCiAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0yIj4KICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9e2dlbmVyYXRlfSBkaXNhYmxlZD17Z2VuZXJhdGluZyB8fCAhc2VsZWN0ZWQgfHwgIWhhc1Byb2plY3R9IGNsYXNzTmFtZT0iZ2FwLTIiIHNpemU9InNtIj4KICAgICAgICAgICAgICAgIHtnZW5lcmF0aW5nID8gPExvYWRlcjIgY2xhc3NOYW1lPSJoLTMgdy0zIGFuaW1hdGUtc3BpbiIgLz4gOiA8TWFpbCBjbGFzc05hbWU9ImgtMyB3LTMiIC8+fQogICAgICAgICAgICAgICAgRHJhZnQgZW1haWwKICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICB7ZHJhZnQgJiYgKAogICAgICAgICAgICAgICAgPD4KICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBvbkNsaWNrPXsoKSA9PiBjb3B5KGRyYWZ0KX0gdmFyaWFudD0ic2Vjb25kYXJ5IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgPENvcHkgY2xhc3NOYW1lPSJoLTMgdy0zIiAvPiBDb3B5CiAgICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9e21haWx0b30gdmFyaWFudD0ic2Vjb25kYXJ5IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJnYXAtMiI+CiAgICAgICAgICAgICAgICAgICAgPFNlbmQgY2xhc3NOYW1lPSJoLTMgdy0zIiAvPiBPcGVuIGluIG1haWwKICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8Lz4KICAgICAgICAgICAgICApfQogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIHtkcmFmdCAmJiAoCiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImJvcmRlciByb3VuZGVkLWxnIHAtMyBiZy1tdXRlZC8zMCI+CiAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB1cHBlcmNhc2UgbWItMiI+CiAgICAgICAgICAgICAgICAgIERyYWZ0IGZvciB7c2VsZWN0ZWQ/Lm9yZ2FuaXphdGlvbn0KICAgICAgICAgICAgICAgIDwvQmFkZ2U+CiAgICAgICAgICAgICAgICA8cHJlIGNsYXNzTmFtZT0id2hpdGVzcGFjZS1wcmUtd3JhcCBmb250LXNhbnMgdGV4dC1zbSBsZWFkaW5nLXJlbGF4ZWQiPntkcmFmdH08L3ByZT4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKX0KCiAgICAgICAgICAgIHshZHJhZnQgJiYgaGlzdG9yeSAmJiBoYXNQcm9qZWN0ICYmICgKICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgICAgIHtoaXN0b3J5Lmxlbmd0aH0gbWVzc2FnZXtoaXN0b3J5Lmxlbmd0aCA9PT0gMSA/ICIiIDogInMifSBpbiBkaXJlY3RvciBjaGF0IGhpc3RvcnkuCiAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICApfQogICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICA8L0NhcmQ+CiAgICAgIDwvZGl2PgogIHshIXByb2plY3RJZCAmJiA8TmV4dFN0YWdlQ1RBIHByb2plY3RJZD17cHJvamVjdElkfSBjdXJyZW50U3RhZ2U9ezV9IC8+fQogICAgICA8L2Rpdj4KICApOwp9Cg==
+import { useMemo, useState } from "react";
+import { Link, useParams } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  ExternalLink,
+  Sparkles,
+  Loader2,
+  Copy,
+  Mail,
+  Building2,
+  Send,
+} from "lucide-react";
+import { toast } from "sonner";
+
+const BRAND_KEYWORDS = [
+  "brand",
+  "product placement",
+  "sponsorship",
+  "co-marketing",
+  "co-branded",
+  "advertis",
+  "integration",
+];
+
+function isBrandSource(s: any): boolean {
+  const pack = (s.packType || "").toLowerCase();
+  if (pack.includes("brand") || pack.includes("sponsor")) return true;
+  const haystack = `${s.organization || ""} ${s.type || ""} ${s.supports || ""}`.toLowerCase();
+  return BRAND_KEYWORDS.some((k) => haystack.includes(k));
+}
+
+interface BriefState {
+  contactName: string;
+  contactRole: string;
+  brandFit: string;
+  integrationIdea: string;
+  ask: string;
+  audience: string;
+  format: string;
+  genre: string;
+}
+
+function buildPrompt(b: BriefState, projectTitle: string, brand: any) {
+  return `Write a personalized cold-outreach email to a brand partnerships contact about an integration in our project.
+
+Project: "${projectTitle}"
+Format: ${b.format} · Genre: ${b.genre}
+Audience: ${b.audience}
+
+Brand: ${brand?.organization || "[brand]"}
+Brand notes: ${brand?.supports || "n/a"}
+Contact: ${b.contactName || "[Name]"} (${b.contactRole || "Brand Partnerships"})
+Why this brand fits the story: ${b.brandFit}
+Integration idea: ${b.integrationIdea}
+The ask (e.g. $25k cash + product, or in-kind only): ${b.ask}
+
+Constraints: ≤180 words, conversational but precise, lead with the brand-relevant story beat (not us), include 1 specific integration moment, end with a clear next step (15-min call). No emojis, no buzzwords. Subject line on the first line.`;
+}
+
+export default function BrandOutreach() {
+  const params = useParams<{ projectId?: string }>();
+  const projectId = parseInt(params.projectId || "0");
+  const hasProject = !!projectId;
+
+  const { data: sources } = trpc.funding.list.useQuery({});
+  const { data: project } = trpc.project.get.useQuery(
+    { id: projectId },
+    { enabled: hasProject }
+  );
+
+  const brands = useMemo(
+    () => (sources ?? []).filter(isBrandSource),
+    [sources]
+  );
+
+  const [search, setSearch] = useState("");
+  const filtered = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    if (!s) return brands;
+    return brands.filter(
+      (p: any) =>
+        (p.organization || "").toLowerCase().includes(s) ||
+        (p.country || "").toLowerCase().includes(s) ||
+        (p.supports || "").toLowerCase().includes(s)
+    );
+  }, [brands, search]);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const selected = useMemo(
+    () => brands.find((b: any) => b.id === selectedId) || null,
+    [brands, selectedId]
+  );
+
+  const [brief, setBrief] = useState<BriefState>({
+    contactName: "",
+    contactRole: "Brand Partnerships",
+    brandFit: "",
+    integrationIdea: "",
+    ask: "",
+    audience: "",
+    format: "Feature",
+    genre: "",
+  });
+  const [generating, setGenerating] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  const sendMessage = trpc.directorChat.send.useMutation();
+  const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
+    { projectId },
+    { enabled: hasProject, refetchInterval: 4000 }
+  );
+
+  async function generate() {
+    if (!hasProject) {
+      toast.error("Open this from a project to generate copy.");
+      return;
+    }
+    if (!selected) {
+      toast.error("Pick a brand on the left first.");
+      return;
+    }
+    if (!brief.brandFit.trim() || !brief.integrationIdea.trim()) {
+      toast.error("Fill in brand fit + integration idea.");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const tag = `brandOutreach:${selected.id}`;
+      await sendMessage.mutateAsync({
+        projectId,
+        message: `[BrandOutreach:${selected.id}]\n\n${buildPrompt(brief, project?.title || "Untitled", selected)}`,
+      });
+      const fresh = await refetchHistory();
+      const latest = (fresh.data ?? [])
+        .slice()
+        .reverse()
+        .find(
+          (m: any) =>
+            m.role === "assistant" &&
+            (m.content || "").toString().includes(""),
+        );
+      if (latest) setDraft((latest as any).content as string);
+      toast.success("Draft ready.");
+    } catch (e: any) {
+      toast.error(e?.message || "Generation failed.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  function copy(text: string) {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied.");
+  }
+
+  function mailto() {
+    if (!draft || !selected) return;
+    const lines = draft.split("\n").filter((l) => l.trim());
+    const subject = (lines[0] || "Partnership inquiry").replace(/^subject:\s*/i, "");
+    const body = lines.slice(1).join("\n").trim();
+    const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = url;
+  }
+
+  return (
+    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div className="container max-w-6xl py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <Link href={hasProject ? `/projects/${projectId}` : "/funding"}>
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="h-4 w-4" /> Back
+          </Button>
+        </Link>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Building2 className="h-4 w-4" /> Brand Outreach Desk
+        </div>
+      </div>
+
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Brand Outreach Desk</h1>
+        <p className="text-muted-foreground mt-1">
+          {brands.length} brand & sponsor desks · pitch tailored cold emails for product placement, integrations, and co-marketing.
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Brands */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-base">Brands & Sponsor Desks</CardTitle>
+            <CardDescription>Pick one to draft outreach.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Input
+              placeholder="Search brands…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+              {filtered.map((p: any) => {
+                const active = p.id === selectedId;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setSelectedId(p.id)}
+                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                      active
+                        ? "border-primary bg-accent/60"
+                        : "hover:border-primary/50 hover:bg-accent/30"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm truncate">{p.organization}</div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {p.country}{p.type ? ` · ${p.type}` : ""}
+                        </div>
+                      </div>
+                      {p.website && (
+                        <a
+                          href={p.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="shrink-0"
+                        >
+                          <ExternalLink className="h-3 w-3 text-muted-foreground mt-0.5" />
+                        </a>
+                      )}
+                    </div>
+                    {p.supports && (
+                      <div className="text-xs text-muted-foreground mt-1.5 line-clamp-2">
+                        {p.supports}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+              {filtered.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-6">
+                  No brand desks match.
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI outreach drafter */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Sparkles className="h-4 w-4" /> Outreach Drafter
+            </CardTitle>
+            <CardDescription>
+              {selected
+                ? `Drafting for ${selected.organization}.`
+                : "Pick a brand on the left to start."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Contact name (optional)</Label>
+                <Input value={brief.contactName} onChange={(e) => setBrief({ ...brief, contactName: e.target.value })} placeholder="Jordan Lee" />
+              </div>
+              <div>
+                <Label className="text-xs">Contact role</Label>
+                <Input value={brief.contactRole} onChange={(e) => setBrief({ ...brief, contactRole: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Format</Label>
+                <Input value={brief.format} onChange={(e) => setBrief({ ...brief, format: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Genre</Label>
+                <Input value={brief.genre} onChange={(e) => setBrief({ ...brief, genre: e.target.value })} />
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-xs">Audience</Label>
+                <Input value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} placeholder="Urban 25-44, eco-curious" />
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-xs">Why this brand fits the story *</Label>
+                <Textarea
+                  rows={2}
+                  value={brief.brandFit}
+                  onChange={(e) => setBrief({ ...brief, brandFit: e.target.value })}
+                  placeholder="The protagonist's lifestyle / setting overlaps with this brand's customer."
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-xs">Integration idea *</Label>
+                <Textarea
+                  rows={2}
+                  value={brief.integrationIdea}
+                  onChange={(e) => setBrief({ ...brief, integrationIdea: e.target.value })}
+                  placeholder="A specific scene, prop, or co-marketing moment."
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Label className="text-xs">The ask</Label>
+                <Input
+                  value={brief.ask}
+                  onChange={(e) => setBrief({ ...brief, ask: e.target.value })}
+                  placeholder="$25k + product, or in-kind only"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={generate} disabled={generating || !selected || !hasProject} className="gap-2" size="sm">
+                {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Mail className="h-3 w-3" />}
+                Draft email
+              </Button>
+              {draft && (
+                <>
+                  <Button onClick={() => copy(draft)} variant="secondary" size="sm" className="gap-2">
+                    <Copy className="h-3 w-3" /> Copy
+                  </Button>
+                  <Button onClick={mailto} variant="secondary" size="sm" className="gap-2">
+                    <Send className="h-3 w-3" /> Open in mail
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {draft && (
+              <div className="border rounded-lg p-3 bg-muted/30">
+                <Badge variant="outline" className="text-[10px] uppercase mb-2">
+                  Draft for {selected?.organization}
+                </Badge>
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{draft}</pre>
+              </div>
+            )}
+
+            {!draft && history && hasProject && (
+              <p className="text-xs text-muted-foreground">
+                {history.length} message{history.length === 1 ? "" : "s"} in director chat history.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={5} />}
+      </div>
+  );
+}
