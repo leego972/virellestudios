@@ -93,6 +93,16 @@ import { useAuth } from "@/_core/hooks/useAuth";
           autoDone: hasApiKey,
         },
         {
+          id: "sound_api",
+          icon: Mic2,
+          color: "#a855f7",
+          title: "Connect a Sound API",
+          desc: "Add ElevenLabs for AI voices and dialogue, or Suno for AI-generated music. Both are optional but bring your film to life.",
+          action: "Open Sound API Settings",
+          path: "/settings",
+          autoDone: !!manualDone["sound_api"],
+        },
+        {
           id: "project",
           icon: Sparkles,
           color: "#8b5cf6",
