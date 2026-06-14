@@ -950,7 +950,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
             <div><Label className="text-xs">Variance</Label><div className={`h-9 flex items-center font-mono text-sm ${live.variance < 0 ? "text-rose-400" : "text-emerald-400"}`}>${live.variance.toLocaleString()}{live.burnPct != null && <span className="ml-2 text-[11px] text-muted-foreground">({live.burnPct}% burned)</span>}</div></div>
           </div>
           <div className="space-y-1 pt-2">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Allocation by stage</Label>
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Allocation by stage</Label>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {Object.entries(live.byStage).map(([k, v]: [string, any]) => (
                 <div key={k}><Label className="text-[10px] capitalize">{k.replace(/([A-Z])/g, " $1")}</Label><Input type="number" value={v} onChange={e => updateStage(k, Number(e.target.value))} className="h-8 text-sm" /></div>
@@ -959,7 +959,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
             <div className="text-[11px] text-muted-foreground text-right">Stage sum: ${stageSum.toLocaleString()}{Math.abs(stageSum - live.totalBudget) > 1 && <span className="ml-2 text-amber-400">⚠ doesn't equal total ({live.totalBudget})</span>}</div>
           </div>
           <div className="space-y-1 pt-3 border-t border-border/40">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Industry savings benchmarks (used for ROI calc)</Label>
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Industry savings benchmarks (used for ROI calc)</Label>
             <div className="grid grid-cols-3 gap-2">
               <div><Label className="text-[10px]">Traditional cost / scene (USD)</Label><Input type="number" value={live.tradCostPerScene} onChange={e => update({ tradCostPerScene: Number(e.target.value) })} className="h-8 text-sm" /></div>
               <div><Label className="text-[10px]">Traditional hours / scene</Label><Input type="number" value={live.tradHoursPerScene} onChange={e => update({ tradHoursPerScene: Number(e.target.value) })} className="h-8 text-sm" /></div>

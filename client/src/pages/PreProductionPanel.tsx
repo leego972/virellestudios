@@ -2066,7 +2066,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
         <div className="lg:col-span-2 space-y-4">
           {/* Quick presets */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Quick Presets</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Quick Presets</CardTitle></CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-1.5">
                 {TITLE_PRESETS.map((p, i) => (
@@ -2084,7 +2084,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Background image */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Background Image</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Background Image</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               <div
                 className={["border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-violet-400 transition-colors",
@@ -2117,7 +2117,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Text content */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Text Content</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Text Content</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <Textarea value={overlayText} onChange={e => setOverlayText(e.target.value)}
                 rows={3} className="text-sm font-mono resize-none"
@@ -2128,7 +2128,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Style options */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Style</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Style</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <FieldGroup label="Text Style">
                 <Select value={textStyle} onValueChange={setTextStyle}>
@@ -2168,7 +2168,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
 
           {/* Overlay options */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Image Effects</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground text-amber-500/60">Image Effects</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="dimCheck" checked={overlayDim} onChange={e => setOverlayDim(e.target.checked)} className="rounded" />

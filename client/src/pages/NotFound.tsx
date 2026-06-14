@@ -28,7 +28,7 @@ export default function NotFound() {
           <Button variant="outline" size="sm" onClick={() => { const ev = new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }); window.dispatchEvent(ev); }}><Search className="h-4 w-4 mr-1.5" />Open command palette</Button>
         </div>
         <div className="pt-6 border-t border-border/40">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center justify-center gap-1.5"><Compass className="h-3.5 w-3.5" />Quick destinations</div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center justify-center gap-1.5 text-amber-500/60"><Compass className="h-3.5 w-3.5" />Quick destinations</div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {suggestions.map(s => {
               const Icon = s.icon;

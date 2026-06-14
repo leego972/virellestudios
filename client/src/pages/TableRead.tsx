@@ -211,7 +211,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                 const isActive = i === currentLine;
                 return (
                   <div key={i} className={`px-3 py-2 rounded-lg transition-all ${isActive ? "bg-primary/15 border border-primary/30" : "opacity-60"}`}>
-                    {line.type === "header" && <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{line.text}</p>}
+                    {line.type === "header" && <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-amber-500/60">{line.text}</p>}
                     {line.type === "action" && <p className="text-sm text-muted-foreground italic">{line.text}</p>}
                     {line.type === "dialogue" && (
                       <div>
