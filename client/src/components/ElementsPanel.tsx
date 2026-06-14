@@ -1,4 +1,4 @@
-// v6.69 Phase 4 â ElementsPanel.
+// v6.69 Phase 4 — ElementsPanel.
 //
 // Displays the unified character / location / prop / style element set for a
 // project so the user has a single surface for the consistency layer.
@@ -11,7 +11,7 @@ type Props = { projectId: number };
 export default function ElementsPanel({ projectId }: Props) {
   const q = trpc.elements.listProjectElements.useQuery({ projectId });
   if (q.isLoading) {
-    return <div className="text-sm text-zinc-400">Loading elementsâ¦</div>;
+    return <div className="text-sm text-zinc-400">Loading elements…</div>;
   }
   if (q.error) {
     return <div className="text-sm text-rose-300">Couldn't load elements: {q.error.message}</div>;
@@ -41,7 +41,7 @@ export default function ElementsPanel({ projectId }: Props) {
             </li>
           ))}
           {items.length > 12 && (
-            <li className="text-xs text-zinc-500">â¦and {items.length - 12} more.</li>
+            <li className="text-xs text-zinc-500">…and {items.length - 12} more.</li>
           )}
         </ul>
       )}
@@ -53,7 +53,7 @@ export default function ElementsPanel({ projectId }: Props) {
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold gradient-text-gold">Production Elements</h3>
         <div className="text-xs text-zinc-500">
-          {characters.length} characters Â· {locations.length} locations Â· {props.length} props
+          {characters.length} characters · {locations.length} locations · {props.length} props
         </div>
       </div>
       <Section title="Characters" items={characters} emptyHint="No characters defined yet." />
