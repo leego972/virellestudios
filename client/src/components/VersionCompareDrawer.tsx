@@ -62,7 +62,7 @@ export default function VersionCompareDrawer({ projectId, sceneId, open, onClose
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-gradient-to-r from-zinc-900 to-zinc-950">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-amber-500" />
-            <h2 className="text-sm font-semibold text-zinc-100">Compare versions — Scene {sceneId}</h2>
+            <h2 className="text-sm font-semibold text-zinc-100 gradient-text-gold">Compare versions — Scene {sceneId}</h2>
           </div>
           <Button size="sm" variant="ghost" onClick={onClose} className="h-8 w-8 p-0">
             <X className="w-4 h-4" />

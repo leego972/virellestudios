@@ -505,7 +505,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
         {/* Left: title — fades with controls */}
         <div className={`flex items-center gap-2 min-w-0 flex-1 px-3 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
           <div className="min-w-0">
-            <h2 className="text-white font-medium text-sm sm:text-base truncate drop-shadow">{movie.title}</h2>
+            <h2 className="text-white font-medium text-sm sm:text-base truncate drop-shadow gradient-text-gold">{movie.title}</h2>
             <div className="flex items-center gap-2 mt-0.5">
               <Badge className={`${TYPE_COLORS[movie.type] || TYPE_COLORS.film} border text-[10px]`}>
                 {TYPE_LABELS[movie.type] || movie.type}

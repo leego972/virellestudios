@@ -73,7 +73,7 @@ class ErrorBoundary extends Component<Props, State> {
               <AlertTriangle size={40} className="text-destructive" />
             </div>
 
-            <h2 className="text-2xl font-bold text-foreground mb-2">
+            <h2 className="text-2xl font-bold text-foreground mb-2 gradient-text-gold">
               Cut — something broke on this take
             </h2>
             <p className="text-muted-foreground mb-6 leading-relaxed">
