@@ -161,7 +161,7 @@ export default function Collections() {
                       </div>
                     </div>
                     <div className="p-3">
-                      <h3 className="text-sm font-semibold  truncate">{item.filmTitle}</h3>
+                      <h3 className="text-sm font-semibold truncate">{item.filmTitle}</h3>
                     </div>
                   </div>
                 </Link>
