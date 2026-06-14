@@ -1,4 +1,4 @@
-// v6.69 Phase 8 â Awaiting Review surface.
+// v6.69 Phase 8 — Awaiting Review surface.
 //
 // Lists every scene across the user's projects whose approvalStatus is
 // "pending_review" so reviewers don't have to drill into each project to find
@@ -19,7 +19,7 @@ export default function AwaitingReviewPage() {
         scene to approve or send it back with notes.
       </p>
       {q.isLoading ? (
-        <div className="text-sm text-zinc-400">Loadingâ¦</div>
+        <div className="text-sm text-zinc-400">Loading…</div>
       ) : q.error ? (
         <div className="text-sm text-rose-300">{q.error.message}</div>
       ) : items.length === 0 ? (
@@ -33,7 +33,7 @@ export default function AwaitingReviewPage() {
               <Link href={`/projects/${it.projectId}/scenes`}>
                 <a className="block">
                   <div className="text-xs text-zinc-500">
-                    {it.projectTitle ?? `Project #${it.projectId}`} Â· Scene {it.sceneNumber ?? it.id}
+                    {it.projectTitle ?? `Project #${it.projectId}`} · Scene {it.sceneNumber ?? it.id}
                   </div>
                   <div className="text-sm text-zinc-100 font-medium truncate">
                     {it.title ?? "Untitled scene"}
