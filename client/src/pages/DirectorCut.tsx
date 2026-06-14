@@ -67,7 +67,7 @@ function statusColor(status: SceneStatus) {
     case "completed": return "text-green-400 bg-green-500/10 border-green-500/30";
     case "generating": return "text-amber-400 bg-amber-500/10 border-amber-500/30";
     case "failed": return "text-red-400 bg-red-500/10 border-red-500/30";
-    default: return "text-zinc-400 bg-zinc-500/10 border-zinc-500/30";
+    default: return "text-zinc-400 bg-zinc-500/10 border-amber-500/20/30";
   }
 }
 
@@ -1182,7 +1182,7 @@ export default function DirectorCut() {
                             className={`p-2 rounded text-[10px] text-center border transition-all
                               ${selectedScene.transitionType === opt.value
                                 ? "bg-amber-400/20 border-primary/60 text-amber-400"
-                                : "bg-zinc-900 border-amber-500/20 text-zinc-400 hover:border-zinc-500"}`}
+                                : "bg-zinc-900 border-amber-500/20 text-zinc-400 hover:border-amber-500/20"}`}
                             onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}
                           >
                             {opt.label}

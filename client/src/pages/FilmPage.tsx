@@ -286,7 +286,7 @@ export default function FilmPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="gap-2 border-zinc-500 text-white hover:bg-amber-500/10 backdrop-blur-sm bg-black/30"
+                className="gap-2 border-amber-500/20 text-white hover:bg-amber-500/10 backdrop-blur-sm bg-black/30"
               >
                 <a href={fp.trailerUrl} target="_blank" rel="noopener noreferrer">
                   <Film className="w-4 h-4" />
