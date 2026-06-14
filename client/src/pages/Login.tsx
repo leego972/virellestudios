@@ -1,1 +1,234 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZUVmZmVjdCB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgTGluaywgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IExhYmVsIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2xhYmVsIjsKaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmREZXNjcmlwdGlvbiwgQ2FyZEZvb3RlciwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CmltcG9ydCB7IEV5ZSwgRXllT2ZmLCBMb2FkZXIyLCBBcnJvd1JpZ2h0LCBVc2VyUGx1cyB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCBHb2xkV2F0ZXJtYXJrTGF1bmNoIGZyb20gIkAvY29tcG9uZW50cy9Hb2xkV2F0ZXJtYXJrTGF1bmNoIjsKaW1wb3J0IExlZWdvTG9nbyBmcm9tICJAL2NvbXBvbmVudHMvTGVlZ29Mb2dvIjsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIExvZ2luKCkgewogIGNvbnN0IFssIG5hdmlnYXRlXSA9IHVzZUxvY2F0aW9uKCk7CiAgY29uc3QgW2VtYWlsLCBzZXRFbWFpbF0gPSB1c2VTdGF0ZSgiIik7CiAgY29uc3QgW3Bhc3N3b3JkLCBzZXRQYXNzd29yZF0gPSB1c2VTdGF0ZSgiIik7CiAgY29uc3QgW3Nob3dQYXNzd29yZCwgc2V0U2hvd1Bhc3N3b3JkXSA9IHVzZVN0YXRlKGZhbHNlKTsKCiAgLy8gU2hvdyBPQXV0aCBlcnJvciBpZiByZWRpcmVjdGVkIGJhY2sgd2l0aCBlcnJvciBwYXJhbQogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBjb25zdCBwYXJhbXMgPSBuZXcgVVJMU2VhcmNoUGFyYW1zKHdpbmRvdy5sb2NhdGlvbi5zZWFyY2gpOwogICAgaWYgKHBhcmFtcy5nZXQoImVycm9yIikgPT09ICJvYXV0aF9mYWlsZWQiKSB7CiAgICAgIHRvYXN0LmVycm9yKCJPQXV0aCBzaWduLWluIGZhaWxlZC4gUGxlYXNlIHRyeSBhZ2FpbiBvciB1c2UgZW1haWwvcGFzc3dvcmQuIik7CiAgICAgIC8vIENsZWFuIHRoZSBVUkwKICAgICAgd2luZG93Lmhpc3RvcnkucmVwbGFjZVN0YXRlKHt9LCAiIiwgIi9sb2dpbiIpOwogICAgfQogIH0sIFtdKTsKCiAgY29uc3QgdXRpbHMgPSB0cnBjLnVzZVV0aWxzKCk7CiAgY29uc3QgbG9naW5NdXRhdGlvbiA9IHRycGMuYXV0aC5sb2dpbi51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMuYXV0aC5tZS5pbnZhbGlkYXRlKCk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIldlbGNvbWUgYmFjayEiKTsKICAgICAgbmF2aWdhdGUoIi8/b3BlbmVyPTEiKTsKICAgIH0sCiAgICBvbkVycm9yOiAoZXJyKSA9PiB7CiAgICAgIHRvYXN0LmVycm9yKGVyci5tZXNzYWdlIHx8ICJMb2dpbiBmYWlsZWQiKTsKICAgIH0sCiAgfSk7CgogIGNvbnN0IGhhbmRsZVN1Ym1pdCA9IChlOiBSZWFjdC5Gb3JtRXZlbnQpID0+IHsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIGlmICghZW1haWwgfHwgIXBhc3N3b3JkKSB7CiAgICAgIHRvYXN0LmVycm9yKCJQbGVhc2UgZmlsbCBpbiBhbGwgZmllbGRzIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGxvZ2luTXV0YXRpb24ubXV0YXRlKHsgZW1haWwsIHBhc3N3b3JkIH0pOwogIH07CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHAtNCByZWxhdGl2ZSIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8R29sZFdhdGVybWFya0xhdW5jaCAvPgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LWNvbCBsZzpmbGV4LXJvdyBpdGVtcy1jZW50ZXIgZ2FwLTggbGc6Z2FwLTEyIHctZnVsbCBtYXgtdy0zeGwiPgogICAgICAgIHsvKiBMZWZ0IHNpZGU6IExvZ2luIGZvcm0gKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9InctZnVsbCBtYXgtdy1zbSBzcGFjZS15LTYiPgogICAgICAgICAgey8qIFZpcmVsbGUgU3R1ZGlvcyBMb2dvICovfQogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGdhcC00Ij4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InJlbGF0aXZlIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIj4KICAgICAgICAgICAgICB7LyogT3V0ZXIgYW1iaWVudCBnbG93ICovfQogICAgICAgICAgICAgIDxkaXYKICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYWJzb2x1dGUgcm91bmRlZC1mdWxsIHBvaW50ZXItZXZlbnRzLW5vbmUiCiAgICAgICAgICAgICAgICBzdHlsZT17ewogICAgICAgICAgICAgICAgICB3aWR0aDogMzAwLAogICAgICAgICAgICAgICAgICBoZWlnaHQ6IDMwMCwKICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZDogInJhZGlhbC1ncmFkaWVudChlbGxpcHNlIGF0IGNlbnRlciwgcmdiYSgxODAsMTAwLDEwLDAuMzUpIDAlLCByZ2JhKDEyMCw2MCw1LDAuMTgpIDM1JSwgdHJhbnNwYXJlbnQgNzAlKSIsCiAgICAgICAgICAgICAgICB9fQogICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgey8qIElubmVyIGdsb3cgcmluZyAqL30KICAgICAgICAgICAgICA8ZGl2CiAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImFic29sdXRlIHJvdW5kZWQtZnVsbCBwb2ludGVyLWV2ZW50cy1ub25lIgogICAgICAgICAgICAgICAgc3R5bGU9e3sKICAgICAgICAgICAgICAgICAgd2lkdGg6IDE3MCwKICAgICAgICAgICAgICAgICAgaGVpZ2h0OiAxNzAsCiAgICAgICAgICAgICAgICAgIGJhY2tncm91bmQ6ICJyYWRpYWwtZ3JhZGllbnQoZWxsaXBzZSBhdCBjZW50ZXIsIHJnYmEoMjEwLDEzMCwyMCwwLjI4KSAwJSwgdHJhbnNwYXJlbnQgNzAlKSIsCiAgICAgICAgICAgICAgICB9fQogICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgPGltZwogICAgICAgICAgICAgICAgc3JjPSJodHRwczovL2ZpbGVzLm1hbnVzY2RuLmNvbS91c2VyX3VwbG9hZF9ieV9tb2R1bGUvc2Vzc2lvbl9maWxlLzMxMDUxOTY2MzQxODYwNTc2Mi9oeFJRUWdzbXlqZ2NCeWltLnBuZyIKICAgICAgICAgICAgICAgIGFsdD0iVmlyZWxsZSBTdHVkaW9zIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJyZWxhdGl2ZSB6LTEwIHctMzIgaC0zMiByb3VuZGVkLTJ4bCIKICAgICAgICAgICAgICAgIHN0eWxlPXt7IGJveFNoYWRvdzogIjAgMCA0MHB4IDhweCByZ2JhKDE4MCwxMDAsMTAsMC40NSksIDAgMCA4MHB4IDIwcHggcmdiYSgxMjAsNjAsNSwwLjI1KSIgfX0KICAgICAgICAgICAgICAgIGRyYWdnYWJsZT17ZmFsc2V9CiAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWNlbnRlciI+CiAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtZm9yZWdyb3VuZCB0cmFja2luZy10aWdodCI+VmlyZWxsZSBTdHVkaW9zPC9oMT4KICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG10LTEiPkNyZWF0ZSBIb2xseXdvb2QgZ3JhZGUgcHJvZHVjdGlvbnMgd2l0aCBBSTwvcD4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICB7LyogTG9naW4gQ2FyZCAqL30KICAgICAgICAgIDxDYXJkIGNsYXNzTmFtZT0iYm9yZGVyLWJvcmRlci81MCBiZy1jYXJkLzgwIGJhY2tkcm9wLWJsdXItc20gc2hhZG93LXhsIj4KICAgICAgICAgICAgPENhcmRIZWFkZXIgY2xhc3NOYW1lPSJzcGFjZS15LTEgcGItNCI+CiAgICAgICAgICAgICAgPENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQteGwgdGV4dC1jZW50ZXIiPlNpZ24gSW48L0NhcmRUaXRsZT4KICAgICAgICAgICAgICA8Q2FyZERlc2NyaXB0aW9uIGNsYXNzTmFtZT0idGV4dC1jZW50ZXIiPkVudGVyIHlvdXIgZW1haWwgYW5kIHBhc3N3b3JkIHRvIGNvbnRpbnVlPC9DYXJkRGVzY3JpcHRpb24+CiAgICAgICAgICAgIDwvQ2FyZEhlYWRlcj4KICAgICAgICAgICAgPGZvcm0gb25TdWJtaXQ9e2hhbmRsZVN1Ym1pdH0+CiAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTIiPgogICAgICAgICAgICAgICAgICA8TGFiZWwgaHRtbEZvcj0iZW1haWwiPkVtYWlsPC9MYWJlbD4KICAgICAgICAgICAgICAgICAgPElucHV0CiAgICAgICAgICAgICAgICAgICAgaWQ9ImVtYWlsIgogICAgICAgICAgICAgICAgICAgIHR5cGU9ImVtYWlsIgogICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJ5b3VAZXhhbXBsZS5jb20iCiAgICAgICAgICAgICAgICAgICAgdmFsdWU9e2VtYWlsfQogICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0RW1haWwoZS50YXJnZXQudmFsdWUpfQogICAgICAgICAgICAgICAgICAgIGF1dG9Db21wbGV0ZT0iZW1haWwiCiAgICAgICAgICAgICAgICAgICAgYXV0b0NhcGl0YWxpemU9Im5vbmUiCiAgICAgICAgICAgICAgICAgICAgYXV0b0NvcnJlY3Q9Im9mZiIKICAgICAgICAgICAgICAgICAgICBzcGVsbENoZWNrPXtmYWxzZX0KICAgICAgICAgICAgICAgICAgICBpbnB1dE1vZGU9ImVtYWlsIgogICAgICAgICAgICAgICAgICAgIGVudGVyS2V5SGludD0ibmV4dCIKICAgICAgICAgICAgICAgICAgICBhdXRvRm9jdXMKICAgICAgICAgICAgICAgICAgICBkaXNhYmxlZD17bG9naW5NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTIiPgogICAgICAgICAgICAgICAgICA8TGFiZWwgaHRtbEZvcj0icGFzc3dvcmQiPlBhc3N3b3JkPC9MYWJlbD4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InJlbGF0aXZlIj4KICAgICAgICAgICAgICAgICAgICA8SW5wdXQKICAgICAgICAgICAgICAgICAgICAgIGlkPSJwYXNzd29yZCIKICAgICAgICAgICAgICAgICAgICAgIHR5cGU9e3Nob3dQYXNzd29yZCA/ICJ0ZXh0IiA6ICJwYXNzd29yZCJ9CiAgICAgICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0i4oCi4oCi4oCi4oCi4oCi4oCi4oCi4oCiIgogICAgICAgICAgICAgICAgICAgICAgdmFsdWU9e3Bhc3N3b3JkfQogICAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRQYXNzd29yZChlLnRhcmdldC52YWx1ZSl9CiAgICAgICAgICAgICAgICAgICAgICBhdXRvQ29tcGxldGU9ImN1cnJlbnQtcGFzc3dvcmQiCiAgICAgICAgICAgICAgICAgICAgICBlbnRlcktleUhpbnQ9ImRvbmUiCiAgICAgICAgICAgICAgICAgICAgICBkaXNhYmxlZD17bG9naW5NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InByLTEwIgogICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICAgICAgdHlwZT0iYnV0dG9uIgogICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0U2hvd1Bhc3N3b3JkKCFzaG93UGFzc3dvcmQpfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJhYnNvbHV0ZSByaWdodC0zIHRvcC0xLzIgLXRyYW5zbGF0ZS15LTEvMiB0ZXh0LW11dGVkLWZvcmVncm91bmQgaG92ZXI6dGV4dC1mb3JlZ3JvdW5kIHRyYW5zaXRpb24tY29sb3JzIgogICAgICAgICAgICAgICAgICAgICAgdGFiSW5kZXg9ey0xfQogICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgIHtzaG93UGFzc3dvcmQgPyA8RXllT2ZmIGNsYXNzTmFtZT0idy00IGgtNCIgLz4gOiA8RXllIGNsYXNzTmFtZT0idy00IGgtNCIgLz59CiAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBqdXN0aWZ5LWVuZCI+CiAgICAgICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9mb3Jnb3QtcGFzc3dvcmQiIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWFtYmVyLTUwMCBob3Zlcjp0ZXh0LWFtYmVyLTQwMCBmb250LW1lZGl1bSI+CiAgICAgICAgICAgICAgICAgICAgRm9yZ290IHBhc3N3b3JkPwogICAgICAgICAgICAgICAgICA8L0xpbms+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgICAgIDxDYXJkRm9vdGVyIGNsYXNzTmFtZT0iZmxleCBmbGV4LWNvbCBnYXAtMyBwdC0yIj4KICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgdHlwZT0ic3VibWl0IgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNzAwIHRleHQtd2hpdGUgZm9udC1zZW1pYm9sZCIKICAgICAgICAgICAgICAgICAgZGlzYWJsZWQ9e2xvZ2luTXV0YXRpb24uaXNQZW5kaW5nfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICB7bG9naW5NdXRhdGlvbi5pc1BlbmRpbmcgPyAoCiAgICAgICAgICAgICAgICAgICAgPD4KICAgICAgICAgICAgICAgICAgICAgIDxMb2FkZXIyIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIGFuaW1hdGUtc3BpbiIgLz4KICAgICAgICAgICAgICAgICAgICAgIFNpZ25pbmcgaW4uLi4KICAgICAgICAgICAgICAgICAgICA8Lz4KICAgICAgICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICAgICAgICA8PgogICAgICAgICAgICAgICAgICAgICAgPEFycm93UmlnaHQgY2xhc3NOYW1lPSJ3LTQgaC00IG1yLTIiIC8+CiAgICAgICAgICAgICAgICAgICAgICBTaWduIEluCiAgICAgICAgICAgICAgICAgICAgPC8+CiAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICA8L0J1dHRvbj4KCiAgICAgICAgICAgICAgICB7LyogRGl2aWRlciAqL30KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyZWxhdGl2ZSB3LWZ1bGwgbXktMSI+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIGZsZXggaXRlbXMtY2VudGVyIj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idy1mdWxsIGJvcmRlci10IGJvcmRlci1ib3JkZXIiIC8+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUgZmxleCBqdXN0aWZ5LWNlbnRlciB0ZXh0LXhzIj4KICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImJnLWNhcmQgcHgtMyB0ZXh0LW11dGVkLWZvcmVncm91bmQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVyIj5vciBjb250aW51ZSB3aXRoPC9zcGFuPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgICAgIHsvKiBPQXV0aCBCdXR0b25zICovfQogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgZ2FwLTMgdy1mdWxsIj4KICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICBocmVmPSIvYXBpL2F1dGgvZ29vZ2xlIgogICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgZ2FwLTIgaC0xMCByb3VuZGVkLW1kIGJvcmRlciBib3JkZXItYm9yZGVyIGJnLWJhY2tncm91bmQgaG92ZXI6YmctbXV0ZWQgdHJhbnNpdGlvbi1jb2xvcnMgdGV4dC1zbSBmb250LW1lZGl1bSIKICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgIDxzdmcgY2xhc3NOYW1lPSJ3LTQgaC00IiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTIyLjU2IDEyLjI1YzAtLjc4LS4wNy0xLjUzLS4yLTIuMjVIMTJ2NC4yNmg1LjkyYTUuMDYgNS4wNiAwIDAgMS0yLjIgMy4zMnYyLjc3aDMuNTdjMi4wOC0xLjkyIDMuMjgtNC43NCAzLjI4LTguMXoiIC8+CiAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjMzRBODUzIiBkPSJNMTIgMjNjMi45NyAwIDUuNDYtLjk4IDcuMjgtMi42NmwtMy41Ny0yLjc3Yy0uOTguNjYtMi4yMyAxLjA2LTMuNzEgMS4wNi0yLjg2IDAtNS4yOS0xLjkzLTYuMTYtNC41M0gyLjE4djIuODRDMy45OSAyMC41MyA3LjcgMjMgMTIgMjN6IiAvPgogICAgICAgICAgICAgICAgICAgICAgPHBhdGggZmlsbD0iI0ZCQkMwNSIgZD0iTTUuODQgMTQuMDljLS4yMi0uNjYtLjM1LTEuMzYtLjM1LTIuMDlzLjEzLTEuNDMuMzUtMi4wOVY3LjA3SDIuMThDMS40MyA4LjU1IDEgMTAuMjIgMSAxMnMuNDMgMy40NSAxLjE4IDQuOTNsMi44NS0yLjIyLjgxLS42MnoiIC8+CiAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMTIgNS4zOGMxLjYyIDAgMy4wNi41NiA0LjIxIDEuNjRsMy4xNS0zLjE1QzE3LjQ1IDIuMDkgMTQuOTcgMSAxMiAxIDcuNyAxIDMuOTkgMy40NyAyLjE4IDcuMDdsMy42NiAyLjg0Yy44Ny0yLjYgMy4zLTQuNTMgNi4xNi00LjUzeiIgLz4KICAgICAgICAgICAgICAgICAgICA8L3N2Zz4KICAgICAgICAgICAgICAgICAgICBHb29nbGUKICAgICAgICAgICAgICAgICAgPC9hPgogICAgICAgICAgICAgICAgICA8YQogICAgICAgICAgICAgICAgICAgIGhyZWY9Ii9hcGkvYXV0aC9naXRodWIiCiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtMiBoLTEwIHJvdW5kZWQtbWQgYm9yZGVyIGJvcmRlci1ib3JkZXIgYmctYmFja2dyb3VuZCBob3ZlcjpiZy1tdXRlZCB0cmFuc2l0aW9uLWNvbG9ycyB0ZXh0LXNtIGZvbnQtbWVkaXVtIgogICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgPHN2ZyBjbGFzc05hbWU9InctNCBoLTQiIGZpbGw9ImN1cnJlbnRDb2xvciIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMiAwYy02LjYyNiAwLTEyIDUuMzczLTEyIDEyIDAgNS4zMDIgMy40MzggOS44IDguMjA3IDExLjM4Ny41OTkuMTExLjc5My0uMjYxLjc5My0uNTc3di0yLjIzNGMtMy4zMzguNzI2LTQuMDMzLTEuNDE2LTQuMDMzLTEuNDE2LS41NDYtMS4zODctMS4zMzMtMS43NTYtMS4zMzMtMS43NTYtMS4wODktLjc0NS4wODMtLjcyOS4wODMtLjcyOSAxLjIwNS4wODQgMS44MzkgMS4yMzcgMS44MzkgMS4yMzcgMS4wNyAxLjgzNCAyLjgwNyAxLjMwNCAzLjQ5Mi45OTcuMTA3LS43NzUuNDE4LTEuMzA1Ljc2Mi0xLjYwNC0yLjY2NS0uMzA1LTUuNDY3LTEuMzM0LTUuNDY3LTUuOTMxIDAtMS4zMTEuNDY5LTIuMzgxIDEuMjM2LTMuMjIxLS4xMjQtLjMwMy0uNTM1LTEuNTI0LjExNy0zLjE3NiAwIDAgMS4wMDgtLjMyMiAzLjMwMSAxLjIzLjk1Ny0uMjY2IDEuOTgzLS4zOTkgMy4wMDMtLjQwNCAxLjAyLjAwNSAyLjA0Ny4xMzggMy4wMDYuNDA0IDIuMjkxLTEuNTUyIDMuMjk3LTEuMjMgMy4yOTctMS4yMy42NTMgMS42NTMuMjQyIDIuODc0LjExOCAzLjE3Ni43Ny44NCAxLjIzNSAxLjkxMSAxLjIzNSAzLjIyMSAwIDQuNjA5LTIuODA3IDUuNjI0LTUuNDc5IDUuOTIxLjQzLjM3Mi44MjMgMS4xMDIuODIzIDIuMjIydjMuMjkzYzAgLjMxOS4xOTIuNjk0LjgwMS41NzYgNC43NjUtMS41ODkgOC4xOTktNi4wODYgOC4xOTktMTEuMzg2IDAtNi42MjctNS4zNzMtMTItMTItMTJ6IiAvPgogICAgICAgICAgICAgICAgICAgIDwvc3ZnPgogICAgICAgICAgICAgICAgICAgIEdpdEh1YgogICAgICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgICAgICB7LyogU2lnbiBVcCBDVEEgKi99CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idy1mdWxsIHB0LTIiPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icm91bmRlZC1sZyBib3JkZXIgYm9yZGVyLWFtYmVyLTUwMC8yMCBiZy1hbWJlci02MDAvNSBwLTMuNSI+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCB0ZXh0LWNlbnRlciBtYi0yLjUiPgogICAgICAgICAgICAgICAgICAgICAgRG9uJ3QgaGF2ZSBhbiBhY2NvdW50PwogICAgICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICAgICAgICA8TGluayBocmVmPSIvcmVnaXN0ZXIiIGNsYXNzTmFtZT0iYmxvY2siPgogICAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgICAgICAgICAgICB0eXBlPSJidXR0b24iCiAgICAgICAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Im91dGxpbmUiCiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idy1mdWxsIGJvcmRlci1hbWJlci01MDAvNDAgdGV4dC1hbWJlci01MDAgaG92ZXI6YmctYW1iZXItNjAwLzEwIGhvdmVyOnRleHQtYW1iZXItNDAwIGZvbnQtc2VtaWJvbGQiCiAgICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICAgIDxVc2VyUGx1cyBjbGFzc05hbWU9InctNCBoLTQgbXItMiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgQ3JlYXRlIEFjY291bnQKICAgICAgICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L0NhcmRGb290ZXI+CiAgICAgICAgICAgIDwvZm9ybT4KICAgICAgICAgIDwvQ2FyZD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIFJpZ2h0IHNpZGUgb24gZGVza3RvcCAvIEJlbG93IG9uIG1vYmlsZTogTGVlZ28gbG9nbyAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC1zaHJpbmstMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciI+CiAgICAgICAgICA8TGVlZ29Mb2dvCiAgICAgICAgICAgIGFsdD0iQ3JlYXRlZCBieSBMZWVnbyIKICAgICAgICAgICAgY2xhc3NOYW1lPSJoLTI4IHNtOmgtMzIgbGc6aC00MCB3LWF1dG8gb2JqZWN0LWNvbnRhaW4gbGVlZ28tZ2xvdyIKICAgICAgICAgIC8+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQo=
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import LeegoLogo from "@/components/LeegoLogo";
+
+export default function Login() {
+  const [, navigate] = useLocation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Show OAuth error if redirected back with error param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "oauth_failed") {
+      toast.error("OAuth sign-in failed. Please try again or use email/password.");
+      // Clean the URL
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
+
+  const utils = trpc.useUtils();
+  const loginMutation = trpc.auth.login.useMutation({
+    onSuccess: () => {
+      utils.auth.me.invalidate();
+      toast.success("Welcome back!");
+      navigate("/?opener=1");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Login failed");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    loginMutation.mutate({ email, password });
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <GoldWatermarkLaunch />
+      <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full max-w-3xl">
+        {/* Left side: Login form */}
+        <div className="w-full max-w-sm space-y-6">
+          {/* Virelle Studios Logo */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative flex items-center justify-center">
+              {/* Outer ambient glow */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 300,
+                  height: 300,
+                  background: "radial-gradient(ellipse at center, rgba(180,100,10,0.35) 0%, rgba(120,60,5,0.18) 35%, transparent 70%)",
+                }}
+              />
+              {/* Inner glow ring */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 170,
+                  height: 170,
+                  background: "radial-gradient(ellipse at center, rgba(210,130,20,0.28) 0%, transparent 70%)",
+                }}
+              />
+              <img
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+                alt="Virelle Studios"
+                className="relative z-10 w-32 h-32 rounded-2xl"
+                style={{ boxShadow: "0 0 40px 8px rgba(180,100,10,0.45), 0 0 80px 20px rgba(120,60,5,0.25)" }}
+                draggable={false}
+              />
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold tracking-tight gradient-text-gold">Virelle Studios</h1>
+              <p className="text-sm text-muted-foreground mt-1">Create Hollywood grade productions with AI</p>
+            </div>
+          </div>
+
+          {/* Login Card */}
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
+            <CardHeader className="space-y-1 pb-4">
+              <CardTitle className="text-xl text-center">Sign In</CardTitle>
+              <CardDescription className="text-center">Enter your email and password to continue</CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    inputMode="email"
+                    enterKeyHint="next"
+                    autoFocus
+                    disabled={loginMutation.isPending}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      enterKeyHint="done"
+                      disabled={loginMutation.isPending}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Link href="/forgot-password" className="text-sm text-amber-500 hover:text-amber-400 font-medium">
+                    Forgot password?
+                  </Link>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3 pt-2">
+                <Button
+                  type="submit"
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+                  disabled={loginMutation.isPending}
+                >
+                  {loginMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowRight className="w-4 h-4 mr-2" />
+                      Sign In
+                    </>
+                  )}
+                </Button>
+
+                {/* Divider */}
+                <div className="relative w-full my-1">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-card px-3 text-muted-foreground uppercase tracking-wider">or continue with</span>
+                  </div>
+                </div>
+
+                {/* OAuth Buttons */}
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <a
+                    href="/api/auth/google"
+                    className="flex items-center justify-center gap-2 h-10 rounded-md border border-border bg-background hover:bg-muted transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Google
+                  </a>
+                  <a
+                    href="/api/auth/github"
+                    className="flex items-center justify-center gap-2 h-10 rounded-md border border-border bg-background hover:bg-muted transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    GitHub
+                  </a>
+                </div>
+
+                {/* Sign Up CTA */}
+                <div className="w-full pt-2">
+                  <div className="rounded-lg border border-amber-500/20 bg-amber-600/5 p-3.5">
+                    <p className="text-sm text-muted-foreground text-center mb-2.5">
+                      Don't have an account?
+                    </p>
+                    <Link href="/register" className="block">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full border-amber-500/40 text-amber-500 hover:bg-amber-600/10 hover:text-amber-400 font-semibold"
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Create Account
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
+
+        {/* Right side on desktop / Below on mobile: Leego logo */}
+        <div className="flex-shrink-0 flex items-center justify-center">
+          <LeegoLogo
+            alt="Created by Leego"
+            className="h-28 sm:h-32 lg:h-40 w-auto object-contain leego-glow"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
