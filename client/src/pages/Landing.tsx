@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import SiteHead from "@/components/SiteHead";
 import {
   Zap, Layers, Users, Music, Palette, Camera,
-  ArrowRight, Play, ShieldCheck,
+  ArrowRight, Play, ShieldCheck, Check,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
   Zap as ZapIcon, Film, Smartphone, Download, Crown,
   Menu, X, Shirt, Key, ExternalLink,
@@ -635,11 +635,11 @@ export default function Landing() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
                 <div className="rounded-2xl border border-amber-500/20 glass-card/[0.02] p-7">
-                  <h3 className="text-xs font-bold /30 uppercase tracking-widest mb-5">Generic clip tools</h3>
+                  <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-5">Generic clip tools</h3>
                   <ul className="space-y-3">
                     {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/35">
-                        <span className="w-4 h-4 rounded-full border border-amber-500/20 flex items-center justify-center text-white/20 text-[10px] shrink-0">x</span>
+                        <X className="w-3.5 h-3.5 text-white/30 shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -650,7 +650,7 @@ export default function Landing() {
                   <ul className="space-y-3">
                     {["Structured story", "Digital Cast", "Character DNA", "Scene cards", "Trailer and pitch assets", "Production package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/80">
-                        <span className="w-4 h-4 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 text-[10px] shrink-0">v</span>
+                        <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -726,7 +726,7 @@ export default function Landing() {
                 { tier: "Indie",    price: "A$149",   usd: "~$97 USD",  credits: "500 credits/mo",   desc: "Solo filmmakers and students.",          cta: "Select Indie" },
                 { tier: "Creator",  price: "A$490",   usd: "~$318 USD", credits: "2,000 credits/mo",  desc: "Serious indie producers.",               cta: "Select Creator", highlight: true },
                 { tier: "Industry", price: "A$1,490", usd: "~$965 USD", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
-                { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
+                { tier: "Enterprise", price: "Custom", credits: "Unlimited credits + BYOK", desc: "Major studios and broadcasters. Custom SLA.",         cta: "Contact Sales" },
               ].map(plan => (
                 <Card key={plan.tier} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
@@ -837,6 +837,15 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            <div className="text-center mt-10">
+              <button
+                onClick={() => setLocation("/faq")}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+              >
+                View all FAQs
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
         </section>
 
@@ -915,7 +924,7 @@ export default function Landing() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                   {/* Left — copy */}
                   <div className="p-8 md:p-10 flex flex-col justify-center">
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23 collections · 1,400+ items</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-amber-400/60 mb-3">23+ collections · 1,400+ items · growing</p>
                     <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight text-gold-shimmer">
                       Menswear. Womenswear. Kids. Sport.<br />
                       <span className="text-amber-400">From 30 cents per item.</span>
@@ -925,7 +934,7 @@ export default function Landing() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
-                        onClick={() => setLocation("/wardrobe-marketplace")}
+                        onClick={() => setLocation("/pricing")}
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-amber-500/20"
                       >
                         <Shirt className="h-4 w-4" />
@@ -1083,7 +1092,7 @@ export default function Landing() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => setLocation("/wardrobe-marketplace")}
+                  onClick={() => setLocation("/pricing")}
                   variant="outline"
                   className="shrink-0 border-amber-500/20 text-white/70 hover:bg-white/5 font-bold px-8 h-11"
                 >
