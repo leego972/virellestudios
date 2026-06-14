@@ -2300,7 +2300,7 @@ export default function SceneEditor() {
               <CollapsibleTrigger asChild>
                 <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.footage ? "rotate-90" : ""}`} />
-                  <Upload className="h-3.5 w-3.5 text-gray-400" />
+                  <Upload className="h-3.5 w-3.5 text-zinc-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1 text-amber-400/60">External Footage</span>
                   <span className="text-[10px] text-muted-foreground/60">{form.externalFootageUrl ? "attached" : "none"}</span>
                 </button>

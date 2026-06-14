@@ -168,7 +168,7 @@ function SampleCard({
 
         {/* Unpublished badge */}
         {!sample.isPublished && (
-          <div className="absolute top-2 left-2 bg-gray-800/90 text-gray-300 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+          <div className="absolute top-2 left-2 bg-zinc-800/90 text-zinc-300 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
             <EyeOff className="w-3 h-3" /> Draft
           </div>
         )}
@@ -573,7 +573,7 @@ export default function ProjectSamples() {
               <div className="text-xs text-muted-foreground">Published</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-400 gradient-text-gold">{samples.filter(s => !s.isPublished).length}</div>
+              <div className="text-2xl font-bold text-zinc-400 gradient-text-gold">{samples.filter(s => !s.isPublished).length}</div>
               <div className="text-xs text-muted-foreground">Drafts</div>
             </div>
           </div>

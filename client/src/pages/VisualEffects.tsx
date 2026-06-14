@@ -42,7 +42,7 @@ import { useState } from "react";
   const BLEND_MODES = ["normal","screen","multiply","add","overlay","soft-light","color-dodge","luminosity"];
 
   const VFX_STATUSES = [
-    { id: "concept",     label: "Concept",     color: "text-gray-400",    bg: "bg-gray-500/15",    dot: "#9ca3af" },
+    { id: "concept",     label: "Concept",     color: "text-zinc-400",    bg: "bg-gray-500/15",    dot: "#9ca3af" },
     { id: "bid",         label: "Bid",         color: "text-amber-400",   bg: "bg-amber-500/15",   dot: "#fbbf24" },
     { id: "approved",    label: "Approved",    color: "text-blue-400",    bg: "bg-blue-500/15",    dot: "#60a5fa" },
     { id: "in_progress", label: "In Progress", color: "text-violet-400",  bg: "bg-violet-500/15",  dot: "#a78bfa" },

@@ -505,7 +505,7 @@ import { useState } from "react";
     purple:  { bg: "bg-purple-500/15",  text: "text-purple-300",  border: "border-purple-500/30" },
     teal:    { bg: "bg-teal-500/15",    text: "text-teal-300",    border: "border-teal-500/30" },
     yellow:  { bg: "bg-yellow-500/15",  text: "text-yellow-300",  border: "border-yellow-500/30" },
-    slate:   { bg: "bg-slate-500/15",   text: "text-slate-300",   border: "border-slate-500/30" },
+    slate:   { bg: "bg-slate-500/15",   text: "text-zinc-300",   border: "border-slate-500/30" },
     zinc:    { bg: "bg-zinc-500/15",    text: "text-zinc-300",    border: "border-amber-500/20/30" },
   };
 

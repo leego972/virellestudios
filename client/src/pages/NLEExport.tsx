@@ -33,7 +33,7 @@ const FORMAT_FILENAMES: Record<string, string> = {
 
 const FORMAT_ICONS: Record<string, React.ReactNode> = {
   "xml-premiere-pro": <FileCode className="w-5 h-5 text-blue-400" />,
-  "xml-final-cut-pro-x": <FileCode className="w-5 h-5 text-gray-300" />,
+  "xml-final-cut-pro-x": <FileCode className="w-5 h-5 text-zinc-300" />,
   "edl-davinci-resolve": <Film className="w-5 h-5 text-amber-400" />,
   "aaf-avid-media-composer": <Film className="w-5 h-5 text-green-400" />,
   "csv-shot-list": <Table className="w-5 h-5 text-emerald-400" />,

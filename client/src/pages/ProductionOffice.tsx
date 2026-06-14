@@ -592,7 +592,7 @@ const COT_TEMPLATE = [
   { key: "permits", label: "Filming permits & COIs" },
 ];
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  pending: { label: "Pending", color: "bg-gray-500/15 text-gray-400 border-gray-500/40" },
+  pending: { label: "Pending", color: "bg-gray-500/15 text-zinc-400 border-gray-500/40" },
   in_progress: { label: "In progress", color: "bg-amber-500/15 text-amber-500 border-amber-500/40" },
   cleared: { label: "Cleared", color: "bg-green-500/15 text-green-500 border-green-500/40" },
   na: { label: "N/A", color: "bg-muted text-muted-foreground border-border" },

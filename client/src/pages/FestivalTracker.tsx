@@ -69,7 +69,7 @@ const STATUS_LABELS: Record<FestivalStatus, string> = {
 };
 
 const STATUS_COLORS: Record<FestivalStatus, string> = {
-  interested: "bg-slate-500/20 text-slate-300",
+  interested: "bg-slate-500/20 text-zinc-300",
   preparing: "bg-blue-500/20 text-blue-300",
   submitted: "bg-amber-500/20 text-amber-300",
   selected: "bg-emerald-500/20 text-emerald-300",

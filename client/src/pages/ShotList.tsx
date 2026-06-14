@@ -56,7 +56,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   const FORMATS = ["4K DCI (4096×2160)","4K UHD (3840×2160)","6K (6144×3456)","8K (8192×4320)","2K (2048×1080)","1080p","S35 4K ARRIRAW","LF ARRIRAW","BRAW 6K","XAVC-I","ProRes 4444","ProRes 422 HQ","H.265 4K"];
 
   const STATUS_CONFIG: Record<ShotStatus, { label: string; color: string; bg: string; dot: string }> = {
-    "not-started":  { label: "Not Started", color: "text-gray-400",   bg: "bg-gray-500/10",   dot: "#9ca3af" },
+    "not-started":  { label: "Not Started", color: "text-zinc-400",   bg: "bg-gray-500/10",   dot: "#9ca3af" },
     "on-schedule":  { label: "On Schedule", color: "text-blue-400",   bg: "bg-blue-500/10",   dot: "#60a5fa" },
     "in-progress":  { label: "In Progress", color: "text-amber-400",  bg: "bg-amber-500/10",  dot: "#fbbf24" },
     "complete":     { label: "Complete",    color: "text-green-400",  bg: "bg-green-500/10",  dot: "#4ade80" },

@@ -48,13 +48,13 @@ const PLATFORM_META: Record<string, { label: string; color: string; bg: string; 
   reddit: { label: "Reddit", color: "text-orange-400", bg: "bg-orange-500/10 border-orange-500/20", icon: <MessageSquare className="h-4 w-4" /> },
   discord: { label: "Discord", color: "text-indigo-400", bg: "bg-indigo-500/10 border-indigo-500/20", icon: <MessageSquare className="h-4 w-4" /> },
   telegram: { label: "Telegram", color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20", icon: <Send className="h-4 w-4" /> },
-  medium: { label: "Medium", color: "text-gray-300", bg: "bg-gray-500/10 border-gray-500/20", icon: <BookOpen className="h-4 w-4" /> },
+  medium: { label: "Medium", color: "text-zinc-300", bg: "bg-gray-500/10 border-gray-500/20", icon: <BookOpen className="h-4 w-4" /> },
   hackernews: { label: "Hacker News", color: "text-orange-500", bg: "bg-orange-600/10 border-orange-600/20", icon: <Globe className="h-4 w-4" /> },
   whatsapp: { label: "WhatsApp", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", icon: <MessageSquare className="h-4 w-4" /> },
 };
 
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  draft: { label: "Draft", color: "bg-gray-500/20 text-gray-300 border-gray-500/30", icon: <FileText className="h-3 w-3" /> },
+  draft: { label: "Draft", color: "bg-gray-500/20 text-zinc-300 border-gray-500/30", icon: <FileText className="h-3 w-3" /> },
   review: { label: "In Review", color: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30", icon: <Eye className="h-3 w-3" /> },
   approved: { label: "Approved", color: "bg-green-500/20 text-green-300 border-green-500/30", icon: <CheckCircle className="h-3 w-3" /> },
   scheduled: { label: "Scheduled", color: "bg-blue-500/20 text-blue-300 border-blue-500/30", icon: <Clock className="h-3 w-3" /> },
@@ -103,7 +103,7 @@ function StatCard({ label, value, icon, color = "text-blue-400", trend }: {
 
 // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Platform Badge ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
 function PlatformBadge({ platform }: { platform: string }) {
-  const meta = PLATFORM_META[platform] || { label: platform, color: "text-gray-400", bg: "bg-gray-500/10 border-gray-500/20", icon: <Globe className="h-4 w-4" /> };
+  const meta = PLATFORM_META[platform] || { label: platform, color: "text-zinc-400", bg: "bg-gray-500/10 border-gray-500/20", icon: <Globe className="h-4 w-4" /> };
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${meta.bg} ${meta.color}`}>
       {meta.icon}

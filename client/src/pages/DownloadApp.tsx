@@ -114,7 +114,7 @@ export default function DownloadApp() {
             Virelle Studios
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>
-          <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
+          <p className="text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
             Every AI filmmaking tool ÃÂ¢ÃÂÃÂ Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more ÃÂ¢ÃÂÃÂ available on iOS today, with Android and desktop apps coming soon. One subscription. All platforms.
           </p>
         </div>
@@ -126,7 +126,7 @@ export default function DownloadApp() {
         <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">ÃÂ°ÃÂÃÂÃÂ± Mobile App</h2>
-            <p className="text-gray-400">iOS available now ÃÂ¢ÃÂÃÂ Android coming soon</p>
+            <p className="text-zinc-400">iOS available now ÃÂ¢ÃÂÃÂ Android coming soon</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
@@ -211,7 +211,7 @@ export default function DownloadApp() {
                 <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
                   <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                   <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
-                  <div className="text-xs text-gray-400 leading-snug">{f.desc}</div>
+                  <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>
                 </div>
               ))}
             </div>
@@ -222,7 +222,7 @@ export default function DownloadApp() {
         <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">ÃÂ°ÃÂÃÂÃÂ¥ÃÂ¯ÃÂ¸ÃÂ Desktop App</h2>
-            <p className="text-gray-400">
+            <p className="text-zinc-400">
               {links?.desktop?.available
                 ? "macOS, Windows & Linux ÃÂ¢ÃÂÃÂ native performance"
                 : "Native desktop apps ÃÂ¢ÃÂÃÂ coming soon"}
@@ -263,7 +263,7 @@ export default function DownloadApp() {
               <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
                 <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                 <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
-                <div className="text-xs text-gray-400 leading-snug">{f.desc}</div>
+                <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>
               </div>
             ))}
           </div>
@@ -273,7 +273,7 @@ export default function DownloadApp() {
         <div className="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20 rounded-3xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">ÃÂ°ÃÂÃÂÃÂ</div>
           <h2 className="text-xl sm:text-2xl font-bold mb-3 gradient-text-gold">One Subscription. All Platforms.</h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
+          <p className="text-zinc-400 max-w-xl mx-auto text-sm sm:text-base">
             Your Virelle subscription works across web, mobile, and desktop. Credits, projects, and settings sync automatically. New features added to the platform appear everywhere ÃÂ¢ÃÂÃÂ no app update required.
           </p>
         </div>
@@ -283,7 +283,7 @@ export default function DownloadApp() {
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center">
             <div className="text-3xl mb-3">ÃÂ°ÃÂÃÂÃÂ</div>
             <h3 className="text-xl font-bold mb-2 gradient-text-gold">Share with Your Crew</h3>
-            <p className="text-gray-400 mb-6 text-sm sm:text-base">
+            <p className="text-zinc-400 mb-6 text-sm sm:text-base">
               Share your referral link ÃÂ¢ÃÂÃÂ you both earn bonus credits when they sign up.
             </p>
             <button
@@ -295,7 +295,7 @@ export default function DownloadApp() {
           </div>
         ) : (
           <div className="text-center pb-8">
-            <p className="text-gray-400 mb-4 text-sm">Create your account to get started</p>
+            <p className="text-zinc-400 mb-4 text-sm">Create your account to get started</p>
             <Button
               onClick={() => setLocation("/register")}
               className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 py-3 rounded-xl text-lg"
