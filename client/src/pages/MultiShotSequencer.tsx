@@ -200,7 +200,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               </div>
               {shotCharIds.length === 0 && (
                 <p className="text-xs text-muted-foreground/60 mt-1">
-                  Tap characters to assign them Ã¢ÂÂ their costumes &amp; likeness will be locked in.
+                  Tap characters to assign them — their costumes &amp; likeness will be locked in.
                 </p>
               )}
             </div>
@@ -225,7 +225,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     const [lensBrand, setLensBrand] = useState("zeiss-supreme-prime");
     const [aperture, setAperture] = useState("t2.8");
     const [sequenceMode, setSequenceMode] = useState<"auto" | "manual">("manual");
-    /** Scene-level character roster Ã¢ÂÂ union of all per-shot selections */
+    /** Scene-level character roster — union of all per-shot selections */
     const [sceneCharacterIds, setSceneCharacterIds] = useState<number[]>([]);
 
     const { data: characters = [] } = trpc.character.listByProject.useQuery(
@@ -311,13 +311,13 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     };
 
     const updateSceneMutation = trpc.scene.update.useMutation({
-      onSuccess: () => toast.success(`Multi-shot sequence saved Ã¢ÂÂ ${shots.length} shots, ${totalDuration}s total`),
+      onSuccess: () => toast.success(`Multi-shot sequence saved — ${shots.length} shots, ${totalDuration}s total`),
       onError: (err) => toast.error(err.message || "Failed to save sequence"),
     });
 
     const generatePreviewMutation = trpc.scene.generatePreview.useMutation({
       onSuccess: (data) => {
-        toast.success("Scene preview generated Ã¢ÂÂ costume & character consistency applied");
+        toast.success("Scene preview generated — costume & character consistency applied");
       },
       onError: (err) => toast.error(err.message || "Preview generation failed"),
     });
@@ -384,8 +384,8 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                   Multi-Shot Sequencer
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  {shots.length} shots ÃÂ· {totalDuration}s total ÃÂ· {sequenceMode} mode
-                  {sceneCharacterIds.length > 0 && ` ÃÂ· ${sceneCharacterIds.length} characters cast`}
+                  {shots.length} shots · {totalDuration}s total · {sequenceMode} mode
+                  {sceneCharacterIds.length > 0 && ` · ${sceneCharacterIds.length} characters cast`}
                 </p>
               </div>
             </div>
@@ -495,7 +495,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               </CardContent>
             </Card>
 
-            {/* Scene Cast Ã¢ÂÂ select characters that appear anywhere in this scene */}
+            {/* Scene Cast — select characters that appear anywhere in this scene */}
             {characters.length > 0 && (
               <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -521,7 +521,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                   {sceneCharacterIds.length > 0 && (
                     <p className="text-xs text-emerald-400 mt-2 flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
-                      {sceneCharacterIds.length} character{sceneCharacterIds.length > 1 ? "s" : ""} locked in Ã¢ÂÂ costumes auto-applied per shot
+                      {sceneCharacterIds.length} character{sceneCharacterIds.length > 1 ? "s" : ""} locked in — costumes auto-applied per shot
                     </p>
                   )}
                 </CardContent>
