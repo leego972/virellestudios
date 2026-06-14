@@ -233,7 +233,7 @@ import { useRoute, useLocation } from "wouter";
               )}
             </div>
 
-            {/* Sidebar ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Rewards + Back */}
+            {/* Sidebar — Rewards + Back */}
             <div className="space-y-4">
               {/* Reward tiers */}
               {rewards.length > 0 && (
@@ -296,20 +296,20 @@ import { useRoute, useLocation } from "wouter";
                       onClick={handleBack}
                     >
                       {backing ? (
-                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦</span>
+                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />Processing…</span>
                       ) : (
                         <span className="flex items-center gap-2"><Heart className="w-4 h-4" />Back this project</span>
                       )}
                     </Button>
                   ) : (
                     <Button className="w-full hover:border-amber-500/50 hover:text-amber-400" variant="outline" disabled>
-                      {campaign.status === "funded" ? "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ Funded ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Campaign Closed" : "Campaign Ended"}
+                      {campaign.status === "funded" ? "🎉 Funded — Campaign Closed" : "Campaign Ended"}
                     </Button>
                   )}
 
                   {isActive && (
                     <p className="text-xs text-center text-muted-foreground">
-                      Virelle charges a 7% platform fee ÃÂÃÂÃÂÃÂ· Powered by Stripe
+                      Virelle charges a 7% platform fee · Powered by Stripe
                     </p>
                   )}
                 </CardContent>
