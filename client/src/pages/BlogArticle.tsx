@@ -26,7 +26,7 @@ export default function BlogArticle() {
   // Update page title and meta for SEO
   useEffect(() => {
     if (article) {
-      document.title = `${article.metaTitle || article.title} | VirÃlle Studios Blog`;
+      document.title = `${article.metaTitle || article.title} | VirÉlle Studios Blog`;
       // Update meta description
       let metaDesc = document.querySelector('meta[name="description"]');
       if (!metaDesc) {
@@ -37,7 +37,7 @@ export default function BlogArticle() {
       metaDesc.setAttribute("content", article.metaDescription || article.excerpt || "");
     }
     return () => {
-      document.title = "VirÃlle Studios";
+      document.title = "VirÉlle Studios";
     };
   }, [article]);
 
@@ -53,7 +53,7 @@ export default function BlogArticle() {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: article?.title || "VirÃlle Studios Blog",
+        title: article?.title || "VirÉlle Studios Blog",
         text: article?.excerpt || "",
         url: window.location.href,
       }).catch(() => {});
@@ -65,7 +65,7 @@ export default function BlogArticle() {
   // Simple Markdown to HTML renderer.
   // Hardened against XSS: input is HTML-escaped FIRST, so any raw <script>,
   // <iframe>, or on*= attributes in article content render as plain text.
-  // Link URLs are validated to allow only http(s)/mailto â `javascript:` and
+  // Link URLs are validated to allow only http(s)/mailto — `javascript:` and
   // `data:` URIs become harmless "#" placeholders.
   const renderMarkdown = (md: string) => {
     const escapeHtml = (s: string) =>
@@ -103,7 +103,7 @@ export default function BlogArticle() {
       .replace(/```([\s\S]*?)```/g, '<pre class="bg-white/5 rounded-lg p-4 my-4 overflow-x-auto text-sm text-white/80"><code>$1</code></pre>')
       // Inline code
       .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1.5 py-0.5 rounded text-amber-400 text-sm">$1</code>')
-      // Links â href is validated through safeUrl, label stays escaped
+      // Links — href is validated through safeUrl, label stays escaped
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label: string, url: string) =>
         `<a href="${safeUrl(url)}" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">${label}</a>`
       )
@@ -227,7 +227,7 @@ export default function BlogArticle() {
         <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-amber-600/10 to-orange-600/5 border border-amber-500/20 text-center">
           <h3 className="text-xl font-bold mb-2 gradient-text-gold">Create Your Own AI Film</h3>
           <p className="text-white/60 mb-4">
-            Turn your ideas into Hollywood-quality films with VirÃlle Studios' AI engine.
+            Turn your ideas into Hollywood-quality films with VirÉlle Studios' AI engine.
           </p>
           <Link href="/register">
             <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6">
