@@ -398,7 +398,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
 
           {/* Published toggle */}
           <div className="flex items-center gap-3">
-            <Switch
+            <Switch className="data-[state=checked]:bg-amber-500"
               checked={form.isPublished}
               onCheckedChange={(v) => setForm(f => ({ ...f, isPublished: v }))}
             />

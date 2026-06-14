@@ -1396,7 +1396,7 @@ export default function ProjectDetail() {
                     <p className="text-sm font-medium">Subtitles</p>
                     <p className="text-xs text-muted-foreground">Burns scene dialogue as timed captions into the exported film</p>
                   </div>
-                  <Switch
+                  <Switch className="data-[state=checked]:bg-amber-500"
                     checked={!!((project as any)?.subtitlesEnabled)}
                     onCheckedChange={(checked) =>
                       updateMutation.mutate({ id: projectId, subtitlesEnabled: checked })
@@ -1412,7 +1412,7 @@ export default function ProjectDetail() {
                       AI-generated signing interpreter in a circle overlay ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ optional, requires a D-ID API key in your BYOK settings
                     </p>
                   </div>
-                  <Switch
+                  <Switch className="data-[state=checked]:bg-amber-500"
                     checked={!!((project as any)?.auslanEnabled)}
                     onCheckedChange={(checked) =>
                       updateMutation.mutate({ id: projectId, auslanEnabled: checked })

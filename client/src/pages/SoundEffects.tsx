@@ -494,7 +494,7 @@ import { useState, useRef } from "react";
                                   <div className="space-y-1.5">
                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Loop Playback</Label>
                                     <div className="flex items-center gap-3 h-8">
-                                      <Switch checked={!!sfx.loop} onCheckedChange={v => updateMutation.mutate({ id: sfx.id, loop: v ? 1 : 0 })} />
+                                      <Switch className="data-[state=checked]:bg-amber-500" checked={!!sfx.loop} onCheckedChange={v => updateMutation.mutate({ id: sfx.id, loop: v ? 1 : 0 })} />
                                       <span className="text-xs text-muted-foreground">{sfx.loop ? "Loops continuously" : "Single playback"}</span>
                                     </div>
                                   </div>

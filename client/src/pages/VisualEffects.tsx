@@ -495,7 +495,7 @@ import { useState } from "react";
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Chroma Key / Green Screen</Label>
-                            <Switch checked={vp.chromaKeyEnabled} onCheckedChange={v => saveParams(selectedVfx, { chromaKeyEnabled: v })} />
+                            <Switch className="data-[state=checked]:bg-amber-500" checked={vp.chromaKeyEnabled} onCheckedChange={v => saveParams(selectedVfx, { chromaKeyEnabled: v })} />
                           </div>
                           {vp.chromaKeyEnabled && (
                             <div className="flex items-center gap-2 p-2.5 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -515,7 +515,7 @@ import { useState } from "react";
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <Label className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5"><Crosshair className="h-3 w-3" />Rotoscoping Required</Label>
-                            <Switch checked={vp.rotoRequired} onCheckedChange={v => saveParams(selectedVfx, { rotoRequired: v })} />
+                            <Switch className="data-[state=checked]:bg-amber-500" checked={vp.rotoRequired} onCheckedChange={v => saveParams(selectedVfx, { rotoRequired: v })} />
                           </div>
                           {vp.rotoRequired && (
                             <Textarea value={vp.rotoNotes} onChange={e => saveParams(selectedVfx, { rotoNotes: e.target.value })} placeholder="Describe roto scope: which elements, isolation requirements, toleranceÃ¢ÂÂ¦" className="text-xs min-h-[60px] bg-black/30 resize-none border-border/40" />

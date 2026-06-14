@@ -1299,7 +1299,7 @@ export default function DesignerWardrobePage() {
                 ] as const).map(([k, label]) => (
                   <div key={k} className="flex items-center justify-between bg-zinc-950 border border-amber-500/20 rounded px-3 py-2">
                     <span className="text-xs text-zinc-400">{label}</span>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-amber-500"
                       checked={(itemForm as any)[k]}
                       onCheckedChange={(v) => setItemForm((f) => ({ ...f, [k]: v } as any))}
                     />

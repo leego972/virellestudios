@@ -442,7 +442,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div><Label className="text-xs">Daily credit cap</Label><Input type="number" value={live.cap?.dailyCredits ?? ""} onChange={e => updateCap({ dailyCredits: e.target.value ? Number(e.target.value) : null })} className="h-8 text-xs" /></div>
           <div><Label className="text-xs">Per-job cap</Label><Input type="number" value={live.cap?.perJobCredits ?? ""} onChange={e => updateCap({ perJobCredits: e.target.value ? Number(e.target.value) : null })} className="h-8 text-xs" /></div>
-          <div className="flex items-end gap-2 pb-1"><Switch checked={!!live.cap?.pauseOnExceed} onCheckedChange={c => updateCap({ pauseOnExceed: c })} /><span className="text-xs">Pause queue if over cap</span></div>
+          <div className="flex items-end gap-2 pb-1 data-[state=checked]:bg-amber-500"><Switch checked={!!live.cap?.pauseOnExceed} onCheckedChange={c => updateCap({ pauseOnExceed: c })} /><span className="text-xs">Pause queue if over cap</span></div>
         </CardContent>
       </Card>
       <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Queue ({live.jobs.length} jobs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· est {dailyEstimate} cr {overCap && <span className="text-rose-400">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  over cap</span>})</CardTitle>
@@ -763,7 +763,7 @@ function LocksTab({ projectId }: { projectId: number }) {
                 )}
                 {!isLocked && s.videoUrl && <div className="text-[11px] text-emerald-400/70 mt-0.5 ml-5">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ has render ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ consider locking once approved</div>}
               </div>
-              <Switch checked={isLocked} onCheckedChange={(v) => onToggle(s.id, v, s.title || `Scene ${s.order ?? s.id}`)} disabled={toggle.isPending} />
+              <Switch className="data-[state=checked]:bg-amber-500" checked={isLocked} onCheckedChange={(v) => onToggle(s.id, v, s.title || `Scene ${s.order ?? s.id}`)} disabled={toggle.isPending} />
             </div>
           );
         })}

@@ -586,7 +586,7 @@ export default function DesignerStudioPage() {
 
                     {/* Publish toggle */}
                     <div className="flex items-center gap-1.5">
-                      <Switch
+                      <Switch className="data-[state=checked]:bg-amber-500"
                         checked={!!col.published}
                         onCheckedChange={(v) =>
                           publishMut.mutate({ collectionId: col.id, published: v })

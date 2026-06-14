@@ -185,7 +185,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
                     <Input value={v.label || ""} onChange={e => updateRow(i, { label: e.target.value })} placeholder={`v${i + 1}`} className="h-8 text-xs max-w-[140px]" />
                     <Input value={v.model || ""} onChange={e => updateRow(i, { model: e.target.value })} placeholder="model (sora-2-pro, runway, veo3...)" className="h-8 text-xs" />
                     <div className="flex items-center gap-1.5">
-                      <Switch checked={!!v.isFinal} onCheckedChange={c => updateRow(i, { isFinal: c })} />
+                      <Switch className="data-[state=checked]:bg-amber-500" checked={!!v.isFinal} onCheckedChange={c => updateRow(i, { isFinal: c })} />
                       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Final</span>
                     </div>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeRow(i)} aria-label="Remove version"><Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" /></Button>

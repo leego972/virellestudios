@@ -770,7 +770,7 @@ export default function TVCommercial() {
       {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Config Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {isMobile && (
         <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
-          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
+          <SheetContent side="left" className="glass-dark w-[85vw] max-w-sm p-0">
             <SheetHeader className="px-4 py-3 border-b">
               <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Settings2 className="h-4 w-4 text-blue-500" /> Platform & Format</SheetTitle>
             </SheetHeader>
@@ -816,7 +816,7 @@ export default function TVCommercial() {
       {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Shot Inspector Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       {isMobile && (
         <Sheet open={mobileShotOpen} onOpenChange={setMobileShotOpen}>
-          <SheetContent side="bottom" className="h-[70vh] p-0">
+          <SheetContent side="bottom" className="glass-dark h-[70vh] p-0">
             <SheetHeader className="px-4 py-3 border-b">
               <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Layers className="h-4 w-4 text-blue-500" /> {selectedShot?.label || "Shot Inspector"}</SheetTitle>
             </SheetHeader>

@@ -215,7 +215,7 @@ export default function AdminSignatureCast() {
                           </div>
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                              <Switch
+                              <Switch className="data-[state=checked]:bg-amber-500"
                                 checked={editDraft.commercialEligible ?? actor.commercialEligible}
                                 onCheckedChange={(v) => setEditDraft((d) => ({ ...d, commercialEligible: v }))}
                                 className="scale-75"
@@ -223,7 +223,7 @@ export default function AdminSignatureCast() {
                               <Label className="text-xs text-zinc-400">Commercial</Label>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Switch
+                              <Switch className="data-[state=checked]:bg-amber-500"
                                 checked={editDraft.featured ?? actor.featured}
                                 onCheckedChange={(v) => setEditDraft((d) => ({ ...d, featured: v }))}
                                 className="scale-75"
@@ -233,7 +233,7 @@ export default function AdminSignatureCast() {
                           </div>
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                              <Switch
+                              <Switch className="data-[state=checked]:bg-amber-500"
                                 checked={editDraft.retired ?? actor.retired}
                                 onCheckedChange={(v) => setEditDraft((d) => ({ ...d, retired: v }))}
                                 className="scale-75"
@@ -241,7 +241,7 @@ export default function AdminSignatureCast() {
                               <Label className="text-xs text-zinc-400">Retired</Label>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Switch
+                              <Switch className="data-[state=checked]:bg-amber-500"
                                 checked={editDraft.restricted ?? actor.restricted}
                                 onCheckedChange={(v) => setEditDraft((d) => ({ ...d, restricted: v }))}
                                 className="scale-75"
