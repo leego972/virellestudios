@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
+import StudioOpener from "@/components/StudioOpener";
   ArrowLeft, Sparkles, Tv, Play, Pause, Plus, Trash2, GripVertical,
   Type, Music, Volume2, Clock, Megaphone, Wand2, Eye, Download,
   Layers, Zap, Settings2, RotateCcw, Copy, Target, Palette, Globe,
@@ -124,6 +125,7 @@ function getDefaultShots(durationSec: number): CommercialShot[] {
 export default function TVCommercial() {
   const params = useParams<{ projectId: string }>();
   const projectId = Number(params.projectId);
+  const [showOpener, setShowOpener] = useState(false);
   const [, setLocation] = useLocation();
 
   // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Data ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
@@ -150,7 +152,7 @@ export default function TVCommercial() {
   });
   const generateCommercialMutation = trpc.generation.generateTrailer.useMutation({
     onSuccess: () => {
-      toast.success("Commercial generation started ÃÂ¢ÃÂÃÂ check your project for the output");
+      setShowOpener(true);
     },
     onError: (err) => {
       toast.error(err.message || "Failed to generate commercial");
@@ -299,7 +301,20 @@ export default function TVCommercial() {
     return scene?.thumbnailUrl || null;
   };
 
-  return (
+  if (showOpener) {
+      return (
+        <StudioOpener
+          mode="film"
+          skippable
+          onComplete={() => {
+            setShowOpener(false);
+            toast.success("Commercial generation started — check your project for the output");
+          }}
+        />
+      );
+    }
+
+    return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <div className="border-b sticky top-0 z-40" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
