@@ -13,37 +13,37 @@ export const ENV = {
   gmailAppPassword: process.env.GMAIL_APP_PASSWORD ?? "",
   emailFromAddress: process.env.EMAIL_FROM ?? "studiosvirelle@gmail.com",
 
-  // ─── Stripe ────────────────────────────────────────────────────────────────
+  // âââ Stripe ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
 
-  // ─── Indie tier (DB: "indie") — AUD ────────────────────────────────────────
+  // âââ Indie tier (DB: "indie") â AUD ââââââââââââââââââââââââââââââââââââââââ
   stripeIndieMonthlyPriceId: process.env.STRIPE_INDIE_MONTHLY_PRICE_ID ?? "",
   stripeIndieAnnualPriceId: process.env.STRIPE_INDIE_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Creator tier (DB: "amateur") — AUD ────────────────────────────────────
+  // âââ Creator tier (DB: "amateur") â AUD ââââââââââââââââââââââââââââââââââââ
   stripeCreatorMonthlyPriceId: process.env.STRIPE_CREATOR_MONTHLY_PRICE_ID ?? "",
   stripeCreatorAnnualPriceId: process.env.STRIPE_CREATOR_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Studio tier (DB: "independent") — AUD ─────────────────────────────────
+  // âââ Studio tier (DB: "independent") â AUD âââââââââââââââââââââââââââââââââ
   stripeStudioMonthlyPriceId: process.env.STRIPE_STUDIO_MONTHLY_PRICE_ID ?? "",
   stripeStudioAnnualPriceId: process.env.STRIPE_STUDIO_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Production tier (DB: "studio") — AUD (consultative; base price only) ──
+  // âââ Production tier (DB: "studio") â AUD (consultative; base price only) ââ
   stripeProductionMonthlyPriceId: process.env.STRIPE_PRODUCTION_MONTHLY_PRICE_ID ?? "",
   stripeProductionAnnualPriceId: process.env.STRIPE_PRODUCTION_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Enterprise tier (DB: "industry") — AUD (custom; base price only) ───────
+  // âââ Enterprise tier (DB: "industry") â AUD (custom; base price only) âââââââ
   stripeEnterpriseMonthlyPriceId: process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID ?? "",
   stripeEnterpriseAnnualPriceId: process.env.STRIPE_ENTERPRISE_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Designer Marketplace membership — AUD (v7.0) ──────────────────────────
+  // âââ Designer Marketplace membership â AUD (v7.0) ââââââââââââââââââââââââââ
   stripeDesignerYearlyPriceId: process.env.STRIPE_DESIGNER_YEARLY_PRICE_ID ?? "",
   stripeConnectReturnUrl: process.env.STRIPE_CONNECT_RETURN_URL ?? "",
   stripeConnectRefreshUrl: process.env.STRIPE_CONNECT_REFRESH_URL ?? "",
 
-  // ─── Backward-compat aliases (old USD keys — kept so existing webhooks work) ─
+  // âââ Backward-compat aliases (old USD keys â kept so existing webhooks work) â
   stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
   stripeIndustryPriceId: process.env.STRIPE_INDUSTRY_PRICE_ID ?? "",
   stripeProMonthlyPriceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? process.env.STRIPE_PRO_PRICE_ID ?? "",
@@ -55,42 +55,61 @@ export const ENV = {
   stripeIndependentMonthlyPriceId: process.env.STRIPE_INDEPENDENT_MONTHLY_PRICE_ID ?? "",
   stripeIndependentAnnualPriceId: process.env.STRIPE_INDEPENDENT_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Credit top-up packs — AUD ─────────────────────────────────────────────
-  stripeTopUp10PriceId: process.env.STRIPE_TOPUP_10_PRICE_ID ?? "",    // 500 cr  — A$750
-  stripeTopUp30PriceId: process.env.STRIPE_TOPUP_30_PRICE_ID ?? "",    // 1,500 cr — A$1,800
-  stripeTopUp100PriceId: process.env.STRIPE_TOPUP_100_PRICE_ID ?? "",  // 3,000 cr — A$3,150
-  stripeTopUp200PriceId: process.env.STRIPE_TOPUP_200_PRICE_ID ?? "",  // 6,000 cr — A$5,400
-  stripeTopUp500PriceId: process.env.STRIPE_TOPUP_500_PRICE_ID ?? "",  // 12,000 cr — A$9,000
-  stripeTopUp1000PriceId: process.env.STRIPE_TOPUP_1000_PRICE_ID ?? "", // 25,000 cr — A$15,000
+  // âââ Credit top-up packs â AUD âââââââââââââââââââââââââââââââââââââââââââââ
+  stripeTopUp10PriceId: process.env.STRIPE_TOPUP_10_PRICE_ID ?? "",    // 500 cr  â A$750
+  stripeTopUp30PriceId: process.env.STRIPE_TOPUP_30_PRICE_ID ?? "",    // 1,500 cr â A$1,800
+  stripeTopUp100PriceId: process.env.STRIPE_TOPUP_100_PRICE_ID ?? "",  // 3,000 cr â A$3,150
+  stripeTopUp200PriceId: process.env.STRIPE_TOPUP_200_PRICE_ID ?? "",  // 6,000 cr â A$5,400
+  stripeTopUp500PriceId: process.env.STRIPE_TOPUP_500_PRICE_ID ?? "",  // 12,000 cr â A$9,000
+  stripeTopUp1000PriceId: process.env.STRIPE_TOPUP_1000_PRICE_ID ?? "", // 25,000 cr â A$15,000
 
-  // ─── OpenAI ────────────────────────────────────────────────────────────────
+  // âââ OpenAI ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   openaiApiKey: process.env.OPENAI_API_KEY ?? "",
 
-  // ─── Runway ML ─────────────────────────────────────────────────────────────
+  // âââ Runway ML âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   runwayApiKey: process.env.RUNWAYML_API_SECRET || process.env.RUNWAY_API_KEY || "",
 
-  // ─── fal.ai (video generation — platform key used as fallback for admin users) ────
+  // âââ fal.ai (video generation â platform key used as fallback for admin users) ââââ
   falApiKey: process.env.FAL_KEY ?? "",
 
-  // ─── Pollinations (free video generation — available to all users via key pool) ─
+  // âââ Pollinations (free video generation â available to all users via key pool) â
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY ?? "",
 
-  // ─── Google (Nano Banana image generation + Veo 3 / Gemini Imagen) ──────────
+  // âââ Google (Nano Banana image generation + Veo 3 / Gemini Imagen) ââââââââââ
   googleApiKey: process.env.GOOGLE_API_KEY ?? "",
 
-  // ─── Hugging Face (FLUX.1-dev image generation fallback) ──────────────────────
+  // âââ Hugging Face (FLUX.1-dev image generation fallback) ââââââââââââââââââââââ
   huggingFaceApiKey: process.env.HUGGING_FACE_API_KEY ?? "",
 
-  // ─── Admin ─────────────────────────────────────────────────────────────
+  // âââ Admin âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   adminEmail: process.env.ADMIN_EMAIL ?? "",
 
-  // ─── TikTok Content Posting API ────────────────────────────────────────────
+  // âââ TikTok Content Posting API ââââââââââââââââââââââââââââââââââââââââââââ
   tiktokCreatorToken: process.env.TIKTOK_CREATOR_TOKEN ?? "",
   tiktokAccessToken: process.env.TIKTOK_ACCESS_TOKEN ?? "",
   tiktokClientKey: process.env.TIKTOK_CLIENT_KEY ?? "",
   tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET ?? "",
 
-  // ─── Social media marketing channels ──────────────────────────────────────
+
+    // ─── YouTube Data API v3 ────────────────────────────────────────────────
+    youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
+    youtubeChannelId: process.env.YOUTUBE_CHANNEL_ID ?? "",
+
+    // ─── Threads (Meta) ─────────────────────────────────────────────────────
+    threadsAccessToken: process.env.THREADS_ACCESS_TOKEN ?? "",
+    threadsUserId: process.env.THREADS_USER_ID ?? "",
+
+    // ─── Product Hunt ────────────────────────────────────────────────────────
+    productHuntApiToken: process.env.PRODUCT_HUNT_API_TOKEN ?? "",
+
+    // ─── Substack ────────────────────────────────────────────────────────────
+    substackApiKey: process.env.SUBSTACK_API_KEY ?? "",
+    substackPublicationUrl: process.env.SUBSTACK_PUBLICATION_URL ?? "",
+
+    // ─── Google Search Console Indexing API ─────────────────────────────────
+    // Base64-encoded service account JSON for instant URL indexing
+    googleIndexingSaKey: process.env.GOOGLE_INDEXING_SA_KEY ?? "",
+  // âââ Social media marketing channels ââââââââââââââââââââââââââââââââââââââ
   metaAccessToken: process.env.META_ACCESS_TOKEN ?? "",
   metaAdAccountId: process.env.META_AD_ACCOUNT_ID ?? "",
   googleAdsCustomerId: process.env.GOOGLE_ADS_CUSTOMER_ID ?? "",
@@ -109,7 +128,7 @@ export const ENV = {
   pinterestAccessToken: process.env.PINTEREST_ACCESS_TOKEN ?? "",
   pinterestAdAccountId: process.env.PINTEREST_AD_ACCOUNT_ID ?? "",
 
-  // ─── Expanded channels ─────────────────────────────────────────────────────
+  // âââ Expanded channels âââââââââââââââââââââââââââââââââââââââââââââââââââââ
   devtoApiKey: process.env.DEVTO_API_KEY ?? "",
   mediumAccessToken: process.env.MEDIUM_ACCESS_TOKEN ?? "",
   mediumAuthorId: process.env.MEDIUM_AUTHOR_ID ?? "",
@@ -124,16 +143,16 @@ export const ENV = {
   whatsappAccessToken: process.env.WHATSAPP_ACCESS_TOKEN ?? "",
   whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID ?? "",
 
-  // ─── Groq (free LLM — Llama 3.3 70B, tool-calling capable) ──────────────
+  // âââ Groq (free LLM â Llama 3.3 70B, tool-calling capable) ââââââââââââââ
     groqApiKey: process.env.GROQ_API_KEY ?? "",
 
-    // ─── TitanAI Inference API ─────────────────────────────────────────────────
-  // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh5.vast.ai:8000 — current Vast box: TitanAI-Verified-2)
-  // Leave empty to disable — falls back to OpenAI/Forge routing as normal.
-  // Leave empty string when TITAN_API_URL is unset — server routes skip TitanAI and fall back to OpenAI
+    // âââ TitanAI Inference API âââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh5.vast.ai:8000 â current Vast box: TitanAI-Verified-2)
+  // Leave empty to disable â falls back to OpenAI/Forge routing as normal.
+  // Leave empty string when TITAN_API_URL is unset â server routes skip TitanAI and fall back to OpenAI
   titanApiUrl: process.env.TITAN_API_URL ?? "",
   titanApiKey: process.env.TITAN_API_KEY ?? "",
-  /** Venice AI permanent platform key — used as the default LLM for ALL users (Assistant, script gen, scene breakdowns) when no user-specific LLM key is set. OpenAI-compatible. */
+  /** Venice AI permanent platform key â used as the default LLM for ALL users (Assistant, script gen, scene breakdowns) when no user-specific LLM key is set. OpenAI-compatible. */
   veniceApiKey: process.env.VENICE_API_KEY ?? "",
   veniceModel: process.env.VENICE_MODEL ?? "llama-3.3-70b",
 };
