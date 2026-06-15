@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { getStripePriceId } from "./stripeProvisioning";
 import { ENV } from "./env";
 import type { User } from "../../drizzle/schema";
+import { logger } from "./logger";
 
 // Initialize Stripe
 export const stripe = ENV.stripeSecretKey
@@ -12,20 +13,20 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-// Internal DB tier keys — display names are mapped in the frontend:
-//   "indie"       → "Indie"       (A$149/mo — 500 credits — entry tier)
-//   "amateur"     → "Creator"     (A$490/mo — 2,000 credits)
-//   "independent" → "Industry"    (A$1,490/mo — 6,000 credits — top self-serve tier)
-//   "creator"     → "Industry"    (alias for independent, backward-compat)
-//   "studio"      → "Industry"    (alias for independent, backward-compat)
-//   "industry"    → "Industry"    (custom/sales-led, same display name)
+// Internal DB tier keys â display names are mapped in the frontend:
+//   "indie"       â "Indie"       (A$149/mo â 500 credits â entry tier)
+//   "amateur"     â "Creator"     (A$490/mo â 2,000 credits)
+//   "independent" â "Industry"    (A$1,490/mo â 6,000 credits â top self-serve tier)
+//   "creator"     â "Industry"    (alias for independent, backward-compat)
+//   "studio"      â "Industry"    (alias for independent, backward-compat)
+//   "industry"    â "Industry"    (custom/sales-led, same display name)
 export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
-  // ─── Top-tier helpers ─────────────────────────────────────────────────────────
+  // âââ Top-tier helpers âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   // Independent / creator / studio / industry = "Industry" display tier.
   // These users get AI generation services (character gen, photo gen, wardrobe gen) FREE.
   // Lamalo clothing item purchases are always paid regardless of tier.
   export const TOP_TIER_KEYS: SubscriptionTier[] = ["independent", "creator", "studio", "industry"];
-  /** True when the user has an active top-tier subscription — AI gen services are free for them */
+  /** True when the user has an active top-tier subscription â AI gen services are free for them */
   export function isTopTierUser(user: { subscriptionTier?: string | null; subscriptionStatus?: string | null }): boolean {
     const status = user.subscriptionStatus ?? "none";
     return TOP_TIER_KEYS.includes((user.subscriptionTier ?? "none") as SubscriptionTier)
@@ -42,7 +43,7 @@ export interface TierLimits {
   maxCollaboratorsPerProject: number;
   maxScriptsPerProject: number;
   maxStorageMB: number;
-  // Feature access — Core (all tiers)
+  // Feature access â Core (all tiers)
   canUseQuickGenerate: boolean;
   canUseTrailerGeneration: boolean;
   canUseDirectorAssistant: boolean;
@@ -68,7 +69,7 @@ export interface TierLimits {
   canUseAIBudgetGen: boolean;
   canUseAISubtitleGen: boolean;
   canUseAILocationSuggest: boolean;
-  // Full film pipeline — all tiers
+  // Full film pipeline â all tiers
   canUseFullFilmGeneration: boolean;
   canUseAIVoiceActing: boolean;
   canUseAISoundtrack: boolean;
@@ -97,25 +98,25 @@ export interface TierLimits {
 }
 
 /**
- * VIRELLE STUDIOS — PREMIUM AI FILM PRODUCTION PLATFORM
+ * VIRELLE STUDIOS â PREMIUM AI FILM PRODUCTION PLATFORM
  *
  * Pricing architecture (AUD):
  *
  * MEMBERSHIP TIERS (required to use the platform):
- *   Indie    (DB: "indie")       — A$149/month   or A$1,490/year   — 500 credits/month
- *   Creator  (DB: "amateur")     — A$490/month   or A$4,900/year   — 2,000 credits/month
- *   Industry (DB: "independent") — A$1,490/month or A$14,900/year  — 6,000 credits/month
+ *   Indie    (DB: "indie")       â A$149/month   or A$1,490/year   â 500 credits/month
+ *   Creator  (DB: "amateur")     â A$490/month   or A$4,900/year   â 2,000 credits/month
+ *   Industry (DB: "independent") â A$1,490/month or A$14,900/year  â 6,000 credits/month
  *
  *   Legacy aliases (map to Industry): "creator", "studio"
- *   Enterprise (DB: "industry") — Custom pricing (sales-led) — 50,500 credits/month
+ *   Enterprise (DB: "industry") â Custom pricing (sales-led) â 50,500 credits/month
  *
  * FOUNDING MEMBER OFFER: 50% off first year on annual billing (VIRELLE_FOUNDER_50 coupon)
  *   Applies to Creator and Industry annual plans only.
  *
- * CREDITS SYSTEM — Every action costs credits:
+ * CREDITS SYSTEM â Every action costs credits:
  *   Create New Project:                      FREE
  *   Generate Film (AI scene breakdown):       10 credits
- *   Generate Scene Video (≤45s):             10 credits
+ *   Generate Scene Video (â¤45s):             10 credits
  *   Regenerate Scene Video:                   8 credits
  *   Generate Preview Image:                   3 credits
  *   Bulk Generate Previews (per scene):       3 credits
@@ -132,18 +133,18 @@ export interface TierLimits {
  *   Ad/Poster Generation:                     5 credits
  *   Export Final Film:                        8 credits
  *
- * CREDIT PACKS (AUD — one-time top-ups):
- *   Starter Pack     — 100 credits    A$19     (A$0.19/credit)
- *   Producer Pack    — 300 credits    A$49     (A$0.16/credit)
- *   Director Pack    — 750 credits    A$99     (A$0.13/credit)
- *   Filmmaker Pack   — 2,000 credits  A$199    (A$0.10/credit)
- *   Blockbuster Pack — 5,000 credits  A$399    (A$0.08/credit)
- *   Mogul Pack       — 12,000 credits A$799    (A$0.07/credit)
+ * CREDIT PACKS (AUD â one-time top-ups):
+ *   Starter Pack     â 100 credits    A$19     (A$0.19/credit)
+ *   Producer Pack    â 300 credits    A$49     (A$0.16/credit)
+ *   Director Pack    â 750 credits    A$99     (A$0.13/credit)
+ *   Filmmaker Pack   â 2,000 credits  A$199    (A$0.10/credit)
+ *   Blockbuster Pack â 5,000 credits  A$399    (A$0.08/credit)
+ *   Mogul Pack       â 12,000 credits A$799    (A$0.07/credit)
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 
-  // ─── NONE (no active subscription) ─── zero premium entitlements ──────────
+  // âââ NONE (no active subscription) âââ zero premium entitlements ââââââââââ
   none: {
     maxProjects: 0,
     maxCharactersPerProject: 0,
@@ -203,7 +204,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 0,
   },
 
-  // ─── INDIE (DB: "indie") ─── A$149/month — 500 credits/month ───────────────
+  // âââ INDIE (DB: "indie") âââ A$149/month â 500 credits/month âââââââââââââââ
   // Entry tier: screenplay tools, character creator, director assistant, shot list.
   // No video generation, no voice acting, no film score, no export.
   indie: {
@@ -265,7 +266,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 500,
   },
 
-  // ─── CREATOR (DB: "amateur") ─── A$490/month — 2,000 credits/month ──────────
+  // âââ CREATOR (DB: "amateur") âââ A$490/month â 2,000 credits/month ââââââââââ
   amateur: {
     maxProjects: 10,
     maxCharactersPerProject: 10,
@@ -325,7 +326,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 2000,
   },
 
-  // ─── INDUSTRY (DB: "independent") ─── A$1,490/month — 6,000 credits/month ───
+  // âââ INDUSTRY (DB: "independent") âââ A$1,490/month â 6,000 credits/month âââ
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -385,7 +386,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 6000,
   },
 
-  // ─── INDUSTRY alias (DB: "creator") ─── same limits as independent ───
+  // âââ INDUSTRY alias (DB: "creator") âââ same limits as independent âââ
   creator: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -414,7 +415,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 6000,
   },
 
-  // ─── INDUSTRY alias (DB: "studio") ─── same limits as independent ───
+  // âââ INDUSTRY alias (DB: "studio") âââ same limits as independent âââ
   studio: {
     maxProjects: 100,
     maxCharactersPerProject: 100,
@@ -443,7 +444,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 15500,
   },
 
-  // ─── ENTERPRISE (DB: "industry") ─── Custom pricing — 50,500 credits/month ───
+  // âââ ENTERPRISE (DB: "industry") âââ Custom pricing â 50,500 credits/month âââ
   industry: {
     maxProjects: 1000,
     maxCharactersPerProject: 1000,
@@ -503,7 +504,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 50500,
   },
 
-  // ─── BETA ─── FREE — Invite-only, full Industry Enterprise-level access ───
+  // âââ BETA âââ FREE â Invite-only, full Industry Enterprise-level access âââ
   beta: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -537,7 +538,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 };
 
 // ============================================================
-// FILM PRODUCTION PACKAGES — Per-film pricing
+// FILM PRODUCTION PACKAGES â Per-film pricing
 // ============================================================
 
 export interface FilmPackage {
@@ -555,7 +556,7 @@ export const FILM_PACKAGES: FilmPackage[] = [
   {
     id: "short_film",
     name: "Short Film",
-    description: "Up to 30 minutes — perfect for short films, pilots, and proof-of-concept",
+    description: "Up to 30 minutes â perfect for short films, pilots, and proof-of-concept",
     maxDurationMinutes: 30,
     fullPrice: 80000,
     launchPrice: 40000,
@@ -572,7 +573,7 @@ export const FILM_PACKAGES: FilmPackage[] = [
   {
     id: "feature_film",
     name: "Feature Film",
-    description: "Up to 90 minutes — full-length feature production",
+    description: "Up to 90 minutes â full-length feature production",
     maxDurationMinutes: 90,
     fullPrice: 200000,
     launchPrice: 100000,
@@ -604,9 +605,9 @@ export interface TierPricing {
 /**
  * Platform membership pricing (AUD, in cents).
  *
- * Indie     (indie):       A$149/mo   (A$1,490/yr)   — 500 credits/mo
- * Creator   (amateur):     A$490/mo   (A$4,900/yr)   — 2,000 credits/mo
- * Industry  (independent): A$1,490/mo (A$14,900/yr)  — 6,000 credits/mo
+ * Indie     (indie):       A$149/mo   (A$1,490/yr)   â 500 credits/mo
+ * Creator   (amateur):     A$490/mo   (A$4,900/yr)   â 2,000 credits/mo
+ * Industry  (independent): A$1,490/mo (A$14,900/yr)  â 6,000 credits/mo
  * (Legacy aliases "creator" and "studio" map to Industry)
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
@@ -633,7 +634,7 @@ export const TIER_DISPLAY_NAMES: Record<string, string> = {
   beta: "Beta",
 };
 
-// Launch special flag — set to false to disable 50% off
+// Launch special flag â set to false to disable 50% off
 export const LAUNCH_SPECIAL_ACTIVE = true;
 export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Creator / Industry
 
@@ -642,14 +643,14 @@ export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Crea
 // ============================================================
 
 export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
-  // ── Core video generation ──────────────────────────────────
+  // ââ Core video generation ââââââââââââââââââââââââââââââââââ
   generate_film:           { cost: 10,  label: "Generate Film (AI scene breakdown + script, full pipeline)" },
-  generate_scene_video:    { cost: 10,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
-  regenerate_scene_video:  { cost: 8,   label: "Regenerate Scene Video (≤45s; 80% of generate cost)" },
+  generate_scene_video:    { cost: 10,  label: "Generate Scene Video (â¤45s; longer scenes cost more)" },
+  regenerate_scene_video:  { cost: 8,   label: "Regenerate Scene Video (â¤45s; 80% of generate cost)" },
   generate_preview_image:  { cost: 3,   label: "Generate Preview Image (DALL-E 3 HD)" },
-  bulk_generate_previews:  { cost: 3,   label: "Bulk Generate Previews (per scene — image only)" },
-  bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
-  // ── AI writing & production tools ─────────────────────────
+  bulk_generate_previews:  { cost: 3,   label: "Bulk Generate Previews (per scene â image only)" },
+  bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene â duration-scaled)" },
+  // ââ AI writing & production tools âââââââââââââââââââââââââ
   virelle_chat:            { cost: 2,   label: "Virelle AI Chat / Director Assistant (per message)" },
   director_assistant:      { cost: 2,   label: "Director's Assistant SSE stream message" },
   voice_tts:               { cost: 2,   label: "Voice TTS synthesis (ElevenLabs / OpenAI)" },
@@ -662,8 +663,8 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   location_scout_ai:       { cost: 3,   label: "AI Location Scout (suggestions + reference image)" },
   budget_estimate_ai:      { cost: 5,   label: "AI Budget Estimate (multi-scene analysis)" },
   subtitle_gen_ai:         { cost: 8,   label: "AI Subtitle Generation (full film, large context)" },
-  trailer_gen:             { cost: 20,  label: "Trailer Generation (4–6 video clips, ~2 min cinematic)" },
-  // v6.71 — Auto Recap MP4 render. Charged when the user clicks "Render
+  trailer_gen:             { cost: 20,  label: "Trailer Generation (4â6 video clips, ~2 min cinematic)" },
+  // v6.71 â Auto Recap MP4 render. Charged when the user clicks "Render
   // final MP4" on a completed recap outline. The outline+segment generation
   // already costs `auto_recap`; this is a separate per-render fee for the
   // ffmpeg cut/concat/upload pass. Reserved at dispatch, finalized on
@@ -675,38 +676,38 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   tagline_variants_gen:    { cost: 3,   label: "AI Tagline Variants (5 distinct tagline options)" },
   brand_kit_gen:           { cost: 5,   label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
   influencer_kit_gen:      { cost: 5,   label: "AI Influencer Kit Generation (press release + social copy)" },
-  // ── Visual design AI (mobile-native tools) ─────────────────
-  color_grading_ai:        { cost: 4,   label: "AI Color Grading Plan (palette, LUTs, and settings — mobile)" },
-  mood_board_ai:           { cost: 3,   label: "AI Mood Board Generation (visual concept + color palette — mobile)" },
-  // ── Sound & voice generation ──────────────────────────────
+  // ââ Visual design AI (mobile-native tools) âââââââââââââââââ
+  color_grading_ai:        { cost: 4,   label: "AI Color Grading Plan (palette, LUTs, and settings â mobile)" },
+  mood_board_ai:           { cost: 3,   label: "AI Mood Board Generation (visual concept + color palette â mobile)" },
+  // ââ Sound & voice generation ââââââââââââââââââââââââââââââ
   sfx_generate_from_text:  { cost: 5,   label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
   sfx_voice_choir:         { cost: 5,   label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
-  // ── Film Post-Production AI ──────────────────────────────
+  // ââ Film Post-Production AI ââââââââââââââââââââââââââââââ
   film_post_adr_suggest:   { cost: 5,   label: "AI ADR Suggestions (dialogue replacement analysis per project)" },
   film_post_foley_suggest: { cost: 5,   label: "AI Foley Suggestions (sound design analysis per project)" },
   film_post_score_gen:     { cost: 8,   label: "AI Score Cue Generation (music cue breakdown per project)" },
   film_post_mix_export:    { cost: 2,   label: "Mix Summary Export (structured post-production report)" },
-  // ── Funding Directory ─────────────────────────────────────
+  // ââ Funding Directory âââââââââââââââââââââââââââââââââââââ
   funding_app_submit:      { cost: 10,  label: "Funding Application Submit (compiled pack + email delivery)" },
-  // ── Blog & content ────────────────────────────────────────
+  // ââ Blog & content ââââââââââââââââââââââââââââââââââââââââ
   blog_article_gen:        { cost: 5,   label: "Blog Article Generation (full article, ~1500 words)" },
-  // ── Export & project management ───────────────────────────
+  // ââ Export & project management âââââââââââââââââââââââââââ
   export_final_film:       { cost: 8,   label: "Export Final Film (full assembly + render)" },
-  create_project:          { cost: 0,   label: "Create New Project (FREE — no friction on start)" },
+  create_project:          { cost: 0,   label: "Create New Project (FREE â no friction on start)" },
   movie_export:            { cost: 5,   label: "Movie Export (scenes/trailer export)" },
-    script_coverage_ai:      { cost: 5,   label: "AI Script Coverage (logline, scores, reader notes — BYOK)" },
-  // ── Crowdfunding ────────────────────────────────────────────────────────────
-  crowdfund_campaign_launch: { cost: 0,   label: "Launch Crowdfunding Campaign (FREE — tier-gated, no credit fee)" },
+    script_coverage_ai:      { cost: 5,   label: "AI Script Coverage (logline, scores, reader notes â BYOK)" },
+  // ââ Crowdfunding ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  crowdfund_campaign_launch: { cost: 0,   label: "Launch Crowdfunding Campaign (FREE â tier-gated, no credit fee)" },
   crowdfund_ai_copy:         { cost: 3,   label: "AI Crowdfunding Copy (tagline + pitch description via Director AI)" },
   crowdfund_reward_gen:      { cost: 2,   label: "AI Reward Tier Suggestions (4 tiered reward ideas for campaign)" },
 };
 
 /**
  * Duration-scaled video credit cost.
- *   ≤15s   → 5 credits
- *   16–45s → 10 credits
- *   46–90s → 15 credits
- *   >90s   → 20 credits
+ *   â¤15s   â 5 credits
+ *   16â45s â 10 credits
+ *   46â90s â 15 credits
+ *   >90s   â 20 credits
  * For regeneration, apply a 20% discount (min 4 credits).
  */
 export function getVideoCredits(durationSeconds: number, isRegenerate = false): number {
@@ -808,7 +809,7 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
   if (lower.includes("amateur")) return "amateur";
   if (lower.includes("indie")) return "indie";
 
-  console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
+  logger.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
   return "independent";
 }
 
@@ -820,12 +821,12 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (!tier) return "none";
   if (tier === "free") return "none"; // free tier = no active subscription
   if (tier === "industry" || tier === "enterprise" || tier === "industry_enterprise") return "industry";
-  if (tier === "studio" || tier === "production_pro") return "independent"; // legacy aliases → Industry
+  if (tier === "studio" || tier === "production_pro") return "independent"; // legacy aliases â Industry
   if (tier === "independent" || tier === "creator") return "independent";
   if (tier === "amateur" || tier === "auteur") return "amateur";
   if (tier === "indie") return "indie";
   if (tier === "beta") return "beta";
-  // Unknown tier — deny access, force subscription
+  // Unknown tier â deny access, force subscription
   return "none";
 }
 
@@ -843,7 +844,7 @@ export function getEffectiveTier(user: User): SubscriptionTier {
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
     return mapTierName(user.subscriptionTier);
   }
-  // No active subscription — canceled, past_due, unpaid, expired, never-subscribed
+  // No active subscription â canceled, past_due, unpaid, expired, never-subscribed
   return "none";
 }
 
@@ -955,9 +956,9 @@ export async function createCheckoutSession(
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe is not configured");
 
-  // Card-only — us_bank_account (ACH) requires explicit Stripe account activation
+  // Card-only â us_bank_account (ACH) requires explicit Stripe account activation
   // Cast to any: Stripe 22 re-exports SessionCreateParams as a type alias, losing the
-  // PaymentMethodType sub-namespace — runtime value and Stripe API behavior are identical.
+  // PaymentMethodType sub-namespace â runtime value and Stripe API behavior are identical.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const paymentMethodTypes: any[] = ["card"];
 
@@ -995,7 +996,7 @@ export async function createCheckoutSession(
       const promoSession = await stripe.checkout.sessions.create(promoSessionParams);
       return promoSession.url!;
     } catch (err: any) {
-      console.error(`[Checkout] Failed to apply promo code coupon: ${err.message}`);
+      logger.error(`[Checkout] Failed to apply promo code coupon: ${err.message}`);
       // Fall through to standard checkout without discount
     }
   }
@@ -1021,7 +1022,7 @@ export async function createCheckoutSession(
         couponId = coupon.id;
       }
     } catch (err: any) {
-      console.error(`[Checkout] Failed to create/find founding coupon: ${err.message}`);
+      logger.error(`[Checkout] Failed to create/find founding coupon: ${err.message}`);
     }
   }
 
