@@ -16,6 +16,7 @@
  */
 import { storagePut } from "../storage";
 import { ENV } from "./env";
+import { logger } from "./logger";
 
 export type NanoBananaModel = "nano-banana-2" | "nano-banana-pro";
 
@@ -42,7 +43,7 @@ export async function generateNanoBananaImage(
 ): Promise<NanoBananaResponse> {
   const apiKey = options.userApiKey || ENV.googleApiKey;
   if (!apiKey) {
-    throw new Error("Google API key is not configured. Add your Google Gemini API key in Settings → API Keys to use Nano Banana image generation.");
+    throw new Error("Google API key is not configured. Add your Google Gemini API key in Settings â API Keys to use Nano Banana image generation.");
   }
 
   const model = MODEL_MAP[options.model || "nano-banana-2"];
@@ -67,7 +68,7 @@ export async function generateNanoBananaImage(
         });
       }
     } catch (e) {
-      console.warn("[NanoBanana] Failed to fetch reference image:", e);
+      logger.warn("[NanoBanana] Failed to fetch reference image:", e);
     }
   }
 
@@ -87,7 +88,7 @@ export async function generateNanoBananaImage(
     },
   };
 
-  console.log(`[NanoBanana] Generating image with model: ${model}`);
+  logger.info(`[NanoBanana] Generating image with model: ${model}`);
 
   const response = await fetch(url, {
     method: "POST",
@@ -133,7 +134,7 @@ export async function generateNanoBananaImage(
           mimeType
         );
         imageUrl = stored.url;
-        console.log(`[NanoBanana] Image generated and saved: ${imageUrl}`);
+        logger.info(`[NanoBanana] Image generated and saved: ${imageUrl}`);
       }
     }
   }
