@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight, Film, Sparkles, Shield, Globe, Zap,
   Target, Eye, Heart, Star, ChevronRight, Users,
-  Clapperboard, Award, Lightbulb, Code2
+  Clapperboard, Award, Lightbulb, Code2, Layers, DollarSign
 } from "lucide-react";
 
 const VALUES = [
@@ -171,6 +171,9 @@ export default function About() {
                 { icon: Users, label: "Active Directors", value: "500+" },
                 { icon: Globe, label: "Countries", value: "40+" },
                 { icon: Award, label: "Founding Year", value: "2025" },
+                { icon: Layers, label: "AI Providers", value: "14" },
+                { icon: Globe, label: "Subtitle Languages", value: "130+" },
+                { icon: DollarSign, label: "Funding Sources", value: "94+" },
               ].map((s) => {
                 const Icon = s.icon;
                 return (
