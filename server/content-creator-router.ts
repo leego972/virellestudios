@@ -68,7 +68,48 @@ export const contentCreatorRouter = router({
       return await getContentCreatorDashboard();
     } catch (err: any) {
       log.error("[ContentCreatorRouter] dashboard error:", err);
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message 
+    // ─── YouTube ──────────────────────────────────────────────────────────────
+
+    youtube: router({
+      /** Returns the URL the admin should visit to connect their YouTube channel */
+      getConnectUrl: adminProcedure.query(({ ctx }) => {
+        const { ENV } = require("./_core/env");
+        return {
+          configured: !!(ENV.youtubeClientId && ENV.youtubeClientSecret),
+          connected: !!ENV.youtubeRefreshToken,
+          connectUrl: "/api/youtube/connect",
+        };
+      }),
+
+      /** Post a YouTube community update / Shorts script for the given topic */
+      postCommunityUpdate: adminProcedure
+        .input(z.object({ topic: z.string().min(1), content: z.string().min(1) }))
+        .mutation(async ({ input }) => {
+          const { youtubeAdapter } = await import("./expanded-channels");
+          const result = await youtubeAdapter.postCommunityUpdate({
+            text: `${input.topic}\n\n${input.content}\n\nCreate your own AI film at https://virelle.life\n\n#AIFilmmaking #VirelleStudios #AICinema #IndieFilm`,
+          });
+          logger.info("[YouTube] Community update posted", result);
+          return result;
+        }),
+
+      /** Generate optimised Shorts metadata for a topic */
+      generateShortsScript: adminProcedure
+        .input(z.object({ topic: z.string().min(1), keywords: z.array(z.string()).default([]) }))
+        .mutation(async ({ input }) => {
+          const { youtubeAdapter } = await import("./expanded-channels");
+          const meta = await youtubeAdapter.generateShortsMetadata({
+            topic: input.topic,
+            keywords: input.keywords.length ? input.keywords : ["AI filmmaking", "Virelle Studios", "indie film", "AI cinema"],
+            videoScript: `${input.topic} — Powered by Virelle Studios AI filmmaking platform. Create cinematic AI films in minutes.`,
+          });
+          logger.info("[YouTube] Shorts metadata generated", { title: meta.title });
+          return meta;
+        }),
+    }),
+  
+});
     }
   }),
 
