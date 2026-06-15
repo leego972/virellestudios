@@ -1242,14 +1242,16 @@ export default function ContentCreatorPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className={`flex items-center gap-3 p-3 rounded-lg border ${dashboard?.tiktokConfigured ? "bg-pink-500/10 border-pink-500/30" : "bg-muted border-border"}`}>
-                  <div className={`h-3 w-3 rounded-full ${dashboard?.tiktokConfigured ? "bg-pink-400" : "bg-gray-500"}`} />
+                <div className={`flex items-center gap-3 p-3 rounded-lg border ${dashboard?.tiktokConfigured ? "bg-pink-500/10 border-pink-500/30" : dashboard?.tiktokKeysSet ? "bg-amber-500/10 border-amber-500/30" : "bg-muted border-border"}`}>
+                  <div className={`h-3 w-3 rounded-full ${dashboard?.tiktokConfigured ? "bg-pink-400" : dashboard?.tiktokKeysSet ? "bg-amber-400" : "bg-gray-500"}`} />
                   <div>
-                    <p className="text-sm font-medium">{dashboard?.tiktokConfigured ? "TikTok Content API Connected" : "TikTok Not Configured"}</p>
+                    <p className="text-sm font-medium">{dashboard?.tiktokConfigured ? "TikTok Connected" : dashboard?.tiktokKeysSet ? "Keys Configured — Authorise Below" : "TikTok Not Configured"}</p>
                     <p className="text-xs text-muted-foreground">
                       {dashboard?.tiktokConfigured
                         ? "Direct posting enabled for carousels and videos"
-                        : "Add TIKTOK_CLIENT_KEY & TIKTOK_CLIENT_SECRET to Railway, then connect below"}
+                        : dashboard?.tiktokKeysSet
+                          ? "Client key & secret found — click Connect to complete OAuth"
+                          : "Add TIKTOK_CLIENT_KEY & TIKTOK_CLIENT_SECRET to Railway first"}
                     </p>
                   </div>
                 </div>
@@ -1257,10 +1259,10 @@ export default function ContentCreatorPage() {
                 {!dashboard?.tiktokConfigured && (
                   <a
                     href="/api/tiktok/connect"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-500/10 border border-pink-500/30 text-pink-300 text-sm font-semibold hover:bg-pink-500/20 transition-colors"
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold transition-colors ${dashboard?.tiktokKeysSet ? "bg-pink-500/10 border-pink-500/30 text-pink-300 hover:bg-pink-500/20" : "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50 pointer-events-none"}`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.15 8.15 0 004.77 1.52V6.75a4.85 4.85 0 01-1-.06z"/></svg>
-                    Connect TikTok Account
+                    {dashboard?.tiktokKeysSet ? "Connect TikTok Account" : "Add Railway Keys First"}
                   </a>
                 )}
 
