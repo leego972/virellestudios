@@ -265,6 +265,203 @@ function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: 
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
+  // ─── YouTube Hub Tab ──────────────────────────────────────────────────────────
+  function YouTubeHubTab() {
+    const [topic, setTopic] = useState("");
+    const [generatedScript, setGeneratedScript] = useState<{
+      title: string; description: string; tags: string[]; categoryId: string;
+    } | null>(null);
+    const [posting, setPosting] = useState(false);
+    const [postResult, setPostResult] = useState<{ success: boolean; url?: string; error?: string } | null>(null);
+
+    const connectQuery = trpc.contentCreator.youtube.getConnectUrl.useQuery();
+    const generateScript = trpc.contentCreator.youtube.generateShortsScript.useMutation();
+    const postUpdate = trpc.contentCreator.youtube.postCommunityUpdate.useMutation();
+
+    const isConnected = connectQuery.data?.connected;
+    const isConfigured = connectQuery.data?.configured;
+
+    const handleGenerate = async () => {
+      if (!topic.trim()) return;
+      const result = await generateScript.mutateAsync({ topic });
+      setGeneratedScript(result);
+      toast.success("YouTube Shorts script generated!");
+    };
+
+    const handlePost = async () => {
+      if (!topic.trim() || !generatedScript) return;
+      setPosting(true);
+      setPostResult(null);
+      const result = await postUpdate.mutateAsync({ topic, content: generatedScript.description });
+      setPostResult(result);
+      setPosting(false);
+      if (result.success) toast.success("Posted to YouTube!");
+      else toast.error(result.error || "Post failed");
+    };
+
+    return (
+      <div className="space-y-4">
+        {/* Connection Status */}
+        <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+              <Video className="h-4 w-4 text-amber-400" />
+              YouTube Channel — @VirelleStudios
+            </CardTitle>
+            <CardDescription>Auto-post Shorts scripts and community updates to your channel</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Status badge */}
+            <div className="flex items-center gap-3">
+              {isConnected ? (
+                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                  <CheckCircle className="h-3 w-3 mr-1" /> Connected
+                </Badge>
+              ) : isConfigured ? (
+                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                  <AlertCircle className="h-3 w-3 mr-1" /> OAuth needed
+                </Badge>
+              ) : (
+                <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+                  <XCircle className="h-3 w-3 mr-1" /> Not configured
+                </Badge>
+              )}
+            </div>
+
+            {/* Connect button */}
+            {!isConnected && (
+              <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
+                {isConfigured ? (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Click below to connect your YouTube channel. You'll be taken to Google to approve access, then brought back with a token to paste into Railway.
+                    </p>
+                    <Button
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold gap-2"
+                      onClick={() => window.open('/api/youtube/connect', '_blank')}
+                    >
+                      <Video className="h-4 w-4" />
+                      Connect YouTube Channel
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Add <code className="text-amber-400">YOUTUBE_CLIENT_ID</code> and <code className="text-amber-400">YOUTUBE_CLIENT_SECRET</code> to Railway to enable YouTube integration.
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Content Generator */}
+        <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+              <Sparkles className="h-4 w-4 text-amber-400" />
+              Shorts Script Generator
+            </CardTitle>
+            <CardDescription>Generate optimised YouTube Shorts scripts, titles, and hashtags</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-sm">Topic / Film Concept</Label>
+              <Input
+                placeholder="e.g. How AI is changing indie filmmaking in 2026"
+                value={topic}
+                onChange={e => setTopic(e.target.value)}
+                className="bg-background/50 border-border/50"
+              />
+            </div>
+
+            <Button
+              onClick={handleGenerate}
+              disabled={!topic.trim() || generateScript.isPending}
+              className="bg-amber-500 hover:bg-amber-600 text-black font-semibold gap-2"
+            >
+              {generateScript.isPending ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Generate Shorts Script
+            </Button>
+
+            {generatedScript && (
+              <div className="space-y-3 rounded-lg border border-border/50 bg-background/30 p-4">
+                <div>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wide">Title</Label>
+                  <p className="text-sm font-semibold text-amber-400 mt-1">{generatedScript.title}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wide">Description</Label>
+                  <p className="text-sm text-foreground/80 mt-1 whitespace-pre-wrap">{generatedScript.description}</p>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wide">Tags</Label>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {generatedScript.tags.map(tag => (
+                      <Badge key={tag} variant="secondary" className="text-xs">#{tag}</Badge>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `${generatedScript.title}
+
+${generatedScript.description}
+
+Tags: ${generatedScript.tags.join(', ')}`
+                      );
+                      toast.success("Copied to clipboard!");
+                    }}
+                  >
+                    <Copy className="h-3 w-3" /> Copy All
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handlePost}
+                    disabled={!isConnected || posting}
+                    className="bg-red-600 hover:bg-red-700 text-white gap-2"
+                  >
+                    {posting ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                    {isConnected ? "Post to YouTube" : "Connect first"}
+                  </Button>
+                </div>
+                {postResult && (
+                  <div className={postResult.success ? "text-emerald-400 text-sm" : "text-red-400 text-sm"}>
+                    {postResult.success ? (
+                      <span>✅ Posted! <a href={postResult.url} target="_blank" rel="noreferrer" className="underline">{postResult.url}</a></span>
+                    ) : (
+                      <span>❌ {postResult.error}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Auto-posting info */}
+        <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+              <Zap className="h-4 w-4 text-amber-400" />
+              Auto-posting Schedule
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              The content engine automatically generates YouTube Shorts scripts every <strong className="text-amber-400">4 hours</strong>. Once your channel is connected, scripts will be queued and posted automatically.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  
 export default function ContentCreatorPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("studio");
@@ -517,12 +714,13 @@ export default function ContentCreatorPage() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
+        <TabsList className="flex w-full max-w-3xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-6 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
           <TabsTrigger value="studio" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Studio</TabsTrigger>
           <TabsTrigger value="queue" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Queue</TabsTrigger>
           <TabsTrigger value="campaigns" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Campaigns</TabsTrigger>
           <TabsTrigger value="tiktok" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">TikTok Hub</TabsTrigger>
           <TabsTrigger value="analytics" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Analytics</TabsTrigger>
+            <TabsTrigger value="youtube" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">YouTube</TabsTrigger>
         </TabsList>
 
         {/* ─── Studio Tab ─────────────────────────────────────────────────────── */}
@@ -1242,7 +1440,12 @@ export default function ContentCreatorPage() {
             </Card>
           )}
         </TabsContent>
-      </Tabs>
-  </div>
-  );
+
+          {/* ─── YouTube Tab ────────────────────────────────────────────────────── */}
+          <TabsContent value="youtube" className="space-y-4 mt-4">
+            <YouTubeHubTab />
+          </TabsContent>
+        </Tabs>
+    </div>
+    );
 }
