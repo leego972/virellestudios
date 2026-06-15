@@ -539,6 +539,12 @@ export default function Pricing() {
                   { name: "Multi-Shot Sequencer", indie: false, creator: false, industry: true },
                   { name: "NLE Export", indie: false, creator: false, industry: true },
                   { name: "Team Members", indie: "1", creator: "1", industry: "5" },
+                  { name: "Subtitle Languages", indie: "130+", creator: "130+", industry: "130+" },
+                  { name: "Wardrobe Library", indie: true, creator: true, industry: true },
+                  { name: "Funding Directory", indie: false, creator: true, industry: true },
+                  { name: "API Access", indie: false, creator: false, industry: true },
+                  { name: "Priority Support", indie: false, creator: false, industry: true },
+                  { name: "Custom Branding", indie: false, creator: false, industry: true },
                 ].map((row, i) => (
                   <tr key={i} className="hover:bg-amber-500/10/30 transition-colors">
                     <td className="py-4 px-6 font-medium text-zinc-400">{row.name}</td>
