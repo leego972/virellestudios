@@ -22,6 +22,7 @@ import React, { useState } from "react";
     });
 
     const seedMarketplace   = trpc.adminSeeding.seedMarketplace.useMutation(mkOpts("Seed Marketplace"));
+      const patchLamaloImages = (trpc.adminSeeding as any).patchLamaloImages.useMutation(mkOpts("Patch Lamalo Images"));
     const seedFunding       = trpc.adminSeeding.seedFundingSources.useMutation(mkOpts("Seed Funding"));
     const seedCrowdfunding  = (trpc.adminSeeding as any).seedCrowdfunding.useMutation(mkOpts("Seed Crowdfunding"));
     const seedExecutive     = trpc.adminSeeding.seedExecutive.useMutation(mkOpts("Seed Executive"));
@@ -85,6 +86,9 @@ import React, { useState } from "react";
                 <Button onClick={() => seedMarketplace.mutate()} disabled={isAnyLoading} className="w-full bg-white/10 hover:bg-white/20 text-white">
                   <Zap className="h-4 w-4 mr-2" />Seed Marketplace
                 </Button>
+                  <Button onClick={() => patchLamaloImages.mutate()} disabled={isAnyLoading} className="w-full mt-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30">
+                    <Zap className="h-4 w-4 mr-2" />Patch Item Images (fix broken)
+                  </Button>
               </CardContent>
             </Card>
 
