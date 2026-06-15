@@ -1,15 +1,16 @@
 import { ENV } from "./env";
 import { AsyncLocalStorage } from "async_hooks";
+import { logger } from "./logger";
 
 /**
  * Request-scoped LLM key context. Lets a top-level handler (e.g. quickGenerate's
  * background pipeline) inject the user's BYOK OpenAI/Anthropic key once, and have
  * EVERY nested invokeLLM call automatically prefer that key over the shared
- * platform key — without threading `userApiKey` through 80+ callsites.
+ * platform key â without threading `userApiKey` through 80+ callsites.
  *
  * Use:
  *   await withUserLlmKey({ openaiKey, anthropicKey }, async () => {
- *     // any code in here — including code in helper modules — that calls
+ *     // any code in here â including code in helper modules â that calls
  *     // invokeLLM() will use the user's key first, falling back to the
  *     // platform key only if the user's key is missing or fails.
  *   });
@@ -109,7 +110,7 @@ export type InvokeParams = {
   response_format?: ResponseFormat;
   systemTag?: string;
   model?: string;
-  /** Per-request user API key — takes priority over the platform key */
+  /** Per-request user API key â takes priority over the platform key */
   userApiKey?: string | null;
   /** Preferred model to use with userApiKey (defaults to gpt-4.1) */
   userModel?: string;
@@ -187,7 +188,7 @@ const normalizeMessage = (message: Message) => {
   const { role, name, tool_call_id } = message;
   const msgAny = message as any;
 
-  // Preserve tool_calls on assistant messages — required for multi-turn tool conversations
+  // Preserve tool_calls on assistant messages â required for multi-turn tool conversations
   if (role === "assistant" && msgAny.tool_calls?.length) {
     return {
       role,
@@ -270,7 +271,7 @@ const normalizeToolChoice = (
 /**
  * Resolve the API URL and key.
  * Priority: Venice (permanent platform LLM) > OpenAI > Forge.
- * Venice is the permanent default LLM for all users — set VENICE_API_KEY in env.
+ * Venice is the permanent default LLM for all users â set VENICE_API_KEY in env.
  */
 const resolveProvider = (): { url: string; apiKey: string; model: string } => {
   // Primary: Permanent platform Venice LLM (used by all users when no BYOK LLM is set)
@@ -291,7 +292,7 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     };
   }
 
-  // Groq free tier — Llama 3.3 70B with tool calling (free at console.groq.com)
+  // Groq free tier â Llama 3.3 70B with tool calling (free at console.groq.com)
   if (ENV.groqApiKey) {
     return {
       url: "https://api.groq.com/openai/v1/chat/completions",
@@ -366,13 +367,13 @@ const normalizeResponseFormat = ({
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  // ── TitanAI fast-path ───────────────────────────────────────────────────
+  // ââ TitanAI fast-path âââââââââââââââââââââââââââââââââââââââââââââââââââ
   // If TITAN_API_URL is set AND the caller requests a titan-* model, route
   // directly to the self-hosted TitanAI API server (OpenAI-compatible).
   // Falls back to standard OpenAI/Forge routing if TitanAI API is unavailable.
   const requestedModel = typeof params.model === "string" ? params.model : "";
   if (ENV.titanApiUrl && requestedModel.startsWith("titan-")) {
-    console.log(`[LLM] Routing to TitanAI API: ${requestedModel}`);
+    logger.info(`[LLM] Routing to TitanAI API: ${requestedModel}`);
     try {
       return await invokeLLMWithProvider(params, {
         url: `${ENV.titanApiUrl}/v1/chat/completions`,
@@ -380,18 +381,18 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
         model: requestedModel,
       });
     } catch (titanErr: unknown) {
-      console.warn(`[LLM] TitanAI API failed, falling back to platform provider: ${(titanErr as Error).message}`);
+      logger.warn(`[LLM] TitanAI API failed, falling back to platform provider: ${(titanErr as Error).message}`);
     }
   }
 
-    // BYOK priority chain: TitanAI (above) → Venice → OpenAI → platform Forge fallback.
+    // BYOK priority chain: TitanAI (above) â Venice â OpenAI â platform Forge fallback.
   // Venice and OpenAI keys come from either explicit params.userApiKey OR the request-
   // scoped withUserLlmKey() context (set once at the top of background pipelines).
   const userCtx = getUserLlmCtx();
   const veniceKey: string | null = userCtx.veniceKey || null;
   const openaiKey: string | null = params.userApiKey || userCtx.openaiKey || null;
 
-  // 1) Venice AI (OpenAI-compatible) — preferred user provider
+  // 1) Venice AI (OpenAI-compatible) â preferred user provider
   if (veniceKey) {
     try {
       return await invokeLLMWithProvider(params, {
@@ -400,7 +401,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
         model: params.userModel || VENICE_DEFAULT_MODEL,
       });
     } catch (e: any) {
-      console.warn(`[LLM] Venice key failed (${e.message?.slice(0, 80)}), trying next provider...`);
+      logger.warn(`[LLM] Venice key failed (${e.message?.slice(0, 80)}), trying next provider...`);
     }
   }
 
@@ -413,7 +414,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
         model: params.userModel || "gpt-4.1",
       });
     } catch (e: any) {
-      console.warn(`[LLM] OpenAI BYOK key failed (${e.message?.slice(0, 80)}), falling back to platform provider...`);
+      logger.warn(`[LLM] OpenAI BYOK key failed (${e.message?.slice(0, 80)}), falling back to platform provider...`);
     }
   }
   const provider = resolveProvider();
@@ -475,7 +476,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     };
   }
 
-  console.log(`[LLM] Using provider: ${provider.model} at ${provider.url.substring(0, 40)}...`);
+  logger.info(`[LLM] Using provider: ${provider.model} at ${provider.url.substring(0, 40)}...`);
 
   const response = await fetch(provider.url, {
     method: "POST",
@@ -491,12 +492,12 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     const isQuotaError = response.status === 429 || errorText.includes("insufficient_quota") || errorText.includes("quota");
     const isOpenAI = provider.url.includes("openai.com");
 
-    // OpenAI failed — if it's a quota/rate error, skip to Forge immediately.
+    // OpenAI failed â if it's a quota/rate error, skip to Forge immediately.
     // For other errors, try gpt-4.1-mini first, then Forge.
     if (isOpenAI) {
       if (!isQuotaError && ENV.openaiApiKey) {
-        // Transient error — try cheaper model on same account first
-        console.warn(`[LLM] OpenAI gpt-4.1 failed (${response.status}), trying gpt-4.1-mini...`);
+        // Transient error â try cheaper model on same account first
+        logger.warn(`[LLM] OpenAI gpt-4.1 failed (${response.status}), trying gpt-4.1-mini...`);
         try {
           return await invokeLLMWithProvider(params, {
             url: "https://api.openai.com/v1/chat/completions",
@@ -507,12 +508,12 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
           // Fall through to Forge
         }
       }
-      // Quota exhausted or mini also failed — use Forge/Gemini (free)
+      // Quota exhausted or mini also failed â use Forge/Gemini (free)
       if (ENV.forgeApiKey) {
         const forgeUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
           ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
           : "https://forge.manus.im/v1/chat/completions";
-        console.warn(`[LLM] OpenAI quota/error (${response.status}) — falling back to Forge/Gemini...`);
+        logger.warn(`[LLM] OpenAI quota/error (${response.status}) â falling back to Forge/Gemini...`);
         return invokeLLMWithProvider(params, {
           url: forgeUrl,
           apiKey: ENV.forgeApiKey,
@@ -521,9 +522,9 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       }
     }
 
-    // Forge/non-OpenAI failed — try OpenAI as fallback (only if not a quota situation)
+    // Forge/non-OpenAI failed â try OpenAI as fallback (only if not a quota situation)
     if (!isOpenAI && ENV.openaiApiKey && !isQuotaError) {
-      console.warn(`[LLM] Forge failed (${response.status}), trying OpenAI fallback...`);
+      logger.warn(`[LLM] Forge failed (${response.status}), trying OpenAI fallback...`);
       return invokeLLMWithProvider(params, {
         url: "https://api.openai.com/v1/chat/completions",
         apiKey: ENV.openaiApiKey,
@@ -532,7 +533,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     }
 
     throw new Error(
-      `LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`
+      `LLM invoke failed: ${response.status} ${response.statusText} â ${errorText}`
     );
   }
 
@@ -601,7 +602,7 @@ async function invokeLLMWithProvider(
     };
   }
 
-  console.log(`[LLM] Fallback provider: ${provider.model} at ${provider.url.substring(0, 40)}...`);
+  logger.info(`[LLM] Fallback provider: ${provider.model} at ${provider.url.substring(0, 40)}...`);
 
   const response = await fetch(provider.url, {
     method: "POST",
@@ -621,7 +622,7 @@ async function invokeLLMWithProvider(
       const forgeUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
         ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
         : "https://forge.manus.im/v1/chat/completions";
-      console.warn(`[LLM] Fallback OpenAI also quota-exhausted — using Forge/Gemini as final fallback...`);
+      logger.warn(`[LLM] Fallback OpenAI also quota-exhausted â using Forge/Gemini as final fallback...`);
       return invokeLLMWithProvider(params, {
         url: forgeUrl,
         apiKey: ENV.forgeApiKey,
@@ -629,7 +630,7 @@ async function invokeLLMWithProvider(
       });
     }
     throw new Error(
-      `LLM fallback invoke failed: ${response.status} ${response.statusText} – ${errorText}`
+      `LLM fallback invoke failed: ${response.status} ${response.statusText} â ${errorText}`
     );
   }
 
@@ -637,7 +638,7 @@ async function invokeLLMWithProvider(
 }
 
 /**
- * Streaming LLM invocation — yields tokens via onToken callback, calls onDone with full text.
+ * Streaming LLM invocation â yields tokens via onToken callback, calls onDone with full text.
  * Uses the same provider resolution as invokeLLM.
  */
 export async function invokeLLMStream(
@@ -666,7 +667,7 @@ export async function invokeLLMStream(
 
     if (!response.ok || !response.body) {
       const errText = await response.text().catch(() => response.statusText);
-      throw new Error(`LLM stream failed: ${response.status} – ${errText}`);
+      throw new Error(`LLM stream failed: ${response.status} â ${errText}`);
     }
 
     const reader = response.body.getReader();
