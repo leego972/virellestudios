@@ -14,6 +14,7 @@ import { useState } from "react";
   } from "lucide-react";
   import { useAuth } from "@/_core/hooks/useAuth";
   import { toast } from "sonner";
+  import SiteHead from "@/components/SiteHead";
 
   // ─── Full cast roster with Character DNA ──────────────────────────────────────
   const FLAGSHIP_STARS = [
@@ -595,7 +596,10 @@ import { useState } from "react";
 
     return (
       <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-
+        <SiteHead
+          title="Signature Cast — Virelle Studios"
+          description="Build your digital cast before you shoot. Browse AI actors with Character DNA Lock — consistent faces, voices, and mannerisms across every scene."
+        />
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden border-b border-amber-500/20">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-950/25 via-zinc-950 to-zinc-950" />
