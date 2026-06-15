@@ -29,6 +29,7 @@ import { generateVideoWithFallback } from "./_core/videoGeneration";
 import { storagePut } from "./storage";
 import { logger } from "./_core/logger";
 import { getErrorMessage } from "./_core/errors";
+import { ENV } from "./_core/env";
 import {
   contentCreatorPieces,
   contentCreatorCampaigns,
@@ -1321,6 +1322,8 @@ export async function getContentCreatorDashboard() {
       engagementRate: totalImpressions > 0 ? ((totalEngagements / totalImpressions) * 100).toFixed(2) + "%" : "0%",
     },
     autonomousConfig: AUTONOMOUS_CONFIG,
+      tiktokConfigured: isTikTokContentConfigured(),
+      tiktokKeysSet: !!(ENV.tiktokClientKey && ENV.tiktokClientSecret),
   };
 }
 
