@@ -111,6 +111,7 @@ export default function Contact() {
                   <div>
                     <p className="text-sm font-medium">Email</p>
                     <p className="text-sm text-muted-foreground">studiosvirelle@gmail.com</p>
+                    <p className="text-xs text-amber-400/60 mt-0.5">Response within 24 hours</p>
                   </div>
                 </CardContent>
               </Card>
@@ -122,7 +123,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Live Chat</p>
-                    <p className="text-sm text-muted-foreground">Available Mon-Fri, 9am-6pm EST</p>
+                    <p className="text-sm text-muted-foreground">Mon–Fri, 9 am–6 pm AEST · Fastest response</p>
                   </div>
                 </CardContent>
               </Card>
@@ -135,6 +136,7 @@ export default function Contact() {
                   <div>
                     <p className="text-sm font-medium">Enterprise & Industry</p>
                     <p className="text-sm text-muted-foreground">Custom plans for studios and production houses</p>
+                    <p className="text-xs text-amber-400/60 mt-0.5">Priority — same business day</p>
                   </div>
                 </CardContent>
               </Card>
