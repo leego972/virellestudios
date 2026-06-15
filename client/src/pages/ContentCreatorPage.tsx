@@ -1249,10 +1249,20 @@ export default function ContentCreatorPage() {
                     <p className="text-xs text-muted-foreground">
                       {dashboard?.tiktokConfigured
                         ? "Direct posting enabled for carousels and videos"
-                        : "Set TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET in environment"}
+                        : "Add TIKTOK_CLIENT_KEY & TIKTOK_CLIENT_SECRET to Railway, then connect below"}
                     </p>
                   </div>
                 </div>
+
+                {!dashboard?.tiktokConfigured && (
+                  <a
+                    href="/api/tiktok/connect"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-500/10 border border-pink-500/30 text-pink-300 text-sm font-semibold hover:bg-pink-500/20 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.15 8.15 0 004.77 1.52V6.75a4.85 4.85 0 01-1-.06z"/></svg>
+                    Connect TikTok Account
+                  </a>
+                )}
 
                 <div className="space-y-2">
                   <p className="text-xs font-medium text-muted-foreground">TikTok-Ready Content</p>
