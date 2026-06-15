@@ -96,7 +96,13 @@ function GoldWatermark() {
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
+    const [showSticky, setShowSticky] = useState(false);
+    useEffect(() => {
+      const onScroll = () => setShowSticky(window.scrollY > 600);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+    const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1143,6 +1149,29 @@ export default function Landing() {
           <p className="text-[10px] text-white/30 font-medium">© 2026 Virelle Studios. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
-}
+
+        {/* Sticky CTA bar */}
+        <div className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ${showSticky ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}>
+          <div className="bg-black/90 backdrop-blur-md border-t border-amber-500/20 px-4 py-3 flex items-center justify-between gap-4 max-w-screen-xl mx-auto">
+            <p className="text-sm text-white/70 hidden sm:block">
+              <span className="font-semibold text-white">Virelle Studios</span> — script to screen in one AI studio
+            </p>
+            <div className="flex items-center gap-3 ml-auto">
+              <button
+                onClick={() => setLocation("/pricing")}
+                className="text-sm text-white/60 hover:text-white transition-colors"
+              >
+                View Pricing
+              </button>
+              <button
+                onClick={() => setLocation("/register")}
+                className="text-sm font-bold px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black transition-colors"
+              >
+                Start Free Trial
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
