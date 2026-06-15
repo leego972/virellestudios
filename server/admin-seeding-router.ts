@@ -28,12 +28,18 @@ import { router, adminProcedure } from "./_core/trpc";
     seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
       const userId = ctx.user.id;
       // Fire-and-forget: 1400+ inserts would timeout if awaited
-      runLamaloSeed(userId).then(r => {
-        logger.info(`[Seed] Lamalo complete: ${r.collections} collections, ${r.items} items`);
+      // Run all seed scripts — INSERT IGNORE makes every run idempotent
+      Promise.all([
+        runLamaloSeed(userId),
+        runUniformSeed(userId),
+        runExecutiveSeed(userId),
+        runMasterSeed(userId),
+      ]).then(([lamalo, uniform, exec, master]) => {
+        logger.info(`[Seed] All complete — Lamalo: ${lamalo.collections}c/${lamalo.items}i, Uniform: ${(uniform as any)?.collections ?? 0}c, Executive: ${(exec as any)?.collections ?? 0}c, Master: ${(master as any)?.collections ?? 0}c`);
       }).catch(err => {
         logger.errorWithStack("[Seed] Marketplace seeding error", err);
       });
-      return { success: true, message: "Seeding started — items will appear within 60 seconds. Refresh the page to see them." };
+      return { success: true, message: "Seeding started — all collections and items will appear within 90 seconds. Refresh the page to see them." };
     }),
 
     /**
