@@ -290,7 +290,7 @@ export default function About() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center border-t border-border/40">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Join the founding directors</h2>
-          <p className="text-foreground/60 mb-8">Virelle is in its founding phase. The first 50 directors who join get half price on their first year's membership.</p>
+          <p className="text-foreground/60 mb-8">Virelle is in its founding phase. The first 50 directors who join receive 50% off their first year — locked in at founding-member pricing for life. No contracts, cancel anytime.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12" onClick={() => setLocation("/register")}>
               Claim Your Spot
