@@ -95,6 +95,11 @@ export const ENV = {
     youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
     youtubeChannelId: process.env.YOUTUBE_CHANNEL_ID ?? "",
 
+      // ─── YouTube OAuth (video upload & auto-posting) ─────────────────────────
+      youtubeClientId: process.env.YOUTUBE_CLIENT_ID ?? "",
+      youtubeClientSecret: process.env.YOUTUBE_CLIENT_SECRET ?? "",
+      youtubeRefreshToken: process.env.YOUTUBE_REFRESH_TOKEN ?? "",
+
     // ─── Threads (Meta) ─────────────────────────────────────────────────────
     threadsAccessToken: process.env.THREADS_ACCESS_TOKEN ?? "",
     threadsUserId: process.env.THREADS_USER_ID ?? "",
