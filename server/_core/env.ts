@@ -128,6 +128,15 @@ export const ENV = {
   linkedinOrganizationId: process.env.LINKEDIN_ORGANIZATION_ID ?? "",
   snapchatAccessToken: process.env.SNAPCHAT_ACCESS_TOKEN ?? "",
   snapchatAdAccountId: process.env.SNAPCHAT_AD_ACCOUNT_ID ?? "",
+  snapchatClientId: process.env.SNAPCHAT_CLIENT_ID ?? "",
+  snapchatClientSecret: process.env.SNAPCHAT_CLIENT_SECRET ?? "",
+  snapchatRefreshToken: process.env.SNAPCHAT_REFRESH_TOKEN ?? "",
+
+  // ─── Instagram (Meta Graph API — content publishing) ─────────────────────
+  instagramClientId: process.env.INSTAGRAM_CLIENT_ID ?? "",
+  instagramClientSecret: process.env.INSTAGRAM_CLIENT_SECRET ?? "",
+  instagramAccessToken: process.env.INSTAGRAM_ACCESS_TOKEN ?? "",
+  instagramUserId: process.env.INSTAGRAM_USER_ID ?? "",
   redditClientId: process.env.REDDIT_CLIENT_ID ?? "",
   redditClientSecret: process.env.REDDIT_CLIENT_SECRET ?? "",
   redditAccessToken: process.env.REDDIT_ACCESS_TOKEN ?? "",
