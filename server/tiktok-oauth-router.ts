@@ -14,7 +14,7 @@ import type { Express, Request, Response } from "express";
   export function registerTikTokOAuthRoutes(app: Express) {
     /** GET /api/tiktok/connect — admin only, redirects to TikTok OAuth */
     app.get("/api/tiktok/connect", requireAdminExpress, (req: Request, res: Response) => {
-      const clientKey = ENV.tiktokClientKey;
+      const clientKey = ENV.tiktokClientKey.trim();
       if (!clientKey) {
         res.status(400).send(`
           <html><body style="font-family:sans-serif;background:#080808;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;">
@@ -60,7 +60,7 @@ import type { Express, Request, Response } from "express";
       }
 
       const clientKey = ENV.tiktokClientKey;
-      const clientSecret = ENV.tiktokClientSecret;
+      const clientSecret = ENV.tiktokClientSecret.trim();
       if (!clientKey || !clientSecret) {
         res.status(400).send("TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET not configured.");
         return;
