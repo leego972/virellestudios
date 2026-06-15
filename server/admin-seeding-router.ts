@@ -316,7 +316,31 @@ import { router, adminProcedure } from "./_core/trpc";
             )
         `);
         const affected = (result as any).rowsAffected ?? (result as any)[0]?.affectedRows ?? '?';
-        return { success: true, updated: affected, message: `Patched ${affected} wardrobe items with Pollinations image URLs` };
+        
+          // Also backfill retailPriceAud for any items missing a price
+          await db.execute(sql`
+            UPDATE wardrobeItems
+            SET retailPriceAud = CASE LOWER(COALESCE(category, ''))
+              WHEN 'tops'        THEN 100
+              WHEN 'bottoms'     THEN 250
+              WHEN 'outerwear'   THEN 350
+              WHEN 'dresses'     THEN 200
+              WHEN 'swimwear'    THEN 150
+              WHEN 'footwear'    THEN 300
+              WHEN 'accessories' THEN 100
+              WHEN 'watches'     THEN 150
+              WHEN 'eyewear'     THEN 100
+              WHEN 'bags'        THEN 200
+              WHEN 'suits'       THEN 500
+              WHEN 'uniforms'    THEN 300
+              WHEN 'knitwear'    THEN 200
+              WHEN 'lingerie'    THEN 100
+              WHEN 'sleepwear'   THEN 100
+              ELSE 100
+            END
+            WHERE collectionId IS NOT NULL AND retailPriceAud IS NULL
+          `);
+          return { success: true, updated: affected, message: `Patched ${affected} wardrobe items with Pollinations image URLs` };
       } catch (error) {
         return { success: false, message: `Failed: ${error instanceof Error ? error.message : String(error)}` };
       }
