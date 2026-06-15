@@ -1,5 +1,5 @@
 /**
- * Video Stitcher v2.0 — Full Post-Production Pipeline
+ * Video Stitcher v2.0 â Full Post-Production Pipeline
  *
  * Pipeline:
  * 1. Download all scene video clips + audio assets to temp directory
@@ -20,10 +20,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { storagePut } from "../storage";
+import { logger } from "./logger";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export interface SceneAudio {
   /** Voice acting audio URL for this scene */
@@ -119,7 +120,7 @@ export interface StitchResult {
   mimeType: string;
 }
 
-// ─── Helpers ───
+// âââ Helpers âââ
 
 async function downloadFile(url: string, dest: string): Promise<void> {
   const response = await fetch(url);
@@ -165,7 +166,7 @@ function escapeSubtitleText(text: string): string {
     .replace(/%/g, "%%");
 }
 
-// ─── Title Card Generator ───
+// âââ Title Card Generator âââ
 
 async function generateTitleCard(
   tmpDir: string,
@@ -185,7 +186,7 @@ async function generateTitleCard(
   // Black background
   filters.push(`color=c=black:s=${resolution.width}x${resolution.height}:d=${duration}:r=24`);
 
-  // Title text — large, centered, fade in
+  // Title text â large, centered, fade in
   let drawtext = `drawtext=text='${escapedTitle}':fontsize=${Math.round(resolution.height / 10)}:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2-${Math.round(resolution.height / 15)}:alpha='if(lt(t,1.5),t/1.5,if(gt(t,${duration - 1.5}),( ${duration}-t)/1.5,1))'`;
   filters.push(drawtext);
 
@@ -219,11 +220,11 @@ async function generateTitleCard(
     outputPath,
   ], { timeout: 60000 });
 
-  console.log(`[VideoStitcher] Title card generated (${duration}s)`);
+  logger.info(`[VideoStitcher] Title card generated (${duration}s)`);
   return outputPath;
 }
 
-// ─── End Credits Generator ───
+// âââ End Credits Generator âââ
 
 async function generateEndCredits(
   tmpDir: string,
@@ -267,11 +268,11 @@ async function generateEndCredits(
     outputPath,
   ], { timeout: 60000 });
 
-  console.log(`[VideoStitcher] End credits generated (${duration}s, ${credits.length} entries)`);
+  logger.info(`[VideoStitcher] End credits generated (${duration}s, ${credits.length} entries)`);
   return outputPath;
 }
 
-// ─── Per-Scene Audio Mixing ───
+// âââ Per-Scene Audio Mixing âââ
 
 async function processSceneAudio(
   tmpDir: string,
@@ -314,7 +315,7 @@ async function processSceneAudio(
       try {
         await downloadFile(sfx.fileUrl, sfxPath);
       } catch (e) {
-        console.log(`[VideoStitcher] Warning: Could not download SFX "${sfx.name}": ${e}`);
+        logger.info(`[VideoStitcher] Warning: Could not download SFX "${sfx.name}": ${e}`);
         continue;
       }
 
@@ -359,17 +360,17 @@ async function processSceneAudio(
 
   try {
     await execFileAsync("ffmpeg", ffmpegArgs, { timeout: 120000 });
-    console.log(`[VideoStitcher] Scene ${sceneIndex}: mixed ${hasVoice ? "voice + " : ""}${sfxLabels.length} SFX`);
+    logger.info(`[VideoStitcher] Scene ${sceneIndex}: mixed ${hasVoice ? "voice + " : ""}${sfxLabels.length} SFX`);
     return outputPath;
   } catch (e) {
-    console.log(`[VideoStitcher] Warning: Audio mixing failed for scene ${sceneIndex}, using original: ${e}`);
+    logger.info(`[VideoStitcher] Warning: Audio mixing failed for scene ${sceneIndex}, using original: ${e}`);
     return sceneVideoPath; // Fallback to original if mixing fails
   }
 }
 
-// ─── Subtitle Burn-in ───
+// âââ Subtitle Burn-in âââ
 
-// ─── Auslan Interpreter Overlay ───
+// âââ Auslan Interpreter Overlay âââ
 
 /**
  * Composite an Auslan signing interpreter as a circular picture-in-picture
@@ -404,7 +405,7 @@ async function overlayAuslanOnScene(
   // 2. Apply circular alpha mask via geq (format=rgba required)
   // 3. Overlay the circle on the main video with eof_action=pass so the
   //    main scene continues playing after the avatar finishes (not truncated)
-  // Label the final output [out] so we can explicitly -map it — required
+  // Label the final output [out] so we can explicitly -map it â required
   // because any explicit -map disables FFmpeg's auto-mapping.
   const filterComplex = [
     `[1:v]scale=${circleSize}:${circleSize},format=rgba,`,
@@ -419,7 +420,7 @@ async function overlayAuslanOnScene(
       "-i", auslanVideoPath,
       "-filter_complex", filterComplex,
       "-map", "[out]",   // video: labelled filtergraph output
-      "-map", "0:a?",    // audio: from scene (optional — not all clips have audio at this stage)
+      "-map", "0:a?",    // audio: from scene (optional â not all clips have audio at this stage)
       "-c:v", "libx264",
       "-preset", "slow",
       "-crf", "18",
@@ -429,10 +430,10 @@ async function overlayAuslanOnScene(
       outputPath,
     ], { timeout: 180_000 });
 
-    console.log(`[VideoStitcher] Scene ${sceneIndex}: Auslan overlay applied (${position})`);
+    logger.info(`[VideoStitcher] Scene ${sceneIndex}: Auslan overlay applied (${position})`);
     return outputPath;
   } catch (e) {
-    console.warn(`[VideoStitcher] Warning: Auslan overlay failed for scene ${sceneIndex}, skipping:`, e);
+    logger.warn(`[VideoStitcher] Warning: Auslan overlay failed for scene ${sceneIndex}, skipping:`, e);
     return sceneVideoPath;
   }
 }
@@ -487,15 +488,15 @@ async function burnSubtitlesIntoScene(
       outputPath,
     ], { timeout: 120000 });
 
-    console.log(`[VideoStitcher] Scene ${sceneIndex}: burned ${subtitles.length} subtitles`);
+    logger.info(`[VideoStitcher] Scene ${sceneIndex}: burned ${subtitles.length} subtitles`);
     return outputPath;
   } catch (e) {
-    console.log(`[VideoStitcher] Warning: Subtitle burn-in failed for scene ${sceneIndex}: ${e}`);
+    logger.info(`[VideoStitcher] Warning: Subtitle burn-in failed for scene ${sceneIndex}: ${e}`);
     return sceneVideoPath;
   }
 }
 
-// ─── Scene Transition Handling ───
+// âââ Scene Transition Handling âââ
 
 function buildTransitionFilter(
   transition: string,
@@ -519,7 +520,7 @@ function buildTransitionFilter(
   }
 }
 
-// ─── Main Stitch Function ───
+// âââ Main Stitch Function âââ
 
 export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
   const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-stitch-"));
@@ -534,24 +535,24 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       throw new Error("No scenes have generated video clips. Generate videos for your scenes first.");
     }
 
-    console.log(`[VideoStitcher] Starting post-production for "${input.projectTitle}" — ${scenesWithVideo.length} scenes`);
+    logger.info(`[VideoStitcher] Starting post-production for "${input.projectTitle}" â ${scenesWithVideo.length} scenes`);
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 1: Download all scene videos
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     const localFiles: string[] = [];
     for (let i = 0; i < scenesWithVideo.length; i++) {
       const scene = scenesWithVideo[i];
       const localPath = path.join(tmpDir, `scene_raw_${String(i).padStart(3, "0")}.mp4`);
-      console.log(`[VideoStitcher] Downloading scene ${i + 1}/${scenesWithVideo.length}: ${scene.title || "Untitled"}`);
+      logger.info(`[VideoStitcher] Downloading scene ${i + 1}/${scenesWithVideo.length}: ${scene.title || "Untitled"}`);
       await downloadFile(scene.videoUrl, localPath);
       localFiles.push(localPath);
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 2: Per-scene audio mixing (voice + SFX)
-    // ═══════════════════════════════════════════════════════
-    console.log(`[VideoStitcher] Phase 2: Mixing audio per scene...`);
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    logger.info(`[VideoStitcher] Phase 2: Mixing audio per scene...`);
     const audioMixedFiles: string[] = [];
     for (let i = 0; i < localFiles.length; i++) {
       const scene = scenesWithVideo[i];
@@ -565,12 +566,12 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       audioMixedFiles.push(mixed);
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 3: Subtitle burn-in (if enabled)
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     let subtitledFiles = audioMixedFiles;
     if (input.burnSubtitles) {
-      console.log(`[VideoStitcher] Phase 3: Burning subtitles...`);
+      logger.info(`[VideoStitcher] Phase 3: Burning subtitles...`);
       subtitledFiles = [];
       for (let i = 0; i < audioMixedFiles.length; i++) {
         const scene = scenesWithVideo[i];
@@ -585,12 +586,12 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       }
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 3.5: Auslan interpreter overlay (if enabled)
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     let auslanOverlaidFiles = subtitledFiles;
     if (input.auslanEnabled) {
-      console.log(`[VideoStitcher] Phase 3.5: Applying Auslan interpreter overlay (${input.auslanPosition ?? "bottom-right"})...`);
+      logger.info(`[VideoStitcher] Phase 3.5: Applying Auslan interpreter overlay (${input.auslanPosition ?? "bottom-right"})...`);
       auslanOverlaidFiles = [];
       for (let i = 0; i < subtitledFiles.length; i++) {
         const scene = scenesWithVideo[i];
@@ -609,7 +610,7 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
             );
             auslanOverlaidFiles.push(overlaid);
           } catch (err: any) {
-            console.warn(`[VideoStitcher] Auslan avatar download failed for scene ${i}, skipping:`, err.message);
+            logger.warn(`[VideoStitcher] Auslan avatar download failed for scene ${i}, skipping:`, err.message);
             auslanOverlaidFiles.push(subtitledFiles[i]);
           }
         } else {
@@ -618,16 +619,16 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       }
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 4: Normalize all clips to consistent format + apply transitions
-    // ═══════════════════════════════════════════════════════
-    console.log(`[VideoStitcher] Phase 4: Normalizing clips and applying transitions...`);
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    logger.info(`[VideoStitcher] Phase 4: Normalizing clips and applying transitions...`);
     const normalizedFiles: string[] = [];
 
-    // ─── MANDATORY: VirElle Studios Opener (cannot be removed) ───
+    // âââ MANDATORY: VirElle Studios Opener (cannot be removed) âââ
     // Every film produced on the platform MUST begin with the VirElle Studios opener.
     // This is a non-negotiable platform standard for branding.
-    // Official Virelle Studios cinematic opener: dove descends → golden transformation → VS logo
+    // Official Virelle Studios cinematic opener: dove descends â golden transformation â VS logo
     const VIRELLE_OPENER_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/IVZBIEWXryDGoWdT.mp4";
     try {
       const openerPath = path.join(tmpDir, "virelle_opener.mp4");
@@ -641,7 +642,7 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
         "-f", "mpegts", "-y", normalizedOpener,
       ], { timeout: 60000 });
       normalizedFiles.push(normalizedOpener);
-      console.log(`[VideoStitcher] VirElle Studios opener prepended successfully.`);
+      logger.info(`[VideoStitcher] VirElle Studios opener prepended successfully.`);
     } catch (openerErr: any) {
       throw new Error(
         `Mandatory Virelle Studios opener failed to prepend: ${openerErr?.message ?? openerErr}`
@@ -722,10 +723,10 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       normalizedFiles.push(normalizedCredits);
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 5: Concatenate all clips
-    // ═══════════════════════════════════════════════════════
-    console.log(`[VideoStitcher] Phase 5: Concatenating ${normalizedFiles.length} clips...`);
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    logger.info(`[VideoStitcher] Phase 5: Concatenating ${normalizedFiles.length} clips...`);
     const concatInput = normalizedFiles.join("|");
     const outputPath = path.join(tmpDir, "final_movie.mp4");
 
@@ -737,11 +738,11 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       "-y", outputPath,
     ], { timeout: 600000 }); // 10 min timeout for long films
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 6: Overlay soundtrack
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     if (input.soundtrackUrl) {
-      console.log(`[VideoStitcher] Phase 6: Overlaying soundtrack...`);
+      logger.info(`[VideoStitcher] Phase 6: Overlaying soundtrack...`);
       const soundtrackPath = path.join(tmpDir, "soundtrack.mp3");
       await downloadFile(input.soundtrackUrl, soundtrackPath);
 
@@ -764,12 +765,12 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       ], { timeout: 600000 });
 
       await fs.promises.rename(withSoundtrack, outputPath);
-      console.log(`[VideoStitcher] Soundtrack overlaid at ${vol} volume`);
+      logger.info(`[VideoStitcher] Soundtrack overlaid at ${vol} volume`);
     }
 
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // PHASE 7: Get final info and upload
-    // ═══════════════════════════════════════════════════════
+    // âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     const stats = await fs.promises.stat(outputPath);
     const duration = await getVideoDuration(outputPath);
 
@@ -786,11 +787,11 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       );
     }
 
-    console.log(`[VideoStitcher] ✅ Post-production complete: ${url}`);
-    console.log(`[VideoStitcher]    Size: ${(stats.size / 1024 / 1024).toFixed(1)} MB`);
-    console.log(`[VideoStitcher]    Duration: ${Math.floor(duration / 60)}m ${Math.round(duration % 60)}s`);
-    console.log(`[VideoStitcher]    Resolution: ${resolution.width}x${resolution.height}`);
-    console.log(`[VideoStitcher]    Scenes: ${scenesWithVideo.length}`);
+    logger.info(`[VideoStitcher] â Post-production complete: ${url}`);
+    logger.info(`[VideoStitcher]    Size: ${(stats.size / 1024 / 1024).toFixed(1)} MB`);
+    logger.info(`[VideoStitcher]    Duration: ${Math.floor(duration / 60)}m ${Math.round(duration % 60)}s`);
+    logger.info(`[VideoStitcher]    Resolution: ${resolution.width}x${resolution.height}`);
+    logger.info(`[VideoStitcher]    Scenes: ${scenesWithVideo.length}`);
 
     return {
       fileUrl: url,
