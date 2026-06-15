@@ -97,6 +97,28 @@ export const contentCreatorRouter = router({
           return meta;
         }),
     }),
+
+  // ─── Snapchat ────────────────────────────────────────────────────────────
+  snapchat: router({
+    getConnectUrl: adminProcedure.query(() => {
+      return {
+        configured: !!(ENV.snapchatClientId && ENV.snapchatClientSecret),
+        connected: !!ENV.snapchatAccessToken,
+        connectUrl: "/api/snapchat/connect",
+      };
+    }),
+  }),
+
+  // ─── Instagram ───────────────────────────────────────────────────────────
+  instagram: router({
+    getConnectUrl: adminProcedure.query(() => {
+      return {
+        configured: !!(ENV.instagramClientId && ENV.instagramClientSecret),
+        connected: !!ENV.instagramAccessToken,
+        connectUrl: "/api/instagram/connect",
+      };
+    }),
+  }),
   
   // ─── Platform Config ────────────────────────────────────────────────────────
   getPlatforms: adminProcedure.query(() => {
