@@ -126,7 +126,10 @@ export default function DownloadApp() {
         <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">📱 Mobile App</h2>
-            <p className="text-zinc-400">iOS available now — Android coming soon</p>
+            <p className="text-zinc-400">iOS available now on the App Store</p>
+            <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
+              🤖 Android — launching Q3 2026 · <a href="mailto:studiosvirelle@gmail.com?subject=Android%20Waitlist" className="underline hover:text-amber-300">Join the waitlist</a>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
@@ -225,7 +228,7 @@ export default function DownloadApp() {
             <p className="text-zinc-400">
               {links?.desktop?.available
                 ? "macOS, Windows & Linux — native performance"
-                : "Native desktop apps — coming soon"}
+                : "macOS · Windows · Linux — launching Q4 2026"}
             </p>
           </div>
 
