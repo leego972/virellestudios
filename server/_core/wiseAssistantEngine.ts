@@ -2,12 +2,13 @@
  * Wise Assistant Engine
  * 
  * Enhances the Director's Assistant to be proactive about catching errors,
- * suggesting improvements, and recommending better workflows—without being pushy.
+ * suggesting improvements, and recommending better workflowsâwithout being pushy.
  * 
  * The assistant remains task-focused but gently flags issues and offers alternatives.
  */
 
 import * as db from "../db";
+import { logger } from "./logger";
 
 export interface AssistantRecommendation {
   type: "warning" | "suggestion" | "optimization";
@@ -33,7 +34,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
     const characters = await db.getProjectCharacters(projectId);
     const soundEffects = await db.listSoundEffectsByProject(projectId);
 
-    // ── Warning: No scenes yet ──────────────────────────────────────────────
+    // ââ Warning: No scenes yet ââââââââââââââââââââââââââââââââââââââââââââââ
     if (scenes.length === 0) {
       recommendations.push({
         type: "warning",
@@ -46,7 +47,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       });
     }
 
-    // ── Warning: Inconsistent character descriptions ──────────────────────
+    // ââ Warning: Inconsistent character descriptions ââââââââââââââââââââââ
     if (characters.length > 1) {
       const characterAppearances = new Map<number, Set<string>>();
       for (const scene of scenes) {
@@ -77,7 +78,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       }
     }
 
-    // ── Suggestion: Scene duration optimization ─────────────────────────
+    // ââ Suggestion: Scene duration optimization âââââââââââââââââââââââââ
     const totalDuration = scenes.reduce((sum, s) => sum + (s.duration || 60), 0);
     const avgDuration = totalDuration / scenes.length;
     const outliers = scenes.filter((s) => (s.duration || 60) > avgDuration * 1.5 || (s.duration || 60) < avgDuration * 0.5);
@@ -94,7 +95,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       });
     }
 
-    // ── Optimization: Missing sound design ──────────────────────────────
+    // ââ Optimization: Missing sound design ââââââââââââââââââââââââââââââ
     const scenesWithoutSFX = scenes.filter((s) => !soundEffects.some((sfx) => sfx.sceneId === s.id));
     if (scenesWithoutSFX.length > 0 && scenes.length > 0) {
       const percentage = Math.round((scenesWithoutSFX.length / scenes.length) * 100);
@@ -111,7 +112,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       }
     }
 
-    // ── Optimization: Project metadata ──────────────────────────────────
+    // ââ Optimization: Project metadata ââââââââââââââââââââââââââââââââââ
     if (!project.genre || !project.rating || !project.description?.length) {
       recommendations.push({
         type: "suggestion",
@@ -124,7 +125,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       });
     }
 
-    // ── Optimization: Dialogue timing ───────────────────────────────────
+    // ââ Optimization: Dialogue timing âââââââââââââââââââââââââââââââââââ
     for (const scene of scenes) {
       const dialogueLines = await db.getSceneDialogues(scene.id);
       if (dialogueLines.length > 0) {
@@ -143,7 +144,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       }
     }
 
-    // ── Warning: Photorealism compliance ────────────────────────────────
+    // ââ Warning: Photorealism compliance ââââââââââââââââââââââââââââââââ
     for (const scene of scenes) {
       const sceneChars = await db.getSceneCharacters(scene.id);
       for (const char of sceneChars) {
@@ -162,7 +163,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       }
     }
   } catch (error) {
-    console.error("Error analyzing project health:", error);
+    logger.error("Error analyzing project health:", error);
   }
 
   return recommendations;
@@ -234,7 +235,7 @@ export async function validateSceneBeforeGeneration(sceneId: number): Promise<As
       });
     }
   } catch (error) {
-    console.error("Error validating scene:", error);
+    logger.error("Error validating scene:", error);
   }
 
   return recommendations;
@@ -290,9 +291,9 @@ export function suggestWorkflowImprovement(action: string, context: Record<strin
  */
 export function formatRecommendationForDisplay(rec: AssistantRecommendation): string {
   const icon = {
-    warning: "⚠️",
-    suggestion: "💡",
-    optimization: "✨",
+    warning: "â ï¸",
+    suggestion: "ð¡",
+    optimization: "â¨",
   }[rec.type];
 
   return `${icon} **${rec.title}**\n${rec.message}`;
