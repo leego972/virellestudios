@@ -105,8 +105,14 @@ export default function Blog() {
         ) : !articles || articles.length === 0 ? (
           <div className="text-center py-20">
             <BookOpen className="h-12 w-12 text-white/20 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold /60 mb-2 gradient-text-gold">No articles yet</h3>
-            <p className="text-white/40">Check back soon — new articles are published automatically every day.</p>
+            <h3 className="text-xl font-semibold text-white/60 mb-2 gradient-text-gold">Articles coming soon</h3>
+              <p className="text-white/40 mb-6">New articles on AI filmmaking, cinematography, and industry trends — published regularly.</p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link href="/how-it-works" className="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-4">How Virelle Works →</Link>
+                <Link href="/press" className="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-4">Press →</Link>
+                <Link href="/faq" className="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-4">FAQ →</Link>
+                <Link href="/changelog" className="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-4">Changelog →</Link>
+              </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
