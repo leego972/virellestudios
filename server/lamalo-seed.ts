@@ -771,33 +771,71 @@ export async function runLamaloSeed(
     newCollections++;
     for (const item of col.items) {
       // Use raw SQL to avoid Drizzle double-encoding JSON columns
-      await db.execute(sql`
-        INSERT IGNORE INTO wardrobeItems
-          (collectionId, userId, designerProfileId, name, description, category,
-           subcategory, wardrobeType, genderFit, sizeRange, era,
-           colors, materials, styleTags, primaryImageUrl, referencePrompt,
-           brandPlacementAllowed, shopfrontPlacementAllowed, characterWardrobeAllowed,
-           costumeUseAllowed, commercialUseAllowed, licenseType, visibility, status,
-           retailPriceAud, leasePriceAud)
-        VALUES
-          (${collectionId}, ${userId}, ${designerProfileId},
-           ${item.name}, ${item.description}, ${item.category},
-           ${item.subcategory ?? null}, ${"fashion"}, ${item.genderFit ?? null},
-           ${item.sizeRange ?? "XS-XXL"}, ${"Contemporary 2026"},
-           ${item.colors ? JSON.stringify(item.colors) : null},
-           ${item.materials ? JSON.stringify(item.materials) : null},
-           ${item.styleTags ? JSON.stringify(item.styleTags) : null},
-           ${item.primaryImageUrl ?? null}, ${item.referencePrompt ?? null},
-           ${0}, ${1}, ${1}, ${1}, ${1},
-           ${"full_license"}, ${"public"}, ${"active"},
-           ${item.retailPriceAud ?? null}, ${null})
-      `);
-      totalItems++;
+      // Use Pollinations URL — /lamalo/ paths 404 in production
+        const imgUrl = (item.primaryImageUrl && !item.primaryImageUrl.startsWith('/lamalo/'))
+          ? item.primaryImageUrl
+          : pollinationsUrl(item.referencePrompt ?? `${item.name} ${item.category} fashion item`);
+        const imgUrlsJson = JSON.stringify([imgUrl]);
+        await db.execute(sql`
+          INSERT IGNORE INTO wardrobeItems
+            (collectionId, userId, designerProfileId, name, description, category,
+             subcategory, wardrobeType, genderFit, sizeRange, era,
+             colors, materials, styleTags, primaryImageUrl, imageUrls, referencePrompt,
+             brandPlacementAllowed, shopfrontPlacementAllowed, characterWardrobeAllowed,
+             costumeUseAllowed, commercialUseAllowed, licenseType, visibility, status,
+             retailPriceAud, leasePriceAud)
+          VALUES
+            (${collectionId}, ${userId}, ${designerProfileId},
+             ${item.name}, ${item.description}, ${item.category},
+             ${item.subcategory ?? null}, ${"fashion"}, ${item.genderFit ?? null},
+             ${item.sizeRange ?? "XS-XXL"}, ${"Contemporary 2026"},
+             ${item.colors ? JSON.stringify(item.colors) : null},
+             ${item.materials ? JSON.stringify(item.materials) : null},
+             ${item.styleTags ? JSON.stringify(item.styleTags) : null},
+             ${imgUrl}, ${imgUrlsJson}, ${item.referencePrompt ?? null},
+             ${0}, ${1}, ${1}, ${1}, ${1},
+             ${"full_license"}, ${"public"}, ${"active"},
+             ${item.retailPriceAud ?? null}, ${null})
+        `);
+        totalItems++;
     }
 
     log.info(`Seeded collection "${col.name}" with ${col.items.length} items (collection bundle = ${(col.collectionPriceAud / 100).toFixed(2)} AUD)`);
   }
 
   log.info(`Lamalo Fashion seed complete — ${newCollections} new collections, ${totalItems} new items`);
-  return { created: newCollections > 0, collections: newCollections, items: totalItems };
-}
+
+    // ── Auto-patch any previously-seeded items still using /lamalo/ paths or missing images ──
+    try {
+      await db.execute(sql`
+        UPDATE wardrobeItems
+        SET
+          primaryImageUrl = CONCAT(
+            'https://image.pollinations.ai/prompt/',
+            REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+              COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category, 'fashion'), ' fashion item')),
+            ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+            '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+          ),
+          imageUrls = JSON_ARRAY(CONCAT(
+            'https://image.pollinations.ai/prompt/',
+            REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+              COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category, 'fashion'), ' fashion item')),
+            ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+            '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+          ))
+        WHERE collectionId IS NOT NULL
+          AND (
+            primaryImageUrl IS NULL
+            OR primaryImageUrl = ''
+            OR primaryImageUrl LIKE '/lamalo/%'
+            OR imageUrls IS NULL
+          )
+      `);
+      log.info('Auto-patched existing wardrobeItems: replaced /lamalo/ paths with Pollinations URLs');
+    } catch (e) {
+      log.warn({ err: e }, 'Auto-patch image URLs failed (non-fatal)');
+    }
+
+    return { created: newCollections > 0, collections: newCollections, items: totalItems };
+  }
