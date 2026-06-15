@@ -1,5 +1,5 @@
 /**
- * Video Generation Module — Sora API Integration
+ * Video Generation Module â Sora API Integration
  * 
  * Generates real video clips using OpenAI's Sora API.
  * Supports text-to-video and image-to-video (first frame reference).
@@ -9,6 +9,7 @@ import OpenAI from "openai";
 import type { VideoSeconds, VideoSize } from "openai/resources/videos";
 import { storagePut } from "../storage";
 import { ENV } from "./env";
+import { logger } from "./logger";
 
 // Use the real OpenAI API endpoint for Sora (not the proxy)
 const openai = new OpenAI({
@@ -18,11 +19,11 @@ const openai = new OpenAI({
 
 export type VideoGenerationOptions = {
   prompt: string;
-  /** Duration in seconds — will be mapped to nearest Sora value: "4", "8", or "12" */
+  /** Duration in seconds â will be mapped to nearest Sora value: "4", "8", or "12" */
   seconds?: number;
   /** Alias for seconds */
   duration?: number;
-  /** Resolution — mapped to Sora sizes */
+  /** Resolution â mapped to Sora sizes */
   resolution?: "1080p" | "720p" | "480p";
   /** Model: "sora-2" (fast) or "sora-2-pro" (production quality) */
   model?: "sora-2" | "sora-2-pro";
@@ -61,7 +62,7 @@ function mapToSoraSize(resolution: string, aspect: string = "landscape"): VideoS
 
 /**
  * Generate a video clip using OpenAI Sora API.
- * This is an async process — it submits the job, polls for completion,
+ * This is an async process â it submits the job, polls for completion,
  * downloads the MP4, and uploads to S3.
  */
 export async function generateVideo(
@@ -71,8 +72,8 @@ export async function generateVideo(
   const soraSeconds = mapToSoraSeconds(options.seconds || 8);
   const soraSize = mapToSoraSize(options.resolution || "720p", options.aspectRatio || "landscape");
 
-  console.log(`[VideoGen] Starting ${model} job: ${soraSeconds}s at ${soraSize}`);
-  console.log(`[VideoGen] Prompt: ${options.prompt.substring(0, 200)}...`);
+  logger.info(`[VideoGen] Starting ${model} job: ${soraSeconds}s at ${soraSize}`);
+  logger.info(`[VideoGen] Prompt: ${options.prompt.substring(0, 200)}...`);
 
   // Step 1: Create the video generation job
   const createParams: OpenAI.VideoCreateParams = {
@@ -93,7 +94,7 @@ export async function generateVideo(
         createParams.input_reference = file;
       }
     } catch (e) {
-      console.warn("[VideoGen] Could not fetch input image, proceeding with text-only:", e);
+      logger.warn("[VideoGen] Could not fetch input image, proceeding with text-only:", e);
     }
   }
 
@@ -101,12 +102,12 @@ export async function generateVideo(
   try {
     video = await openai.videos.create(createParams);
   } catch (e: any) {
-    console.error("[VideoGen] Failed to create video job:", e.message);
+    logger.error("[VideoGen] Failed to create video job:", e.message);
     throw new Error(`Video generation failed to start: ${e.message}`);
   }
 
   const jobId = video.id;
-  console.log(`[VideoGen] Job created: ${jobId}, status: ${video.status}`);
+  logger.info(`[VideoGen] Job created: ${jobId}, status: ${video.status}`);
 
   // Step 2: Poll for completion
   const MAX_POLL_TIME = 10 * 60 * 1000; // 10 minutes max
@@ -125,9 +126,9 @@ export async function generateVideo(
       const check = await openai.videos.retrieve(jobId);
       status = check.status;
       const progress = check.progress || 0;
-      console.log(`[VideoGen] Job ${jobId}: ${status} (${progress}%)`);
+      logger.info(`[VideoGen] Job ${jobId}: ${status} (${progress}%)`);
     } catch (e: any) {
-      console.warn(`[VideoGen] Poll error for ${jobId}:`, e.message);
+      logger.warn(`[VideoGen] Poll error for ${jobId}:`, e.message);
     }
   }
 
@@ -136,7 +137,7 @@ export async function generateVideo(
   }
 
   // Step 3: Download the MP4 using the correct SDK method: downloadContent
-  console.log(`[VideoGen] Job ${jobId} completed, downloading MP4...`);
+  logger.info(`[VideoGen] Job ${jobId} completed, downloading MP4...`);
 
   let videoBuffer: Buffer;
   try {
@@ -145,11 +146,11 @@ export async function generateVideo(
     const arrayBuffer = await contentResponse.arrayBuffer();
     videoBuffer = Buffer.from(arrayBuffer);
   } catch (e: any) {
-    console.error(`[VideoGen] Failed to download video ${jobId}:`, e.message);
+    logger.error(`[VideoGen] Failed to download video ${jobId}:`, e.message);
     throw new Error(`Failed to download generated video: ${e.message}`);
   }
 
-  console.log(`[VideoGen] Downloaded ${(videoBuffer.length / 1024 / 1024).toFixed(1)}MB video`);
+  logger.info(`[VideoGen] Downloaded ${(videoBuffer.length / 1024 / 1024).toFixed(1)}MB video`);
 
   // Step 4: Upload MP4 to S3
   const videoKey = `videos/${Date.now()}-${jobId.substring(0, 8)}.mp4`;
@@ -157,9 +158,9 @@ export async function generateVideo(
   try {
     const { url } = await storagePut(videoKey, videoBuffer, "video/mp4");
     videoUrl = url;
-    console.log(`[VideoGen] Uploaded to S3: ${videoUrl}`);
+    logger.info(`[VideoGen] Uploaded to S3: ${videoUrl}`);
   } catch (storageErr: any) {
-    console.warn(`[VideoGen] Storage unavailable (${storageErr.message}). Configure AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Railway Variables.`);
+    logger.warn(`[VideoGen] Storage unavailable (${storageErr.message}). Configure AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Railway Variables.`);
     throw new Error(`Video generated but could not be stored: ${storageErr.message}`);
   }
 
@@ -175,7 +176,7 @@ export async function generateVideo(
       thumbnailUrl = thumbUrl;
     } catch { /* thumbnail storage failure is non-critical */ }
   } catch (e) {
-    console.warn("[VideoGen] Could not download thumbnail, using first frame");
+    logger.warn("[VideoGen] Could not download thumbnail, using first frame");
   }
 
   // Step 6: Clean up from OpenAI storage
@@ -183,7 +184,7 @@ export async function generateVideo(
     await openai.videos.delete(jobId);
   } catch (e) {
     // Non-critical, just log
-    console.warn("[VideoGen] Could not delete video from OpenAI storage");
+    logger.warn("[VideoGen] Could not delete video from OpenAI storage");
   }
 
   const actualDuration = parseInt(soraSeconds, 10);
@@ -196,7 +197,7 @@ export async function generateVideo(
 }
 
 /**
- * Generate a video with fallback — if Sora fails, generate a still image instead.
+ * Generate a video with fallback â if Sora fails, generate a still image instead.
  * Returns both videoUrl (if available) and thumbnailUrl.
  */
 export async function generateVideoWithFallback(
@@ -217,7 +218,7 @@ export async function generateVideoWithFallback(
       isVideo: true,
     };
   } catch (e: any) {
-    console.error("[VideoGen] Video generation failed, falling back to image:", e.message);
+    logger.error("[VideoGen] Video generation failed, falling back to image:", e.message);
 
     if (fallbackImageGenerator) {
       try {
@@ -229,7 +230,7 @@ export async function generateVideoWithFallback(
           isVideo: false,
         };
       } catch (imgErr: any) {
-        console.error("[VideoGen] Image fallback also failed:", imgErr.message);
+        logger.error("[VideoGen] Image fallback also failed:", imgErr.message);
       }
     }
 
@@ -265,7 +266,7 @@ export function buildVideoPrompt(
   // Core scene description
   parts.push(sceneDescription);
 
-  // Character action (critical for video — what's MOVING)
+  // Character action (critical for video â what's MOVING)
   if (options?.characterAction) {
     parts.push(options.characterAction);
   }
