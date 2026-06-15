@@ -5,10 +5,11 @@
  */
 
 import { ENV } from "./env";
+import { logger } from "./logger";
 
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // TYPES
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface PostResult {
   platform: string;
@@ -39,11 +40,11 @@ export interface WhatsAppMessageOptions {
   mediaUrl?: string; // Image or video URL
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // LINKEDIN POSTING
-// LinkedIn API v2 — uses OAuth2 access token
+// LinkedIn API v2 â uses OAuth2 access token
 // Required env vars: LINKEDIN_ACCESS_TOKEN, LINKEDIN_PERSON_URN or LINKEDIN_ORG_URN
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function postToLinkedIn(options: LinkedInPostOptions): Promise<PostResult> {
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
@@ -96,11 +97,11 @@ export async function postToLinkedIn(options: LinkedInPostOptions): Promise<Post
             status: "READY",
             description: { text: options.title || "Virelle Studios" },
             media: imageAsset,
-            title: { text: options.title || "Virelle Studios — AI Film Production" },
+            title: { text: options.title || "Virelle Studios â AI Film Production" },
           },
         ];
       } catch (imgErr: any) {
-        console.warn("[LinkedIn] Image upload failed, posting text only:", imgErr.message);
+        logger.warn("[LinkedIn] Image upload failed, posting text only:", imgErr.message);
         postBody.specificContent["com.linkedin.ugc.ShareContent"].shareMediaCategory = "NONE";
       }
     }
@@ -124,7 +125,7 @@ export async function postToLinkedIn(options: LinkedInPostOptions): Promise<Post
     const postId = data.id || data.value;
     const postUrl = postId ? `https://www.linkedin.com/feed/update/${postId}` : undefined;
 
-    console.log(`[LinkedIn] Posted successfully: ${postId}`);
+    logger.info(`[LinkedIn] Posted successfully: ${postId}`);
     return {
       platform: "linkedin",
       success: true,
@@ -133,7 +134,7 @@ export async function postToLinkedIn(options: LinkedInPostOptions): Promise<Post
       timestamp: new Date().toISOString(),
     };
   } catch (err: any) {
-    console.error("[LinkedIn] Post failed:", err.message);
+    logger.error("[LinkedIn] Post failed:", err.message);
     return {
       platform: "linkedin",
       success: false,
@@ -199,11 +200,11 @@ async function uploadLinkedInImage(accessToken: string, authorUrn: string, image
   return asset;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // REDDIT POSTING
-// Reddit API — uses OAuth2 with username/password flow
+// Reddit API â uses OAuth2 with username/password flow
 // Required env vars: REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 let redditAccessToken: string | null = null;
 let redditTokenExpiry: number = 0;
@@ -286,7 +287,7 @@ export async function postToReddit(options: RedditPostOptions): Promise<PostResu
     const postUrl = data?.data?.url || `https://reddit.com/r/${options.subreddit}`;
     const postId = data?.data?.id;
 
-    console.log(`[Reddit] Posted to r/${options.subreddit}: ${postUrl}`);
+    logger.info(`[Reddit] Posted to r/${options.subreddit}: ${postUrl}`);
     return {
       platform: `reddit_${options.subreddit}`,
       success: true,
@@ -295,7 +296,7 @@ export async function postToReddit(options: RedditPostOptions): Promise<PostResu
       timestamp: new Date().toISOString(),
     };
   } catch (err: any) {
-    console.error(`[Reddit] Post to r/${options.subreddit} failed:`, err.message);
+    logger.error(`[Reddit] Post to r/${options.subreddit} failed:`, err.message);
     return {
       platform: `reddit_${options.subreddit}`,
       success: false,
@@ -305,12 +306,12 @@ export async function postToReddit(options: RedditPostOptions): Promise<PostResu
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // WHATSAPP POSTING VIA TWILIO
 // Required env vars: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM
 // TWILIO_WHATSAPP_FROM should be in format: whatsapp:+14155238886
 // TWILIO_WHATSAPP_BROADCAST_LIST: comma-separated list of numbers to broadcast to
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function sendWhatsAppMessage(options: WhatsAppMessageOptions): Promise<PostResult> {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -342,7 +343,7 @@ export async function sendWhatsAppMessage(options: WhatsAppMessageOptions): Prom
 
     const message = await client.messages.create(messageOptions);
 
-    console.log(`[WhatsApp] Message sent to ${options.to}: ${message.sid}`);
+    logger.info(`[WhatsApp] Message sent to ${options.to}: ${message.sid}`);
     return {
       platform: "whatsapp",
       success: true,
@@ -350,7 +351,7 @@ export async function sendWhatsAppMessage(options: WhatsAppMessageOptions): Prom
       timestamp: new Date().toISOString(),
     };
   } catch (err: any) {
-    console.error("[WhatsApp] Send failed:", err.message);
+    logger.error("[WhatsApp] Send failed:", err.message);
     return {
       platform: "whatsapp",
       success: false,
@@ -387,9 +388,9 @@ export async function broadcastWhatsApp(text: string, mediaUrl?: string): Promis
   return results;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// VIRELLE FILM SUBREDDITS — best communities to post to
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// VIRELLE FILM SUBREDDITS â best communities to post to
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export const VIRELLE_REDDIT_TARGETS = [
   { subreddit: "artificial", description: "AI general community" },
@@ -434,9 +435,9 @@ export async function postToFilmSubreddits(
   return results;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // CREDENTIAL STATUS CHECK
-// ─────────────────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export function getSocialCredentialStatus(): Record<string, { configured: boolean; missing: string[] }> {
   return {
