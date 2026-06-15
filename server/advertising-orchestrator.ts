@@ -2,15 +2,15 @@
  * Autonomous Advertising Orchestrator
  * 
  * The master brain that coordinates ALL of Titan's growth systems:
- * - SEO Engine → organic search traffic (FREE)
- * - Blog System → content marketing & long-tail keywords (FREE)
- * - Marketing Engine → social media & paid campaigns ($500 AUD/month)
- * - Affiliate Engine → partner-driven revenue (FREE)
- * - Email Service → lead nurturing & retention (FREE)
- * - Ad Tracking → conversion measurement (FREE)
+ * - SEO Engine â organic search traffic (FREE)
+ * - Blog System â content marketing & long-tail keywords (FREE)
+ * - Marketing Engine â social media & paid campaigns ($500 AUD/month)
+ * - Affiliate Engine â partner-driven revenue (FREE)
+ * - Email Service â lead nurturing & retention (FREE)
+ * - Ad Tracking â conversion measurement (FREE)
  * 
  * Strategy: 80% free organic growth, 20% paid amplification
- * Budget: $500 AUD/month → Google Ads only (highest intent traffic)
+ * Budget: $500 AUD/month â Google Ads only (highest intent traffic)
  */
 
 import { safeJsonExtract } from "./_core/safeParse";
@@ -66,7 +66,7 @@ const createLogger = (name: string) => ({
 import { getErrorMessage } from "./_core/errors.js";
 import { generateVideo, generateVideoWithFallback } from "./_core/videoGeneration";
 // Compatibility shims for missing exports
-const isVideoGenerationAvailable = () => true; // Pollinations built-in keys — always available
+const isVideoGenerationAvailable = () => true; // Pollinations built-in keys â always available
 const generateShortFormVideo = async (hook: string, script: string) => generateVideoWithFallback({ prompt: `${hook}\n${script}`, seconds: 15 });
 const generateSocialClip = async (topic: string, _platform: string) => generateVideoWithFallback({ prompt: topic, seconds: 30 });
 const generateMarketingVideo = async (prompt: string) => generateVideoWithFallback({ prompt, seconds: 30 });
@@ -129,7 +129,7 @@ const CONTENT_PILLARS = [
     blogTopics: [
       "How to Make a Cinematic Short Film with AI in 2026",
       "AI Scene Generation: A Complete Beginner's Guide",
-      "The Best AI Film Generators Compared: VirÉlle vs Runway vs Sora",
+      "The Best AI Film Generators Compared: VirÃlle vs Runway vs Sora",
       "How Indie Filmmakers Are Using AI to Cut Production Costs by 90%",
       "From Script to Screen: AI-Powered Film Production Workflow",
     ],
@@ -152,7 +152,7 @@ const CONTENT_PILLARS = [
     keywords: ["AI visual effects", "AI cinematography", "cinematic lighting AI", "AI VFX", "AI colour grading"],
     blogTopics: [
       "Mastering Cinematic Lighting with AI: A Director's Guide",
-      "AI Visual Effects That Used to Cost $500K — Now Free",
+      "AI Visual Effects That Used to Cost $500K â Now Free",
       "How to Achieve Hollywood-Quality Colour Grading with AI",
       "AI Cinematography: Recreating Iconic Film Looks with Prompts",
       "The Future of VFX: How AI is Democratising Visual Effects",
@@ -204,13 +204,13 @@ const COMMUNITY_TARGETS = {
       "r/shortfilm",
       "r/contentcreation",
     ],
-    strategy: "Share genuine filmmaking tips, AI generation tutorials, and behind-the-scenes content. Provide value first, mention VirÉlle only when naturally relevant.",
+    strategy: "Share genuine filmmaking tips, AI generation tutorials, and behind-the-scenes content. Provide value first, mention VirÃlle only when naturally relevant.",
   },
   devto: {
     strategy: "Cross-post technical articles about AI video generation APIs, prompt engineering for film, and building AI production pipelines.",
   },
   producthunt: {
-    strategy: "Launch new features as Product Hunt posts — new AI models, rendering upgrades, character generation improvements. Engage with upvoters.",
+    strategy: "Launch new features as Product Hunt posts â new AI models, rendering upgrades, character generation improvements. Engage with upvoters.",
   },
   youtube: {
     strategy: "Tutorial videos on AI filmmaking techniques, scene generation walkthroughs, and cinematic prompt engineering. Build a subscriber base of filmmakers.",
@@ -252,7 +252,7 @@ const COMMUNITY_TARGETS = {
     strategy: "Free AI filmmaking course content, community challenges, and prompt engineering lessons. Funnel engaged learners to the Pro tier.",
   },
   indiehackers: {
-    strategy: "Building-in-public updates about VirÉlle Studios growth, revenue milestones, AI model improvements, and lessons from building a creative AI SaaS.",
+    strategy: "Building-in-public updates about VirÃlle Studios growth, revenue milestones, AI model improvements, and lessons from building a creative AI SaaS.",
   },
   vimeo: {
     strategy: "Showcase high-quality AI-generated films and shorts on Vimeo. Engage with the professional filmmaker community. Build a portfolio of AI cinema.",
@@ -404,7 +404,7 @@ export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "affiliate_network",
     frequency: "Ongoing",
-    description: "Partner with filmmaking YouTubers, cinematography bloggers, and AI art creators for affiliate revenue sharing. Target creators with 10K–500K audiences.",
+    description: "Partner with filmmaking YouTubers, cinematography bloggers, and AI art creators for affiliate revenue sharing. Target creators with 10Kâ500K audiences.",
     expectedImpact: "high",
     costPerMonth: 0,
     automatable: false,
@@ -468,7 +468,7 @@ export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "reddit_film",
     frequency: "Daily",
-    description: "Provide genuine value in filmmaking, AI art, and cinematography subreddits. Share tutorials, answer questions, and organically showcase VirÉlle capabilities.",
+    description: "Provide genuine value in filmmaking, AI art, and cinematography subreddits. Share tutorials, answer questions, and organically showcase VirÃlle capabilities.",
     expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
@@ -492,7 +492,7 @@ export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "indiehackers",
     frequency: "Weekly",
-    description: "Building-in-public updates about VirÉlle Studios growth, AI model improvements, and lessons from building a creative AI SaaS.",
+    description: "Building-in-public updates about VirÃlle Studios growth, AI model improvements, and lessons from building a creative AI SaaS.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
@@ -681,7 +681,7 @@ async function generateSeoBlogPost(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are an expert content writer for VirÉlle Studios, the world's most advanced AI cinematic production platform. Write SEO-optimized blog posts that provide genuine value to filmmakers and creators while naturally positioning VirÉlle Studios as the solution.
+          content: `You are an expert content writer for VirÃlle Studios, the world's most advanced AI cinematic production platform. Write SEO-optimized blog posts that provide genuine value to filmmakers and creators while naturally positioning VirÃlle Studios as the solution.
           
 Target keyword: "${targetKeyword}"
 Content pillar: "${pillar.pillar}"
@@ -691,7 +691,7 @@ Write in a cinematic, inspiring, and professional tone. Include:
 - Meta description (155 chars max)
 - 1500-2000 word article with H2/H3 subheadings
 - Natural keyword placement (2-3% density)
-- Internal link suggestion to VirÉlle Studios features
+- Internal link suggestion to VirÃlle Studios features
 - Call to action at the end
 
 Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(markdown)...", "tags": ["..."], "category": "..." }`,
@@ -731,7 +731,7 @@ Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(mark
       .replace(/^-|-$/g, "")
       .substring(0, 80);
 
-    // Category tracking not available in this schema — skip
+    // Category tracking not available in this schema â skip
     const categoryId: number | null = null;
 
     // Calculate SEO score
@@ -949,7 +949,7 @@ async function generateBacklinkOutreach(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are a professional outreach specialist for VirÉlle Studios, the world's most advanced AI cinematic production platform. Generate a personalized outreach email template for requesting backlinks from filmmaking bloggers, AI art publications, and creative technology media.
+          content: `You are a professional outreach specialist for VirÃlle Studios, the world's most advanced AI cinematic production platform. Generate a personalized outreach email template for requesting backlinks from filmmaking bloggers, AI art publications, and creative technology media.
 The email should:
 - Be concise (under 150 words)
 - Offer genuine value (guest post, exclusive AI film showcase, data, early access)
@@ -1034,7 +1034,7 @@ async function generateEmailNurture(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are an email marketing specialist for VirÉlle Studios, the world's most advanced AI cinematic production platform. Write a nurture email for the "${segment.name}" segment.
+          content: `You are an email marketing specialist for VirÃlle Studios, the world's most advanced AI cinematic production platform. Write a nurture email for the "${segment.name}" segment.
 Segment: ${segment.description}
 Goal: ${segment.goal}
 The email should:
@@ -1120,7 +1120,7 @@ async function optimizeAffiliateNetwork(): Promise<AdvertisingAction> {
     if (!db) throw new Error("Database not available");
 
     // Get affiliate stats
-    // affiliatePartners table not in schema — return early
+    // affiliatePartners table not in schema â return early
     const partners: unknown[] = [];
     if (false) await (db as any).query.affiliatePartners?.findMany({
       where: (affiliatePartners: any) => eq(affiliatePartners.status, "active"),
@@ -1172,7 +1172,7 @@ async function generateCommunityContent(): Promise<AdvertisingAction> {
 Rules:
 - Provide genuine creative and technical value (not marketing fluff)
 - Be helpful, inspiring, and educational for filmmakers and creators
-- Only mention VirÉlle Studios if it naturally fits (max 1 subtle mention)
+- Only mention VirÃlle Studios if it naturally fits (max 1 subtle mention)
 - Match the tone of ${platform} (technical for HN/Cinema5D, casual for Reddit/TikTok)
 - Keep it concise (under 200 words)
 Return as JSON: { "platform": "${platform}", "topic": "...", "content": "...", "isPromotional": false }`,
@@ -1214,7 +1214,7 @@ Return as JSON: { "platform": "${platform}", "topic": "...", "content": "...", "
         body: post.content,
         platform: platform.toLowerCase(),
         status: "draft",
-        aiPrompt: `Community engagement post for ${platform} — AI generated`,
+        aiPrompt: `Community engagement post for ${platform} â AI generated`,
         metadata: { platform: post.platform, isPromotional: post.isPromotional },
       } as any);
     }
@@ -1256,7 +1256,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Write a creative technology article about "${pillar.pillar}" for Dev.to. Include practical examples and actionable advice for filmmakers and creators. Naturally mention VirÉlle Studios where relevant. Return JSON: { "title": "...", "body": "...(markdown)...", "tags": ["..."] }` },
+          { role: "system", content: `Write a creative technology article about "${pillar.pillar}" for Dev.to. Include practical examples and actionable advice for filmmakers and creators. Naturally mention VirÃlle Studios where relevant. Return JSON: { "title": "...", "body": "...(markdown)...", "tags": ["..."] }` },
           { role: "user", content: `Write a Dev.to article about ${pillar.blogTopics[Math.floor(Math.random() * pillar.blogTopics.length)]}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "devto_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, body: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "body", "tags"], additionalProperties: false } } },
@@ -1282,7 +1282,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Write a thought-provoking Medium article about "${pillar.pillar}". Focus on storytelling and insights. Subtly position VirÉlle Studios as the solution. Return JSON: { "title": "...", "content": "...(markdown)...", "tags": ["..."] }` },
+          { role: "system", content: `Write a thought-provoking Medium article about "${pillar.pillar}". Focus on storytelling and insights. Subtly position VirÃlle Studios as the solution. Return JSON: { "title": "...", "content": "...(markdown)...", "tags": ["..."] }` },
           { role: "user", content: `Write a Medium article about ${pillar.blogTopics[Math.floor(Math.random() * pillar.blogTopics.length)]}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "medium_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "content", "tags"], additionalProperties: false } } },
@@ -1374,7 +1374,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Generate a Telegram channel broadcast about AI filmmaking or a new VirÉlle Studios feature. Include an inspiring showcase or tip, and a CTA to visit https://virelle.life. Use Telegram markdown formatting. Keep under 300 words. Return JSON: { "text": "..." }` },
+          { role: "system", content: `Generate a Telegram channel broadcast about AI filmmaking or a new VirÃlle Studios feature. Include an inspiring showcase or tip, and a CTA to visit https://virelle.life. Use Telegram markdown formatting. Keep under 300 words. Return JSON: { "text": "..." }` },
           { role: "user", content: `Generate a Telegram broadcast about ${pillar.pillar}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "telegram_msg", strict: true, schema: { type: "object", properties: { text: { type: "string" } }, required: ["text"], additionalProperties: false } } },
@@ -1400,11 +1400,11 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
     }
   }
 
-  // WhatsApp (if configured — weekly only, to stay within free tier)
+  // WhatsApp (if configured â weekly only, to stay within free tier)
   if (whatsappAdapter.isConfigured && new Date().getDay() === 1) { // Monday only
     try {
       const result = await whatsappAdapter.sendTemplateMessage({
-        to: "", // Requires subscriber list — will be populated from DB
+        to: "", // Requires subscriber list â will be populated from DB
         templateName: "security_tip_weekly",
         languageCode: "en_US",
       });
@@ -1455,9 +1455,9 @@ Focus areas: ${forum.focus}
 Topic area: ${pillar.pillar}
 
 Rules:
-- Provide REAL technical value — code snippets, methodology, analysis
+- Provide REAL technical value â code snippets, methodology, analysis
 - Write in the authentic voice of the ${forum.name} community
-- Only mention VirÉlle Studios if it naturally fits as a tool recommendation (max 1 subtle mention)
+- Only mention VirÃlle Studios if it naturally fits as a tool recommendation (max 1 subtle mention)
 - Include actionable takeaways
 - 300-600 words
 
@@ -1659,7 +1659,7 @@ Return JSON: { "hook": "...", "script": "...", "visualDirections": ["..."], "has
 
 /**
  * Generate a marketing video ad for social media campaigns.
- * Uses Pollinations.ai free tier — zero cost.
+ * Uses Pollinations.ai free tier â zero cost.
  */
 async function generateVideoAd(): Promise<AdvertisingAction> {
     try {
@@ -1698,11 +1698,11 @@ async function generateVideoAd(): Promise<AdvertisingAction> {
 async function generateContentQueueItems(): Promise<AdvertisingAction> {
   try {
     const manualChannels = [
-      { name: "Quora", platform: "quora", type: "answer", prompt: "Generate an expert Quora answer about AI filmmaking, AI video generation, or the future of cinema. Be genuinely helpful. Include a subtle mention of VirÉlle Studios only if natural. 200-400 words." },
-      { name: "Skool", platform: "skool", type: "community_post", prompt: "Generate a Skool community post for an AI filmmaking learning group. Share a free lesson or cinematic prompt tip that provides value and encourages discussion. Subtly funnel to VirÉlle Studios. 200-300 words." },
-      { name: "IndieHackers", platform: "indiehackers", type: "update", prompt: "Generate an IndieHackers building-in-public update about VirÉlle Studios. Share a growth metric, AI model improvement, lesson learned, or technical challenge. Be authentic and transparent. 150-300 words." },
+      { name: "Quora", platform: "quora", type: "answer", prompt: "Generate an expert Quora answer about AI filmmaking, AI video generation, or the future of cinema. Be genuinely helpful. Include a subtle mention of VirÃlle Studios only if natural. 200-400 words." },
+      { name: "Skool", platform: "skool", type: "community_post", prompt: "Generate a Skool community post for an AI filmmaking learning group. Share a free lesson or cinematic prompt tip that provides value and encourages discussion. Subtly funnel to VirÃlle Studios. 200-300 words." },
+      { name: "IndieHackers", platform: "indiehackers", type: "update", prompt: "Generate an IndieHackers building-in-public update about VirÃlle Studios. Share a growth metric, AI model improvement, lesson learned, or technical challenge. Be authentic and transparent. 150-300 words." },
       { name: "Pinterest", platform: "pinterest", type: "pin_description", prompt: "Generate a Pinterest pin description for an AI filmmaking mood board or cinematic style guide. Include keywords for Pinterest SEO. Describe what the visual should show. 100-200 words." },
-      { name: "Hacker News", platform: "hackernews", type: "submission", prompt: "Generate a Hacker News Show HN submission about VirÉlle Studios AI film generation technology. Be technical and concise. HN audience hates marketing — focus on the technical innovation. 50-100 words." },
+      { name: "Hacker News", platform: "hackernews", type: "submission", prompt: "Generate a Hacker News Show HN submission about VirÃlle Studios AI film generation technology. Be technical and concise. HN audience hates marketing â focus on the technical innovation. 50-100 words." },
       { name: "LinkedIn", platform: "linkedin", type: "thought_leadership", prompt: "Generate a LinkedIn thought leadership post about AI's impact on film production and commercial content creation. Write as a creative director or studio head. Include a personal insight. 200-400 words." },
       { name: "Slack Communities", platform: "slack", type: "community_message", prompt: "Generate a helpful message for a filmmaking or creative production Slack workspace. Share a tip, resource, or answer a common question about AI video generation. No self-promotion. 50-150 words." },
     ];
@@ -1735,7 +1735,7 @@ async function generateContentQueueItems(): Promise<AdvertisingAction> {
             body: item.content,
             platform: ch.platform,
             status: "approved",
-            aiPrompt: `${ch.name} content — AI generated for ${pillar.pillar}`,
+            aiPrompt: `${ch.name} content â AI generated for ${pillar.pillar}`,
             metadata: { channel: ch.name, queueType: "manual_post", pillar: pillar.pillar },
           } as any);
         }
@@ -1986,7 +1986,7 @@ async function recycleTopContent(): Promise<AdvertisingAction> {
     await db.insert(marketingContent).values({
       channel: "content_seo" as any,
       contentType: "blog_article" as any,
-      title: `[Recycled → ${format.name}] ${recycled.title}`,
+      title: `[Recycled â ${format.name}] ${recycled.title}`,
       body: recycled.content,
       status: "approved",
       metadata: { recycledFrom: post.slug, format: format.name, originalTitle: post.title },
@@ -1996,7 +1996,7 @@ async function recycleTopContent(): Promise<AdvertisingAction> {
       channel: "blog_content",
       action: "recycle_content",
       status: "success",
-      details: `Recycled "${post.title}" → ${format.name}: "${recycled.title}"`,
+      details: `Recycled "${post.title}" â ${format.name}: "${recycled.title}"`,
       cost: 0,
     };
   } catch (err: unknown) {
@@ -2011,7 +2011,7 @@ async function recycleTopContent(): Promise<AdvertisingAction> {
 }
 
 /**
- * Smart Scheduling — determine optimal posting times based on channel.
+ * Smart Scheduling â determine optimal posting times based on channel.
  * Returns whether now is a good time to post to a given channel.
  */
 function isOptimalPostingTime(channel: string): boolean {
@@ -2120,7 +2120,7 @@ export async function getCrossChannelAttribution(days = 30): Promise<{
 
   for (const [channel, perf] of channelPerformance) {
     const successRate = perf.totalAttempts > 0 ? perf.successes / perf.totalAttempts : 0;
-    // Score = success rate * log(attempts) — rewards both reliability and volume
+    // Score = success rate * log(attempts) â rewards both reliability and volume
     const score = Math.round(successRate * Math.log2(perf.totalAttempts + 1) * 100) / 100;
     rankings.push({ channel, score, contentCount: perf.totalAttempts, successRate: Math.round(successRate * 100) });
   }
@@ -2213,7 +2213,7 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     }
   }
 
-  // 2b. Content Recycling (Wed/Fri — repurpose top-performing blog posts)
+  // 2b. Content Recycling (Wed/Fri â repurpose top-performing blog posts)
   if ([3, 5].includes(dayOfWeek)) {
     const t0 = Date.now();
     try {
@@ -2254,6 +2254,15 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
       recordChannelPerformance("community_engagement", false, Date.now() - t0);
     }
   }
+
+  
+    // 4b. Threads (Meta) — daily short-form
+    try {
+      const threadsAction = await runThreadsStep();
+      actions.push(threadsAction);
+    } catch (err: unknown) {
+      errors.push(`Threads: ${getErrorMessage(err)}`);
+    }
 
   // 5. Email Nurture (Wednesday)
   if (dayOfWeek === 3) {
@@ -2310,7 +2319,7 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     }
   }
 
-  // 10. TikTok Content Posting — auto-generate & post carousels (Wed/Fri)
+  // 10. TikTok Content Posting â auto-generate & post carousels (Wed/Fri)
   if ([3, 5].includes(dayOfWeek)) {
     try {
       const tiktokResult = await runTikTokContentPipeline();
@@ -2446,7 +2455,7 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
   try {
     await notifyOwner({
       title: `Advertising Cycle v2: ${successCount}/${actions.length} actions (${skippedCount} smart-skipped)`,
-      content: `Duration: ${Math.round(duration / 1000)}s\nBlog posts: ${metrics.blogPostsGenerated}\nContent recycled: ${actions.filter(a => a.action === "recycle_content" && a.status === "success").length}\nSocial posts: ${metrics.socialPostsPublished}\nTikTok posts: ${metrics.tiktokContentPosts}\nCommunity: ${metrics.communityEngagements}\nSEO: ${metrics.seoOptimizations}\nEmails: ${metrics.emailCampaignsSent}\nErrors: ${failCount}\n\n📊 Intelligence Layer:\nTop channels: ${topChannels || "gathering data..."}\nThrottled: ${throttledChannels.length > 0 ? throttledChannels.join(", ") : "none"}\nActive A/B tests: ${getActiveABTests().length}${errors.length > 0 ? "\n\nErrors:\n" + errors.join("\n") : ""}`,
+      content: `Duration: ${Math.round(duration / 1000)}s\nBlog posts: ${metrics.blogPostsGenerated}\nContent recycled: ${actions.filter(a => a.action === "recycle_content" && a.status === "success").length}\nSocial posts: ${metrics.socialPostsPublished}\nTikTok posts: ${metrics.tiktokContentPosts}\nCommunity: ${metrics.communityEngagements}\nSEO: ${metrics.seoOptimizations}\nEmails: ${metrics.emailCampaignsSent}\nErrors: ${failCount}\n\nð Intelligence Layer:\nTop channels: ${topChannels || "gathering data..."}\nThrottled: ${throttledChannels.length > 0 ? throttledChannels.join(", ") : "none"}\nActive A/B tests: ${getActiveABTests().length}${errors.length > 0 ? "\n\nErrors:\n" + errors.join("\n") : ""}`,
     });
   } catch {
     // Notification failure is non-critical
@@ -2476,7 +2485,7 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
 let advertisingInterval: ReturnType<typeof setInterval> | null = null;
 
 /** Advertising run days: Monday (1), Wednesday (3), Friday (5) */
-const ADVERTISING_RUN_DAYS = [1, 3, 5];
+const ADVERTISING_RUN_DAYS = [0, 1, 2, 3, 4, 5, 6]; // Run every day
 
 /**
  * Get the last advertising run date from the database.
@@ -2514,6 +2523,253 @@ async function setLastRunDate(dateStr: string): Promise<void> {
  * Checks every 30 minutes whether it's a run day and hasn't already run today.
  * Persists last run date in DB so Railway restarts don't cause missed cycles.
  */
+
+  // ============================================
+  // CONTENT REPURPOSING ENGINE
+  // Takes a single blog post and repurposes it into 
+  // platform-native content for X thread, LinkedIn, Reddit, Threads
+  // ============================================
+
+  async function runContentRepurposing(blogTitle: string, blogExcerpt: string, blogUrl: string): Promise<AdvertisingAction> {
+    const t0 = Date.now();
+    try {
+      const db = await getDb();
+
+      // Generate platform-native repurposed content from the blog
+      const repurposedContent = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `You are a viral content strategist for Virellé Studios — the world's most advanced AI film production platform at https://virelle.life.
+            
+  Repurpose a blog post into platform-native content for maximum organic reach. Each piece must feel native to its platform — not copy-pasted.
+
+  BRAND: Prestige, cinematic, Hollywood-quality AI filmmaking for indie creators and studios.
+  TONE: Confident, visionary, inspiring. Think Christopher Nolan meets Silicon Valley.`,
+          },
+          {
+            role: "user",
+            content: `Blog Post Title: "${blogTitle}"
+  Blog Excerpt: ${blogExcerpt.slice(0, 500)}
+  Full Article URL: ${blogUrl}
+
+  Generate repurposed content for these platforms. Return JSON:
+  {
+    "x_thread": "5-7 tweet thread (each tweet ≤280 chars, separated by \\n---\\n, include hook tweet first + CTA last)",
+    "linkedin": "LinkedIn post (800-1200 words, thought leadership angle, professional CTA, no hashtag spam, 3-5 relevant hashtags max)",
+    "reddit": "Reddit post for r/filmmaking or r/indiefilm (genuine, value-first, no hard sell, include a genuine insight or tutorial from the article)",
+    "threads": "Threads post (≤500 chars, casual and visual, single compelling insight from the article)",
+    "youtube_shorts_script": "60-second YouTube Shorts script based on the article's key insight (include visual direction notes)"
+  }`,
+          },
+        ],
+        response_format: { type: "json_schema", json_schema: { name: "repurposed", strict: true, schema: {
+          type: "object",
+          properties: {
+            x_thread: { type: "string" },
+            linkedin: { type: "string" },
+            reddit: { type: "string" },
+            threads: { type: "string" },
+            youtube_shorts_script: { type: "string" },
+          },
+          required: ["x_thread", "linkedin", "reddit", "threads", "youtube_shorts_script"],
+          additionalProperties: false,
+        }}},
+      });
+
+      const raw = repurposedContent.choices?.[0]?.message?.content;
+      const pieces = JSON.parse(typeof raw === "string" ? raw : "{}") as {
+        x_thread: string; linkedin: string; reddit: string; threads: string; youtube_shorts_script: string;
+      };
+
+      if (db) {
+        // Save all repurposed pieces to marketingContent table
+        const platformPieces: Array<{ platform: string; content: string; label: string }> = [
+          { platform: "x_twitter", content: pieces.x_thread, label: "Thread" },
+          { platform: "linkedin", content: pieces.linkedin, label: "Post" },
+          { platform: "reddit", content: pieces.reddit, label: "Post" },
+          { platform: "threads_meta", content: pieces.threads, label: "Post" },
+          { platform: "youtube_shorts", content: pieces.youtube_shorts_script, label: "Shorts Script" },
+        ];
+        for (const p of platformPieces) {
+          if (p.content?.length > 20) {
+            await db.insert(marketingContent).values({
+              platform: p.platform,
+              contentType: "repurposed_from_blog",
+              headline: `[${p.label}] ${blogTitle.slice(0, 80)}`,
+              body: p.content,
+              callToAction: `Read full article: ${blogUrl}`,
+              status: "approved",
+              sourceUrl: blogUrl,
+              scheduledFor: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2h from now
+              createdAt: new Date(),
+            } as any);
+          }
+        }
+      }
+
+      return {
+        channel: "content_repurposing",
+        status: "success",
+        content: `Repurposed "${blogTitle}" → X thread, LinkedIn, Reddit, Threads, YouTube Shorts`,
+        duration: Date.now() - t0,
+        timestamp: new Date(),
+      };
+    } catch (err: unknown) {
+      return { channel: "content_repurposing", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+    }
+  }
+
+  // ============================================
+  // PRESS RELEASE AUTOMATION
+  // Weekly: generate and distribute press release
+  // to PRLog, OpenPR, and film industry contacts
+  // ============================================
+
+  async function runPressReleaseStep(): Promise<AdvertisingAction> {
+    const t0 = Date.now();
+    try {
+      const topics = [
+        { announcement: "introduces real-time AI character consistency for indie filmmakers", feature: "Character DNA System" },
+        { announcement: "launches autonomous AI film director that writes, shoots, and edits complete scenes", feature: "AI Director" },
+        { announcement: "enables filmmakers to create Hollywood-quality scenes for under $10", feature: "Runway Gen-4 integration" },
+        { announcement: "releases automated wardrobe continuity system used on professional film sets", feature: "Wardrobe AI" },
+        { announcement: "partners with independent filmmakers to democratise cinematic storytelling", feature: "Community Platform" },
+      ];
+      const topic = topics[new Date().getDate() % topics.length];
+
+      const prContent = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: "You are a PR writer for Virellé Studios. Write compelling, newsworthy press releases that get picked up by film industry publications. Use AP Style. Write for Variety, Deadline, No Film School, and TechCrunch audiences.",
+          },
+          {
+            role: "user",
+            content: `Write a press release for this announcement:
+  Virellé Studios ${topic.announcement}
+
+  Feature highlight: ${topic.feature}
+  Website: https://virelle.life
+
+  Return JSON:
+  {
+    "headline": "press release headline (max 100 chars)",
+    "subheadline": "supporting deck line (max 150 chars)",
+    "body": "full press release body (400-600 words, AP Style, include quote from founder, company background, and product details)",
+    "quote": "founder quote (1-2 sentences)",
+    "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
+  }`,
+          },
+        ],
+        response_format: { type: "json_schema", json_schema: { name: "press_release", strict: true, schema: {
+          type: "object",
+          properties: {
+            headline: { type: "string" },
+            subheadline: { type: "string" },
+            body: { type: "string" },
+            quote: { type: "string" },
+            keywords: { type: "array", items: { type: "string" } },
+          },
+          required: ["headline", "subheadline", "body", "quote", "keywords"],
+          additionalProperties: false,
+        }}},
+      });
+
+      const raw = prContent.choices?.[0]?.message?.content;
+      const pr = JSON.parse(typeof raw === "string" ? raw : "{}") as {
+        headline: string; subheadline: string; body: string; quote: string; keywords: string[];
+      };
+
+      log.info(`[PressRelease] Generated: "${pr.headline}"`);
+
+      // Distribute via free PR services
+      const { pressReleaseAdapter } = await import("./expanded-channels");
+      const result = await pressReleaseAdapter.distribute({
+        headline: pr.headline,
+        subheadline: pr.subheadline,
+        body: pr.body,
+        contactName: "Virellé Studios Team",
+        contactEmail: "studiosvirelle@gmail.com",
+        city: "Sydney",
+        country: "AU",
+        category: "Technology",
+        keywords: pr.keywords,
+        websiteUrl: "https://virelle.life",
+      });
+
+      const db = await getDb();
+      if (db) {
+        await db.insert(marketingActivityLog).values({
+          action: "press_release_distributed",
+          details: JSON.stringify({ headline: pr.headline, distributed: result.distributed, errors: result.errors }),
+          createdAt: new Date(),
+          channel: "press_release",
+          status: result.success ? "success" : "partial",
+        } as any);
+      }
+
+      return {
+        channel: "press_release",
+        status: result.success ? "success" : "partial",
+        content: `PR: "${pr.headline}" → distributed to: ${result.distributed.join(", ") || "queued for manual submission"}`,
+        duration: Date.now() - t0,
+        timestamp: new Date(),
+      };
+    } catch (err: unknown) {
+      return { channel: "press_release", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+    }
+  }
+
+  // ============================================
+  // THREADS (META) POSTING STEP
+  // ============================================
+
+  async function runThreadsStep(): Promise<AdvertisingAction> {
+    const t0 = Date.now();
+    try {
+      const { threadsAdapter } = await import("./expanded-channels");
+      if (!threadsAdapter.isConfigured) {
+        return { channel: "threads_meta", status: "skipped", content: "Threads not configured (add THREADS_ACCESS_TOKEN + THREADS_USER_ID)", duration: 0, timestamp: new Date() };
+      }
+
+      const content = await generateContent({ platform: "threads_meta", topic: undefined, count: 1 });
+      const piece = content[0];
+      if (!piece) throw new Error("No content generated");
+
+      const result = await threadsAdapter.post({ text: piece.body.slice(0, 500) });
+      return {
+        channel: "threads_meta",
+        status: result.success ? "success" : "failed",
+        content: result.success ? piece.body.slice(0, 100) : result.error,
+        error: result.error,
+        duration: Date.now() - t0,
+        timestamp: new Date(),
+      };
+    } catch (err: unknown) {
+      return { channel: "threads_meta", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+    }
+  }
+
+  // ============================================
+  // GOOGLE SEARCH CONSOLE — INSTANT INDEXING
+  // Submits new blog posts for immediate Google crawl
+  // ============================================
+
+  export async function submitNewContentToGoogleIndexing(urls: string[]): Promise<{ submitted: number; errors: string[] }> {
+    const { youtubeAdapter } = await import("./expanded-channels");
+    const errors: string[] = [];
+    let submitted = 0;
+    for (const url of urls) {
+      const result = await youtubeAdapter.submitUrlForIndexing(url);
+      if (result.success) submitted++;
+      else errors.push(`${url}: ${result.error}`);
+    }
+    log.info(`[GoogleIndexing] Submitted ${submitted}/${urls.length} URLs`);
+    return { submitted, errors };
+  }
+
+  
 export function startAdvertisingScheduler(): void {
   log.info("[AdvertisingOrchestrator] Starting autonomous advertising scheduler (Mon/Wed/Fri)...");
 
