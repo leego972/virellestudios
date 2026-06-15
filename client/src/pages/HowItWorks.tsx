@@ -23,6 +23,7 @@ const STEPS = [
     icon: FileText,
     color: "amber",
     time: "5–15 minutes",
+    path: "/projects/new" as string | null,
   },
   {
     number: "02",
@@ -240,9 +241,17 @@ export default function HowItWorks() {
                       <h3 className="text-xl font-bold gradient-text-gold">{step.title}</h3>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badgeColor[step.color]}`}>
                         <Clock className="h-3 w-3 inline mr-1" />{step.time}
-                      </span>
-                    </div>
-                    <p className="text-foreground/70 mb-4 leading-relaxed">{step.description}</p>
+                        </span>
+                        {step.path && (
+                          <button
+                            onClick={() => setLocation(step.path!)}
+                            className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1"
+                          >
+                            Try it in Virelle <ArrowRight className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-foreground/70 mb-4 leading-relaxed">{step.description}</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {step.details.map((d) => (
                         <div key={d} className="flex items-start gap-2 text-sm text-foreground/60">
