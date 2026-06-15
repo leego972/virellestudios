@@ -160,6 +160,14 @@ const FAQ_CATEGORIES = [
         q: "Does Virelle offer API access?",
         a: "Yes. The Studio and Industry tiers include API access for pipeline integration. You can trigger generation, retrieve assets, and manage projects programmatically.",
       },
+      {
+        q: "Is there a guided path to help me make my first film?",
+        a: "Yes. After signing in, your dashboard shows a step-by-step Film Production Path: Connect API Key → Connect Sound API → Create Project → Write Script → Plan Scenes → Generate Scene. You can navigate freely between steps, skip any step, and return to it later.",
+      },
+      {
+        q: "What happens if I skip a step in the production path?",
+        a: "Nothing is locked — every tool is accessible at any time. The guided path is a convenience, not a gate. Skipping marks it as skipped and moves you forward, but you can return to any step via the breadcrumb bar at any time.",
+      },
     ],
   },
 ];
