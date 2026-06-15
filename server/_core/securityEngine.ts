@@ -4,17 +4,17 @@ import { logger } from "./logger";
 import type { User } from "../../drizzle/schema";
 
 // ============================================================
-// ENCRYPTION — Encrypt/decrypt user BYOK API keys at rest
+// ENCRYPTION â Encrypt/decrypt user BYOK API keys at rest
 // ============================================================
 
-// Derive encryption key using scrypt — stronger than a raw SHA-256 hash.
+// Derive encryption key using scrypt â stronger than a raw SHA-256 hash.
 // Fail hard at startup if JWT_SECRET is missing or is the insecure default.
 const _jwtSecret = process.env.JWT_SECRET;
 if (!_jwtSecret || _jwtSecret === "dev-secret-change-me") {
   if (process.env.NODE_ENV === "production") {
     throw new Error("[security] JWT_SECRET is not set or is using the insecure default. Set a strong secret before starting in production.");
   } else {
-    console.warn("[security] WARNING: JWT_SECRET is not set — using insecure dev default. Do NOT use in production.");
+    logger.warn("[security] WARNING: JWT_SECRET is not set â using insecure dev default. Do NOT use in production.");
   }
 }
 // Legacy key (SHA-256) kept solely for decrypting old CBC-encrypted values
@@ -55,7 +55,7 @@ export function decryptApiKey(ciphertext: string): string {
       decrypted += decipher.final("utf8");
       return decrypted;
     } else {
-      // Legacy AES-256-CBC — decrypt with SHA-256 key for backward compatibility
+      // Legacy AES-256-CBC â decrypt with SHA-256 key for backward compatibility
       const [ivHex, encrypted] = ciphertext.split(":");
       if (!ivHex || !encrypted) return ciphertext;
       const iv = Buffer.from(ivHex, "hex");
@@ -73,13 +73,13 @@ export function decryptApiKey(ciphertext: string): string {
     } catch {
       // fall through
     }
-    logger.error("[security] decryptApiKey failed — returning empty string to prevent key leakage");
+    logger.error("[security] decryptApiKey failed â returning empty string to prevent key leakage");
     return "";
   }
 }
 
 // ============================================================
-// FRAUD DETECTION — In-memory tracking with configurable thresholds
+// FRAUD DETECTION â In-memory tracking with configurable thresholds
 // ============================================================
 
 interface FraudSignal {
@@ -266,7 +266,7 @@ export function trackLoginAttempt(userId: number, ip: string, success: boolean):
       return { allowed: false, reason: "Account temporarily locked due to too many failed login attempts. Try again in 30 minutes." };
     }
   } else {
-    // Successful login — reset failed counter
+    // Successful login â reset failed counter
     tracker.failedLogins1h = 0;
     tracker.lockoutUntil = undefined;
   }
@@ -355,7 +355,7 @@ export function trackGeneration(userId: number, ip: string, type: string): { all
 }
 
 // ============================================================
-// SUBSCRIPTION VERIFICATION — Real-time Stripe sync
+// SUBSCRIPTION VERIFICATION â Real-time Stripe sync
 // ============================================================
 
 export async function verifySubscriptionForAction(
@@ -386,7 +386,7 @@ export async function verifySubscriptionForAction(
   if (user.subscriptionCurrentPeriodEnd) {
     const endDate = new Date(user.subscriptionCurrentPeriodEnd);
     if (endDate < new Date()) {
-      // Period expired — live-check with Stripe
+      // Period expired â live-check with Stripe
       if (stripe && user.stripeSubscriptionId) {
         try {
           const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
@@ -476,7 +476,7 @@ export function logAuditEvent(
 }
 
 // ============================================================
-// ADMIN QUERIES — For the security dashboard
+// ADMIN QUERIES â For the security dashboard
 // ============================================================
 
 export function getSecurityEvents(limit = 100, severity?: string): FraudSignal[] {
@@ -592,7 +592,7 @@ export function lockUser(userId: number, durationMs: number, reason: string) {
 }
 
 // ============================================================
-// PERIODIC CLEANUP — Reset daily counters
+// PERIODIC CLEANUP â Reset daily counters
 // ============================================================
 
 setInterval(() => {
