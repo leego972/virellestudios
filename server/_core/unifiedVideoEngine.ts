@@ -10,7 +10,8 @@
  * - Parallel: Split scenes between both providers for maximum speed
  */
 import { generateVideo, generateVideoWithFallback, buildVideoPrompt, type VideoGenerationOptions } from "./videoGeneration";
-import { generateRunwayVideo, generateRunwayVideoWithFallback, type RunwayVideoOptions } from "./runwayVideoGeneration";
+
+import { logger } from "./logger";import { generateRunwayVideo, generateRunwayVideoWithFallback, type RunwayVideoOptions } from "./runwayVideoGeneration";
 import { ENV } from "./env";
 
 export type VideoProvider = "runway" | "sora" | "auto";
@@ -61,7 +62,7 @@ export async function generateUnifiedVideo(
   const provider = options.provider || "auto";
   const available = getAvailableProviders();
 
-  console.log(`[UnifiedVideo] Provider: ${provider}, Available: ${available.join(", ")}`);
+  logger.info(`[UnifiedVideo] Provider: ${provider}, Available: ${available.join(", ")}`);
 
   if (available.length === 0) {
     throw new Error("No video generation providers configured. Set OPENAI_API_KEY or RUNWAYML_API_SECRET.");
@@ -90,7 +91,7 @@ export async function generateUnifiedVideo(
         return await generateWithSora(options);
       }
     } catch (e: any) {
-      console.error(`[UnifiedVideo] ${p} failed:`, e.message);
+      logger.error(`[UnifiedVideo] ${p} failed:`, e.message);
       lastError = e;
       // Try next provider
     }
@@ -148,7 +149,7 @@ async function generateWithSora(options: UnifiedVideoOptions): Promise<UnifiedVi
 
 /**
  * Generate multiple scene videos in parallel, distributing across providers.
- * This is the key speed optimization — instead of sequential generation,
+ * This is the key speed optimization â instead of sequential generation,
  * scenes are split between Runway and Sora simultaneously.
  */
 export async function generateScenesParallel(
@@ -174,7 +175,7 @@ export async function generateScenesParallel(
   const available = getAvailableProviders();
   const maxConcurrency = options?.maxConcurrency || 3;
 
-  console.log(`[UnifiedVideo] Generating ${scenes.length} scenes in parallel (max ${maxConcurrency} concurrent)`);
+  logger.info(`[UnifiedVideo] Generating ${scenes.length} scenes in parallel (max ${maxConcurrency} concurrent)`);
 
   // Process scenes with concurrency limit
   const results: Array<{
@@ -207,7 +208,7 @@ export async function generateScenesParallel(
       running++;
 
       try {
-        console.log(`[UnifiedVideo] Scene ${scene.sceneIndex}: starting with ${provider}`);
+        logger.info(`[UnifiedVideo] Scene ${scene.sceneIndex}: starting with ${provider}`);
         const result = await generateUnifiedVideo({
           prompt: scene.prompt,
           seconds: scene.seconds || 5,
@@ -224,9 +225,9 @@ export async function generateScenesParallel(
           duration: result.duration,
           provider: result.provider,
         });
-        console.log(`[UnifiedVideo] Scene ${scene.sceneIndex}: completed (${result.provider})`);
+        logger.info(`[UnifiedVideo] Scene ${scene.sceneIndex}: completed (${result.provider})`);
       } catch (e: any) {
-        console.error(`[UnifiedVideo] Scene ${scene.sceneIndex}: failed:`, e.message);
+        logger.error(`[UnifiedVideo] Scene ${scene.sceneIndex}: failed:`, e.message);
         results.push({
           sceneIndex: scene.sceneIndex,
           duration: scene.seconds || 5,
@@ -279,7 +280,7 @@ export function buildUnifiedVideoPrompt(
   // Core scene description
   parts.push(sceneDescription);
 
-  // Character action (critical for video — what's MOVING)
+  // Character action (critical for video â what's MOVING)
   if (options?.characterAction) {
     parts.push(options.characterAction);
   }
