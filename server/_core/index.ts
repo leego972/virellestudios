@@ -1543,6 +1543,41 @@ async function startServer() {
               )
           `);
           logger.info("[WardrobeImages] Auto-patched broken image paths with Pollinations URLs");
+      // Backfill retailPriceAud for existing items where it is NULL (INSERT IGNORE skipped them)
+      try {
+        const dbConn2 = await db.getDb();
+        if (dbConn2) {
+          await dbConn2.execute(sql`
+            UPDATE wardrobeItems
+            SET
+              retailPriceAud = CASE LOWER(COALESCE(category, ''))
+                WHEN 'tops'        THEN 100
+                WHEN 'bottoms'     THEN 250
+                WHEN 'outerwear'   THEN 350
+                WHEN 'dresses'     THEN 200
+                WHEN 'swimwear'    THEN 150
+                WHEN 'footwear'    THEN 300
+                WHEN 'accessories' THEN 100
+                WHEN 'watches'     THEN 150
+                WHEN 'eyewear'     THEN 100
+                WHEN 'bags'        THEN 200
+                WHEN 'suits'       THEN 500
+                WHEN 'uniforms'    THEN 300
+                WHEN 'knitwear'    THEN 200
+                WHEN 'lingerie'    THEN 100
+                WHEN 'sleepwear'   THEN 100
+                ELSE 100
+              END,
+              visibility = COALESCE(visibility, 'public'),
+              status     = COALESCE(status, 'active')
+            WHERE collectionId IS NOT NULL
+              AND retailPriceAud IS NULL
+          `);
+          logger.info("[WardrobeItems] Backfilled retailPriceAud for existing items missing prices");
+        }
+      } catch (e: any) {
+        logger.warn(`[WardrobeItems] Price backfill failed (non-fatal): ${e.message}`);
+      }
         }
       } catch (e: any) {
         logger.warn(`[WardrobeImages] Startup image patch failed (non-fatal): ${e.message}`);
