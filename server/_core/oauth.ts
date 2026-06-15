@@ -3,6 +3,7 @@ import type { Express, Request, Response } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
+import { logger } from "./logger";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -10,7 +11,7 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 export function registerOAuthRoutes(app: Express) {
-  // OAuth initiation routes — redirect user to Google/GitHub via Manus OAuth
+  // OAuth initiation routes â redirect user to Google/GitHub via Manus OAuth
   app.get("/api/auth/google", async (req: Request, res: Response) => {
     try {
       const protocol = req.headers["x-forwarded-proto"] || req.protocol;
@@ -19,7 +20,7 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUrl = await sdk.getAuthorizationUrl("google", callbackUrl);
       res.redirect(302, redirectUrl);
     } catch (error) {
-      console.error("[OAuth] Google auth initiation failed", error);
+      logger.error("[OAuth] Google auth initiation failed", error);
       res.redirect(302, "/login?error=oauth_failed");
     }
   });
@@ -32,12 +33,12 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUrl = await sdk.getAuthorizationUrl("github", callbackUrl);
       res.redirect(302, redirectUrl);
     } catch (error) {
-      console.error("[OAuth] GitHub auth initiation failed", error);
+      logger.error("[OAuth] GitHub auth initiation failed", error);
       res.redirect(302, "/login?error=oauth_failed");
     }
   });
 
-  // OAuth callback — exchange code for token and create session
+  // OAuth callback â exchange code for token and create session
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
@@ -75,7 +76,7 @@ export function registerOAuthRoutes(app: Express) {
       // Redirect to dashboard with opener flag so the studio opener plays
       res.redirect(302, "/?opener=1");
     } catch (error) {
-      console.error("[OAuth] Callback failed", error);
+      logger.error("[OAuth] Callback failed", error);
       res.status(500).json({ error: "OAuth callback failed" });
     }
   });
