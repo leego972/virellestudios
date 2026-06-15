@@ -1,5 +1,5 @@
 // ============================================================================
-// v6.71 — Auto Recap MP4 renderer.
+// v6.71 â Auto Recap MP4 renderer.
 //
 // Background worker invoked by the `recap.renderMp4` mutation. Loads the
 // recap + its `recapSegments` + the source movies, downloads each source
@@ -9,7 +9,7 @@
 // `render_completed` and finalizes the credit reservation.
 //
 // Failure semantics (matches the v6.70 scene-video pattern):
-//   - any error before the storage upload → recap reverts to
+//   - any error before the storage upload â recap reverts to
 //     `outline_completed`, errorMessage saved, reservation released.
 //   - finalizeReservation/releaseReservation are both idempotent (gate on
 //     status='reserved') so this is safe under retry.
@@ -27,6 +27,7 @@ import { promisify } from "util";
 
 import * as db from "../db";
 import { storagePut } from "../storage";
+import { logger } from "./logger";
 
 const execFileAsync = promisify(execFile);
 
@@ -54,7 +55,7 @@ interface RenderArgs {
  * Render the final Auto Recap MP4. Long-running; intended to be fired as a
  * background task (`(async () => renderRecapMp4(...))()`) from the mutation.
  * Resolves once the recap row has been updated and the reservation
- * finalized/released. Never throws — errors are persisted to the recap row.
+ * finalized/released. Never throws â errors are persisted to the recap row.
  */
 export async function renderRecapMp4(args: RenderArgs): Promise<void> {
   const { recapId, reservationId, userId } = args;
@@ -62,7 +63,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
 
   // 1. Probe ffmpeg up front. If missing, fail fast and refund.
   if (!(await isFfmpegAvailable())) {
-    console.warn(`${tag} ffmpeg is not installed on this host — aborting render.`);
+    logger.warn(`${tag} ffmpeg is not installed on this host â aborting render.`);
     await safeFail(
       recapId,
       userId,
@@ -95,7 +96,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
       const url: string | null = movie?.fileUrl ?? movie?.videoUrl ?? null;
       if (!movie || !url) {
         throw new Error(
-          `Source movie #${id} is missing a downloadable video URL — cannot render recap.`,
+          `Source movie #${id} is missing a downloadable video URL â cannot render recap.`,
         );
       }
       movieCache.set(id, { id, fileUrl: url });
@@ -103,13 +104,13 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
 
     // 4. Create a temp working directory under /tmp.
     workDir = await fs.mkdtemp(path.join(os.tmpdir(), `virelle-recap-${recapId}-`));
-    console.log(`${tag} workDir=${workDir}`);
+    logger.info(`${tag} workDir=${workDir}`);
 
     // 5. Download every distinct source clip exactly once.
     const downloadedSources = new Map<number, string>();
     for (const [id, src] of movieCache) {
       const localPath = path.join(workDir, `src-${id}.mp4`);
-      console.log(`${tag} downloading source #${id}`);
+      logger.info(`${tag} downloading source #${id}`);
       const resp = await fetch(src.fileUrl);
       if (!resp.ok) {
         throw new Error(`Failed to download source movie #${id}: HTTP ${resp.status}`);
@@ -123,7 +124,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
     //    -ss / -to applied AFTER -i for accurate-cut at the cost of speed,
     //    which is fine for short recap segments. Re-encode to H.264 + AAC at
     //    1920x1080 30fps. Clips may be shorter than requested if the source
-    //    is shorter — ffmpeg silently truncates.
+    //    is shorter â ffmpeg silently truncates.
     const segmentClips: string[] = [];
     const sortedSegments = segments.slice().sort(
       (a, b) => Number(a.sortOrder ?? 0) - Number(b.sortOrder ?? 0),
@@ -139,7 +140,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
       const end = Math.max(start + 0.5, Number(seg.endTimeSeconds ?? start + 4));
       const duration = end - start;
       const outPath = path.join(workDir, `seg-${String(i).padStart(3, "0")}.mp4`);
-      console.log(`${tag} cutting segment ${i} (src=${sourceId} ${start}s–${end}s)`);
+      logger.info(`${tag} cutting segment ${i} (src=${sourceId} ${start}sâ${end}s)`);
       await execFileAsync("ffmpeg", [
         "-y",
         "-i", srcPath,
@@ -172,7 +173,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
       segmentClips.map((p) => `file '${p.replace(/'/g, "'\\''")}'`).join("\n"),
     );
     const finalPath = path.join(workDir, "recap.mp4");
-    console.log(`${tag} concatenating ${segmentClips.length} segment(s)`);
+    logger.info(`${tag} concatenating ${segmentClips.length} segment(s)`);
     await execFileAsync("ffmpeg", [
       "-y",
       "-f", "concat",
@@ -187,7 +188,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
     //    that surfaces a clean error that the failure path will refund.
     const finalBuf = await fs.readFile(finalPath);
     const relKey = `recaps/${recap.projectId}/${recapId}/recap-${Date.now()}.mp4`;
-    console.log(`${tag} uploading final MP4 (${finalBuf.length} bytes)`);
+    logger.info(`${tag} uploading final MP4 (${finalBuf.length} bytes)`);
     const uploaded = await storagePut(relKey, finalBuf, "video/mp4");
 
     // 9. Update the recap row with the final asset.
@@ -199,16 +200,16 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
       errorMessage: null as any,
     } as any);
 
-    // 10. Finalize the reservation (idempotent — only mutates rows still
+    // 10. Finalize the reservation (idempotent â only mutates rows still
     //     in 'reserved' state). Mirrors the v6.70 scene-video pattern.
     if (reservationId) {
       try { await db.finalizeReservation(reservationId); } catch {}
     }
 
-    console.log(`${tag} render_completed → ${uploaded.url}`);
+    logger.info(`${tag} render_completed â ${uploaded.url}`);
   } catch (err: any) {
     const message = err?.message || "Auto Recap MP4 render failed.";
-    console.error(`${tag} ${message}`);
+    logger.error(`${tag} ${message}`);
     await safeFail(recapId, userId, reservationId, message);
   } finally {
     // 11. Always clean up the temp working directory.
@@ -221,7 +222,7 @@ export async function renderRecapMp4(args: RenderArgs): Promise<void> {
 /**
  * Failure path. Reverts the recap to its prior `outline_completed` state,
  * stores the error message for the UI, and refunds the credit reservation.
- * Never throws — best effort.
+ * Never throws â best effort.
  */
 async function safeFail(
   recapId: number,
@@ -236,7 +237,7 @@ async function safeFail(
       errorMessage,
     } as any);
   } catch (e: any) {
-    console.warn(`[RecapRender#${recapId}] failed to revert status: ${e?.message}`);
+    logger.warn(`[RecapRender#${recapId}] failed to revert status: ${e?.message}`);
   }
   if (reservationId) {
     try { await db.releaseReservation(reservationId); } catch {}
