@@ -1,6 +1,6 @@
 /**
  * Content Moderation Engine
- * ─────────────────────────────────────────────────────────────────────────────
+ * âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
  * Scans user-submitted content (prompts, character descriptions, scene text,
  * uploaded image descriptions) for policy violations.
  *
@@ -11,10 +11,10 @@
  *  4. Sends a notification email to the user explaining the freeze
  *
  * Severity levels:
- *  - CRITICAL  → CSAM, child exploitation (immediate freeze + law enforcement flag)
- *  - HIGH      → Non-consensual explicit content, extreme violence, terrorism
- *  - MEDIUM    → Hate speech, harassment, impersonation
- *  - LOW       → Suspicious patterns, borderline content (flag for review, no freeze)
+ *  - CRITICAL  â CSAM, child exploitation (immediate freeze + law enforcement flag)
+ *  - HIGH      â Non-consensual explicit content, extreme violence, terrorism
+ *  - MEDIUM    â Hate speech, harassment, impersonation
+ *  - LOW       â Suspicious patterns, borderline content (flag for review, no freeze)
  */
 
 import { getDb } from "../db";
@@ -22,8 +22,9 @@ import { users, moderationIncidents } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { ENV } from "./env";
 import nodemailer from "nodemailer";
+import { logger } from "./logger";
 
-// ─── Email transporter (reuses same Gmail SMTP as main email.ts) ─────────────
+// âââ Email transporter (reuses same Gmail SMTP as main email.ts) âââââââââââââ
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -32,7 +33,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ─── Violation Categories ─────────────────────────────────────────────────────
+// âââ Violation Categories âââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export type ViolationSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 export type ViolationCategory =
   | "CSAM"
@@ -55,9 +56,9 @@ interface ViolationRule {
   reportToAuthorities: boolean;
 }
 
-// ─── Violation Rules ──────────────────────────────────────────────────────────
+// âââ Violation Rules ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // NOTE: These are intentionally obfuscated in logs. The actual keyword list
-// is kept minimal here — a production deployment should use an AI moderation
+// is kept minimal here â a production deployment should use an AI moderation
 // API (e.g., OpenAI Moderation, AWS Rekognition, Google SafeSearch) in addition.
 const VIOLATION_RULES: ViolationRule[] = [
   {
@@ -130,9 +131,9 @@ const VIOLATION_RULES: ViolationRule[] = [
     freeze: false,
     reportToAuthorities: false,
   },
-  // ─── Signature Cast Brand-Safety Rule ─────────────────────────────────────────
+  // âââ Signature Cast Brand-Safety Rule âââââââââââââââââââââââââââââââââââââââââ
   // Blocks explicit sexual / pornographic requests that name Virelle Stars.
-  // Severity: HIGH (freeze=true, no authority report — internal enforcement only).
+  // Severity: HIGH (freeze=true, no authority report â internal enforcement only).
   // Permitted: sensual, romantic, mature drama, implied intimacy, adult glamour.
   // Prohibited: pornography, explicit sex acts, graphic nudity for sexual display,
   //             fetish content, adult-industry positioning.
@@ -156,7 +157,7 @@ const VIOLATION_RULES: ViolationRule[] = [
   },
 ];
 
-// ─── Scan Result ──────────────────────────────────────────────────────────────
+// âââ Scan Result ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export interface ModerationScanResult {
   flagged: boolean;
   violations: Array<{
@@ -171,7 +172,7 @@ export interface ModerationScanResult {
   shouldReport: boolean;
 }
 
-// ─── Core Scan Function ───────────────────────────────────────────────────────
+// âââ Core Scan Function âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export function scanContent(text: string): ModerationScanResult {
   const lower = text.toLowerCase();
   const violations: ModerationScanResult["violations"] = [];
@@ -205,7 +206,7 @@ export function scanContent(text: string): ModerationScanResult {
   };
 }
 
-// ─── Handle a Flagged Incident ────────────────────────────────────────────────
+// âââ Handle a Flagged Incident ââââââââââââââââââââââââââââââââââââââââââââââââ
 export async function handleModerationViolation(opts: {
   userId: number;
   userEmail: string;
@@ -219,7 +220,7 @@ export async function handleModerationViolation(opts: {
 }): Promise<void> {
   const { userId, userEmail, userName, contentType, contentSnippet, scanResult } = opts;
 
-  console.warn(`[Moderation] VIOLATION DETECTED — User ${userId} (${userEmail}) | Severity: ${scanResult.highestSeverity} | Categories: ${scanResult.violations.map(v => v.category).join(", ")}`);
+  logger.warn(`[Moderation] VIOLATION DETECTED â User ${userId} (${userEmail}) | Severity: ${scanResult.highestSeverity} | Categories: ${scanResult.violations.map(v => v.category).join(", ")}`);
 
   // 1. Log to database
   try {
@@ -236,7 +237,7 @@ export async function handleModerationViolation(opts: {
       status: "pending_review",
     });
   } catch (err) {
-    console.error("[Moderation] Failed to log incident to DB:", err);
+    logger.error("[Moderation] Failed to log incident to DB:", err);
   }
 
   // 2. Freeze account if required
@@ -247,9 +248,9 @@ export async function handleModerationViolation(opts: {
       await db2.update(users)
         .set({ isFrozen: true, frozenReason: `Policy violation detected: ${scanResult.violations.map(v => v.category).join(", ")}`, frozenAt: new Date() })
         .where(eq(users.id, userId));
-      console.warn(`[Moderation] Account ${userId} FROZEN.`);
+      logger.warn(`[Moderation] Account ${userId} FROZEN.`);
     } catch (err) {
-      console.error("[Moderation] Failed to freeze account:", err);
+      logger.error("[Moderation] Failed to freeze account:", err);
     }
   }
 
@@ -262,7 +263,7 @@ export async function handleModerationViolation(opts: {
   }
 }
 
-// ─── Admin Alert Email ────────────────────────────────────────────────────────
+// âââ Admin Alert Email ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function sendAdminAlert(opts: {
   userId: number;
   userEmail: string;
@@ -281,8 +282,8 @@ async function sendAdminAlert(opts: {
     `<tr>
       <td style="padding:6px 12px;border-bottom:1px solid #262626;color:#f5f5f5;">${v.category}</td>
       <td style="padding:6px 12px;border-bottom:1px solid #262626;color:${severityColor};font-weight:700;">${v.severity}</td>
-      <td style="padding:6px 12px;border-bottom:1px solid #262626;color:#a3a3a3;">${v.freeze ? "✅ Frozen" : "⚠️ Flagged"}</td>
-      <td style="padding:6px 12px;border-bottom:1px solid #262626;color:#a3a3a3;">${v.reportToAuthorities ? "🚨 YES" : "No"}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #262626;color:#a3a3a3;">${v.freeze ? "â Frozen" : "â ï¸ Flagged"}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #262626;color:#a3a3a3;">${v.reportToAuthorities ? "ð¨ YES" : "No"}</td>
     </tr>`
   ).join("");
 
@@ -294,7 +295,7 @@ async function sendAdminAlert(opts: {
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#141414;border-radius:12px;border:2px solid ${severityColor};overflow:hidden;">
         <tr><td style="padding:24px 32px;background-color:${severityColor};text-align:center;">
           <h1 style="margin:0;font-size:20px;font-weight:800;color:#fff;letter-spacing:1px;">
-            🚨 CONTENT MODERATION ALERT — ${scanResult.highestSeverity}
+            ð¨ CONTENT MODERATION ALERT â ${scanResult.highestSeverity}
           </h1>
         </td></tr>
         <tr><td style="padding:28px 32px;">
@@ -318,13 +319,13 @@ async function sendAdminAlert(opts: {
             <tr>
               <td style="padding:8px 0;color:#a3a3a3;font-size:13px;">Account Status</td>
               <td style="padding:8px 0;font-size:13px;font-weight:700;color:${scanResult.shouldFreeze ? "#dc2626" : "#65a30d"};">
-                ${scanResult.shouldFreeze ? "🔒 FROZEN" : "⚠️ Flagged (active)"}
+                ${scanResult.shouldFreeze ? "ð FROZEN" : "â ï¸ Flagged (active)"}
               </td>
             </tr>
             <tr>
               <td style="padding:8px 0;color:#a3a3a3;font-size:13px;">Report to Authorities</td>
               <td style="padding:8px 0;font-size:13px;font-weight:700;color:${scanResult.shouldReport ? "#dc2626" : "#65a30d"};">
-                ${scanResult.shouldReport ? "🚨 YES — NCMEC / Law Enforcement" : "No"}
+                ${scanResult.shouldReport ? "ð¨ YES â NCMEC / Law Enforcement" : "No"}
               </td>
             </tr>
           </table>
@@ -356,7 +357,7 @@ async function sendAdminAlert(opts: {
           </div>
         </td></tr>
         <tr><td style="padding:16px 32px;background-color:#0d0d0d;text-align:center;border-top:1px solid #262626;">
-          <p style="margin:0;font-size:11px;color:#525252;">Virelle Studios Content Moderation System — ${new Date().toISOString()}</p>
+          <p style="margin:0;font-size:11px;color:#525252;">Virelle Studios Content Moderation System â ${new Date().toISOString()}</p>
         </td></tr>
       </table>
     </td></tr>
@@ -368,16 +369,16 @@ async function sendAdminAlert(opts: {
     await transporter.sendMail({
       from: `"Virelle Studios Moderation" <${ENV.gmailUser}>`,
       to: adminEmail,
-      subject: `🚨 [${scanResult.highestSeverity}] Content Moderation Alert — User ${userId} (${userEmail})`,
+      subject: `ð¨ [${scanResult.highestSeverity}] Content Moderation Alert â User ${userId} (${userEmail})`,
       html,
     });
-    console.log(`[Moderation] Admin alert sent to ${adminEmail}`);
+    logger.info(`[Moderation] Admin alert sent to ${adminEmail}`);
   } catch (err) {
-    console.error("[Moderation] Failed to send admin alert email:", err);
+    logger.error("[Moderation] Failed to send admin alert email:", err);
   }
 }
 
-// ─── User Freeze Notification Email ──────────────────────────────────────────
+// âââ User Freeze Notification Email ââââââââââââââââââââââââââââââââââââââââââ
 async function sendUserFreezeNotification(opts: {
   userEmail: string;
   userName: string;
@@ -411,7 +412,7 @@ async function sendUserFreezeNotification(opts: {
             </p>
           </div>
           <p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#a3a3a3;">
-            Please note that certain violations — particularly those involving content that exploits or endangers minors — are subject to mandatory reporting to law enforcement and will result in permanent account termination.
+            Please note that certain violations â particularly those involving content that exploits or endangers minors â are subject to mandatory reporting to law enforcement and will result in permanent account termination.
           </p>
           <p style="margin:0;font-size:14px;line-height:1.7;color:#a3a3a3;">
             Contact us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4a843;">studiosvirelle@gmail.com</a> to discuss your case.
@@ -433,13 +434,13 @@ async function sendUserFreezeNotification(opts: {
       subject: "Important: Your Virelle Studios Account Has Been Temporarily Frozen",
       html,
     });
-    console.log(`[Moderation] User freeze notification sent to ${userEmail}`);
+    logger.info(`[Moderation] User freeze notification sent to ${userEmail}`);
   } catch (err) {
-    console.error("[Moderation] Failed to send user freeze notification:", err);
+    logger.error("[Moderation] Failed to send user freeze notification:", err);
   }
 }
 
-// ─── Convenience: Scan and Handle in One Call ─────────────────────────────────
+// âââ Convenience: Scan and Handle in One Call âââââââââââââââââââââââââââââââââ
 export async function moderateContent(opts: {
   userId: number;
   userEmail: string;
