@@ -25,8 +25,13 @@ import { useState, useEffect } from "react";
     { title: "Berlin International Film Festival", date: "Feb 13–23, 2026", location: "Berlin, Germany", type: "Festival", url: "https://berlinale.de" },
     { title: "Hot Docs International Documentary Festival", date: "May 1–11, 2026", location: "Toronto, Canada", type: "Festival", url: "https://hotdocs.ca" },
     { title: "Cannes Film Market", date: "May 13–24, 2026", location: "Cannes, France", type: "Market", url: "https://marchedufilm.com" },
-    { title: "AFM — American Film Market", date: "Nov 5–10, 2025", location: "Las Vegas, NV", type: "Market", url: "https://americanfilmmarket.com" },
+    { title: "AFM — American Film Market", date: "Nov 4–9, 2026", location: "Las Vegas, NV", type: "Market", url: "https://americanfilmmarket.com" },
     { title: "SXSW Film & TV Festival", date: "Mar 6–15, 2026", location: "Austin, Texas", type: "Festival", url: "https://sxsw.com/film" },
+      { title: "Tribeca Film Festival", date: "Jun 5–15, 2026", location: "New York, USA", type: "Festival", url: "https://tribecafilm.com" },
+      { title: "Melbourne International Film Festival", date: "Jul 30–Aug 16, 2026", location: "Melbourne, Australia", type: "Festival", url: "https://miff.com.au" },
+      { title: "Venice International Film Festival", date: "Aug 26–Sep 5, 2026", location: "Venice, Italy", type: "Festival", url: "https://labiennale.org/en/cinema" },
+      { title: "Toronto International Film Festival", date: "Sep 3–13, 2026", location: "Toronto, Canada", type: "Festival", url: "https://tiff.net" },
+      { title: "Clermont-Ferrand Short Film Market", date: "Feb 2–8, 2026", location: "Clermont-Ferrand, France", type: "Market", url: "https://clermont-filmfest.org" },
   ];
   const RESOURCES = [
     { title: "No Film School", description: "Daily filmmaking news, tutorials, and gear reviews.", url: "https://nofilmschool.com", category: "Education" },
@@ -40,6 +45,11 @@ import { useState, useEffect } from "react";
     { title: "Artlist", description: "Unlimited annual music licence for film and social.", url: "https://artlist.io", category: "Music" },
     { title: "Soundly", description: "Professional SFX library used by major studios.", url: "https://getsoundly.com", category: "Sound" },
     { title: "Incentify", description: "Film production tax incentive calculator.", url: "https://incentify.io", category: "Finance" },
+      { title: "Casting Networks", description: "Professional casting platform used by major studios and agencies worldwide.", url: "https://castingnetworks.com", category: "Casting" },
+      { title: "Final Draft", description: "Industry-standard screenwriting software — export your Virelle scripts directly.", url: "https://finaldraft.com", category: "Screenwriting" },
+      { title: "IMDbPro", description: "Professional database for tracking credits, deal news, and industry contacts.", url: "https://pro.imdb.com", category: "Networking" },
+      { title: "Dolby Institute", description: "Free resources on sound design, mixing, and Dolby Atmos for independent film.", url: "https://dolby.com/stories/resources/film", category: "Sound" },
+      { title: "WIPO Creative Industries", description: "IP rights, copyright, and licensing guidance for filmmakers worldwide.", url: "https://www.wipo.int/copyright/en/creative_industries", category: "Legal" },
   ];
 
   const POST_CATEGORIES = ["General","Craft","Gear","Festivals","Finance","Music","VFX","Writing","Feedback","Casting"];
