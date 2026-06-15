@@ -567,7 +567,27 @@ Return a JSON object with these exact fields:
   });
 
   const raw = response.choices?.[0]?.message?.content;
-  const parsed = JSON.parse(typeof raw === "string" ? raw : "{}");
+  let parsed: Record<string, any> = {};
+  try {
+    parsed = JSON.parse(typeof raw === "string" ? raw : "{}");
+  } catch {
+    const jsonMatch = (typeof raw === "string" ? raw : "").match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try { parsed = JSON.parse(jsonMatch[0]); } catch { /* fall through */ }
+    }
+    if (!parsed.body) {
+      log.warn("[ContentCreator] LLM returned non-JSON; using raw text as body", { preview: String(raw).slice(0, 120) });
+      parsed = {
+        title: params.topic || "Virelle Studios — AI Filmmaking",
+        headline: params.topic || "AI-Powered Cinema",
+        body: typeof raw === "string" ? raw.slice(0, config.maxChars) : "",
+        callToAction: "Start creating at virelle.life",
+        hashtags: ["virellestudios", "aifilmmaking", "cinematicai"],
+        hook: "", videoScript: "", visualDirections: "",
+        imagePrompt: params.topic || "cinematic AI film production studio",
+      };
+    }
+  }
 
   let body = (parsed.body || "") as string;
   if (body.length > config.maxChars) {
