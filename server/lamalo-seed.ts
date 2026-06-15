@@ -741,12 +741,12 @@ export async function runLamaloSeed(
       )
       .limit(1);
 
+    let collectionId: number;
     if (existingCol.length > 0) {
-      log.info(`Collection "${col.name}" already exists — skipping`);
-      continue;
-    }
-
-    // Insert collection — price auto-calculated (sum of item prices × 0.90, 10% bundle discount)
+      collectionId = existingCol[0].id;
+      log.info(`Collection "${col.name}" already exists (id=${collectionId}) — backfilling missing items`);
+    } else {
+    // Insert collection
     const [colResult] = await db.insert(designerCollections).values({
       designerProfileId,
       userId,
@@ -765,10 +765,10 @@ export async function runLamaloSeed(
       published: true,
       publishedAt: new Date(),
     });
-
-    const collectionId: number = (colResult as any).insertId;
+    collectionId = (colResult as any).insertId;
     if (!collectionId) { log.warn(`Collection "${col.name}" insert returned no insertId, skipping items`); newCollections++; continue; }
     newCollections++;
+    } // end else (new collection)
     for (const item of col.items) {
       // Use raw SQL to avoid Drizzle double-encoding JSON columns
       // Use Pollinations URL — /lamalo/ paths 404 in production
