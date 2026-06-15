@@ -97,10 +97,6 @@ export const contentCreatorRouter = router({
           return meta;
         }),
     }),
-  
-});
-    }
-  }),
   // ─── Platform Config ────────────────────────────────────────────────────────
   getPlatforms: adminProcedure.query(() => {
     return Object.entries(PLATFORM_CONFIG).map(([key, cfg]) => ({

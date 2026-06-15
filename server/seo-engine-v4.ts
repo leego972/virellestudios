@@ -1171,7 +1171,7 @@ export async function analyzeContentGaps(): Promise<ContentGap[]> {
       messages: [
         {
           role: "system",
-    content: `You are an expert SEO strategist for a creative AI SaaS company called Virelle Studios (AI-powered Hollywood film production platform at virelle.life). Your job is to generate data-driven SEO content briefs for indie filmmakers and content creators.`
+    content: `You are an expert SEO strategist for a creative AI SaaS company called Virelle Studios (AI-powered Hollywood film production platform at virelle.life). Your job is to generate data-driven SEO content briefs for indie filmmakers and content creators.
 
       Current content covers: AI filmmaking, Runway Gen-4 tutorials, character consistency AI, ElevenLabs voice acting, storyboarding with AI, and indie film production guides.
 
@@ -1186,7 +1186,7 @@ Return a JSON array of 10 content gap opportunities. Each item should have:
 
 Focus on topics that:
 1. Have high search intent for developer tools
-2. Can naturally link back to VirÃlle Studios features
+2. Can naturally link back to Virèlle Studios features
 3. Target long-tail keywords with lower competition
 4. Address emerging trends in 2025-2026 (AI agents, GEO, etc.)`,
         },
