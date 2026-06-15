@@ -1,4 +1,5 @@
 import express, { type Express } from "express";
+import { logger } from "./logger";
   import fs from "fs";
   import { type Server } from "http";
   import { nanoid } from "nanoid";
@@ -8,11 +9,11 @@ import express, { type Express } from "express";
   // vite and viteConfig are intentionally NOT imported at the module level.
   // In production, setupVite() is never called, so the Vite dev-server (and
   // Replit-specific Vite plugins such as vite-plugin-manus-runtime) never
-  // initialise — avoiding hangs or crashes in non-Replit environments.
+  // initialise â avoiding hangs or crashes in non-Replit environments.
 
   export async function setupVite(app: Express, server: Server) {
-    // Lazy imports — only executed in development when this function is called.
-    // IMPORTANT: vite.config.ts is NOT dynamically imported here — passing it as a
+    // Lazy imports â only executed in development when this function is called.
+    // IMPORTANT: vite.config.ts is NOT dynamically imported here â passing it as a
     // path string means esbuild cannot statically trace it, so its dev-only imports
     // (vite-plugin-manus-runtime, @builder.io/vite-plugin-jsx-loc) are never bundled
     // into dist/index.js and cannot cause ERR_MODULE_NOT_FOUND on Railway.
@@ -29,7 +30,7 @@ import express, { type Express } from "express";
     });
 
     app.use(vite.middlewares);
-    // Express 5: bare "*" is no longer a valid path — use "/{*path}" instead
+    // Express 5: bare "*" is no longer a valid path â use "/{*path}" instead
     app.use("/{*path}", async (req, res, next) => {
       const url = req.originalUrl;
 
@@ -62,7 +63,7 @@ import express, { type Express } from "express";
         ? path.resolve(import.meta.dirname, "../..", "dist", "public")
         : path.resolve(import.meta.dirname, "public");
     if (!fs.existsSync(distPath)) {
-      console.error(
+      logger.error(
         `Could not find the build directory: ${distPath}, make sure to build the client first`
       );
     }
@@ -71,7 +72,7 @@ import express, { type Express } from "express";
 
     // fall through to index.html if the file does not exist.
     // Inject per-page SEO meta tags (canonical, title, description, OG) based on request path.
-    // Express 5: bare "*" is no longer a valid path — use "/{*path}" instead.
+    // Express 5: bare "*" is no longer a valid path â use "/{*path}" instead.
     app.use("/{*path}", (req, res) => {
       const indexPath = path.resolve(distPath, "index.html");
       try {
