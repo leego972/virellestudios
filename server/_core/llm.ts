@@ -389,7 +389,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   // Venice and OpenAI keys come from either explicit params.userApiKey OR the request-
   // scoped withUserLlmKey() context (set once at the top of background pipelines).
   const userCtx = getUserLlmCtx();
-  const veniceKey: string | null = userCtx.veniceKey || null;
+  const veniceKey: string | null = userCtx.veniceKey || ENV.veniceApiKey || null;
   const openaiKey: string | null = params.userApiKey || userCtx.openaiKey || null;
 
   // 1) Venice AI (OpenAI-compatible) â preferred user provider
