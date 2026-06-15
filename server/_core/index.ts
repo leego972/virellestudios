@@ -1512,6 +1512,41 @@ async function startServer() {
       logger.error(`[StripeProvisioning] Failed: ${err.message}`);
     }
     logger.info("[Server] Background init (migrate + provision) complete");
+
+    // Patch wardrobeItems that still have /lamalo/ paths or missing imageUrls
+      try {
+        const dbConn = await db.getDb();
+        if (dbConn) {
+          await dbConn.execute(sql`
+            UPDATE wardrobeItems
+            SET
+              primaryImageUrl = CONCAT(
+                'https://image.pollinations.ai/prompt/',
+                REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                  COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category, 'fashion'), ' fashion item')),
+                ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+                '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+              ),
+              imageUrls = JSON_ARRAY(CONCAT(
+                'https://image.pollinations.ai/prompt/',
+                REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                  COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category, 'fashion'), ' fashion item')),
+                ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+                '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+              ))
+            WHERE collectionId IS NOT NULL
+              AND (
+                primaryImageUrl IS NULL
+                OR primaryImageUrl = ''
+                OR primaryImageUrl LIKE '/lamalo/%'
+                OR imageUrls IS NULL
+              )
+          `);
+          logger.info("[WardrobeImages] Auto-patched broken image paths with Pollinations URLs");
+        }
+      } catch (e: any) {
+        logger.warn(`[WardrobeImages] Startup image patch failed (non-fatal): ${e.message}`);
+      }
   })();
 
   // ── Schedulers ──────────────────────────────────────────────────────────────────
