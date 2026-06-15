@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 /**
- * Marketing Channel Adapters — Direct API Integrations
+ * Marketing Channel Adapters â Direct API Integrations
  * Meta (Facebook + Instagram), Google Ads, X (Twitter), LinkedIn, Snapchat,
  * SendGrid (Email), Reddit, TikTok, Pinterest
  * 
@@ -15,6 +15,7 @@ import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 import { logger as log } from "./_core/logger";
 import { getErrorMessage } from "./_core/errors";
+import { logger } from "./_core/logger";
 
 
 // ============================================
@@ -83,7 +84,7 @@ async function apiCall(
       });
 
       if (response.status === 429) {
-        // Rate limited — exponential backoff
+        // Rate limited â exponential backoff
         const waitMs = retryDelay * Math.pow(2, attempt);
         log.warn(`[Marketing] Rate limited on ${url}, waiting ${waitMs}ms`);
         await new Promise((r) => setTimeout(r, waitMs));
@@ -1199,7 +1200,7 @@ export const snapchatAdapter = {
 
 // ============================================
 // GMAIL (EMAIL MARKETING) ADAPTER
-// Replaces SendGrid — uses free Gmail SMTP via Nodemailer
+// Replaces SendGrid â uses free Gmail SMTP via Nodemailer
 // Set GMAIL_USER and GMAIL_APP_PASSWORD in env
 // Generate an App Password at: https://myaccount.google.com/apppasswords
 // ============================================
@@ -1251,11 +1252,11 @@ const sendgridAdapter = {
     sendAt?: string;
   }): Promise<AdCampaignResult> {
     // Gmail does not have a campaign scheduling API; log the campaign for manual send
-    console.log(`[Gmail] Campaign queued: "${params.title}" — subject: "${params.subject}" — scheduled: ${params.sendAt ?? "immediate"}`);
+    logger.info(`[Gmail] Campaign queued: "${params.title}" â subject: "${params.subject}" â scheduled: ${params.sendAt ?? "immediate"}`);
     return { success: true, platformCampaignId: `gmail-${Date.now()}` };
   },
   async getStats(_startDate: string, _endDate: string): Promise<PerformanceMetrics> {
-    // Gmail SMTP does not provide open/click analytics — return zeroed metrics
+    // Gmail SMTP does not provide open/click analytics â return zeroed metrics
     return { impressions: 0, reach: 0, clicks: 0, engagement: 0, spend: 0, conversions: 0, ctr: 0, cpc: 0, cpm: 0 };
   },
 };
