@@ -109,7 +109,35 @@ import SiteHead from "@/components/SiteHead";
       description:
         "Authentication session management tightened, API key storage encrypted at rest, admin routes protected with role-based guards, and rate limiting applied to all public API endpoints.",
     },
-  ];
+  ,
+    {
+      date: "June 2026",
+      tag: "feat",
+      title: "Guided film production path on dashboard",
+      description:
+        "A step-by-step production path now appears on the dashboard for new users — Connect API Key → Connect Sound API → Create Project → Write Script → Plan Scenes → Generate. Back, forward, and skip buttons let you navigate freely between steps.",
+    },
+    {
+      date: "June 2026",
+      tag: "feat",
+      title: "Lamalo wardrobe item images patched",
+      description:
+        "All 1,400+ Lamalo Fashion wardrobe items now display AI-generated product images via Pollinations, built from each item's stored reference prompt. Admins can re-patch at any time from the Admin panel.",
+    },
+    {
+      date: "June 2026",
+      tag: "improve",
+      title: "Sticky CTA bar on landing page",
+      description:
+        "A slim call-to-action bar now slides up from the bottom of the landing page after scrolling 600px, giving visitors a persistent path to sign up without scrolling back to the top.",
+    },
+    {
+      date: "June 2026",
+      tag: "fix",
+      title: "Mojibake encoding fixed in Changelog (PR #55)",
+      description:
+        "Garbled characters caused by a text-encoding mismatch in Changelog.tsx have been resolved. All special characters and em-dashes now render correctly across the platform.",
+    }];
 
   const TAG_CONFIG = {
     fix:      { label: "Fix",      bg: "bg-red-500/10",    text: "text-red-400",    border: "border-red-500/25",    icon: Wrench },
