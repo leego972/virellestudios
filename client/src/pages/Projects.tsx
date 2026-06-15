@@ -71,7 +71,7 @@ export default function Projects() {
       toast.success("Project deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Couldn't delete that project — please try again, or refresh if it persists."),
+    onError: (err) => toast.error(`Couldn't delete: ${err.message}`),
   });
 
     const createDemoMut = trpc.project.createDemoShort.useMutation({
