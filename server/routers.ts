@@ -76,7 +76,7 @@ import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_cor
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 import { runLamaloSeed } from "./lamalo-seed";
 
-// v6.77 — Per-project brand allow/required/forbidden list, mapped into the
+// v6.77 â Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
 // generator so the model knows which real-world brands may appear (Nike, Pepsi,
 // storefront signage, billboards, etc.) and which it must NEVER show.
@@ -105,7 +105,7 @@ async function brandsForPrompt(projectId: number | null | undefined): Promise<Ar
 
 // Render the brand list as a short directive block usable inside any LLM
 // prompt that builds free-form descriptions (trailers, posters, storyboards,
-// breakdowns) — anywhere we don't go through buildScenePrompt directly.
+// breakdowns) â anywhere we don't go through buildScenePrompt directly.
 function brandDirectiveBlock(brands: Awaited<ReturnType<typeof brandsForPrompt>>): string {
   if (!brands || brands.length === 0) return "";
   const required = brands.filter((b) => b.policy === "required");
@@ -120,7 +120,7 @@ function brandDirectiveBlock(brands: Awaited<ReturnType<typeof brandsForPrompt>>
     lines.push(`- APPROVED for placement (may appear on storefronts, billboards, road signs, drinks, clothing, vehicles when contextually appropriate): ${allowed.map((b) => b.name).join(", ")}.`);
   }
   if (forbidden.length > 0) {
-    lines.push(`- FORBIDDEN — must NEVER appear, be named, or be hinted at in any frame; replace with generic / unmarked alternatives: ${forbidden.map((b) => b.name).join(", ")}.`);
+    lines.push(`- FORBIDDEN â must NEVER appear, be named, or be hinted at in any frame; replace with generic / unmarked alternatives: ${forbidden.map((b) => b.name).join(", ")}.`);
   }
   if (allowed.length === 0 && required.length === 0) {
     lines.push("- All other background signage, packaging and apparel must be generic / unmarked unless explicitly listed above.");
@@ -128,7 +128,7 @@ function brandDirectiveBlock(brands: Awaited<ReturnType<typeof brandsForPrompt>>
   return lines.join("\n");
 }
 
-// v6.77 — Designer Wardrobe prompt context helper.
+// v6.77 â Designer Wardrobe prompt context helper.
 // For a given scene, returns a structured text block describing:
 //   - per-character wardrobe / costume references attached to the scene
 //   - scene-level set-dressing / shopfront / mood references
@@ -210,13 +210,13 @@ async function getWardrobePromptContextForScene(
       if (tags) bits.push(`style: ${tags}`);
       if (it.era) bits.push(`era: ${it.era}`);
       if (it.subcategory) bits.push(`type: ${it.subcategory}`);
-      return bits.join(" — ");
+      return bits.join(" â ");
     };
 
     for (const a of allAssignments) {
       const item = itemById.get(a.wardrobeItemId);
       if (!item) continue;
-      // Visibility guard — never leak private items into prompts unless the
+      // Visibility guard â never leak private items into prompts unless the
       // item is owned by the caller or explicitly attached to this project.
       const isOwner = item.userId === userId;
       const isProjectLinked = item.projectId === scene.projectId;
@@ -231,9 +231,9 @@ async function getWardrobePromptContextForScene(
         switch (usage) {
           case "must_match": return "MUST match this exact look";
           case "costume_accurate": return "render the COSTUME accurately (silhouette, era, materials, cultural details)";
-          case "period_accurate": return "PERIOD-ACCURATE — preserve era, fabric, silhouette, and cultural details";
+          case "period_accurate": return "PERIOD-ACCURATE â preserve era, fabric, silhouette, and cultural details";
           case "brand_visible": return "brand/label may be visible";
-          case "background_only": return "background only — do not feature";
+          case "background_only": return "background only â do not feature";
           case "inspired_by": return "use as inspiration, not a strict match";
           default: return "use as visual reference";
         }
@@ -244,7 +244,7 @@ async function getWardrobePromptContextForScene(
         const who = c?.name || `Character #${a.characterId}`;
         const desc = fmtItem(item);
         const placement = a.placementNotes?.trim() ? ` Placement: ${a.placementNotes.trim()}.` : "";
-        characterLines.push(`- ${who} should wear "${item.name}"${desc ? ` — ${desc}` : ""}. (${usageHint}.)${placement}`);
+        characterLines.push(`- ${who} should wear "${item.name}"${desc ? ` â ${desc}` : ""}. (${usageHint}.)${placement}`);
       } else {
         const kind = (() => {
           switch (a.assignmentType) {
@@ -259,14 +259,14 @@ async function getWardrobePromptContextForScene(
         })();
         const desc = fmtItem(item);
         const placement = a.placementNotes?.trim() ? ` Placement: ${a.placementNotes.trim()}.` : "";
-        sceneLines.push(`- ${kind}: "${item.name}"${desc ? ` — ${desc}` : ""}. (${usageHint}.)${placement}`);
+        sceneLines.push(`- ${kind}: "${item.name}"${desc ? ` â ${desc}` : ""}. (${usageHint}.)${placement}`);
       }
     }
 
     if (characterLines.length === 0 && sceneLines.length === 0) return "";
 
     const out: string[] = [];
-    out.push("DESIGNER WARDROBE — director-attached references for this scene (treat as authoritative):");
+    out.push("DESIGNER WARDROBE â director-attached references for this scene (treat as authoritative):");
     if (characterLines.length > 0) {
       out.push("Character wardrobe / costume:");
       out.push(...characterLines);
@@ -280,7 +280,7 @@ async function getWardrobePromptContextForScene(
       guards.push("Do NOT show real-world brand logos on these wardrobe items unless brand_visible usage was set.");
     }
     if (sawCommercialUseBlocked) {
-      guards.push("These references are licensed for production use only — keep stylistic match without copying trademarked logos verbatim.");
+      guards.push("These references are licensed for production use only â keep stylistic match without copying trademarked logos verbatim.");
     }
     guards.push("For costume_accurate / period_accurate: preserve era, materials, silhouette, and cultural details exactly.");
     out.push("Wardrobe rules:");
@@ -335,7 +335,7 @@ export const appRouter = router({
       if (!ctx.user) return null;
       // Admin status is determined solely by database role
       const isAdmin = ctx.user.role === "admin";
-      // Explicitly omit passwordHash — never send credential material to the client
+      // Explicitly omit passwordHash â never send credential material to the client
       const { passwordHash: _ph, ...safeUser } = ctx.user;
       return {
         ...safeUser,
@@ -507,8 +507,8 @@ export const appRouter = router({
         }
         // Grant 2 free AI character generations on signup (matches the 2 free Lamalo outfits welcome package)
           try {
-            await db.addCredits(user.id, CREDIT_COSTS.character_gen_ai.cost * 2, "signup_char_gen_bonus", "Welcome bonus — 2 free AI character generations");
-          } catch (_) { /* non-critical — never fail registration */ }
+            await db.addCredits(user.id, CREDIT_COSTS.character_gen_ai.cost * 2, "signup_char_gen_bonus", "Welcome bonus â 2 free AI character generations");
+          } catch (_) { /* non-critical â never fail registration */ }
           return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
@@ -548,7 +548,7 @@ export const appRouter = router({
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
         // v6.82: Login must NEVER promote a user to admin. Admin authority
-        // is database-role only — see SECURITY.md §8 "Admin authority model".
+        // is database-role only â see SECURITY.md Â§8 "Admin authority model".
         // Update last signed in
         await db.upsertUser({ openId: user.openId, lastSignedIn: new Date() });
         // Start 48-hour expiry clock on first login for temporary tester accounts
@@ -615,8 +615,8 @@ export const appRouter = router({
         return { success: true };
       }),
 
-      // ─── Voice Cloning ──────────────────────────────────────────────────────────
-      // Upload an audio sample → ElevenLabs instantVC → voice_id saved on character.
+      // âââ Voice Cloning ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+      // Upload an audio sample â ElevenLabs instantVC â voice_id saved on character.
       cloneVoice: protectedProcedure
         .input(z.object({
           characterId: z.number(),
@@ -630,7 +630,7 @@ export const appRouter = router({
           if (char.projectId) await assertCanAccessProject(char.projectId, ctx.user.id);
           const userKeys = await db.getUserApiKeys(ctx.user.id);
           const elevenlabsKey = userKeys.elevenlabsKey;
-          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for voice cloning. Add it in Settings → API Keys." });
+          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for voice cloning. Add it in Settings â API Keys." });
           const audioBuffer = Buffer.from(input.audioBase64, "base64");
           const formData = new FormData();
           formData.append("name", input.name);
@@ -654,7 +654,7 @@ export const appRouter = router({
         }),
     }),
 
-  // ─── Admin ───
+  // âââ Admin âââ
   admin: router({
     listUsers: adminProcedure.query(async () => {
       return db.getAllUsers();
@@ -676,7 +676,7 @@ export const appRouter = router({
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + input.expiresInDays);
         await db.assignBetaTier(input.userId, expiresAt);
-        await db.addCredits(input.userId, 5000, "beta_welcome", "Beta tester welcome credits — 5,000 credits included");
+        await db.addCredits(input.userId, 5000, "beta_welcome", "Beta tester welcome credits â 5,000 credits included");
         return { success: true, expiresAt };
       }),
     revokeBetaTier: adminProcedure
@@ -703,7 +703,7 @@ export const appRouter = router({
         const BETA_PASS  = "Hello123";
 
         try {
-          // Already exists — sync API keys from admin caller
+          // Already exists â sync API keys from admin caller
           const existing = await db.getUserByEmail(BETA_EMAIL);
           if (existing) {
             await db.updateUser(existing.id, {
@@ -784,7 +784,7 @@ export const appRouter = router({
       }),
   }),
 
-  // ─── Projects ───
+  // âââ Projects âââ
   project: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       const projects = await db.getUserProjects(ctx.user.id);
@@ -801,7 +801,7 @@ export const appRouter = router({
               await db.updateProject(p.id, ctx.user.id, { thumbnailUrl: sceneWithThumb.thumbnailUrl });
             }
           } catch (e) {
-            // Ignore errors — just show placeholder
+            // Ignore errors â just show placeholder
           }
         }));
       }
@@ -858,7 +858,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         // Credits: deduct for creating a project
-        // create_project is FREE — no credit deduction (zero friction on project creation)
+        // create_project is FREE â no credit deduction (zero friction on project creation)
         // Subscription: check project quota
         const projectCount = await db.getUserProjectCount(ctx.user.id);
         requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
@@ -896,8 +896,8 @@ export const appRouter = router({
           const stamp = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
           const project = await db.createProject({
             userId: ctx.user.id,
-            title: `Virelle Demo Short — ${stamp}`,
-            description: "A showcase demo generated entirely by Virelle Studios. Five cinematic scenes — golden-hour chase, rooftop standoff, rain-soaked revelation, underground rave, sunrise epilogue.",
+            title: `Virelle Demo Short â ${stamp}`,
+            description: "A showcase demo generated entirely by Virelle Studios. Five cinematic scenes â golden-hour chase, rooftop standoff, rain-soaked revelation, underground rave, sunrise epilogue.",
             mode: "manual",
             genre: "Thriller",
             rating: "PG-13",
@@ -910,10 +910,10 @@ export const appRouter = router({
           } as any);
           const DEMO_SCENES = [
             { orderIndex: 0, title: "The Drop", description: "Elena sprints through a crowded golden-hour market as two black SUVs screech around the corner behind her.", timeOfDay: "golden hour", weather: "clear", lighting: "warm golden backlight, long shadows, lens flares", mood: "urgent, kinetic", emotionalBeat: "fear turning into determination", cameraAngle: "low angle", cameraMovement: "tracking shot", colorGrading: "golden orange tones, high contrast", locationType: "outdoor market", duration: 60, transitionType: "smash-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman in a leather jacket sprints through a crowded golden-hour street market in a near-future city. Warm amber light floods through market awnings, long dramatic shadows. Two black SUVs screech around the corner in pursuit. Low tracking shot through the stalls. Shallow depth of field. Golden orange color grading, high contrast." },
-            { orderIndex: 1, title: "Rooftop Standoff", description: "Elena reaches a rain-slicked rooftop, cornered. A corporate agent steps from the stairwell — calm, unhurried. The city glitters 40 floors below.", timeOfDay: "dusk", weather: "rain", lighting: "cool blue ambient, neon reflections on wet concrete", mood: "tense, confrontational", emotionalBeat: "defiance", cameraAngle: "eye level", cameraMovement: "slow push in", colorGrading: "cool teal tones, neon accents", locationType: "rooftop", duration: 60, transitionType: "dissolve", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A rain-soaked rooftop 40 floors above a neon-lit near-future city at dusk. A young woman backs toward the edge, cornered. A suited corporate agent steps from the stairwell, unhurried. Neon reflections on wet concrete. Slow cinematic push-in. Cool teal color grading, neon orange and blue accents." },
+            { orderIndex: 1, title: "Rooftop Standoff", description: "Elena reaches a rain-slicked rooftop, cornered. A corporate agent steps from the stairwell â calm, unhurried. The city glitters 40 floors below.", timeOfDay: "dusk", weather: "rain", lighting: "cool blue ambient, neon reflections on wet concrete", mood: "tense, confrontational", emotionalBeat: "defiance", cameraAngle: "eye level", cameraMovement: "slow push in", colorGrading: "cool teal tones, neon accents", locationType: "rooftop", duration: 60, transitionType: "dissolve", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A rain-soaked rooftop 40 floors above a neon-lit near-future city at dusk. A young woman backs toward the edge, cornered. A suited corporate agent steps from the stairwell, unhurried. Neon reflections on wet concrete. Slow cinematic push-in. Cool teal color grading, neon orange and blue accents." },
             { orderIndex: 2, title: "The Revelation", description: "In a rain-soaked alley, Elena opens the package. Inside: a holographic message from her missing sister.", timeOfDay: "night", weather: "rain", lighting: "single overhead sodium lamp, holographic blue glow", mood: "emotional, revelatory", emotionalBeat: "grief into resolve", cameraAngle: "close up", cameraMovement: "slow zoom", colorGrading: "desaturated with holographic blue bloom", locationType: "alley", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman crouches in a rain-drenched alley at night, opening a mysterious package under a flickering sodium lamp. Holographic blue light spills from inside, illuminating her face. Tears form. Close-up, slow zoom. Desaturated palette with holographic blue bloom. Rain in soft slow motion." },
-            { orderIndex: 3, title: "Underground", description: "Elena descends into an underground rave — the handoff point. Strobing lights, bodies, bass. She scans for her contact in the chaos.", timeOfDay: "night", weather: "clear", lighting: "strobe lights, UV, laser grid, smoke haze", mood: "disorienting, electric", emotionalBeat: "controlled panic", cameraAngle: "dutch angle", cameraMovement: "handheld", colorGrading: "high contrast neon, UV purple and electric blue", locationType: "interior nightclub", duration: 60, transitionType: "match-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman pushes through a packed underground rave in a near-future city. Strobing white light, UV glow, laser grid cutting through smoke haze. Hundreds of bodies. She scans faces urgently. Handheld camera, dutch angle. UV purple, electric blue, hot white strobes." },
-            { orderIndex: 4, title: "Sunrise", description: "Dawn. Elena sits alone on a concrete bridge above the waking city, the package delivered. Whatever she sacrificed — it mattered.", timeOfDay: "dawn", weather: "clear", lighting: "soft pink-gold sunrise, long warm rays, lens flare", mood: "bittersweet, hopeful", emotionalBeat: "quiet triumph", cameraAngle: "wide shot", cameraMovement: "slow crane up", colorGrading: "warm rose gold, soft bloom", locationType: "bridge", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman sits alone on the edge of a concrete bridge above a waking near-future city at dawn. Pink-gold sunrise light spills across the skyline. Slow crane up revealing the full cityscape. Warm rose-gold color grading, soft bloom, anamorphic lens flares." },
+            { orderIndex: 3, title: "Underground", description: "Elena descends into an underground rave â the handoff point. Strobing lights, bodies, bass. She scans for her contact in the chaos.", timeOfDay: "night", weather: "clear", lighting: "strobe lights, UV, laser grid, smoke haze", mood: "disorienting, electric", emotionalBeat: "controlled panic", cameraAngle: "dutch angle", cameraMovement: "handheld", colorGrading: "high contrast neon, UV purple and electric blue", locationType: "interior nightclub", duration: 60, transitionType: "match-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman pushes through a packed underground rave in a near-future city. Strobing white light, UV glow, laser grid cutting through smoke haze. Hundreds of bodies. She scans faces urgently. Handheld camera, dutch angle. UV purple, electric blue, hot white strobes." },
+            { orderIndex: 4, title: "Sunrise", description: "Dawn. Elena sits alone on a concrete bridge above the waking city, the package delivered. Whatever she sacrificed â it mattered.", timeOfDay: "dawn", weather: "clear", lighting: "soft pink-gold sunrise, long warm rays, lens flare", mood: "bittersweet, hopeful", emotionalBeat: "quiet triumph", cameraAngle: "wide shot", cameraMovement: "slow crane up", colorGrading: "warm rose gold, soft bloom", locationType: "bridge", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman sits alone on the edge of a concrete bridge above a waking near-future city at dawn. Pink-gold sunrise light spills across the skyline. Slow crane up revealing the full cityscape. Warm rose-gold color grading, soft bloom, anamorphic lens flares." },
           ];
           const createdScenes = await Promise.all(
             DEMO_SCENES.map((s) => db.createScene({ ...s, projectId: project.id, userId: ctx.user.id } as any))
@@ -1103,7 +1103,7 @@ export const appRouter = router({
         return { success: true, deletedProjectId: input.id };
       }),
 
-    // ─── Stateless review-share link (owner-only) ──────────────────────────
+    // âââ Stateless review-share link (owner-only) ââââââââââââââââââââââââââ
     // Returns a public URL the owner can share with producers, friends, or
     // collaborators. The token is an HMAC of the project id, so no schema
     // change is needed and revocation = rotate JWT_SECRET.
@@ -1116,7 +1116,7 @@ export const appRouter = router({
         return { path: `/share/${input.id}/${token}`, token };
       }),
 
-    // ─── Public read-only project view (token-gated) ───────────────────────
+    // âââ Public read-only project view (token-gated) âââââââââââââââââââââââ
     // Used by /share/:projectId/:token for review/approval flows.
     getPublicById: publicProcedure
       .input(z.object({ id: z.number(), token: z.string() }))
@@ -1153,7 +1153,7 @@ export const appRouter = router({
         return { project, scenes: safeScenes };
       }),
 
-    // v6.68 Phase 2 — Project Command Center health summary.
+    // v6.68 Phase 2 â Project Command Center health summary.
     // Pure read aggregation; no AI calls, no writes. Used to power the
     // Command Center page and the Next Best Action prompt.
     getHealthSummary: protectedProcedure
@@ -1165,7 +1165,7 @@ export const appRouter = router({
         return summary;
       }),
   }),
-  // ─── Characters ────
+  // âââ Characters ââââ
   character: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       const chars = await db.getUserLibraryCharacters(ctx.user.id);
@@ -1333,10 +1333,10 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // AI Character Generator — create photorealistic portrait from feature selections
+    // AI Character Generator â create photorealistic portrait from feature selections
 
       /**
-       * Stripe Checkout for AI character generation — A$1.99 one-time.
+       * Stripe Checkout for AI character generation â A$1.99 one-time.
        * Returns { free: true } immediately for Industry-tier members (no charge).
        */
       aiGenerateCheckout: protectedProcedure
@@ -1347,7 +1347,7 @@ export const appRouter = router({
           const session = await stripe.checkout.sessions.create({
             mode: "payment",
             payment_method_types: ["card"],
-            line_items: [{ price_data: { currency: "aud", product_data: { name: "AI Character Generation — Virelle Studios", description: "Generate a hyper-realistic photorealistic character portrait from your chosen features." }, unit_amount: 199 }, quantity: 1 }],
+            line_items: [{ price_data: { currency: "aud", product_data: { name: "AI Character Generation â Virelle Studios", description: "Generate a hyper-realistic photorealistic character portrait from your chosen features." }, unit_amount: 199 }, quantity: 1 }],
             success_url: input.returnUrl + "?char_gen_session={CHECKOUT_SESSION_ID}",
             cancel_url:  input.returnUrl + "?char_gen_cancelled=1",
             metadata: { userId: String(ctx.user.id), type: "ai_character_gen" },
@@ -1357,7 +1357,7 @@ export const appRouter = router({
         }),
 
       /**
-       * Stripe Checkout for character-from-photo generation — A$5.99 one-time.
+       * Stripe Checkout for character-from-photo generation â A$5.99 one-time.
        * Returns { free: true } immediately for Industry-tier members (no charge).
        */
       aiGenerateFromPhotoCheckout: protectedProcedure
@@ -1368,7 +1368,7 @@ export const appRouter = router({
           const session = await stripe.checkout.sessions.create({
             mode: "payment",
             payment_method_types: ["card"],
-            line_items: [{ price_data: { currency: "aud", product_data: { name: "Character from Photo — Virelle Studios", description: "Upload a reference photo — AI analyzes and recreates a hyper-realistic cinematic character portrait." }, unit_amount: 599 }, quantity: 1 }],
+            line_items: [{ price_data: { currency: "aud", product_data: { name: "Character from Photo â Virelle Studios", description: "Upload a reference photo â AI analyzes and recreates a hyper-realistic cinematic character portrait." }, unit_amount: 599 }, quantity: 1 }],
             success_url: input.returnUrl + "?char_photo_session={CHECKOUT_SESSION_ID}",
             cancel_url:  input.returnUrl + "?char_photo_cancelled=1",
             metadata: { userId: String(ctx.user.id), type: "ai_character_from_photo" },
@@ -1403,21 +1403,21 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
-        // Industry-tier members get AI character generation FREE — skip quota + credit deduction
+        // Industry-tier members get AI character generation FREE â skip quota + credit deduction
         if (!isTopTierUser(ctx.user)) {
           requireGenerationQuota(ctx.user);
           try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         }
         await db.incrementGenerationCount(ctx.user.id);
 
-        // Free-text path: user typed their own description — their words define the character exactly
+        // Free-text path: user typed their own description â their words define the character exactly
         if (input.freeDescription) {
           const freePrompt = [
             "RAW photograph, ultra-photorealistic Hollywood portrait, absolutely indistinguishable from a real photograph,",
             "captured on ARRI ALEXA 65 with Zeiss Supreme Prime lens at f/1.4, cinematic shallow depth of field,",
             input.freeDescription + ",",
             "three-point Rembrandt lighting, Kodak Vision3 500T film stock, 8K resolution,",
-            "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render — a REAL PHOTOGRAPH of a REAL PERSON",
+            "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render â a REAL PHOTOGRAPH of a REAL PERSON",
           ].join(" ");
           const freeResult = await generateImage({ prompt: freePrompt }).catch((_e: unknown) => {
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Character image generation failed. Please try again." });
@@ -1435,36 +1435,36 @@ export const appRouter = router({
 
         const f = input.features!;
         const promptParts = [
-          // Core photorealism anchor — this is the most critical part
+          // Core photorealism anchor â this is the most critical part
           "RAW photograph, ultra-photorealistic Hollywood A-list actor headshot, absolutely indistinguishable from a real photograph of a real human being,",
           "captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens at f/1.4, shallow cinematic depth of field with natural oval bokeh,",
           // Physical description
           `${f.gender} in their ${f.ageRange},`,
           `${f.ethnicity} ethnicity,`,
         ];
-        if (f.skinTone) promptParts.push(`${f.skinTone} skin tone — skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry — no airbrushed or plastic skin,`);
+        if (f.skinTone) promptParts.push(`${f.skinTone} skin tone â skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry â no airbrushed or plastic skin,`);
         if (f.build) promptParts.push(`${f.build} build,`);
         if (f.height) promptParts.push(`${f.height} height,`);
-        promptParts.push(`${f.hairColor} ${f.hairStyle} hair — individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`);
-        promptParts.push(`${f.eyeColor} eyes — hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`);
+        promptParts.push(`${f.hairColor} ${f.hairStyle} hair â individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`);
+        promptParts.push(`${f.eyeColor} eyes â hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`);
         if (f.facialFeatures) promptParts.push(`${f.facialFeatures},`);
         if (f.facialHair) promptParts.push(`facial hair: ${f.facialHair} with individual hair strand detail,`);
         if (f.distinguishingMarks) promptParts.push(`${f.distinguishingMarks},`);
-        if (f.clothingStyle) promptParts.push(`wearing ${f.clothingStyle} — fabric texture and material weight visible,`);
+        if (f.clothingStyle) promptParts.push(`wearing ${f.clothingStyle} â fabric texture and material weight visible,`);
         if (f.expression) promptParts.push(`${f.expression} expression with authentic micro-expressions and genuine emotion,`);
         if (f.additionalNotes) promptParts.push(f.additionalNotes);
         promptParts.push(
-          // Lighting — Hollywood three-point Rembrandt setup
+          // Lighting â Hollywood three-point Rembrandt setup
           "three-point Rembrandt lighting: warm key light at 45 degrees creating a Rembrandt triangle on the face, soft fill light reducing shadow ratio to 2:1, subtle rim/hair light separating subject from background,",
           "volumetric atmospheric light with physically accurate inverse-square falloff,",
           // Skin and face realism
           "skin pores visible under magnification, micro-wrinkles around eyes and mouth, natural skin oil and moisture, capillaries visible in sclera,",
-          "authentic facial bone structure with natural asymmetry — no perfect symmetry, no uncanny valley,",
+          "authentic facial bone structure with natural asymmetry â no perfect symmetry, no uncanny valley,",
           // Technical quality
           "Kodak Vision3 500T film stock color science with organic grain structure and natural highlight rolloff,",
           "8K resolution, hyperdetailed, Academy Award-winning portrait photography,",
           // Negative guidance embedded in prompt
-          "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON"
+          "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth â a REAL PHOTOGRAPH of a REAL PERSON"
         );
 
         const result = await generateImage({ prompt: promptParts.join(" ") }).catch((_e: unknown) => {
@@ -1484,7 +1484,7 @@ export const appRouter = router({
         return character;
       }),
 
-    // AI Character Generator from Photo — analyze a reference photo and create a cinematic character portrait
+    // AI Character Generator from Photo â analyze a reference photo and create a cinematic character portrait
     aiGenerateFromPhoto: protectedProcedure
       .input(z.object({
         name: z.string().min(1).max(128),
@@ -1499,14 +1499,14 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
-        // Industry-tier members get character-from-photo generation FREE — skip quota + credit deduction
+        // Industry-tier members get character-from-photo generation FREE â skip quota + credit deduction
         if (!isTopTierUser(ctx.user)) {
           requireGenerationQuota(ctx.user);
           try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character from photo: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         }
         await db.incrementGenerationCount(ctx.user.id);
 
-        // Step 1: Resolve the reference photo — either from uploaded base64 or from a URL
+        // Step 1: Resolve the reference photo â either from uploaded base64 or from a URL
         let resolvedBase64 = input.photoBase64 ?? "";
         let resolvedMimeType = input.photoMimeType;
         let refPhotoUrl: string;
@@ -1546,7 +1546,7 @@ Your analysis will be used to:
 2. Maintain perfect visual consistency of this character across dozens of film scenes
 3. Direct a VFX team to recreate this person in any lighting, angle, or environment
 
-Be obsessively precise. Use specific, measurable, visual language. Never use vague terms like "normal" or "average" — always describe what you actually observe. If you cannot observe a feature clearly, describe what IS visible and note the limitation.
+Be obsessively precise. Use specific, measurable, visual language. Never use vague terms like "normal" or "average" â always describe what you actually observe. If you cannot observe a feature clearly, describe what IS visible and note the limitation.
 
 Focus especially on:
 - Face geometry: exact bone structure, proportions, spatial relationships between features
@@ -1583,58 +1583,58 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               schema: {
                 type: "object",
                 properties: {
-                  // ─── Demographics ───
+                  // âââ Demographics âââ
                   estimatedAge: { type: "string", description: "Precise age estimate with range, e.g. 'mid-30s, approximately 34-37'" },
                   gender: { type: "string", description: "Gender presentation as observed" },
-                  ethnicity: { type: "string", description: "Specific ethnic heritage as observable from features, e.g. 'East Asian — likely Korean or Japanese' or 'Mixed — appears West African and European'" },
+                  ethnicity: { type: "string", description: "Specific ethnic heritage as observable from features, e.g. 'East Asian â likely Korean or Japanese' or 'Mixed â appears West African and European'" },
                   nationality: { type: "string", description: "Most likely nationality based on features and any visible context clues" },
-                  // ─── Skin ───
-                  skinTone: { type: "string", description: "Precise skin tone using Fitzpatrick scale + descriptive, e.g. 'Fitzpatrick Type III — warm olive undertone, golden-brown in natural light'" },
+                  // âââ Skin âââ
+                  skinTone: { type: "string", description: "Precise skin tone using Fitzpatrick scale + descriptive, e.g. 'Fitzpatrick Type III â warm olive undertone, golden-brown in natural light'" },
                   skinUndertone: { type: "string", description: "Warm/cool/neutral undertone and specific hue, e.g. 'warm golden-yellow undertone'" },
                   skinTexture: { type: "string", description: "Texture quality: pore size, smoothness, visible imperfections, oiliness/dryness" },
-                  skinAgeMarkers: { type: "string", description: "Visible age markers: fine lines, wrinkles, laugh lines, crow's feet, forehead lines — location and depth" },
-                  skinImperfections: { type: "string", description: "Specific visible marks: moles, freckles, scars, birthmarks, hyperpigmentation — exact location" },
-                  // ─── Face Geometry ───
-                  faceShape: { type: "string", description: "Precise face shape with proportions, e.g. 'elongated oval — forehead slightly wider than jaw, high cheekbones, tapered chin'" },
+                  skinAgeMarkers: { type: "string", description: "Visible age markers: fine lines, wrinkles, laugh lines, crow's feet, forehead lines â location and depth" },
+                  skinImperfections: { type: "string", description: "Specific visible marks: moles, freckles, scars, birthmarks, hyperpigmentation â exact location" },
+                  // âââ Face Geometry âââ
+                  faceShape: { type: "string", description: "Precise face shape with proportions, e.g. 'elongated oval â forehead slightly wider than jaw, high cheekbones, tapered chin'" },
                   foreheadShape: { type: "string", description: "Forehead height, width, hairline shape (straight/widow's peak/receding), brow ridge prominence" },
-                  cheekboneStructure: { type: "string", description: "Cheekbone height, prominence, width — e.g. 'high prominent cheekbones with defined hollows beneath'" },
-                  jawlineShape: { type: "string", description: "Jaw angle, width, definition — e.g. 'strong angular jaw with defined mandibular angle, slight squareness'" },
-                  chinShape: { type: "string", description: "Chin shape, projection, cleft if present — e.g. 'slightly pointed chin with subtle horizontal dimple'" },
-                  facialSymmetry: { type: "string", description: "Degree of symmetry and notable asymmetries — e.g. 'slight left-side dominance, right eye marginally higher'" },
-                  // ─── Eyes ───
-                  eyeColor: { type: "string", description: "Precise iris color with pattern, e.g. 'deep hazel — inner ring warm amber, outer ring dark green-brown, visible spoke pattern'" },
+                  cheekboneStructure: { type: "string", description: "Cheekbone height, prominence, width â e.g. 'high prominent cheekbones with defined hollows beneath'" },
+                  jawlineShape: { type: "string", description: "Jaw angle, width, definition â e.g. 'strong angular jaw with defined mandibular angle, slight squareness'" },
+                  chinShape: { type: "string", description: "Chin shape, projection, cleft if present â e.g. 'slightly pointed chin with subtle horizontal dimple'" },
+                  facialSymmetry: { type: "string", description: "Degree of symmetry and notable asymmetries â e.g. 'slight left-side dominance, right eye marginally higher'" },
+                  // âââ Eyes âââ
+                  eyeColor: { type: "string", description: "Precise iris color with pattern, e.g. 'deep hazel â inner ring warm amber, outer ring dark green-brown, visible spoke pattern'" },
                   eyeShape: { type: "string", description: "Eye shape: almond/round/hooded/monolid/upturned/downturned, with lid crease details" },
-                  eyeSize: { type: "string", description: "Relative eye size and spacing — e.g. 'medium-large, slightly wide-set'" },
-                  eyebrowShape: { type: "string", description: "Brow shape, thickness, arch height, color, density — e.g. 'thick straight brows with slight natural arch, dark brown, full'" },
+                  eyeSize: { type: "string", description: "Relative eye size and spacing â e.g. 'medium-large, slightly wide-set'" },
+                  eyebrowShape: { type: "string", description: "Brow shape, thickness, arch height, color, density â e.g. 'thick straight brows with slight natural arch, dark brown, full'" },
                   eyelashDescription: { type: "string", description: "Lash length, density, curl, color" },
-                  eyeExpression: { type: "string", description: "The emotional quality conveyed by the eyes — e.g. 'intense and watchful, slight downward inner corner creating a melancholic quality'" },
-                  // ─── Nose ───
-                  noseType: { type: "string", description: "Nose shape: bridge width/height, tip shape, nostril shape/flare, overall profile — e.g. 'straight medium bridge, rounded soft tip, slightly wide nostrils'" },
-                  // ─── Mouth & Lips ───
-                  lipShape: { type: "string", description: "Lip fullness top/bottom, cupid's bow shape, lip line definition, natural color — e.g. 'full lower lip, defined cupid's bow, natural rose-pink'" },
-                  mouthWidth: { type: "string", description: "Mouth width relative to face — e.g. 'medium-wide, corners slightly upturned at rest'" },
+                  eyeExpression: { type: "string", description: "The emotional quality conveyed by the eyes â e.g. 'intense and watchful, slight downward inner corner creating a melancholic quality'" },
+                  // âââ Nose âââ
+                  noseType: { type: "string", description: "Nose shape: bridge width/height, tip shape, nostril shape/flare, overall profile â e.g. 'straight medium bridge, rounded soft tip, slightly wide nostrils'" },
+                  // âââ Mouth & Lips âââ
+                  lipShape: { type: "string", description: "Lip fullness top/bottom, cupid's bow shape, lip line definition, natural color â e.g. 'full lower lip, defined cupid's bow, natural rose-pink'" },
+                  mouthWidth: { type: "string", description: "Mouth width relative to face â e.g. 'medium-wide, corners slightly upturned at rest'" },
                   teethVisible: { type: "string", description: "If teeth visible: color, alignment, shape" },
-                  // ─── Hair ───
+                  // âââ Hair âââ
                   hairColor: { type: "string", description: "Precise hair color with highlights/lowlights/undertone, e.g. 'dark espresso brown with subtle warm auburn highlights in direct light'" },
                   hairStyle: { type: "string", description: "Specific style: cut, layers, texture styling" },
                   hairLength: { type: "string", description: "Precise length reference" },
                   hairTexture: { type: "string", description: "Natural texture: straight/wavy/curly/coily, density, thickness per strand" },
                   hairlineShape: { type: "string", description: "Hairline shape and any recession" },
                   facialHair: { type: "string", description: "Precise facial hair description or 'clean-shaven'" },
-                  // ─── Body (if visible) ───
+                  // âââ Body (if visible) âââ
                   build: { type: "string", description: "Body type as observable: lean/athletic/muscular/average/stocky/plus-size with specific notes" },
                   neckDescription: { type: "string", description: "Neck length, width, visible musculature" },
                   shoulderDescription: { type: "string", description: "Shoulder width and posture if visible" },
-                  // ─── Expression & Presence ───
+                  // âââ Expression & Presence âââ
                   expression: { type: "string", description: "Precise expression in the photo and what it conveys" },
                   restingExpression: { type: "string", description: "The character's likely resting/neutral expression tendency" },
-                  overallVibe: { type: "string", description: "The overall screen presence and charisma — what a casting director would note" },
-                  distinguishingFeatures: { type: "string", description: "The 3-5 most distinctive features that make this face uniquely recognisable — the things a sketch artist would prioritise" },
-                  // ─── Lighting Response ───
-                  lightingResponse: { type: "string", description: "How this person's skin and features respond to light — e.g. 'olive skin creates warm golden tones under warm light, cool undertones emerge under blue light, cheekbones catch light dramatically'" },
-                  // ─── Clothing (if relevant) ───
+                  overallVibe: { type: "string", description: "The overall screen presence and charisma â what a casting director would note" },
+                  distinguishingFeatures: { type: "string", description: "The 3-5 most distinctive features that make this face uniquely recognisable â the things a sketch artist would prioritise" },
+                  // âââ Lighting Response âââ
+                  lightingResponse: { type: "string", description: "How this person's skin and features respond to light â e.g. 'olive skin creates warm golden tones under warm light, cool undertones emerge under blue light, cheekbones catch light dramatically'" },
+                  // âââ Clothing (if relevant) âââ
                   clothing: { type: "string", description: "Visible clothing description" },
-                  // ─── Master Description ───
+                  // âââ Master Description âââ
                   detailedDescription: { type: "string", description: "A 3-4 sentence master casting description that a director could read aloud to immediately visualise this person" },
                   cinematographerNotes: { type: "string", description: "Notes for the cinematographer on how to light and shoot this face for maximum impact" },
                 },
@@ -1671,7 +1671,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // Face features come first so the AI model weights them highest.
         const style = input.style || "cinematic";
 
-        // Technical base — always photorealistic, style only changes lighting/mood
+        // Technical base â always photorealistic, style only changes lighting/mood
         const photorealismBase = [
           "RAW photograph, absolutely indistinguishable from a real photograph of a real human being",
           "captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance T1.5 anamorphic lens",
@@ -1691,7 +1691,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         };
         const stylePrompt = styleMap[style] || styleMap.cinematic;
 
-        // Build the face geometry block — this is the highest-priority section
+        // Build the face geometry block â this is the highest-priority section
         const faceGeometryBlock = [
           analysis.faceShape ? `${analysis.faceShape} face` : "",
           analysis.foreheadShape ? `forehead: ${analysis.foreheadShape}` : "",
@@ -1701,7 +1701,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           analysis.facialSymmetry ? `facial symmetry: ${analysis.facialSymmetry}` : "",
         ].filter(Boolean).join(", ");
 
-        // Build the skin block — the most visible realism indicator
+        // Build the skin block â the most visible realism indicator
         const skinBlock = [
           analysis.skinTone ? `${analysis.skinTone} skin` : "natural skin",
           analysis.skinUndertone ? `${analysis.skinUndertone} undertone` : "",
@@ -1715,7 +1715,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           analysis.lightingResponse ? `lighting response: ${analysis.lightingResponse}` : "",
         ].filter(Boolean).join(", ");
 
-        // Build the eyes block — the soul of the character
+        // Build the eyes block â the soul of the character
         const eyesBlock = [
           analysis.eyeColor ? `${analysis.eyeColor} irises` : "",
           analysis.eyeShape ? `${analysis.eyeShape} eye shape` : "",
@@ -1755,7 +1755,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           analysis.shoulderDescription ? `shoulders: ${analysis.shoulderDescription}` : "",
         ].filter(Boolean).join(", ");
 
-        // Distinguishing features — highest recognition priority
+        // Distinguishing features â highest recognition priority
         const distinguishingBlock = analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none"
           ? `MOST IMPORTANT DISTINGUISHING FEATURES (must be reproduced exactly): ${analysis.distinguishingFeatures}`
           : "";
@@ -1773,7 +1773,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           ? `CINEMATOGRAPHER NOTES: ${analysis.cinematographerNotes}`
           : "";
 
-        // Assemble the full prompt — face geometry first for maximum model weighting
+        // Assemble the full prompt â face geometry first for maximum model weighting
         const promptParts = [
           photorealismBase,
           `SUBJECT: Recreate this exact person as a movie character named ${input.name}`,
@@ -1788,8 +1788,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           characterBlock ? `CHARACTER: ${characterBlock}` : "",
           dpNotes,
           `LIGHTING & STYLE: ${stylePrompt}`,
-          // Hard realism enforcement — always last
-          "REALISM ENFORCEMENT: NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-generated look, NOT plastic skin, NOT airbrushed — a REAL PHOTOGRAPH of a REAL HUMAN BEING with all natural imperfections preserved",
+          // Hard realism enforcement â always last
+          "REALISM ENFORCEMENT: NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-generated look, NOT plastic skin, NOT airbrushed â a REAL PHOTOGRAPH of a REAL HUMAN BEING with all natural imperfections preserved",
         ].filter((x: any) => x !== null) as any[];
 
         // Step 4: Generate the character image using the reference photo
@@ -1801,27 +1801,27 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           }],
         });
 
-        // Step 5: Build faceDnaPrompt — a cinematographer-grade character descriptor
+        // Step 5: Build faceDnaPrompt â a cinematographer-grade character descriptor
         // This is the master consistency anchor injected into every scene prompt.
         // Structured as: [FACE GEOMETRY] | [SKIN] | [EYES] | [HAIR] | [DISTINGUISHING]
         // so the AI model can parse and weight each category independently.
         const faceDnaPrompt = [
           // Core identity
           `${analysis.gender || "person"}, ${analysis.estimatedAge || "adult"}, ${analysis.ethnicity || ""}`.replace(/,\s*,/g, ",").trim().replace(/,\s*$/, ""),
-          // Face geometry — the structural foundation
+          // Face geometry â the structural foundation
           analysis.faceShape ? `FACE: ${analysis.faceShape}` : "",
           analysis.foreheadShape ? `forehead: ${analysis.foreheadShape}` : "",
           analysis.cheekboneStructure ? `cheekbones: ${analysis.cheekboneStructure}` : "",
           analysis.jawlineShape ? `jaw: ${analysis.jawlineShape}` : "",
           analysis.chinShape ? `chin: ${analysis.chinShape}` : "",
           analysis.facialSymmetry ? `symmetry: ${analysis.facialSymmetry}` : "",
-          // Skin — the most visible realism indicator
+          // Skin â the most visible realism indicator
           analysis.skinTone ? `SKIN: ${analysis.skinTone}` : "",
           analysis.skinUndertone ? `undertone: ${analysis.skinUndertone}` : "",
           analysis.skinTexture ? `texture: ${analysis.skinTexture}` : "",
           analysis.skinAgeMarkers && analysis.skinAgeMarkers !== "none" ? `age markers: ${analysis.skinAgeMarkers}` : "",
           analysis.skinImperfections && analysis.skinImperfections !== "none" ? `marks: ${analysis.skinImperfections}` : "",
-          // Eyes — the soul of the character
+          // Eyes â the soul of the character
           analysis.eyeColor ? `EYES: ${analysis.eyeColor}` : "",
           analysis.eyeShape ? `shape: ${analysis.eyeShape}` : "",
           analysis.eyeSize ? `size: ${analysis.eyeSize}` : "",
@@ -1839,9 +1839,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           analysis.hairLength ? `length: ${analysis.hairLength}` : "",
           analysis.hairTexture ? `texture: ${analysis.hairTexture}` : "",
           analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None" && analysis.facialHair !== "clean-shaven" ? `facial hair: ${analysis.facialHair}` : "",
-          // Distinguishing features — the top priority for recognition
+          // Distinguishing features â the top priority for recognition
           analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none" ? `DISTINGUISHING: ${analysis.distinguishingFeatures}` : "",
-          // Lighting response — critical for scene realism
+          // Lighting response â critical for scene realism
           analysis.lightingResponse ? `LIGHTING RESPONSE: ${analysis.lightingResponse}` : "",
         ].filter(Boolean).join(" | ");
 
@@ -1859,7 +1859,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           userId: ctx.user.id,
           projectId: input.projectId ?? null,
           name: input.name,
-          description: analysis.detailedDescription || `Character created from reference photo — ${analysis.gender}, ${analysis.estimatedAge}, ${analysis.ethnicity}`,
+          description: analysis.detailedDescription || `Character created from reference photo â ${analysis.gender}, ${analysis.estimatedAge}, ${analysis.ethnicity}`,
           photoUrl: result.url,
           attributes: {
             ...analysis,
@@ -1958,10 +1958,10 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
   }),
 
-  // ─── v6.77 Brands ───
+  // âââ v6.77 Brands âââ
   // Per-project allow / required / forbidden list of real-world commercial
   // brands (Nike, Pepsi, storefronts, road signs, billboards, vehicles, etc.).
-  // Free to manage — every scene/trailer/poster/storyboard generator reads this
+  // Free to manage â every scene/trailer/poster/storyboard generator reads this
   // list and feeds the constraints into the model so the right logos appear
   // (and the wrong ones never do).
   brand: router({
@@ -2028,19 +2028,19 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
   }),
 
-  // ─── v6.77 Designer Wardrobe ───
+  // âââ v6.77 Designer Wardrobe âââ
   // Lets fashion / costume designers, brands, stylists, wardrobe departments
   // and production designers manage their designer profile, collections, and
   // wardrobe / costume items. Directors browse public collections, optionally
   // upload private items into their own project, and attach items to
   // characters or to scenes (set dressing / shopfront / mood / period
-  // references). Free to manage — no credits charged on any procedure here;
+  // references). Free to manage â no credits charged on any procedure here;
   // expensive AI / video work only happens later when the director runs an
   // actual scene generation. The buildScenePrompt engine reads attached
   // wardrobe via the precomputed `wardrobeContext` block, so this router
   // never has to reach into the prompt engine itself.
   designerWardrobe: router({
-    // ─── Profile ───
+    // âââ Profile âââ
     getMyProfile: protectedProcedure.query(async ({ ctx }) => {
       return db.getDesignerProfileByUserId(ctx.user.id);
     }),
@@ -2079,7 +2079,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         return db.createDesignerProfile({ ...patch, userId: ctx.user.id } as any);
       }),
 
-    // ─── Collections ───
+    // âââ Collections âââ
     createCollection: protectedProcedure
       .input(z.object({
         name: z.string().min(1).max(255),
@@ -2144,12 +2144,12 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           // also designs see one canonical "Mine" tab + a clean public feed.
           return publicList.filter((c) => c.userId !== ctx.user.id);
         }
-        // 'all' — mine first, then public minus mine
+        // 'all' â mine first, then public minus mine
         const mineIds = new Set(mine.map((c) => c.id));
         return [...mine, ...publicList.filter((c) => !mineIds.has(c.id))];
       }),
 
-    // ─── Wardrobe items ───
+    // âââ Wardrobe items âââ
     createWardrobeItem: protectedProcedure
       .input(z.object({
         collectionId: z.number().int().optional(),
@@ -2313,7 +2313,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         return { ok: true };
       }),
 
-    // ─── Assignments — attach to character or scene ───
+    // âââ Assignments â attach to character or scene âââ
     attachToCharacter: protectedProcedure
       .input(z.object({
         projectId: z.number().int(),
@@ -2444,7 +2444,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
   }),
 
-  // ─── Scenes ───
+  // âââ Scenes âââ
   scene: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -2799,13 +2799,13 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const sceneIdx = allScenes.findIndex(s => s.id === scene.id);
 
         const sceneWardrobeContext = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
-          // ── Auto-inject user's active VFX/SFX library signature into every generated scene ──
+          // ââ Auto-inject user's active VFX/SFX library signature into every generated scene ââ
           let _vfxLibCtx = "";
           try {
             const { getVfxLibraryPrompt } = await import("./_core/vfxPromptEngine");
             const _vfxDb = await db.getDb();
             if (_vfxDb) { const res = await getVfxLibraryPrompt(ctx.user.id, _vfxDb); _vfxLibCtx = res.vfx || ""; }
-          } catch (_vfxErr) { /* non-fatal — generation continues without library injection */ }
+          } catch (_vfxErr) { /* non-fatal â generation continues without library injection */ }
 
         // Build rich cinematic prompt
         const prompt = buildScenePrompt(
@@ -2817,7 +2817,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: sceneWardrobeContext,
+                  wardrobeContext: _effectivePhotoWardrobeCtx || sceneWardrobeContext || undefined,
             characters: characters.map(c => ({
                 name: c.name,
                 ageRange: (c as any).ageRange ?? (c as any).dateOfBirth ?? null,
@@ -3079,7 +3079,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         await db.incrementGenerationCount(ctx.user.id);
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
-        // ─── Scene Lock Check: blocked if director has locked this scene ───
+        // âââ Scene Lock Check: blocked if director has locked this scene âââ
         try {
           const dbl = await db.getDb();
           if (dbl) {
@@ -3088,13 +3088,13 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             if (larr?.[0]) {
               const locks = JSON.parse((larr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, ""));
               const lock = (locks || []).find((x: any) => x.sceneId === input.sceneId && x.locked);
-              if (lock) throw new TRPCError({ code: "FORBIDDEN", message: `Scene is locked by ${lock.lockedBy || "director"}${lock.reason ? ` (${lock.reason})` : ""}. Unlock in Studio Ops → Locks to regenerate.` });
+              if (lock) throw new TRPCError({ code: "FORBIDDEN", message: `Scene is locked by ${lock.lockedBy || "director"}${lock.reason ? ` (${lock.reason})` : ""}. Unlock in Studio Ops â Locks to regenerate.` });
             }
           }
         } catch (e: any) { if (e instanceof TRPCError) throw e; }
-        // Credits: duration-scaled deduction (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
+        // Credits: duration-scaled deduction (â¤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
         const videoCredits = getVideoCredits(Math.max(10, scene.duration || 45), false);
-        // ─── Render Queue Executor Guard: enforce per-project caps before spending ───
+        // âââ Render Queue Executor Guard: enforce per-project caps before spending âââ
         try {
           const dbq = await db.getDb();
           if (dbq) {
@@ -3105,7 +3105,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const cap = qdata?.cap;
               if (cap?.pauseOnExceed) {
                 if (cap.perJobCredits != null && videoCredits > cap.perJobCredits) {
-                  throw new TRPCError({ code: "FORBIDDEN", message: `Render queue cap: per-job ${cap.perJobCredits}cr exceeded (this job needs ${videoCredits}cr). Adjust scene duration or raise cap in Studio Ops → Render Queue.` });
+                  throw new TRPCError({ code: "FORBIDDEN", message: `Render queue cap: per-job ${cap.perJobCredits}cr exceeded (this job needs ${videoCredits}cr). Adjust scene duration or raise cap in Studio Ops â Render Queue.` });
                 }
                 if (cap.dailyCredits != null) {
                   const spentR: any = await dbq.execute(sql`SELECT COALESCE(SUM(-amount),0) AS spent FROM credit_transactions WHERE userId = ${ctx.user.id} AND amount < 0 AND action LIKE 'generate_%' AND createdAt > NOW() - INTERVAL '24 HOURS'`);
@@ -3119,8 +3119,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }
           }
         } catch (e: any) { if (e instanceof TRPCError) throw e; /* fail open on guard errors */ }
-        // v6.69 Phase 5 — Atomic reservation. reserveCredits dedupes by
-        // (referenceType, referenceId) — a duplicate click while the previous
+        // v6.69 Phase 5 â Atomic reservation. reserveCredits dedupes by
+        // (referenceType, referenceId) â a duplicate click while the previous
         // reservation is still "reserved" returns the existing reservation id
         // without double-charging. Finalize happens just before this route
         // returns; release happens in the route-level catch wrapper below.
@@ -3145,7 +3145,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const visualDNA = buildVisualDNA(project, characters, userTier);
         const allScenes = await db.getProjectScenes(project.id);
         const sceneIdx = allScenes.findIndex(s => s.id === scene.id);
-        // ── Continuity: prev scene last frame for scene-to-scene visual anchoring ──
+        // ââ Continuity: prev scene last frame for scene-to-scene visual anchoring ââ
         const _prevScene = sceneIdx > 0 ? allScenes[sceneIdx - 1] : null;
         const previousSceneLastFrameUrl: string | undefined = (_prevScene as any)?.endFrameUrl ?? undefined;
         // Pre-fetch wardrobeContext once, reuse in buildScenePrompt + buildExtendedSceneDescription
@@ -3198,9 +3198,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           sceneCharIds.length === 0 || sceneCharIds.includes(c.id)
         );
 
-        // v6.62 — Project-level style anchors (logos, mood boards) take priority
+        // v6.62 â Project-level style anchors (logos, mood boards) take priority
         // over character photos when the scene has no explicit refs of its own.
-        // Order of precedence: scene.referenceImages → project.referenceImages → character photos.
+        // Order of precedence: scene.referenceImages â project.referenceImages â character photos.
         if (sceneRefImages.length === 0) {
           const projRefs = ((project as any).referenceImages as string[] | null) || [];
           if (projRefs.length > 0) {
@@ -3216,12 +3216,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           sceneRefImages.push(...charPhotos);
         }
         // Use rich CharacterDNA for cinematographer-grade visual consistency across all providers
-          // v6.78 — Per-character wardrobe lookup. Fetch assignments so DNA gets the correct outfit
+          // v6.78 â Per-character wardrobe lookup. Fetch assignments so DNA gets the correct outfit
           // instead of the "plain all-black" placeholder that fires when no override is supplied.
           // Also collects the first garment imageUrl per character to use as a visual ref anchor.
           const _charWardrobeOverrides = new Map<number, {
             wardrobeDescription?: string;
             accessories?: string;
+            hairNotes?: string;
+            makeupNotes?: string;
             imageUrl?: string;
           }>();
           for (const _wc of sceneActiveCharacters) {
@@ -3251,9 +3253,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   });
                 }
               }
-            } catch { /* non-fatal — character falls back to default wardrobe */ }
+            } catch { /* non-fatal â character falls back to default wardrobe */ }
           }
-          // v6.78 — Append wardrobe item images as additional visual anchors (cap at 2 extra refs)
+          // v6.78 â Append wardrobe item images as additional visual anchors (cap at 2 extra refs)
           const _wardrobeRefUrls = [..._charWardrobeOverrides.values()]
             .map(v => v.imageUrl).filter((u): u is string => !!u).slice(0, 2);
           for (const _wImgUrl of _wardrobeRefUrls) {
@@ -3261,9 +3263,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               sceneRefImages.push(_wImgUrl);
             }
           }
-          // v6.79 — Read scene.wardrobe inline overrides (from SceneEditor "Scene Wardrobe Overrides" UI)
+          // v6.79 â Read scene.wardrobe inline overrides (from SceneEditor "Scene Wardrobe Overrides" UI)
           // These are user-typed outfit descriptions per character, saved as JSON on the scene record.
-          // Previously stored but NEVER read during generation — the AI never saw manual outfit directives.
+          // Previously stored but NEVER read during generation â the AI never saw manual outfit directives.
           const _inlineWardrobeEntries = (scene as any).wardrobe as Array<{
             characterId?: number;
             wardrobeDescription?: string;
@@ -3278,11 +3280,13 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const _iweChar = sceneActiveCharacters.find((c: any) => (c as any).id === _iwe.characterId) as any;
               const _iweName = _iweChar?.name || `Character ${_iwe.characterId}`;
               if (!_charWardrobeOverrides.has(_iwe.characterId)) {
-                // No marketplace assignment for this character — use inline override
+                // No marketplace assignment for this character â use inline override
                 if (_iwe.wardrobeDescription?.trim()) {
                   _charWardrobeOverrides.set(_iwe.characterId, {
                     wardrobeDescription: _iwe.wardrobeDescription.trim(),
                     accessories: _iwe.accessories?.trim() || undefined,
+                    hairNotes: _iwe.hairNotes?.trim() || undefined,
+                    makeupNotes: _iwe.makeupNotes?.trim() || undefined,
                     imageUrl: undefined,
                   });
                 }
@@ -3330,7 +3334,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Pollinations is always available as a free fallback — no key required.
+        // Pollinations is always available as a free fallback â no key required.
         // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         // Cancel any existing processing jobs for this scene to prevent race conditions.
@@ -3355,7 +3359,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const activeProvider = selectProvider(byokKeys);
 
         if (activeProvider === "veo3" && byokKeys.googleAiKey) {
-          // ─── VEO 3: Extended clip-chaining via background task ───
+          // âââ VEO 3: Extended clip-chaining via background task âââ
           // Uses generateExtendedScene to chain multiple sub-clips into full declared duration.
           (async () => {
             try {
@@ -3398,7 +3402,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
               logger.info(`[SceneVideo] Extended Veo3 generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
-              // v6.70 — async success: finalize the reservation. finalizeReservation
+              // v6.70 â async success: finalize the reservation. finalizeReservation
               // is idempotent (only updates rows still in "reserved" state).
               if (__sceneVideoResId) {
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
@@ -3406,14 +3410,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             } catch (err: any) {
               logger.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}: ${err.message}`);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
-              // v6.70 — async failure: refund. releaseReservation is idempotent.
+              // v6.70 â async failure: refund. releaseReservation is idempotent.
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
               }
             }
           })();
           } else if (activeProvider === "runway" && byokKeys.runwayKey) {
-          // ─── RUNWAY: Extended clip-chaining via background task ───
+          // âââ RUNWAY: Extended clip-chaining via background task âââ
           // Uses generateExtendedScene to chain multiple 10s Runway clips into full declared duration.
           (async () => {
             try {
@@ -3467,10 +3471,10 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }
           })();
         } else if (activeProvider === "fal" && byokKeys.falKey) {
-          // ─── FAL.AI: Extended clip-chaining via background task ───
+          // âââ FAL.AI: Extended clip-chaining via background task âââ
           // Uses generateExtendedScene to chain multiple sub-clips (each ~10-16s) into a
           // full-length scene matching the declared duration (60-90s). Same pattern as
-          // other providers — fire-and-forget background task.
+          // other providers â fire-and-forget background task.
           (async () => {
             try {
               logger.info(`[SceneVideo] Extended fal.ai generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
@@ -3524,7 +3528,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           })();
 
         } else {
-          // ─── OTHER PROVIDERS: Fire-and-forget background task ───
+          // âââ OTHER PROVIDERS: Fire-and-forget background task âââ
           // Non-fal providers (Pollinations, Replicate, Luma, HuggingFace, SeedDance) are handled
           // via background async tasks. These providers complete synchronously within the request
           // or use their own polling internally.
@@ -3581,14 +3585,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           })();
         }
 
-        // v6.70 — Dispatch succeeded; the reservation is now owned by the
+        // v6.70 â Dispatch succeeded; the reservation is now owned by the
         // background IIFE that fired above. Each provider branch finalizes on
         // success (post-completed) and releases on failure (post-failed). The
         // reservation row's (referenceType, referenceId) key still blocks any
         // duplicate click because reserveCredits returns the existing
         // "reserved" row id without re-deducting. Finalize/release are both
         // idempotent (status='reserved' guard) so a retry path is safe.
-        // Return immediately — frontend will poll scene status
+        // Return immediately â frontend will poll scene status
         return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),
 
@@ -3605,7 +3609,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const scenes = await db.getProjectScenes(project.id);
         const scenesNeedingVideo = scenes.filter(s => !(s as any).videoUrl);
         if (scenesNeedingVideo.length === 0) return { generated: 0, total: scenes.length };
-        // Credits: duration-scaled per scene (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
+        // Credits: duration-scaled per scene (â¤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
         const bulkVideoCredits = scenesNeedingVideo.reduce((sum: number, s: any) => sum + getVideoCredits(Math.max(10, s.duration || 45), false), 0);
         try { await db.deductCredits(ctx.user.id, bulkVideoCredits, "bulk_generate_videos", `Bulk videos for ${scenesNeedingVideo.length} scenes (duration-scaled)`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const characters = await db.getProjectCharacters(project.id);
@@ -3627,7 +3631,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Pollinations is always available as a free fallback — no key required.
+        // Pollinations is always available as a free fallback â no key required.
         // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         // Determine the active provider for this user
@@ -3638,7 +3642,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         let generated = 0;
 
         if (isFalProvider) {
-          // ─── FAL.AI BULK: Extended clip-chaining for each scene ───
+          // âââ FAL.AI BULK: Extended clip-chaining for each scene âââ
           // Uses generateExtendedScene to chain multiple sub-clips into full declared duration.
           // Process 2 at a time to avoid API overload.
           const { generateExtendedScene: generateExtendedSceneBulkFal } = await import("./_core/extendedSceneGenerator");
@@ -3680,14 +3684,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     if (dlRecs?.length) bulkFalDialogue = dlRecs.map((d: any) => `${d.characterName}: "${d.line}"${d.emotion ? ` (${d.emotion})` : ''}`).join('\n');
                   } catch { /* ignore */ }
                 }
-                // Build character data for visual consistency
-                const bulkFalCharIds = ((scene as any).characterIds as number[]) || [];
-                const bulkFalSceneChars = characters.filter((c: any) => bulkFalCharIds.length === 0 || bulkFalCharIds.includes(c.id));
-                const bulkFalCharDescs = bulkFalSceneChars.filter((c: any) => c.name).map((c: any) => {
-                  const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
-                  if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
-                  return p.filter(Boolean).join(', ');
-                }).filter((x: any) => x !== null) as any[];
+                // Build character data for visual consistency using full CharacterDNA (v6.80)
+                  // Previously used a basic name+age+gender string — now uses buildCharacterDNA
+                  // for photorealistic face DNA, body DNA, clothing, and consistency locking.
+                  const bulkFalCharIds = ((scene as any).characterIds as number[]) || [];
+                  const bulkFalSceneChars = characters.filter((c: any) => bulkFalCharIds.length === 0 || bulkFalCharIds.includes(c.id));
+                  const { buildCharacterDNA: _bulkFalBuildDNA } = await import("./_core/characterConsistency");
+                  const bulkFalCharDescs = bulkFalSceneChars
+                    .filter((c: any) => c.name)
+                    .map((c: any) => _bulkFalBuildDNA(c).promptAnchor);
                 if (sceneRefImages.length === 0) {
                   const cp = bulkFalSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
                   sceneRefImages.push(...cp);
@@ -3697,7 +3702,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkFalDialogue, undefined, ""),
+                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkFalDialogue, await getWardrobePromptContextForScene(scene.id, ctx.user.id), ""),
                   targetDurationSeconds: Math.max(10, scene.duration || 45),
                   mood: scene.mood || undefined,
                   lighting: scene.lighting || undefined,
@@ -3729,7 +3734,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }));
           }
         } else {
-          // ─── OTHER PROVIDERS: Sequential batch processing ───
+          // âââ OTHER PROVIDERS: Sequential batch processing âââ
           // Non-fal providers (Pollinations, Replicate, Luma, HuggingFace, SeedDance) complete
           // synchronously within the request or use their own polling internally.
           const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
@@ -3740,6 +3745,26 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             await Promise.allSettled(batch.map(async (scene) => {
               try {
                 const bulkWardrobeCtx = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
+                  // v6.80 — include inline scene.wardrobe overrides in effective wardrobe context
+                  const _bulkInlineEntries = (scene as any).wardrobe as Array<{
+                    characterId?: number; wardrobeDescription?: string;
+                    hairNotes?: string; makeupNotes?: string; accessories?: string;
+                  }> | null | undefined;
+                  const _bulkInlineLines: string[] = [];
+                  if (Array.isArray(_bulkInlineEntries)) {
+                    for (const _bie of _bulkInlineEntries) {
+                      const _bieName = characters.find((c: any) => c.id === _bie.characterId)?.name || `Character ${_bie.characterId}`;
+                      const _bieParts: string[] = [];
+                      if (_bie.wardrobeDescription?.trim()) _bieParts.push(_bie.wardrobeDescription.trim());
+                      if (_bie.hairNotes?.trim()) _bieParts.push(`hair: ${_bie.hairNotes.trim()}`);
+                      if (_bie.makeupNotes?.trim()) _bieParts.push(`makeup: ${_bie.makeupNotes.trim()}`);
+                      if (_bie.accessories?.trim()) _bieParts.push(`accessories: ${_bie.accessories.trim()}`);
+                      if (_bieParts.length > 0) _bulkInlineLines.push(`${_bieName}: ${_bieParts.join(", ")}`);
+                    }
+                  }
+                  const _bulkEffectiveWardrobeCtx = bulkWardrobeCtx?.trim()
+                    ? bulkWardrobeCtx
+                    : _bulkInlineLines.length > 0 ? `CHARACTER WARDROBE (scene overrides):\n${_bulkInlineLines.join("\n")}` : undefined;
                 const sceneIdx = scenes.findIndex(s => s.id === scene.id);
                 const prompt = buildScenePrompt(
                   { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
@@ -3771,19 +3796,18 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   } catch { /* ignore */ }
                 }
                 const bulkOtherCharIds = ((scene as any).characterIds as number[]) || [];
-                const bulkOtherSceneChars = characters.filter((c: any) => bulkOtherCharIds.length === 0 || bulkOtherCharIds.includes(c.id));
-                const bulkOtherCharDescs = bulkOtherSceneChars.filter((c: any) => c.name).map((c: any) => {
-                  const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
-                  if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
-                  return p.filter(Boolean).join(', ');
-                }).filter((x: any) => x !== null) as any[];
+                  const bulkOtherSceneChars = characters.filter((c: any) => bulkOtherCharIds.length === 0 || bulkOtherCharIds.includes(c.id));
+                  const { buildCharacterDNA: _bulkOtherBuildDNA } = await import("./_core/characterConsistency");
+                  const bulkOtherCharDescs = bulkOtherSceneChars
+                    .filter((c: any) => c.name)
+                    .map((c: any) => _bulkOtherBuildDNA(c).promptAnchor);
                 const bulkOtherRefs = (scene as any).referenceImages as string[] || [];
                 if (bulkOtherRefs.length === 0) {
                   const cp2 = bulkOtherSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
                   bulkOtherRefs.push(...cp2);
                 }
                 const bulkOtherPromptOverride = (scene as any).aiPromptOverride as string | undefined;
-                const bulkOtherDesc = bulkOtherPromptOverride ? bulkOtherPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkOtherDialogue);
+                const bulkOtherDesc = bulkOtherPromptOverride ? bulkOtherPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkOtherDialogue, _bulkEffectiveWardrobeCtx || "", "");
                 const extResult = await generateExtendedScene(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
@@ -3796,7 +3820,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   locationDescription: scene.locationType || undefined,
                   referenceImages: bulkOtherRefs.length > 0 ? bulkOtherRefs : undefined,
                   characterDescriptions: bulkOtherCharDescs.length > 0 ? bulkOtherCharDescs : undefined,
-                  wardrobeContext: bulkWardrobeCtx || undefined,
+                  wardrobeContext: _bulkEffectiveWardrobeCtx || undefined,
                   previousSceneLastFrameUrl: sceneIdx > 0 ? (scenes[sceneIdx - 1] as any)?.endFrameUrl : undefined,
                 });
                 await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
@@ -3827,7 +3851,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         return { generated, total: scenes.length };
       }),
 
-    // ─── Virelle AI Scene Editing Chat ───
+    // âââ Virelle AI Scene Editing Chat âââ
     virelleChat: protectedProcedure
       .input(z.object({
         sceneId: z.number(),
@@ -3850,7 +3874,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
 
         // Determine which LLM provider to use.
-        // Priority: Venice (preferred) → user's chosen → OpenAI → Anthropic → Google → admin platform key.
+        // Priority: Venice (preferred) â user's chosen â OpenAI â Anthropic â Google â admin platform key.
         const preferredLlm = userKeys.preferredLlmProvider;
         const isAdminChat = ctx.user.role === "admin";
         let provider: "openai" | "anthropic" | "google" | "venice" | "groq" = "groq";
@@ -3868,7 +3892,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           else {
             throw new TRPCError({
               code: "FORBIDDEN",
-              message: "No LLM key configured. Go to Settings → API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
+              message: "No LLM key configured. Go to Settings â API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
             });
           }
 
@@ -3880,7 +3904,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           : userKeys.googleAiKey!;
 
         // Build the system prompt for Virelle
-        const systemPrompt = `You are Virelle, the AI production assistant for VirÉlle Studios. You execute the director's scene editing instructions with precision and faithfulness.
+        const systemPrompt = `You are Virelle, the AI production assistant for VirÃlle Studios. You execute the director's scene editing instructions with precision and faithfulness.
 
 You are currently editing this scene:
 - Title: ${scene.title || "Untitled"}
@@ -3900,7 +3924,7 @@ DIRECTOR-FIRST RULES (non-negotiable):
 3. Preserve ALL existing scene properties that the director did not mention.
 4. If the director's instruction is ambiguous, ask ONE clarifying question instead of guessing.
 5. ONLY make creative suggestions or additions if the director explicitly says "be creative", "add something", "what do you suggest", "use your judgment", or "surprise me".
-6. The director has full creative control — execute their vision exactly as stated, without restriction.
+6. The director has full creative control â execute their vision exactly as stated, without restriction.
 
 When the director gives you editing instructions, respond with:
 1. A single brief confirmation of what you are changing (one sentence)
@@ -4089,7 +4113,7 @@ Available fields you can update:
       }),
   }),
 
-  // ─── File Upload ───
+  // âââ File Upload âââ
   upload: router({
     image: protectedProcedure
       .input(z.object({
@@ -4104,7 +4128,7 @@ Available fields you can update:
         return { url };
       }),
 
-    // ─── External Scene Footage Upload ───
+    // âââ External Scene Footage Upload âââ
     // Allows directors to upload externally shot footage (MP4, MOV, AVI, MKV) into a scene
     footage: protectedProcedure
       .input(z.object({
@@ -4136,7 +4160,7 @@ Available fields you can update:
         return { url, key };
       }),
 
-    // Upload reference images (PNG, JPG, WEBP) for a scene — logos, concept art, mood boards
+    // Upload reference images (PNG, JPG, WEBP) for a scene â logos, concept art, mood boards
     referenceImage: protectedProcedure
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
@@ -4175,7 +4199,7 @@ Available fields you can update:
         return { referenceImages: updated };
       }),
 
-    // v6.62 — Project-level reference image upload (style anchor for ALL scenes
+    // v6.62 â Project-level reference image upload (style anchor for ALL scenes
     // in the project). Falls back to scene-level refs first; this is the
     // "set the look once, applied everywhere" lever directors expect.
     projectReferenceImage: protectedProcedure
@@ -4213,8 +4237,8 @@ Available fields you can update:
       }),
   }),
 
-  // ─── Frame-timestamp comments (v6.62) ───
-  // Pinned notes at a specific second of a video clip — table-stakes review
+  // âââ Frame-timestamp comments (v6.62) âââ
+  // Pinned notes at a specific second of a video clip â table-stakes review
   // workflow for any pro film tool (Frame.io / Vimeo Review parity).
   frameComment: router({
     list: protectedProcedure
@@ -4256,7 +4280,7 @@ Available fields you can update:
         if (!input.sceneId && !input.movieId) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "sceneId or movieId required" });
         }
-        // Sanitize body — comments render as plain text in the panel
+        // Sanitize body â comments render as plain text in the panel
         const cleanBody = sanitizeText(input.body).slice(0, 2000);
         const created = await db.createFrameComment({
           projectId: input.projectId,
@@ -4293,7 +4317,7 @@ Available fields you can update:
       }),
   }),
 
-  // ─── Generation ───
+  // âââ Generation âââ
   generation: router({
     // Quick generate: AI creates full film from plot + characters
     // Enhanced with Visual DNA system and Cinematic Prompt Engine
@@ -4330,7 +4354,7 @@ Available fields you can update:
           logger.warn(`[Credits] Deduction warning: ${e.message}`);
         }
 
-        // ── Reset: clear existing scenes and OLD jobs BEFORE creating the new job ──
+        // ââ Reset: clear existing scenes and OLD jobs BEFORE creating the new job ââ
         // IMPORTANT: must happen before createGenerationJob so we don't delete the new job.
         try {
           const existingScenes = await db.getProjectScenes(project.id);
@@ -4347,7 +4371,7 @@ Available fields you can update:
           }
         } catch (clearErr: any) {
           logger.warn(`[QuickGen] Could not clear old scenes/jobs: ${clearErr.message}`);
-          // Non-fatal — continue with generation
+          // Non-fatal â continue with generation
         }
         // Create a generation job AFTER clearing old jobs so it isn't immediately deleted
         const job = await db.createGenerationJob({
@@ -4364,7 +4388,7 @@ Available fields you can update:
           thumbnailUrl: null,
         });
 
-        // ── FIRE-AND-FORGET: Return immediately so Railway's 5-minute HTTP timeout doesn't kill us ──
+        // ââ FIRE-AND-FORGET: Return immediately so Railway's 5-minute HTTP timeout doesn't kill us ââ
         // The full generation pipeline runs in the background. The client polls for updates
         // via refetchInterval on project.get, scene.listByProject, and generation.listJobs.
         const userId = ctx.user.id;
@@ -4374,7 +4398,7 @@ Available fields you can update:
         const ctxUser = ctx.user; // capture for background closure
 
         setImmediate(async () => {
-        // ── Fetch user BYOK keys early — used for both LLM and video generation ──
+        // ââ Fetch user BYOK keys early â used for both LLM and video generation ââ
         // Must be done before Step 0 so user's own OpenAI key is used for LLM calls,
         // not the platform key (which may be quota-exhausted).
         let earlyUserKeys: any = { openaiKey: null, anthropicKey: null, googleAiKey: null, falApiKey: null };
@@ -4383,7 +4407,7 @@ Available fields you can update:
         }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
 
-        // ── Pre-flight check: ensure user has at least ONE video provider key configured ──
+        // ââ Pre-flight check: ensure user has at least ONE video provider key configured ââ
         // Without this guard the pipeline runs the full LLM script generation (burning credits +
         // platform LLM quota), then dies at the video step with a vague error. Block early with
         // a clear instructional message instead.
@@ -4400,7 +4424,7 @@ Available fields you can update:
         if (!hasAnyVideoKey) {
           const noKeyMsg =
             "NO_VIDEO_KEY: Add a video-generation API key before generating a film. " +
-            "Open Settings → API Keys and connect at least one of: fal.ai (cheapest, ~$0.40/clip), " +
+            "Open Settings â API Keys and connect at least one of: fal.ai (cheapest, ~$0.40/clip), " +
             "Runway, Hugging Face (free tier), Luma, Replicate, or Google Veo 3. " +
             "Once connected, return here and tap Re-generate Film.";
           logger.warn(`[QuickGen] Project ${projectId} blocked: user has no video API keys configured.`);
@@ -4411,8 +4435,8 @@ Available fields you can update:
         if (!earlyUserKeys.elevenlabsKey) {
           const noElevenLabsMsg =
             "NO_ELEVENLABS_KEY: ElevenLabs is required for voice and sound generation. " +
-            "Open Settings → API Keys, add your ElevenLabs API key, then tap Re-generate Film. " +
-            "Get a free key at elevenlabs.io — the free tier covers thousands of characters per month.";
+            "Open Settings â API Keys, add your ElevenLabs API key, then tap Re-generate Film. " +
+            "Get a free key at elevenlabs.io â the free tier covers thousands of characters per month.";
           logger.warn(`[QuickGen] Project ${projectId} blocked: user has no ElevenLabs key configured.`);
           try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: noElevenLabsMsg }); } catch {}
           try { await db.updateProject(projectId, userId, { status: "failed", progress: 0 }); } catch {}
@@ -4425,7 +4449,7 @@ Available fields you can update:
         await withUserLlmKey({ openaiKey: earlyUserKeys.openaiKey, anthropicKey: earlyUserKeys.anthropicKey, veniceKey: earlyUserKeys.veniceKey }, async () => {
         try {
 
-        // ── Step 0: Auto-generate photorealistic characters if none exist ──
+        // ââ Step 0: Auto-generate photorealistic characters if none exist ââ
         // This is the key to broadcast-quality output: consistent faces across all scenes
         let existingCharacters = await db.getProjectCharacters(projectId);
         if (existingCharacters.length === 0) {
@@ -4436,7 +4460,7 @@ Available fields you can update:
               messages: [
                 {
                   role: "system",
-                  content: `You are a Hollywood casting director and character designer. Based on the plot summary, design 2-4 main characters for this film. Include humans AND animals if relevant to the story. For each character, provide extremely specific physical descriptions that will be used to generate photorealistic portrait images. Be precise — hair color, eye color, skin tone, age, ethnicity, build, distinguishing features, clothing style. For animals, describe species, breed, coloring, size, and distinctive features.`,
+                  content: `You are a Hollywood casting director and character designer. Based on the plot summary, design 2-4 main characters for this film. Include humans AND animals if relevant to the story. For each character, provide extremely specific physical descriptions that will be used to generate photorealistic portrait images. Be precise â hair color, eye color, skin tone, age, ethnicity, build, distinguishing features, clothing style. For animals, describe species, breed, coloring, size, and distinctive features.`,
                 },
                 {
                   role: "user",
@@ -4465,30 +4489,30 @@ Available fields you can update:
                     `shot on Canon EOS R5 with 500mm telephoto lens, shallow depth of field, natural habitat environment,`,
                     `National Geographic quality, 8K resolution, hyperdetailed, absolutely indistinguishable from a real photograph,`,
                     `perfect animal anatomy, natural fur/feather/scale texture, authentic animal eyes with natural reflections,`,
-                    `NOT CGI, NOT illustration, NOT cartoon — a REAL PHOTOGRAPH of a REAL ANIMAL`,
+                    `NOT CGI, NOT illustration, NOT cartoon â a REAL PHOTOGRAPH of a REAL ANIMAL`,
                   ].filter(Boolean).join(" ");
                 } else {
-                  // Human portrait prompt — using the same high-quality prompt as the character generator
+                  // Human portrait prompt â using the same high-quality prompt as the character generator
                   portraitPrompt = [
                     `RAW photograph, ultra-photorealistic Hollywood A-list actor headshot, absolutely indistinguishable from a real photograph of a real human being,`,
                     `captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens at f/1.4, shallow cinematic depth of field with natural oval bokeh,`,
                     `${cd.gender || "person"} in their ${cd.ageRange || "30s"},`,
                     `${cd.ethnicity || ""} ethnicity,`,
-                    cd.skinTone ? `${cd.skinTone} skin tone — skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry — no airbrushed or plastic skin,` : "",
+                    cd.skinTone ? `${cd.skinTone} skin tone â skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry â no airbrushed or plastic skin,` : "",
                     cd.build ? `${cd.build} build,` : "",
-                    `${cd.hairColor || "brown"} ${cd.hairStyle || "natural"} hair — individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`,
-                    `${cd.eyeColor || "brown"} eyes — hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`,
+                    `${cd.hairColor || "brown"} ${cd.hairStyle || "natural"} hair â individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`,
+                    `${cd.eyeColor || "brown"} eyes â hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`,
                     cd.facialFeatures ? `${cd.facialFeatures},` : "",
                     cd.distinguishingMarks ? `${cd.distinguishingMarks},` : "",
-                    cd.clothingStyle ? `wearing ${cd.clothingStyle} — fabric texture and material weight visible,` : "",
+                    cd.clothingStyle ? `wearing ${cd.clothingStyle} â fabric texture and material weight visible,` : "",
                     cd.expression ? `${cd.expression} expression with authentic micro-expressions and genuine emotion,` : "",
                     cd.description ? `Character context: ${cd.description},` : "",
                     `three-point Rembrandt lighting: warm key light at 45 degrees creating a Rembrandt triangle on the face, soft fill light reducing shadow ratio to 2:1, subtle rim/hair light separating subject from background,`,
                     `skin pores visible under magnification, micro-wrinkles around eyes and mouth, natural skin oil and moisture, capillaries visible in sclera,`,
-                    `authentic facial bone structure with natural asymmetry — no perfect symmetry, no uncanny valley,`,
+                    `authentic facial bone structure with natural asymmetry â no perfect symmetry, no uncanny valley,`,
                     `Kodak Vision3 500T film stock color science with organic grain structure and natural highlight rolloff,`,
                     `8K resolution, hyperdetailed, Academy Award-winning portrait photography,`,
-                    `NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON`,
+                    `NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth â a REAL PHOTOGRAPH of a REAL PERSON`,
                   ].filter(Boolean).join(" ");
                 }
 
@@ -4498,7 +4522,7 @@ Available fields you can update:
                     userId: userId,
                     projectId: projectId,
                     name: cd.name || "Character",
-                    description: cd.description || `${cd.role || "Character"} — ${cd.isAnimal ? cd.animalSpecies : `${cd.gender}, ${cd.ageRange}, ${cd.ethnicity}`}`,
+                    description: cd.description || `${cd.role || "Character"} â ${cd.isAnimal ? cd.animalSpecies : `${cd.gender}, ${cd.ageRange}, ${cd.ethnicity}`}`,
                     photoUrl: portraitResult.url,
                     attributes: {
                       ...cd,
@@ -4514,18 +4538,18 @@ Available fields you can update:
             }
           } catch (charDesignErr: any) {
             logger.error(`[QuickGen] Character auto-generation failed: ${charDesignErr.message}`);
-            // Non-fatal — continue with scene generation
+            // Non-fatal â continue with scene generation
           }
         }
 
-        // ── Step 1: Build Visual DNA for consistent style across all scenes ──
+        // ââ Step 1: Build Visual DNA for consistent style across all scenes ââ
         const characters = await db.getProjectCharacters(projectId);
         const userTier = getEffectiveTier(ctxUser) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
         const charDescriptions = characters.map(c => {
           const attrs = (c.attributes as any) || {};
           const parts = [`${c.name}`];
-          if (c.description) parts.push(`— ${c.description}`);
+          if (c.description) parts.push(`â ${c.description}`);
           if (attrs.age || attrs.ageRange || attrs.estimatedAge) parts.push(`Age: ${attrs.age || attrs.ageRange || attrs.estimatedAge}`);
           if (attrs.gender) parts.push(`Gender: ${attrs.gender}`);
           if (attrs.ethnicity) parts.push(`Ethnicity: ${attrs.ethnicity}`);
@@ -4536,11 +4560,11 @@ Available fields you can update:
           return parts.join(". ");
         }).join("\n");
 
-        // ── Step 2: Enhanced LLM scene breakdown with cinematic intelligence ──
+        // ââ Step 2: Enhanced LLM scene breakdown with cinematic intelligence ââ
         // Check if director explicitly granted creative leeway in their plot/description
         const directorText = (projectRef.plotSummary || projectRef.description || "").toLowerCase();
         const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise|creative freedom/i.test(directorText);
-        // ── Visual Style Pre-generation (C1) ──────────────────────────────────────
+        // ââ Visual Style Pre-generation (C1) ââââââââââââââââââââââââââââââââââââââ
           // Run a focused LLM call to establish a Visual DNA guide before scene breakdown.
           // This anchors every scene's look so the final film has visual consistency.
           let visualDnaGuide = "";
@@ -4550,11 +4574,11 @@ Available fields you can update:
               messages: [
                 {
                   role: "system",
-                  content: `You are a world-class cinematographer. In 150-200 words, write a concise Visual DNA guide for a ${projectRef.genre || "Drama"} film. Cover: color palette, primary lighting style, preferred lens range, camera movement philosophy, texture/grain style, and two reference cinematographers whose work defines this look. Be technically specific (e.g. f/stops, focal lengths, color temperature). Output plain text only — no headings, no bullets.`,
+                  content: `You are a world-class cinematographer. In 150-200 words, write a concise Visual DNA guide for a ${projectRef.genre || "Drama"} film. Cover: color palette, primary lighting style, preferred lens range, camera movement philosophy, texture/grain style, and two reference cinematographers whose work defines this look. Be technically specific (e.g. f/stops, focal lengths, color temperature). Output plain text only â no headings, no bullets.`,
                 },
                 {
                   role: "user",
-                  content: `Film: "${projectRef.title}" — ${projectRef.genre || "Drama"} | ${projectRef.rating || "PG-13"} | ${projectRef.duration || 90} min${projectRef.tone ? "\nTone: " + projectRef.tone : ""}${projectRef.themes ? "\nThemes: " + projectRef.themes : ""}`,
+                  content: `Film: "${projectRef.title}" â ${projectRef.genre || "Drama"} | ${projectRef.rating || "PG-13"} | ${projectRef.duration || 90} min${projectRef.tone ? "\nTone: " + projectRef.tone : ""}${projectRef.themes ? "\nThemes: " + projectRef.themes : ""}`,
                 },
               ],
             });
@@ -4562,13 +4586,13 @@ Available fields you can update:
               visualDnaGuide = (vdnaResult.choices[0].message.content as string).trim();
             }
           } catch {
-            // Non-fatal — proceed without visual DNA guide
+            // Non-fatal â proceed without visual DNA guide
           }
 
                   const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway }) +
             (visualDnaGuide ? `\n\nVISUAL DNA FOR THIS FILM (apply consistently to every scene):\n${visualDnaGuide}` : "");
 
-        // v6.77 — Inject project brand policy so the AI scene breakdown places
+        // v6.77 â Inject project brand policy so the AI scene breakdown places
         // required brands into the right shots and never writes forbidden ones
         // into a visual description.
         const __sbBrands = await brandsForPrompt(projectId);
@@ -4585,7 +4609,7 @@ Available fields you can update:
               role: "user",
               content: `Plot: ${projectRef.plotSummary || projectRef.description || "A compelling story"}
 
-Director's Specs (NON-NEGOTIABLE — honor these exactly):
+Director's Specs (NON-NEGOTIABLE â honor these exactly):
 - Genre: ${projectRef.genre || "Drama"}
 - Rating: ${projectRef.rating || "PG-13"}
 - Duration: ${projectRef.duration || 90} minutes
@@ -4600,7 +4624,7 @@ ${__sbBrandBlock ? `\n${__sbBrandBlock}\n` : ""}
 Break this into the number of scenes specified in your system instructions above. For each scene, provide:
 - title: Scene title
 - description: What happens narratively (2-3 sentences)
-- visualDescription: EXACTLY what the camera sees — specific details about environment, character positions, expressions, lighting quality, colors, textures, foreground/background elements (3-5 sentences, be extremely specific and visual)
+- visualDescription: EXACTLY what the camera sees â specific details about environment, character positions, expressions, lighting quality, colors, textures, foreground/background elements (3-5 sentences, be extremely specific and visual)
 - timeOfDay: dawn/morning/afternoon/evening/night/golden-hour
 - weather: clear/cloudy/rainy/stormy/snowy/foggy/windy
 - lighting: natural/dramatic/soft/neon/candlelight/studio/backlit/silhouette
@@ -4637,7 +4661,7 @@ Break this into the number of scenes specified in your system instructions above
         }
         const scenesData = parsed.scenes || [];
 
-        // ── Step 3: Create scenes in DB with enhanced data ──
+        // ââ Step 3: Create scenes in DB with enhanced data ââ
         for (let i = 0; i < scenesData.length; i++) {
           const s = scenesData[i];
           await db.createScene({
@@ -4667,7 +4691,7 @@ Break this into the number of scenes specified in your system instructions above
           });
         }
 
-        // ── Step 4: Generate VIDEO CLIPS for each scene using Sora API ──
+        // ââ Step 4: Generate VIDEO CLIPS for each scene using Sora API ââ
         const allScenes = await db.getProjectScenes(projectId);
         let generatedCount = 0;
 
@@ -4742,7 +4766,7 @@ Break this into the number of scenes specified in your system instructions above
               preferredProvider: earlyUserKeys.preferredProvider || undefined,
             };
 
-            // Build rich video prompt — PRIORITY: faceDnaPrompt (photo-locked) > assembled attributes
+            // Build rich video prompt â PRIORITY: faceDnaPrompt (photo-locked) > assembled attributes
             const charVideoDescriptions = characters.map(c => {
               const attrs = (c.attributes as any) || {};
               if (attrs.isAnimal && attrs.animalSpecies) {
@@ -4794,7 +4818,7 @@ Break this into the number of scenes specified in your system instructions above
               "Photorealistic, shot on ARRI Alexa 65, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain, broadcast TV quality.",
             ].filter(Boolean).join(" ");
 
-            // Use extended scene generation — support industry-standard scene lengths (30s–5min)
+            // Use extended scene generation â support industry-standard scene lengths (30sâ5min)
             // No artificial cap: providers will handle their own per-clip limits internally
             const targetSceneDuration = Math.max(10, scene.duration || 45);
 
@@ -4882,7 +4906,7 @@ Break this into the number of scenes specified in your system instructions above
                       duration: sceneDuration,
                     },
                   });
-                  // Leave scene in generating state — worker will complete it
+                  // Leave scene in generating state â worker will complete it
                   await db.updateScene(scene.id, { status: "generating" } as any);
                   generatedCount++;
                   logger.info(`[QuickGen] Scene ${sceneIdx + 1} Runway job ${taskId} queued for worker`);
@@ -4900,7 +4924,7 @@ Break this into the number of scenes specified in your system instructions above
                 logger.error(`[QuickGen] All video generation failed for scene "${scene.title}": ${errMsg}`);
                 // Store actionable error in the job so the UI can surface it
                 try {
-                  await db.updateJob(job.id, { errorMessage: `Scene "${scene.title}" — ${errMsg}` });
+                  await db.updateJob(job.id, { errorMessage: `Scene "${scene.title}" â ${errMsg}` });
                 } catch { /* ignore */ }
                 // Mark scene as failed (not completed) so the UI can distinguish "no video" from "generation failed"
                 await db.updateScene(scene.id, { status: "failed" } as any);
@@ -4911,13 +4935,13 @@ Break this into the number of scenes specified in your system instructions above
             // Mark scene as completed (with no video) so it doesn't stay in 'generating' state
             try { await db.updateScene(scene.id, { status: "completed" }); } catch { /* ignore */ }
           }
-          // Always update progress — even if this scene failed — so the UI never appears frozen
+          // Always update progress â even if this scene failed â so the UI never appears frozen
           const progress = Math.min(95, Math.round(((sceneIdx + 1) / allScenes.length) * 90) + 10);
           await db.updateJob(job.id, { progress });
           await db.updateProject(projectId, userId, { progress });
         }
 
-         // ── Auto-stitch all scene videos into a final film ──
+         // ââ Auto-stitch all scene videos into a final film ââ
         let outputUrl: string | undefined;
         try {
           const freshScenes = await db.getProjectScenes(projectId);
@@ -4943,24 +4967,24 @@ Break this into the number of scenes specified in your system instructions above
               resolution: projectRef.resolution === "1920x1080" ? "1080p" : "720p",
             });
             outputUrl = stitchResult.fileUrl;
-            logger.info(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
+            logger.info(`[QuickGen] Auto-stitched ${videoScenes.length} scenes â ${outputUrl}`);
           }
         } catch (stitchErr: any) {
           logger.error(`[QuickGen] Auto-stitch failed (non-fatal): ${stitchErr.message}`);
-          // Non-fatal — project still completes, user can manually export later
+          // Non-fatal â project still completes, user can manually export later
         }
 
-        // ── No-video guard: if zero scenes produced playable videos AND no stitched output,
+        // ââ No-video guard: if zero scenes produced playable videos AND no stitched output,
         //    mark the job + project as failed with an actionable message instead of silently
-        //    "completing" with an empty preview (which is what the user sees as "it pretends"). ──
+        //    "completing" with an empty preview (which is what the user sees as "it pretends"). ââ
         if (!outputUrl && generatedCount === 0) {
           const failMsg =
             "VIDEO_PROVIDER_FAILED: Every video provider attempt failed for this project. " +
             "Common causes: (1) the API key for your selected provider is rate-limited or out of credit, " +
             "(2) the provider is temporarily down, or (3) the prompt was rejected by the safety filter. " +
-            "Open Settings → API Keys, verify your fal.ai / Runway / Hugging Face / Luma key is valid and funded, " +
+            "Open Settings â API Keys, verify your fal.ai / Runway / Hugging Face / Luma key is valid and funded, " +
             "then return here and tap Re-generate Film.";
-          logger.error(`[QuickGen] Project ${projectId} produced 0 videos — marking job/project failed.`);
+          logger.error(`[QuickGen] Project ${projectId} produced 0 videos â marking job/project failed.`);
           try { await db.updateJob(job.id, { status: "failed", progress: 0, errorMessage: failMsg }); } catch { /* ignore */ }
           try {
             await db.updateProject(projectId, userId, {
@@ -4974,7 +4998,7 @@ Break this into the number of scenes specified in your system instructions above
 
         // Update job and project
         await db.updateJob(job.id, { status: "completed", progress: 100 });
-        // Ensure project has a thumbnailUrl — use first scene's thumbnail if not already set
+        // Ensure project has a thumbnailUrl â use first scene's thumbnail if not already set
         let finalThumbnailUrl: string | undefined;
         if (!(project as any).thumbnailUrl) {
           try {
@@ -4995,7 +5019,7 @@ Break this into the number of scenes specified in your system instructions above
           // AND surface the actual error message into the job so the red banner in the UI fires.
           const fatalMsg =
             (error?.message ? String(error.message) : "Unknown background generation error") +
-            " — please check Settings → API Keys and try Re-generate Film. If this keeps happening, the issue is on the AI provider side.";
+            " â please check Settings â API Keys and try Re-generate Film. If this keeps happening, the issue is on the AI provider side.";
           logger.errorWithStack("[QuickGen] Background generation failed", error);
           try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: fatalMsg }); } catch { /* ignore */ }
           try {
@@ -5008,7 +5032,7 @@ Break this into the number of scenes specified in your system instructions above
         }); // end withUserLlmKey
         }); // end setImmediate
 
-        // Return immediately — generation continues in background
+        // Return immediately â generation continues in background
         return { jobId: job.id, scenesCreated: 0, imagesGenerated: 0 };
       }),
 
@@ -5019,7 +5043,7 @@ Break this into the number of scenes specified in your system instructions above
         await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseTrailerGeneration", "Trailer Generation");
         requireGenerationQuota(ctx.user);
-        // v6.69 Phase 5 — Atomic reservation w/ release-on-failure.
+        // v6.69 Phase 5 â Atomic reservation w/ release-on-failure.
         // Trailer generation runs synchronously inside this handler, so we can
         // wrap the entire body and release the reservation if anything throws.
         let __trailerResId: number | null = null;
@@ -5061,7 +5085,7 @@ Break this into the number of scenes specified in your system instructions above
           `Scene ${i + 1} "${s.title}": ${s.description} (${s.mood} mood, ${s.locationType})`
         ).join("\n");
 
-        // v6.77 — Inject per-project brand policy so the trailer cuts respect
+        // v6.77 â Inject per-project brand policy so the trailer cuts respect
         // required / allowed / forbidden real-world brands when describing shots.
         const __trailerBrands = await brandsForPrompt(project.id);
         const __trailerBrandBlock = brandDirectiveBlock(__trailerBrands);
@@ -5070,11 +5094,11 @@ Break this into the number of scenes specified in your system instructions above
           messages: [
             {
               role: "system",
-              content: "You are a Hollywood trailer editor. Your STRICT rules:\n1. NEVER spoil key plot twists, endings, character deaths, major reveals, or surprise elements.\n2. ALL trailer content MUST be G-rated regardless of the film's actual rating — absolutely NO violence, gore, sexual content, strong language, drug use, or disturbing imagery.\n3. Focus on building intrigue, mystery, and excitement — tease the premise and characters without giving away what happens.\n4. Select scenes from the FIRST HALF of the film only to avoid late-story spoilers.\n5. Create a sense of wonder and anticipation that makes viewers want to see the film.\n6. Keep the trailer family-friendly and suitable for all audiences.\n7. Honor the project BRAND POLICY: keep required brands visible, allowed brands welcome, forbidden brands completely absent in every trailer-cut description you write.\nReturn JSON.",
+              content: "You are a Hollywood trailer editor. Your STRICT rules:\n1. NEVER spoil key plot twists, endings, character deaths, major reveals, or surprise elements.\n2. ALL trailer content MUST be G-rated regardless of the film's actual rating â absolutely NO violence, gore, sexual content, strong language, drug use, or disturbing imagery.\n3. Focus on building intrigue, mystery, and excitement â tease the premise and characters without giving away what happens.\n4. Select scenes from the FIRST HALF of the film only to avoid late-story spoilers.\n5. Create a sense of wonder and anticipation that makes viewers want to see the film.\n6. Keep the trailer family-friendly and suitable for all audiences.\n7. Honor the project BRAND POLICY: keep required brands visible, allowed brands welcome, forbidden brands completely absent in every trailer-cut description you write.\nReturn JSON.",
             },
             {
               role: "user",
-              content: `Film: "${project.title}" (${project.genre || "Drama"}, rated ${project.rating || "PG-13"})\nPlot: ${project.plotSummary || project.description}\n${__trailerBrandBlock ? `\n${__trailerBrandBlock}\n` : ""}\nAvailable scenes:\n${sceneDescriptions}\n\nSelect 4-6 scenes for a 2-minute trailer. IMPORTANT RULES:\n- ONLY select scenes from the first half of the film (scenes 1 through ${Math.ceil(allScenes.length / 2)}) to avoid spoilers\n- Do NOT reveal any plot twists, endings, or major surprises\n- Rewrite each scene description to be G-RATED and family-friendly even if the original scene contains mature content\n- Respect the BRAND POLICY above: do not write any forbidden brand into a trailer description; weave required brands into the chosen shots when natural.\n- Focus on establishing the world, characters, and central conflict without resolution\n- Build curiosity and excitement — leave the audience wanting more\n\nFor each scene, provide the scene index (0-based), a G-rated trailer-cut description, and the order they should appear in the trailer.`,
+              content: `Film: "${project.title}" (${project.genre || "Drama"}, rated ${project.rating || "PG-13"})\nPlot: ${project.plotSummary || project.description}\n${__trailerBrandBlock ? `\n${__trailerBrandBlock}\n` : ""}\nAvailable scenes:\n${sceneDescriptions}\n\nSelect 4-6 scenes for a 2-minute trailer. IMPORTANT RULES:\n- ONLY select scenes from the first half of the film (scenes 1 through ${Math.ceil(allScenes.length / 2)}) to avoid spoilers\n- Do NOT reveal any plot twists, endings, or major surprises\n- Rewrite each scene description to be G-RATED and family-friendly even if the original scene contains mature content\n- Respect the BRAND POLICY above: do not write any forbidden brand into a trailer description; weave required brands into the chosen shots when natural.\n- Focus on establishing the world, characters, and central conflict without resolution\n- Build curiosity and excitement â leave the audience wanting more\n\nFor each scene, provide the scene index (0-based), a G-rated trailer-cut description, and the order they should appear in the trailer.`,
             },
           ],
           response_format: {
@@ -5165,7 +5189,7 @@ Break this into the number of scenes specified in your system instructions above
           },
         });
 
-        // v6.69 Phase 5 — Trailer dispatch succeeded; finalize the hold.
+        // v6.69 Phase 5 â Trailer dispatch succeeded; finalize the hold.
         if (__trailerResId) {
           try { await db.finalizeReservation(__trailerResId); } catch {}
         }
@@ -5177,7 +5201,7 @@ Break this into the number of scenes specified in your system instructions above
           images: trailerImages,
         };
         } catch (err) {
-          // v6.69 Phase 5 — Refund the held credits if anything failed.
+          // v6.69 Phase 5 â Refund the held credits if anything failed.
           if (__trailerResId) {
             try { await db.releaseReservation(__trailerResId); } catch {}
           }
@@ -5201,7 +5225,7 @@ Break this into the number of scenes specified in your system instructions above
         return db.getProjectJobs(input.projectId);
       }),
 
-    // ── Generate Full Film (90-minute pipeline) ──
+    // ââ Generate Full Film (90-minute pipeline) ââ
     generateFullFilm: protectedProcedure
       .input(z.object({
         projectId: z.number(),
@@ -5222,7 +5246,7 @@ Break this into the number of scenes specified in your system instructions above
         const allScenes = await db.getProjectScenes(project.id);
         if (allScenes.length === 0) throw new Error("No scenes found. Generate scenes first using Quick Generate or the Director Assistant.");
 
-        // ── Credit System: Full Film Generation ──
+        // ââ Credit System: Full Film Generation ââ
         // Each scene costs credits based on complexity:
         // - Video generation: 1 credit per scene (covers clip chaining)
         // - Voice acting: 0.5 credits per scene with dialogue
@@ -5241,7 +5265,7 @@ Break this into the number of scenes specified in your system instructions above
           const remaining = totalAvailable - used;
           if (remaining < totalCreditsNeeded) {
             throw new Error(
-              `GENERATION_LIMIT: Full film generation requires ${totalCreditsNeeded} credits (${scenesWithDialogueCount} scenes × ${creditsPerScene} credits/scene). You have ${remaining} credits remaining. Upgrade your plan or purchase a top-up pack.`
+              `GENERATION_LIMIT: Full film generation requires ${totalCreditsNeeded} credits (${scenesWithDialogueCount} scenes Ã ${creditsPerScene} credits/scene). You have ${remaining} credits remaining. Upgrade your plan or purchase a top-up pack.`
             );
           }
         }
@@ -5252,7 +5276,7 @@ Break this into the number of scenes specified in your system instructions above
         }
         // Deduct from creditBalance so the credit system stays in sync
         try {
-          await db.deductCredits(ctx.user.id, totalCreditsNeeded, "generate_film", `Full film generation: ${allScenes.length} scenes × ${creditsPerScene} credits/scene`);
+          await db.deductCredits(ctx.user.id, totalCreditsNeeded, "generate_film", `Full film generation: ${allScenes.length} scenes Ã ${creditsPerScene} credits/scene`);
         } catch (e: any) {
           if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message });
         }
@@ -5272,7 +5296,7 @@ Break this into the number of scenes specified in your system instructions above
           preferredProvider: userKeys.preferredProvider,
         };
 
-        // Pollinations is always available as a free fallback — all users can generate films.
+        // Pollinations is always available as a free fallback â all users can generate films.
         // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
         const voiceKeys: VoiceActingKeys = {
           elevenlabsKey: userKeys.elevenlabsKey,
@@ -5444,7 +5468,7 @@ Break this into the number of scenes specified in your system instructions above
         }
       }),
 
-    // ── Estimate film generation cost ──
+    // ââ Estimate film generation cost ââ
     estimateFilmCost: protectedProcedure
       .input(z.object({
         projectId: z.number(),
@@ -5474,7 +5498,7 @@ Break this into the number of scenes specified in your system instructions above
         });
       }),
 
-    // ── Get available TTS and music providers ──
+    // ââ Get available TTS and music providers ââ
     getAudioProviders: protectedProcedure.query(async () => {
       return {
         ttsProviders: TTS_PROVIDERS,
@@ -5499,7 +5523,7 @@ Break this into the number of scenes specified in your system instructions above
         return db.updateJob(input.id, { status: "processing" });
       }),
 
-    // ── Cancel Film Generation ──
+    // ââ Cancel Film Generation ââ
     cancelGeneration: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -5525,10 +5549,10 @@ Break this into the number of scenes specified in your system instructions above
         return { success: true, cancelledJobs: cancelledCount };
       }),
 
-    // v6.62 — Cross-project active render queue feed.
+    // v6.62 â Cross-project active render queue feed.
     // Powers the global Render Queue tray in the dashboard top bar so users
     // can see, at a glance, every job they have in flight regardless of which
-    // project page they're on. Polled every 5–15s by the tray component.
+    // project page they're on. Polled every 5â15s by the tray component.
     listActiveForUser: protectedProcedure.query(async ({ ctx }) => {
       return db.getUserActiveRenders(ctx.user.id);
     }),
@@ -5547,7 +5571,7 @@ Break this into the number of scenes specified in your system instructions above
         return { ok: true };
       }),
   }),
-  // ─── Scripts ────
+  // âââ Scripts ââââ
   script: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -5630,7 +5654,7 @@ Break this into the number of scenes specified in your system instructions above
             c.occupation ? `Occupation: ${c.occupation}` : "",
           ].filter((x: any) => x !== null) as any[];
           if (identityParts.length) lines.push(`  Identity: ${identityParts.join(" | ")}`);
-          // Voice & Speech — critical for authentic dialogue
+          // Voice & Speech â critical for authentic dialogue
           const voiceParts = [
             c.voiceType ? `Voice type: ${c.voiceType}` : "",
             c.voiceDescription ? `Voice: ${c.voiceDescription}` : "",
@@ -5659,7 +5683,7 @@ Break this into the number of scenes specified in your system instructions above
         }).join("\n\n");
 
         const sceneBlock = scenes.map((s, i) =>
-          `Scene ${i + 1}: "${s.title || "Untitled"}" — ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
+          `Scene ${i + 1}: "${s.title || "Untitled"}" â ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
         ).join("\n");
 
         let _llmRefundAmount_script_writer_ai = 3;
@@ -5669,7 +5693,7 @@ Break this into the number of scenes specified in your system instructions above
           messages: [
             {
               role: "system",
-                    content: `You are an award-winning Hollywood screenwriter with credits on major studio productions. Your job is to faithfully adapt the director's exact story, characters, plot, and scenes into a production-ready screenplay. You do NOT invent new characters, subplots, or story elements the director did not provide — unless the director explicitly grants creative freedom.
+                    content: `You are an award-winning Hollywood screenwriter with credits on major studio productions. Your job is to faithfully adapt the director's exact story, characters, plot, and scenes into a production-ready screenplay. You do NOT invent new characters, subplots, or story elements the director did not provide â unless the director explicitly grants creative freedom.
 
 === DIRECTOR-FIRST RULES (NON-NEGOTIABLE) ===
 - Write ONLY what the director's scenes and story describe. Every scene, character, and plot point must trace back to the director's input.
@@ -5680,16 +5704,16 @@ Break this into the number of scenes specified in your system instructions above
 
 === INDUSTRY-STANDARD FORMAT (EXACT) ===
 
-1. FADE IN: — Always the very first line. Never omit.
+1. FADE IN: â Always the very first line. Never omit.
 
-2. SCENE HEADINGS (Sluglines) — ALL CAPS only.
+2. SCENE HEADINGS (Sluglines) â ALL CAPS only.
    Format: INT./EXT. SPECIFIC LOCATION NAME - TIME OF DAY
    - INT. = interior, EXT. = exterior, INT./EXT. = both (e.g. car window scene)
    - Time of day: DAY, NIGHT, DAWN, DUSK, CONTINUOUS, MOMENTS LATER, LATER, SAME TIME
    - Be specific: not "HOUSE" but "MARCUS'S KITCHEN" or "ABANDONED WAREHOUSE - LOWER EAST SIDE"
    - Every location change = new slugline, always
 
-3. ACTION LINES — Present tense. Describe only what the camera sees and hears. No internal thoughts.
+3. ACTION LINES â Present tense. Describe only what the camera sees and hears. No internal thoughts.
    - First appearance of each character: ALL CAPS their name, followed by brief description in parentheses
      Example: DETECTIVE SARAH COLE (40s, sharp eyes, perpetually coffee-stained blazer) enters.
    - Keep paragraphs to 3-4 lines maximum. White space is your friend.
@@ -5697,51 +5721,51 @@ Break this into the number of scenes specified in your system instructions above
    - Avoid directing the reader's emotions. Show the action; let the emotion emerge.
    - Camera directions (CLOSE ON:, WIDE SHOT:, POV:) only when essential to story meaning.
 
-4. CHARACTER NAME — ALL CAPS, on its own line, above dialogue.
+4. CHARACTER NAME â ALL CAPS, on its own line, above dialogue.
    - (V.O.) = voice-over (character narrating, not physically present)
    - (O.S.) = off-screen (character in scene but not visible)
    - (CONT'D) = character continues after an action line interruption
    - (PRE-LAP) = character's voice heard before their scene begins
 
-5. DIALOGUE — Below character name. Conversational, not literary.
+5. DIALOGUE â Below character name. Conversational, not literary.
    - Each character must have a DISTINCT VOICE. A reader should know who's speaking without seeing the name.
    - Subtext over text: characters rarely say exactly what they mean.
    - Avoid on-the-nose exposition. No character explains what both already know.
    - Read every line aloud mentally. If it sounds like a speech, cut it in half.
    - Use interruptions (--) and trailing off (...) for natural rhythm.
 
-6. PARENTHETICALS — (in parentheses) between character name and dialogue.
+6. PARENTHETICALS â (in parentheses) between character name and dialogue.
    - Use SPARINGLY. Only when delivery is genuinely ambiguous without it.
    - Good: (whispering), (to Marcus), (beat), (re: the gun), (sotto voce)
-   - Bad: (angrily), (sadly) — these should be evident from context.
+   - Bad: (angrily), (sadly) â these should be evident from context.
 
-7. TRANSITIONS — Right-aligned. Use sparingly — only for deliberate effect.
+7. TRANSITIONS â Right-aligned. Use sparingly â only for deliberate effect.
    CUT TO: (standard edit, rarely written out)
    SMASH CUT TO: (jarring, abrupt cut for shock)
    MATCH CUT TO: (visual or audio match between scenes)
    DISSOLVE TO: (passage of time, dreamlike quality)
    FADE TO BLACK. (end of act or major sequence)
-   FADE OUT. (end of screenplay — ALWAYS the final line)
+   FADE OUT. (end of screenplay â ALWAYS the final line)
    INTERCUT WITH: (parallel action in two locations)
 
 8. ADVANCED ELEMENTS:
-   MONTAGE — Label clearly:
-     MONTAGE — SARAH'S INVESTIGATION
+   MONTAGE â Label clearly:
+     MONTAGE â SARAH'S INVESTIGATION
      - Shot description.
      - Shot description.
      END MONTAGE.
    FLASHBACK:
-     FLASHBACK — CHICAGO, 1987
+     FLASHBACK â CHICAGO, 1987
      [scene content]
      END FLASHBACK.
    SUPER: "On-screen text or title cards" (right after slugline)
    SERIES OF SHOTS:
      A) Shot description.
      B) Shot description.
-   INSERT — CLOSE ON: [specific object/detail]
+   INSERT â CLOSE ON: [specific object/detail]
    BACK TO SCENE (after insert)
 
-9. THREE-ACT STRUCTURE — Every screenplay must have:
+9. THREE-ACT STRUCTURE â Every screenplay must have:
    ACT ONE (~25%): Establish the world, introduce protagonist with a clear want and need, inciting incident that disrupts the status quo, end-of-act-one turning point that locks the protagonist into the story.
    ACT TWO (~50%): Rising stakes and escalating obstacles, midpoint reversal that changes the story's direction, dark night of the soul (protagonist at their lowest), end-of-act-two turning point that propels into the climax.
    ACT THREE (~25%): Climax where the protagonist confronts the central conflict with everything at stake, resolution that pays off all setups, final image that mirrors or contrasts the opening image.
@@ -5749,7 +5773,7 @@ Break this into the number of scenes specified in your system instructions above
 10. PACING RULES:
     - 1 page = approximately 1 minute of screen time
     - Short scenes (half a page) build tension and momentum
-    - Long scenes (2+ pages) allow character depth — use sparingly
+    - Long scenes (2+ pages) allow character depth â use sparingly
     - End every scene on a hook: cut out one beat before the scene feels "done"
     - Use "beat" in action lines for deliberate dramatic pauses
     - Scene transitions should create narrative momentum
@@ -5764,9 +5788,9 @@ Break this into the number of scenes specified in your system instructions above
 - Emotional contrast: place humor immediately before tragedy; calm before violence
 - The opening image and closing image should rhyme thematically
 - Character want vs. need: what a character wants (external goal) and what they need (internal truth) should be in conflict
-- The protagonist must CHANGE by the end — or deliberately refuse to change, which is itself a statement
+- The protagonist must CHANGE by the end â or deliberately refuse to change, which is itself a statement
 
-FADE OUT. — Always the absolute last line of the screenplay.`,
+FADE OUT. â Always the absolute last line of the screenplay.`,
             },
             {
               role: "user",
@@ -5810,8 +5834,8 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
           ],
         });
         } catch (_llmErr_script_writer_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_script_writer_ai, "script_writer_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_script_writer_ai, "script_writer_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
 
@@ -5821,7 +5845,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         const script = await db.createScript({
           projectId: project.id,
           userId: ctx.user.id,
-          title: `${project.title} — Screenplay`,
+          title: `${project.title} â Screenplay`,
           content: typeof scriptContent === "string" ? scriptContent : "",
           pageCount: pageEstimate,
           metadata: {
@@ -5880,7 +5904,7 @@ ${input.instructions ? `Director's notes: ${input.instructions}` : ""}
 Output the rewritten section only. No commentary.`,
 
           dialogue: `You are writing a dialogue exchange for this screenplay. The dialogue must:
-- Feel completely natural when spoken aloud — no speeches, no on-the-nose lines
+- Feel completely natural when spoken aloud â no speeches, no on-the-nose lines
 - Give each character a DISTINCT VOICE (different vocabulary, rhythm, sentence length)
 - Carry subtext: what characters want vs. what they say should differ
 - Use interruptions (--) and trailing off (...) for realism
@@ -5896,8 +5920,8 @@ Write the complete dialogue exchange in proper screenplay format. No commentary.
 
           "action-line": `You are writing cinematic action lines for this screenplay moment. The action lines must:
 - Be in present tense only
-- Describe exactly what the camera sees and hears — no internal thoughts
-- Use active, specific verbs (SLAMS, PIVOTS, FREEZES — not "moves" or "goes")
+- Describe exactly what the camera sees and hears â no internal thoughts
+- Use active, specific verbs (SLAMS, PIVOTS, FREEZES â not "moves" or "goes")
 - Keep paragraphs to 3-4 lines maximum
 - Create visual tension through specific physical detail
 - Introduce characters in ALL CAPS on first appearance with brief description
@@ -5911,13 +5935,13 @@ ${input.instructions ? `Director's notes: ${input.instructions}` : ""}
 Write the action lines only. No commentary.`,
 
           transition: `You are writing a scene transition for this screenplay. Choose the transition type that best serves the story:
-- CUT TO: (standard edit — rarely written, use for emphasis only)
-- SMASH CUT TO: (jarring, abrupt — shock or comedy)
-- MATCH CUT TO: (visual or audio match between scenes — elegant, thematic)
+- CUT TO: (standard edit â rarely written, use for emphasis only)
+- SMASH CUT TO: (jarring, abrupt â shock or comedy)
+- MATCH CUT TO: (visual or audio match between scenes â elegant, thematic)
 - DISSOLVE TO: (passage of time, memory, dreamlike quality)
 - FADE TO BLACK. (end of act, major emotional beat)
 - INTERCUT WITH: (parallel action in two locations)
-- CONTINUOUS (no time has passed — same scene, new location)
+- CONTINUOUS (no time has passed â same scene, new location)
 
 Context before transition:
 ${selectedOrContext}
@@ -5942,7 +5966,7 @@ ${input.instructions ? `Director's notes: ${input.instructions}` : ""}
 Write the complete scene in proper screenplay format. No commentary.`,
 
           polish: `You are polishing this screenplay section to professional production-ready quality. Improve it by:
-- Sharpening every line of dialogue — cut anything that can be cut, add subtext where it's missing
+- Sharpening every line of dialogue â cut anything that can be cut, add subtext where it's missing
 - Strengthening action lines: more specific, more visual, more active verbs
 - Fixing any formatting issues (sluglines, character names, parentheticals)
 - Removing redundant description (if we can see it, we don't need to say it twice)
@@ -5994,7 +6018,7 @@ First list the beats (3-6 beats), then write the full scene below.`,
           messages: [
             {
               role: "system",
-              content: `You are an award-winning Hollywood screenwriter. You write in strict industry-standard screenplay format. Your work is production-ready: vivid, economical, and emotionally precise. You never write prose summaries or commentary — only screenplay content.
+              content: `You are an award-winning Hollywood screenwriter. You write in strict industry-standard screenplay format. Your work is production-ready: vivid, economical, and emotionally precise. You never write prose summaries or commentary â only screenplay content.
 
 FORMAT RULES (always apply):
 - FADE IN: opens every screenplay
@@ -6012,8 +6036,8 @@ FORMAT RULES (always apply):
           ],
         });
         } catch (_llmErr_dialogue_editor_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
 
@@ -6022,7 +6046,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Soundtracks ───
+  // âââ Soundtracks âââ
   soundtrack: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6155,7 +6179,7 @@ FORMAT RULES (always apply):
         return { success: true };
       }),
   }),
-  // ─── Project Duplication ───
+  // âââ Project Duplication âââ
   projectDuplicate: router({
     duplicate: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6164,7 +6188,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Shot List Generator ───
+  // âââ Shot List Generator âââ
   shotList: router({
     generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6237,8 +6261,8 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_shot_list_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_shot_list_ai, "shot_list_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_shot_list_ai, "shot_list_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
 
@@ -6251,7 +6275,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Continuity Check ───
+  // âââ Continuity Check âââ
   continuity: router({
     check: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6321,8 +6345,8 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_continuity_check_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_continuity_check_ai, "continuity_check_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_continuity_check_ai, "continuity_check_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
 
@@ -6335,7 +6359,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Location Scout ───
+  // âââ Location Scout âââ
   location: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6456,8 +6480,8 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_location_scout_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_location_scout_ai, "location_scout_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_location_scout_ai, "location_scout_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 1 credit have been refunded." });
         }
         const content = llmResult.choices[0]?.message?.content;
@@ -6485,7 +6509,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Mood Board ───
+  // âââ Mood Board âââ
   moodBoard: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6552,7 +6576,7 @@ FORMAT RULES (always apply):
         requireFeature(ctx.user, "canUseMoodBoard", "Mood Board");
         // Deduct 1 credit for mood board image generation (same as preview image)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-        // v6.77 — Mood board references the same brand policy as the rest of
+        // v6.77 â Mood board references the same brand policy as the rest of
         // the film so reference frames match what the actual scenes will draw.
         const __mbBrands = await brandsForPrompt(input.projectId);
         const __mbBrandBlock = brandDirectiveBlock(__mbBrands);
@@ -6566,7 +6590,7 @@ FORMAT RULES (always apply):
       }),
   }),
 
-  // ─── Subtitles ───
+  // âââ Subtitles âââ
   subtitle: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -6674,7 +6698,7 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_subtitle_gen_ai: any) {
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
         const content = llmResult.choices[0]?.message?.content;
@@ -6741,7 +6765,7 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_subtitle_gen_ai: any) {
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
         const content = llmResult.choices[0]?.message?.content;
@@ -6758,7 +6782,7 @@ FORMAT RULES (always apply):
         });
       }),
   }),
-  // ─── Dialogues ───
+  // âââ Dialogues âââ
   dialogue: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
@@ -6850,7 +6874,7 @@ DIRECTOR-FIRST RULES:
               role: "user",
               content: `Film: ${project?.title || "Untitled"} (${project?.genre || "Drama"}, ${project?.rating || "PG-13"})
 Plot: ${project?.plotSummary || "Not specified"}
-Character: ${input.characterName}${input.characterDescription ? ` — ${input.characterDescription}` : ""}
+Character: ${input.characterName}${input.characterDescription ? ` â ${input.characterDescription}` : ""}
 ${input.context ? `Previous dialogue:\n${input.context}` : ""}
 ${input.emotion ? `Emotion: ${input.emotion}` : ""}
 ${input.direction ? `Direction: ${input.direction}` : ""}
@@ -6887,8 +6911,8 @@ Generate 3 dialogue line options for this character.`,
           },
         });
         } catch (_llmErr_dialogue_editor_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
         try {
@@ -6937,7 +6961,7 @@ DIRECTOR-FIRST RULES:
               role: "user",
               content: `Film: ${project?.title || "Untitled"} (${project?.genre || "Drama"}, ${project?.rating || "PG-13"})
 Plot: ${project?.plotSummary || ""}
-Scene: ${scene?.title || ""} — ${scene?.description || input.sceneDescription || ""}
+Scene: ${scene?.title || ""} â ${scene?.description || input.sceneDescription || ""}
 Time: ${scene?.timeOfDay || "afternoon"}, Weather: ${scene?.weather || "clear"}, Mood: ${scene?.mood || "neutral"}
 Available Characters: ${charNames || "Generic characters"}
 
@@ -6974,8 +6998,8 @@ Generate the full dialogue for this scene.`,
           },
         });
         } catch (_llmErr_dialogue_editor_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
         try {
@@ -7017,11 +7041,11 @@ Generate the full dialogue for this scene.`,
         });
       }),
   }),
-  // ─── Public reviewer comments on shared screeners ────
+  // âââ Public reviewer comments on shared screeners ââââ
   // Pro studios send screeners to investors / distributors / festival
   // programmers and need their feedback collected against scenes.
-  // Reviewers don't have accounts — they reach the project via an HMAC
-  // share-token URL — so the add endpoint is publicProcedure but
+  // Reviewers don't have accounts â they reach the project via an HMAC
+  // share-token URL â so the add endpoint is publicProcedure but
   // gated by verifyShareToken. Comments are stored in the existing
   // directorChats table tagged `[REVIEW@sceneId|reviewerName|timecode]`
   // so the project owner sees them inline (no schema migration).
@@ -7088,7 +7112,7 @@ Generate the full dialogue for this scene.`,
         });
       }),
 
-    // v6.69 Phase 8 — Awaiting-review queue across all the user's projects.
+    // v6.69 Phase 8 â Awaiting-review queue across all the user's projects.
     // Pure read; surfaces scenes whose approvalStatus is "pending_review".
     listAwaiting: protectedProcedure.query(async ({ ctx }) => {
       const dbConn = await db.getDb();
@@ -7114,7 +7138,7 @@ Generate the full dialogue for this scene.`,
     }),
   }),
 
-  // ─── Chain of Title — clearance / rights tracker ────
+  // âââ Chain of Title â clearance / rights tracker ââââ
   // Pro film distribution requires verifiable proof every right has been
   // cleared (literary, music sync + master, life rights, location releases,
   // talent agreements, depiction releases, E&O insurance). Without this
@@ -7173,7 +7197,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Studio: Shot Versions (per-scene generation history) ────
+  // âââ Pro Studio: Shot Versions (per-scene generation history) ââââ
   shotVersions: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
@@ -7227,7 +7251,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Studio: Style Bible (project visual identity) ────
+  // âââ Pro Studio: Style Bible (project visual identity) ââââ
   styleBible: router({
     get: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7278,7 +7302,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Studio: Voice Clone Consent (AI talent likeness rights) ────
+  // âââ Pro Studio: Voice Clone Consent (AI talent likeness rights) ââââ
   voiceConsent: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7342,7 +7366,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Studio: C2PA-Compatible Provenance Manifest ────
+  // âââ Pro Studio: C2PA-Compatible Provenance Manifest ââââ
   // Generates a downloadable JSON manifest disclosing all AI-generated
   // assets for distribution platforms requiring AI content disclosure
   // (YouTube, Meta, TikTok, broadcast deliverables).
@@ -7409,7 +7433,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Studio: Render History & Cost Dashboard ────
+  // âââ Pro Studio: Render History & Cost Dashboard ââââ
   // Pulls from the existing credit_transactions ledger so producers
   // can see every AI generation, its cost, and 30-day burn rate.
   renderHistory: router({
@@ -7463,7 +7487,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Frame Comments (Frame.io-style review) ────
+  // âââ Pro Ops: Frame Comments (Frame.io-style review) ââââ
   frameComments: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
@@ -7486,7 +7510,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Color Pipeline (CDL + LUT + ACES) ────
+  // âââ Pro Ops: Color Pipeline (CDL + LUT + ACES) ââââ
   colorPipeline: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7508,7 +7532,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Asset Versions (script/schedule/budget/EDL snapshots) ────
+  // âââ Pro Ops: Asset Versions (script/schedule/budget/EDL snapshots) ââââ
   assetVersions: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7537,7 +7561,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Render Queue (priorities + cost caps) ────
+  // âââ Pro Ops: Render Queue (priorities + cost caps) ââââ
   renderQueue: router({
     get: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7560,7 +7584,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Deliverable Packager ────
+  // âââ Pro Ops: Deliverable Packager ââââ
   deliverables: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7598,7 +7622,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Clearances (music/location/talent/AI rider) ────
+  // âââ Pro Ops: Clearances (music/location/talent/AI rider) ââââ
   clearances: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7621,7 +7645,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Distribution Targets ────
+  // âââ Pro Ops: Distribution Targets ââââ
   distributionTargets: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7644,7 +7668,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Audit Log (SOC2-grade activity trail) ────
+  // âââ Pro Ops: Audit Log (SOC2-grade activity trail) ââââ
   auditLog: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number(), limit: z.number().min(1).max(1000).default(200) }))
@@ -7673,7 +7697,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Proxy Chain (1/4 res proxies → master conform) ────
+  // âââ Pro Ops: Proxy Chain (1/4 res proxies â master conform) ââââ
   proxyChain: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7695,7 +7719,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Pro Ops: Timeline Cuts (in/out trim + transitions per scene) ────
+  // âââ Pro Ops: Timeline Cuts (in/out trim + transitions per scene) ââââ
   timelineCuts: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7717,7 +7741,7 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
-  // ─── Budget Estimator ────
+  // âââ Budget Estimator ââââ
   budget: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -7875,8 +7899,8 @@ Generate a detailed production budget estimate.`,
           },
         });
         } catch (_llmErr_budget_estimate_ai: any) {
-          // Refund credits — LLM call failed before generating any content
-          try { await db.addCredits(ctx.user.id, _llmRefundAmount_budget_estimate_ai, "budget_estimate_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          // Refund credits â LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_budget_estimate_ai, "budget_estimate_ai_refund", "Refund: AI call failed â credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
         }
 
@@ -7906,7 +7930,7 @@ Generate a detailed production budget estimate.`,
       }),
    }),
 
-  // ─── Sound Effects Library ───
+  // âââ Sound Effects Library âââ
   soundEffect: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -8164,8 +8188,8 @@ Generate a detailed production budget estimate.`,
 
         // For angelic choir: use Rachel voice (ethereal female soprano)
         // For dove wings: use a breathy, soft voice with specific settings
-        const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel — clear, ethereal female
-        const ARIA_VOICE_ID = "9BWtsMINqrJLrRacOk9x"; // Aria — warm, expressive female
+        const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel â clear, ethereal female
+        const ARIA_VOICE_ID = "9BWtsMINqrJLrRacOk9x"; // Aria â warm, expressive female
 
         let voiceId: string;
         let text: string;
@@ -8227,7 +8251,7 @@ Generate a detailed production budget estimate.`,
         return { sfx, url };
       }),
   }),
-  // ─── Visual Effects (VFX) Database ───
+  // âââ Visual Effects (VFX) Database âââ
   visualEffect: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -8375,9 +8399,9 @@ Generate a detailed production budget estimate.`,
     }),
   }),
 
-    // ─── Opening Sequence Studio ──────────────────────────────────────────────
+    // âââ Opening Sequence Studio ââââââââââââââââââââââââââââââââââââââââââââââ
     // Stores opening sequence data (title cards, crawl, narrator V.O.) as tagged
-    // JSON in directorChats — uses the established pattern, no DB migration needed.
+    // JSON in directorChats â uses the established pattern, no DB migration needed.
     openingSequence: router({
       get: protectedProcedure
         .input(z.object({ projectId: z.number() }))
@@ -8404,7 +8428,7 @@ Generate a detailed production budget estimate.`,
           return { success: true };
         }),
     }),
-  // ─── Project Collaboration ───
+  // âââ Project Collaboration âââ
   collaboration: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -8442,7 +8466,7 @@ Generate a detailed production budget estimate.`,
             await sendCollaborationInviteEmail(input.email, inviterName, projectTitle, input.role, inviteUrl);
           } catch (emailErr) {
             logger.errorWithStack("Failed to send collaboration invite email:", emailErr);
-            // Non-fatal — invite was created, email failure shouldn't block the response
+            // Non-fatal â invite was created, email failure shouldn't block the response
           }
         }
         return { collaborator: collab, inviteToken: token };
@@ -8483,7 +8507,7 @@ Generate a detailed production budget estimate.`,
       }),
   }),
 
-  // ─── My Movies ───
+  // âââ My Movies âââ
   movie: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       return db.getUserMovies(ctx.user.id);
@@ -8633,7 +8657,7 @@ Generate a detailed production budget estimate.`,
             }
           }
 
-          // ── Auslan signing interpreter overlay ────────────────────────────
+          // ââ Auslan signing interpreter overlay ââââââââââââââââââââââââââââ
           // If the project has auslanEnabled, generate a D-ID avatar video for
           // each scene that has dialogue text and map it by scene ID.
           const auslanAvatarMap = new Map<number, string>();
@@ -8641,7 +8665,7 @@ Generate a detailed production budget estimate.`,
             const userKeys = await db.getUserApiKeys(ctx.user.id);
             if (userKeys.didKey) {
               const { generateAuslanAvatar } = await import("./_core/auslanEngine");
-              // Generate all avatar renders in parallel — D-ID renders take 30-60s each;
+              // Generate all avatar renders in parallel â D-ID renders take 30-60s each;
               // sequential awaiting across many scenes would blow past the export timeout.
               const scenesWithDialogue = scenesWithVideo.filter((s: any) => {
                 const text = (s.dialogueText || s.subtitleText || "").trim();
@@ -8666,7 +8690,7 @@ Generate a detailed production budget estimate.`,
                 }
               }
             } else {
-              logger.warn("[Export] Auslan overlay enabled but no D-ID API key set — skipping avatar generation");
+              logger.warn("[Export] Auslan overlay enabled but no D-ID API key set â skipping avatar generation");
             }
           }
 
@@ -8732,7 +8756,7 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               logger.error(`[Export] Video stitching failed: ${err.message}`);
-              // Hard fail — never save a full film without the Virelle Studios opener.
+              // Hard fail â never save a full film without the Virelle Studios opener.
               throw new Error(`Film compilation failed: ${err.message}. Please try again.`);
             }
           }
@@ -8838,7 +8862,7 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               logger.error(`[Export] Trailer stitching failed: ${err.message}`);
-              // Hard fail — never save a trailer without the Virelle Studios opener.
+              // Hard fail â never save a trailer without the Virelle Studios opener.
               throw new Error(`Trailer compilation failed: ${err.message}. Please try again.`);
             }
           }
@@ -8966,12 +8990,12 @@ Generate a detailed production budget estimate.`,
           return { deleted: toDelete.length, kept: openers.length, keptTitles: openers.map((m: any) => m.title) };
         }),
 
-    // ─── Real NLE Export ──────────────────────────────────────────────────────
+    // âââ Real NLE Export ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     exportNLE: protectedProcedure
       .input(z.object({
         projectId: z.number(),
         format: z.enum(["fcpxml", "edl", "csv", "premiere_xml", "resolve_xml"]),
-        // v6.62 — aspect ratio preset; embeds matching frame dimensions in the
+        // v6.62 â aspect ratio preset; embeds matching frame dimensions in the
         // sequence header (FCPXML / Premiere XML) and adds a metadata note for
         // EDL/CSV. Defaults to project.exportAspectRatio if omitted.
         aspectRatio: z.enum(["16:9", "9:16", "1:1", "4:5", "21:9", "2.39:1"]).optional(),
@@ -8992,7 +9016,7 @@ Generate a detailed production budget estimate.`,
         if (completedScenes.length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No completed scenes to export. Generate video for at least one scene first." });
 
         const fps = 24;
-        // v6.62 — Resolve aspect ratio: explicit param → project sticky → 16:9 default.
+        // v6.62 â Resolve aspect ratio: explicit param â project sticky â 16:9 default.
         // Persist back to the project so the next export remembers the user's choice.
         const aspectRatio = input.aspectRatio || ((project as any).exportAspectRatio as string) || "16:9";
         const ASPECT_DIMS: Record<string, { width: number; height: number; label: string; formatName: string }> = {
@@ -9035,13 +9059,13 @@ Generate a detailed production budget estimate.`,
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
-          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <!-- Virelle Studios export — aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <resources>\n    <format id="r1" name="${dims.formatName}" frameDuration="1/${fps}s" width="${dims.width}" height="${dims.height}" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export (${aspectRatio})">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <!-- Virelle Studios export â aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <resources>\n    <format id="r1" name="${dims.formatName}" frameDuration="1/${fps}s" width="${dims.width}" height="${dims.height}" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} â Virelle Export (${aspectRatio})">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
           mimeType = "application/xml";
           filename += ".fcpxml";
 
         } else if (input.format === "edl") {
           const toTC = (frames: number) => { const f=frames%fps,s=Math.floor(frames/fps)%60,m=Math.floor(frames/(fps*60))%60,h=Math.floor(frames/(fps*3600)); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}:${String(f).padStart(2,"0")}`; };
-          const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", `* ASPECT: ${aspectRatio} (${dims.width}x${dims.height} — ${dims.label})`, ""];
+          const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", `* ASPECT: ${aspectRatio} (${dims.width}x${dims.height} â ${dims.label})`, ""];
           let editNum = 1; let recIn = 0;
           completedScenes.forEach((scene: any, i: number) => {
             const df = Math.round((scene.duration ?? 60) * fps);
@@ -9067,7 +9091,7 @@ Generate a detailed production budget estimate.`,
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
-          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <!-- Virelle Studios export — aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media>\n      <video>\n        <format><samplecharacteristics><width>${dims.width}</width><height>${dims.height}</height><pixelaspectratio>square</pixelaspectratio><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate></samplecharacteristics></format>\n        <track>\n${clipItems}\n        </track>\n      </video>\n    </media>\n  </sequence>\n</xmeml>`;
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <!-- Virelle Studios export â aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media>\n      <video>\n        <format><samplecharacteristics><width>${dims.width}</width><height>${dims.height}</height><pixelaspectratio>square</pixelaspectratio><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate></samplecharacteristics></format>\n        <track>\n${clipItems}\n        </track>\n      </video>\n    </media>\n  </sequence>\n</xmeml>`;
           mimeType = "application/xml";
           filename += "_premiere.xml";
 
@@ -9078,7 +9102,7 @@ Generate a detailed production budget estimate.`,
             rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??60), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed", aspectRatio, String(dims.width), String(dims.height)]);
           });
           // Lead with a Virelle metadata header line that's compatible with most spreadsheet importers
-          const header = `# Virelle Studios export — ${project.title} — Aspect ${aspectRatio} (${dims.label}, ${dims.width}x${dims.height})`;
+          const header = `# Virelle Studios export â ${project.title} â Aspect ${aspectRatio} (${dims.label}, ${dims.width}x${dims.height})`;
           content = header + "\n" + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
           mimeType = "text/csv";
           filename += "_scenes.csv";
@@ -9089,7 +9113,7 @@ Generate a detailed production budget estimate.`,
       }),
   }),
 
-  // ─── Showcase / Demo Reel──────────────────────────────────────────────────
+  // âââ Showcase / Demo Reelââââââââââââââââââââââââââââââââââââââââââââââââââ
   showcase: router({
     // Public: get featured projects with completed scenes for the showcase page
     featured: publicProcedure.query(async () => {
@@ -9454,16 +9478,16 @@ Examples of chained commands:
 - "Change the tone to be more serious, remove the last line, and add a new ending about hope"
 
 Common edit commands include:
-- "Replace X with Y" or "Change X to Y" — find and replace text
-- "Delete/Remove [text or description]" — remove specified text
-- "Add/Append [text] at the end" — add text to the end
-- "Insert [text] before/after [reference]" — insert at a specific position
-- "Undo" or "Revert" — cannot be handled, return the text unchanged
-- "Clear all" or "Start over" — return empty string
-- "Make it more [adjective]" — rewrite with that quality
-- "Fix grammar" or "Fix spelling" — correct errors
-- "Make it shorter" or "Make it longer" — adjust length
-- "Read it back" — return the text unchanged (the UI will handle display)
+- "Replace X with Y" or "Change X to Y" â find and replace text
+- "Delete/Remove [text or description]" â remove specified text
+- "Add/Append [text] at the end" â add text to the end
+- "Insert [text] before/after [reference]" â insert at a specific position
+- "Undo" or "Revert" â cannot be handled, return the text unchanged
+- "Clear all" or "Start over" â return empty string
+- "Make it more [adjective]" â rewrite with that quality
+- "Fix grammar" or "Fix spelling" â correct errors
+- "Make it shorter" or "Make it longer" â adjust length
+- "Read it back" â return the text unchanged (the UI will handle display)
 
 Rules:
 - Return ONLY the edited text, nothing else
@@ -9498,7 +9522,7 @@ Rules:
         };
       }),
 
-    // ─── Director Instructions (custom AI persona rules) ───
+    // âââ Director Instructions (custom AI persona rules) âââ
     getInstructions: protectedProcedure
       .query(async ({ ctx }) => {
         const user = await db.getUserById(ctx.user.id);
@@ -9512,7 +9536,7 @@ Rules:
         return { success: true };
       }),
 
-    // ─── AI Voice Response (ElevenLabs → OpenAI TTS fallback) ───
+    // âââ AI Voice Response (ElevenLabs â OpenAI TTS fallback) âââ
     speakResponse: creationProcedure
       .input(z.object({
         text: z.string().min(1).max(5000),
@@ -9526,9 +9550,9 @@ Rules:
         const userKeys = await db.getUserApiKeys(ctx.user.id);
         const elevenlabsKey = userKeys.elevenlabsKey;
 
-        // Archibald Titan voice: "Adam" — deep, authoritative, cinematic male voice
+        // Archibald Titan voice: "Adam" â deep, authoritative, cinematic male voice
         // ElevenLabs free library voice ID for Adam
-        const ARCHIBALD_VOICE_ID = "pNInz6obpgDQGcFmaJgB"; // Adam — deep male
+        const ARCHIBALD_VOICE_ID = "pNInz6obpgDQGcFmaJgB"; // Adam â deep male
         const ARCHIBALD_VOICE_SETTINGS = {
           stability: 0.6,
           similarity_boost: 0.8,
@@ -9539,7 +9563,7 @@ Rules:
         if (!elevenlabsKey) {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "ElevenLabs API key required for voice generation. Add your key in Settings → API Keys. Get a free key at elevenlabs.io.",
+            message: "ElevenLabs API key required for voice generation. Add your key in Settings â API Keys. Get a free key at elevenlabs.io.",
           });
         }
 
@@ -9575,13 +9599,13 @@ Rules:
       }),
   }),
 
-  // ─── Poster / Ad Maker ─────────────────────────────────────────────────────
+  // âââ Poster / Ad Maker âââââââââââââââââââââââââââââââââââââââââââââââââââââ
   poster: router({
     generateImage: protectedProcedure
       .input(z.object({
         prompt: z.string().min(1).max(2000),
         templateType: z.string().max(128),
-        // v6.77 — Optional projectId so the poster engine reads the same
+        // v6.77 â Optional projectId so the poster engine reads the same
         // brand allow/required/forbidden list the scenes use.
         projectId: z.number().optional(),
       }))
@@ -9605,7 +9629,7 @@ Rules:
         genre: z.string().max(128),
         description: z.string().max(2000),
         templateType: z.string().max(128),
-        // v6.77 — Brand-aware copy so taglines + credits never name a forbidden
+        // v6.77 â Brand-aware copy so taglines + credits never name a forbidden
         // brand and may reference required ones.
         projectId: z.number().optional(),
       }))
@@ -9633,11 +9657,11 @@ Rules:
           messages: [
             {
               role: "system",
-              content: `You are a professional film marketing copywriter. Generate compelling marketing copy for a ${templateDesc}. Return valid JSON only.${__posterCopyBrandBlock ? " Honor the project BRAND POLICY supplied in the user message — never name a forbidden brand in the title, tagline or credits." : ""}`,
+              content: `You are a professional film marketing copywriter. Generate compelling marketing copy for a ${templateDesc}. Return valid JSON only.${__posterCopyBrandBlock ? " Honor the project BRAND POLICY supplied in the user message â never name a forbidden brand in the title, tagline or credits." : ""}`,
             },
             {
               role: "user",
-              content: `Generate marketing copy for a ${input.genre} film:\n\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}${__posterCopyBrandBlock ? `\n\n${__posterCopyBrandBlock}` : ""}\n\nReturn JSON with these fields:\n- title: the film title, possibly stylized (max 40 chars)\n- tagline: a compelling tagline (max 80 chars)\n- credits: a credits line like "Directed by X • Starring Y, Z" (max 120 chars)`,
+              content: `Generate marketing copy for a ${input.genre} film:\n\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}${__posterCopyBrandBlock ? `\n\n${__posterCopyBrandBlock}` : ""}\n\nReturn JSON with these fields:\n- title: the film title, possibly stylized (max 40 chars)\n- tagline: a compelling tagline (max 80 chars)\n- credits: a credits line like "Directed by X â¢ Starring Y, Z" (max 120 chars)`,
             },
           ],
           response_format: {
@@ -9788,11 +9812,11 @@ Rules:
       }),
   }),
 
-  // ─── Social Platform Credentials ─────────────────────────────────────────────
+  // âââ Social Platform Credentials âââââââââââââââââââââââââââââââââââââââââââââ
   // Per-user credentials for Instagram, TikTok, Facebook, Discord, YouTube
   // Credentials are stored per-user and never shared between accounts.
   socialCredentials: router({
-    // List all connected platforms (metadata only — no raw tokens returned)
+    // List all connected platforms (metadata only â no raw tokens returned)
     list: protectedProcedure.query(async ({ ctx }) => {
       const creds = await db.getUserSocialCredentials(ctx.user.id);
       return creds.map((c) => ({
@@ -9957,7 +9981,7 @@ Rules:
                 if (status.status_code === "FINISHED") { ready = true; break; }
                 if (status.status_code === "ERROR") throw new Error("Instagram video processing failed");
               }
-              if (!ready) throw new Error("Instagram video processing timed out — try again");
+              if (!ready) throw new Error("Instagram video processing timed out â try again");
               const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media_publish`, {
                 method: "POST", headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ creation_id: container.id, access_token: token }),
@@ -10058,7 +10082,7 @@ Rules:
       }),
   }),
 
-  // ─── Subscription / Billing ─────────────────────────────────────────────────
+  // âââ Subscription / Billing âââââââââââââââââââââââââââââââââââââââââââââââââ
   subscription: router({
     // Get current user's subscription status and limits (with live Stripe sync)
     status: protectedProcedure.query(async ({ ctx }) => {
@@ -10127,7 +10151,7 @@ Rules:
       };
     }),
 
-    // v6.62 — Cost preflight.
+    // v6.62 â Cost preflight.
     // Returns { cost, balance, balanceAfter, sufficient, label } for ANY action
     // before the user commits. Powers the <CostPreflight /> chip rendered next
     // to every credit-spending button so the user never gets a surprise bill.
@@ -10138,17 +10162,17 @@ Rules:
     estimateCost: protectedProcedure
       .input(z.object({
         action: z.string().min(1).max(64),
-        // Multiplier — used for "bulk" actions like bulk_generate_previews where
+        // Multiplier â used for "bulk" actions like bulk_generate_previews where
         // the cost scales by N scenes. Defaults to 1.
         multiplier: z.number().int().min(1).max(500).default(1),
-        // Scene duration in seconds — only used for video gen actions to apply
+        // Scene duration in seconds â only used for video gen actions to apply
         // the per-second scaling (matches server's actual deduction logic).
         sceneDurationSeconds: z.number().int().min(1).max(3600).optional(),
       }))
       .query(async ({ ctx, input }) => {
         const entry = (CREDIT_COSTS as any)[input.action];
         if (!entry) {
-          // Unknown action — return zero-cost so client doesn't block, but flag.
+          // Unknown action â return zero-cost so client doesn't block, but flag.
           return {
             ok: false,
             cost: 0,
@@ -10192,7 +10216,7 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Resolve the correct Stripe price ID — check auto-provisioned first, then ENV fallbacks
+        // Resolve the correct Stripe price ID â check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
           indie: {
@@ -10208,7 +10232,7 @@ Rules:
             annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || "",
           },
           creator: {
-            // "creator" is a DB alias for the studio tier — use studio price IDs
+            // "creator" is a DB alias for the studio tier â use studio price IDs
             monthly: getStripePriceId("creator_monthly") || getStripePriceId("studio_monthly") || "",
             annual: getStripePriceId("creator_annual") || getStripePriceId("studio_annual") || "",
           },
@@ -10241,7 +10265,7 @@ Rules:
             return { spotsRemaining: Math.max(50 - realCount, 0) };
           } catch { return { spotsRemaining: 0 }; }
         })();
-         // Founding offer only applies to Independent+ tiers (not Amateur — it's a hook tier, not a founding member)
+         // Founding offer only applies to Independent+ tiers (not Amateur â it's a hook tier, not a founding member)
         const applyFoundingDiscount = isFirstSub && input.billing === "annual" && spotsData.spotsRemaining > 0 && input.tier !== "amateur";
         // Check if user has an unused promo code (50% off first payment, any billing cycle)
         const promoStatus = await db.getUserPromoStatus(ctx.user.id);
@@ -10318,7 +10342,7 @@ Rules:
         return { url };
       }),
 
-    // ── Asset Marketplace ─────────────────────────────────────────────────────
+    // ââ Asset Marketplace âââââââââââââââââââââââââââââââââââââââââââââââââââââ
     // Create a Stripe checkout for a one-time asset purchase
     createAssetCheckout: protectedProcedure
       .input(z.object({
@@ -10365,7 +10389,7 @@ Rules:
               unit_amount: amountCents,
               product_data: {
                 name: input.assetName,
-                description: `Virelle Studios Asset — ${input.assetName}`,
+                description: `Virelle Studios Asset â ${input.assetName}`,
               },
             },
             quantity: 1,
@@ -10520,7 +10544,7 @@ Rules:
   // ============================================================
   advertising: advertisingRouter,
 
-  // ─── Blog (Public + Admin) ───
+  // âââ Blog (Public + Admin) âââ
   seo: seoRouter,
   communityForum: communityForumRouter,
   autonomous: autonomousRouter,
@@ -10641,7 +10665,7 @@ Rules:
       }),
   }),
 
-  // ─── Referral System ───
+  // âââ Referral System âââ
   referral: router({
     // Get or create the user's referral code
     getMyCode: protectedProcedure.query(async ({ ctx }) => {
@@ -10788,7 +10812,7 @@ Rules:
             await db.createNotification({
               userId: refCode.userId,
               type: "referral_reward",
-              title: `🌟 Referral Milestone: ${milestoneLabel}!`,
+              title: `ð Referral Milestone: ${milestoneLabel}!`,
               message: `You've referred ${newSuccessfulCount} members! You've earned a bonus of ${milestoneBonus.toLocaleString()} credits. Keep going!`,
               link: "/referrals",
             });
@@ -10817,12 +10841,12 @@ Rules:
         if (!refCode || !refCode.isActive) {
           return { valid: false };
         }
-        return { valid: true, referrerName: "A VirÉlle Studios user" };
+        return { valid: true, referrerName: "A VirÃlle Studios user" };
       }),
   }),
-  // ─── Promo Codes (50% discount on first subscription payment) ───
+  // âââ Promo Codes (50% discount on first subscription payment) âââ
   promo: router({
-    // Validate a promo code (public — called live as user types)
+    // Validate a promo code (public â called live as user types)
     validate: publicProcedure
       .input(z.object({ code: z.string() }))
       .query(async ({ input }) => {
@@ -10851,7 +10875,7 @@ Rules:
       return await db.getUserPromoStatus(ctx.user.id);
     }),
   }),
-  // ─── User Settings & API Key Management ────
+  // âââ User Settings & API Key Management ââââ
   settings: router({
     // Get current user profile and API key status
     getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -10933,7 +10957,7 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         const user = ctx.user! as any;
         if (!user.passwordHash) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Account uses OAuth login — no password to change" });
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Account uses OAuth login â no password to change" });
         }
         const valid = await bcrypt.compare(input.currentPassword, user.passwordHash);
         if (!valid) {
@@ -10988,7 +11012,7 @@ Rules:
         const column = columnMap[provider];
         if (!column) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid provider" });
 
-        // Encrypt with AES-256-GCM — uses securityEngine.encryptApiKey for proper key protection
+        // Encrypt with AES-256-GCM â uses securityEngine.encryptApiKey for proper key protection
         const encoded = encryptApiKey(key);
 
         await db.updateUserApiKey(ctx.user!.id, column, encoded);
@@ -11155,10 +11179,10 @@ Rules:
                   headers: { "Authorization": `Bearer ${key}` },
                   signal: AbortSignal.timeout(10000),
                 });
-                if (resp.ok) return { valid: true, message: "BytePlus ModelArk key is valid — SeedDance ready" };
+                if (resp.ok) return { valid: true, message: "BytePlus ModelArk key is valid â SeedDance ready" };
                 if (resp.status === 401) return { valid: false, message: "BytePlus key is invalid or expired" };
                 // Other status codes might still be valid keys (e.g., 403 = no model access)
-                return { valid: true, message: `BytePlus key accepted (status ${resp.status} — will be verified on first use)` };
+                return { valid: true, message: `BytePlus key accepted (status ${resp.status} â will be verified on first use)` };
               } catch {
                 // If we can't reach BytePlus, accept the key and let generation verify it
                 if (key.length > 10) return { valid: true, message: "BytePlus key format accepted (will be verified on first use)" };
@@ -11173,9 +11197,9 @@ Rules:
                   headers: { Authorization: authHeader, Accept: "application/json" },
                   signal: AbortSignal.timeout(10_000),
                 });
-                if (resp.ok) return { valid: true, message: "D-ID key is valid — Auslan interpreter ready" };
+                if (resp.ok) return { valid: true, message: "D-ID key is valid â Auslan interpreter ready" };
                 if (resp.status === 401) return { valid: false, message: "D-ID key is invalid or expired" };
-                return { valid: true, message: `D-ID key accepted (status ${resp.status} — will be verified on first use)` };
+                return { valid: true, message: `D-ID key accepted (status ${resp.status} â will be verified on first use)` };
               } catch {
                 if (key.length > 10) return { valid: true, message: "D-ID key format accepted (will be verified on first use)" };
                 return { valid: false, message: "D-ID key appears too short" };
@@ -11190,7 +11214,7 @@ Rules:
       }),
   }),
 
-  // ─── Security Admin Dashboard ───
+  // âââ Security Admin Dashboard âââ
   security: router({
     stats: adminProcedure.query(() => {
       return getSecurityStats();
@@ -11237,7 +11261,7 @@ Rules:
       }),
   }),
 
-  // ─── Project Samples ───
+  // âââ Project Samples âââ
   projectSamples: router({
     // Public (all logged-in users): list published samples
     list: protectedProcedure.query(async () => {
@@ -11313,7 +11337,7 @@ Rules:
       }),
   }),
 
-  // ─── Contact Form ───
+  // âââ Contact Form âââ
   contact: router({
     submit: publicProcedure
       .input(z.object({
@@ -11328,11 +11352,11 @@ Rules:
         // Notify the owner via the notification system
         try {
           await notifyOwner({
-            title: `[Contact] ${input.subject.toUpperCase()} — ${input.name}`,
+            title: `[Contact] ${input.subject.toUpperCase()} â ${input.name}`,
             content: `From: ${input.name} <${input.email}>\nCompany: ${input.company || "N/A"}\nSubject: ${input.subject}\nIP: ${clientIP}\n\n${input.message}`,
           });
         } catch (notifyErr) {
-          // Non-critical — still succeed even if notification fails
+          // Non-critical â still succeed even if notification fails
           logger.warn(`Contact form owner notification failed: ${notifyErr}`);
         }
         // Also create an in-app notification for admin users
@@ -11343,7 +11367,7 @@ Rules:
               userId: adminUser.id,
               type: "system",
               title: `New contact: ${input.name}`,
-              message: `${input.email} — ${input.subject}: ${input.message.slice(0, 120)}${input.message.length > 120 ? "..." : ""}`,
+              message: `${input.email} â ${input.subject}: ${input.message.slice(0, 120)}${input.message.length > 120 ? "..." : ""}`,
               link: "/admin",
             });
           }
@@ -11353,7 +11377,7 @@ Rules:
       }),
   }),
 
-  // ─── Notifications ───
+  // âââ Notifications âââ
   notifications: router({
     list: protectedProcedure
       .input(z.object({ limit: z.number().min(1).max(100).default(50) }).optional())
@@ -11380,7 +11404,7 @@ Rules:
         return { success: true };
       }),
   }),
-  // ─── Distribute / Promote ─────────────────────────────────────────────────
+  // âââ Distribute / Promote âââââââââââââââââââââââââââââââââââââââââââââââââ
   distribute: router({
     getPromoStatus: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -11447,11 +11471,11 @@ Rules:
 
         // Fallback assets used if LLM call fails
         const fallbackAssets = [
-          { type: "caption", variant: "viral", content: `Just dropped my new film "${title}" 🎬 Watch until the end. #filmmaking #indiefilm #virellestudios` },
-          { type: "caption", variant: "cinematic", content: `"${title}" — a ${genre} short. ${logline.slice(0, 120)}. #cinema #director #shortfilm` },
+          { type: "caption", variant: "viral", content: `Just dropped my new film "${title}" ð¬ Watch until the end. #filmmaking #indiefilm #virellestudios` },
+          { type: "caption", variant: "cinematic", content: `"${title}" â a ${genre} short. ${logline.slice(0, 120)}. #cinema #director #shortfilm` },
           { type: "hashtags", variant: "general", content: `#${titleSlug} #filmmaker #shortfilm #virellestudios #aifilm #cinema #indiefilm #${genre}` },
           { type: "hook", variant: "tiktok", content: `POV: You just made a cinematic short film with AI and it actually looks incredible...` },
-          { type: "hook", variant: "instagram", content: `This is what happens when storytelling meets AI. "${title}" — now live. 🎥` },
+          { type: "hook", variant: "instagram", content: `This is what happens when storytelling meets AI. "${title}" â now live. ð¥` },
         ];
 
         let assets = fallbackAssets;
@@ -11486,7 +11510,7 @@ Rules:
           }
         } catch (llmErr: any) {
           logger.warn(`[Distribute] LLM promo generation failed, using fallback: ${llmErr.message}`);
-          // fallbackAssets already set above — continue
+          // fallbackAssets already set above â continue
         }
 
         for (const asset of assets) {
@@ -11594,7 +11618,7 @@ Rules:
           mimeType = result.mimeType;
         } catch (err: any) {
           logger.error(`[Export] ${input.platform} promo stitching failed: ${err.message}`);
-          // Hard fail — never save a promo without the Virelle Studios opener.
+          // Hard fail â never save a promo without the Virelle Studios opener.
           throw new Error(`Promo compilation failed: ${err.message}. Please try again.`);
         }
 
@@ -11736,7 +11760,7 @@ Rules:
       }),
   }),
 
-  // ─── Phase 2: Creator Profiles ────────────────────────────────────────────
+  // âââ Phase 2: Creator Profiles ââââââââââââââââââââââââââââââââââââââââââââ
   creatorProfile: router({
     getProfile: publicProcedure
       .input(z.object({ slug: z.string() }))
@@ -11823,7 +11847,7 @@ Rules:
       }),
   }),
 
-  // ─── Phase 2: Collections ─────────────────────────────────────────────────
+  // âââ Phase 2: Collections âââââââââââââââââââââââââââââââââââââââââââââââââ
   collections: router({
     getCollection: publicProcedure
       .input(z.object({ slug: z.string() }))
@@ -11858,7 +11882,7 @@ Rules:
       }),
   }),
 
-  // ─── Phase 2: Analytics ───────────────────────────────────────────────────
+  // âââ Phase 2: Analytics âââââââââââââââââââââââââââââââââââââââââââââââââââ
   analytics: router({
     trackEvent: publicProcedure
       .input(z.object({
@@ -11955,9 +11979,9 @@ Rules:
         return { success: true };
       }),
   }),
-  // ─── Phase 3: Showcase Ranking ──────────────────────────────────────────────────
+  // âââ Phase 3: Showcase Ranking ââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-  // ─── Phase 3: Submission Review Workflow ─────────────────────────────────────
+  // âââ Phase 3: Submission Review Workflow âââââââââââââââââââââââââââââââââââââ
   submissions: router({
     submit: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -12023,7 +12047,7 @@ Rules:
       }),
   }),
 
-  // ─── Phase 3: Abuse / Fraud Guards ────────────────────────────────────────────
+  // âââ Phase 3: Abuse / Fraud Guards ââââââââââââââââââââââââââââââââââââââââââââ
   abuse: router({
     report: publicProcedure
       .input(z.object({
@@ -12079,7 +12103,7 @@ Rules:
       }),
   }),
 
-  // ─── Phase 3: Conversion Funnel Analytics ─────────────────────────────────
+  // âââ Phase 3: Conversion Funnel Analytics âââââââââââââââââââââââââââââââââ
   conversion: router({
     // Admin: get top performing film pages by conversion score
     getTopFilms: adminProcedure
@@ -12197,7 +12221,7 @@ Rules:
       }),
   }),
 
-  // ─── AI Generation ────────────────────────────────────────────────────────
+  // âââ AI Generation ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   credits: router({
     // Paginated credit transaction history for the current user
     getHistory: protectedProcedure
@@ -12224,7 +12248,7 @@ Rules:
     }),
   }),
 
-  // ─── YouTube Export ───────────────────────────────────────────────────────
+  // âââ YouTube Export âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   youtube: router({
     /**
      * Export a movie/trailer to the Virelle Studios YouTube channel.
@@ -12240,7 +12264,7 @@ Rules:
         projectId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Only Studio+ tiers can export to YouTube — use getEffectiveTier for consistent access control
+        // Only Studio+ tiers can export to YouTube â use getEffectiveTier for consistent access control
         const effectiveTier = getEffectiveTier(ctx.user);
         const paidTiers = ["independent", "creator", "studio", "industry", "beta"];
         if (!paidTiers.includes(effectiveTier) && ctx.user.role !== "admin") {
@@ -12281,7 +12305,7 @@ Rules:
           result = await uploadVideoToYouTube({
             videoUrl: input.videoUrl,
             title: input.title,
-            description: input.description || `Created with Virelle Studios — AI-powered cinema.\n\nhttps://virelle.life`,
+            description: input.description || `Created with Virelle Studios â AI-powered cinema.\n\nhttps://virelle.life`,
             privacyStatus: input.privacyStatus,
             tags: ["Virelle Studios", "AI Film", "AI Cinema", "Short Film", "AI Generated"],
           });
@@ -12341,7 +12365,7 @@ Rules:
     }),
   }),
 
-  // ─── Signature Cast ──────────────────────────────────────────────────────────
+  // âââ Signature Cast ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   signatureCast: router({
 
     // List all active actors with entitlement status for the current user
@@ -12589,7 +12613,7 @@ Rules:
       }),
 
 
-    // ── Portrait Generation (Admin) ──────────────────────────────────────────
+    // ââ Portrait Generation (Admin) ââââââââââââââââââââââââââââââââââââââââââ
     generatePortrait: adminProcedure
       .input(z.object({ actorId: z.string() }))
       .mutation(async ({ ctx, input }) => {
@@ -12744,7 +12768,7 @@ Rules:
         .input(z.object({ jobId: z.number() }))
         .query(async ({ ctx, input }) => { return db.getCompileJobById(input.jobId); }),
     }),
-  // ─── Pro Ops: Render Queue Bulk Operations ────
+  // âââ Pro Ops: Render Queue Bulk Operations ââââ
   renderQueueBulk: router({
     run: protectedProcedure
       .input(z.object({ projectId: z.number(), action: z.enum(["pauseAll","resumeAll","retryFailed","clearDone","startAllQueued"]) }))
@@ -12773,7 +12797,7 @@ Rules:
       }),
   }),
 
-  // ─── Pro Collab: Presence (multi-user heartbeat for live collaboration) ────
+  // âââ Pro Collab: Presence (multi-user heartbeat for live collaboration) ââââ
   presence: router({
     heartbeat: protectedProcedure
       .input(z.object({ projectId: z.number(), tab: z.string().max(60).optional(), sceneId: z.number().nullable().optional() }))
@@ -12799,7 +12823,7 @@ Rules:
       }),
   }),
 
-  // ─── Pro Locks: director-locked scenes (block accidental regeneration) ────
+  // âââ Pro Locks: director-locked scenes (block accidental regeneration) ââââ
   sceneLocks: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -12829,7 +12853,7 @@ Rules:
       }),
   }),
 
-  // ─── Pro Ops: 3-tier Approval Chain (director → producer → exec) ───
+  // âââ Pro Ops: 3-tier Approval Chain (director â producer â exec) âââ
   approvals: router({
     get: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -12873,7 +12897,7 @@ Rules:
       }),
   }),
 
-  // ─── Pro Ops: Project Budget Tracker (config + actuals roll-up) ───
+  // âââ Pro Ops: Project Budget Tracker (config + actuals roll-up) âââ
   studioBudget: router({
     get: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -12887,8 +12911,8 @@ Rules:
           byStage: { development: 0, preProduction: 0, production: 0, postProduction: 0, distribution: 0 },
           contingencyPct: 10,
           // Industry savings benchmarks (configurable)
-          tradCostPerScene: 5000,   // USD — mid-range indie scene shoot
-          tradHoursPerScene: 8,     // hours — one production day per scene
+          tradCostPerScene: 5000,   // USD â mid-range indie scene shoot
+          tradHoursPerScene: 8,     // hours â one production day per scene
           creditUsdRate: 0.05,      // USD per credit (used to convert AI spend to dollars)
         };
         if (arr?.[0]) { try { cfg = { ...cfg, ...JSON.parse((arr[0].content as string).replace(/^\[StudioBudget\]\s*\n?/, "")) }; } catch {} }
@@ -12928,7 +12952,7 @@ Rules:
       }),
   }),
 
-  // ─── Pro Dashboard: single-pane studio readiness summary ────
+  // âââ Pro Dashboard: single-pane studio readiness summary ââââ
   studioDashboard: router({
     summary: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -13012,7 +13036,7 @@ Rules:
           failed === 0 ? 1 : 0.5,
         ];
         const readiness = Math.round((readinessParts.reduce((a, b) => a + b, 0) / readinessParts.length) * 100);
-        // Forecast: scenes without video × duration-scaled credit estimate
+        // Forecast: scenes without video Ã duration-scaled credit estimate
         const unrenderedScenes = scenes.filter((s: any) => !s.videoUrl);
         const forecastCredits = unrenderedScenes.reduce((sum: number, s: any) => {
           const dur = Math.max(10, s.duration || 45);
@@ -13048,7 +13072,7 @@ Rules:
             } catch {}
           }
         }
-        // Savings roll-up — mirror of studioBudget.get computation, lighter
+        // Savings roll-up â mirror of studioBudget.get computation, lighter
         let savings: any = null;
         if (dbConn) {
           let cfg: any = { tradCostPerScene: 5000, tradHoursPerScene: 8, creditUsdRate: 0.05 };
@@ -13084,10 +13108,10 @@ Rules:
       }),
   }),
 
-  // ───────────────────────────────────────────────────────────────────────
-  // v6.63 — Production Spine
+  // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // v6.63 â Production Spine
   // Schedule, call sheets, crew, approvals, shot lists, activity timeline.
-  // ───────────────────────────────────────────────────────────────────────
+  // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   shootDay: router({
     list: protectedProcedure
@@ -13333,7 +13357,7 @@ Rules:
         const prevStatus = (scene as any).approvalStatus || null;
         await db.setSceneApproval(input.sceneId, ctx.user.id, input.status, cleanNote);
         await db.logActivity((scene as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "scene.approval.set", { sceneId: input.sceneId, status: input.status, note: cleanNote });
-        // v6.64 — append signed chain entry
+        // v6.64 â append signed chain entry
         const snapshot = JSON.stringify({ id: input.sceneId, title: (scene as any).title, description: (scene as any).description, videoUrl: (scene as any).videoUrl, shotList: (scene as any).shotList });
         await db.appendApprovalChain((scene as any).projectId, "scene", input.sceneId, prevStatus, input.status, ctx.user.id, ctx.user.name || ctx.user.email || null, cleanNote, snapshot);
         return { success: true };
@@ -13363,7 +13387,7 @@ Rules:
         await db.setMovieApproval(input.movieId, ctx.user.id, input.status, cleanNote);
         if ((movie as any).projectId) {
           await db.logActivity((movie as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "movie.approval.set", { movieId: input.movieId, status: input.status, note: cleanNote });
-          // v6.64 — append signed chain entry
+          // v6.64 â append signed chain entry
           const snapshot = JSON.stringify({ id: input.movieId, title: (movie as any).title, prompt: (movie as any).prompt, videoUrl: (movie as any).videoUrl });
           await db.appendApprovalChain((movie as any).projectId, "movie", input.movieId, prevStatus, input.status, ctx.user.id, ctx.user.name || ctx.user.email || null, cleanNote, snapshot);
         }
@@ -13401,7 +13425,7 @@ Rules:
 
   // Manual budget editing on top of the AI-generated breakdown stored on the
   // existing `budgets` table. (The `budget` router above only exposes generate,
-  // setActuals, and AI helpers — this adds direct breakdown editing so users
+  // setActuals, and AI helpers â this adds direct breakdown editing so users
   // can build a budget from scratch without an AI call.)
   budgetManual: router({
     upsert: protectedProcedure
@@ -13445,7 +13469,7 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.64 — Signed approval chain (read + verify)
+  // v6.64 â Signed approval chain (read + verify)
   // ============================================================================
   approvalChain: router({
     list: protectedProcedure
@@ -13463,7 +13487,7 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.64 — Asset version history
+  // v6.64 â Asset version history
   // ============================================================================
   assetVersion: router({
     list: protectedProcedure
@@ -13509,7 +13533,7 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.64 — Collaborator list (admin/visibility — invite/remove already on
+  // v6.64 â Collaborator list (admin/visibility â invite/remove already on
   // collaboration router). This is a thin read-only convenience wrapper.
   // ============================================================================
   collaboratorView: router({
@@ -13522,7 +13546,7 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.64 — Fountain / FDX script import + export (named scriptIO to avoid
+  // v6.64 â Fountain / FDX script import + export (named scriptIO to avoid
   // collision with the v6.0 `script` router which manages script documents).
   // ============================================================================
   scriptIO: router({
@@ -13609,8 +13633,8 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.66 + v6.67 — Auto Recap ("Previously On" generator for episodic projects).
-  // Maps episode → movie of type "film" inside a project where
+  // v6.66 + v6.67 â Auto Recap ("Previously On" generator for episodic projects).
+  // Maps episode â movie of type "film" inside a project where
   // actStructure="episodic". Generates outline + beats + voiceover script via
   // OpenAI; segment selection from movie metadata. Charges credits only on
   // successful AI completion.
@@ -13648,7 +13672,7 @@ Rules:
           breakdown.subtitles + breakdown.voiceover +
           breakdown.openingCreditsOverlay + breakdown.render;
         if (input.sourceMovieIds.length > 1) subtotal = Math.ceil(subtotal * 1.25);
-        // v6.67 — apply membership tier discount per upgrade-kit policy.
+        // v6.67 â apply membership tier discount per upgrade-kit policy.
         const { creditDiscountForTier } = await import("./_core/providerPolicy");
         const discountPct = creditDiscountForTier(ctx.user.subscriptionTier);
         const discountAmount = discountPct > 0 ? Math.ceil(subtotal * (discountPct / 100)) : 0;
@@ -13730,7 +13754,7 @@ Rules:
         });
         if (!recap) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not create recap." });
 
-        // Run synchronously — Virelle's pattern. Wrap in try so failures roll back.
+        // Run synchronously â Virelle's pattern. Wrap in try so failures roll back.
         try {
           await db.updateRecap(recap.id, ctx.user.id, { status: "selecting_clips", progress: 35 });
 
@@ -13794,7 +13818,7 @@ Return JSON ONLY in this exact shape:
               throw new Error(`AI outline generation failed: ${e?.message || "unknown error"}`);
             }
           } else {
-            // Deterministic fallback when no API key — still produces a usable recap from metadata.
+            // Deterministic fallback when no API key â still produces a usable recap from metadata.
             const beats = sources.map((s: any, i: number) => ({
               order: i + 1,
               sourceMovieId: s.id,
@@ -13813,10 +13837,10 @@ Return JSON ONLY in this exact shape:
             };
           }
 
-          // v6.70 — Honest status. We are about to persist the outline+segments
+          // v6.70 â Honest status. We are about to persist the outline+segments
           // but no MP4 has been rendered. Was previously "rendering" which
           // implied an active MP4 render that does not exist yet.
-          // v6.71 — Renamed from "render_pending" to "outline_pending" to
+          // v6.71 â Renamed from "render_pending" to "outline_pending" to
           // avoid collision with the live MP4 render state introduced in
           // recap.renderMp4. This intermediate state is brief (one update
           // away from "outline_completed") and will rarely be observed.
@@ -13836,7 +13860,7 @@ Return JSON ONLY in this exact shape:
             })));
           }
 
-          // v6.69 Phase 5 — Atomic reservation. reserveCredits deducts the
+          // v6.69 Phase 5 â Atomic reservation. reserveCredits deducts the
           // breakdownCost up front, then we finalize on success. Failure path
           // releases the reservation so the user is refunded automatically.
           let __recapResId: number | null = null;
@@ -13857,7 +13881,7 @@ Return JSON ONLY in this exact shape:
             try { await db.finalizeReservation(__recapResId); } catch {}
           }
 
-          // v6.70 — Honest terminal status. The outline + voiceover script +
+          // v6.70 â Honest terminal status. The outline + voiceover script +
           // segment list are saved but NO final MP4 has been rendered. We
           // mark this as "outline_completed" so the UI can label it
           // "Recap outline ready" instead of "Final recap video ready". A
@@ -13870,7 +13894,7 @@ Return JSON ONLY in this exact shape:
           return { recapId: recap.id, status: "outline_completed" as const, reused: false };
         } catch (err: any) {
           await db.updateRecap(recap.id, ctx.user.id, { status: "failed", progress: 0, errorMessage: err?.message || "unknown error" });
-          // v6.69 Phase 5 — If we managed to create a reservation before the
+          // v6.69 Phase 5 â If we managed to create a reservation before the
           // failure, refund it. Look up by referenceType/referenceId since the
           // local variable may be out of scope here.
           try {
@@ -13896,14 +13920,14 @@ Return JSON ONLY in this exact shape:
         return db.listRecapsForMovie(input.movieId, ctx.user.id);
       }),
 
-    // v6.67 — attach a completed recap to its target episode so the project
+    // v6.67 â attach a completed recap to its target episode so the project
     // surface knows which recap to play before the episode starts.
     attach: protectedProcedure
       .input(z.object({ recapId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const recap = await db.getRecapById(input.recapId, ctx.user.id);
         if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
-        // v6.70 — Accept any of the legacy "completed" value (older rows)
+        // v6.70 â Accept any of the legacy "completed" value (older rows)
         // and the new honest "outline_completed" / "render_completed" values.
         const ready = recap.status === "completed" || recap.status === "outline_completed" || recap.status === "render_completed";
         if (!ready) {
@@ -13923,8 +13947,8 @@ Return JSON ONLY in this exact shape:
         return { success: true };
       }),
 
-    // ────────────────────────────────────────────────────────────────────
-    // v6.71 — Render the final MP4 for an Auto Recap.
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // v6.71 â Render the final MP4 for an Auto Recap.
     //
     // Reserves the `recap_render` credit, flips the recap to
     // `render_pending`, and fires the background renderer
@@ -13932,7 +13956,7 @@ Return JSON ONLY in this exact shape:
     // reservation on success and releases on failure (same pattern as
     // v6.70 scene-video). The mutation itself returns immediately so the
     // UI can poll for status.
-    // ────────────────────────────────────────────────────────────────────
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     renderMp4: creationProcedure
       .input(z.object({ recapId: z.number().int().positive() }))
       .mutation(async ({ ctx, input }) => {
@@ -14004,7 +14028,7 @@ Return JSON ONLY in this exact shape:
           errorMessage: null as any,
         } as any);
 
-        // Fire the background renderer. Never await — the worker manages its
+        // Fire the background renderer. Never await â the worker manages its
         // own lifecycle (finalize on success, release on failure, status
         // revert on failure).
         (async () => {
@@ -14027,18 +14051,18 @@ Return JSON ONLY in this exact shape:
         return { recapId: input.recapId, status: "render_pending" as const, reservationId, reused: false };
       }),
 
-    // ────────────────────────────────────────────────────────────────────
-    // v6.72 — Cancel an in-flight MP4 render.
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // v6.72 â Cancel an in-flight MP4 render.
     //
     // The renderer is fire-and-forget so we cannot kill the ffmpeg process
-    // from here — but we *can* refund the user immediately, mark the recap
+    // from here â but we *can* refund the user immediately, mark the recap
     // as outline_completed, and the worker's safeFail path will simply find
     // an already-released reservation when it tries to release on its own
     // (releaseReservation is gated on status='reserved' so the second call
     // is a no-op). Same goes for finalizeReservation if the render somehow
-    // finishes after cancel — the recap status will already be back to
+    // finishes after cancel â the recap status will already be back to
     // outline_completed and the credits will already be refunded.
-    // ────────────────────────────────────────────────────────────────────
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     cancelRender: protectedProcedure
       .input(z.object({ recapId: z.number().int().positive() }))
       .mutation(async ({ ctx, input }) => {
@@ -14073,13 +14097,13 @@ Return JSON ONLY in this exact shape:
         return { success: true, releasedReservationId };
       }),
 
-    // ────────────────────────────────────────────────────────────────────
-    // v6.72 — Admin/dev diagnostic. Releases reservations and reverts
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // v6.72 â Admin/dev diagnostic. Releases reservations and reverts
     // recaps stuck in `render_pending` for more than `olderThanMinutes`
     // (default 30). `dryRun` reports what *would* happen without mutating.
     //
-    // Admin-only — normal users use `cancelRender` for their own recaps.
-    // ────────────────────────────────────────────────────────────────────
+    // Admin-only â normal users use `cancelRender` for their own recaps.
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     sweepStuckRenders: adminProcedure
       .input(z.object({
         olderThanMinutes: z.number().int().positive().max(60 * 24 * 7).optional(),
@@ -14095,7 +14119,7 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
-  // v6.69 Phase 3 — Script-to-Storyboard breakdown wizard.
+  // v6.69 Phase 3 â Script-to-Storyboard breakdown wizard.
   // Two procedures: analyze (returns proposal, NO writes) + apply (creates
   // scenes only after the user has explicitly approved).
   // ============================================================================
@@ -14117,7 +14141,7 @@ Return JSON ONLY in this exact shape:
     applyBreakdownToProject: protectedProcedure
       .input(z.object({
         projectId: z.number(),
-        // v6.73 — append (default, safe) or replace (destructive, requires
+        // v6.73 â append (default, safe) or replace (destructive, requires
         // explicit confirmReplace flag set by the wizard's UI prompt).
         mode: z.enum(["append", "replace"]).optional(),
         confirmReplace: z.boolean().optional(),
@@ -14130,10 +14154,10 @@ Return JSON ONLY in this exact shape:
           mood: z.string().max(120).nullable().optional(),
           characters: z.array(z.string().max(80)).optional(),
           estimatedDuration: z.number().min(5).max(600).optional(),
-          // v6.74 — new richer per-scene fields. All optional so old wizard
+          // v6.74 â new richer per-scene fields. All optional so old wizard
           // payloads still validate. The mutation lower down packs these
           // into existing scene columns (props/shotList/continuityNotes/
-          // dialogueText) — no new tables, no new columns required.
+          // dialogueText) â no new tables, no new columns required.
           dialogue: z.string().max(4000).nullable().optional(),
           props: z.array(z.string().max(120)).max(40).optional(),
           shotSuggestions: z.array(z.object({
@@ -14146,8 +14170,8 @@ Return JSON ONLY in this exact shape:
           })).max(10).optional(),
           continuityNotes: z.string().max(1500).nullable().optional(),
         })).min(1).max(80),
-        // v6.74 — top-level entities. The wizard can pass these so we create
-        // characters and locations alongside scenes. They're optional — when
+        // v6.74 â top-level entities. The wizard can pass these so we create
+        // characters and locations alongside scenes. They're optional â when
         // omitted, we behave exactly like v6.73 (count only, no creation).
         characters: z.array(z.object({
           name: z.string().max(128),
@@ -14167,7 +14191,7 @@ Return JSON ONLY in this exact shape:
         const mode = input.mode ?? "append";
         const existing: any[] = await db.getProjectScenes(input.projectId).catch(() => []);
 
-        // v6.73 — Replace requires an explicit second confirmation so the
+        // v6.73 â Replace requires an explicit second confirmation so the
         // wizard cannot silently destroy work. We never auto-replace.
         let deleted = 0;
         if (mode === "replace") {
@@ -14192,9 +14216,9 @@ Return JSON ONLY in this exact shape:
         const remaining = mode === "replace" ? [] : existing;
         const baseOrder = remaining.reduce((m: number, s: any) => Math.max(m, Number(s.orderIndex ?? 0)), 0);
 
-        // v6.73 — Pre-load existing characters + locations for case-insensitive
+        // v6.73 â Pre-load existing characters + locations for case-insensitive
         // reuse counting + lookup.
-        // v6.74 — When the wizard sends top-level `characters` / `locations`,
+        // v6.74 â When the wizard sends top-level `characters` / `locations`,
         // we now actually create the missing ones (no description-only ghosts)
         // alongside scenes so the project ends up with a populated cast +
         // locations list ready for the readiness panel.
@@ -14209,9 +14233,9 @@ Return JSON ONLY in this exact shape:
         const newLocations = new Set<string>();
         const missingReferences: string[] = [];
 
-        // v6.74 — Top-level entity creation. We create characters first so the
+        // v6.74 â Top-level entity creation. We create characters first so the
         // per-scene character tally below sees them as "reused" rather than
-        // "new" (which is the right mental model — they've been added).
+        // "new" (which is the right mental model â they've been added).
         const createdCharacters: string[] = [];
         const createdLocations: string[] = [];
         const characterCreateFailures: Array<{ name: string; error: string }> = [];
@@ -14273,7 +14297,7 @@ Return JSON ONLY in this exact shape:
         for (let i = 0; i < input.scenes.length; i++) {
           const s = input.scenes[i];
           // Tally character reuse vs new (now reflects v6.74 top-level
-          // creation above — newly-created chars register as reused here).
+          // creation above â newly-created chars register as reused here).
           for (const cname of (s.characters ?? [])) {
             const k = cname.trim().toLowerCase();
             if (!k) continue;
@@ -14286,7 +14310,7 @@ Return JSON ONLY in this exact shape:
             if (locNameSet.has(lk)) reusedLocations.add(s.location.trim());
             else newLocations.add(s.location.trim());
           }
-          // v6.74 — Build the productionNotes string conservatively. We keep
+          // v6.74 â Build the productionNotes string conservatively. We keep
           // the v6.73 "Suggested cast" summary, then append the props list
           // when present so users see it in the existing crew-notes textarea.
           const noteParts: string[] = [];
@@ -14303,13 +14327,13 @@ Return JSON ONLY in this exact shape:
               locationDetail: s.location ?? null,
               duration: Math.round(s.estimatedDuration ?? 30),
               productionNotes: noteParts.length ? noteParts.join("\n") : null,
-              // v6.74 — pack rich fields into existing scene columns.
-              // props → scenes.props (json) — already provisioned by autoMigrate.
-              // shotSuggestions → scenes.shotList (json) — same shape as the
+              // v6.74 â pack rich fields into existing scene columns.
+              // props â scenes.props (json) â already provisioned by autoMigrate.
+              // shotSuggestions â scenes.shotList (json) â same shape as the
               // existing structured shot list, so downstream consumers work.
-              // continuityNotes → scenes.continuityNotes (text) — already
+              // continuityNotes â scenes.continuityNotes (text) â already
               // provisioned by autoMigrate.
-              // dialogue → scenes.dialogueText (text) — existing column.
+              // dialogue â scenes.dialogueText (text) â existing column.
               ...(s.props && s.props.length ? { props: s.props } : {}),
               ...(s.shotSuggestions && s.shotSuggestions.length
                 ? {
@@ -14334,16 +14358,16 @@ Return JSON ONLY in this exact shape:
           }
         }
 
-        // v6.73 — Surface "missing references" so the post-apply summary
+        // v6.73 â Surface "missing references" so the post-apply summary
         // can nudge the user to add reference images / character details
-        // before they spend video credits. v6.74 — also flag freshly-created
+        // before they spend video credits. v6.74 â also flag freshly-created
         // characters/locations that were imported from the breakdown but
         // still need reference images.
         for (const cname of createdCharacters) {
-          missingReferences.push(`Character "${cname}" was just imported — no reference images yet. Add one before generating video.`);
+          missingReferences.push(`Character "${cname}" was just imported â no reference images yet. Add one before generating video.`);
         }
         for (const lname of createdLocations) {
-          missingReferences.push(`Location "${lname}" was just imported — no reference images yet. Add one before generating video.`);
+          missingReferences.push(`Location "${lname}" was just imported â no reference images yet. Add one before generating video.`);
         }
         for (const cname of newCharacters) {
           if (!createdCharacters.includes(cname)) {
@@ -14382,7 +14406,7 @@ Return JSON ONLY in this exact shape:
             newCharacters: Array.from(newCharacters).sort(),
             reusedLocations: Array.from(reusedLocations).sort(),
             newLocations: Array.from(newLocations).sort(),
-            // v6.74 — record what we actually wrote so the post-apply card
+            // v6.74 â record what we actually wrote so the post-apply card
             // can confirm to the user that characters/locations were created.
             createdCharacters,
             createdLocations,
@@ -14395,8 +14419,8 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
-  // v6.68 Phase 5 — BYOK Provider Control Center.
-  // Returns ONLY masked status of each provider key (boolean → label). Never
+  // v6.68 Phase 5 â BYOK Provider Control Center.
+  // Returns ONLY masked status of each provider key (boolean â label). Never
   // returns the raw key string to the client. Validation is shape-only by
   // default; deeper provider pings can be added per-provider as needed.
   // ============================================================================
@@ -14409,7 +14433,7 @@ Return JSON ONLY in this exact shape:
       for (const k of Object.keys(has)) {
         providers[k] = (has as any)[k] ? "configured" : "not_configured";
       }
-      // v6.69 repair — surface the persisted fallback policy so the BYOK
+      // v6.69 repair â surface the persisted fallback policy so the BYOK
       // Control Center can render the user's saved choice without flicker.
       return {
         providers,
@@ -14424,7 +14448,7 @@ Return JSON ONLY in this exact shape:
       .mutation(async ({ ctx, input }) => {
         const user: any = await db.getUserById(ctx.user.id);
         if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
-        // v6.69 — true cheap-call validation for the providers we have a
+        // v6.69 â true cheap-call validation for the providers we have a
         // safe ping for; shape-only fallback for the rest. Never returns
         // the key string under any circumstance.
         const { validateProviderKey } = await import("./_core/byokValidation");
@@ -14435,7 +14459,7 @@ Return JSON ONLY in this exact shape:
       .input(z.object({
         preferredVideoProvider: z.string().nullable().optional(),
         preferredLlmProvider: z.string().nullable().optional(),
-        // v6.69 repair — values match the spec used everywhere else.
+        // v6.69 repair â values match the spec used everywhere else.
         fallbackMode: z.enum([
           "credits_only",
           "byok_only",
@@ -14451,7 +14475,7 @@ Return JSON ONLY in this exact shape:
         if (input.preferredLlmProvider !== undefined) {
           patch.preferredLlmProvider = input.preferredLlmProvider || null;
         }
-        // v6.69 — fallback mode is now persisted on the users row.
+        // v6.69 â fallback mode is now persisted on the users row.
         if (input.fallbackMode !== undefined) {
           patch.byokFallbackMode = input.fallbackMode;
         }
@@ -14463,7 +14487,7 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
-  // v6.68 Phase 4 — Production Elements (consistency layer).
+  // v6.68 Phase 4 â Production Elements (consistency layer).
   // ============================================================================
   elements: router({
     listProjectElements: protectedProcedure
@@ -14481,15 +14505,15 @@ Return JSON ONLY in this exact shape:
         return ctxScene;
       }),
 
-    // ────────────────────────────────────────────────────────────────────
-    // v6.73 — Generation-readiness scoring per scene + per-project rollup.
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // v6.73 â Generation-readiness scoring per scene + per-project rollup.
     //
-    // Returns a 0–100 score with weighted components (see scoreScene below)
+    // Returns a 0â100 score with weighted components (see scoreScene below)
     // plus a list of warnings/missing items so the UI can show users what
     // to fix BEFORE they spend video-generation credits.
     //
     // Pure read. No DB writes. No expensive AI calls.
-    // ────────────────────────────────────────────────────────────────────
+    // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     getSceneReadiness: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
       .query(async ({ ctx, input }) => {
@@ -14530,16 +14554,16 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
-  // v6.68 Phase 6 — Credit reservations (read-only listing for users).
+  // v6.68 Phase 6 â Credit reservations (read-only listing for users).
   // ============================================================================
   reservations: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       return db.listUserReservations(ctx.user.id);
     }),
-    // v6.70 — Observability helper. Given a (referenceType, referenceId)
+    // v6.70 â Observability helper. Given a (referenceType, referenceId)
     // pair, returns every reservation row tied to that reference (all
     // statuses) so we can debug scene/trailer/recap credit behavior. Scoped
-    // to the calling user — never returns sensitive data, only the public
+    // to the calling user â never returns sensitive data, only the public
     // reservation lifecycle fields.
     getForReference: protectedProcedure
       .input(z.object({
@@ -14565,7 +14589,7 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
-  // v6.68 Phase 10 — Pitch Deck assembly.
+  // v6.68 Phase 10 â Pitch Deck assembly.
   // ============================================================================
   pitchDeck: router({
     get: protectedProcedure
@@ -14573,7 +14597,7 @@ Return JSON ONLY in this exact shape:
       .query(async ({ ctx, input }) => {
         const project: any = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
-        // v6.69 Phase 7 — Pull every data source the pitch deck needs.
+        // v6.69 Phase 7 â Pull every data source the pitch deck needs.
         // Budgets and shootDays already have helpers in db.ts; if a helper
         // is missing we fall back to an empty array rather than throwing.
         const [characters, scenes, moodBoard, budgets] = await Promise.all([
@@ -14588,7 +14612,7 @@ Return JSON ONLY in this exact shape:
             shootDays = await (db as any).getProjectShootDays(input.projectId);
           }
         } catch { shootDays = []; }
-        // v6.69 Phase 7 — Scenes table has NO sceneNumber column. Sort by the
+        // v6.69 Phase 7 â Scenes table has NO sceneNumber column. Sort by the
         // actual orderIndex column and derive a 1-based scene number for the
         // deck. Title falls back to "Scene N" when missing.
         const { collectCharacterReferenceImages } = await import("./_core/productionElements");
@@ -14640,7 +14664,7 @@ Return JSON ONLY in this exact shape:
       }),
   }),
   // ============================================================================
-    // Script Coverage — AI-powered coverage report (uses caller-supplied BYOK key)
+    // Script Coverage â AI-powered coverage report (uses caller-supplied BYOK key)
     // Deducts 5 credits (script_coverage_ai) server-side; refunds on AI failure.
     // ============================================================================
     coverage: router({
@@ -14722,7 +14746,7 @@ Return JSON ONLY in this exact shape:
                 ctx.user.id,
                 CREDIT_COSTS.script_coverage_ai.cost,
                 "script_coverage_ai_refund",
-                "Coverage AI call failed — credits refunded",
+                "Coverage AI call failed â credits refunded",
               );
             } catch { /* best-effort refund */ }
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Coverage analysis failed: ${e.message}` });
@@ -14737,8 +14761,8 @@ Return JSON ONLY in this exact shape:
         }),
     }),
 
-    // ─── Dubbing Studio ───────────────────────────────────────────────────────────
-    // AI multilingual dubbing + lip-sync: ElevenLabs v2 TTS · GPT translation.
+    // âââ Dubbing Studio âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // AI multilingual dubbing + lip-sync: ElevenLabs v2 TTS Â· GPT translation.
     dubbing: router({
 
       generateDub: protectedProcedure
@@ -14750,7 +14774,7 @@ Return JSON ONLY in this exact shape:
         .mutation(async ({ ctx, input }) => {
           const userKeys = await db.getUserApiKeys(ctx.user.id);
           const elevenlabsKey = userKeys.elevenlabsKey;
-          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for dubbing. Add it in Settings → API Keys." });
+          if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for dubbing. Add it in Settings â API Keys." });
           const body: any = {
             text: input.text,
             model_id: "eleven_multilingual_v2",
@@ -14801,7 +14825,7 @@ Return JSON ONLY in this exact shape:
         .mutation(async ({ ctx, input }) => {
           const userKeys = await db.getUserApiKeys(ctx.user.id);
           const openaiKey = userKeys.openaiKey;
-          if (!openaiKey) throw new TRPCError({ code: "BAD_REQUEST", message: "OpenAI API key required for translation. Add it in Settings → API Keys." });
+          if (!openaiKey) throw new TRPCError({ code: "BAD_REQUEST", message: "OpenAI API key required for translation. Add it in Settings â API Keys." });
           const resp = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
