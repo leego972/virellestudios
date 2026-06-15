@@ -1,9 +1,9 @@
 /**
- * Voice Acting Engine — AI-Powered Dialogue Audio Generation
+ * Voice Acting Engine â AI-Powered Dialogue Audio Generation
  * 
  * Generates spoken dialogue audio for film scenes using TTS APIs.
  * Supports multiple providers (BYOK):
- * 1. ElevenLabs (premium — most expressive, best for film)
+ * 1. ElevenLabs (premium â most expressive, best for film)
  * 2. OpenAI TTS (high quality, good emotion range)
  * 3. Pollinations TTS (free fallback)
  * 
@@ -23,10 +23,11 @@ import { promisify } from "util";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { logger } from "./logger";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export type TTSProvider = "elevenlabs" | "openai" | "pollinations";
 
@@ -72,7 +73,7 @@ export interface VoiceActingResult {
   lineCount: number;
 }
 
-// ─── Emotion Profile Registry ─────────────────────────────────────────────────
+// âââ Emotion Profile Registry âââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface EmotionProfile {
   prefix: string;
@@ -85,40 +86,40 @@ export interface EmotionProfile {
 
 export const EMOTION_PROFILES: Record<string, EmotionProfile> = {
   neutral:      { prefix: "", stability: 0.55, similarity: 0.75, style: 0.35, speedHint: "natural conversational pace", deliveryNote: "Neutral, natural delivery" },
-  happy:        { prefix: "*with genuine warmth and happiness*", stability: 0.45, similarity: 0.75, style: 0.65, speedHint: "slightly upbeat, warm", deliveryNote: "Warm and upbeat — smile in the voice" },
-  cheerful:     { prefix: "*brightly, with infectious cheerfulness*", stability: 0.40, similarity: 0.70, style: 0.75, speedHint: "bright, energetic, slightly faster", deliveryNote: "Bright and energetic — light, bouncy delivery" },
-  excited:      { prefix: "*with breathless excitement, barely containing it*", stability: 0.30, similarity: 0.70, style: 0.85, speedHint: "fast, breathless, forward-leaning", deliveryNote: "Fast and breathless — energy spilling over" },
-  loving:       { prefix: "*softly, with deep tenderness and love*", stability: 0.65, similarity: 0.80, style: 0.55, speedHint: "slow, gentle, intimate", deliveryNote: "Slow and tender — intimate, close delivery" },
-  hopeful:      { prefix: "*with quiet, fragile hope*", stability: 0.55, similarity: 0.75, style: 0.50, speedHint: "measured, slightly tentative", deliveryNote: "Measured and earnest — vulnerability beneath the hope" },
-  confident:    { prefix: "*speaking with calm, unshakeable authority*", stability: 0.70, similarity: 0.80, style: 0.45, speedHint: "deliberate, unhurried, commanding", deliveryNote: "Deliberate and commanding — no hesitation" },
+  happy:        { prefix: "*with genuine warmth and happiness*", stability: 0.45, similarity: 0.75, style: 0.65, speedHint: "slightly upbeat, warm", deliveryNote: "Warm and upbeat â smile in the voice" },
+  cheerful:     { prefix: "*brightly, with infectious cheerfulness*", stability: 0.40, similarity: 0.70, style: 0.75, speedHint: "bright, energetic, slightly faster", deliveryNote: "Bright and energetic â light, bouncy delivery" },
+  excited:      { prefix: "*with breathless excitement, barely containing it*", stability: 0.30, similarity: 0.70, style: 0.85, speedHint: "fast, breathless, forward-leaning", deliveryNote: "Fast and breathless â energy spilling over" },
+  loving:       { prefix: "*softly, with deep tenderness and love*", stability: 0.65, similarity: 0.80, style: 0.55, speedHint: "slow, gentle, intimate", deliveryNote: "Slow and tender â intimate, close delivery" },
+  hopeful:      { prefix: "*with quiet, fragile hope*", stability: 0.55, similarity: 0.75, style: 0.50, speedHint: "measured, slightly tentative", deliveryNote: "Measured and earnest â vulnerability beneath the hope" },
+  confident:    { prefix: "*speaking with calm, unshakeable authority*", stability: 0.70, similarity: 0.80, style: 0.45, speedHint: "deliberate, unhurried, commanding", deliveryNote: "Deliberate and commanding â no hesitation" },
   proud:        { prefix: "*with unmistakable pride, chin up*", stability: 0.65, similarity: 0.78, style: 0.55, speedHint: "measured, slightly elevated", deliveryNote: "Elevated and self-assured" },
-  sad:          { prefix: "*voice heavy with sadness, barely holding together*", stability: 0.60, similarity: 0.80, style: 0.60, speedHint: "slow, heavy, trailing off at ends", deliveryNote: "Heavy and slow — words cost something to say" },
-  crying:       { prefix: "*through tears, voice breaking*", stability: 0.35, similarity: 0.75, style: 0.70, speedHint: "halting, broken, uneven rhythm", deliveryNote: "Broken and halting — voice cracks on key words" },
-  grief:        { prefix: "*devastated, hollow with grief*", stability: 0.40, similarity: 0.75, style: 0.65, speedHint: "very slow, hollow, almost inward", deliveryNote: "Hollow and devastated — barely audible at times" },
-  angry:        { prefix: "*with barely controlled fury, jaw tight*", stability: 0.25, similarity: 0.70, style: 0.90, speedHint: "clipped, tense, each word deliberate and hard", deliveryNote: "Clipped and tense — controlled rage is more frightening than shouting" },
-  aggressive:   { prefix: "*aggressively, leaning in, voice raised*", stability: 0.20, similarity: 0.68, style: 0.95, speedHint: "loud, fast, forward-driving, no pauses", deliveryNote: "Loud and driving — physical aggression in the voice" },
-  shouting:     { prefix: "*SHOUTING at full volume*", stability: 0.15, similarity: 0.65, style: 1.0, speedHint: "full volume, fast, no restraint", deliveryNote: "Full-volume shout — raw and uncontrolled" },
-  bitter:       { prefix: "*with cold, quiet bitterness*", stability: 0.50, similarity: 0.75, style: 0.70, speedHint: "slow and deliberate, each word chosen to wound", deliveryNote: "Cold and deliberate — every word chosen to sting" },
-  contemptuous: { prefix: "*dripping with contempt, barely deigning to speak*", stability: 0.55, similarity: 0.75, style: 0.75, speedHint: "slow, dismissive, slightly clipped", deliveryNote: "Dismissive and slow — the other person isn't worth full effort" },
-  disgusted:    { prefix: "*with visible disgust, recoiling slightly*", stability: 0.45, similarity: 0.72, style: 0.72, speedHint: "clipped, slightly rushed, pulling away", deliveryNote: "Clipped and recoiling — physical revulsion in the voice" },
-  threatening:  { prefix: "*in a low, dangerous tone — a promise, not a warning*", stability: 0.60, similarity: 0.78, style: 0.80, speedHint: "very slow, very quiet, each word landing like a stone", deliveryNote: "Quiet and slow — the quieter the voice, the more dangerous" },
-  fearful:      { prefix: "*trembling with fear, voice barely steady*", stability: 0.30, similarity: 0.72, style: 0.75, speedHint: "uneven, slightly fast, voice catching", deliveryNote: "Uneven and catching — fear makes the voice unreliable" },
-  panicked:     { prefix: "*in a panicked rush, words tumbling out*", stability: 0.20, similarity: 0.68, style: 0.88, speedHint: "very fast, breathless, no pauses, running together", deliveryNote: "Very fast and breathless — words trip over each other" },
-  nervous:      { prefix: "*nervously, with small hesitations*", stability: 0.40, similarity: 0.73, style: 0.55, speedHint: "slightly halting, small pauses mid-sentence", deliveryNote: "Halting with small pauses — the mind working faster than the mouth" },
-  surprised:    { prefix: "*genuinely caught off guard, voice jumping slightly*", stability: 0.30, similarity: 0.72, style: 0.78, speedHint: "starts fast then slows as it registers", deliveryNote: "Starts fast then slows — the brain catching up to the mouth" },
-  shocked:      { prefix: "*stunned into near-silence, barely able to form words*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "very slow, halting, words don't quite form", deliveryNote: "Slow and halting — the mind has gone blank" },
-  cold:         { prefix: "*in a cold, detached, clinical tone*", stability: 0.75, similarity: 0.80, style: 0.25, speedHint: "flat, even, no emotional variation", deliveryNote: "Flat and even — emotion has been deliberately removed" },
-  resigned:     { prefix: "*with quiet resignation, the fight gone out of them*", stability: 0.65, similarity: 0.78, style: 0.45, speedHint: "slow, flat, trailing off", deliveryNote: "Slow and flat — they've stopped fighting" },
-  grumpy:       { prefix: "*grumpily, with low-level irritation*", stability: 0.45, similarity: 0.73, style: 0.60, speedHint: "slightly clipped, low energy, muttering quality", deliveryNote: "Clipped and muttered — low-level irritation throughout" },
-  tired:        { prefix: "*exhausted, running on empty*", stability: 0.60, similarity: 0.78, style: 0.40, speedHint: "slow, low energy, slightly slurred at ends of words", deliveryNote: "Slow and low — every word is an effort" },
-  bored:        { prefix: "*with flat, undisguised boredom*", stability: 0.70, similarity: 0.78, style: 0.20, speedHint: "monotone, slow, trailing off, barely engaged", deliveryNote: "Monotone and trailing — they'd rather be anywhere else" },
-  confused:     { prefix: "*genuinely confused, working it out as they speak*", stability: 0.40, similarity: 0.73, style: 0.50, speedHint: "halting, rising intonation mid-sentence, questioning", deliveryNote: "Halting with rising intonation — thinking out loud" },
-  sarcastic:    { prefix: "*with dripping sarcasm, every word a small performance*", stability: 0.45, similarity: 0.73, style: 0.80, speedHint: "slightly slow and deliberate, exaggerated emphasis", deliveryNote: "Deliberate and exaggerated — the performance is the point" },
-  mocking:      { prefix: "*mockingly, mimicking or belittling*", stability: 0.40, similarity: 0.70, style: 0.82, speedHint: "exaggerated, slightly sing-song, drawn out", deliveryNote: "Exaggerated and sing-song — cruelty dressed as humour" },
-  pleading:     { prefix: "*pleading desperately, voice raw with need*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "fast at first, slowing as desperation deepens", deliveryNote: "Raw and urgent — dignity abandoned" },
-  desperate:    { prefix: "*with raw, unguarded desperation*", stability: 0.28, similarity: 0.70, style: 0.85, speedHint: "fast and uneven, voice cracking under pressure", deliveryNote: "Fast and cracking — nothing held back" },
-  whisper:      { prefix: "*whispering softly, barely above breath*", stability: 0.70, similarity: 0.82, style: 0.30, speedHint: "very slow, intimate, barely audible", deliveryNote: "Barely above breath — intimate and close" },
-  seductive:    { prefix: "*in a low, deliberate, alluring voice*", stability: 0.65, similarity: 0.80, style: 0.60, speedHint: "slow, low, each word drawn out slightly", deliveryNote: "Slow and low — every word chosen for effect" },
+  sad:          { prefix: "*voice heavy with sadness, barely holding together*", stability: 0.60, similarity: 0.80, style: 0.60, speedHint: "slow, heavy, trailing off at ends", deliveryNote: "Heavy and slow â words cost something to say" },
+  crying:       { prefix: "*through tears, voice breaking*", stability: 0.35, similarity: 0.75, style: 0.70, speedHint: "halting, broken, uneven rhythm", deliveryNote: "Broken and halting â voice cracks on key words" },
+  grief:        { prefix: "*devastated, hollow with grief*", stability: 0.40, similarity: 0.75, style: 0.65, speedHint: "very slow, hollow, almost inward", deliveryNote: "Hollow and devastated â barely audible at times" },
+  angry:        { prefix: "*with barely controlled fury, jaw tight*", stability: 0.25, similarity: 0.70, style: 0.90, speedHint: "clipped, tense, each word deliberate and hard", deliveryNote: "Clipped and tense â controlled rage is more frightening than shouting" },
+  aggressive:   { prefix: "*aggressively, leaning in, voice raised*", stability: 0.20, similarity: 0.68, style: 0.95, speedHint: "loud, fast, forward-driving, no pauses", deliveryNote: "Loud and driving â physical aggression in the voice" },
+  shouting:     { prefix: "*SHOUTING at full volume*", stability: 0.15, similarity: 0.65, style: 1.0, speedHint: "full volume, fast, no restraint", deliveryNote: "Full-volume shout â raw and uncontrolled" },
+  bitter:       { prefix: "*with cold, quiet bitterness*", stability: 0.50, similarity: 0.75, style: 0.70, speedHint: "slow and deliberate, each word chosen to wound", deliveryNote: "Cold and deliberate â every word chosen to sting" },
+  contemptuous: { prefix: "*dripping with contempt, barely deigning to speak*", stability: 0.55, similarity: 0.75, style: 0.75, speedHint: "slow, dismissive, slightly clipped", deliveryNote: "Dismissive and slow â the other person isn't worth full effort" },
+  disgusted:    { prefix: "*with visible disgust, recoiling slightly*", stability: 0.45, similarity: 0.72, style: 0.72, speedHint: "clipped, slightly rushed, pulling away", deliveryNote: "Clipped and recoiling â physical revulsion in the voice" },
+  threatening:  { prefix: "*in a low, dangerous tone â a promise, not a warning*", stability: 0.60, similarity: 0.78, style: 0.80, speedHint: "very slow, very quiet, each word landing like a stone", deliveryNote: "Quiet and slow â the quieter the voice, the more dangerous" },
+  fearful:      { prefix: "*trembling with fear, voice barely steady*", stability: 0.30, similarity: 0.72, style: 0.75, speedHint: "uneven, slightly fast, voice catching", deliveryNote: "Uneven and catching â fear makes the voice unreliable" },
+  panicked:     { prefix: "*in a panicked rush, words tumbling out*", stability: 0.20, similarity: 0.68, style: 0.88, speedHint: "very fast, breathless, no pauses, running together", deliveryNote: "Very fast and breathless â words trip over each other" },
+  nervous:      { prefix: "*nervously, with small hesitations*", stability: 0.40, similarity: 0.73, style: 0.55, speedHint: "slightly halting, small pauses mid-sentence", deliveryNote: "Halting with small pauses â the mind working faster than the mouth" },
+  surprised:    { prefix: "*genuinely caught off guard, voice jumping slightly*", stability: 0.30, similarity: 0.72, style: 0.78, speedHint: "starts fast then slows as it registers", deliveryNote: "Starts fast then slows â the brain catching up to the mouth" },
+  shocked:      { prefix: "*stunned into near-silence, barely able to form words*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "very slow, halting, words don't quite form", deliveryNote: "Slow and halting â the mind has gone blank" },
+  cold:         { prefix: "*in a cold, detached, clinical tone*", stability: 0.75, similarity: 0.80, style: 0.25, speedHint: "flat, even, no emotional variation", deliveryNote: "Flat and even â emotion has been deliberately removed" },
+  resigned:     { prefix: "*with quiet resignation, the fight gone out of them*", stability: 0.65, similarity: 0.78, style: 0.45, speedHint: "slow, flat, trailing off", deliveryNote: "Slow and flat â they've stopped fighting" },
+  grumpy:       { prefix: "*grumpily, with low-level irritation*", stability: 0.45, similarity: 0.73, style: 0.60, speedHint: "slightly clipped, low energy, muttering quality", deliveryNote: "Clipped and muttered â low-level irritation throughout" },
+  tired:        { prefix: "*exhausted, running on empty*", stability: 0.60, similarity: 0.78, style: 0.40, speedHint: "slow, low energy, slightly slurred at ends of words", deliveryNote: "Slow and low â every word is an effort" },
+  bored:        { prefix: "*with flat, undisguised boredom*", stability: 0.70, similarity: 0.78, style: 0.20, speedHint: "monotone, slow, trailing off, barely engaged", deliveryNote: "Monotone and trailing â they'd rather be anywhere else" },
+  confused:     { prefix: "*genuinely confused, working it out as they speak*", stability: 0.40, similarity: 0.73, style: 0.50, speedHint: "halting, rising intonation mid-sentence, questioning", deliveryNote: "Halting with rising intonation â thinking out loud" },
+  sarcastic:    { prefix: "*with dripping sarcasm, every word a small performance*", stability: 0.45, similarity: 0.73, style: 0.80, speedHint: "slightly slow and deliberate, exaggerated emphasis", deliveryNote: "Deliberate and exaggerated â the performance is the point" },
+  mocking:      { prefix: "*mockingly, mimicking or belittling*", stability: 0.40, similarity: 0.70, style: 0.82, speedHint: "exaggerated, slightly sing-song, drawn out", deliveryNote: "Exaggerated and sing-song â cruelty dressed as humour" },
+  pleading:     { prefix: "*pleading desperately, voice raw with need*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "fast at first, slowing as desperation deepens", deliveryNote: "Raw and urgent â dignity abandoned" },
+  desperate:    { prefix: "*with raw, unguarded desperation*", stability: 0.28, similarity: 0.70, style: 0.85, speedHint: "fast and uneven, voice cracking under pressure", deliveryNote: "Fast and cracking â nothing held back" },
+  whisper:      { prefix: "*whispering softly, barely above breath*", stability: 0.70, similarity: 0.82, style: 0.30, speedHint: "very slow, intimate, barely audible", deliveryNote: "Barely above breath â intimate and close" },
+  seductive:    { prefix: "*in a low, deliberate, alluring voice*", stability: 0.65, similarity: 0.80, style: 0.60, speedHint: "slow, low, each word drawn out slightly", deliveryNote: "Slow and low â every word chosen for effect" },
 };
 
 export const EMOTION_STATES = Object.keys(EMOTION_PROFILES);
@@ -133,7 +134,7 @@ export const EMOTION_GROUPS: Record<string, string[]> = {
   "Performative":     ["sarcastic", "mocking", "pleading", "desperate", "whisper", "seductive"],
 };
 
-// ─── Voice Presets ────────────────────────────────────────────────────────────
+// âââ Voice Presets ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 /** Default voice assignments for OpenAI TTS */
 const OPENAI_VOICE_PRESETS: Record<string, string> = {
@@ -158,7 +159,7 @@ const ELEVENLABS_VOICE_PRESETS: Record<string, string> = {
   "narrator": "ErXwobaYiN019PkySvjV",        // Antoni
 };
 
-// ─── Provider Detection ───
+// âââ Provider Detection âââ
 
 function selectTTSProvider(keys: VoiceActingKeys): TTSProvider {
   if (keys.elevenlabsKey) return "elevenlabs";
@@ -205,11 +206,11 @@ function getVoiceForCharacter(
   } else if (provider === "openai") {
     return OPENAI_VOICE_PRESETS[key] || OPENAI_VOICE_PRESETS["neutral"];
   }
-  // Pollinations — return a descriptive string
+  // Pollinations â return a descriptive string
   return `${gender}-${age}`;
 }
 
-// ─── ElevenLabs TTS ───
+// âââ ElevenLabs TTS âââ
 
 async function generateElevenLabsAudio(
   apiKey: string,
@@ -263,7 +264,7 @@ async function generateElevenLabsAudio(
   return Buffer.from(await resp.arrayBuffer());
 }
 
-// ─── OpenAI TTS ───
+// âââ OpenAI TTS âââ
 
 async function generateOpenAIAudio(
   apiKey: string,
@@ -277,7 +278,7 @@ async function generateOpenAIAudio(
   const cues: string[] = [];
   if (emotion && emotion !== "neutral") cues.push(`[${emotion}: ${profile.deliveryNote}]`);
   if (direction) cues.push(`[direction: ${direction}]`);
-  if (pacing && pacing !== "normal") cues.push(`[pacing: ${pacing} — ${profile.speedHint}]`);
+  if (pacing && pacing !== "normal") cues.push(`[pacing: ${pacing} â ${profile.speedHint}]`);
   const processedText = cues.length > 0 ? `${cues.join(" ")} ${text}` : text;
 
   const resp = await fetch("https://api.openai.com/v1/audio/speech", {
@@ -304,7 +305,7 @@ async function generateOpenAIAudio(
   return Buffer.from(await resp.arrayBuffer());
 }
 
-// ─── Pollinations TTS (Free Fallback) ───
+// âââ Pollinations TTS (Free Fallback) âââ
 
 async function generatePollinationsAudio(
   text: string,
@@ -341,7 +342,7 @@ async function generatePollinationsAudio(
   return Buffer.from(await resp.arrayBuffer());
 }
 
-// ─── Audio Stitching ───
+// âââ Audio Stitching âââ
 
 /**
  * Stitch multiple audio clips with pauses between them into a single track.
@@ -418,7 +419,7 @@ async function stitchDialogueAudio(
   }
 }
 
-// ─── Main Entry Point ───
+// âââ Main Entry Point âââ
 
 /**
  * Generate voice acting audio for a scene's dialogue.
@@ -435,7 +436,7 @@ export async function generateSceneDialogue(
     throw new Error("No dialogue lines provided");
   }
 
-  console.log(`[VoiceActing] Generating ${dialogueLines.length} lines via ${provider}`);
+  logger.info(`[VoiceActing] Generating ${dialogueLines.length} lines via ${provider}`);
 
   // Track unique characters for voice assignment
   const characterIndex = new Map<string, number>();
@@ -455,7 +456,7 @@ export async function generateSceneDialogue(
     const charVoice = characterVoices?.[line.characterName];
     const voiceId = getVoiceForCharacter(line.characterName, charVoice, provider, idx);
 
-    console.log(`[VoiceActing] Line ${i + 1}/${dialogueLines.length}: ${line.characterName} (${provider}:${voiceId})`);
+    logger.info(`[VoiceActing] Line ${i + 1}/${dialogueLines.length}: ${line.characterName} (${provider}:${voiceId})`);
 
     let audioBuffer: Buffer;
 
@@ -498,7 +499,7 @@ export async function generateSceneDialogue(
           break;
       }
     } catch (err: any) {
-      console.error(`[VoiceActing] Failed to generate line ${i + 1}:`, err.message);
+      logger.error(`[VoiceActing] Failed to generate line ${i + 1}:`, err.message);
       // Generate a short silence as placeholder for failed lines
       audioBuffer = Buffer.alloc(0);
       continue; // Skip this line
@@ -523,7 +524,7 @@ export async function generateSceneDialogue(
   const key = `dialogue/${request.projectId}/scene-${request.sceneId}-dialogue-${Date.now()}.mp3`;
   const { url: audioUrl } = await storagePut(key, finalAudio, "audio/mpeg");
 
-  console.log(`[VoiceActing] Scene dialogue generated: ${durationSeconds.toFixed(1)}s, ${clips.length} lines, via ${provider}`);
+  logger.info(`[VoiceActing] Scene dialogue generated: ${durationSeconds.toFixed(1)}s, ${clips.length} lines, via ${provider}`);
 
   return {
     audioUrl,
@@ -554,11 +555,11 @@ export async function inferEmotionFromContext(params: {
     messages: [
       {
         role: "system",
-        content: `You are a professional film director and voice director with 30 years of Hollywood experience. Analyse a dialogue line in its full dramatic context and determine the precise emotional delivery.\n\nReturn JSON with:\n- emotion: one of: ${EMOTION_STATES.join(", ")}\n- pacing: one of: slow | normal | fast | staccato | trailing\n- direction: concise acting direction (max 12 words) — physical, specific, actable. e.g. "jaw tight, eyes not leaving the door"\n- reasoning: one sentence explaining why this delivery serves the scene\n\nRules:\n- Choose the emotion that serves the SCENE, not just the surface meaning of the words\n- Consider subtext — "I'm fine" after a loss is not "happy"\n- Pacing must reflect the emotional state: panic = fast, grief = slow, cold = flat/normal\n- Direction must be physical and specific, never vague ("with emotion" is not acceptable)\n- Genre matters: a thriller "angry" is colder and more controlled than a melodrama "angry"`,
+        content: `You are a professional film director and voice director with 30 years of Hollywood experience. Analyse a dialogue line in its full dramatic context and determine the precise emotional delivery.\n\nReturn JSON with:\n- emotion: one of: ${EMOTION_STATES.join(", ")}\n- pacing: one of: slow | normal | fast | staccato | trailing\n- direction: concise acting direction (max 12 words) â physical, specific, actable. e.g. "jaw tight, eyes not leaving the door"\n- reasoning: one sentence explaining why this delivery serves the scene\n\nRules:\n- Choose the emotion that serves the SCENE, not just the surface meaning of the words\n- Consider subtext â "I'm fine" after a loss is not "happy"\n- Pacing must reflect the emotional state: panic = fast, grief = slow, cold = flat/normal\n- Direction must be physical and specific, never vague ("with emotion" is not acceptable)\n- Genre matters: a thriller "angry" is colder and more controlled than a melodrama "angry"`,
       },
       {
         role: "user",
-        content: `Film genre: ${genre || "Drama"}\nScene: ${sceneDescription || "Not specified"}\nCharacter: ${characterName}${characterDescription ? ` — ${characterDescription}` : ""}\n\nPrevious dialogue:\n${contextBlock}\n\nLine to analyse:\n${characterName.toUpperCase()}: "${line}"`,
+        content: `Film genre: ${genre || "Drama"}\nScene: ${sceneDescription || "Not specified"}\nCharacter: ${characterName}${characterDescription ? ` â ${characterDescription}` : ""}\n\nPrevious dialogue:\n${contextBlock}\n\nLine to analyse:\n${characterName.toUpperCase()}: "${line}"`,
       },
     ],
     response_format: {
@@ -646,7 +647,7 @@ export async function generateNarration(
   return { audioUrl, durationSeconds, provider };
 }
 
-// ─── Provider Info ───
+// âââ Provider Info âââ
 
 export const TTS_PROVIDERS = [
   {
@@ -656,7 +657,7 @@ export const TTS_PROVIDERS = [
     keyPrefix: "",
     signupUrl: "https://elevenlabs.io/sign-up",
     pricing: "Free tier: 10K chars/month. Starter: $5/mo (30K chars). Pro: $22/mo (100K chars).",
-    quality: "Ultra-premium — indistinguishable from human actors",
+    quality: "Ultra-premium â indistinguishable from human actors",
   },
   {
     id: "openai" as TTSProvider,
@@ -665,7 +666,7 @@ export const TTS_PROVIDERS = [
     keyPrefix: "sk-",
     signupUrl: "https://platform.openai.com/api-keys",
     pricing: "TTS-1: $15/1M chars. TTS-1-HD: $30/1M chars.",
-    quality: "Premium — natural and expressive",
+    quality: "Premium â natural and expressive",
   },
   {
     id: "pollinations" as TTSProvider,
@@ -674,6 +675,6 @@ export const TTS_PROVIDERS = [
     keyPrefix: "",
     signupUrl: "https://pollinations.ai",
     pricing: "FREE",
-    quality: "Basic — functional but less expressive",
+    quality: "Basic â functional but less expressive",
   },
 ];
