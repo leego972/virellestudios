@@ -1,17 +1,17 @@
 /**
- * Video Job Worker — Persistent Background Processor
+ * Video Job Worker â Persistent Background Processor
  *
  * Problem: Railway kills Node.js processes on redeploy, causing Runway jobs
  * that use waitForTaskOutput() to die mid-generation, leaving scenes stuck
  * in "generating" status forever.
  *
  * Solution: Two-phase approach:
- * 1. SUBMIT — Create Runway task, store task ID + all params in DB immediately
- * 2. POLL   — This worker runs on startup and every 15s, polling Runway for
+ * 1. SUBMIT â Create Runway task, store task ID + all params in DB immediately
+ * 2. POLL   â This worker runs on startup and every 15s, polling Runway for
  *             any pending task IDs and completing them.
  *
  * On Railway restart, the worker picks up all pending task IDs from the DB
- * and resumes polling — no generation is ever lost.
+ * and resumes polling â no generation is ever lost.
  */
 
 import RunwayML, { TaskFailedError } from "@runwayml/sdk";
@@ -24,10 +24,11 @@ import { promisify } from "util";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { logger } from "./logger";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export interface RunwayJobMetadata {
   runwayTaskId: string;
@@ -45,7 +46,7 @@ export interface RunwayJobMetadata {
   aiPromptOverride?: string;
 }
 
-// ─── Veo 3 Job Metadata ───
+// âââ Veo 3 Job Metadata âââ
 
 export interface Veo3JobMetadata {
   veo3OperationName: string;
@@ -57,7 +58,7 @@ export interface Veo3JobMetadata {
   imageUrl?: string;
 }
 
-// ─── fal.ai Job Metadata ───
+// âââ fal.ai Job Metadata âââ
 
 export interface FalJobMetadata {
   falRequestId: string;
@@ -70,7 +71,7 @@ export interface FalJobMetadata {
   imageUrl?: string;
 }
 
-// ─── Poll a single Veo 3 operation ───
+// âââ Poll a single Veo 3 operation âââ
 
 async function pollVeo3Operation(apiKey: string, operationName: string): Promise<{
   status: "running" | "succeeded" | "failed";
@@ -82,7 +83,7 @@ async function pollVeo3Operation(apiKey: string, operationName: string): Promise
     const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
     if (!resp.ok) {
       const errText = await resp.text();
-      console.warn(`[VideoWorker:Veo3] Poll returned ${resp.status}: ${errText.substring(0, 200)}`);
+      logger.warn(`[VideoWorker:Veo3] Poll returned ${resp.status}: ${errText.substring(0, 200)}`);
       return { status: "running" }; // Treat HTTP errors as still running
     }
     const data = await resp.json() as any;
@@ -103,20 +104,20 @@ async function pollVeo3Operation(apiKey: string, operationName: string): Promise
     }
     return { status: "succeeded", videoUrl: videoUri };
   } catch (err: any) {
-    console.warn(`[VideoWorker:Veo3] Poll error (treating as running):`, err.message);
+    logger.warn(`[VideoWorker:Veo3] Poll error (treating as running):`, err.message);
     return { status: "running" };
   }
 }
 
-// ─── Download and store a completed Veo 3 video ───
+// âââ Download and store a completed Veo 3 video âââ
 
 async function processCompletedVeo3Video(
   veoVideoUri: string,
   apiKey: string,
   meta: Veo3JobMetadata
 ): Promise<string> {
-  console.log(`[VideoWorker:Veo3] Downloading video for scene ${meta.sceneId}...`);
-  // Veo 3 videos are served from Google's Files API — append key for auth
+  logger.info(`[VideoWorker:Veo3] Downloading video for scene ${meta.sceneId}...`);
+  // Veo 3 videos are served from Google's Files API â append key for auth
   const downloadUrl = veoVideoUri.includes("?")
     ? `${veoVideoUri}&key=${apiKey}`
     : `${veoVideoUri}?key=${apiKey}`;
@@ -129,14 +130,14 @@ async function processCompletedVeo3Video(
     const result = await storagePut(s3Key, buffer, "video/mp4");
     url = result.url;
   } catch (storageErr: any) {
-    console.warn(`[VideoWorker:Veo3] Storage unavailable (${storageErr.message}), using raw CDN URL`);
+    logger.warn(`[VideoWorker:Veo3] Storage unavailable (${storageErr.message}), using raw CDN URL`);
     url = downloadUrl;
   }
-  console.log(`[VideoWorker:Veo3] Video uploaded to S3: ${url}`);
+  logger.info(`[VideoWorker:Veo3] Video uploaded to S3: ${url}`);
   return url;
 }
 
-// ─── Submit a Runway job (non-blocking) ───
+// âââ Submit a Runway job (non-blocking) âââ
 
 /**
  * Submit a Runway Gen-4 Turbo job and return the task ID immediately.
@@ -157,7 +158,7 @@ export async function submitRunwayJob(
 
   const client = new RunwayML({ apiKey });
 
-  // Runway API enforces a 1000-character limit on promptText — truncate to avoid 400 errors
+  // Runway API enforces a 1000-character limit on promptText â truncate to avoid 400 errors
   const truncatedPrompt = params.prompt.length > 1000 ? params.prompt.substring(0, 997) + "..." : params.prompt;
 
   const createParams: any = {
@@ -169,7 +170,7 @@ export async function submitRunwayJob(
 
   if (params.imageUrl) {
     createParams.promptImage = params.imageUrl;
-    console.log(`[VideoWorker] Runway image-to-video: ${params.imageUrl.substring(0, 80)}`);
+    logger.info(`[VideoWorker] Runway image-to-video: ${params.imageUrl.substring(0, 80)}`);
   }
 
   if (params.negativePrompt) {
@@ -180,9 +181,9 @@ export async function submitRunwayJob(
     createParams.seed = params.seed;
   }
 
-  console.log(`[VideoWorker] Submitting Runway job: "${params.prompt.substring(0, 100)}..."`);
+  logger.info(`[VideoWorker] Submitting Runway job: "${params.prompt.substring(0, 100)}..."`);
 
-  // Create the task — returns immediately with a task ID
+  // Create the task â returns immediately with a task ID
   // Use imageToVideo (gen4_turbo) only when an image is provided; otherwise use textToVideo (gen4.5)
   let task: any;
   if (params.imageUrl) {
@@ -196,7 +197,7 @@ export async function submitRunwayJob(
       duration: createParams.duration,
     };
     if (createParams.seed !== undefined) textParams.seed = createParams.seed;
-    console.log(`[VideoWorker] Runway text-to-video (gen4.5) — no image provided`);
+    logger.info(`[VideoWorker] Runway text-to-video (gen4.5) â no image provided`);
     task = await (client as any).textToVideo.create(textParams);
   }
 
@@ -206,11 +207,11 @@ export async function submitRunwayJob(
     throw new Error(`Runway task creation returned no task ID: ${JSON.stringify(task).substring(0, 200)}`);
   }
 
-  console.log(`[VideoWorker] Runway task submitted: ${taskId}`);
+  logger.info(`[VideoWorker] Runway task submitted: ${taskId}`);
   return taskId;
 }
 
-// ─── Poll a single Runway task ───
+// âââ Poll a single Runway task âââ
 
 async function pollRunwayTask(apiKey: string, taskId: string): Promise<{
   status: "running" | "succeeded" | "failed";
@@ -238,12 +239,12 @@ async function pollRunwayTask(apiKey: string, taskId: string): Promise<{
     // Still running
     return { status: "running" };
   } catch (err: any) {
-    console.error(`[VideoWorker] Error polling task ${taskId}:`, err.message);
+    logger.error(`[VideoWorker] Error polling task ${taskId}:`, err.message);
     return { status: "running" }; // Treat poll errors as "still running" to avoid false failures
   }
 }
 
-// ─── Extract last frame from video ───
+// âââ Extract last frame from video âââ
 
 async function extractLastFrame(videoUrl: string, projectId: number, sceneId: number): Promise<string | undefined> {
   const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-frame-"));
@@ -274,7 +275,7 @@ async function extractLastFrame(videoUrl: string, projectId: number, sceneId: nu
       const { url } = await storagePut(key, frameBuffer, "image/jpeg");
       return url;
     } catch {
-      return undefined; // Storage unavailable — skip frame upload
+      return undefined; // Storage unavailable â skip frame upload
     }
   } catch {
     return undefined;
@@ -282,14 +283,14 @@ async function extractLastFrame(videoUrl: string, projectId: number, sceneId: nu
     try { await fs.promises.rm(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
   }
 }
-// ─── Process a completed Runway video ───
+// âââ Process a completed Runway video âââ
 
 async function processCompletedVideo(
   runwayVideoUrl: string,
   meta: RunwayJobMetadata
 ): Promise<string> {
   // Download the Runway video and re-upload to our S3/CloudFront
-  console.log(`[VideoWorker] Downloading Runway video for scene ${meta.sceneId}...`);
+  logger.info(`[VideoWorker] Downloading Runway video for scene ${meta.sceneId}...`);
   const resp = await fetch(runwayVideoUrl);
   if (!resp.ok) throw new Error(`Failed to download Runway video: ${resp.status}`);
   const buffer = Buffer.from(await resp.arrayBuffer());
@@ -300,21 +301,21 @@ async function processCompletedVideo(
     const result = await storagePut(key, buffer, "video/mp4");
     url = result.url;
   } catch (storageErr: any) {
-    console.warn(`[VideoWorker] Storage unavailable (${storageErr.message}), using raw Runway CDN URL`);
+    logger.warn(`[VideoWorker] Storage unavailable (${storageErr.message}), using raw Runway CDN URL`);
     url = runwayVideoUrl;
   }
-  console.log(`[VideoWorker] Video uploaded to S3: ${url}`);
+  logger.info(`[VideoWorker] Video uploaded to S3: ${url}`);
   return url;
 }
 
-// ─── Cascading Fallback Resubmit ───
+// âââ Cascading Fallback Resubmit âââ
 
 /**
  * When an async job (Runway, Veo3, fal.ai) fails after submission,
  * re-submit the original request through the next available provider
  * in the cascade chain instead of hard-failing the scene.
  *
- * Provider cascade order: runway → fal → seedance → replicate → luma → huggingface → pollinations
+ * Provider cascade order: runway â fal â seedance â replicate â luma â huggingface â pollinations
  */
 async function resubmitWithFallback(
   failedProvider: string,
@@ -348,7 +349,7 @@ async function resubmitWithFallback(
       const key = keyMap[nextProvider];
       if (!key) continue;
 
-      console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: ${failedProvider} failed — trying ${nextProvider}`);
+      logger.info(`[VideoWorker:Fallback] Scene ${meta.sceneId}: ${failedProvider} failed â trying ${nextProvider}`);
 
       try {
         // Build a minimal UserApiKeys object that only exposes the next provider
@@ -380,7 +381,7 @@ async function resubmitWithFallback(
         const newMeta = { ...meta, fallbackProvider: nextProvider, fallbackFrom: failedProvider };
 
         if (result.videoUrl.startsWith("runway-pending:") || result.videoUrl.startsWith("veo3-pending:") || result.videoUrl.startsWith("fal-pending:")) {
-          // Async job — update job metadata so worker picks it up on next cycle
+          // Async job â update job metadata so worker picks it up on next cycle
           const newJobMeta: any = { ...newMeta };
           if (result.videoUrl.startsWith("runway-pending:")) {
             newJobMeta.runwayTaskId = result.videoUrl.replace("runway-pending:", "");
@@ -407,10 +408,10 @@ async function resubmitWithFallback(
             await dbConn.execute(sql.raw(`UPDATE generationJobs SET status = 'processing', metadata = '${metaJson}', errorMessage = NULL WHERE id = ${jobId}`));
             await db.updateScene(meta.sceneId, { status: "generating" } as any).catch(() => {});
           }
-          console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: re-submitted async job via ${nextProvider}`);
+          logger.info(`[VideoWorker:Fallback] Scene ${meta.sceneId}: re-submitted async job via ${nextProvider}`);
           return true;
         } else {
-          // Synchronous result — update scene directly
+          // Synchronous result â update scene directly
           const thumbnailUrl = await extractLastFrame(result.videoUrl, meta.projectId, meta.sceneId);
           await db.updateScene(meta.sceneId, {
             videoUrl: result.videoUrl,
@@ -418,24 +419,24 @@ async function resubmitWithFallback(
             ...(thumbnailUrl ? { thumbnailUrl } : {}),
           } as any);
           await db.updateJob(jobId, { status: "completed", resultUrl: result.videoUrl, progress: 100 });
-          console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: completed via ${nextProvider} (sync)`);
+          logger.info(`[VideoWorker:Fallback] Scene ${meta.sceneId}: completed via ${nextProvider} (sync)`);
           return true;
         }
       } catch (err: any) {
-        console.warn(`[VideoWorker:Fallback] ${nextProvider} also failed for scene ${meta.sceneId}: ${err.message}`);
+        logger.warn(`[VideoWorker:Fallback] ${nextProvider} also failed for scene ${meta.sceneId}: ${err.message}`);
         // Continue to next provider
       }
     }
 
-    console.error(`[VideoWorker:Fallback] Scene ${meta.sceneId}: all fallback providers exhausted`);
+    logger.error(`[VideoWorker:Fallback] Scene ${meta.sceneId}: all fallback providers exhausted`);
     return false;
   } catch (err: any) {
-    console.error(`[VideoWorker:Fallback] Unexpected error for scene ${meta?.sceneId}: ${err.message}`);
+    logger.error(`[VideoWorker:Fallback] Unexpected error for scene ${meta?.sceneId}: ${err.message}`);
     return false;
   }
 }
 
-// ─── Main Worker Loop ───
+// âââ Main Worker Loop âââ
 
 let workerRunning = false;
 const POLL_INTERVAL_MS = 15_000; // Poll every 15 seconds
@@ -456,7 +457,7 @@ async function runWorkerCycle() {
     const jobs = (pendingJobs as any)[0] as any[];
     if (!jobs || jobs.length === 0) return;
 
-    console.log(`[VideoWorker] Found ${jobs.length} pending job(s) to poll (Runway + Veo 3)`);
+    logger.info(`[VideoWorker] Found ${jobs.length} pending job(s) to poll (Runway + Veo 3)`);
 
     for (const job of jobs) {
       try {
@@ -466,10 +467,10 @@ async function runWorkerCycle() {
           ? (() => { try { return JSON.parse(job.metadata); } catch { return {}; } })()
           : (job.metadata ?? {});
 
-        // ─── Veo 3 Job ───
+        // âââ Veo 3 Job âââ
         if (meta?.veo3OperationName) {
           if (!meta.veo3ApiKey) {
-            console.warn(`[VideoWorker:Veo3] Job ${job.id} missing API key — marking failed`);
+            logger.warn(`[VideoWorker:Veo3] Job ${job.id} missing API key â marking failed`);
             await db.updateJob(job.id, { status: "failed", errorMessage: "Missing Veo 3 API key" });
             await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             continue;
@@ -479,14 +480,14 @@ async function runWorkerCycle() {
             const createdAt = new Date(job.createdAt).getTime();
             const ageMs = Date.now() - createdAt;
             if (ageMs > 20 * 60 * 1000) {
-              console.warn(`[VideoWorker:Veo3] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
+              logger.warn(`[VideoWorker:Veo3] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
               await db.updateJob(job.id, { status: "failed", errorMessage: "Veo 3 operation timed out after 20 minutes" });
               await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             }
             continue;
           }
           if (veo3Result.status === "failed") {
-            console.error(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} failed: ${veo3Result.error}`);
+            logger.error(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} failed: ${veo3Result.error}`);
             // Attempt cascade to next provider before marking failed
             const resubmitted = await resubmitWithFallback("veo3", meta, job.id);
             if (!resubmitted) {
@@ -496,7 +497,7 @@ async function runWorkerCycle() {
             continue;
           }
           // Succeeded!
-          console.log(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} succeeded! Processing video...`);
+          logger.info(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} succeeded! Processing video...`);
           const veo3FinalUrl = await processCompletedVeo3Video(veo3Result.videoUrl!, meta.veo3ApiKey, meta as Veo3JobMetadata);
           const veo3Thumbnail = await extractLastFrame(veo3FinalUrl, meta.projectId, meta.sceneId);
           await db.updateScene(meta.sceneId, {
@@ -514,14 +515,14 @@ async function runWorkerCycle() {
               link: `/projects/${meta.projectId}/scenes`,
             });
           } catch { /* ignore */ }
-          console.log(`[VideoWorker:Veo3] Scene ${meta.sceneId} completed: ${veo3FinalUrl}`);
+          logger.info(`[VideoWorker:Veo3] Scene ${meta.sceneId} completed: ${veo3FinalUrl}`);
           continue;
         }
 
-        // ─── fal.ai Job ───
+        // âââ fal.ai Job âââ
         if (meta?.falRequestId) {
           if (!meta.falModel) {
-            console.warn(`[VideoWorker:fal] Job ${job.id} missing fal.ai model — marking failed`);
+            logger.warn(`[VideoWorker:fal] Job ${job.id} missing fal.ai model â marking failed`);
             await db.updateJob(job.id, { status: "failed", errorMessage: "Missing fal.ai model" });
             await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             continue;
@@ -534,12 +535,12 @@ async function runWorkerCycle() {
               const currentUserKeys = await db.getUserApiKeys(meta.userId);
               const freshFalKey = currentUserKeys.falKey;
               if (freshFalKey && freshFalKey !== meta.falApiKey) {
-                console.log(`[VideoWorker:fal] Using refreshed fal.ai API key for job ${job.id} (user ${meta.userId})`);
+                logger.info(`[VideoWorker:fal] Using refreshed fal.ai API key for job ${job.id} (user ${meta.userId})`);
                 effectiveFalKey = freshFalKey;
               }
             }
           } catch (keyErr: any) {
-            console.warn(`[VideoWorker:fal] Could not refresh fal.ai key for job ${job.id}: ${keyErr.message}`);
+            logger.warn(`[VideoWorker:fal] Could not refresh fal.ai key for job ${job.id}: ${keyErr.message}`);
           }
           // Platform-level fallback
           if (!effectiveFalKey) {
@@ -547,7 +548,7 @@ async function runWorkerCycle() {
             effectiveFalKey = (ENV as any).falApiKey || meta.falApiKey;
           }
           if (!effectiveFalKey) {
-            console.warn(`[VideoWorker:fal] Job ${job.id} has no valid fal.ai API key — marking failed`);
+            logger.warn(`[VideoWorker:fal] Job ${job.id} has no valid fal.ai API key â marking failed`);
             await db.updateJob(job.id, { status: "failed", errorMessage: "No valid fal.ai API key available" });
             await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             continue;
@@ -558,14 +559,14 @@ async function runWorkerCycle() {
             const createdAt = new Date(job.createdAt).getTime();
             const ageMs = Date.now() - createdAt;
             if (ageMs > 20 * 60 * 1000) {
-              console.warn(`[VideoWorker:fal] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
+              logger.warn(`[VideoWorker:fal] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
               await db.updateJob(job.id, { status: "failed", errorMessage: "fal.ai request timed out after 20 minutes" });
               await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             }
             continue;
           }
           if (falResult.status === "failed") {
-            console.error(`[VideoWorker:fal] Request ${meta.falRequestId} failed: ${falResult.error}`);
+            logger.error(`[VideoWorker:fal] Request ${meta.falRequestId} failed: ${falResult.error}`);
             // Attempt cascade to next provider before marking failed
             const resubmitted = await resubmitWithFallback("fal", meta, job.id);
             if (!resubmitted) {
@@ -575,7 +576,7 @@ async function runWorkerCycle() {
             continue;
           }
           // Succeeded! Download and store the video
-          console.log(`[VideoWorker:fal] Request ${meta.falRequestId} succeeded! Processing video...`);
+          logger.info(`[VideoWorker:fal] Request ${meta.falRequestId} succeeded! Processing video...`);
           let falFinalUrl = falResult.videoUrl!;
           try {
             const falResp = await fetch(falFinalUrl, { signal: AbortSignal.timeout(120000) });
@@ -586,11 +587,11 @@ async function runWorkerCycle() {
                 const result = await storagePut(s3Key, buffer, "video/mp4");
                 falFinalUrl = result.url;
               } catch (storageErr: any) {
-                console.warn(`[VideoWorker:fal] Storage unavailable (${storageErr.message}), using raw fal CDN URL`);
+                logger.warn(`[VideoWorker:fal] Storage unavailable (${storageErr.message}), using raw fal CDN URL`);
               }
             }
           } catch (dlErr: any) {
-            console.warn(`[VideoWorker:fal] Video download failed (${dlErr.message}), using raw CDN URL`);
+            logger.warn(`[VideoWorker:fal] Video download failed (${dlErr.message}), using raw CDN URL`);
           }
           const falThumbnail = await extractLastFrame(falFinalUrl, meta.projectId, meta.sceneId);
           await db.updateScene(meta.sceneId, {
@@ -608,13 +609,13 @@ async function runWorkerCycle() {
               link: `/projects/${meta.projectId}/scenes`,
             });
           } catch { /* ignore */ }
-          console.log(`[VideoWorker:fal] Scene ${meta.sceneId} completed: ${falFinalUrl}`);
+          logger.info(`[VideoWorker:fal] Scene ${meta.sceneId} completed: ${falFinalUrl}`);
           continue;
         }
 
-        // ─── Runway Job ───
+        // âââ Runway Job âââ
         if (!meta?.runwayTaskId) {
-          console.warn(`[VideoWorker] Job ${job.id} missing Runway task ID — marking failed`);
+          logger.warn(`[VideoWorker] Job ${job.id} missing Runway task ID â marking failed`);
           await db.updateJob(job.id, { status: "failed", errorMessage: "Missing Runway task ID" });
           await db.updateScene(meta?.sceneId, { status: "failed" } as any).catch(() => {});
           continue;
@@ -629,12 +630,12 @@ async function runWorkerCycle() {
             const currentUserKeys = await db.getUserApiKeys(meta.userId);
             const freshKey = currentUserKeys.runwayKey;
             if (freshKey && freshKey !== meta.runwayApiKey) {
-              console.log(`[VideoWorker] Using refreshed Runway API key for job ${job.id} (user ${meta.userId})`);
+              logger.info(`[VideoWorker] Using refreshed Runway API key for job ${job.id} (user ${meta.userId})`);
               effectiveRunwayKey = freshKey;
             }
           }
         } catch (keyErr: any) {
-          console.warn(`[VideoWorker] Could not refresh Runway key for job ${job.id}: ${keyErr.message}`);
+          logger.warn(`[VideoWorker] Could not refresh Runway key for job ${job.id}: ${keyErr.message}`);
         }
         // Platform-level fallback
         if (!effectiveRunwayKey) {
@@ -642,7 +643,7 @@ async function runWorkerCycle() {
           effectiveRunwayKey = ENV.runwayApiKey || meta.runwayApiKey;
         }
         if (!effectiveRunwayKey) {
-          console.warn(`[VideoWorker] Job ${job.id} has no valid Runway API key — marking failed`);
+          logger.warn(`[VideoWorker] Job ${job.id} has no valid Runway API key â marking failed`);
           await db.updateJob(job.id, { status: "failed", errorMessage: "No valid Runway API key available" });
           await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
           continue;
@@ -651,20 +652,20 @@ async function runWorkerCycle() {
         const result = await pollRunwayTask(effectiveRunwayKey, meta.runwayTaskId);
 
         if (result.status === "running") {
-          // Still running — check if it's been more than 15 minutes (timeout)
+          // Still running â check if it's been more than 15 minutes (timeout)
           const createdAt = new Date(job.createdAt).getTime();
           const ageMs = Date.now() - createdAt;
           if (ageMs > 15 * 60 * 1000) {
-            console.warn(`[VideoWorker] Job ${job.id} (task ${meta.runwayTaskId}) timed out after ${Math.round(ageMs / 60000)}min`);
+            logger.warn(`[VideoWorker] Job ${job.id} (task ${meta.runwayTaskId}) timed out after ${Math.round(ageMs / 60000)}min`);
             await db.updateJob(job.id, { status: "failed", errorMessage: "Runway task timed out after 15 minutes" });
             await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
           }
-          // Otherwise just skip — will be polled again next cycle
+          // Otherwise just skip â will be polled again next cycle
           continue;
         }
 
         if (result.status === "failed") {
-          console.error(`[VideoWorker] Runway task ${meta.runwayTaskId} failed: ${result.error}`);
+          logger.error(`[VideoWorker] Runway task ${meta.runwayTaskId} failed: ${result.error}`);
           // Attempt cascade to next provider before marking failed
           const resubmitted = await resubmitWithFallback("runway", meta, job.id);
           if (!resubmitted) {
@@ -675,7 +676,7 @@ async function runWorkerCycle() {
         }
 
         // Succeeded! Process the video
-        console.log(`[VideoWorker] Runway task ${meta.runwayTaskId} succeeded! Processing video...`);
+        logger.info(`[VideoWorker] Runway task ${meta.runwayTaskId} succeeded! Processing video...`);
         const finalVideoUrl = await processCompletedVideo(result.videoUrl!, meta);
 
         // Extract thumbnail (last frame for continuity)
@@ -713,24 +714,24 @@ async function runWorkerCycle() {
           });
         } catch { /* ignore */ }
 
-        console.log(`[VideoWorker] Scene ${meta.sceneId} completed successfully: ${finalVideoUrl}`);
+        logger.info(`[VideoWorker] Scene ${meta.sceneId} completed successfully: ${finalVideoUrl}`);
 
       } catch (err: any) {
-        console.error(`[VideoWorker] Error processing job ${job.id}:`, err.message);
+        logger.error(`[VideoWorker] Error processing job ${job.id}:`, err.message);
       }
     }
   } catch (err: any) {
-    console.error(`[VideoWorker] Worker cycle error:`, err.message);
+    logger.error(`[VideoWorker] Worker cycle error:`, err.message);
   } finally {
     workerRunning = false;
   }
 }
 
-// ─── Startup Recovery ───
+// âââ Startup Recovery âââ
 
 /**
  * On server startup, find any scenes stuck in "generating" status
- * that DON'T have a corresponding processing job — these were killed
+ * that DON'T have a corresponding processing job â these were killed
  * mid-generation and need to be reset to "draft" so users can retry.
  */
 export async function recoverStuckScenes() {
@@ -750,21 +751,21 @@ export async function recoverStuckScenes() {
 
     const scenes = (stuckScenes as any)[0] as any[];
     if (scenes && scenes.length > 0) {
-      console.log(`[VideoWorker] Recovering ${scenes.length} stuck scene(s) on startup`);
+      logger.info(`[VideoWorker] Recovering ${scenes.length} stuck scene(s) on startup`);
       for (const scene of scenes) {
         await dbConn.execute(sql.raw(`UPDATE scenes SET status = 'draft' WHERE id = ${scene.id}`));
-        console.log(`[VideoWorker] Reset stuck scene ${scene.id} to draft`);
+        logger.info(`[VideoWorker] Reset stuck scene ${scene.id} to draft`);
       }
     }
   } catch (err: any) {
-    console.error(`[VideoWorker] Recovery error:`, err.message);
+    logger.error(`[VideoWorker] Recovery error:`, err.message);
   }
 }
 
-// ─── Start the Worker ───
+// âââ Start the Worker âââ
 
 export function startVideoJobWorker() {
-  console.log(`[VideoWorker] Starting persistent video job worker (polling every ${POLL_INTERVAL_MS / 1000}s)`);
+  logger.info(`[VideoWorker] Starting persistent video job worker (polling every ${POLL_INTERVAL_MS / 1000}s)`);
 
   // Run recovery immediately on startup
   recoverStuckScenes().catch(console.error);
