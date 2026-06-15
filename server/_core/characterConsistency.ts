@@ -3,12 +3,12 @@
  * 
  * Solves the two biggest problems in AI film generation:
  * 
- * 1. CHARACTER CONSISTENCY — Same character looks different in every scene
+ * 1. CHARACTER CONSISTENCY â Same character looks different in every scene
  *    Solution: Build a "character DNA" prompt that is injected into every
  *    scene prompt. Uses reference images + detailed physical descriptions
  *    to anchor the AI model's output.
  * 
- * 2. SCENE-TO-SCENE CONTINUITY — Jarring visual jumps between scenes
+ * 2. SCENE-TO-SCENE CONTINUITY â Jarring visual jumps between scenes
  *    Solution: Extract the last frame of each scene and use it as the
  *    reference image (img2vid) for the first shot of the next scene.
  *    Also maintains a "visual state" that tracks what the camera last saw.
@@ -21,6 +21,7 @@
  */
 
 import { storagePut } from "../storage";
+import { logger } from "./logger";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs";
@@ -29,12 +30,12 @@ import * as os from "os";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export interface CharacterDNA {
   characterId: number;
   name: string;
-  /** Detailed physical description — the core consistency anchor */
+  /** Detailed physical description â the core consistency anchor */
   physicalDescription: string;
   /** Reference image URL (uploaded photo or AI-generated reference) */
   referenceImageUrl?: string;
@@ -89,7 +90,7 @@ export interface ContinuityChain {
   characters: CharacterDNA[];
 }
 
-// ─── Character DNA Builder ───
+// âââ Character DNA Builder âââ
 
 /**
  * Build a character DNA from database character record.
@@ -162,18 +163,18 @@ export function buildCharacterDNA(character: {
     clothing: sceneWardrobeOverride?.wardrobeDescription || character.clothing || undefined,
   };
 
-  // Build the prompt anchor — a structured, cinematographer-grade descriptor
+  // Build the prompt anchor â a structured, cinematographer-grade descriptor
   // Priority: faceDnaPrompt (from photo analysis) > manual description > auto-built
   // The anchor is structured in sections so the AI model can parse and weight each category.
   const sections: string[] = [];
 
-  // ── Core identity ──
+  // ââ Core identity ââ
   const identityParts = [`${attrs.age} ${attrs.gender}`];
   if (attrs.ethnicity !== "unspecified") identityParts.push(attrs.ethnicity);
   if (attrs.nationality) identityParts.push(`${attrs.nationality} nationality`);
   sections.push(identityParts.join(", "));
 
-  // ── Face DNA (from photo analysis — highest fidelity) ──
+  // ââ Face DNA (from photo analysis â highest fidelity) ââ
   if (character.faceDnaPrompt) {
     // The faceDnaPrompt is already structured with | separators from the photo analysis
     sections.push(character.faceDnaPrompt);
@@ -188,11 +189,11 @@ export function buildCharacterDNA(character: {
       faceSection.push(`DISTINGUISHING: ${attrs.distinguishingFeatures.join(", ")}`);
     }
     sections.push(faceSection.join(" | "));
-    // ── Photorealism enforcement ──
+    // ââ Photorealism enforcement ââ
     sections.push("photorealistic human face with authentic natural skin texture, visible pores, micro-wrinkles, and subsurface scattering. NOT CGI, NOT plastic skin.");
   }
 
-  // ── Body DNA ──
+  // ââ Body DNA ââ
   if (character.bodyDnaPrompt) {
     sections.push(character.bodyDnaPrompt);
   } else {
@@ -205,7 +206,7 @@ export function buildCharacterDNA(character: {
     if (bodySection.length > 1) sections.push(bodySection.join(", "));
   }
 
-  // ── Wardrobe — scene-specific override takes priority over character default ──
+  // ââ Wardrobe â scene-specific override takes priority over character default ââ
   if (sceneWardrobeOverride?.wardrobeDescription) {
     const wardrobeParts = [`wearing ${sceneWardrobeOverride.wardrobeDescription}`];
     if (sceneWardrobeOverride.makeupNotes) wardrobeParts.push(`makeup: ${sceneWardrobeOverride.makeupNotes}`);
@@ -215,25 +216,25 @@ export function buildCharacterDNA(character: {
   } else if (attrs.clothing) {
     sections.push(`wearing ${attrs.clothing}`);
   } else {
-    // ── Default wardrobe: plain black until clothing is purchased & assigned ──
+    // ââ Default wardrobe: plain black until clothing is purchased & assigned ââ
     sections.push(
-      "wearing a plain all-black outfit — solid black top, black trousers or skirt, " +
+      "wearing a plain all-black outfit â solid black top, black trousers or skirt, " +
       "black shoes; no visible branding, no pattern, no colour accent; " +
-      "placeholder wardrobe — upgrade by leasing from the Virelle wardrobe marketplace"
+      "placeholder wardrobe â upgrade by leasing from the Virelle wardrobe marketplace"
     );
   }
 
-  // ── Director consistency notes ──
+  // ââ Director consistency notes ââ
   if (character.consistencyNotes) {
     sections.push(`PHYSICAL HARD-LOCK DIRECTIVE: ${character.consistencyNotes}`);
   }
 
-  // ── Photorealism enforcement — always injected, character-specific where possible ──
+  // ââ Photorealism enforcement â always injected, character-specific where possible ââ
   sections.push(
-    "photorealistic human face with authentic natural imperfections — " +
-    "skin with visible pores, micro-wrinkles, subsurface scattering, fine peach fuzz — " +
-    "eyes with detailed iris fiber structure, limbal ring, corneal reflections, subtle waterline moisture — " +
-    "individual hair strand detail with natural flyaways — " +
+    "photorealistic human face with authentic natural imperfections â " +
+    "skin with visible pores, micro-wrinkles, subsurface scattering, fine peach fuzz â " +
+    "eyes with detailed iris fiber structure, limbal ring, corneal reflections, subtle waterline moisture â " +
+    "individual hair strand detail with natural flyaways â " +
     "NOT CGI, NOT AI-generated look, NOT plastic skin"
   );
 
@@ -246,7 +247,7 @@ export function buildCharacterDNA(character: {
       : 'Creature';
     const baseDesc = character.description || sections.join(' || ') || 'unique appearance';
     const lockNote = character.referenceImageLocked
-      ? ' APPEARANCE HARD-LOCKED — match reference image EXACTLY every frame. Zero deviation.'
+      ? ' APPEARANCE HARD-LOCKED â match reference image EXACTLY every frame. Zero deviation.'
       : ' Maintain this creature/animal/robot appearance consistently across all scenes.';
     promptAnchor = `[${typeLabel.toUpperCase()} "${character.name}": ${baseDesc}.${lockNote}]`;
   } else {
@@ -287,10 +288,10 @@ export function injectCharacterDNA(
     .join(" ");
 
   // Inject at the beginning for maximum weight
-  return `${charBlock} — ${scenePrompt}`;
+  return `${charBlock} â ${scenePrompt}`;
 }
 
-// ─── Scene Continuity Manager ───
+// âââ Scene Continuity Manager âââ
 
 /**
  * Build a continuity-aware prompt for a scene based on the previous scene's state.
@@ -335,7 +336,7 @@ export function buildContinuityPrompt(
   return scenePrompt;
 }
 
-// ─── Frame Extraction for Continuity ───
+// âââ Frame Extraction for Continuity âââ
 
 /**
  * Extract the last frame from a video URL and return it as a reference image.
@@ -404,7 +405,7 @@ export async function extractContinuityFrame(
     const { url } = await storagePut(key, frameBuffer, "image/jpeg");
     return url;
   } catch (err) {
-    console.warn(`[Continuity] Failed to extract ${position} frame:`, err);
+    logger.warn(`[Continuity] Failed to extract ${position} frame: ${String(err)}`);
     return undefined;
   } finally {
     try {
@@ -413,7 +414,7 @@ export async function extractContinuityFrame(
   }
 }
 
-// ─── Continuity Chain Builder ───
+// âââ Continuity Chain Builder âââ
 
 /**
  * Build a full continuity chain for a project.
@@ -490,7 +491,7 @@ export function buildContinuityChain(
  * Combines character DNA + scene continuity + cinematic prompt.
  */
 
-  // ─── Scene Coherence Context (v6.32+) ─────────────────────────────────────────
+  // âââ Scene Coherence Context (v6.32+) âââââââââââââââââââââââââââââââââââââââââ
   // Injected into every scene prompt so backgrounds, vehicles, props, animals,
   // creatures and character states remain locked across both quick-generate
   // and manual scene-by-scene generation.
@@ -533,18 +534,18 @@ export function buildContinuityChain(
         `${bg.vehicleMake||''} ${bg.vehicleModel||''}`.trim()].filter(Boolean).join(' ');
       const interior  = bg.vehicleInterior  ? `, ${bg.vehicleInterior} interior`  : '';
       const condition = bg.vehicleCondition ? `, ${bg.vehicleCondition} condition` : '';
-      return `[VEHICLE LOCK — "${bg.name}": ${tag}${interior}${condition}. Character operates THIS specific vehicle. NEVER substitute another make, model or colour.]`;
+      return `[VEHICLE LOCK â "${bg.name}": ${tag}${interior}${condition}. Character operates THIS specific vehicle. NEVER substitute another make, model or colour.]`;
     }
-    if (t === 'vessel') return `[VESSEL LOCK — "${bg.name}"${bg.description?' — '+bg.description:''}. Maintain exact hull, rigging and deck condition in all shots.]`;
-    if (t === 'aircraft') return `[AIRCRAFT LOCK — "${bg.name}"${bg.description?' — '+bg.description:''}. Maintain livery, registration and interior consistently.]`;
+    if (t === 'vessel') return `[VESSEL LOCK â "${bg.name}"${bg.description?' â '+bg.description:''}. Maintain exact hull, rigging and deck condition in all shots.]`;
+    if (t === 'aircraft') return `[AIRCRAFT LOCK â "${bg.name}"${bg.description?' â '+bg.description:''}. Maintain livery, registration and interior consistently.]`;
     const parts:string[]=[];
     if(bg.description)parts.push(bg.description);if(bg.styleNotes)parts.push(`Style: ${bg.styleNotes}`);
     if(Array.isArray(bg.locationTags)&&bg.locationTags.length)parts.push(`Tags: ${bg.locationTags.join(', ')}`);
-    return `[LOCATION LOCK — "${bg.name}": ${parts.join('. ')}. Visual consistency required across all scenes set here.]`;
+    return `[LOCATION LOCK â "${bg.name}": ${parts.join('. ')}. Visual consistency required across all scenes set here.]`;
   }
   function buildPropsSection(props:SceneCoherenceContext['props']):string{
     if(!props?.length)return'';
-    return `[LOCKED PROPS — maintain exact visual identity: ${props.map(p=>[p.name,p.category?`(${p.category})`:'',p.description?`— ${p.description}`:'',Array.isArray(p.colors)&&p.colors.length?`color:${p.colors.join('/')}`:'',p.usageNotes?`[${p.usageNotes}]`:''].filter(Boolean).join(' ')).join(' | ')}]`;
+    return `[LOCKED PROPS â maintain exact visual identity: ${props.map(p=>[p.name,p.category?`(${p.category})`:'',p.description?`â ${p.description}`:'',Array.isArray(p.colors)&&p.colors.length?`color:${p.colors.join('/')}`:'',p.usageNotes?`[${p.usageNotes}]`:''].filter(Boolean).join(' ')).join(' | ')}]`;
   }
   function buildCharacterStateSection(states:SceneCoherenceContext['characterStates'],charIds:number[]):string{
     if(!states?.length)return'';
@@ -567,7 +568,7 @@ export function buildContinuityChain(
     if(dna.colorPalette)p.push(`Palette: ${dna.colorPalette}`);
     if(dna.filmStock)p.push(`Film stock: ${dna.filmStock}`);
     if(dna.globalColorGrade&&dna.globalColorGradeLocked)p.push(`Color grade LOCKED: ${dna.globalColorGrade}`);
-    return p.length?`[VISUAL DNA LOCK — apply every frame: ${p.join(' | ')}]`:'';
+    return p.length?`[VISUAL DNA LOCK â apply every frame: ${p.join(' | ')}]`:'';
   }
 
   export function generateConsistentScenePrompt(
