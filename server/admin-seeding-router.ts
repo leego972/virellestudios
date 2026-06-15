@@ -266,5 +266,55 @@ import { router, adminProcedure } from "./_core/trpc";
         return { success: false, message: `Failed to get status: ${error instanceof Error ? error.message : "Unknown error"}` };
       }
     }),
-  });
+    patchLamaloImages: adminProcedure.mutation(async () => {
+      try {
+        const db = (await getDb())!;
+        // Build Pollinations URLs from the referencePrompt already stored in each row.
+        // REPLACE() handles the most common characters; Pollinations is lenient with encoding.
+        const result = await db.execute(sql`
+          UPDATE wardrobeItems
+          SET primaryImageUrl = CONCAT(
+            'https://image.pollinations.ai/prompt/',
+            REPLACE(
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    REPLACE(
+                      REPLACE(
+                        COALESCE(referencePrompt, CONCAT(name, ' ', category, ' fashion item')),
+                      ' ', '%20'),
+                    ',', '%2C'),
+                  '/', '%2F'),
+                '(', '%28'),
+              ')', '%29'),
+            '&', '%26'),
+            '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+          ),
+          imageUrls = JSON_ARRAY(CONCAT(
+            'https://image.pollinations.ai/prompt/',
+            REPLACE(
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    REPLACE(
+                      REPLACE(
+                        COALESCE(referencePrompt, CONCAT(name, ' ', category, ' fashion item')),
+                      ' ', '%20'),
+                    ',', '%2C'),
+                  '/', '%2F'),
+                '(', '%28'),
+              ')', '%29'),
+            '&', '%26'),
+            '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+          ))
+          WHERE (primaryImageUrl IS NULL OR primaryImageUrl LIKE '/lamalo/%' OR primaryImageUrl = '')
+            AND collectionId IS NOT NULL
+        `);
+        const affected = (result as any).rowsAffected ?? (result as any)[0]?.affectedRows ?? '?';
+        return { success: true, updated: affected, message: `Patched ${affected} wardrobe items with Pollinations image URLs` };
+      } catch (error) {
+        return { success: false, message: `Failed: ${error instanceof Error ? error.message : String(error)}` };
+      }
+    }),
   
+  });
