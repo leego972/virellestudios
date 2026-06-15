@@ -60,8 +60,11 @@ export const contentCreatorRouter = router({
       return await getContentCreatorDashboard();
     } catch (err: any) {
       log.error("[ContentCreatorRouter] dashboard error:", err);
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message 
-    // ─── YouTube ──────────────────────────────────────────────────────────────
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
+    }
+  }),
+
+  // ─── YouTube ────────────────────────────────────────────────────────────────────────────
     youtube: router({
       /** Returns the URL the admin should visit to connect their YouTube channel */
       getConnectUrl: adminProcedure.query(() => {
