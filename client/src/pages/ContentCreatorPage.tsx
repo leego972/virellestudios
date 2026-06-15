@@ -513,6 +513,8 @@ export default function ContentCreatorPage() {
 
   // ─── Queries ──────────────────────────────────────────────────────────────
   const dashboardQuery = trpc.contentCreator.dashboard.useQuery(undefined, { refetchInterval: 30000 });
+  const snapchatConnectQuery = trpc.contentCreator.snapchat.getConnectUrl.useQuery();
+  const instagramConnectQuery = trpc.contentCreator.instagram.getConnectUrl.useQuery();
   const campaignsQuery = trpc.contentCreator.listCampaigns.useQuery({ limit: 50 });
   const piecesQuery = trpc.contentCreator.listPieces.useQuery({
     limit: 30,
@@ -702,6 +704,14 @@ export default function ContentCreatorPage() {
             <div className={`h-1.5 w-1.5 rounded-full ${dashboard.tiktokConfigured ? "bg-pink-400" : "bg-gray-500"}`} />
             TikTok {dashboard.tiktokConfigured ? "Connected" : "Not Connected"}
           </div>
+          <div className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border ${snapchatConnectQuery.data?.connected ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-300" : "bg-muted border-border text-muted-foreground"}`}>
+            <div className={`h-1.5 w-1.5 rounded-full ${snapchatConnectQuery.data?.connected ? "bg-yellow-400" : "bg-gray-500"}`} />
+            Snapchat {snapchatConnectQuery.data?.connected ? "Connected" : "Not Connected"}
+          </div>
+          <div className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border ${instagramConnectQuery.data?.connected ? "bg-pink-500/10 border-pink-500/30 text-pink-300" : "bg-muted border-border text-muted-foreground"}`}>
+            <div className={`h-1.5 w-1.5 rounded-full ${instagramConnectQuery.data?.connected ? "bg-pink-400" : "bg-gray-500"}`} />
+            Instagram {instagramConnectQuery.data?.connected ? "Connected" : "Not Connected"}
+          </div>
           <div className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border bg-blue-500/10 border-blue-500/30 text-blue-300">
             <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
             SEO Engine Active
@@ -715,13 +725,15 @@ export default function ContentCreatorPage() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex w-full max-w-3xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-6 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
+        <TabsList className="flex w-full max-w-3xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-8 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
           <TabsTrigger value="studio" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Studio</TabsTrigger>
           <TabsTrigger value="queue" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Queue</TabsTrigger>
           <TabsTrigger value="campaigns" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Campaigns</TabsTrigger>
           <TabsTrigger value="tiktok" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">TikTok Hub</TabsTrigger>
           <TabsTrigger value="analytics" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Analytics</TabsTrigger>
             <TabsTrigger value="youtube" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">YouTube</TabsTrigger>
+          <TabsTrigger value="snapchat" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Snapchat Hub</TabsTrigger>
+          <TabsTrigger value="instagram" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Instagram Hub</TabsTrigger>
         </TabsList>
 
         {/* ─── Studio Tab ─────────────────────────────────────────────────────── */}
@@ -1345,6 +1357,184 @@ export default function ContentCreatorPage() {
                     </div>
                   </>
                 )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ─── Snapchat Hub Tab ──────────────────────────────────────────────── */}
+        <TabsContent value="snapchat" className="space-y-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+                  <Camera className="h-4 w-4 text-yellow-400" />
+                  Snapchat Integration
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className={`flex items-center gap-3 p-3 rounded-lg border ${snapchatConnectQuery.data?.connected ? "bg-yellow-500/10 border-yellow-500/30" : snapchatConnectQuery.data?.configured ? "bg-amber-500/10 border-amber-500/30" : "bg-muted border-border"}`}>
+                  <div className={`h-3 w-3 rounded-full ${snapchatConnectQuery.data?.connected ? "bg-yellow-400" : snapchatConnectQuery.data?.configured ? "bg-amber-400" : "bg-gray-500"}`} />
+                  <div>
+                    <p className="text-sm font-medium">{snapchatConnectQuery.data?.connected ? "Snapchat Connected" : snapchatConnectQuery.data?.configured ? "Keys Configured — Authorise Below" : "Snapchat Not Configured"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {snapchatConnectQuery.data?.connected
+                        ? "Snapchat Business API connected"
+                        : snapchatConnectQuery.data?.configured
+                          ? "Client ID & secret found — click Connect to complete OAuth"
+                          : "Add SNAPCHAT_CLIENT_ID & SNAPCHAT_CLIENT_SECRET to Railway first"}
+                    </p>
+                  </div>
+                </div>
+                {!snapchatConnectQuery.data?.connected && (
+                  <a
+                    href="/api/snapchat/connect"
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold transition-colors ${snapchatConnectQuery.data?.configured ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/20" : "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50 pointer-events-none"}`}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {snapchatConnectQuery.data?.configured ? "Connect Snapchat Account" : "Add Railway Keys First"}
+                  </a>
+                )}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">Snapchat-Ready Content</p>
+                  {pieces.filter((p: any) => p.platform === "snapchat" && ["approved", "draft"].includes(p.status)).length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No Snapchat content ready. Generate in Studio tab.</p>
+                  ) : (
+                    pieces.filter((p: any) => p.platform === "snapchat").slice(0, 5).map((piece: any) => (
+                      <div key={piece.id} className="flex items-center justify-between p-2 rounded-lg border border-border/50 bg-muted/20">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium line-clamp-1">{piece.title || piece.headline || "Untitled"}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <StatusBadge status={piece.status} />
+                            <span className="text-xs text-muted-foreground">{piece.contentType?.replace(/_/g, " ")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <Button
+                  className="w-full hover:border-amber-500/50 hover:text-amber-400"
+                  variant="outline"
+                  onClick={() => { setPlatform("snapchat"); setContentType("story"); setActiveTab("studio"); }}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Snapchat Story
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+                  <Globe className="h-4 w-4 text-yellow-400" />
+                  Snapchat Setup Guide
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">Railway Environment Variables</p>
+                  <div className="space-y-1 font-mono bg-muted/30 p-3 rounded-lg">
+                    <p>SNAPCHAT_CLIENT_ID=<span className="text-amber-400">your_client_id</span></p>
+                    <p>SNAPCHAT_CLIENT_SECRET=<span className="text-amber-400">your_client_secret</span></p>
+                    <p>SNAPCHAT_ACCESS_TOKEN=<span className="text-green-400">set_after_oauth</span></p>
+                    <p>SNAPCHAT_REFRESH_TOKEN=<span className="text-green-400">set_after_oauth</span></p>
+                  </div>
+                  <p className="mt-2">Get credentials from <a href="https://business.snapchat.com" target="_blank" className="text-amber-400 hover:underline">Snapchat Business Manager</a> → Marketing API.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ─── Instagram Hub Tab ──────────────────────────────────────────────── */}
+        <TabsContent value="instagram" className="space-y-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+                  <Camera className="h-4 w-4 text-pink-400" />
+                  Instagram Integration
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className={`flex items-center gap-3 p-3 rounded-lg border ${instagramConnectQuery.data?.connected ? "bg-pink-500/10 border-pink-500/30" : instagramConnectQuery.data?.configured ? "bg-amber-500/10 border-amber-500/30" : "bg-muted border-border"}`}>
+                  <div className={`h-3 w-3 rounded-full ${instagramConnectQuery.data?.connected ? "bg-pink-400" : instagramConnectQuery.data?.configured ? "bg-amber-400" : "bg-gray-500"}`} />
+                  <div>
+                    <p className="text-sm font-medium">{instagramConnectQuery.data?.connected ? "Instagram Connected" : instagramConnectQuery.data?.configured ? "Keys Configured — Authorise Below" : "Instagram Not Configured"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {instagramConnectQuery.data?.connected
+                        ? "Meta Graph API connected — content publishing enabled"
+                        : instagramConnectQuery.data?.configured
+                          ? "App ID & secret found — click Connect to complete OAuth"
+                          : "Add INSTAGRAM_CLIENT_ID & INSTAGRAM_CLIENT_SECRET to Railway first"}
+                    </p>
+                  </div>
+                </div>
+                {!instagramConnectQuery.data?.connected && (
+                  <a
+                    href="/api/instagram/connect"
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold transition-colors ${instagramConnectQuery.data?.configured ? "bg-pink-500/10 border-pink-500/30 text-pink-300 hover:bg-pink-500/20" : "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50 pointer-events-none"}`}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {instagramConnectQuery.data?.configured ? "Connect Instagram Account" : "Add Railway Keys First"}
+                  </a>
+                )}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">Instagram-Ready Content</p>
+                  {pieces.filter((p: any) => p.platform === "instagram" && ["approved", "draft"].includes(p.status)).length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No Instagram content ready. Generate in Studio tab.</p>
+                  ) : (
+                    pieces.filter((p: any) => p.platform === "instagram").slice(0, 5).map((piece: any) => (
+                      <div key={piece.id} className="flex items-center justify-between p-2 rounded-lg border border-border/50 bg-muted/20">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium line-clamp-1">{piece.title || piece.headline || "Untitled"}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <StatusBadge status={piece.status} />
+                            <span className="text-xs text-muted-foreground">{piece.contentType?.replace(/_/g, " ")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    className="w-full hover:border-amber-500/50 hover:text-amber-400"
+                    variant="outline"
+                    onClick={() => { setPlatform("instagram"); setContentType("reel"); setActiveTab("studio"); }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Reel
+                  </Button>
+                  <Button
+                    className="w-full hover:border-amber-500/50 hover:text-amber-400"
+                    variant="outline"
+                    onClick={() => { setPlatform("instagram"); setContentType("photo_carousel"); setActiveTab("studio"); }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Carousel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-card/50 border-border/50 glass-card shadow-lg shadow-amber-500/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
+                  <Globe className="h-4 w-4 text-pink-400" />
+                  Instagram Setup Guide
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">Railway Environment Variables</p>
+                  <div className="space-y-1 font-mono bg-muted/30 p-3 rounded-lg">
+                    <p>INSTAGRAM_CLIENT_ID=<span className="text-amber-400">your_app_id</span></p>
+                    <p>INSTAGRAM_CLIENT_SECRET=<span className="text-amber-400">your_app_secret</span></p>
+                    <p>INSTAGRAM_ACCESS_TOKEN=<span className="text-green-400">set_after_oauth</span></p>
+                    <p>INSTAGRAM_USER_ID=<span className="text-green-400">your_ig_business_id</span></p>
+                  </div>
+                  <p className="mt-2">Get credentials from <a href="https://developers.facebook.com" target="_blank" className="text-amber-400 hover:underline">Meta for Developers</a> → Instagram Graph API.</p>
+                </div>
               </CardContent>
             </Card>
           </div>
