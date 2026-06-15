@@ -643,7 +643,7 @@ export default function Landing() {
                 <div className="rounded-2xl border border-amber-500/20 glass-card/[0.02] p-7">
                   <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-5">Generic clip tools</h3>
                   <ul className="space-y-3">
-                    {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
+                    {["Random clips with no narrative", "Inconsistent characters per clip", "No story structure or arc", "No continuity between scenes", "No pitch or funding package", "No distribution workflow"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/35">
                         <X className="w-3.5 h-3.5 text-white/30 shrink-0" />
                         {item}
@@ -654,7 +654,7 @@ export default function Landing() {
                 <div className="rounded-2xl border border-amber-500/20 bg-amber-950/10 p-7">
                   <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-5">Virelle</h3>
                   <ul className="space-y-3">
-                    {["Structured story", "Digital Cast", "Character DNA", "Scene cards", "Trailer and pitch assets", "Production package"].map(item => (
+                    {["Structured screenplay to final cut", "Digital Cast with DNA Lock", "Character faces consistent across all scenes", "Scene cards, storyboards, shot lists", "Trailer, poster, and pitch deck", "Distribution, crowdfunding, and festivals"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/80">
                         <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                         {item}
