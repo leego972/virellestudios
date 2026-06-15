@@ -833,6 +833,30 @@ export async function runLamaloSeed(
           )
       `);
       log.info('Auto-patched existing wardrobeItems: replaced /lamalo/ paths with Pollinations URLs');
+      // Backfill retailPriceAud for items where INSERT IGNORE left it NULL
+      await db.execute(sql`
+        UPDATE wardrobeItems
+        SET retailPriceAud = CASE LOWER(COALESCE(category, ''))
+          WHEN 'tops'        THEN 100
+          WHEN 'bottoms'     THEN 250
+          WHEN 'outerwear'   THEN 350
+          WHEN 'dresses'     THEN 200
+          WHEN 'swimwear'    THEN 150
+          WHEN 'footwear'    THEN 300
+          WHEN 'accessories' THEN 100
+          WHEN 'watches'     THEN 150
+          WHEN 'eyewear'     THEN 100
+          WHEN 'bags'        THEN 200
+          WHEN 'suits'       THEN 500
+          WHEN 'uniforms'    THEN 300
+          WHEN 'knitwear'    THEN 200
+          WHEN 'lingerie'    THEN 100
+          WHEN 'sleepwear'   THEN 100
+          ELSE 100
+        END
+        WHERE collectionId IS NOT NULL AND retailPriceAud IS NULL
+      `);
+      log.info('Backfilled retailPriceAud for existing items');
     } catch (e) {
       log.warn({ err: e }, 'Auto-patch image URLs failed (non-fatal)');
     }
