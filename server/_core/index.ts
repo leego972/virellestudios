@@ -8,6 +8,8 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerYouTubeOAuthRoutes } from "../youtube-oauth-router";
 import { registerTikTokOAuthRoutes } from "../tiktok-oauth-router";
+import { registerSnapchatOAuthRoutes } from "../snapchat-oauth-router";
+import { registerInstagramOAuthRoutes } from "../instagram-oauth-router";
 import { appRouter } from "../routers";
 import { createContext, requireAdminExpress } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -1045,6 +1047,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerYouTubeOAuthRoutes(app);
   registerTikTokOAuthRoutes(app);
+  registerSnapchatOAuthRoutes(app);
+  registerInstagramOAuthRoutes(app);
 
   // Register SEO Engine routes (sitemap, robots.txt, etc.)
   registerSeoRoutes(app);
