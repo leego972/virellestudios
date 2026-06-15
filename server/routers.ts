@@ -3159,7 +3159,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: sceneWardrobeContext || undefined,
+                  wardrobeContext: _effectiveWardrobeContext || undefined,
             characters: characters.map(c => ({
               name: c.name,
               ageRange: (c as any).ageRange ?? null,
@@ -3261,6 +3261,55 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               sceneRefImages.push(_wImgUrl);
             }
           }
+          // v6.79 — Read scene.wardrobe inline overrides (from SceneEditor "Scene Wardrobe Overrides" UI)
+          // These are user-typed outfit descriptions per character, saved as JSON on the scene record.
+          // Previously stored but NEVER read during generation — the AI never saw manual outfit directives.
+          const _inlineWardrobeEntries = (scene as any).wardrobe as Array<{
+            characterId?: number;
+            wardrobeDescription?: string;
+            hairNotes?: string;
+            makeupNotes?: string;
+            accessories?: string;
+          }> | null | undefined;
+          const _inlineWardrobeLines: string[] = [];
+          if (Array.isArray(_inlineWardrobeEntries)) {
+            for (const _iwe of _inlineWardrobeEntries) {
+              if (!_iwe?.characterId) continue;
+              const _iweChar = sceneActiveCharacters.find((c: any) => (c as any).id === _iwe.characterId) as any;
+              const _iweName = _iweChar?.name || `Character ${_iwe.characterId}`;
+              if (!_charWardrobeOverrides.has(_iwe.characterId)) {
+                // No marketplace assignment for this character — use inline override
+                if (_iwe.wardrobeDescription?.trim()) {
+                  _charWardrobeOverrides.set(_iwe.characterId, {
+                    wardrobeDescription: _iwe.wardrobeDescription.trim(),
+                    accessories: _iwe.accessories?.trim() || undefined,
+                    imageUrl: undefined,
+                  });
+                }
+              } else {
+                // Supplement existing marketplace override with accessories if missing
+                const _iweExisting = _charWardrobeOverrides.get(_iwe.characterId)!;
+                if (!_iweExisting.accessories && _iwe.accessories?.trim()) {
+                  _iweExisting.accessories = _iwe.accessories.trim();
+                  _charWardrobeOverrides.set(_iwe.characterId, _iweExisting);
+                }
+              }
+              // Build text lines for the fallback wardrobeContext block
+              const _iweParts: string[] = [];
+              if (_iwe.wardrobeDescription?.trim()) _iweParts.push(_iwe.wardrobeDescription.trim());
+              if (_iwe.hairNotes?.trim()) _iweParts.push(`hair: ${_iwe.hairNotes.trim()}`);
+              if (_iwe.makeupNotes?.trim()) _iweParts.push(`makeup: ${_iwe.makeupNotes.trim()}`);
+              if (_iwe.accessories?.trim()) _iweParts.push(`accessories: ${_iwe.accessories.trim()}`);
+              if (_iweParts.length > 0) _inlineWardrobeLines.push(`${_iweName}: ${_iweParts.join(", ")}`);
+            }
+          }
+          // Effective wardrobe context: marketplace text when available, otherwise fall back to
+          // inline scene entries so the prompt always carries costume directives.
+          const _effectiveWardrobeContext = sceneWardrobeContext?.trim()
+            ? sceneWardrobeContext
+            : _inlineWardrobeLines.length > 0
+              ? `CHARACTER WARDROBE (scene overrides):\n${_inlineWardrobeLines.join("\n")}`
+              : undefined;
             const { buildCharacterDNA: _buildDNA } = await import("./_core/characterConsistency");
             const characterDescriptions = sceneActiveCharacters
               .filter((c: any) => c.name)
@@ -3315,7 +3364,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, _effectiveWardrobeContext || "", ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3328,7 +3377,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
                 sceneType: (scene as any).sceneType || undefined,
-                wardrobeContext: sceneWardrobeContext || undefined,
+                wardrobeContext: _effectiveWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
                 sfxNotes: (scene as any).sfxNotes || undefined,
                 ambientSound: (scene as any).ambientSound || undefined,
@@ -3373,7 +3422,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, _effectiveWardrobeContext || "", ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3385,7 +3434,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
-                wardrobeContext: sceneWardrobeContext || undefined,
+                wardrobeContext: _effectiveWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
                 sfxNotes: (scene as any).sfxNotes || undefined,
                 ambientSound: (scene as any).ambientSound || undefined,
@@ -3429,7 +3478,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, _effectiveWardrobeContext || "", ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3441,7 +3490,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
-                wardrobeContext: sceneWardrobeContext || undefined,
+                wardrobeContext: _effectiveWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
                 sfxNotes: (scene as any).sfxNotes || undefined,
                 ambientSound: (scene as any).ambientSound || undefined,
@@ -3486,7 +3535,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, _effectiveWardrobeContext || "", ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3498,7 +3547,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
-                wardrobeContext: sceneWardrobeContext || undefined,
+                wardrobeContext: _effectiveWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
                 sfxNotes: (scene as any).sfxNotes || undefined,
                 ambientSound: (scene as any).ambientSound || undefined,
