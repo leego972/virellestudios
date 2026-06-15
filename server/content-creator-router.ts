@@ -38,6 +38,8 @@ import {
 } from "./content-creator-engine";
 import { generatePictureAd, autoGeneratePictureAd } from "./_core/pictureAdEngine";
 import { postToLinkedIn } from "./_core/socialPostingEngine";
+  import { ENV } from "./_core/env";
+  import { youtubeAdapter } from "./expanded-channels";
 
 const log = logger;
 
