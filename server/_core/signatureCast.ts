@@ -1,5 +1,5 @@
 /**
- * VIRELLE SIGNATURE CAST — Server Core
+ * VIRELLE SIGNATURE CAST â Server Core
  *
  * Handles:
  *  - Actor registry (config-driven, DB-backed)
@@ -10,10 +10,11 @@
  */
 
 import type { SubscriptionTier } from "./subscription";
+import { logger } from "./logger";
 
-// ─── Plan → Cast Tier Access Map ─────────────────────────────────────────────
+// âââ Plan â Cast Tier Access Map âââââââââââââââââââââââââââââââââââââââââââââ
 // Which actor tiers each subscription plan can access via inclusion.
-// Paid unlocks bypass this — any plan can unlock any actor if they pay.
+// Paid unlocks bypass this â any plan can unlock any actor if they pay.
 
 export const PLAN_CAST_ACCESS: Record<SubscriptionTier, ("standard" | "premium" | "flagship")[]> = {
   none:        [],
@@ -26,9 +27,9 @@ export const PLAN_CAST_ACCESS: Record<SubscriptionTier, ("standard" | "premium" 
   beta:        ["standard"],
 };
 
-// ─── Actor Unlock Pricing (AUD cents) ────────────────────────────────────────
+// âââ Actor Unlock Pricing (AUD cents) ââââââââââââââââââââââââââââââââââââââââ
 // Config-driven pricing per license type per actor tier.
-// Launch defaults — editable in admin without code changes.
+// Launch defaults â editable in admin without code changes.
 //
 // Pricing model:
 //   Base price: standard=$15, premium=$39, flagship=$99
@@ -72,7 +73,7 @@ export const DEFAULT_UNLOCK_PRICING: Record<
   },
 };
 
-// ─── License Type Display Copy ────────────────────────────────────────────────
+// âââ License Type Display Copy ââââââââââââââââââââââââââââââââââââââââââââââââ
 export const LICENSE_COPY: Record<
   "personal" | "creator" | "commercial" | "episodic",
   { label: string; description: string; badge: string }
@@ -84,7 +85,7 @@ export const LICENSE_COPY: Record<
   },
   creator: {
     label: "Creator License",
-    description: "Use in one public creator release — YouTube, socials, indie film, or festival submission.",
+    description: "Use in one public creator release â YouTube, socials, indie film, or festival submission.",
     badge: "Public Release",
   },
   commercial: {
@@ -94,12 +95,12 @@ export const LICENSE_COPY: Record<
   },
   episodic: {
     label: "Episodic License",
-    description: "Use across a series project — recurring episodes or multi-part installments.",
+    description: "Use across a series project â recurring episodes or multi-part installments.",
     badge: "Series",
   },
 };
 
-// ─── Brand Safety Rules ───────────────────────────────────────────────────────
+// âââ Brand Safety Rules âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export const BRAND_SAFETY_RULES = {
   allowed: [
     "romantic scenes",
@@ -127,7 +128,7 @@ export const BRAND_SAFETY_RULES = {
     "Consider implied intimacy, a fade-to-black treatment, or romantic tension instead.",
 };
 
-// ─── Entitlement Check ────────────────────────────────────────────────────────
+// âââ Entitlement Check ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 /**
  * Returns true if the user has active entitlement to use the given actor.
  * Checks both subscription-plan inclusion and paid per-actor unlocks.
@@ -144,7 +145,7 @@ export function checkPlanInclusion(
   return userLevel >= requiredLevel;
 }
 
-// ─── Stripe Price ID Helpers ──────────────────────────────────────────────────
+// âââ Stripe Price ID Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââ
 // We create one-time Stripe price objects dynamically per unlock.
 // In production, these would be pre-created Stripe Price IDs.
 // For now we use dynamic price creation via the Stripe API.
@@ -178,7 +179,7 @@ export async function createActorUnlockCheckoutSession(
           currency: "aud",
           unit_amount: params.amountAud,
           product_data: {
-            name: `${params.actorName} — ${licenseLabel}`,
+            name: `${params.actorName} â ${licenseLabel}`,
             description:
               `Virelle Signature Cast: ${params.actorTier.charAt(0).toUpperCase() + params.actorTier.slice(1)} tier. ` +
               LICENSE_COPY[params.licenseType].description,
@@ -214,8 +215,8 @@ export async function createActorUnlockCheckoutSession(
   return { url: session.url!, sessionId: session.id };
 }
 
-// ─── Seed Data: Initial Actor Registry ──────────────────────────────────────
-  // Full cast — 4 Flagship, 7 Premium, 5 Standard actors.
+// âââ Seed Data: Initial Actor Registry ââââââââââââââââââââââââââââââââââââââ
+  // Full cast â 4 Flagship, 7 Premium, 5 Standard actors.
   // Used by autoMigrate to seed the actor catalog on first boot.
   /**
    * Read a Signature Cast actor portrait directly from disk (client/public/portraits/<id>/master.png)
@@ -234,7 +235,7 @@ export async function createActorUnlockCheckoutSession(
       // Lazy require to keep this module import-safe in browser bundles
       const fs = require("fs") as typeof import("fs");
       const path = require("path") as typeof import("path");
-      // Resolve relative to repo root — works in dev (tsx) and prod (esbuild bundle)
+      // Resolve relative to repo root â works in dev (tsx) and prod (esbuild bundle)
       const candidates = [
         path.resolve(process.cwd(), "client/public/portraits", actorId, "master.png"),
         path.resolve(process.cwd(), "dist/public/portraits", actorId, "master.png"),
@@ -247,13 +248,13 @@ export async function createActorUnlockCheckoutSession(
         }
       }
     } catch (e) {
-      console.warn(`[SignatureCast] Could not read portrait for actor ${actorId}:`, (e as Error).message);
+      logger.warn(`[SignatureCast] Could not read portrait for actor ${actorId}: ${(e as Error).message}`);
     }
     return null;
   }
 
   export const INITIAL_ACTORS = [
-    // ── FLAGSHIP ──────────────────────────────────────────────────────────────
+    // ââ FLAGSHIP ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "julian-vance",
       name: "Julian Vance",
@@ -346,7 +347,7 @@ export async function createActorUnlockCheckoutSession(
       allowCommercialUse: true,
       noExplicitContent: true,
     },
-    // ── PREMIUM ───────────────────────────────────────────────────────────────
+    // ââ PREMIUM âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "kenji-sato",
       name: "Kenji Sato",
@@ -494,7 +495,7 @@ export async function createActorUnlockCheckoutSession(
       allowCommercialUse: true,
       noExplicitContent: true,
     },
-    // ── STANDARD ─────────────────────────────────────────────────────────────
+    // ââ STANDARD âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "daniel-cross",
       name: "Daniel Cross",
@@ -504,7 +505,7 @@ export async function createActorUnlockCheckoutSession(
       priceCreatorAud: 1500,
       priceCommercialAud: 9400,
       priceEpisodicAud: 6000,
-            visualSpec: "35-45 year old man, Anglo-Australian heritage, mousy brown hair with natural parting, average build with slight suburban softness, ordinary trustworthy face, blue-grey eyes, the kind of unremarkable face that makes him invisible until he isn't, dressed in smart suburban casual — the everyman hiding in plain sight",
+            visualSpec: "35-45 year old man, Anglo-Australian heritage, mousy brown hair with natural parting, average build with slight suburban softness, ordinary trustworthy face, blue-grey eyes, the kind of unremarkable face that makes him invisible until he isn't, dressed in smart suburban casual â the everyman hiding in plain sight",
       promptStyle: "flat neutral cinematic lighting, suburban drama aesthetic, deceptive ordinariness",
       portraitUrl: "/portraits/daniel-cross/master.png",
       hook: "Suburban everyman energy that makes moral compromise feel real and earned.",
@@ -600,7 +601,7 @@ export async function createActorUnlockCheckoutSession(
       allowCommercialUse: false,
       noExplicitContent: true,
     },
-    // ── CHILDREN & TEENS ─────────────────────────────────────────────────────
+    // ââ CHILDREN & TEENS âââââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "leo-chen",
       name: "Leo Chen",
@@ -647,7 +648,7 @@ export async function createActorUnlockCheckoutSession(
       allowCommercialUse: true,
       noExplicitContent: true,
     },
-    // ── UNIQUE PHYSICALITY ──────────────────────────────────────────────────
+    // ââ UNIQUE PHYSICALITY ââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "sam-miller",
       name: "Sam Miller",
@@ -694,7 +695,7 @@ export async function createActorUnlockCheckoutSession(
       allowCommercialUse: true,
       noExplicitContent: true,
     },
-    // ── GLOBAL ETHNICITIES ──────────────────────────────────────────────────
+    // ââ GLOBAL ETHNICITIES ââââââââââââââââââââââââââââââââââââââââââââââââââ
     {
       id: "omar-al-fayed",
       name: "Omar Al-Fayed",
