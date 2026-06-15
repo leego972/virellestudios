@@ -1,140 +1,153 @@
 /**
- * SEO Router v3 — tRPC endpoints for the autonomous SEO engine
- */
+   * SEO Router v4 — tRPC endpoints for the autonomous SEO engine
+   * Exposes both v3 (core) and v4 (GEO/programmatic) capabilities.
+   */
 
-import { z } from "zod";
-import { adminProcedure, protectedProcedure } from "./_core/trpc";
-import { router } from "./_core/trpc";
-import {
-  analyzeSeoHealth,
-  analyzeKeywords,
-  analyzeInternalLinks,
-  optimizeMetaTags,
-  generateSeoReport,
-  generateStructuredData,
-  getOpenGraphTags,
-  getPublicPages,
-  getCachedReport,
-  getLastOptimizationRun,
-  runScheduledSeoOptimization,
-  triggerSeoKillSwitch,
-  resetSeoKillSwitch,
-  isSeoKilled,
-  getWebVitalsSummary,
-  getRedirects,
-  submitToIndexNow,
-  getSeoEventLog,
-} from "./seo-engine";
+  import { z } from "zod";
+  import { adminProcedure, publicProcedure } from "./_core/trpc";
+  import { router } from "./_core/trpc";
+  import {
+    analyzeSeoHealth,
+    analyzeKeywords,
+    analyzeInternalLinks,
+    optimizeMetaTags,
+    generateSeoReport,
+    generateStructuredData,
+    getOpenGraphTags,
+    getPublicPages,
+    getCachedReport,
+    getLastOptimizationRun,
+    runScheduledSeoOptimization,
+    triggerSeoKillSwitch,
+    resetSeoKillSwitch,
+    isSeoKilled,
+    getWebVitalsSummary,
+    getRedirects,
+    submitToIndexNow,
+    getSeoEventLog,
+    generateContentBriefs,
+    analyzeCompetitors,
+    optimizeBlogPostSeo,
+  } from "./seo-engine";
+  import {
+    getAllProgrammaticPages,
+    getTopicClusters,
+    getFeaturedSnippetTargets,
+    analyzeContentFreshness,
+    analyzeContentGaps,
+    getSemanticKeywordClusters,
+    getSearchIntentMappings,
+    generateEnhancedStructuredData,
+    generateEEATStructuredData,
+    generateLlmsTxt,
+    generateLlmsFullTxt,
+    generateAiCitationMeta,
+    generateSitemapIndex,
+    submitBatchToGoogleIndexing,
+  } from "./seo-engine-v4";
 
-export const seoRouter = router({
-  // Get SEO health score and issues
-  getHealthScore: adminProcedure.query(async () => {
-    return analyzeSeoHealth();
-  }),
+  export const seoRouter = router({
+    // ── Core v3 ──────────────────────────────────────────────────────────────
 
-  // Get keyword analysis
-  getKeywords: adminProcedure.query(async () => {
-    return analyzeKeywords();
-  }),
+    getHealthScore: adminProcedure.query(async () => analyzeSeoHealth()),
 
-  // Get meta tag optimization suggestions
-  getMetaOptimizations: adminProcedure.query(async () => {
-    return optimizeMetaTags();
-  }),
+    getKeywords: adminProcedure.query(async () => analyzeKeywords()),
 
-  // Get full SEO report (cached if available)
-  getReport: adminProcedure.query(async () => {
-    const cached = getCachedReport();
-    if (cached && Date.now() - cached.generatedAt < 3600_000) {
-      return cached; // Return cached if less than 1 hour old
-    }
-    return generateSeoReport();
-  }),
+    getMetaOptimizations: adminProcedure.query(async () => optimizeMetaTags()),
 
-  // Force a new SEO optimization run
-  runOptimization: adminProcedure.mutation(async () => {
-    return runScheduledSeoOptimization();
-  }),
-
-  // Get structured data schemas
-  getStructuredData: adminProcedure.query(async () => {
-    return generateStructuredData();
-  }),
-
-  // Get Open Graph tags for a page
-  getOpenGraphTags: adminProcedure
-    .input(z.object({ path: z.string() }))
-    .query(async ({ input }) => {
-      return getOpenGraphTags(input.path);
+    getReport: adminProcedure.query(async () => {
+      const cached = getCachedReport();
+      if (cached && Date.now() - cached.generatedAt < 3600_000) return cached;
+      return generateSeoReport();
     }),
 
-  // Get all public pages configuration
-  getPublicPages: adminProcedure.query(async () => {
-    return getPublicPages();
-  }),
+    runOptimization: adminProcedure.mutation(async () => runScheduledSeoOptimization()),
 
-  // Get internal link analysis
-  getInternalLinks: adminProcedure.query(async () => {
-    return analyzeInternalLinks();
-  }),
+    getStructuredData: adminProcedure.query(async () => generateStructuredData()),
 
-  // Get Core Web Vitals summary
-  getWebVitals: adminProcedure.query(async () => {
-    return getWebVitalsSummary();
-  }),
+    getOpenGraph: adminProcedure
+      .input(z.object({ path: z.string() }))
+      .query(async ({ input }) => getOpenGraphTags(input.path)),
 
-  // Get redirect configuration
-  getRedirects: adminProcedure.query(async () => {
-    return getRedirects();
-  }),
+    getPublicPages: adminProcedure.query(async () => getPublicPages()),
 
-  // Get SEO event log
-  getEventLog: adminProcedure
-    .input(z.object({ limit: z.number().min(1).max(500).default(50) }).optional())
-    .query(async ({ input }) => {
-      return getSeoEventLog(input?.limit || 50);
-    }),
+    getLastOptimizationRun: adminProcedure.query(async () => getLastOptimizationRun()),
 
-  // Submit URLs to IndexNow for instant indexing
-  submitIndexNow: adminProcedure
-    .input(z.object({ urls: z.array(z.string()).min(1).max(100) }))
-    .mutation(async ({ input }) => {
-      return submitToIndexNow(input.urls);
-    }),
+    getWebVitals: adminProcedure.query(async () => getWebVitalsSummary()),
 
-  // Get engine status
-  getStatus: adminProcedure.query(async () => {
-    return {
-      version: "3.0",
-      isKilled: isSeoKilled(),
-      lastRun: getLastOptimizationRun(),
-      hasCachedReport: getCachedReport() !== null,
-      cachedReportAge: getCachedReport()
-        ? Date.now() - getCachedReport()!.generatedAt
-        : null,
-      features: [
-        "Dynamic meta tag injection (SSR-like)",
-        "Hreflang for 12 languages",
-        "RSS/Atom feed",
-        "security.txt",
-        "Core Web Vitals beacon",
-        "IndexNow integration",
-        "Redirect manager",
-        "Blog post SEO with keyword density",
-        "Internal link depth analysis",
-        "Cost-optimized scheduling",
-      ],
-    };
-  }),
+    getRedirects: adminProcedure.query(async () => getRedirects()),
 
-  // Kill switch
-  killSwitch: adminProcedure
-    .input(z.object({ action: z.enum(["activate", "deactivate"]) }))
-    .mutation(async ({ input }) => {
-      if (input.action === "activate") {
-        return { success: triggerSeoKillSwitch("SEO_KILL_9X4M"), killed: true };
-      } else {
-        return { success: resetSeoKillSwitch("SEO_KILL_9X4M"), killed: false };
-      }
-    }),
-});
+    submitToIndexNow: adminProcedure
+      .input(z.object({ urls: z.array(z.string()) }))
+      .mutation(async ({ input }) => submitToIndexNow(input.urls)),
+
+    getSeoEventLog: adminProcedure
+      .input(z.object({ limit: z.number().optional() }))
+      .query(async ({ input }) => getSeoEventLog(input.limit)),
+
+    getInternalLinks: adminProcedure.query(async () => analyzeInternalLinks()),
+
+    getCompetitorAnalysis: adminProcedure.query(async () => analyzeCompetitors()),
+
+    getContentBriefs: adminProcedure
+      .input(z.object({ count: z.number().default(5) }))
+      .query(async ({ input }) => generateContentBriefs(input.count)),
+
+    optimizeBlogPost: adminProcedure
+      .input(z.object({ slug: z.string() }))
+      .mutation(async ({ input }) => optimizeBlogPostSeo(input.slug)),
+
+    killSwitch: adminProcedure
+      .input(z.object({ code: z.string() }))
+      .mutation(async ({ input }) => triggerSeoKillSwitch(input.code)),
+
+    resetKillSwitch: adminProcedure
+      .input(z.object({ code: z.string() }))
+      .mutation(async ({ input }) => resetSeoKillSwitch(input.code)),
+
+    isKilled: adminProcedure.query(async () => isSeoKilled()),
+
+    // ── v4: Generative Engine Optimisation (GEO) ─────────────────────────────
+
+    getLlmsTxt: publicProcedure.query(async () => ({
+      llmsTxt: generateLlmsTxt(),
+      llmsFullTxt: generateLlmsFullTxt(),
+    })),
+
+    getAiCitationMeta: adminProcedure
+      .input(z.object({ title: z.string(), description: z.string(), path: z.string() }))
+      .query(async ({ input }) => generateAiCitationMeta(input)),
+
+    // ── v4: Programmatic SEO ─────────────────────────────────────────────────
+
+    getProgrammaticPages: adminProcedure.query(async () => getAllProgrammaticPages()),
+
+    getTopicClusters: adminProcedure.query(async () => getTopicClusters()),
+
+    getFeaturedSnippetTargets: adminProcedure.query(async () => getFeaturedSnippetTargets()),
+
+    getSearchIntentMappings: adminProcedure.query(async () => getSearchIntentMappings()),
+
+    getSemanticKeywordClusters: adminProcedure.query(async () => getSemanticKeywordClusters()),
+
+    // ── v4: Content Analysis ─────────────────────────────────────────────────
+
+    getContentFreshness: adminProcedure.query(async () => analyzeContentFreshness()),
+
+    getContentGaps: adminProcedure.query(async () => analyzeContentGaps()),
+
+    // ── v4: Enhanced Structured Data ─────────────────────────────────────────
+
+    getEnhancedStructuredData: adminProcedure.query(async () => generateEnhancedStructuredData()),
+
+    getEEATStructuredData: adminProcedure.query(async () => generateEEATStructuredData()),
+
+    getSitemapIndex: adminProcedure.query(async () => generateSitemapIndex()),
+
+    // ── v4: Google Search Console Instant Indexing ────────────────────────────
+
+    submitToGoogleIndexing: adminProcedure
+      .input(z.object({ urls: z.array(z.string().url()) }))
+      .mutation(async ({ input }) => submitBatchToGoogleIndexing(input.urls)),
+  });
+  
