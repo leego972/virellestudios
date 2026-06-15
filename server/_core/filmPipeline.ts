@@ -1,18 +1,19 @@
 import { buildNegativePrompt } from "./cinematicPromptEngine";
-/**
- * Full Film Generation Pipeline — The Master Orchestrator
+
+import { logger } from "./logger";/**
+ * Full Film Generation Pipeline â The Master Orchestrator
  * 
  * This is the engine that generates a complete 90-minute film.
  * It orchestrates all sub-systems:
  * 
- * 1. SCREENPLAY PHASE — AI generates the full screenplay
- * 2. SCENE BREAKDOWN — Script is broken into 60-90 detailed scenes
- * 3. CHARACTER SETUP — Build character DNA for consistency
- * 4. CONTINUITY CHAIN — Plan visual flow between scenes
- * 5. VIDEO GENERATION — Generate extended scenes with clip chaining
- * 6. DIALOGUE AUDIO — Generate voice acting for each scene
- * 7. SOUNDTRACK — Generate AI film score
- * 8. FINAL ASSEMBLY — Stitch everything into a single film with audio
+ * 1. SCREENPLAY PHASE â AI generates the full screenplay
+ * 2. SCENE BREAKDOWN â Script is broken into 60-90 detailed scenes
+ * 3. CHARACTER SETUP â Build character DNA for consistency
+ * 4. CONTINUITY CHAIN â Plan visual flow between scenes
+ * 5. VIDEO GENERATION â Generate extended scenes with clip chaining
+ * 6. DIALOGUE AUDIO â Generate voice acting for each scene
+ * 7. SOUNDTRACK â Generate AI film score
+ * 8. FINAL ASSEMBLY â Stitch everything into a single film with audio
  * 
  * Architecture for 90-minute film:
  * - 60-90 scenes (avg 60-90 seconds each)
@@ -27,7 +28,7 @@ import { buildNegativePrompt } from "./cinematicPromptEngine";
  * - Progress tracking (real-time updates)
  * 
  * The pipeline supports:
- * - Full auto-generation (concept → finished film)
+ * - Full auto-generation (concept â finished film)
  * - Scene-by-scene generation (generate one scene at a time)
  * - Re-generation (regenerate specific scenes)
  * - Multi-pass refinement (generate draft, then improve)
@@ -50,7 +51,7 @@ import * as os from "os";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export type FilmGenerationPhase =
   | "preparing"
@@ -222,7 +223,7 @@ export interface FilmGenerationResult {
   };
 }
 
-// ─── Scene Duration Calculator ───
+// âââ Scene Duration Calculator âââ
 
 /**
  * Calculate target duration for each scene based on total film duration.
@@ -275,7 +276,7 @@ function calculateSceneDurations(
   return durations;
 }
 
-// ─── Final Film Assembly ───
+// âââ Final Film Assembly âââ
 
 /**
  * Assemble all scene videos, dialogue audio, and soundtrack into a single film.
@@ -305,14 +306,14 @@ async function assembleFilm(
       throw new Error("No scene videos to assemble");
     }
 
-    console.log(`[FilmPipeline] Assembling ${sortedScenes.length} scenes into final film...`);
+    logger.info(`[FilmPipeline] Assembling ${sortedScenes.length} scenes into final film...`);
 
     // Download and process each scene
     const processedFiles: string[] = [];
 
     for (let i = 0; i < sortedScenes.length; i++) {
       const scene = sortedScenes[i];
-      console.log(`[FilmPipeline] Processing scene ${i + 1}/${sortedScenes.length}...`);
+      logger.info(`[FilmPipeline] Processing scene ${i + 1}/${sortedScenes.length}...`);
 
       // Download video
       const videoPath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_video.mp4`);
@@ -415,7 +416,7 @@ async function assembleFilm(
           ], { timeout: 120000 });
         } catch (err) {
           // Fallback: just use video without audio mixing
-          console.warn(`[FilmPipeline] Audio mixing failed for scene ${i}, using video only:`, err);
+          logger.warn(`[FilmPipeline] Audio mixing failed for scene ${i}, using video only:`, err);
           await execFileAsync("ffmpeg", [
             "-i", videoPath,
             "-c:v", "libx264", "-preset", "slow", "-crf", "18",
@@ -435,7 +436,7 @@ async function assembleFilm(
     }
 
     // Concatenate all scenes into final film
-    console.log(`[FilmPipeline] Concatenating ${processedFiles.length} scenes...`);
+    logger.info(`[FilmPipeline] Concatenating ${processedFiles.length} scenes...`);
     const concatInput = processedFiles.join("|");
     const outputPath = path.join(tmpDir, "final_film.mp4");
 
@@ -475,7 +476,7 @@ async function assembleFilm(
     const key = `films/${projectId}/${projectTitle.replace(/[^a-zA-Z0-9]/g, "_")}_${Date.now()}.mp4`;
     const { url: filmUrl } = await storagePut(key, fileBuffer, "video/mp4");
 
-    console.log(`[FilmPipeline] Film assembled: ${totalDuration.toFixed(0)}s (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+    logger.info(`[FilmPipeline] Film assembled: ${totalDuration.toFixed(0)}s (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
 
     return { filmUrl, totalDuration };
   } finally {
@@ -485,7 +486,7 @@ async function assembleFilm(
   }
 }
 
-// ─── Main Pipeline ───
+// âââ Main Pipeline âââ
 
 /**
  * Generate a complete film from start to finish.
@@ -512,23 +513,23 @@ export async function generateFullFilm(
 
   onProgress?.(progress);
 
-  // ── Step 1: Calculate scene durations ──
+  // ââ Step 1: Calculate scene durations ââ
   const sceneDurations = calculateSceneDurations(scenes, config.targetDurationMinutes);
   const estimates = estimateFilmGenerationCalls(config.targetDurationMinutes);
   progress.totalClips = estimates.totalClips;
   progress.estimatedTimeRemainingMinutes = estimates.estimatedMinutes;
 
-  console.log(`[FilmPipeline] Starting ${config.targetDurationMinutes}-minute film generation`);
-  console.log(`[FilmPipeline] ${scenes.length} scenes, ~${estimates.totalClips} total clips, est. ${estimates.estimatedMinutes} min`);
+  logger.info(`[FilmPipeline] Starting ${config.targetDurationMinutes}-minute film generation`);
+  logger.info(`[FilmPipeline] ${scenes.length} scenes, ~${estimates.totalClips} total clips, est. ${estimates.estimatedMinutes} min`);
 
-  // ── Step 2: Build continuity chain ──
+  // ââ Step 2: Build continuity chain ââ
   let continuityChain: ContinuityChain | undefined;
   if (config.useCharacterConsistency || config.useSceneContinuity) {
     continuityChain = buildContinuityChain(characters, scenes as any, project.id);
-    console.log(`[FilmPipeline] Continuity chain built: ${continuityChain.characters.length} characters, ${continuityChain.scenes.length} scenes`);
+    logger.info(`[FilmPipeline] Continuity chain built: ${continuityChain.characters.length} characters, ${continuityChain.scenes.length} scenes`);
   }
 
-  // ── Step 3: Generate scenes ──
+  // ââ Step 3: Generate scenes ââ
   progress.phase = "generating_scenes";
   onProgress?.(progress);
 
@@ -545,9 +546,9 @@ export async function generateFullFilm(
   }> = [];
 
   const _coherenceDb = await getDb();
-  // ── Pre-load all coherence data for this project ──────────────────────────
+  // ââ Pre-load all coherence data for this project ââââââââââââââââââââââââââ
   // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
-  // across every scene — covers both quick-generate and manual generate.
+  // across every scene â covers both quick-generate and manual generate.
   // Guard: if db is unavailable (no DATABASE_URL) fall back to empty arrays
   // so film generation degrades gracefully instead of throwing a TypeError.
   const [_bgRows, _rawPropAssign, _propLibRows, _stateRows, _wardRows, _vdnaRows] = _coherenceDb
@@ -595,7 +596,7 @@ export async function generateFullFilm(
 
         if (continuityChain) {
           // Build per-scene coherence context for wardrobe, location, props,
-          // character states, and Visual DNA — wires both quick & manual generate.
+          // character states, and Visual DNA â wires both quick & manual generate.
           const _ord = scene.orderIndex || sceneIdx;
           const coherenceCtx: SceneCoherenceContext = {
             background: (() => {
@@ -642,7 +643,7 @@ export async function generateFullFilm(
         const previousLastFrame = prevResult?.lastFrameUrl || referenceImageUrl;
 
         // Generate extended scene video
-        console.log(`[FilmPipeline] Generating scene ${sceneIdx + 1}/${sortedScenes.length}: "${scene.title}" (${targetDuration}s target)`);
+        logger.info(`[FilmPipeline] Generating scene ${sceneIdx + 1}/${sortedScenes.length}: "${scene.title}" (${targetDuration}s target)`);
 
         const sceneResult = await generateExtendedScene(
           videoKeys,
@@ -717,7 +718,7 @@ export async function generateFullFilm(
             dialogueAudioUrl = dialogueResult.audioUrl;
             progress.dialogueLinesGenerated += dialogueResult.lineCount;
           } catch (err: any) {
-            console.warn(`[FilmPipeline] Dialogue generation failed for scene ${scene.id}:`, err.message);
+            logger.warn(`[FilmPipeline] Dialogue generation failed for scene ${scene.id}:`, err.message);
             progress.errors.push(`Dialogue failed for scene "${scene.title}": ${err.message}`);
           }
         }
@@ -743,7 +744,7 @@ export async function generateFullFilm(
             soundtrackUrl = soundtrackResult.audioUrl;
             progress.soundtrackSegmentsGenerated++;
           } catch (err: any) {
-            console.warn(`[FilmPipeline] Soundtrack generation failed for scene ${scene.id}:`, err.message);
+            logger.warn(`[FilmPipeline] Soundtrack generation failed for scene ${scene.id}:`, err.message);
             progress.errors.push(`Soundtrack failed for scene "${scene.title}": ${err.message}`);
           }
         }
@@ -769,7 +770,7 @@ export async function generateFullFilm(
           lastFrameUrl: sceneResult.lastFrameUrl,
         };
       } catch (err: any) {
-        console.error(`[FilmPipeline] Scene ${scene.id} failed:`, err.message);
+        logger.error(`[FilmPipeline] Scene ${scene.id} failed:`, err.message);
         progress.errors.push(`Scene "${scene.title}" failed: ${err.message}`);
         progress.completedScenes++;
         onProgress?.(progress);
@@ -788,7 +789,7 @@ export async function generateFullFilm(
     sceneResults.push(...batchResults);
   }
 
-  // ── Step 4: Assemble final film ──
+  // ââ Step 4: Assemble final film ââ
   progress.phase = "assembling";
   onProgress?.(progress);
 
@@ -814,20 +815,20 @@ export async function generateFullFilm(
       filmUrl = assembly.filmUrl;
       totalDuration = assembly.totalDuration;
     } catch (err: any) {
-      console.error("[FilmPipeline] Final assembly failed:", err.message);
+      logger.error("[FilmPipeline] Final assembly failed:", err.message);
       progress.errors.push(`Film assembly failed: ${err.message}`);
     }
   }
 
-  // ── Complete ──
+  // ââ Complete ââ
   const endTime = Date.now();
   const totalTimeMinutes = (endTime - startTime) / 60000;
 
   progress.phase = filmUrl ? "complete" : "failed";
   onProgress?.(progress);
 
-  console.log(`[FilmPipeline] Film generation ${filmUrl ? "COMPLETE" : "FAILED"}`);
-  console.log(`[FilmPipeline] ${successfulScenes.length}/${sortedScenes.length} scenes, ${totalDuration.toFixed(0)}s total, ${totalTimeMinutes.toFixed(1)} min elapsed`);
+  logger.info(`[FilmPipeline] Film generation ${filmUrl ? "COMPLETE" : "FAILED"}`);
+  logger.info(`[FilmPipeline] ${successfulScenes.length}/${sortedScenes.length} scenes, ${totalDuration.toFixed(0)}s total, ${totalTimeMinutes.toFixed(1)} min elapsed`);
 
   return {
     filmUrl,
@@ -881,7 +882,7 @@ export async function generateSingleScene(
 }> {
   const { scene, characters, videoKeys, voiceKeys, musicKeys } = input;
 
-    // ── Resolve wardrobe assignments for this scene ──────────────────────────
+    // ââ Resolve wardrobe assignments for this scene ââââââââââââââââââââââââââ
     // Query wardrobeAssignments JOIN wardrobeItems for this project so the AI
     // generates the exact leased outfit on each character in every frame.
     const _wardDb = await getDb();
@@ -911,12 +912,12 @@ export async function generateSingleScene(
             : itemDesc;
         }
       } catch (err: any) {
-        console.warn("[SingleScene] Wardrobe resolution failed:", err.message);
+        logger.warn("[SingleScene] Wardrobe resolution failed:", err.message);
       }
     }
 
     // Pre-populate character.clothing so buildCharacterDNA bakes the outfit into
-    // the promptAnchor — every frame of the scene will show the correct clothes.
+    // the promptAnchor â every frame of the scene will show the correct clothes.
     const charactersWithWardrobe = characters.map(c => ({
       ...c,
       clothing: wardrobeByCharacter[c.id] ?? c.clothing ?? undefined,
@@ -979,7 +980,7 @@ export async function generateSingleScene(
       });
       dialogueAudioUrl = dialogueResult.audioUrl;
     } catch (err: any) {
-      console.warn(`[SingleScene] Dialogue failed:`, err.message);
+      logger.warn(`[SingleScene] Dialogue failed:`, err.message);
     }
   }
 
@@ -1000,7 +1001,7 @@ export async function generateSingleScene(
       });
       soundtrackUrl = soundtrackResult.audioUrl;
     } catch (err: any) {
-      console.warn(`[SingleScene] Soundtrack failed:`, err.message);
+      logger.warn(`[SingleScene] Soundtrack failed:`, err.message);
     }
   }
 
