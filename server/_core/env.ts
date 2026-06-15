@@ -89,6 +89,7 @@ export const ENV = {
   tiktokAccessToken: process.env.TIKTOK_ACCESS_TOKEN ?? "",
   tiktokClientKey: process.env.TIKTOK_CLIENT_KEY ?? "",
   tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET ?? "",
+  tiktokRefreshToken: process.env.TIKTOK_REFRESH_TOKEN ?? "",
 
 
     // ─── YouTube Data API v3 ────────────────────────────────────────────────
