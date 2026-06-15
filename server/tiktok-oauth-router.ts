@@ -59,7 +59,7 @@ import type { Express, Request, Response } from "express";
         return;
       }
 
-      const clientKey = ENV.tiktokClientKey;
+      const clientKey = ENV.tiktokClientKey.trim();
       const clientSecret = ENV.tiktokClientSecret.trim();
       if (!clientKey || !clientSecret) {
         res.status(400).send("TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET not configured.");
