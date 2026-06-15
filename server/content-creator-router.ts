@@ -12,7 +12,6 @@
  *  - Content calendar
  *  - Scheduled post processing
  */
-
 import { z } from "zod";
 import { router, adminProcedure } from "./_core/trpc";
 import { getDb } from "./db";
@@ -40,30 +39,21 @@ import { generatePictureAd, autoGeneratePictureAd } from "./_core/pictureAdEngin
 import { postToLinkedIn } from "./_core/socialPostingEngine";
   import { ENV } from "./_core/env";
   import { youtubeAdapter } from "./expanded-channels";
-
 const log = logger;
-
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
-
 const platformEnum = z.enum([
   "tiktok", "instagram", "x_twitter", "linkedin", "facebook",
   "youtube_shorts", "blog", "email", "pinterest", "reddit",
   "discord", "telegram", "medium", "hackernews", "whatsapp",
 ]);
-
 const contentTypeEnum = z.enum([
   "social_post", "video_script", "photo_carousel", "blog_article",
   "email_campaign", "ad_copy", "reel", "story", "infographic", "thread",
 ]);
-
 const statusEnum = z.enum(["draft", "review", "approved", "scheduled", "published", "failed", "archived"]);
-
 const campaignStatusEnum = z.enum(["draft", "active", "paused", "completed", "archived"]);
-
 // ─── Router ───────────────────────────────────────────────────────────────────
-
 export const contentCreatorRouter = router({
-
   // ─── Dashboard ─────────────────────────────────────────────────────────────
   dashboard: adminProcedure.query(async () => {
     try {
@@ -72,35 +62,29 @@ export const contentCreatorRouter = router({
       log.error("[ContentCreatorRouter] dashboard error:", err);
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message 
     // ─── YouTube ──────────────────────────────────────────────────────────────
-
     youtube: router({
       /** Returns the URL the admin should visit to connect their YouTube channel */
-      getConnectUrl: adminProcedure.query(({ ctx }) => {
-        const { ENV } = require("./_core/env");
+      getConnectUrl: adminProcedure.query(() => {
         return {
           configured: !!(ENV.youtubeClientId && ENV.youtubeClientSecret),
           connected: !!ENV.youtubeRefreshToken,
           connectUrl: "/api/youtube/connect",
         };
       }),
-
       /** Post a YouTube community update / Shorts script for the given topic */
       postCommunityUpdate: adminProcedure
         .input(z.object({ topic: z.string().min(1), content: z.string().min(1) }))
         .mutation(async ({ input }) => {
-          const { youtubeAdapter } = await import("./expanded-channels");
           const result = await youtubeAdapter.postCommunityUpdate({
             text: `${input.topic}\n\n${input.content}\n\nCreate your own AI film at https://virelle.life\n\n#AIFilmmaking #VirelleStudios #AICinema #IndieFilm`,
           });
           logger.info("[YouTube] Community update posted", result);
           return result;
         }),
-
       /** Generate optimised Shorts metadata for a topic */
       generateShortsScript: adminProcedure
         .input(z.object({ topic: z.string().min(1), keywords: z.array(z.string()).default([]) }))
         .mutation(async ({ input }) => {
-          const { youtubeAdapter } = await import("./expanded-channels");
           const meta = await youtubeAdapter.generateShortsMetadata({
             topic: input.topic,
             keywords: input.keywords.length ? input.keywords : ["AI filmmaking", "Virelle Studios", "indie film", "AI cinema"],
@@ -114,7 +98,6 @@ export const contentCreatorRouter = router({
 });
     }
   }),
-
   // ─── Platform Config ────────────────────────────────────────────────────────
   getPlatforms: adminProcedure.query(() => {
     return Object.entries(PLATFORM_CONFIG).map(([key, cfg]) => ({
@@ -125,7 +108,6 @@ export const contentCreatorRouter = router({
       contentTypes: cfg.contentTypes,
     }));
   }),
-
   // ─── SEO Briefs ─────────────────────────────────────────────────────────────
   getSeoContentBriefs: adminProcedure
     .input(z.object({ count: z.number().min(1).max(20).default(5) }))
@@ -137,7 +119,6 @@ export const contentCreatorRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
       }
     }),
-
   // ─── Campaign CRUD ──────────────────────────────────────────────────────────
   listCampaigns: adminProcedure
     .input(z.object({
@@ -148,34 +129,27 @@ export const contentCreatorRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const conditions = input.status ? [eq(contentCreatorCampaigns.status, input.status)] : [];
       const campaigns = await db.select().from(contentCreatorCampaigns)
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(desc(contentCreatorCampaigns.createdAt))
         .limit(input.limit)
         .offset(input.offset);
-
       const [countResult] = await db.select({ count: sql<number>`count(*)` })
         .from(contentCreatorCampaigns)
         .where(conditions.length > 0 ? and(...conditions) : undefined);
-
       return { campaigns, total: Number(countResult?.count || 0) };
     }),
-
   getCampaign: adminProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const campaigns = await db.select().from(contentCreatorCampaigns)
         .where(eq(contentCreatorCampaigns.id, input.id)).limit(1);
-
       if (!campaigns[0]) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
       return campaigns[0];
     }),
-
   createCampaign: adminProcedure
     .input(z.object({
       name: z.string().min(1).max(255),
@@ -195,7 +169,6 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       let aiStrategy: string | undefined;
       if (input.generateStrategy && input.objective) {
         try {
@@ -208,7 +181,6 @@ export const contentCreatorRouter = router({
           log.warn("[ContentCreatorRouter] Strategy generation failed:", { error: String(err) });
         }
       }
-
       const [result] = await db.insert(contentCreatorCampaigns).values({
         name: input.name,
         description: input.description,
@@ -225,10 +197,8 @@ export const contentCreatorRouter = router({
         startDate: input.startDate ? new Date(input.startDate) : undefined,
         endDate: input.endDate ? new Date(input.endDate) : undefined,
       } as any);
-
       return { id: (result as any).insertId, success: true };
     }),
-
   updateCampaign: adminProcedure
     .input(z.object({
       id: z.number(),
@@ -247,35 +217,27 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const { id, ...updates } = input;
       const filteredUpdates = Object.fromEntries(
         Object.entries(updates).filter(([, v]) => v !== undefined)
       );
-
       if (Object.keys(filteredUpdates).length === 0) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "No fields to update" });
       }
-
       await db.update(contentCreatorCampaigns).set(filteredUpdates as any)
         .where(eq(contentCreatorCampaigns.id, id));
-
       return { success: true };
     }),
-
   deleteCampaign: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorCampaigns)
         .set({ status: "archived" })
         .where(eq(contentCreatorCampaigns.id, input.id));
-
       return { success: true };
     }),
-
   generateCampaignStrategy: adminProcedure
     .input(z.object({
       campaignId: z.number(),
@@ -287,20 +249,16 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const strategy = await generateCampaignStrategy({
         name: input.name,
         objective: input.objective,
         targetAudience: input.targetAudience,
       });
-
       await db.update(contentCreatorCampaigns)
         .set({ aiStrategy: strategy })
         .where(eq(contentCreatorCampaigns.id, input.campaignId));
-
       return { strategy };
     }),
-
   // ─── Content Piece Generation ───────────────────────────────────────────────
   generatePiece: adminProcedure
     .input(z.object({
@@ -327,7 +285,6 @@ export const contentCreatorRouter = router({
           includeImage: input.includeImage,
           campaignId: input.campaignId,
         });
-
         let pieceId: number | undefined;
         if (input.saveToDb) {
           const db = await getDb();
@@ -355,7 +312,6 @@ export const contentCreatorRouter = router({
               generationMs: content.generationMs,
             } as any);
             pieceId = (result as any).insertId;
-
             if (input.campaignId) {
               await db.update(contentCreatorCampaigns)
                 .set({ totalPieces: sql`totalPieces + 1` })
@@ -363,14 +319,12 @@ export const contentCreatorRouter = router({
             }
           }
         }
-
         return { ...content, pieceId };
       } catch (err: any) {
         log.error("[ContentCreatorRouter] generatePiece error:", err);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
       }
     }),
-
   bulkGenerate: adminProcedure
     .input(z.object({
       campaignId: z.number(),
@@ -394,7 +348,6 @@ export const contentCreatorRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
       }
     }),
-
   // ─── Content Queue ──────────────────────────────────────────────────────────
   listPieces: adminProcedure
     .input(z.object({
@@ -407,38 +360,30 @@ export const contentCreatorRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const conditions = [];
       if (input.campaignId) conditions.push(eq(contentCreatorPieces.campaignId, input.campaignId));
       if (input.platform) conditions.push(eq(contentCreatorPieces.platform, input.platform));
       if (input.status) conditions.push(eq(contentCreatorPieces.status, input.status));
-
       const pieces = await db.select().from(contentCreatorPieces)
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(desc(contentCreatorPieces.createdAt))
         .limit(input.limit)
         .offset(input.offset);
-
       const [countResult] = await db.select({ count: sql<number>`count(*)` })
         .from(contentCreatorPieces)
         .where(conditions.length > 0 ? and(...conditions) : undefined);
-
       return { pieces, total: Number(countResult?.count || 0) };
     }),
-
   getPiece: adminProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const pieces = await db.select().from(contentCreatorPieces)
         .where(eq(contentCreatorPieces.id, input.id)).limit(1);
-
       if (!pieces[0]) throw new TRPCError({ code: "NOT_FOUND", message: "Content piece not found" });
       return pieces[0];
     }),
-
   updatePieceStatus: adminProcedure
     .input(z.object({
       id: z.number(),
@@ -447,14 +392,11 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorPieces)
         .set({ status: input.status as any })
         .where(eq(contentCreatorPieces.id, input.id));
-
       return { success: true };
     }),
-
   updatePiece: adminProcedure
     .input(z.object({
       id: z.number(),
@@ -471,58 +413,45 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const { id, ...updates } = input;
       const filteredUpdates = Object.fromEntries(
         Object.entries(updates).filter(([, v]) => v !== undefined)
       );
-
       await db.update(contentCreatorPieces)
         .set(filteredUpdates as any)
         .where(eq(contentCreatorPieces.id, id));
-
       return { success: true };
     }),
-
   deletePiece: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorPieces)
         .set({ status: "archived" })
         .where(eq(contentCreatorPieces.id, input.id));
-
       return { success: true };
     }),
-
   approvePiece: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorPieces)
         .set({ status: "approved" })
         .where(eq(contentCreatorPieces.id, input.id));
-
       return { success: true };
     }),
-
   rejectPiece: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorPieces)
         .set({ status: "archived" })
         .where(eq(contentCreatorPieces.id, input.id));
-
       return { success: true };
     }),
-
   // ─── Scheduling ─────────────────────────────────────────────────────────────
   schedulePiece: adminProcedure
     .input(z.object({
@@ -542,7 +471,6 @@ export const contentCreatorRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
       }
     }),
-
   listSchedules: adminProcedure
     .input(z.object({
       campaignId: z.number().optional(),
@@ -555,33 +483,27 @@ export const contentCreatorRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const conditions = [];
       if (input.campaignId) conditions.push(eq(contentCreatorSchedules.campaignId, input.campaignId));
       if (input.platform) conditions.push(eq(contentCreatorSchedules.platform, input.platform));
       if (input.status) conditions.push(eq(contentCreatorSchedules.status, input.status));
       if (input.from) conditions.push(gte(contentCreatorSchedules.scheduledAt, new Date(input.from)));
       if (input.to) conditions.push(lte(contentCreatorSchedules.scheduledAt, new Date(input.to)));
-
       return db.select().from(contentCreatorSchedules)
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(contentCreatorSchedules.scheduledAt)
         .limit(input.limit);
     }),
-
   cancelSchedule: adminProcedure
     .input(z.object({ scheduleId: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       await db.update(contentCreatorSchedules)
         .set({ status: "cancelled" })
         .where(eq(contentCreatorSchedules.id, input.scheduleId));
-
       return { success: true };
     }),
-
   processDueSchedules: adminProcedure.mutation(async () => {
     try {
       return await processDueSchedules();
@@ -590,7 +512,6 @@ export const contentCreatorRouter = router({
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
     }
   }),
-
   // ─── TikTok Publishing ──────────────────────────────────────────────────────
   publishToTikTok: adminProcedure
     .input(z.object({
@@ -607,7 +528,6 @@ export const contentCreatorRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: err.message });
       }
     }),
-
   // ─── Analytics ──────────────────────────────────────────────────────────────
   getAnalytics: adminProcedure
     .input(z.object({
@@ -619,18 +539,15 @@ export const contentCreatorRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const conditions = [];
       if (input.campaignId) conditions.push(eq(contentCreatorAnalytics.campaignId, input.campaignId));
       if (input.platform) conditions.push(eq(contentCreatorAnalytics.platform, input.platform));
       if (input.from) conditions.push(gte(contentCreatorAnalytics.createdAt, new Date(input.from)));
       if (input.to) conditions.push(lte(contentCreatorAnalytics.createdAt, new Date(input.to)));
-
       const rows = await db.select().from(contentCreatorAnalytics)
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(desc(contentCreatorAnalytics.createdAt))
         .limit(500);
-
       const totals = rows.reduce((acc, row) => ({
         impressions: acc.impressions + row.impressions,
         clicks: acc.clicks + row.clicks,
@@ -639,10 +556,8 @@ export const contentCreatorRouter = router({
         saves: acc.saves + row.saves,
         videoViews: acc.videoViews + row.videoViews,
       }), { impressions: 0, clicks: 0, engagements: 0, shares: 0, saves: 0, videoViews: 0 });
-
       const avgCtr = rows.length > 0 ? rows.reduce((s, r) => s + r.ctr, 0) / rows.length : 0;
       const avgEngagementRate = rows.length > 0 ? rows.reduce((s, r) => s + r.engagementRate, 0) / rows.length : 0;
-
       const byPlatform: Record<string, typeof totals> = {};
       for (const row of rows) {
         if (!byPlatform[row.platform]) {
@@ -655,10 +570,8 @@ export const contentCreatorRouter = router({
         byPlatform[row.platform].saves += row.saves;
         byPlatform[row.platform].videoViews += row.videoViews;
       }
-
       return { totals, avgCtr, avgEngagementRate, byPlatform, rows: rows.slice(0, 100) };
     }),
-
   updateAnalytics: adminProcedure
     .input(z.object({
       pieceId: z.number(),
@@ -674,10 +587,8 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const ctr = input.impressions > 0 ? (input.clicks / input.impressions) * 100 : 0;
       const engagementRate = input.impressions > 0 ? (input.engagements / input.impressions) * 100 : 0;
-
       await db.insert(contentCreatorAnalytics).values({
         pieceId: input.pieceId,
         campaignId: input.campaignId,
@@ -691,7 +602,6 @@ export const contentCreatorRouter = router({
         ctr,
         engagementRate,
       } as any);
-
       await db.update(contentCreatorPieces).set({
         impressions: sql`impressions + ${input.impressions}`,
         clicks: sql`clicks + ${input.clicks}`,
@@ -700,10 +610,8 @@ export const contentCreatorRouter = router({
         saves: sql`saves + ${input.saves}`,
         videoViews: sql`videoViews + ${input.videoViews}`,
       }).where(eq(contentCreatorPieces.id, input.pieceId));
-
       return { success: true, ctr, engagementRate };
     }),
-
   // ─── Picture Ad Generation ─────────────────────────────────────────────────
   generatePictureAd: adminProcedure
     .input(z.object({
@@ -724,7 +632,6 @@ export const contentCreatorRouter = router({
       }
       return result;
     }),
-
   autoGeneratePictureAd: adminProcedure
     .input(z.object({
       topic: z.string().min(1).max(300),
@@ -736,7 +643,6 @@ export const contentCreatorRouter = router({
     .mutation(async ({ input }) => {
       return await autoGeneratePictureAd(input);
     }),
-
   // ─── LinkedIn Publishing ───────────────────────────────────────────────────
   publishToLinkedIn: adminProcedure
     .input(z.object({
@@ -764,7 +670,6 @@ export const contentCreatorRouter = router({
       }
       return result;
     }),
-
   // ─── Content Calendar ───────────────────────────────────────────────────────
   getCalendar: adminProcedure
     .input(z.object({
@@ -775,18 +680,15 @@ export const contentCreatorRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
       const conditions = [
         gte(contentCreatorSchedules.scheduledAt, new Date(input.from)),
         lte(contentCreatorSchedules.scheduledAt, new Date(input.to)),
       ];
       if (input.campaignId) conditions.push(eq(contentCreatorSchedules.campaignId, input.campaignId));
-
       const schedules = await db.select().from(contentCreatorSchedules)
         .where(and(...conditions))
         .orderBy(contentCreatorSchedules.scheduledAt)
         .limit(200);
-
       const pieceIds = [...new Set(schedules.map(s => s.pieceId))];
       const pieces = pieceIds.length > 0
         ? await db.select({
@@ -800,9 +702,7 @@ export const contentCreatorRouter = router({
           }).from(contentCreatorPieces)
             .where(sql`id IN (${sql.join(pieceIds.map(id => sql`${id}`), sql`, `)})`)
         : [];
-
       const pieceMap = new Map(pieces.map(p => [p.id, p]));
-
       return schedules.map(s => ({
         ...s,
         piece: pieceMap.get(s.pieceId),
