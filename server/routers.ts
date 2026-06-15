@@ -3159,7 +3159,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                  wardrobeContext: sceneWardrobeContext || undefined,
             characters: characters.map(c => ({
               name: c.name,
               ageRange: (c as any).ageRange ?? null,
@@ -3216,10 +3216,55 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           sceneRefImages.push(...charPhotos);
         }
         // Use rich CharacterDNA for cinematographer-grade visual consistency across all providers
-          const { buildCharacterDNA: _buildDNA } = await import("./_core/characterConsistency");
-          const characterDescriptions = sceneActiveCharacters
-            .filter((c: any) => c.name)
-            .map((c: any) => _buildDNA(c).promptAnchor);
+          // v6.78 — Per-character wardrobe lookup. Fetch assignments so DNA gets the correct outfit
+          // instead of the "plain all-black" placeholder that fires when no override is supplied.
+          // Also collects the first garment imageUrl per character to use as a visual ref anchor.
+          const _charWardrobeOverrides = new Map<number, {
+            wardrobeDescription?: string;
+            accessories?: string;
+            imageUrl?: string;
+          }>();
+          for (const _wc of sceneActiveCharacters) {
+            try {
+              const _wcAssignments = await db.getWardrobeAssignmentsByCharacter((_wc as any).id);
+              const _wcFiltered = _wcAssignments.filter(
+                (a: any) => a.assignmentType === "character_wardrobe" || a.assignmentType === "character_costume"
+              );
+              if (_wcFiltered.length > 0) {
+                const _primary = await db.getWardrobeItemById(_wcFiltered[0].wardrobeItemId);
+                if (_primary) {
+                  const _extras = await Promise.all(
+                    _wcFiltered.slice(1, 3).map((a: any) => db.getWardrobeItemById(a.wardrobeItemId))
+                  );
+                  const _accNames = _extras.filter(Boolean).map((it: any) => it.name).filter(Boolean).join(", ");
+                  const _wardrobeDesc = (_primary as any).referencePrompt?.trim()
+                    || (_primary as any).description?.trim()
+                    || (_primary as any).name;
+                  const _rawImgUrls = (_primary as any).imageUrls;
+                  const _firstImg: string | undefined = Array.isArray(_rawImgUrls)
+                    ? (_rawImgUrls[0] as string | undefined)
+                    : typeof _rawImgUrls === "string" ? (_rawImgUrls as string) : undefined;
+                  _charWardrobeOverrides.set((_wc as any).id, {
+                    wardrobeDescription: _wardrobeDesc,
+                    accessories: _accNames || undefined,
+                    imageUrl: _firstImg,
+                  });
+                }
+              }
+            } catch { /* non-fatal — character falls back to default wardrobe */ }
+          }
+          // v6.78 — Append wardrobe item images as additional visual anchors (cap at 2 extra refs)
+          const _wardrobeRefUrls = [..._charWardrobeOverrides.values()]
+            .map(v => v.imageUrl).filter((u): u is string => !!u).slice(0, 2);
+          for (const _wImgUrl of _wardrobeRefUrls) {
+            if (!sceneRefImages.includes(_wImgUrl) && sceneRefImages.length < 4) {
+              sceneRefImages.push(_wImgUrl);
+            }
+          }
+            const { buildCharacterDNA: _buildDNA } = await import("./_core/characterConsistency");
+            const characterDescriptions = sceneActiveCharacters
+              .filter((c: any) => c.name)
+              .map((c: any) => _buildDNA(c, _charWardrobeOverrides.get((c as any).id) || undefined).promptAnchor);
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
