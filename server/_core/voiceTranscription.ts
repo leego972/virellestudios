@@ -11,9 +11,9 @@
  * // Frontend component
  * const transcribeMutation = trpc.voice.transcribe.useMutation({
  *   onSuccess: (data) => {
- *     console.log(data.text); // Full transcription
- *     console.log(data.language); // Detected language
- *     console.log(data.segments); // Timestamped segments
+ *     logger.info(data.text); // Full transcription
+ *     logger.info(data.language); // Detected language
+ *     logger.info(data.segments); // Timestamped segments
  *   }
  * });
  * 
@@ -26,6 +26,7 @@
  * ```
  */
 import { ENV } from "./env";
+import { logger } from "./logger";
 
 export type TranscribeOptions = {
   audioUrl: string; // URL to the audio file (e.g., S3 URL)
@@ -164,7 +165,7 @@ export async function transcribeAudio(
       };
     }
 
-    console.log(`[Transcription] Using: ${transcriptionUrl.substring(0, 40)}...`);
+    logger.info(`[Transcription] Using: ${transcriptionUrl.substring(0, 40)}...`);
 
     let response = await fetch(transcriptionUrl, {
       method: "POST",
@@ -177,7 +178,7 @@ export async function transcribeAudio(
 
     // Fallback: if OpenAI fails and Forge is available, try Forge
     if (!response.ok && transcriptionUrl.includes("openai.com") && ENV.forgeApiUrl && ENV.forgeApiKey) {
-      console.warn(`[Transcription] OpenAI failed (${response.status}), trying Forge fallback...`);
+      logger.warn(`[Transcription] OpenAI failed (${response.status}), trying Forge fallback...`);
       const forgeBase = ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`;
       const forgeUrl = new URL("v1/audio/transcriptions", forgeBase).toString();
       const forgeFormData = new FormData();
@@ -198,7 +199,7 @@ export async function transcribeAudio(
 
     // Fallback: if Forge fails and OpenAI is available, try OpenAI
     if (!response.ok && !transcriptionUrl.includes("openai.com") && ENV.openaiApiKey) {
-      console.warn(`[Transcription] Forge failed (${response.status}), trying OpenAI fallback...`);
+      logger.warn(`[Transcription] Forge failed (${response.status}), trying OpenAI fallback...`);
       const oaiFormData = new FormData();
       const audioBlob3 = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
       oaiFormData.append("file", audioBlob3, filename);
