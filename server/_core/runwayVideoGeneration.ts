@@ -8,6 +8,7 @@
 import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 import { storagePut } from "../storage";
 import { ENV } from "./env";
+import { logger } from "./logger";
 
 // Initialize the Runway client
 // The SDK reads RUNWAYML_API_SECRET env var, but we set it explicitly
@@ -16,7 +17,7 @@ const getRunwayClient = (): RunwayML => {
   if (!apiKey) {
     throw new Error("Runway API key not configured");
   }
-  // Runway API keys must start with 'key_' — fail fast if invalid
+  // Runway API keys must start with 'key_' â fail fast if invalid
   if (!apiKey.startsWith('key_')) {
     throw new Error(`Runway API key invalid (must start with 'key_'). Got: ${apiKey.substring(0, 8)}...`);
   }
@@ -54,15 +55,15 @@ export async function generateRunwayVideo(
   const duration = Math.min(10, Math.max(2, options.duration || 5));
   const ratio = options.ratio || "1280:720";
 
-  console.log(`[RunwayGen] Starting ${model} job: ${duration}s at ${ratio}`);
-  console.log(`[RunwayGen] Prompt: ${options.prompt.substring(0, 200)}...`);
+  logger.info(`[RunwayGen] Starting ${model} job: ${duration}s at ${ratio}`);
+  logger.info(`[RunwayGen] Prompt: ${options.prompt.substring(0, 200)}...`);
 
   let task: any;
 
   try {
     if (options.inputImageUrl) {
       // Image-to-video mode
-      console.log(`[RunwayGen] Mode: image-to-video with reference: ${options.inputImageUrl.substring(0, 80)}...`);
+      logger.info(`[RunwayGen] Mode: image-to-video with reference: ${options.inputImageUrl.substring(0, 80)}...`);
       task = await client.imageToVideo
         .create({
           model: model as any,
@@ -73,8 +74,8 @@ export async function generateRunwayVideo(
         })
         .waitForTaskOutput();
     } else {
-      // Text-to-video mode — use the textToVideo endpoint
-      console.log(`[RunwayGen] Mode: text-to-video`);
+      // Text-to-video mode â use the textToVideo endpoint
+      logger.info(`[RunwayGen] Mode: text-to-video`);
       task = await (client as any).textToVideo
         .create({
           model: "gen4.5",
@@ -86,25 +87,25 @@ export async function generateRunwayVideo(
     }
   } catch (error: any) {
     if (error instanceof TaskFailedError) {
-      console.error("[RunwayGen] Task failed:", error.taskDetails);
+      logger.error("[RunwayGen] Task failed:", error.taskDetails);
       throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails)}`);
     }
-    console.error("[RunwayGen] Error:", error.message);
+    logger.error("[RunwayGen] Error:", error.message);
     throw new Error(`Runway video generation error: ${error.message}`);
   }
 
-  console.log(`[RunwayGen] Task completed:`, JSON.stringify(task).substring(0, 500));
+  logger.info(`[RunwayGen] Task completed:`, JSON.stringify(task).substring(0, 500));
 
   // Extract the video URL from the task output
   const taskId = task.id || "unknown";
   const outputUrl = task.output?.[0] || task.output?.video || task.output;
 
   if (!outputUrl || typeof outputUrl !== "string") {
-    console.error("[RunwayGen] No output URL in task result:", JSON.stringify(task));
+    logger.error("[RunwayGen] No output URL in task result:", JSON.stringify(task));
     throw new Error("Runway video generation completed but no video URL returned");
   }
 
-  console.log(`[RunwayGen] Video output URL: ${outputUrl.substring(0, 100)}...`);
+  logger.info(`[RunwayGen] Video output URL: ${outputUrl.substring(0, 100)}...`);
 
   // Download the video from Runway's CDN
   let videoBuffer: Buffer;
@@ -116,16 +117,16 @@ export async function generateRunwayVideo(
     const arrayBuffer = await response.arrayBuffer();
     videoBuffer = Buffer.from(arrayBuffer);
   } catch (e: any) {
-    console.error(`[RunwayGen] Failed to download video:`, e.message);
+    logger.error(`[RunwayGen] Failed to download video:`, e.message);
     throw new Error(`Failed to download Runway video: ${e.message}`);
   }
 
-  console.log(`[RunwayGen] Downloaded ${(videoBuffer.length / 1024 / 1024).toFixed(1)}MB video`);
+  logger.info(`[RunwayGen] Downloaded ${(videoBuffer.length / 1024 / 1024).toFixed(1)}MB video`);
 
   // Upload to S3 for permanent storage
   const videoKey = `videos/runway-${Date.now()}-${taskId.substring(0, 8)}.mp4`;
   const { url: s3VideoUrl } = await storagePut(videoKey, videoBuffer, "video/mp4");
-  console.log(`[RunwayGen] Uploaded to S3: ${s3VideoUrl}`);
+  logger.info(`[RunwayGen] Uploaded to S3: ${s3VideoUrl}`);
 
   return {
     videoUrl: s3VideoUrl,
@@ -157,7 +158,7 @@ export async function generateRunwayVideoWithFallback(
       provider: "runway",
     };
   } catch (e: any) {
-    console.error("[RunwayGen] Video generation failed, falling back to image:", e.message);
+    logger.error("[RunwayGen] Video generation failed, falling back to image:", e.message);
 
     if (fallbackImageGenerator) {
       try {
@@ -170,7 +171,7 @@ export async function generateRunwayVideoWithFallback(
           provider: "runway",
         };
       } catch (imgErr: any) {
-        console.error("[RunwayGen] Image fallback also failed:", imgErr.message);
+        logger.error("[RunwayGen] Image fallback also failed:", imgErr.message);
       }
     }
 
