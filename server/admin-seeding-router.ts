@@ -307,8 +307,13 @@ import { router, adminProcedure } from "./_core/trpc";
             '&', '%26'),
             '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
           ))
-          WHERE (primaryImageUrl IS NULL OR primaryImageUrl LIKE '/lamalo/%' OR primaryImageUrl = '')
-            AND collectionId IS NOT NULL
+          WHERE collectionId IS NOT NULL
+            AND (
+              primaryImageUrl IS NULL
+              OR primaryImageUrl = ''
+              OR primaryImageUrl LIKE '/lamalo/%'
+              OR imageUrls IS NULL
+            )
         `);
         const affected = (result as any).rowsAffected ?? (result as any)[0]?.affectedRows ?? '?';
         return { success: true, updated: affected, message: `Patched ${affected} wardrobe items with Pollinations image URLs` };
