@@ -4,10 +4,10 @@
  * Generates original film scores and background music for scenes.
  * 
  * Providers (BYOK):
- * 1. Suno AI — Best quality AI music generation (BYOK key required)
- * 2. Udio — Alternative AI music generation (BYOK key required)
- * 3. MusicGen (Replicate) — Open-source music generation via Replicate API
- * 4. Pollinations Audio — Free fallback for basic ambient music
+ * 1. Suno AI â Best quality AI music generation (BYOK key required)
+ * 2. Udio â Alternative AI music generation (BYOK key required)
+ * 3. MusicGen (Replicate) â Open-source music generation via Replicate API
+ * 4. Pollinations Audio â Free fallback for basic ambient music
  * 
  * Pipeline:
  * 1. Analyze scene mood, genre, and pacing
@@ -26,10 +26,11 @@ import { promisify } from "util";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { logger } from "./logger";
 
 const execFileAsync = promisify(execFile);
 
-// ─── Types ───
+// âââ Types âââ
 
 export type MusicProvider = "suno" | "udio" | "replicate_musicgen" | "pollinations";
 
@@ -64,7 +65,7 @@ export interface SoundtrackResult {
   title?: string;
 }
 
-// ─── Music Prompt Builder ───
+// âââ Music Prompt Builder âââ
 
 /**
  * Build a detailed music generation prompt from scene metadata.
@@ -200,7 +201,7 @@ export function getGenreMusicPreset(genre: string, mood: string): {
   return preset;
 }
 
-// ─── Suno AI ───
+// âââ Suno AI âââ
 
 async function generateSunoMusic(
   apiKey: string,
@@ -230,7 +231,7 @@ async function generateSunoMusic(
 
   const result = await resp.json() as any;
 
-  // Suno returns a task ID — poll for completion
+  // Suno returns a task ID â poll for completion
   const taskId = result.id || result.task_id;
   if (!taskId) {
     // Direct audio response
@@ -264,7 +265,7 @@ async function generateSunoMusic(
   throw new Error("Suno generation timed out after 3 minutes");
 }
 
-// ─── Replicate MusicGen ───
+// âââ Replicate MusicGen âââ
 
 async function generateReplicateMusic(
   apiKey: string,
@@ -323,7 +324,7 @@ async function generateReplicateMusic(
   throw new Error("MusicGen generation timed out");
 }
 
-// ─── Pollinations Audio (Free Fallback) ───
+// âââ Pollinations Audio (Free Fallback) âââ
 
 async function generatePollinationsMusic(
   prompt: string,
@@ -344,7 +345,7 @@ async function generatePollinationsMusic(
   return Buffer.from(await resp.arrayBuffer());
 }
 
-// ─── Audio Post-Processing ───
+// âââ Audio Post-Processing âââ
 
 /**
  * Loop or trim audio to match target duration.
@@ -413,7 +414,7 @@ async function adjustAudioDuration(
   }
 }
 
-// ─── Provider Selection ───
+// âââ Provider Selection âââ
 
 function selectMusicProvider(keys: SoundtrackKeys): MusicProvider {
   if (keys.sunoKey) return "suno";
@@ -422,7 +423,7 @@ function selectMusicProvider(keys: SoundtrackKeys): MusicProvider {
   return "pollinations";
 }
 
-// ─── Main Entry Point ───
+// âââ Main Entry Point âââ
 
 /**
  * Generate an AI soundtrack for a scene or full film.
@@ -434,7 +435,7 @@ export async function generateSoundtrack(
   const provider = selectMusicProvider(keys);
   const prompt = buildMusicPrompt(request);
 
-  console.log(`[Soundtrack] Generating ${request.durationSeconds}s ${request.genre} score via ${provider}`);
+  logger.info(`[Soundtrack] Generating ${request.durationSeconds}s ${request.genre} score via ${provider}`);
 
   let audioBuffer: Buffer;
 
@@ -454,11 +455,11 @@ export async function generateSoundtrack(
         break;
     }
   } catch (err: any) {
-    console.error(`[Soundtrack] ${provider} failed:`, err.message);
+    logger.error(`[Soundtrack] ${provider} failed:`, err.message);
 
     // Fallback to Pollinations
     if (provider !== "pollinations") {
-      console.log("[Soundtrack] Falling back to Pollinations...");
+      logger.info("[Soundtrack] Falling back to Pollinations...");
       try {
         audioBuffer = await generatePollinationsMusic(prompt, request.durationSeconds);
       } catch {
@@ -474,7 +475,7 @@ export async function generateSoundtrack(
     try {
       audioBuffer = await adjustAudioDuration(audioBuffer, request.durationSeconds);
     } catch (err) {
-      console.warn("[Soundtrack] Duration adjustment failed, using raw audio:", err);
+      logger.warn("[Soundtrack] Duration adjustment failed, using raw audio:", err);
     }
   }
 
@@ -496,7 +497,7 @@ export async function generateSoundtrack(
     await fs.promises.unlink(tmpPath).catch(() => {});
   } catch { /* use target duration */ }
 
-  console.log(`[Soundtrack] Generated ${durationSeconds.toFixed(1)}s score via ${provider}`);
+  logger.info(`[Soundtrack] Generated ${durationSeconds.toFixed(1)}s score via ${provider}`);
 
   return {
     audioUrl,
@@ -507,7 +508,7 @@ export async function generateSoundtrack(
 }
 
 /**
- * Generate a full film score — multiple tracks for different sections.
+ * Generate a full film score â multiple tracks for different sections.
  */
 export async function generateFilmScore(
   keys: SoundtrackKeys,
@@ -535,8 +536,8 @@ export async function generateFilmScore(
       });
       results.push(result);
     } catch (err: any) {
-      console.error(`[FilmScore] Scene ${scene.sceneId} score failed:`, err.message);
-      // Continue — missing scores are not fatal
+      logger.error(`[FilmScore] Scene ${scene.sceneId} score failed:`, err.message);
+      // Continue â missing scores are not fatal
     }
     onProgress?.(i + 1, scenes.length);
   }
@@ -544,7 +545,7 @@ export async function generateFilmScore(
   return results;
 }
 
-// ─── Provider Info ───
+// âââ Provider Info âââ
 
 export const MUSIC_PROVIDERS = [
   {
@@ -553,7 +554,7 @@ export const MUSIC_PROVIDERS = [
     description: "Industry-leading AI music generation. Creates full songs and instrumentals with high production quality.",
     signupUrl: "https://suno.com",
     pricing: "Free tier: 10 songs/day. Pro: $10/mo (500 songs). Premier: $30/mo (2000 songs).",
-    quality: "Ultra-premium — indistinguishable from human composers",
+    quality: "Ultra-premium â indistinguishable from human composers",
     maxDuration: 240,
   },
   {
@@ -562,7 +563,7 @@ export const MUSIC_PROVIDERS = [
     description: "Meta's open-source music generation model. Good for short instrumental cues and ambient music.",
     signupUrl: "https://replicate.com",
     pricing: "Pay per generation (~$0.01-0.05 per clip).",
-    quality: "Good — suitable for background scores",
+    quality: "Good â suitable for background scores",
     maxDuration: 30,
   },
   {
@@ -571,7 +572,7 @@ export const MUSIC_PROVIDERS = [
     description: "Free AI audio generation. Basic quality but no API key required.",
     signupUrl: "https://pollinations.ai",
     pricing: "FREE",
-    quality: "Basic — functional ambient music",
+    quality: "Basic â functional ambient music",
     maxDuration: 60,
   },
 ];
