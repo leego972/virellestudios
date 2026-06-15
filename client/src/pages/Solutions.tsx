@@ -158,6 +158,19 @@ export default function Solutions() {
               Every Creator
             </span>
           </h1>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-6 mb-8">
+            {[
+              { stat: "14", label: "AI Provider Integrations" },
+              { stat: "50+", label: "Production Tools" },
+              { stat: "40+", label: "Countries Served" },
+              { stat: "130+", label: "Subtitle Languages" },
+            ].map(({ stat, label }) => (
+              <div key={label} className="text-center">
+                <div className="text-2xl font-black text-amber-400">{stat}</div>
+                <div className="text-xs text-white/40 font-medium uppercase tracking-wider">{label}</div>
+              </div>
+            ))}
+          </div>
           <p className="text-lg text-foreground/70 leading-relaxed">
             Whether you're an independent filmmaker, a brand agency, a music artist, or a production studio — Virelle has a workflow built for your specific production needs.
           </p>
