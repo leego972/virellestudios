@@ -2,6 +2,7 @@ import { safeJsonExtract } from "./safeParse";
 import { invokeLLM } from "./llm";
 import { ENV } from "./env";
 import { generateImage } from "./imageGeneration";
+import { logger } from "./logger";
 
 // ============================================================
 // AUTONOMOUS SEO BLOG ENGINE
@@ -75,7 +76,7 @@ const BLOG_CATEGORIES = {
   "behind-the-scenes": {
     label: "Behind the Scenes",
     topics: [
-      "How VirÉlle Studios' AI engine creates Hollywood-quality imagery",
+      "How VirÃlle Studios' AI engine creates Hollywood-quality imagery",
       "The technology behind AI film generation: A deep dive",
       "How we trained our AI to understand cinematic language",
       "Building an AI film studio: The engineering challenges we solved",
@@ -158,18 +159,18 @@ export async function generateBlogArticle(): Promise<GeneratedArticle> {
   const { category, topic } = pickRandomTopic();
   const categoryLabel = BLOG_CATEGORIES[category].label;
 
-  const systemPrompt = `You are an expert content writer for VirÉlle Studios, an AI-powered film production platform. 
+  const systemPrompt = `You are an expert content writer for VirÃlle Studios, an AI-powered film production platform. 
 You write authoritative, engaging, SEO-optimized blog articles about AI filmmaking, cinematography, and the film industry.
 
 WRITING GUIDELINES:
-- Write in a professional but accessible tone — authoritative yet approachable
+- Write in a professional but accessible tone â authoritative yet approachable
 - Target audience: aspiring filmmakers, indie creators, film students, tech enthusiasts
 - Include practical insights, real techniques, and actionable advice
-- Naturally mention VirÉlle Studios where relevant (not forced — organic mentions only)
+- Naturally mention VirÃlle Studios where relevant (not forced â organic mentions only)
 - Use proper Markdown formatting: ## headings, **bold**, *italic*, bullet points, numbered lists
-- Include 2-3 internal references like "tools like VirÉlle Studios" or "platforms such as VirÉlle Studios" naturally
+- Include 2-3 internal references like "tools like VirÃlle Studios" or "platforms such as VirÃlle Studios" naturally
 - Article length: 1500-2500 words
-- Structure: Introduction → 4-6 main sections with ## headings → Conclusion
+- Structure: Introduction â 4-6 main sections with ## headings â Conclusion
 - Each section should have 2-4 paragraphs
 - Include relevant statistics or industry facts where appropriate
 - End with a compelling conclusion that encourages the reader to try AI filmmaking
@@ -212,7 +213,7 @@ Return your response as JSON with this exact structure:
         : "";
 
     const parsed = safeJsonExtract<{ title?: string; subtitle?: string; content?: string; excerpt?: string; tags?: string[]; metaTitle?: string; metaDescription?: string; }>(content, {});
-    // parsed is {} if JSON extraction fails — all fields are optional so this is safe
+    // parsed is {} if JSON extraction fails â all fields are optional so this is safe
     const slug = slugify(parsed.title || topic) + "-" + Date.now().toString(36);
 
     // Generate a cover image for the article
@@ -221,9 +222,9 @@ Return your response as JSON with this exact structure:
       const imagePrompt = `Professional blog header image for an article titled "${parsed.title || topic}". Cinematic, modern, high-quality editorial photography style. Dark moody tones with amber/gold accent lighting. Film production, AI technology, or cinematography theme. No text overlays.`;
       const imgResult = await generateImage({ prompt: imagePrompt });
       coverImageUrl = imgResult.url || undefined;
-      console.log(`[BlogEngine] Cover image generated for "${parsed.title || topic}"`);
+      logger.info(`[BlogEngine] Cover image generated for "${parsed.title || topic}"`);
     } catch (imgErr: any) {
-      console.warn(`[BlogEngine] Cover image generation failed (non-fatal): ${imgErr.message}`);
+      logger.warn(`[BlogEngine] Cover image generation failed (non-fatal): ${imgErr.message}`);
     }
 
     return {
@@ -240,7 +241,7 @@ Return your response as JSON with this exact structure:
       coverImageUrl,
     };
   } catch (error: any) {
-    console.error("[BlogEngine] Article generation failed:", error.message);
+    logger.error("[BlogEngine] Article generation failed:", error.message);
     throw error;
   }
 }
@@ -257,29 +258,29 @@ export function startBlogScheduler(
   const INTERVAL_MS = 8 * 60 * 60 * 1000; // 8 hours
   const INITIAL_DELAY_MS = 60 * 1000; // 1 minute after server start
 
-  console.log("[BlogEngine] Autonomous blog scheduler started. Publishing every 8 hours.");
+  logger.info("[BlogEngine] Autonomous blog scheduler started. Publishing every 8 hours.");
 
   // First article shortly after server start
   setTimeout(async () => {
     try {
-      console.log("[BlogEngine] Generating initial article...");
+      logger.info("[BlogEngine] Generating initial article...");
       const article = await generateBlogArticle();
       await publishFn(article);
-      console.log(`[BlogEngine] Published: "${article.title}"`);
+      logger.info(`[BlogEngine] Published: "${article.title}"`);
     } catch (err: any) {
-      console.error("[BlogEngine] Failed to generate initial article:", err.message);
+      logger.error("[BlogEngine] Failed to generate initial article:", err.message);
     }
   }, INITIAL_DELAY_MS);
 
   // Recurring generation
   setInterval(async () => {
     try {
-      console.log("[BlogEngine] Generating scheduled article...");
+      logger.info("[BlogEngine] Generating scheduled article...");
       const article = await generateBlogArticle();
       await publishFn(article);
-      console.log(`[BlogEngine] Published: "${article.title}"`);
+      logger.info(`[BlogEngine] Published: "${article.title}"`);
     } catch (err: any) {
-      console.error("[BlogEngine] Scheduled generation failed:", err.message);
+      logger.error("[BlogEngine] Scheduled generation failed:", err.message);
     }
   }, INTERVAL_MS);
 }
