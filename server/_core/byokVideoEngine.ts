@@ -2,8 +2,8 @@
  * BYOK (Bring Your Own Key) Video Engine
  * 
  * Provider Priority:
- * 1. Pollinations.ai (grok-video) — ALWAYS the default for free users
- * 2. User-provided keys (Runway, Sora, Replicate, fal, Luma, HuggingFace) — ONLY when user explicitly provides their own key
+ * 1. Pollinations.ai (grok-video) â ALWAYS the default for free users
+ * 2. User-provided keys (Runway, Sora, Replicate, fal, Luma, HuggingFace) â ONLY when user explicitly provides their own key
  * 
  * Platform-level Runway/OpenAI keys are NEVER used for video generation automatically.
  * They are reserved for other purposes (LLM scene breakdown, etc.).
@@ -15,11 +15,12 @@
  */
 
 import { ENV } from "./env";
-import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 
-// No prompt sanitization — user prompts are sent exactly as written to all providers.
+import { logger } from "./logger";import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 
-// ─── Types ───
+// No prompt sanitization â user prompts are sent exactly as written to all providers.
+
+// âââ Types âââ
 
 export type VideoProvider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "pollinations" | "seedance" | "veo3";
 
@@ -53,7 +54,7 @@ export interface VideoGenerationResult {
   thumbnailUrl?: string;
 }
 
-// ─── Pollinations Key Rotation Pool ───
+// âââ Pollinations Key Rotation Pool âââ
 // Keys come exclusively from env vars. Never hardcode credentials here.
 // Set POLLINATIONS_API_KEY (primary) and optionally POLLINATIONS_API_KEY_2
 // in Railway Variables. The pool is filtered to only non-empty values;
@@ -93,7 +94,7 @@ async function checkPollenBalance(apiKey: string): Promise<{ balance: number; su
   }
 }
 
-// ─── Provider Detection ───
+// âââ Provider Detection âââ
 
 function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
   const providers: VideoProvider[] = [];
@@ -129,7 +130,7 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
     if (hasKey) return pref;
   }
 
-  // Default priority order when no preference is set: Luma → Runway → OpenAI → fal → SeedDance → Replicate → Veo3 → HuggingFace → Pollinations
+  // Default priority order when no preference is set: Luma â Runway â OpenAI â fal â SeedDance â Replicate â Veo3 â HuggingFace â Pollinations
   if (keys.lumaKey) return "luma";
   if (keys.runwayKey) return "runway";
   if (keys.openaiKey) return "openai";
@@ -142,7 +143,7 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
   return "pollinations";
 }
 
-// ─── Runway ML ───
+// âââ Runway ML âââ
 
 async function generateWithRunway(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   // Runway SDK requires different endpoints for image-to-video vs text-to-video:
@@ -156,7 +157,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
   const ratio = req.aspectRatio === "9:16" ? ratio9x16 : ratio16x9;
   const duration = 10; // seconds
 
-  // promptText must be a non-empty string of ≤1000 characters
+  // promptText must be a non-empty string of â¤1000 characters
   const promptText = (req.prompt || "cinematic scene").substring(0, 1000).trim() || "cinematic scene";
 
   const client = new RunwayML({ apiKey: key });
@@ -166,7 +167,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
 
     if (hasImage) {
       // Image-to-video: use gen4_turbo via imageToVideo endpoint
-      console.log(`[BYOK:Runway] Mode: image-to-video (gen4_turbo) — ref: ${req.imageUrl!.substring(0, 80)}`);
+      logger.info(`[BYOK:Runway] Mode: image-to-video (gen4_turbo) â ref: ${req.imageUrl!.substring(0, 80)}`);
       const createParams: any = {
         model: "gen4_turbo",
         promptImage: req.imageUrl,
@@ -179,7 +180,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
       task = await client.imageToVideo.create(createParams);
     } else {
       // Text-to-video: use gen4.5 via textToVideo endpoint (no image required)
-      console.log(`[BYOK:Runway] Mode: text-to-video (gen4.5)`);
+      logger.info(`[BYOK:Runway] Mode: text-to-video (gen4.5)`);
       const createParams: any = {
         model: "gen4.5",
         promptText,
@@ -196,20 +197,20 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
       throw new Error(`Runway task creation returned no task ID: ${JSON.stringify(task).substring(0, 200)}`);
     }
 
-    console.log(`[BYOK:Runway] Task submitted: ${taskId} — worker will poll for completion`);
+    logger.info(`[BYOK:Runway] Task submitted: ${taskId} â worker will poll for completion`);
     return { provider: "runway", videoUrl: `runway-pending:${taskId}`, jobId: taskId, durationSeconds: duration };
 
   } catch (error: any) {
     if (error instanceof TaskFailedError) {
-      console.error("[BYOK:Runway] Task failed:", error.taskDetails);
+      logger.error("[BYOK:Runway] Task failed:", error.taskDetails);
       throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails).substring(0, 300)}`);
     }
-    console.error("[BYOK:Runway] Error:", error.message);
+    logger.error("[BYOK:Runway] Error:", error.message);
     throw new Error(`Runway video generation error: ${error.message}`);
   }
 }
 
-// ─── OpenAI Sora ───
+// âââ OpenAI Sora âââ
 
 async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const OpenAI = (await import("openai")).default;
@@ -226,7 +227,7 @@ async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Pro
     size,
   });
 
-  console.log(`[BYOK:OpenAI] Video job created: ${video.id}`);
+  logger.info(`[BYOK:OpenAI] Video job created: ${video.id}`);
 
   let result = video;
   const maxWait = 600000;
@@ -234,7 +235,7 @@ async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Pro
   while (result.status !== "completed" && Date.now() - startTime < maxWait) {
     await new Promise(r => setTimeout(r, 5000));
     result = await (client as any).videos.retrieve(result.id);
-    console.log(`[BYOK:OpenAI] Job ${result.id} status: ${result.status}`);
+    logger.info(`[BYOK:OpenAI] Job ${result.id} status: ${result.status}`);
     if (result.status === "failed") {
       throw new Error(`Sora generation failed: ${result.error?.message || "Unknown"}`);
     }
@@ -257,7 +258,7 @@ async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Pro
   return { provider: "openai", videoUrl, jobId: result.id, durationSeconds: parseInt(seconds) };
 }
 
-// ─── Replicate ───
+// âââ Replicate âââ
 
 async function generateWithReplicate(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   // Wan2.1-T2V-14B: best open-source text-to-video model
@@ -305,7 +306,7 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
   }
 
   const prediction = await createResp.json() as any;
-  console.log(`[BYOK:Replicate] Prediction created: ${prediction.id} (${numFrames} frames = ~${Math.round(numFrames / 8)}s)`);
+  logger.info(`[BYOK:Replicate] Prediction created: ${prediction.id} (${numFrames} frames = ~${Math.round(numFrames / 8)}s)`);
 
   // If already completed (Prefer: wait response)
   if (prediction.status === "succeeded") {
@@ -331,15 +332,15 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
     if (data.status === "failed" || data.status === "canceled") {
       throw new Error(`Replicate failed: ${data.error || "Unknown"}`);
     }
-    console.log(`[BYOK:Replicate] Prediction ${prediction.id} status: ${data.status}`);
+    logger.info(`[BYOK:Replicate] Prediction ${prediction.id} status: ${data.status}`);
   }
   throw new Error("Replicate prediction timed out after 10 minutes");
 }
 
-// ─── fal.ai ───
+// âââ fal.ai âââ
 
 async function generateWithFal(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  // Kling v2.6 Pro: supports 3–15s per clip natively (ideal for chained extended generation)
+  // Kling v2.6 Pro: supports 3â15s per clip natively (ideal for chained extended generation)
   // Use image-to-video model when a reference image is provided for visual continuity
   const requestedDuration = Math.min(Math.max(req.duration || 5, 3), 15);
   const actualDuration = requestedDuration;
@@ -363,7 +364,7 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
     model = "fal-ai/kling-video/v2.6/pro/text-to-video";
   }
 
-  console.log(`[BYOK:fal] Submitting ${model} (${actualDuration}s clip)`);
+  logger.info(`[BYOK:fal] Submitting ${model} (${actualDuration}s clip)`);
 
   const submitResp = await fetch(`https://queue.fal.run/${model}`, {
     method: "POST",
@@ -383,9 +384,9 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
   const submitData = await submitResp.json() as any;
   const requestId = submitData.request_id;
   if (!requestId) throw new Error(`fal.ai: no request_id in response: ${JSON.stringify(submitData)}`);
-  console.log(`[BYOK:fal] Request submitted: ${requestId} — returning sentinel for worker polling`);
+  logger.info(`[BYOK:fal] Request submitted: ${requestId} â returning sentinel for worker polling`);
 
-  // Return a sentinel URL immediately — the videoJobWorker will poll for completion.
+  // Return a sentinel URL immediately â the videoJobWorker will poll for completion.
   // This is non-blocking and survives Railway restarts, matching the Runway/Veo3 pattern.
   // Format: fal-pending|{requestId}|{model} (pipe separator avoids conflicts with model name slashes/colons)
   return { provider: "fal", videoUrl: `fal-pending|${requestId}|${model}`, jobId: requestId, durationSeconds: actualDuration };
@@ -407,12 +408,12 @@ export async function pollFalRequest(key: string, requestId: string, model: stri
     });
 
     if (!statusResp.ok) {
-      // 404 = request not found (wrong key or expired) — treat as failed, not running
+      // 404 = request not found (wrong key or expired) â treat as failed, not running
       if (statusResp.status === 404 || statusResp.status === 401 || statusResp.status === 403) {
-        console.warn(`[BYOK:fal] Status check returned ${statusResp.status} for request ${requestId} — marking as failed (not found/unauthorized)`);
+        logger.warn(`[BYOK:fal] Status check returned ${statusResp.status} for request ${requestId} â marking as failed (not found/unauthorized)`);
         return { status: "failed", error: `fal.ai request not found or unauthorized (HTTP ${statusResp.status})` };
       }
-      console.log(`[BYOK:fal] Status check failed (${statusResp.status}), treating as running`);
+      logger.info(`[BYOK:fal] Status check failed (${statusResp.status}), treating as running`);
       return { status: "running" };
     }
 
@@ -443,15 +444,15 @@ export async function pollFalRequest(key: string, requestId: string, model: stri
       return { status: "failed", error: `fal.ai failed: ${statusData.error || statusData.detail || "Unknown"}` };
     }
 
-    // IN_QUEUE, IN_PROGRESS, etc. — still running
+    // IN_QUEUE, IN_PROGRESS, etc. â still running
     return { status: "running" };
   } catch (err: any) {
-    console.warn(`[BYOK:fal] Poll error (treating as running):`, err.message);
+    logger.warn(`[BYOK:fal] Poll error (treating as running):`, err.message);
     return { status: "running" };
   }
 }
 
-// ─── Luma AI ───
+// âââ Luma AI âââ
 
 async function generateWithLuma(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const body: any = {
@@ -480,7 +481,7 @@ async function generateWithLuma(key: string, req: VideoGenerationRequest): Promi
 
   const createData = await createResp.json() as any;
   const genId = createData.id;
-  console.log(`[BYOK:Luma] Generation created: ${genId}`);
+  logger.info(`[BYOK:Luma] Generation created: ${genId}`);
 
   const maxWait = 600000;
   const startTime = Date.now();
@@ -500,12 +501,12 @@ async function generateWithLuma(key: string, req: VideoGenerationRequest): Promi
     if (data.state === "failed") {
       throw new Error(`Luma failed: ${data.failure_reason || "Unknown"}`);
     }
-    console.log(`[BYOK:Luma] Generation ${genId} state: ${data.state}`);
+    logger.info(`[BYOK:Luma] Generation ${genId} state: ${data.state}`);
   }
   throw new Error("Luma generation timed out");
 }
 
-// ─── Hugging Face ───
+// âââ Hugging Face âââ
 
 async function generateWithHuggingFace(token: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   // HuggingFace moved from api-inference.huggingface.co to router.huggingface.co in 2025
@@ -532,7 +533,7 @@ async function generateWithHuggingFace(token: string, req: VideoGenerationReques
   });
 
   if (resp.status === 503) {
-    console.log("[BYOK:HuggingFace] Model is loading, waiting 30s...");
+    logger.info("[BYOK:HuggingFace] Model is loading, waiting 30s...");
     await new Promise(r => setTimeout(r, 30000));
     return generateWithHuggingFace(token, req);
   }
@@ -553,7 +554,7 @@ async function generateWithHuggingFace(token: string, req: VideoGenerationReques
   throw new Error("HuggingFace did not return video data");
 }
 
-// ─── Pollinations.ai (FREE — Primary Provider for All Users) ───
+// âââ Pollinations.ai (FREE â Primary Provider for All Users) âââ
 
 async function generateWithPollinations(apiKey: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   // Video models on Pollinations (in order of preference):
@@ -566,7 +567,7 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
   const duration = Math.min(req.duration || 5, 8);
   const encodedPrompt = encodeURIComponent(req.prompt);
   
-  // Build query params — use aspectRatio parameter directly (Pollinations supports it)
+  // Build query params â use aspectRatio parameter directly (Pollinations supports it)
   const params = new URLSearchParams();
   params.set("duration", String(duration));
   params.set("aspectRatio", req.aspectRatio === "9:16" ? "9:16" : "16:9");
@@ -580,14 +581,14 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         // Check pollen balance before attempting generation
         const { balance, sufficient } = await checkPollenBalance(currentKey);
         if (!sufficient && balance >= 0) {
-          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (${balance}), trying next key`);
+          logger.info(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (${balance}), trying next key`);
           continue;
         }
 
-        console.log(`[BYOK:Pollinations] Trying model: ${model} with key ***${currentKey.slice(-4)} (balance: ${balance})`);
+        logger.info(`[BYOK:Pollinations] Trying model: ${model} with key ***${currentKey.slice(-4)} (balance: ${balance})`);
         params.set("model", model);
         
-        // CORRECT API URL: /video/{prompt} — this is the video generation endpoint
+        // CORRECT API URL: /video/{prompt} â this is the video generation endpoint
         const url = `https://gen.pollinations.ai/video/${encodedPrompt}?${params.toString()}`;
         
         const headers: Record<string, string> = {};
@@ -603,18 +604,18 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         });
 
         if (resp.status === 402) {
-          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (402), trying next key`);
+          logger.info(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (402), trying next key`);
           continue; // Try next key
         }
 
         if (resp.status === 401) {
-          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} is invalid (401), trying next key`);
+          logger.info(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} is invalid (401), trying next key`);
           continue; // Try next key
         }
 
         if (!resp.ok) {
           const errText = await resp.text().catch(() => "Unknown error");
-          console.log(`[BYOK:Pollinations] Model ${model} failed (${resp.status}): ${errText}`);
+          logger.info(`[BYOK:Pollinations] Model ${model} failed (${resp.status}): ${errText}`);
           continue; // Try next model/key
         }
 
@@ -625,12 +626,12 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
           // Direct video binary response
           const videoBuffer = Buffer.from(await resp.arrayBuffer());
           if (videoBuffer.length < 1000) {
-            console.log(`[BYOK:Pollinations] Model ${model} returned too-small response (${videoBuffer.length} bytes), skipping`);
+            logger.info(`[BYOK:Pollinations] Model ${model} returned too-small response (${videoBuffer.length} bytes), skipping`);
             continue;
           }
           const { uploadBufferToS3 } = await import("./s3Upload");
           const videoUrl = await uploadBufferToS3(videoBuffer, `pollinations-${model}-${Date.now()}.mp4`, "video/mp4");
-          console.log(`[BYOK:Pollinations] Video generated successfully with ${model} (${videoBuffer.length} bytes)`);
+          logger.info(`[BYOK:Pollinations] Video generated successfully with ${model} (${videoBuffer.length} bytes)`);
           return { provider: "pollinations", videoUrl, durationSeconds: duration };
         }
         
@@ -639,23 +640,23 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
           const data = await resp.json() as any;
           if (data.url || data.video_url || data.output) {
             const videoUrl = data.url || data.video_url || data.output;
-            console.log(`[BYOK:Pollinations] Video URL received from ${model}: ${videoUrl}`);
+            logger.info(`[BYOK:Pollinations] Video URL received from ${model}: ${videoUrl}`);
             return { provider: "pollinations", videoUrl, durationSeconds: duration };
           }
         }
 
         // If the response URL itself is the video (redirect)
         if (resp.url && resp.url !== url) {
-          console.log(`[BYOK:Pollinations] Redirected to video URL: ${resp.url}`);
+          logger.info(`[BYOK:Pollinations] Redirected to video URL: ${resp.url}`);
           return { provider: "pollinations", videoUrl: resp.url, durationSeconds: duration };
         }
 
-        console.log(`[BYOK:Pollinations] Model ${model} returned unexpected content-type: ${contentType}`);
+        logger.info(`[BYOK:Pollinations] Model ${model} returned unexpected content-type: ${contentType}`);
       } catch (err: any) {
         if (err.name === "TimeoutError" || err.name === "AbortError") {
-          console.log(`[BYOK:Pollinations] Model ${model} timed out with key ***${currentKey.slice(-4)}`);
+          logger.info(`[BYOK:Pollinations] Model ${model} timed out with key ***${currentKey.slice(-4)}`);
         } else {
-          console.log(`[BYOK:Pollinations] Model ${model} error with key ***${currentKey.slice(-4)}: ${err.message}`);
+          logger.info(`[BYOK:Pollinations] Model ${model} error with key ***${currentKey.slice(-4)}: ${err.message}`);
         }
       }
     }
@@ -670,13 +671,13 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
   );
 }
 
-// ─── BytePlus ModelArk (SeedDance) ───
+// âââ BytePlus ModelArk (SeedDance) âââ
 
 /**
  * Generate video using BytePlus ModelArk SeedDance API.
  * Uses async job submission + polling pattern.
  * 
- * SeedDance 2.0 API is not yet available — using Seedance 1.5 Pro (latest available).
+ * SeedDance 2.0 API is not yet available â using Seedance 1.5 Pro (latest available).
  * The model field will be updated to seedance-2-0 when BytePlus enables it.
  * 
  * API Docs: https://docs.byteplus.com/en/docs/ModelArk/Video_Generation_API
@@ -687,7 +688,7 @@ async function generateWithSeedance(key: string, req: VideoGenerationRequest): P
   const rawDuration = req.duration || 5;
   const duration = rawDuration >= 8 ? 10 : 5;
 
-  // Select model — Seedance 1.5 Pro is the latest available via API
+  // Select model â Seedance 1.5 Pro is the latest available via API
   // Will be upgraded to seedance-2-0 when BytePlus enables it
   const model = "seedance-1-5-pro-251215";
 
@@ -733,7 +734,7 @@ async function generateWithSeedance(key: string, req: VideoGenerationRequest): P
   const createData = await createResp.json() as any;
   const taskId = createData.id;
   if (!taskId) throw new Error(`SeedDance: no task ID in response: ${JSON.stringify(createData)}`);
-  console.log(`[BYOK:SeedDance] Task created: ${taskId} (model: ${model})`);
+  logger.info(`[BYOK:SeedDance] Task created: ${taskId} (model: ${model})`);
 
   // Poll for completion
   const videoUrl = await pollSeedanceTask(key, taskId, BYTEPLUS_API_BASE);
@@ -751,7 +752,7 @@ async function pollSeedanceTask(key: string, taskId: string, apiBase: string, ma
     });
 
     if (!resp.ok) {
-      console.log(`[BYOK:SeedDance] Poll error ${resp.status}, retrying...`);
+      logger.info(`[BYOK:SeedDance] Poll error ${resp.status}, retrying...`);
       continue;
     }
 
@@ -766,7 +767,7 @@ async function pollSeedanceTask(key: string, taskId: string, apiBase: string, ma
         data.output?.[0]?.url ||
         data.output?.video_url;
       if (!videoUrl) throw new Error(`SeedDance task succeeded but no video URL found in: ${JSON.stringify(data)}`);
-      console.log(`[BYOK:SeedDance] Task ${taskId} completed: ${videoUrl}`);
+      logger.info(`[BYOK:SeedDance] Task ${taskId} completed: ${videoUrl}`);
       return videoUrl;
     }
 
@@ -775,19 +776,19 @@ async function pollSeedanceTask(key: string, taskId: string, apiBase: string, ma
     }
 
     if (status === "expired") {
-      throw new Error("SeedDance task expired — exceeded maximum wait time");
+      throw new Error("SeedDance task expired â exceeded maximum wait time");
     }
 
-    console.log(`[BYOK:SeedDance] Task ${taskId} status: ${status}`);
+    logger.info(`[BYOK:SeedDance] Task ${taskId} status: ${status}`);
   }
   throw new Error("SeedDance task timed out after 10 minutes");
 }
 
-// ─── Google Veo 3 (via Gemini API) ───
+// âââ Google Veo 3 (via Gemini API) âââ
 /**
  * Generate video using Google Veo 3.1 via the Gemini API.
  * Uses the generativelanguage.googleapis.com REST endpoint.
- * Returns a pending sentinel — the videoJobWorker polls the operation name.
+ * Returns a pending sentinel â the videoJobWorker polls the operation name.
  */
 export async function generateWithVeo3(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const aspectRatio = req.aspectRatio === "9:16" ? "9:16" : "16:9";
@@ -806,12 +807,12 @@ export async function generateWithVeo3(key: string, req: VideoGenerationRequest)
   // Image-to-video: include the reference image as base64 or URL
   if (req.imageUrl) {
     body.instances[0].image = { url: req.imageUrl };
-    console.log(`[BYOK:Veo3] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
+    logger.info(`[BYOK:Veo3] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
   } else {
-    console.log(`[BYOK:Veo3] Mode: text-to-video`);
+    logger.info(`[BYOK:Veo3] Mode: text-to-video`);
   }
 
-  console.log(`[BYOK:Veo3] Submitting Veo 3.1 job: "${req.prompt.substring(0, 100)}..."`);
+  logger.info(`[BYOK:Veo3] Submitting Veo 3.1 job: "${req.prompt.substring(0, 100)}..."`);
 
   const resp = await fetch(baseUrl, {
     method: "POST",
@@ -824,7 +825,7 @@ export async function generateWithVeo3(key: string, req: VideoGenerationRequest)
     const errText = await resp.text();
     // Parse quota/billing errors for a cleaner message
     if (resp.status === 429 || errText.includes("RESOURCE_EXHAUSTED") || errText.includes("quota")) {
-      throw new Error(`Veo3 quota exceeded — recharge at aistudio.google.com`);
+      throw new Error(`Veo3 quota exceeded â recharge at aistudio.google.com`);
     }
     if (resp.status === 400) {
       // Try to extract the specific validation message
@@ -845,13 +846,13 @@ export async function generateWithVeo3(key: string, req: VideoGenerationRequest)
     throw new Error(`Veo 3: no operation name in response: ${JSON.stringify(data).substring(0, 200)}`);
   }
 
-  console.log(`[BYOK:Veo3] Operation submitted: ${operationName} — worker will poll for completion`);
+  logger.info(`[BYOK:Veo3] Operation submitted: ${operationName} â worker will poll for completion`);
 
-  // Return a sentinel URL — the job worker will replace this with the real video URL
+  // Return a sentinel URL â the job worker will replace this with the real video URL
   return { provider: "veo3", videoUrl: `veo3-pending:${operationName}`, jobId: operationName, durationSeconds: 8 };
 }
 
-// ─── Main Entry Point ───
+// âââ Main Entry Point âââ
 
 export async function generateVideo(
   keys: UserApiKeys,
@@ -860,7 +861,7 @@ export async function generateVideo(
   // Build the ordered list of providers to try, starting with the preferred one
   // and cascading through ALL available providers until one succeeds.
   const preferred = selectProvider(keys);
-  console.log(`[BYOK] Selected provider: ${preferred}`);
+  logger.info(`[BYOK] Selected provider: ${preferred}`);
 
   // Build key map
   const keyMap: Record<VideoProvider, string | null | undefined> = {
@@ -888,7 +889,7 @@ export async function generateVideo(
   };
 
   // Build ordered cascade: preferred first, then all others with keys, then pollinations last
-  // Default fallback order: luma → runway → openai → fal → seedance → replicate → veo3 → huggingface → pollinations
+  // Default fallback order: luma â runway â openai â fal â seedance â replicate â veo3 â huggingface â pollinations
   const allOrdered: VideoProvider[] = ["luma", "runway", "openai", "fal", "seedance", "replicate", "veo3", "huggingface", "pollinations"];
   const cascade: { provider: VideoProvider; key: string }[] = [];
 
@@ -912,32 +913,32 @@ export async function generateVideo(
 
   for (const { provider, key } of cascade) {
     try {
-      console.log(`[BYOK] Trying provider: ${provider}`);
+      logger.info(`[BYOK] Trying provider: ${provider}`);
       const result = await providerFunctions[provider](key, req);
       if (provider !== preferred) {
-        console.log(`[BYOK] Succeeded with fallback provider: ${provider}`);
+        logger.info(`[BYOK] Succeeded with fallback provider: ${provider}`);
       }
       return result;
     } catch (err: any) {
       const msg = err.message || String(err);
-      console.error(`[BYOK:${provider}] Failed: ${msg}`);
+      logger.error(`[BYOK:${provider}] Failed: ${msg}`);
       errors.push(`${provider}: ${msg}`);
       // Continue to next provider
     }
   }
 
-  // All providers exhausted — build a short summary
+  // All providers exhausted â build a short summary
   const shortErrors = errors.map(e => {
     // Truncate each error to 120 chars
     return e.length > 120 ? e.substring(0, 117) + "..." : e;
   });
   throw new Error(
-    `Video generation failed — all providers exhausted:\n` +
-    shortErrors.map(e => `  • ${e}`).join("\n")
+    `Video generation failed â all providers exhausted:\n` +
+    shortErrors.map(e => `  â¢ ${e}`).join("\n")
   );
 }
 
-// ─── Provider Info (for frontend display) ───
+// âââ Provider Info (for frontend display) âââ
 
 export interface ProviderInfo {
   /** Provider ID. May be a VideoProvider value or a non-generation provider such as "did". */
@@ -964,7 +965,7 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     description: "Free AI video generation using grok-video. Default for all users. No API key needed.",
     keyPrefix: "sk_",
     signupUrl: "https://pollinations.ai",
-    pricing: "FREE — 1.5 pollen/week on Spore tier. No credit card required.",
+    pricing: "FREE â 1.5 pollen/week on Spore tier. No credit card required.",
     models: "Grok-Video (free with daily pollen grant)",
   },
   {
@@ -1028,25 +1029,25 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     keyPrefix: "",
     signupUrl: "https://console.byteplus.com/ark/region:ark+ap-southeast-1/apiKey",
     pricing: "Pay-per-use via BytePlus ModelArk. ~$0.10-0.30 per video clip.",
-    models: "Seedance 1.5 Pro (API available now) · Seedance 2.0 (coming soon — will auto-upgrade)",
+    models: "Seedance 1.5 Pro (API available now) Â· Seedance 2.0 (coming soon â will auto-upgrade)",
   },
   {
     id: "veo3",
     name: "Google Veo 3 (Gemini API)",
-    description: "Google's state-of-the-art video model with native audio. Generates 8-second 720p–4K videos with stunning realism. Bring your own Gemini API key.",
+    description: "Google's state-of-the-art video model with native audio. Generates 8-second 720pâ4K videos with stunning realism. Bring your own Gemini API key.",
     keyPrefix: "AIza",
     signupUrl: "https://aistudio.google.com/apikey",
     pricing: "Pay-per-use via Google AI Studio. ~$0.35 per video (720p 8s).",
-    models: "Veo 3.1 Preview — text-to-video, image-to-video, native audio",
+    models: "Veo 3.1 Preview â text-to-video, image-to-video, native audio",
   },
   {
     id: "did",
     name: "D-ID (Auslan Interpreter)",
-    description: "Generates a realistic AI signing avatar video for each scene that has dialogue text. The avatar is composited as a circular picture-in-picture overlay on your exported film — enabling Auslan (Australian Sign Language) accessibility. Enable the overlay per-project in the Accessibility section of the export panel.",
+    description: "Generates a realistic AI signing avatar video for each scene that has dialogue text. The avatar is composited as a circular picture-in-picture overlay on your exported film â enabling Auslan (Australian Sign Language) accessibility. Enable the overlay per-project in the Accessibility section of the export panel.",
     keyPrefix: "",
     signupUrl: "https://studio.d-id.com/account-settings",
-    pricing: "Pay-per-use. Free trial credits included. ~$0.01–0.05 per avatar clip.",
-    models: "D-ID Talks API — realistic presenter avatars with Microsoft Neural TTS",
+    pricing: "Pay-per-use. Free trial credits included. ~$0.01â0.05 per avatar clip.",
+    models: "D-ID Talks API â realistic presenter avatars with Microsoft Neural TTS",
     canSetPreferred: false,
   },
 ];
@@ -1057,7 +1058,7 @@ export function getProviderInfo(id: string): ProviderInfo | undefined {
 
 export function validateApiKey(provider: VideoProvider, key: string): { valid: boolean; message: string } {
   if (provider === "pollinations") {
-    return { valid: true, message: "Pollinations is free — no key validation needed" };
+    return { valid: true, message: "Pollinations is free â no key validation needed" };
   }
   
   if (!key || key.trim().length === 0) {
@@ -1084,7 +1085,7 @@ export function validateApiKey(provider: VideoProvider, key: string): { valid: b
       if (!key.startsWith("AIza")) return { valid: false, message: "Gemini API keys must start with 'AIza'" };
       break;
     case "seedance":
-      // BytePlus API keys don't have a fixed prefix — just check it's non-empty
+      // BytePlus API keys don't have a fixed prefix â just check it's non-empty
       if (key.length < 10) return { valid: false, message: "BytePlus API key appears too short" };
       break;
   }
