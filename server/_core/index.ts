@@ -6,6 +6,7 @@ import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
+import { registerYouTubeOAuthRoutes } from "../youtube-oauth-router";
 import { appRouter } from "../routers";
 import { createContext, requireAdminExpress } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -1041,6 +1042,7 @@ async function startServer() {
 
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  registerYouTubeOAuthRoutes(app);
 
   // Register SEO Engine routes (sitemap, robots.txt, etc.)
   registerSeoRoutes(app);
