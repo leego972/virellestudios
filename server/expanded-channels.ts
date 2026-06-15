@@ -580,7 +580,9 @@ export const whatsappAdapter = {
       return {
         success: true,
         platformPostId: `yt-community-${Date.now()}`,
-        url: `https://studio.youtube.com/channel/${ENV.youtubeChannelId}/community`,
+        url: ENV.youtubeChannelId.startsWith("UC")
+            ? `https://studio.youtube.com/channel/${ENV.youtubeChannelId}/community`
+            : `https://studio.youtube.com`,
       };
     },
 
