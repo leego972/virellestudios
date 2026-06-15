@@ -173,7 +173,54 @@ import SiteHead from "@/components/SiteHead";
           </section>
 
         </div>
-      </div>
-    );
-  }
+
+          {/* Media Assets */}
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <section>
+              <h2 className="text-xl font-bold text-white mb-6 pb-2 border-b border-white/10">Media Assets</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 text-center">
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+                    <Globe className="h-5 w-5 text-amber-400" />
+                  </div>
+                  <p className="text-sm font-semibold text-white mb-1">Brand Logo (Gold)</p>
+                  <p className="text-xs text-white/40 mb-3">PNG · Transparent background</p>
+                  <a
+                    href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    Download ↓
+                  </a>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 text-center">
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+                    <BookOpen className="h-5 w-5 text-amber-400" />
+                  </div>
+                  <p className="text-sm font-semibold text-white mb-1">Platform Overview</p>
+                  <p className="text-xs text-white/40 mb-3">Press facts sheet — this page</p>
+                  <a href="/press" className="inline-block text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors">
+                    View page ↗
+                  </a>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 text-center">
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+                    <Mail className="h-5 w-5 text-amber-400" />
+                  </div>
+                  <p className="text-sm font-semibold text-white mb-1">Press Enquiries</p>
+                  <p className="text-xs text-white/40 mb-3">Response within 24 hours</p>
+                  <a
+                    href="mailto:press@virelle.life"
+                    className="inline-block text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    press@virelle.life
+                  </a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      );
+    }
   
