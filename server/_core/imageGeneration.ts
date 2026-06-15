@@ -1,9 +1,9 @@
 /**
  * Image generation helper with fallback chain:
- *   1. OpenAI gpt-image-1 (primary — supports reference images via image editing)
- *   2. Google Gemini Imagen 3 (GOOGLE_API_KEY — supports reference images)
- *   3. Hugging Face Inference API (HUGGING_FACE_API_KEY — FLUX.1-dev, text-to-image fallback)
- *   4. OpenAI DALL-E 3 (final fallback — text-to-image only)
+ *   1. OpenAI gpt-image-1 (primary â supports reference images via image editing)
+ *   2. Google Gemini Imagen 3 (GOOGLE_API_KEY â supports reference images)
+ *   3. Hugging Face Inference API (HUGGING_FACE_API_KEY â FLUX.1-dev, text-to-image fallback)
+ *   4. OpenAI DALL-E 3 (final fallback â text-to-image only)
  *
  * When `originalImages` is provided (e.g. character-from-photo), the reference image
  * is passed to every provider that supports image-to-image or image editing so the
@@ -16,6 +16,7 @@
  */
 import { storagePut } from "../storage";
 import { ENV } from "./env";
+import { logger } from "./logger";
 
 /**
  * Upload image buffer to storage and return a permanent URL.
@@ -33,10 +34,10 @@ async function uploadImage(
     return url;
   } catch (storageErr: any) {
     if (rawProviderUrl) {
-      console.warn(`[ImageGen] Storage unavailable (${storageErr.message}), using raw provider URL`);
+      logger.warn(`[ImageGen] Storage unavailable (${storageErr.message}), using raw provider URL`);
       return rawProviderUrl;
     }
-    console.warn(`[ImageGen] Storage unavailable (${storageErr.message}), returning data URI`);
+    logger.warn(`[ImageGen] Storage unavailable (${storageErr.message}), returning data URI`);
     return `data:${contentType};base64,${buffer.toString("base64")}`;
   }
 }
@@ -57,7 +58,7 @@ export type GenerateImageResponse = {
   provider?: string;
 };
 
-// ─── Helper: resolve originalImages to base64 ───
+// âââ Helper: resolve originalImages to base64 âââ
 async function resolveReferenceBase64(
   images: GenerateImageOptions["originalImages"]
 ): Promise<Array<{ b64: string; mimeType: string }>> {
@@ -80,7 +81,7 @@ async function resolveReferenceBase64(
   return results;
 }
 
-/* ─── 1. OpenAI gpt-image-1 (primary — supports reference images) ─── */
+/* âââ 1. OpenAI gpt-image-1 (primary â supports reference images) âââ */
 async function generateWithOpenAIImageEdit(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -91,7 +92,7 @@ async function generateWithOpenAIImageEdit(
 
   if (refs.length > 0) {
     // Use the images/edits endpoint which accepts a reference image
-    // gpt-image-1 supports multi-image editing — anchor to the reference face
+    // gpt-image-1 supports multi-image editing â anchor to the reference face
     const formData = new FormData();
     formData.append("model", "gpt-image-1");
     formData.append("prompt", options.prompt.slice(0, 4000));
@@ -136,13 +137,13 @@ async function generateWithOpenAIImageEdit(
         const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png", imgUrl);
         return { url, provider: "openai-gpt-image-1-edit" };
       }
-      // Could not download — return raw URL directly
+      // Could not download â return raw URL directly
       return { url: imgUrl, provider: "openai-gpt-image-1-edit" };
     }
     throw new Error("OpenAI image edit returned no image data");
   }
 
-  // No reference image — use standard generations endpoint with gpt-image-1
+  // No reference image â use standard generations endpoint with gpt-image-1
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: {
@@ -188,7 +189,7 @@ async function generateWithOpenAIImageEdit(
   throw new Error("OpenAI gpt-image-1 returned no image data");
 }
 
-/* ─── 2. Google Gemini Imagen 3 (supports reference images) ─── */
+/* âââ 2. Google Gemini Imagen 3 (supports reference images) âââ */
 async function generateWithGoogle(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -198,7 +199,7 @@ async function generateWithGoogle(
 
   const refs = await resolveReferenceBase64(options.originalImages);
 
-  // Build the instance — include reference images when available
+  // Build the instance â include reference images when available
   const instance: any = {
     prompt: options.prompt.slice(0, 2000),
   };
@@ -253,7 +254,7 @@ async function generateWithGoogle(
   return { url, provider: "google-imagen" };
 }
 
-/* ─── 3. Hugging Face Inference API (FLUX.1-dev — text-to-image fallback) ─── */
+/* âââ 3. Hugging Face Inference API (FLUX.1-dev â text-to-image fallback) âââ */
 async function generateWithHuggingFace(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -261,7 +262,7 @@ async function generateWithHuggingFace(
     throw new Error("Hugging Face API key not configured");
   }
 
-  // Use FLUX.1-dev — best open-source cinematic image model
+  // Use FLUX.1-dev â best open-source cinematic image model
   const model = "black-forest-labs/FLUX.1-dev";
   const response = await fetch(
     `https://router.huggingface.co/models/${model}`,
@@ -276,7 +277,7 @@ async function generateWithHuggingFace(
         parameters: {
           width: 1280,
           height: 720,
-          num_inference_steps: 50,  // Maximum quality — 28 is too few for photorealism
+          num_inference_steps: 50,  // Maximum quality â 28 is too few for photorealism
           guidance_scale: 4.5,      // Higher adherence to cinematic prompt directives
         },
       }),
@@ -302,7 +303,7 @@ async function generateWithHuggingFace(
   return { url, provider: "huggingface" };
 }
 
-/* ─── 4. OpenAI DALL-E 3 (final fallback — text-to-image only) ─── */
+/* âââ 4. OpenAI DALL-E 3 (final fallback â text-to-image only) âââ */
 async function generateWithDallE3(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -350,20 +351,20 @@ async function generateWithDallE3(
   return { url, provider: "dalle3" };
 }
 
-/* ─── Main entry point with fallback chain ─── */
+/* âââ Main entry point with fallback chain âââ */
 export async function generateImage(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
   const errors: string[] = [];
 
-  // 1. OpenAI gpt-image-1 (primary — supports reference images for character-from-photo)
+  // 1. OpenAI gpt-image-1 (primary â supports reference images for character-from-photo)
   if (options.userOpenAiKey || ENV.openaiApiKey) {
     try {
       const result = await generateWithOpenAIImageEdit(options);
-      console.log(`[ImageGen] Generated with ${result.provider}`);
+      logger.info(`[ImageGen] Generated with ${result.provider}`);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] OpenAI gpt-image-1 failed: ${err.message}`);
+      logger.warn(`[ImageGen] OpenAI gpt-image-1 failed: ${err.message}`);
       errors.push(`OpenAI gpt-image-1: ${err.message}`);
     }
   }
@@ -371,23 +372,23 @@ export async function generateImage(
   // 2. Google Gemini Imagen 3 (supports referenceImages for subject consistency)
   if (ENV.googleApiKey) {
     try {
-      console.log("[ImageGen] Falling back to Google Imagen 3");
+      logger.info("[ImageGen] Falling back to Google Imagen 3");
       const result = await generateWithGoogle(options);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] Google Imagen failed: ${err.message}`);
+      logger.warn(`[ImageGen] Google Imagen failed: ${err.message}`);
       errors.push(`Google: ${err.message}`);
     }
   }
 
-  // 3. Hugging Face (FLUX.1-dev — text-to-image, no reference image support)
+  // 3. Hugging Face (FLUX.1-dev â text-to-image, no reference image support)
   if (ENV.huggingFaceApiKey) {
     try {
-      console.log("[ImageGen] Falling back to Hugging Face (FLUX.1-dev)");
+      logger.info("[ImageGen] Falling back to Hugging Face (FLUX.1-dev)");
       const result = await generateWithHuggingFace(options);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] Hugging Face failed: ${err.message}`);
+      logger.warn(`[ImageGen] Hugging Face failed: ${err.message}`);
       errors.push(`HuggingFace: ${err.message}`);
     }
   }
@@ -395,21 +396,21 @@ export async function generateImage(
   // 4. Final fallback: DALL-E 3 (text-to-image only)
   if (options.userOpenAiKey || ENV.openaiApiKey) {
     try {
-      console.log("[ImageGen] Falling back to OpenAI DALL-E 3");
+      logger.info("[ImageGen] Falling back to OpenAI DALL-E 3");
       const result = await generateWithDallE3(options);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] OpenAI DALL-E 3 failed: ${err.message}`);
+      logger.warn(`[ImageGen] OpenAI DALL-E 3 failed: ${err.message}`);
       errors.push(`DALL-E 3: ${err.message}`);
     }
   }
 
-  // 5. Pollinations (free, no key required — always available as last resort)
+  // 5. Pollinations (free, no key required â always available as last resort)
   try {
-    console.log("[ImageGen] Falling back to Pollinations (free, no key required)");
+    logger.info("[ImageGen] Falling back to Pollinations (free, no key required)");
     const encodedPrompt = encodeURIComponent((options.prompt || "cinematic scene").slice(0, 500));
     const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&model=flux&nologo=true&enhance=true&seed=${Date.now()}`;
-    // Pollinations returns a direct image URL — no upload needed, it’s a CDN
+    // Pollinations returns a direct image URL â no upload needed, itâs a CDN
     return { url: pollinationsUrl, provider: "pollinations" };
   } catch (err: any) {
     errors.push(`Pollinations: ${err.message}`);
