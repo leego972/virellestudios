@@ -16,7 +16,7 @@ import SiteHead from "@/components/SiteHead";
       tag: "fix",
       title: "Text encoding fixed across entire platform",
       description:
-        "A systematic encoding issue caused garbled characters (mojibake) on multiple pages — em dashes appeared as â€", curly quotes as â€™, and accented characters were mangled. Identified and corrected in 182+ files across client pages, server templates, and meta tags. All public-facing text now renders correctly.",
+        "A systematic encoding issue caused garbled characters (mojibake) on multiple pages \u2014 em dashes, curly quotes, and accented characters were all mangled. Identified and corrected in 182+ files across client pages, server templates, and meta tags. All public-facing text now renders correctly.",
     },
     {
       date: "June 2026",
