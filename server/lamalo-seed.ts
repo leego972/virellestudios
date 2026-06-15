@@ -93,16 +93,27 @@ interface SeedCollection {
 // ─── Helper: expand one base item into one item per color ────────────────────
 // Auto-prices by category. Hard-capped at 5 colours per item.
 
-function cc(base: BaseItem, colors: string[]): SeedItem[] {
-  const price = itemPrice(base.category);
-  return colors.slice(0, 5).map(color => ({
-    ...base,
-    name: `${base.name} — ${color}`,
-    colors: [color],
-    retailPriceAud: price,
-    referencePrompt: `${base.referencePrompt}, ${color.toLowerCase()} colorway`,
-  }));
-}
+function pollinationsUrl(prompt: string): string {
+    const encoded = prompt
+      .replace(/ /g, "%20").replace(/,/g, "%2C").replace(/\//g, "%2F")
+      .replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/&/g, "%26");
+    return `https://image.pollinations.ai/prompt/${encoded}%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux`;
+  }
+
+  function cc(base: BaseItem, colors: string[]): SeedItem[] {
+    const price = itemPrice(base.category);
+    return colors.slice(0, 5).map(color => {
+      const prompt = `${base.referencePrompt}, ${color.toLowerCase()} colorway`;
+      return {
+        ...base,
+        name: `${base.name} — ${color}`,
+        colors: [color],
+        retailPriceAud: price,
+        referencePrompt: prompt,
+        primaryImageUrl: pollinationsUrl(prompt),
+      };
+    });
+  }
 
 // ─── Standard colour palettes ─────────────────────────────────────────────────
 
