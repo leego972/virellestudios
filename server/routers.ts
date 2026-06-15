@@ -1061,7 +1061,7 @@ export const appRouter = router({
         return db.updateProject(id, ctx.user.id, data);
       }),
 
-    delete: creationProcedure
+    delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteProject(input.id, ctx.user.id);
