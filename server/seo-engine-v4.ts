@@ -178,7 +178,6 @@ const COMPETITORS = [
   { name: "Final Cut Pro", slug: "final-cut-pro", category: "Video Editing" },
   { name: "CapCut", slug: "capcut", category: "Mobile Video Editing" },
   { name: "InVideo AI", slug: "invideo-ai", category: "AI Video Creation" },
-];
   { name: "LastPass", slug: "lastpass", category: "Password Manager" },
   { name: "HashiCorp Vault", slug: "hashicorp-vault", category: "Secrets Management" },
   { name: "AWS Secrets Manager", slug: "aws-secrets-manager", category: "Cloud Secrets" },
@@ -205,7 +204,6 @@ const INTEGRATIONS = [
   { name: "DaVinci Neural Engine", slug: "davinci-neural", category: "AI Color" },
   { name: "Adobe Firefly", slug: "adobe-firefly", category: "AI Creative" },
   { name: "Premiere Pro AI", slug: "premiere-pro-ai", category: "AI Editing" },
-];
   { name: "AWS", slug: "aws", category: "Cloud" },
   { name: "GitHub", slug: "github", category: "DevOps" },
   { name: "Google Cloud", slug: "google-cloud", category: "Cloud" },
