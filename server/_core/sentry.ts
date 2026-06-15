@@ -4,6 +4,7 @@
  * Set SENTRY_DSN in your environment variables to enable error reporting.
  */
 import * as Sentry from "@sentry/node";
+import { logger } from "./logger";
 
 const dsn = process.env.SENTRY_DSN;
 const env = process.env.NODE_ENV ?? "development";
@@ -28,9 +29,9 @@ if (dsn) {
       return event;
     },
   });
-  console.log(`[Sentry] Initialised for environment: ${env}`);
+  logger.info(`[Sentry] Initialised for environment: ${env}`);
 } else {
-  console.log("[Sentry] SENTRY_DSN not set — error reporting disabled");
+  logger.info("[Sentry] SENTRY_DSN not set â error reporting disabled");
 }
 
 export { Sentry };
