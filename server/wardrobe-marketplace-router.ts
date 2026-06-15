@@ -429,7 +429,17 @@ export const wardrobeMarketplaceRouter = router({
         if (!profile || profile.visibility !== "public") return null;
         const collections = await db.getDesignerCollectionsByDesigner(profile.id);
         const published = collections.filter((c) => c.published);
-        return { profile, collections: published };
+        // Fetch leasable items for every published collection so CollectionBlock renders them
+        const collectionsWithItems = await Promise.all(
+          published.map(async (col) => {
+            const allItems = await db.getWardrobeItemsByCollection(col.id);
+            const leasable = allItems.filter(
+              (i: any) => i.visibility === "public" && i.status === "active" && i.retailPriceAud,
+            );
+            return { ...col, items: leasable };
+          }),
+        );
+        return { profile, collections: collectionsWithItems };
       }),
 
     /** Single collection + items available for lease */
