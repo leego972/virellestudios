@@ -179,18 +179,6 @@ const COMPETITORS = [
   { name: "CapCut", slug: "capcut", category: "Mobile Video Editing" },
   { name: "InVideo AI", slug: "invideo-ai", category: "AI Video Creation" },
 ];
-  { name: "LastPass", slug: "lastpass", category: "Password Manager" },
-  { name: "HashiCorp Vault", slug: "hashicorp-vault", category: "Secrets Management" },
-  { name: "AWS Secrets Manager", slug: "aws-secrets-manager", category: "Cloud Secrets" },
-  { name: "Azure Key Vault", slug: "azure-key-vault", category: "Cloud Secrets" },
-  { name: "Google Secret Manager", slug: "google-secret-manager", category: "Cloud Secrets" },
-  { name: "Doppler", slug: "doppler", category: "Secrets Management" },
-  { name: "Infisical", slug: "infisical", category: "Secrets Management" },
-  { name: "CyberArk", slug: "cyberark", category: "Privileged Access" },
-  { name: "Keeper", slug: "keeper", category: "Password Manager" },
-  { name: "Bitwarden", slug: "bitwarden", category: "Password Manager" },
-  { name: "Dashlane", slug: "dashlane", category: "Password Manager" },
-];
 
 const INTEGRATIONS = [
   { name: "Runway Gen-4", slug: "runway-gen4", category: "AI Video" },
@@ -205,21 +193,6 @@ const INTEGRATIONS = [
   { name: "DaVinci Neural Engine", slug: "davinci-neural", category: "AI Color" },
   { name: "Adobe Firefly", slug: "adobe-firefly", category: "AI Creative" },
   { name: "Premiere Pro AI", slug: "premiere-pro-ai", category: "AI Editing" },
-];
-  { name: "AWS", slug: "aws", category: "Cloud" },
-  { name: "GitHub", slug: "github", category: "DevOps" },
-  { name: "Google Cloud", slug: "google-cloud", category: "Cloud" },
-  { name: "Azure", slug: "azure", category: "Cloud" },
-  { name: "Stripe", slug: "stripe", category: "Payments" },
-  { name: "Vercel", slug: "vercel", category: "Hosting" },
-  { name: "Supabase", slug: "supabase", category: "Database" },
-  { name: "Cloudflare", slug: "cloudflare", category: "CDN/Security" },
-  { name: "MongoDB Atlas", slug: "mongodb-atlas", category: "Database" },
-  { name: "Firebase", slug: "firebase", category: "Backend" },
-  { name: "Twilio", slug: "twilio", category: "Communications" },
-  { name: "SendGrid", slug: "sendgrid", category: "Email" },
-  { name: "Anthropic", slug: "anthropic", category: "AI/ML" },
-  { name: "Hugging Face", slug: "hugging-face", category: "AI/ML" },
 ];
 
 const USE_CASES = [
