@@ -428,7 +428,8 @@ export const appRouter = router({
         portfolioUrl: z.string().max(512).optional(),
         howDidYouHear: z.string().max(128).optional(),
         marketingOptIn: z.boolean().optional(),
-      }))
+          stripeCustomerId: z.string().max(64).optional(),
+        }))
       .mutation(async ({ ctx, input }) => {
         // Security: Fraud detection on registration
         const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
@@ -462,6 +463,7 @@ export const appRouter = router({
           portfolioUrl: input.portfolioUrl,
           howDidYouHear: input.howDidYouHear,
           marketingOptIn: input.marketingOptIn,
+          stripeCustomerId: input.stripeCustomerId,
         });
         if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create account" });
 
@@ -616,12 +618,13 @@ export const appRouter = router({
           metadata: { source: "registration_trial", email: input.email || "" },
         });
         return {
-          clientSecret: setupIntent.client_secret,
-          customerId: customer.id,
-          setupIntentId: setupIntent.id,
-        };
-      }),
-    requestPasswordReset: publicProcedure
+            clientSecret: setupIntent.client_secret,
+            customerId: customer.id,
+            setupIntentId: setupIntent.id,
+            publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
+          };
+        }),
+      requestPasswordReset: publicProcedure
       .input(z.object({ email: z.string().email().max(320), origin: z.string().url().max(256) }))
       .mutation(async ({ input }) => {
         const user = await db.getUserByEmail(input.email.toLowerCase());
