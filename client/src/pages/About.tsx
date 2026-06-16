@@ -135,7 +135,7 @@ export default function About() {
             , Not Demos
           </h1>
           <p className="text-lg text-foreground/70 leading-relaxed">
-            Virelle Studios is an AI film production platform built on a single conviction: every filmmaker — regardless of budget, crew, or studio backing — deserves access to professional-grade production tools.
+            Virelle Studios is an AI film production platform built for working directors, indie filmmakers, and creative teams. Our conviction is simple: professional-grade production tools should not require a studio budget or a full crew.
           </p>
         </div>
       </section>
@@ -150,7 +150,7 @@ export default function About() {
                 <span className="text-amber-400">the Studio</span>
               </h2>
               <p className="text-foreground/70 leading-relaxed mb-4">
-                Virelle was founded with a straightforward mission: collapse the gap between a filmmaker's imagination and what they can actually produce. The traditional film production stack — pre-production, casting, location scouting, shooting, VFX, post — requires teams, budgets, and timelines that exclude most of the world's storytellers.
+                Virelle was built with a straightforward mission: close the gap between a filmmaker's imagination and what they can actually produce. The traditional production stack — development, casting, location scouting, principal photography, VFX, post-production — requires teams, budgets, and timelines that are out of reach for most of the world's storytellers.
               </p>
               <p className="text-foreground/70 leading-relaxed mb-4">
                 AI changes that equation. Not by replacing human creativity, but by removing the infrastructure barriers that prevent it from reaching the screen.
@@ -167,11 +167,11 @@ export default function About() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Film, label: "Films Created", value: "1,000+" },
-                { icon: Users, label: "Active Directors", value: "500+" },
-                { icon: Globe, label: "Countries", value: "40+" },
+                { icon: Film, label: "Films Created", value: "Growing" },
+                { icon: Users, label: "Active Directors", value: "Growing" },
+                { icon: Globe, label: "Countries", value: "Global" },
                 { icon: Award, label: "Founding Year", value: "2025" },
-                { icon: Layers, label: "AI Providers", value: "14" },
+                { icon: Layers, label: "AI Providers", value: "6+" },
                 { icon: Globe, label: "Subtitle Languages", value: "130+" },
                 { icon: DollarSign, label: "Funding Sources", value: "94+" },
               ].map((s) => {
