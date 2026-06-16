@@ -22,7 +22,7 @@ export default function TermsOfService() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer text-gold-shimmer">Terms of Service</h1>
             <p className="text-muted-foreground text-sm mt-0.5">
-              Last updated: March 2026 &mdash; Effective immediately upon account creation
+              Last updated: June 2026 &mdash; Effective immediately upon account creation
             </p>
           </div>
         </div>
