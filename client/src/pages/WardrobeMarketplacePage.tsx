@@ -817,6 +817,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
 // ─── Designer grid card ───────────────────────────────────────────────────────
 
 function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void }) {
+  const [imgErr, setImgErr] = useState(false);
   const isLamalo = profile.brandName === "Lamalo Fashion";
   return (
     <button
@@ -828,11 +829,12 @@ function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void 
       }`}
     >
       <div className="relative h-36 overflow-hidden">
-        {profile.logoUrl ? (
+        {profile.logoUrl && !imgErr ? (
           <img
             src={profile.logoUrl}
             alt={profile.brandName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgErr(true)}
           />
         ) : (
           <div className="w-full h-full glass-card/5 flex items-center justify-center">
@@ -1040,7 +1042,7 @@ function MarketplaceGrid({
             { icon: Users,   label: "Designers",    value: designers?.length ?? "—" },
             { icon: Package, label: "Collections",  value: "23+"    },
             { icon: Shirt,   label: "Items",        value: "1,400+" },
-            { icon: Tag,     label: "From",         value: "A$0.30" },
+            { icon: Tag,     label: "From",         value: "A$1.00" },
             { icon: Wand2,   label: "Custom items", value: "A$4.99" },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="text-center">
