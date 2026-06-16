@@ -594,6 +594,33 @@ export const appRouter = router({
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
+    createSetupIntent: publicProcedure
+      .input(z.object({
+        email: z.string().email().max(320).optional(),
+        name: z.string().max(255).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
+        // Create or retrieve Stripe customer
+        const customerData: { email?: string; name?: string; metadata?: Record<string, string> } = {
+          metadata: { source: "registration_trial" },
+        };
+        if (input.email) customerData.email = input.email;
+        if (input.name) customerData.name = input.name;
+        const customer = await stripe.customers.create(customerData);
+        // Create SetupIntent — saves card for future billing when trial ends
+        const setupIntent = await stripe.setupIntents.create({
+          customer: customer.id,
+          usage: "off_session",
+          payment_method_types: ["card"],
+          metadata: { source: "registration_trial", email: input.email || "" },
+        });
+        return {
+          clientSecret: setupIntent.client_secret,
+          customerId: customer.id,
+          setupIntentId: setupIntent.id,
+        };
+      }),
     requestPasswordReset: publicProcedure
       .input(z.object({ email: z.string().email().max(320), origin: z.string().url().max(256) }))
       .mutation(async ({ input }) => {
