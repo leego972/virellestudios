@@ -416,7 +416,7 @@ async function assembleFilm(
           ], { timeout: 120000 });
         } catch (err) {
           // Fallback: just use video without audio mixing
-          logger.warn(`[FilmPipeline] Audio mixing failed for scene ${i}, using video only:`, err);
+          logger.warn(`[FilmPipeline] Audio mixing failed for scene ${i}, using video only:`, { error: String(err) });
           await execFileAsync("ffmpeg", [
             "-i", videoPath,
             "-c:v", "libx264", "-preset", "slow", "-crf", "18",
