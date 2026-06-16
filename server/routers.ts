@@ -540,11 +540,11 @@ export const appRouter = router({
             sendNewSignupNotification(user!.email!, user!.name || "Unknown", user!.role || "user").catch(() => {});
           }).catch(() => {});
         }
-        // Grant 2 free AI character generations on signup (matches the 2 free Lamalo outfits welcome package)
         // Grant 500 welcome credits — enough to explore the platform for a full week
-          try {
-            await db.addCredits(user.id, 500, "signup_welcome_bonus", "Welcome bonus — 500 credits to explore Virelle Studios");
-          return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+        try {
+          await db.addCredits(user.id, 500, "signup_welcome_bonus", "Welcome bonus — 500 credits to explore Virelle Studios");
+        } catch (_) { /* non-critical */ }
+        return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
       .input(z.object({
