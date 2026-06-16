@@ -37,7 +37,7 @@ import {
 // ─── Platform Icons & Labels ──────────────────────────────────────────────────
 const PLATFORM_META: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
   tiktok: { label: "TikTok", color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", icon: <Video className="h-4 w-4" /> },
-  instagram: { label: "Camera", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4 text-amber-400/70" /> },
+  instagram: { label: "Instagram", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4 text-amber-400/70" /> },
   x_twitter: { label: "X (X)", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20", icon: <X className="h-4 w-4" /> },
   linkedin: { label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", icon: <Briefcase className="h-4 w-4" /> },
   facebook: { label: "ThumbsUp", color: "text-blue-500", bg: "bg-blue-600/10 border-blue-600/20", icon: <ThumbsUp className="h-4 w-4" /> },
@@ -1416,7 +1416,7 @@ export default function ContentCreatorPage() {
                 <Button
                   className="w-full hover:border-amber-500/50 hover:text-amber-400"
                   variant="outline"
-                  onClick={() => { setPlatform("snapchat"); setContentType("story"); setActiveTab("studio"); }}
+                  onClick={() => { setContentType("story"); setActiveTab("studio"); }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Create Snapchat Story
