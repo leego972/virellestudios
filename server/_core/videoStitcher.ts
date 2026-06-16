@@ -629,7 +629,8 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
     // Every film produced on the platform MUST begin with the VirElle Studios opener.
     // This is a non-negotiable platform standard for branding.
     // Official Virelle Studios cinematic opener: dove descends â golden transformation â VS logo
-    const VIRELLE_OPENER_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/IVZBIEWXryDGoWdT.mp4";
+    // Opener served from local /public/virelle-opener.mp4 (CDN URL removed — was expiring session file)
+    const VIRELLE_OPENER_URL = "/virelle-opener.mp4";
     try {
       const openerPath = path.join(tmpDir, "virelle_opener.mp4");
       await downloadFile(VIRELLE_OPENER_URL, openerPath);
