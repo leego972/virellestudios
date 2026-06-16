@@ -10,7 +10,7 @@ import SiteHead from "@/components/SiteHead";
     description: string;
   };
 
-  const CHANGES: ChangeEntry[] = [
+  const _CHANGES_RAW = [
     {
       date: "June 2026",
       tag: "fix",
@@ -138,6 +138,7 @@ import SiteHead from "@/components/SiteHead";
       description:
         "Garbled characters caused by a text-encoding mismatch in Changelog.tsx have been resolved. All special characters and em-dashes now render correctly across the platform.",
     }];
+const CHANGES: ChangeEntry[] = _CHANGES_RAW.filter((x): x is ChangeEntry => x !== undefined);
 
   const TAG_CONFIG = {
     fix:      { label: "Fix",      bg: "bg-red-500/10",    text: "text-red-400",    border: "border-red-500/25",    icon: Wrench },
