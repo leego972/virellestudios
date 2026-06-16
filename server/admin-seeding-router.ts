@@ -27,19 +27,23 @@ import { router, adminProcedure } from "./_core/trpc";
      */
     seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
       const userId = ctx.user.id;
-      // Fire-and-forget: 1400+ inserts would timeout if awaited
-      // Run all seed scripts — INSERT IGNORE makes every run idempotent
-      Promise.all([
-        runLamaloSeed(userId),
-        runUniformSeed(userId),
-        runExecutiveSeed(userId),
-        runMasterSeed(userId),
-      ]).then(([lamalo, uniform, exec, master]) => {
-        logger.info(`[Seed] All complete — Lamalo: ${lamalo.collections}c/${lamalo.items}i, Uniform: ${(uniform as any)?.collections ?? 0}c, Executive: ${(exec as any)?.collections ?? 0}c, Master: ${(master as any)?.collections ?? 0}c`);
+      // CRITICAL: runLamaloSeed must complete FIRST — it runs ALTER TABLE to add columns
+      // (retailPriceAud, primaryImageUrl, etc.) that all other seeds depend on.
+      // Running all 4 in parallel caused a race condition: uniform/executive/master seeds
+      // hit INSERT IGNORE before columns existed, silently dropping all items → 0 items.
+      runLamaloSeed(userId).then((lamalo) => {
+        // Schema columns now exist — safe to run remaining seeds in parallel
+        return Promise.all([
+          runUniformSeed(userId),
+          runExecutiveSeed(userId),
+          runMasterSeed(userId),
+        ]).then(([uniform, exec, master]) => {
+          logger.info(`[Seed] All complete — Lamalo: ${lamalo.collections}c/${lamalo.items}i, Uniform: ${(uniform as any)?.collections ?? 0}c, Executive: ${(exec as any)?.collections ?? 0}c, Master: ${(master as any)?.collections ?? 0}c`);
+        });
       }).catch(err => {
         logger.errorWithStack("[Seed] Marketplace seeding error", err);
       });
-      return { success: true, message: "Seeding started — all collections and items will appear within 90 seconds. Refresh the page to see them." };
+      return { success: true, message: "Seeding started — Lamalo seeds first (creates schema), then all collections seed in parallel. Items appear within 90 seconds." };
     }),
 
     /**
@@ -317,7 +321,6 @@ import { router, adminProcedure } from "./_core/trpc";
             AND (
               primaryImageUrl IS NULL
               OR primaryImageUrl = ''
-              OR primaryImageUrl LIKE '/lamalo/%'
               OR imageUrls IS NULL
             )
         `);
