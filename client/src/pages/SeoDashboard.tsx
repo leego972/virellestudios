@@ -130,11 +130,11 @@ export default function SeoDashboard() {
   const metaQuery = trpc.seo.getMetaOptimizations.useQuery();
   const reportQuery = trpc.seo.getReport.useQuery();
   const structuredDataQuery = trpc.seo.getStructuredData.useQuery();
-  const openGraphQuery = trpc.seo.getOpenGraphTags.useQuery({ path: "/" });
+  const openGraphQuery = trpc.seo.getOpenGraph.useQuery({ path: "/" });
   const publicPagesQuery = trpc.seo.getPublicPages.useQuery();
   const internalLinksQuery = trpc.seo.getInternalLinks.useQuery();
   const webVitalsQuery = trpc.seo.getWebVitals.useQuery();
-  const eventLogQuery = trpc.seo.getEventLog.useQuery({ limit: 30 });
+  const eventLogQuery = trpc.seo.getSeoEventLog.useQuery({ limit: 30 });
   const statusQuery = trpc.seo.getStatus.useQuery();
 
   // ─── Mutations ────────────────────────────────────────────────────────────
@@ -144,16 +144,16 @@ export default function SeoDashboard() {
       utils.seo.getHealthScore.invalidate();
       utils.seo.getReport.invalidate();
       utils.seo.getMetaOptimizations.invalidate();
-      utils.seo.getEventLog.invalidate();
+      utils.seo.getSeoEventLog.invalidate();
     },
     onError: (err) => toast.error(err.message || "SEO optimisation failed"),
   });
 
-  const submitIndexNowMutation = trpc.seo.submitIndexNow.useMutation({
-    onSuccess: (result) => {
+  const submitIndexNowMutation = trpc.seo.submitToIndexNow.useMutation({
+    onSuccess: (result: any) => {
       toast.success(`IndexNow submitted — ${(result as any).urlsSubmitted ?? 0} URLs sent to search engines`);
     },
-    onError: (err) => toast.error(err.message || "IndexNow submission failed"),
+    onError: (err: any) => toast.error(err.message || "IndexNow submission failed"),
   });
 
   const killSwitchMutation = trpc.seo.killSwitch.useMutation({
@@ -831,7 +831,7 @@ export default function SeoDashboard() {
                 <Switch
                   checked={!isKilled}
                   onCheckedChange={(checked) => {
-                    killSwitchMutation.mutate({ action: checked ? "activate" : "deactivate" });
+                    killSwitchMutation.mutate({ code: checked ? "activate" : "deactivate" });
                   }}
                   disabled={killSwitchMutation.isPending}
                   className="data-[state=checked]:bg-emerald-600"
