@@ -1,7 +1,7 @@
 import "./sentry.js";
 import "dotenv/config";
 import crypto from "crypto";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
