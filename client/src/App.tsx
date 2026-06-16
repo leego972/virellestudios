@@ -89,6 +89,7 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const About = lazy(() => import("./pages/About"));
+  const Onboarding = lazy(() => import("./pages/Onboarding"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Solutions = lazy(() => import("./pages/Solutions"));
 
@@ -288,6 +289,7 @@ function Router() {
       <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
+        <Route path="/onboarding">{() => <LazyPage><Onboarding /></LazyPage>}</Route>
       <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
       <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
       <Route path="/download">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
