@@ -11,7 +11,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   import { Badge } from "@/components/ui/badge";
   import {
     Film, Plus, Zap, Users, ArrowRight, Clock, CheckCircle2, Loader2, Key,
-    Clapperboard, BookOpen, Sparkles, ChevronRight, Trash2, Play, Square,
+    Clapperboard, BookOpen, Sparkles, ChevronLeft, ChevronRight, Trash2, Play, Square,
     PlayCircle, Layers, Download, Mic2, DollarSign, FileText, LayoutGrid,
     List, Palette, MapPin, ClipboardList, Wand2, Star, MessageSquare, Eye,
     Scissors, Music, AlignCenter, Share2, Newspaper, BarChart, Tv, Globe,
