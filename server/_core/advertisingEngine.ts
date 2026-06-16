@@ -929,7 +929,7 @@ export async function generateFullAdPackage(
   try {
     imageAd = await generateImageAd(text.imagePrompt);
   } catch (err) {
-    logger.error("[AdEngine] Image ad generation failed:", err);
+    logger.error("[AdEngine] Image ad generation failed:", { error: String(err) });
   }
 
   // Generate video ad if requested
@@ -938,7 +938,7 @@ export async function generateFullAdPackage(
     try {
       videoAd = await generateVideoAd(text.title);
     } catch (err) {
-      logger.error("[AdEngine] Video ad generation failed:", err);
+      logger.error("[AdEngine] Video ad generation failed:", { error: String(err) });
     }
   }
 
@@ -1164,7 +1164,7 @@ export function startAdScheduler(): void {
     try {
       await runAutonomousAdCycle();
     } catch (err) {
-      logger.error("[AdEngine] First cycle failed:", err);
+      logger.error("[AdEngine] First cycle failed:", { error: String(err) });
     }
   }, 5 * 60 * 1000);
 
@@ -1173,7 +1173,7 @@ export function startAdScheduler(): void {
     try {
       await runAutonomousAdCycle();
     } catch (err) {
-      logger.error("[AdEngine] Scheduled cycle failed:", err);
+      logger.error("[AdEngine] Scheduled cycle failed:", { error: String(err) });
     }
   }, 8 * 60 * 60 * 1000);
 }
