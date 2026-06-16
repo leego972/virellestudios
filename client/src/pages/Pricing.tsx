@@ -604,6 +604,22 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* Value framing */}
+        <div className="max-w-3xl mx-auto mb-20 px-4">
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-8 text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">Why Virelle</p>
+            <h3 className="text-xl font-bold text-white mb-4 leading-snug">
+              One platform for the entire pre-production pipeline
+            </h3>
+            <p className="text-white/50 text-sm leading-relaxed max-w-2xl mx-auto">
+              Traditional early-stage film packaging requires separate costs for concept art, script development, pitch deck design, poster creation, trailer mockups, voice demos, and production planning — each from a different vendor. Virelle brings every step into one AI-assisted workflow so you can go from idea to pitch-ready package without the fragmentation.
+            </p>
+            <p className="text-white/30 text-xs mt-6 italic">
+              Virelle is not here to replace filmmakers, designers, or producers — it gives creative professionals a faster AI-assisted production pipeline and a new way to package, pitch, and develop projects.
+            </p>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl font-bold text-center mb-12 text-gold-shimmer">Frequently Asked Questions</h2>
