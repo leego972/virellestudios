@@ -204,13 +204,19 @@
 :root:not(.dark) .text-zinc-800 { color: oklch(0.80 0.16 85) !important; }
 :root:not(.dark) .text-zinc-900 { color: oklch(0.84 0.17 85) !important; }
 :root:not(.dark) .text-zinc-950 { color: oklch(0.86 0.18 85) !important; }
-
-  /* ── Gold/amber buttons: always black text (overrides zinc remap above) ── */
-  [data-slot="button"].bg-amber-500,
-  [data-slot="button"].bg-amber-400,
-  [data-slot="button"].bg-amber-600,
-  [data-slot="button"].bg-amber-300,
-  .btn-gold { color: #000000 !important; }
+/* ── Gold/amber buttons: always black text ──────────────────────────────
+   Scoped to :root:not(.dark) so specificity beats the zinc/black remaps
+   above. Also covers text-black / text-zinc-900 inside buttons. ──────── */
+:root:not(.dark) [data-slot="button"].bg-amber-500,
+:root:not(.dark) [data-slot="button"].bg-amber-400,
+:root:not(.dark) [data-slot="button"].bg-amber-600,
+:root:not(.dark) [data-slot="button"].bg-amber-300,
+:root:not(.dark) [data-slot="button"].bg-yellow-500,
+:root:not(.dark) [data-slot="button"].bg-yellow-400,
+:root:not(.dark) [data-slot="button"].bg-yellow-600,
+:root:not(.dark) [data-slot="button"].text-black,
+:root:not(.dark) [data-slot="button"].text-zinc-900,
+:root:not(.dark) .btn-gold { color: #000000 !important; }
 
 /* text-neutral-* â readable on dark bg */
 :root:not(.dark) .text-neutral-100 { color: oklch(0.90 0.06 85) !important; }
