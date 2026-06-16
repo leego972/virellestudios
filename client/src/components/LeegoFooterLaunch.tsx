@@ -16,6 +16,7 @@ import LeegoLogo from "@/components/LeegoLogo";
       { label: "FAQ",          href: "/faq" },
       { label: "Pricing",      href: "/pricing" },
       { label: "Contact",      href: "/contact" },
+      { label: "Designers",    href: "/designers" },
     ],
     Legal: [
       { label: "Terms of Service",  href: "/terms" },
