@@ -137,7 +137,7 @@ import type { Express, Request, Response } from "express";
   </body>
   </html>`);
       } catch (err) {
-        logger.error("[Snapchat OAuth] Callback error", err);
+        logger.error("[Snapchat OAuth] Callback error", { error: String(err) });
         res.status(500).send("Snapchat OAuth callback failed. Please try again.");
       }
     });
