@@ -86,7 +86,7 @@ export default function CreatorProfile() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link href="/">
             <img
-              src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt="VirElle Studios"
               className="h-8 object-contain"
               style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}
