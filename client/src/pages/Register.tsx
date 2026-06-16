@@ -413,7 +413,7 @@ function SelectField({
 
     const createSetupIntentMutation = trpc.auth.createSetupIntent.useMutation({
       onSuccess: (data) => {
-        setSetupIntentData({ ...data, publishableKey: data.publishableKey || "" });
+        setSetupIntentData({ clientSecret: data.clientSecret ?? "", customerId: data.customerId, publishableKey: data.publishableKey || "" });
         nextStep();
       },
       onError: () => {
