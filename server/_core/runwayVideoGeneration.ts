@@ -87,21 +87,21 @@ export async function generateRunwayVideo(
     }
   } catch (error: any) {
     if (error instanceof TaskFailedError) {
-      logger.error("[RunwayGen] Task failed:", error.taskDetails);
+      logger.error("[RunwayGen] Task failed:", { taskDetails: JSON.stringify(error.taskDetails) });
       throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails)}`);
     }
     logger.error("[RunwayGen] Error:", error.message);
     throw new Error(`Runway video generation error: ${error.message}`);
   }
 
-  logger.info(`[RunwayGen] Task completed:`, JSON.stringify(task).substring(0, 500));
+  logger.info(`[RunwayGen] Task completed:`, { data: JSON.stringify(task).substring(0, 500) });
 
   // Extract the video URL from the task output
   const taskId = task.id || "unknown";
   const outputUrl = task.output?.[0] || task.output?.video || task.output;
 
   if (!outputUrl || typeof outputUrl !== "string") {
-    logger.error("[RunwayGen] No output URL in task result:", JSON.stringify(task));
+    logger.error("[RunwayGen] No output URL in task result:", { data: JSON.stringify(task) });
     throw new Error("Runway video generation completed but no video URL returned");
   }
 
