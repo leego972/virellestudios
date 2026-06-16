@@ -573,7 +573,7 @@ async function extractLastFrame(videoUrl: string, projectId: number, sceneId: nu
       return undefined;
     }
   } catch (err) {
-    logger.warn("[ExtendedScene] Failed to extract last frame:", err);
+    logger.warn("[ExtendedScene] Failed to extract last frame:", { error: String(err) });
     return undefined;
   } finally {
     try {
