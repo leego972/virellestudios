@@ -190,7 +190,7 @@ export default function SeoDashboard() {
   const health = healthQuery.data;
   const report = reportQuery.data;
   const status = statusQuery.data;
-  const isKilled = status?.isKilled || killSwitchEnabled;
+  const isKilled = (status as any)?.isKilled || killSwitchEnabled;
   const isRunning = runOptimizationMutation.isPending;
 
   return (
