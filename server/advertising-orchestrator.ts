@@ -326,9 +326,11 @@ export interface AdvertisingCycleResult {
 export interface AdvertisingAction {
   channel: FreeChannel | "google_ads";
   action: string;
-  status: "success" | "failed" | "skipped";
+  status: "success" | "failed" | "skipped" | "partial";
   details: string;
   cost: number; // 0 for free channels
+  content?: string;
+  error?: string;
 }
 
 export interface GrowthStrategy {
