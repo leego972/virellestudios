@@ -6,6 +6,7 @@
   import { z } from "zod";
   import { adminProcedure, publicProcedure } from "./_core/trpc";
   import { router } from "./_core/trpc";
+import * as db from "./db";
   import {
     analyzeSeoHealth,
     analyzeKeywords,
@@ -95,7 +96,14 @@
 
     optimizeBlogPost: adminProcedure
       .input(z.object({ slug: z.string() }))
-      .mutation(async ({ input }) => optimizeBlogPostSeo(input.slug)),
+      .mutation(async ({ input }) => { const article = await db.getArticleBySlug(input.slug); return optimizeBlogPostSeo(input.slug, article?.title || input.slug, article?.content || ""); }),
+
+    getStatus: adminProcedure.query(async () => {
+      const lastRun = await getLastOptimizationRun();
+      const cached = getCachedReport();
+      const cachedAge = cached ? Date.now() - (cached as any).generatedAt : null;
+      return { version: "4.0", lastRun: lastRun ?? null, hasCachedReport: !!cached, cachedReportAge: cachedAge, features: ["meta-optimization","structured-data","internal-links","event-log","geo","content-briefs"] };
+    }),
 
     killSwitch: adminProcedure
       .input(z.object({ code: z.string() }))
