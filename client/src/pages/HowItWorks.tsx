@@ -170,7 +170,7 @@ export default function HowItWorks() {
             <Button variant="ghost" size="sm" onClick={() => setLocation("/blog")}>Blog</Button>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/pricing")}>Pricing</Button>
             <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold" onClick={() => setLocation("/register")}>
-              Start Free Trial
+              Start 7-Day Trial
             </Button>
           </div>
         </div>
