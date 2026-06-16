@@ -555,7 +555,7 @@ export async function runStripeProvisioning(): Promise<void> {
   }
 
   logger.info(`[StripeProvisioning] Done: ${existing} existing, ${created} created`);
-  logger.info("[StripeProvisioning] Resolved price IDs:", JSON.stringify(resolvedPriceIds, null, 2));
+  logger.info("[StripeProvisioning] Resolved price IDs:", { data: JSON.stringify(resolvedPriceIds, null, 2) });
 }
 
 /**
