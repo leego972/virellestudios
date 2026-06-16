@@ -333,8 +333,14 @@ export default function Register() {
   };
 
   const validateStep2 = (): boolean => {
+    if (!companyName.trim()) { toast.error("Please enter your company or studio name"); return false; }
     if (!professionalRole) { toast.error("Please select your professional role"); return false; }
     if (!experienceLevel) { toast.error("Please select your experience level"); return false; }
+    return true;
+  };
+
+  const validateStep3 = (): boolean => {
+    if (!primaryUseCase) { toast.error("Please select what you'll mainly use Virelle Studios for"); return false; }
     return true;
   };
 
@@ -362,6 +368,7 @@ export default function Register() {
   // ─── Submit ───
 
   const handleSubmit = () => {
+    if (!validateStep3()) return;
     registerMutation.mutate({
       name: name.trim(),
       email: email.trim().toLowerCase(),
