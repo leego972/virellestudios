@@ -67,6 +67,7 @@ const SeoDashboard = lazy(() => import("./pages/SeoDashboard"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Pricing = lazy(() => import("./pages/Pricing"));
+  const UpgradePage = lazy(() => import("./pages/Upgrade"));
 
 // Public pages — lazy loaded
 const Blog = lazy(() => import("./pages/Blog"));
@@ -262,6 +263,7 @@ function Router() {
 
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
+            <Route path="/upgrade">{() => <LazyPage><UpgradePage /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
       <Route path="/billing/portal">{() => <LazyPage><BillingPortal /></LazyPage>}</Route>
       <Route path="/contact">{() => <LazyPage><Contact /></LazyPage>}</Route>
