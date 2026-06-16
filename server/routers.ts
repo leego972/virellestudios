@@ -368,14 +368,83 @@ export const appRouter = router({
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
       if (!ctx.user) return null;
-      // Admin status is determined solely by database role
       const isAdmin = ctx.user.role === "admin";
-      // Explicitly omit passwordHash ÃÂ¢ÃÂÃÂ never send credential material to the client
-      const { passwordHash: _ph, ...safeUser } = ctx.user;
+      const u = ctx.user;
+      // SECURITY: Explicit field whitelist — BYOK API keys, Stripe IDs, and
+      // openId are server-only. Never spread the full user row to the client.
       return {
-        ...safeUser,
+        // Identity
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        avatarUrl: u.avatarUrl,
+        role: u.role,
         isAdmin,
-        creditBalance: isAdmin ? -1 : (ctx.user.creditBalance ?? 0),
+        loginMethod: u.loginMethod,
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+        lastSignedIn: u.lastSignedIn,
+        // Subscription
+        subscriptionTier: u.subscriptionTier,
+        subscriptionStatus: u.subscriptionStatus,
+        subscriptionCurrentPeriodEnd: u.subscriptionCurrentPeriodEnd,
+        creditBalance: isAdmin ? -1 : (u.creditBalance ?? 0),
+        totalCreditsEarned: u.totalCreditsEarned,
+        totalCreditsSpent: u.totalCreditsSpent,
+        creditsResetAt: u.creditsResetAt,
+        monthlyGenerationsUsed: u.monthlyGenerationsUsed,
+        monthlyGenerationsResetAt: u.monthlyGenerationsResetAt,
+        bonusGenerations: u.bonusGenerations,
+        betaExpiresAt: u.betaExpiresAt,
+        // Referral
+        referralCode: u.referralCode,
+        referralStats: u.referralStats,
+        // Profile
+        phone: u.phone,
+        bio: u.bio,
+        country: u.country,
+        city: u.city,
+        timezone: u.timezone,
+        companyName: u.companyName,
+        companyWebsite: u.companyWebsite,
+        jobTitle: u.jobTitle,
+        professionalRole: u.professionalRole,
+        experienceLevel: u.experienceLevel,
+        industryType: u.industryType,
+        teamSize: u.teamSize,
+        preferredGenres: u.preferredGenres,
+        primaryUseCase: u.primaryUseCase,
+        portfolioUrl: u.portfolioUrl,
+        socialLinks: u.socialLinks,
+        howDidYouHear: u.howDidYouHear,
+        marketingOptIn: u.marketingOptIn,
+        onboardingCompleted: u.onboardingCompleted,
+        // Account status
+        isFrozen: u.isFrozen,
+        frozenReason: u.frozenReason,
+        frozenAt: u.frozenAt,
+        accountExpiresAt: (u as any).accountExpiresAt,
+        // BYOK metadata (preferences + presence flags — never the raw key values)
+        byokFallbackMode: u.byokFallbackMode,
+        preferredVideoProvider: u.preferredVideoProvider,
+        preferredLlmProvider: u.preferredLlmProvider,
+        directorInstructions: u.directorInstructions,
+        apiKeysUpdatedAt: u.apiKeysUpdatedAt,
+        byokKeys: {
+          hasOpenai:      Boolean(u.userOpenaiKey),
+          hasRunway:      Boolean(u.userRunwayKey),
+          hasReplicate:   Boolean(u.userReplicateKey),
+          hasFal:         Boolean(u.userFalKey),
+          hasLuma:        Boolean(u.userLumaKey),
+          hasHuggingFace: Boolean(u.userHfToken),
+          hasElevenlabs:  Boolean(u.userElevenlabsKey),
+          hasSuno:        Boolean(u.userSunoKey),
+          hasBytePlus:    Boolean(u.userByteplusKey),
+          hasAnthropic:   Boolean(u.userAnthropicKey),
+          hasGoogleAi:    Boolean(u.userGoogleAiKey),
+          hasVenice:      Boolean(u.userVeniceKey),
+          hasDid:         Boolean(u.userDidKey),
+        },
       };
     }),
     logout: publicProcedure.mutation(({ ctx }) => {
