@@ -142,12 +142,12 @@ import { useState, useEffect } from "react";
       }
     }, [navigate]);
 
-    const createMutation = trpc.projects.create.useMutation({
-      onSuccess: (project: { id: string | number }) => {
+    const createMutation = trpc.project.create.useMutation({
+      onSuccess: (project: any) => {
         localStorage.setItem(STORAGE_KEY, "1");
         navigate(`/projects/${project.id}`);
       },
-      onError: (err: { message?: string }) => {
+      onError: (err: any) => {
         toast.error(err.message || "Failed to create project");
         setCreating(false);
       },
