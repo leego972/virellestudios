@@ -148,6 +148,7 @@ export async function createEmailUser(data: {
   socialLinks?: Record<string, string>;
   howDidYouHear?: string;
   marketingOptIn?: boolean;
+  stripeCustomerId?: string;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -181,6 +182,7 @@ export async function createEmailUser(data: {
     socialLinks: data.socialLinks || null,
     howDidYouHear: data.howDidYouHear || null,
     marketingOptIn: data.marketingOptIn ?? false,
+    stripeCustomerId: data.stripeCustomerId || null,
     onboardingCompleted: true,
   });
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
