@@ -2852,7 +2852,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: _effectivePhotoWardrobeCtx || sceneWardrobeContext || undefined,
+                  wardrobeContext: sceneWardrobeContext || undefined,
             characters: characters.map(c => ({
                 name: c.name,
                 ageRange: (c as any).ageRange ?? (c as any).dateOfBirth ?? null,
@@ -3194,7 +3194,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: _effectiveWardrobeContext || undefined,
+                  wardrobeContext: sceneWardrobeContext || undefined,
             characters: characters.map(c => ({
               name: c.name,
               ageRange: (c as any).ageRange ?? null,
@@ -3722,6 +3722,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 // Build character data for visual consistency using full CharacterDNA (v6.80)
                   // Previously used a basic name+age+gender string Ã¢ÂÂ now uses buildCharacterDNA
                   // for photorealistic face DNA, body DNA, clothing, and consistency locking.
+                const _bulkFalOverrides = new Map<number, { wardrobeDescription?: string; hairNotes?: string; makeupNotes?: string; accessories?: string }>();
+                const _bulkFalWardrobeCtx: string | undefined = await getEffectiveWardrobeContext(scene as any, ctx.user.id, characters as any).catch(() => undefined) as string | undefined;
                   const bulkFalCharIds = ((scene as any).characterIds as number[]) || [];
                   const bulkFalSceneChars = characters.filter((c: any) => bulkFalCharIds.length === 0 || bulkFalCharIds.includes(c.id));
                   const { buildCharacterDNA: _bulkFalBuildDNA } = await import("./_core/characterConsistency");
@@ -3853,6 +3855,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 const bulkOtherCharDescs = bulkOtherSceneChars
                     .filter((c: any) => c.name)
                     .map((c: any) => _bulkOtherBuildDNA(c, _bulkOtherOverrides.get((c as any).id) || undefined).promptAnchor);
+                const bulkOtherRefs: string[] = ((scene as any).referenceImages as string[] | undefined || []).slice();
                 if (bulkOtherRefs.length === 0) {
                   const cp2 = bulkOtherSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
                   bulkOtherRefs.push(...cp2);
