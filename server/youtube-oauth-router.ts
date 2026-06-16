@@ -109,7 +109,7 @@ import type { Express, Request, Response } from "express";
   </body>
   </html>`);
       } catch (err) {
-        logger.error("[YouTube OAuth] Callback error", err);
+        logger.error("[YouTube OAuth] Callback error", { error: String(err) });
         res.status(500).send("YouTube OAuth callback failed. Please try again.");
       }
     });
