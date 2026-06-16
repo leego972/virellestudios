@@ -163,7 +163,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
       }
     }
   } catch (error) {
-    logger.error("Error analyzing project health:", error);
+    logger.error("Error analyzing project health:", { error: String(error) });
   }
 
   return recommendations;
@@ -235,7 +235,7 @@ export async function validateSceneBeforeGeneration(sceneId: number): Promise<As
       });
     }
   } catch (error) {
-    logger.error("Error validating scene:", error);
+    logger.error("Error validating scene:", { error: String(error) });
   }
 
   return recommendations;
