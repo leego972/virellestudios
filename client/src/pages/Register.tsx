@@ -305,7 +305,7 @@ export default function Register() {
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
       utils.auth.me.invalidate();
-      setShowWelcome(true);
+      setShowStudioOpener(true);
     },
     onError: (err) => {
       toast.error(err.message || "Registration failed");
