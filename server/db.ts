@@ -1352,18 +1352,37 @@ export async function updateUserPassword(userId: number, passwordHash: string) {
 
 // ─── Admin User Management ───
 export async function getAllUsers() {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select({
-    id: users.id,
-    name: users.name,
-    email: users.email,
-    role: users.role,
-    loginMethod: users.loginMethod,
-    createdAt: users.createdAt,
-    lastSignedIn: users.lastSignedIn,
-  }).from(users).orderBy(desc(users.createdAt));
-}
+    const db = await getDb();
+    if (!db) return [];
+    return db.select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      loginMethod: users.loginMethod,
+      createdAt: users.createdAt,
+      lastSignedIn: users.lastSignedIn,
+      // Profile fields from registration
+      phone: users.phone,
+      companyName: users.companyName,
+      companyWebsite: users.companyWebsite,
+      jobTitle: users.jobTitle,
+      professionalRole: users.professionalRole,
+      experienceLevel: users.experienceLevel,
+      industryType: users.industryType,
+      teamSize: users.teamSize,
+      preferredGenres: users.preferredGenres,
+      primaryUseCase: users.primaryUseCase,
+      portfolioUrl: users.portfolioUrl,
+      howDidYouHear: users.howDidYouHear,
+      marketingOptIn: users.marketingOptIn,
+      // Subscription & credits
+      subscriptionTier: users.subscriptionTier,
+      subscriptionStatus: users.subscriptionStatus,
+      creditBalance: users.creditBalance,
+      stripeCustomerId: users.stripeCustomerId,
+    }).from(users).orderBy(desc(users.createdAt));
+  }
 
 export async function updateUserRole(userId: number, role: "user" | "admin") {
   const db = await getDb();
