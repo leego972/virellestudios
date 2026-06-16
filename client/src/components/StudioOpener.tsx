@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 // Default export alias so both import styles work
 export default function StudioOpenerDefault(props: Parameters<typeof StudioOpener>[0]) {
@@ -303,7 +304,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
 
   // If video hasn't errored, show video player
   if (!videoError) {
-    return (
+    return createPortal(
       <div
         className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-700"
         style={{ opacity: videoPhase === "fadeout" ? 0 : 1 }}
