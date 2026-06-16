@@ -618,12 +618,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio — let's make something great.</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
-              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
-                <DollarSign className="h-4 w-4" />Funding
-              </Button>
-            )}
-            {user && (user as any).role === "admin" && (
+            {user && (["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") || (user as any).role === "admin") && (
               <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
                 <DollarSign className="h-4 w-4" />Funding
               </Button>
