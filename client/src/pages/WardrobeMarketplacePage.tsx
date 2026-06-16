@@ -24,7 +24,7 @@ import {
 import { toast } from "sonner";
 
 const LOGO_URL =
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+  "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
 
 const PROFILE_TYPE_LABELS: Record<string, string> = {
   designer: "Fashion Designer",
@@ -91,7 +91,7 @@ function ValueProps() {
     {
       icon: Zap,
       title: "Buy once, use across every project forever",
-      body: "Purchase an item for 30¢ and it lives in your wardrobe inventory permanently. Assign it to characters in any current or future project without ever repurchasing.",
+      body: "Purchase an item from A$1.00 and it lives in your wardrobe inventory permanently. Assign it to characters in any current or future project without ever repurchasing.",
       border: "border-blue-500/20",
       iconBg: "bg-blue-500/10 text-blue-400",
     },
@@ -727,7 +727,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
                 {[
                   "Costume Lock enabled",
                   "Zero colour drift",
-                  "30¢ per item",
+                  "From A$1.00 per item",
                   "Scene continuity built-in",
                 ].map((tag) => (
                   <span
