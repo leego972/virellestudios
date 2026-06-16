@@ -432,7 +432,7 @@ function ItemCard({
   const [imgErr, setImgErr] = useState(false);
   const color = item.colors?.[0] ?? "";
   const baseName = item.name?.split(" — ")[0] ?? item.name;
-  const cents = item.retailPriceAud ?? 30;
+  const cents = item.retailPriceAud ?? 100;
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
 
   return (
