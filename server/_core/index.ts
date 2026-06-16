@@ -1489,7 +1489,26 @@ async function startServer() {
     })
   );
 
-  // ── Port binding + static files ─────────────────────────────────────────────
+  // ── Global Express error handler ────────────────────────────────────────────
+    // Catches any synchronous throw or next(err) in non-tRPC Express routes.
+    // Returns a safe JSON error — never exposes stack traces in production.
+    app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+      const isDev = process.env.NODE_ENV !== "production";
+      logger.error("[Express] Unhandled route error:", {
+        message: err.message,
+        stack: isDev ? err.stack : undefined,
+      });
+      res.status(500).json({
+        success: false,
+        error: {
+          message: "An unexpected server error occurred. Please try again.",
+          code: "INTERNAL_SERVER_ERROR",
+          ...(isDev && { detail: err.message }),
+        },
+      });
+    });
+
+    // ── Port binding + static files ─────────────────────────────────────────────
   // Production: register static serving BEFORE server.listen() so Railway's
   // health check at "/" returns 200 from the very first request.
   // Development: bind first (Vite HMR needs the http.Server reference).
