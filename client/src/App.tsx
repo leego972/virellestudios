@@ -80,6 +80,8 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
+  const AIUsePolicy = lazy(() => import("./pages/legal/AIUsePolicy"));
+  const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy"));
 const Press = lazy(() => import("./pages/Press"));
 const Changelog = lazy(() => import("./pages/Changelog"));
 
@@ -271,6 +273,8 @@ function Router() {
       <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
+      <Route path="/ai-use-policy">{() => <LazyPage><AIUsePolicy /></LazyPage>}</Route>
+      <Route path="/refund-policy">{() => <LazyPage><RefundPolicy /></LazyPage>}</Route>
       <Route path="/press">{() => <LazyPage><Press /></LazyPage>}</Route>
       <Route path="/changelog">{() => <LazyPage><Changelog /></LazyPage>}</Route>
       <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
