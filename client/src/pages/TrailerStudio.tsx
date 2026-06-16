@@ -114,7 +114,6 @@ function TrailerStudioInner() {
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
   const generateTrailer = trpc.generation.generateTrailer.useMutation({
-  const generateTrailer = trpc.generation.generateTrailer.useMutation({
     onSuccess: (data) => {
       setGeneratedResult(data);
       setShowOpener(true);
