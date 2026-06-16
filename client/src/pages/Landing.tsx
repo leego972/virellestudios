@@ -747,7 +747,7 @@ export default function Landing() {
                     <Button
                       className={`w-full font-semibold ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black" : "bg-white/10 hover:bg-white/20 text-white"}`}
                       size="sm"
-                      onClick={() => setLocation(plan.tier === "Industry+" ? "/contact" : "/register")}
+                      onClick={() => setLocation(plan.tier === "Enterprise" ? "/contact" : "/register")}
                     >
                       {plan.cta}
                     </Button>
