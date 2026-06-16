@@ -90,10 +90,21 @@ async function startServer() {
 
 
   // Health check — registered before any other middleware.
-  // healthcheckPath = "/" in railway.toml; this also satisfies explicit /api/healthz checks.
-  app.get("/api/healthz", (_req, res) => {
-    res.json({ ok: true, uptime: process.uptime() });
-  });
+  // Both /api/health (Phase 15 format) and /api/healthz respond identically.
+  // healthcheckPath = "/" in railway.toml.
+  function healthHandler(_req: Request, res: Response) {
+    res.json({
+      success: true,
+      status: "ok",
+      service: "virelle-studios",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV ?? "development",
+      uptime: Math.round(process.uptime()),
+      database: ENV.databaseUrl ? "configured" : "not_configured",
+    });
+  }
+  app.get("/api/health", healthHandler);
+  app.get("/api/healthz", healthHandler);
 
   // Hardened security headers (CSP, HSTS, frame-options, permissions-policy)
   // applied to every response before route handlers run.
