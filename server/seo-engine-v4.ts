@@ -514,7 +514,7 @@ export function generateEnhancedStructuredData(): Record<string, any>[] {
   schemas.push({
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${SITE_NAME} â AI-Powered Credential Management`,
+    name: `${SITE_NAME} â AI-Powered Film Production Platform`,
     url: SITE_URL,
     speakable: {
       "@type": "SpeakableSpecification",
@@ -1210,31 +1210,31 @@ Focus on topics that:
   // Fallback static gaps
   return [
     {
-      topic: "AI Agent Security",
+      topic: "AI Character Consistency",
       searchVolume: "high",
       difficulty: "medium",
-      suggestedTitle: "How AI Agents Handle Sensitive Credentials Safely in 2026",
+      suggestedTitle: "AI Character Consistency in Film: The Director's Guide to Locking Your Cast Across Every Scene",
       suggestedSlug: "ai-character-consistency-guide-2026",
       targetKeywords: ["AI character consistency", "consistent AI characters video", "character DNA filmmaking"],
-      rationale: "Growing interest in AI agent security as more developers deploy autonomous systems.",
+      rationale: "Character consistency is the #1 pain point for AI filmmakers doing multi-scene productions.",
     },
     {
-      topic: "Multi-Cloud Credential Management",
+      topic: "Multi-Scene AI Film Production",
       searchVolume: "high",
       difficulty: "hard",
-      suggestedTitle: "Managing Credentials Across AWS, GCP, and Azure: The Complete Guide",
+      suggestedTitle: "How to Produce a Full AI Film With Multiple Scenes: The Complete Director's Guide",
       suggestedSlug: "multi-scene-ai-film-production-guide",
       targetKeywords: ["multi-scene AI film", "AI film production pipeline", "consistent characters across scenes"],
-      rationale: "Most enterprises use 2-3 cloud providers. Credential sprawl is a major pain point.",
+      rationale: "Multi-scene production is the core differentiator for Virelle vs single-clip AI video generators.",
     },
     {
-      topic: "Developer Productivity",
+      topic: "AI Filmmaking Productivity",
       searchVolume: "medium",
       difficulty: "easy",
-      suggestedTitle: "10 Ways Credential Automation Saves Developers 5+ Hours Per Week",
+      suggestedTitle: "10 Ways AI Filmmaking Saves Indie Directors Weeks of Production Time",
       suggestedSlug: "ai-filmmaking-saves-production-time",
       targetKeywords: ["AI filmmaking productivity", "indie film production time savings", "AI film ROI"],
-      rationale: "Quantified productivity content performs well in developer communities.",
+      rationale: "Quantified time-savings content resonates with indie filmmakers evaluating AI production tools.",
     },
   ];
 }
