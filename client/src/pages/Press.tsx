@@ -1,7 +1,7 @@
 import SiteHead from "@/components/SiteHead";
   import { Download, Mail, Globe, Film, Layers, Globe2, Mic2, Subtitles, Key, DollarSign, BookOpen } from "lucide-react";
 
-  const LOGO_GOLD = "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
+  const LOGO_GOLD = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
   const VERIFIED_FACTS = [
     { icon: "🌐", stat: "130+", label: "Subtitle Languages", note: "SRT & VTT export included" },
