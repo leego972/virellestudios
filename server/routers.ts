@@ -10650,10 +10650,7 @@ Rules:
     lamaloGifts: lamaloGiftsRouter,
   lamaloAdmin: router({
     /** Seed Lamalo Fashion in-house designer. Admin-only. Idempotent. */
-    seedLamalo: protectedProcedure.mutation(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
-      }
+    seedLamalo: adminProcedure.mutation(async ({ ctx }) => {
       return runLamaloSeed(ctx.user.id);
     }),
   }),
