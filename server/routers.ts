@@ -20,7 +20,7 @@ import { assertOwnsProject, assertCanAccessProject } from "./_core/ownership";
 import { safeJsonExtract } from "./_core/safeParse";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
-import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
+import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload, rateLimitPublicByIP } from "./_core/rateLimit";
 import { sanitizeText } from "./_core/sanitize";
 import type { WardrobeItem } from "../drizzle/schema";
 import {
@@ -670,7 +670,10 @@ export const appRouter = router({
         email: z.string().email().max(320).optional(),
         name: z.string().max(255).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+          // Rate limit: max 5 password reset requests per IP per hour to prevent email flooding
+          const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+          await rateLimitPublicByIP(clientIP, "password-reset", 5, 60 * 60 * 1000);
         if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
         // Create or retrieve Stripe customer
         const customerData: { email?: string; name?: string; metadata?: Record<string, string> } = {
@@ -762,6 +765,7 @@ export const appRouter = router({
           const char = await db.getCharacterById(input.characterId);
           if (!char) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
           if (char.projectId) await assertCanAccessProject(char.projectId, ctx.user.id);
+            else if (char.userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "You do not have access to this character." });
           const userKeys = await db.getUserApiKeys(ctx.user.id);
           const elevenlabsKey = userKeys.elevenlabsKey;
           if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for voice cloning. Add it in Settings ÃÂ¢ÃÂÃÂ API Keys." });
