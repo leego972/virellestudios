@@ -475,7 +475,7 @@ export async function generateSoundtrack(
     try {
       audioBuffer = await adjustAudioDuration(audioBuffer, request.durationSeconds);
     } catch (err) {
-      logger.warn("[Soundtrack] Duration adjustment failed, using raw audio:", err);
+      logger.warn("[Soundtrack] Duration adjustment failed, using raw audio:", { error: String(err) });
     }
   }
 
