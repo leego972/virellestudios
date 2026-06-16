@@ -763,9 +763,10 @@ export const appRouter = router({
       }),
     provisionBetaTester: adminProcedure
       .mutation(async ({ ctx }) => {
-        const BETA_EMAIL = "tester@virelle.life";
+        const BETA_EMAIL = process.env.BETA_TESTER_EMAIL ?? "tester@virelle.life";
         const BETA_NAME  = "Virelle Beta Tester";
-        const BETA_PASS  = "Hello123";
+        const BETA_PASS  = process.env.BETA_TESTER_PASSWORD;
+        if (!BETA_PASS) throw new Error("BETA_TESTER_PASSWORD env var not set");
 
         try {
           // Already exists ÃÂ¢ÃÂÃÂ sync API keys from admin caller
