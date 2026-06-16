@@ -112,18 +112,18 @@ const VIRELLE_BRAND = {
   competitors: ["1Password", "LastPass", "Bitwarden", "GitHub Copilot", "ChatGPT"],
   // Campaign creative assets uploaded by owner (rotated across campaigns)
   campaignImages: [
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/gvTVttaFEQstvWuh.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/KeTLfaSXYpSzZYrC.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/myFnaqFpXtIwMYmX.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/UmexBzectsHuvsNd.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/RGWrfdQoAtcdKjif.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/eLBbWQGICiDYYbYD.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/ZuWltnnHDFRmxrlQ.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/bhGHYADVuNfLtkhV.png",
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/wZJrLqfQjumeUtkd.png",
+    "https://image.pollinations.ai/prompt/Hollywood%20cinematic%20film%20production%2C%20dramatic%20golden%20hour%2C%20director%20and%20camera%20crew%2C%20film%20set%20atmosphere?width=1200&height=630&nologo=true&seed=201&model=flux",
+    "https://image.pollinations.ai/prompt/AI%20filmmaking%20studio%2C%20luxury%20black%20and%20gold%20aesthetic%2C%20screenplay%20and%20clapperboard%2C%20cinematic%20lighting?width=1200&height=630&nologo=true&seed=202&model=flux",
+    "https://image.pollinations.ai/prompt/Professional%20film%20director%20reviewing%20storyboard%2C%20cinematic%20production%20suite%2C%20dramatic%20film%20noir%20lighting?width=1200&height=630&nologo=true&seed=203&model=flux",
+    "https://image.pollinations.ai/prompt/Epic%20Hollywood%20movie%20scene%2C%20stunning%20visual%20effects%2C%20AI%20generated%20cinematic%20production%2C%20gold%20and%20black%20color%20palette?width=1200&height=630&nologo=true&seed=204&model=flux",
+    "https://image.pollinations.ai/prompt/Independent%20film%20production%2C%20award%20winning%20cinematography%2C%20moody%20dramatic%20lighting%2C%20prestige%20cinema%20aesthetic?width=1200&height=630&nologo=true&seed=205&model=flux",
+    "https://image.pollinations.ai/prompt/AI%20script%20writer%20interface%2C%20luxury%20dark%20studio%20dashboard%2C%20screenplay%20on%20screen%2C%20professional%20filmmaking%20tools?width=1200&height=630&nologo=true&seed=206&model=flux",
+    "https://image.pollinations.ai/prompt/Film%20festival%20red%20carpet%2C%20golden%20trophy%2C%20Hollywood%20premiere%2C%20cinematic%20luxury%20black%20and%20gold?width=1200&height=630&nologo=true&seed=207&model=flux",
+    "https://image.pollinations.ai/prompt/Virelle%20Studios%20AI%20film%20production%20platform%2C%20dark%20luxury%20interface%2C%20gold%20accents%2C%20cinematic%20storytelling?width=1200&height=630&nologo=true&seed=208&model=flux",
+    "https://image.pollinations.ai/prompt/Professional%20video%20editing%20suite%2C%20Hollywood%20post-production%2C%20dramatic%20ambient%20lighting%2C%20premium%20filmmaking%20aesthetic?width=1200&height=630&nologo=true&seed=209&model=flux",
   ],
   campaignVideos: [
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/FEAdTmkvXlpjZyqd.mp4",
+    // Managed externally — upload to a stable CDN and add URLs here
   ],
   get defaultCampaignVideo() {
     return this.campaignVideos[Math.floor(Math.random() * this.campaignVideos.length)];
