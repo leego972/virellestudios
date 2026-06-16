@@ -12,10 +12,10 @@ const UNIFORM_COLLECTIONS = [
     styleTags: ["professional", "emergency", "tactical"],
     collectionPriceAud: 450, // 15% discount for bundle
     items: [
-      { name: "Police Patrol Uniform (Dark Blue)", category: "uniform", subcategory: "police", genderFit: "unisex", colors: ["dark blue"], retailPriceAud: 30, referencePrompt: "A professional dark blue police patrol uniform with badge and utility belt." },
-      { name: "Firefighter Turnout Gear (Tan)", category: "uniform", subcategory: "fire", genderFit: "unisex", colors: ["tan"], retailPriceAud: 30, referencePrompt: "Heavy-duty tan firefighter turnout gear with reflective strips and helmet." },
-      { name: "Paramedic Response Uniform (Green/Navy)", category: "uniform", subcategory: "paramedic", genderFit: "unisex", colors: ["green", "navy"], retailPriceAud: 30, referencePrompt: "A high-visibility paramedic response uniform with medical patches." },
-      { name: "Hospital Scrub Set (Light Blue)", category: "uniform", subcategory: "nurse", genderFit: "unisex", colors: ["light blue"], retailPriceAud: 30, referencePrompt: "Standard light blue hospital scrubs for nurses and medical staff." },
+      { name: "Police Patrol Uniform (Dark Blue)", category: "uniform", subcategory: "police", genderFit: "unisex", colors: ["dark blue"], retailPriceAud: 300, referencePrompt: "A professional dark blue police patrol uniform with badge and utility belt." },
+      { name: "Firefighter Turnout Gear (Tan)", category: "uniform", subcategory: "fire", genderFit: "unisex", colors: ["tan"], retailPriceAud: 300, referencePrompt: "Heavy-duty tan firefighter turnout gear with reflective strips and helmet." },
+      { name: "Paramedic Response Uniform (Green/Navy)", category: "uniform", subcategory: "paramedic", genderFit: "unisex", colors: ["green", "navy"], retailPriceAud: 300, referencePrompt: "A high-visibility paramedic response uniform with medical patches." },
+      { name: "Hospital Scrub Set (Light Blue)", category: "uniform", subcategory: "nurse", genderFit: "unisex", colors: ["light blue"], retailPriceAud: 300, referencePrompt: "Standard light blue hospital scrubs for nurses and medical staff." },
     ]
   },
   {
@@ -27,10 +27,10 @@ const UNIFORM_COLLECTIONS = [
     styleTags: ["academic", "classic", "student"],
     collectionPriceAud: 350,
     items: [
-      { name: "Classic Private School Blazer (Navy)", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["navy"], retailPriceAud: 30, referencePrompt: "A classic navy blue school blazer with gold buttons and crest." },
-      { name: "Pleated School Skirt (Grey)", category: "uniform", subcategory: "school", genderFit: "female", colors: ["grey"], retailPriceAud: 30, referencePrompt: "A traditional grey pleated school skirt, knee-length." },
-      { name: "White School Dress Shirt", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["white"], retailPriceAud: 30, referencePrompt: "A crisp white long-sleeved school dress shirt." },
-      { name: "School V-Neck Sweater (Maroon)", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["maroon"], retailPriceAud: 30, referencePrompt: "A maroon v-neck school sweater with ribbing." },
+      { name: "Classic Private School Blazer (Navy)", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["navy"], retailPriceAud: 300, referencePrompt: "A classic navy blue school blazer with gold buttons and crest." },
+      { name: "Pleated School Skirt (Grey)", category: "uniform", subcategory: "school", genderFit: "female", colors: ["grey"], retailPriceAud: 300, referencePrompt: "A traditional grey pleated school skirt, knee-length." },
+      { name: "White School Dress Shirt", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["white"], retailPriceAud: 300, referencePrompt: "A crisp white long-sleeved school dress shirt." },
+      { name: "School V-Neck Sweater (Maroon)", category: "uniform", subcategory: "school", genderFit: "unisex", colors: ["maroon"], retailPriceAud: 300, referencePrompt: "A maroon v-neck school sweater with ribbing." },
     ]
   },
   {
@@ -42,10 +42,10 @@ const UNIFORM_COLLECTIONS = [
     styleTags: ["athletic", "performance", "sport"],
     collectionPriceAud: 500,
     items: [
-      { name: "Elite Soccer Kit (Home/Away)", category: "sportswear", subcategory: "soccer", genderFit: "unisex", colors: ["red", "white"], retailPriceAud: 30, referencePrompt: "A modern soccer kit including jersey, shorts, and high socks." },
-      { name: "Pro-Basketball Uniform (Gold/Purple)", category: "sportswear", subcategory: "basketball", genderFit: "unisex", colors: ["gold", "purple"], retailPriceAud: 30, referencePrompt: "A high-performance basketball jersey and mesh shorts." },
-      { name: "Track & Field Compression Set", category: "sportswear", subcategory: "athletics", genderFit: "unisex", colors: ["black", "neon green"], retailPriceAud: 30, referencePrompt: "A sleek compression set for track and field athletes." },
-      { name: "Premium Tennis Whites", category: "sportswear", subcategory: "tennis", genderFit: "female", colors: ["white"], retailPriceAud: 30, referencePrompt: "A classic white tennis dress with pleated skirt." },
+      { name: "Elite Soccer Kit (Home/Away)", category: "sportswear", subcategory: "soccer", genderFit: "unisex", colors: ["red", "white"], retailPriceAud: 300, referencePrompt: "A modern soccer kit including jersey, shorts, and high socks." },
+      { name: "Pro-Basketball Uniform (Gold/Purple)", category: "sportswear", subcategory: "basketball", genderFit: "unisex", colors: ["gold", "purple"], retailPriceAud: 300, referencePrompt: "A high-performance basketball jersey and mesh shorts." },
+      { name: "Track & Field Compression Set", category: "sportswear", subcategory: "athletics", genderFit: "unisex", colors: ["black", "neon green"], retailPriceAud: 300, referencePrompt: "A sleek compression set for track and field athletes." },
+      { name: "Premium Tennis Whites", category: "sportswear", subcategory: "tennis", genderFit: "female", colors: ["white"], retailPriceAud: 300, referencePrompt: "A classic white tennis dress with pleated skirt." },
     ]
   }
 ];
