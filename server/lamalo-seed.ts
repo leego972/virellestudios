@@ -888,7 +888,7 @@ export async function runLamaloSeed(
       `);
       log.info('Backfilled retailPriceAud for existing items');
     } catch (e) {
-      log.warn({ err: e }, 'Auto-patch image URLs failed (non-fatal)');
+      log.warn('Auto-patch image URLs failed (non-fatal): ' + String(e));
     }
 
     return { created: newCollections > 0, collections: newCollections, items: totalItems };
