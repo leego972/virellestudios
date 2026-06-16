@@ -368,7 +368,7 @@ export default function AdminUsers() {
                                         <div className="text-muted-foreground break-all">{value}</div>
                                       </div>
                                     ) : null)}
-                                    {u.preferredGenres && (u.preferredGenres as string[]).length > 0 && (
+                                    {Array.isArray(u.preferredGenres) && u.preferredGenres.length > 0 && (
                                       <div className="space-y-0.5 col-span-2">
                                         <div className="text-[10px] text-amber-400/60 uppercase tracking-wide font-semibold">Preferred Genres</div>
                                         <div className="flex flex-wrap gap-1">
