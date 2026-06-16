@@ -346,8 +346,6 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
         >
           {/* Primary: self-hosted on Railway for reliable delivery */}
           <source src="/virelle-opener.mp4" type="video/mp4" />
-          {/* Fallback: CDN */}
-          <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4" type="video/mp4" />
         </video>
         {/* Gold glow halo that pulses across the held final frame */}
         {videoPhase === "hold" && (
