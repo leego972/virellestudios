@@ -140,11 +140,15 @@ async function startServer() {
     let event: any;
 
     try {
-      if (ENV.stripeWebhookSecret) {
-        event = stripe.webhooks.constructEvent(req.body, sig, ENV.stripeWebhookSecret);
-      } else {
-        // In development without webhook secret, parse directly
+      if (!ENV.stripeWebhookSecret) {
+        if (process.env.NODE_ENV === "production") {
+          res.status(400).json({ error: "Webhook secret not configured" });
+          return;
+        }
+        // Development only: skip sig check when secret not provided
         event = JSON.parse(req.body.toString());
+      } else {
+        event = stripe.webhooks.constructEvent(req.body, sig, ENV.stripeWebhookSecret);
       }
     } catch (err: any) {
       logger.error(`Stripe webhook signature verification failed: ${err.message}`);
