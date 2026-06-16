@@ -738,7 +738,7 @@ export async function runLamaloSeed(
       (${userId}, 'Lamalo Fashion', 'Lamalo', 'brand',
        'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
        'https://virelle.life/wardrobe-marketplace', '@lamalofashion', 'wardrobe@virelle.life',
-       'https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png',
+       'https://image.pollinations.ai/prompt/Lamalo%20Fashion%20luxury%20gold%20black%20couture%20brand%20logo%2C%20minimalist%20letter%20L%2C%20fashion%20editorial?width=512&height=256&nologo=true&seed=99&model=flux',
        TRUE, 'public', NULL, 'none', 'active', NULL, '2099-12-31 00:00:00')
   `);
 
