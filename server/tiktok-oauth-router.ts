@@ -140,7 +140,7 @@ import type { Express, Request, Response } from "express";
   </body>
   </html>`);
       } catch (err) {
-        logger.error("[TikTok OAuth] Callback error", err);
+        logger.error("[TikTok OAuth] Callback error", { error: String(err) });
         res.status(500).send("TikTok OAuth callback failed. Please try again.");
       }
     });
