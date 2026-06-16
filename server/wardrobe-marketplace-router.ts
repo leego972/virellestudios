@@ -631,8 +631,20 @@ export const wardrobeMarketplaceRouter = router({
 
     /** All leases for the current user */
     myInventory: protectedProcedure.query(async ({ ctx }) => {
-      return db.getWardrobeLeasesByUser(ctx.user.id);
-    }),
+        const leases = await db.getWardrobeLeasesByUser(ctx.user.id);
+        // Enrich each lease with item/collection name and image for the inventory UI
+        return Promise.all(leases.map(async (l) => {
+          if (l.leaseType === "item" && l.wardrobeItemId) {
+            const item = await db.getWardrobeItemById(l.wardrobeItemId);
+            return { ...l, itemName: item?.name ?? null, imageUrl: item?.primaryImageUrl ?? null };
+          }
+          if (l.leaseType === "collection" && l.collectionId) {
+            const col = await db.getDesignerCollectionById(l.collectionId);
+            return { ...l, collectionName: col?.name ?? null };
+          }
+          return l;
+        }));
+      }),
 
     /** Check if the current user has an active lease for a specific item */
     hasAccess: protectedProcedure
