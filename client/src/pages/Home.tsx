@@ -501,7 +501,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       if (params.get("subscription") === "success") { toast.success("🎬 Welcome to Virelle Studios! Your membership is now active."); window.history.replaceState({}, "", "/"); }
     }, []);
 
-    const { data: projects, isLoading } = trpc.project.list.useQuery(undefined, { enabled: !showOpener });
+    const { data: projects, isLoading, isError: projectsError, refetch: refetchProjects } = trpc.project.list.useQuery(undefined, { enabled: !showOpener });
     const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
     const utils = trpc.useUtils();
     const deleteMutation = trpc.project.delete.useMutation({
@@ -723,7 +723,27 @@ import { useAuth } from "@/_core/hooks/useAuth";
           ))}
         </div>
 
-        <GettingStartedChecklist onShowGuide={() => setForceOnboarding(true)} />
+        {projectsError && (
+            <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-5 py-4 flex items-center justify-between gap-4 mb-2">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                  <span className="text-red-400 text-sm">!</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Your workspace could not be loaded</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Check your connection and try again.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => refetchProjects()}
+                className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg border border-amber-400/20 hover:bg-amber-400/5"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          <GettingStartedChecklist onShowGuide={() => setForceOnboarding(true)} />
 
         {/* ══════════════════════════════════════════════════════════════
             FULL PRODUCTION PIPELINE
