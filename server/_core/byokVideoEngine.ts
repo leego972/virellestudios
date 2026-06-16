@@ -202,7 +202,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
 
   } catch (error: any) {
     if (error instanceof TaskFailedError) {
-      logger.error("[BYOK:Runway] Task failed:", error.taskDetails);
+      logger.error("[BYOK:Runway] Task failed:", { taskDetails: JSON.stringify(error.taskDetails) });
       throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails).substring(0, 300)}`);
     }
     logger.error("[BYOK:Runway] Error:", error.message);
