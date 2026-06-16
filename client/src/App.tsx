@@ -37,6 +37,7 @@ const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
 const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
 const DesignerStudioPage = lazy(() => import("./pages/DesignerStudioPage"));
 const DesignerRegisterPage = lazy(() => import("./pages/DesignerRegisterPage"));
+const DesignersPage = lazy(() => import("./pages/DesignersPage"));
 const UserInventoryPage = lazy(() => import("./pages/UserInventoryPage"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
@@ -257,6 +258,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/designer-register">{() => <LazyPage><DesignerRegisterPage /></LazyPage>}</Route>
+      <Route path="/designers">{() => <LazyPage><DesignersPage /></LazyPage>}</Route>
 
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
