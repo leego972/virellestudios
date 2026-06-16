@@ -46,7 +46,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does each credit cost in real terms?",
-        a: "On the Indie plan (A$149/mo · ~$97 USD, 500 credits/month), each credit costs approximately A$0.30 (~$0.20 USD). On the Industry plan (A$1,490/mo · ~$965 USD, 6,000 credits/month), each credit costs approximately A$0.25 (~$0.16 USD). All plans include a 7-day free trial.",
+        a: "On the Indie plan (A$149/mo · ~$97 USD, 500 credits/month), each credit costs approximately A$0.30 (~$0.20 USD). On the Industry plan (A$1,490/mo · ~$965 USD, 6,000 credits/month), each credit costs approximately A$0.25 (~$0.16 USD). All plans include a 7-day free trial. A card is required to start — you won't be charged until the 7 days are up.",
       },
       {
         q: "Do unused credits roll over?",
@@ -62,7 +62,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is there a free trial?",
-        a: "Virelle does not currently offer a free tier, as the platform requires significant AI infrastructure to operate. However, the founding offer (50% off first year) is available while spots last. Contact us if you'd like to discuss a trial arrangement for a specific production.",
+        a: "Yes. All plans include a 7-day free trial with full access to your chosen tier's features. A card is required at checkout — you will not be charged until the trial ends. Cancel any time before the 7 days are up and you owe nothing. The founding offer (50% off first year on annual billing) applies on top of the trial while spots last.",
       },
     ],
   },
