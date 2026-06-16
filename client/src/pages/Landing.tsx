@@ -213,7 +213,7 @@ export default function Landing() {
               Virelle connects story, characters, scenes, AI generation, trailers, posters, funding targets, and production packages in one controlled film workflow.
             </p>
             <p className="max-w-xl mx-auto text-sm text-white/35 italic leading-relaxed mb-12">
-              Generic AI tools make clips. Virelle helps you build the show.
+              Generic AI tools generate clips. Virelle orchestrates the entire production.
             </p>
 
             {/* CTA buttons */}
@@ -402,7 +402,7 @@ export default function Landing() {
               ))}
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5">
-              {["Runway Gen-4.5", "OpenAI Sora 2", "Google Veo 3", "Kling 3.0", "ElevenLabs v3", "Suno v4"].map(name => (
+              {["Runway Gen-4.5", "OpenAI Sora", "Google Veo 3", "Kling 3.0", "ElevenLabs v3", "Suno v4"].map(name => (
                 <span key={name} className="text-[11px] font-semibold text-white/20 hover:text-white/40 transition-colors cursor-default">{name}</span>
               ))}
             </div>
@@ -833,7 +833,7 @@ export default function Landing() {
                 { title: "How long does it take?", answer: "A full 90-minute film takes 4–8 hours to generate from a written concept. Individual scenes generate in 3–6 minutes each." },
                 { title: "What exactly does it generate?", answer: "Screenplay, scene-by-scene video clips, AI voice acting, original film score, scene-to-scene continuity, and a final stitched cut." },
                 { title: "What rights do I get?", answer: "You own 100% of all outputs commercially. No royalties, no licensing fees, no platform watermarks on exports." },
-                { title: "What AI models are used?", answer: "Runway Gen-4.5, Sora 2, Kling 3.0, Veo 3, and fal.ai for video. ElevenLabs v3 for voice. Suno v4 for scores." },
+                { title: "What AI models are used?", answer: "Runway, fal.ai, Google Veo 3, and Kling for video generation — you choose which provider to use. ElevenLabs for AI voice acting. Suno for original film scores. Models are updated as providers release improvements." },
                 { title: "Do I need to pay to use it?", answer: "You can register for free and explore the platform. All AI generation features require an active subscription plan." },
                 { title: "Is there a mobile app?", answer: "Yes — Virelle Studios for iOS is live on the App Store. The Android app and a native desktop client are in active development. Your subscription works across every platform, and the web app at virelle.life is fully responsive in the meantime." },
               ].map(q => (
