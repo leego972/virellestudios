@@ -331,6 +331,8 @@ export interface AdvertisingAction {
   cost: number; // 0 for free channels
   content?: string;
   error?: string;
+  duration?: number;
+  timestamp?: Date;
 }
 
 export interface GrowthStrategy {
