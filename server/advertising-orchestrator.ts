@@ -2588,7 +2588,7 @@ async function setLastRunDate(dateStr: string): Promise<void> {
           { platform: "x_twitter", content: pieces.x_thread, label: "Thread" },
           { platform: "linkedin", content: pieces.linkedin, label: "Post" },
           { platform: "reddit", content: pieces.reddit, label: "Post" },
-          { platform: "threads_meta", content: pieces.threads, label: "Post" },
+          { platform: "threads_meta" as any, content: pieces.threads, label: "Post" },
           { platform: "youtube_shorts", content: pieces.youtube_shorts_script, label: "Shorts Script" },
         ];
         for (const p of platformPieces) {
@@ -2609,14 +2609,14 @@ async function setLastRunDate(dateStr: string): Promise<void> {
       }
 
       return {
-        channel: "content_repurposing",
+        channel: "content_repurposing" as any,
         status: "success",
         content: `Repurposed "${blogTitle}" → X thread, LinkedIn, Reddit, Threads, YouTube Shorts`,
         duration: Date.now() - t0,
         timestamp: new Date(),
       };
     } catch (err: unknown) {
-      return { channel: "content_repurposing", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+      return { channel: "content_repurposing" as any, status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
     }
   }
 
@@ -2704,20 +2704,20 @@ async function setLastRunDate(dateStr: string): Promise<void> {
           action: "press_release_distributed",
           details: JSON.stringify({ headline: pr.headline, distributed: result.distributed, errors: result.errors }),
           createdAt: new Date(),
-          channel: "press_release",
-          status: result.success ? "success" : "partial",
+          channel: "press_release" as any,
+          status: result.success ? "success" : "failed",
         } as any);
       }
 
       return {
-        channel: "press_release",
+        channel: "press_release" as any,
         status: result.success ? "success" : "partial",
         content: `PR: "${pr.headline}" → distributed to: ${result.distributed.join(", ") || "queued for manual submission"}`,
         duration: Date.now() - t0,
         timestamp: new Date(),
       };
     } catch (err: unknown) {
-      return { channel: "press_release", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+      return { channel: "press_release" as any, status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
     }
   }
 
@@ -2730,16 +2730,16 @@ async function setLastRunDate(dateStr: string): Promise<void> {
     try {
       const { threadsAdapter } = await import("./expanded-channels");
       if (!threadsAdapter.isConfigured) {
-        return { channel: "threads_meta", status: "skipped", content: "Threads not configured (add THREADS_ACCESS_TOKEN + THREADS_USER_ID)", duration: 0, timestamp: new Date() };
+        return { channel: "threads_meta" as any, status: "skipped", content: "Threads not configured (add THREADS_ACCESS_TOKEN + THREADS_USER_ID)", duration: 0, timestamp: new Date() };
       }
 
       const content = await generateContent({ platform: "threads_meta", topic: undefined, count: 1 });
-      const piece = content[0];
+      const piece = (content as any)[0];
       if (!piece) throw new Error("No content generated");
 
       const result = await threadsAdapter.post({ text: piece.body.slice(0, 500) });
       return {
-        channel: "threads_meta",
+        channel: "threads_meta" as any,
         status: result.success ? "success" : "failed",
         content: result.success ? piece.body.slice(0, 100) : result.error,
         error: result.error,
@@ -2747,7 +2747,7 @@ async function setLastRunDate(dateStr: string): Promise<void> {
         timestamp: new Date(),
       };
     } catch (err: unknown) {
-      return { channel: "threads_meta", status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
+      return { channel: "threads_meta" as any, status: "failed", error: getErrorMessage(err), duration: Date.now() - t0, timestamp: new Date() };
     }
   }
 
