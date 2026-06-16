@@ -2,7 +2,7 @@ import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera, PhoneCall, CalendarDays } from "lucide-react";
+import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera, PhoneCall, CalendarDays, Shield } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
@@ -218,8 +218,16 @@ const FAQ = [
   {
     q: "Is there a free trial?",
     a: "Yes. All new accounts include a 7-day free trial with access to core features — no credit card required. After the trial you can choose a paid plan or continue with the limited free tier.",
-  },
-];
+    },
+    {
+      q: "Can I upgrade or downgrade my plan?",
+      a: "Yes. You can upgrade at any time and your higher-tier features activate immediately — you are only charged the prorated difference for the remainder of the billing period. Downgrades take effect at the start of your next billing period. Your credit balance is always preserved in full.",
+    },
+    {
+      q: "Who owns the content I create? Can I use it commercially?",
+      a: "You own 100% of everything you create on Virelle Studios. All content — scripts, images, videos, storyboards, and exports — is yours to use commercially, publish, distribute, and monetise without restriction or royalties. The Industry plan additionally includes an explicit commercial licence for Signature Cast actor likenesses used in your generated content.",
+    },
+  ];
 
 export default function Pricing() {
   // Read URL params — source=mobile means the user came from the mobile app
@@ -424,8 +432,10 @@ export default function Pricing() {
                     )}
                     <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">{tier.displayName}</CardTitle>
                   </div>
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-500/70 mb-1">Best for</p>
-                    <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.audience}</CardDescription>
+                  <div className="flex items-center gap-2 mt-1 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded px-2 py-0.5">Best for</span>
+                  </div>
+                  <CardDescription className="text-sm text-zinc-300 leading-relaxed min-h-[3rem]">{tier.audience}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
@@ -446,18 +456,44 @@ export default function Pricing() {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button 
+                <CardFooter className="flex flex-col gap-2 pt-4">
+                  <Button
                     className={`w-full text-white ${tier.buttonColor}`}
                     onClick={() => handleSubscribe(tier.id)}
-                    disabled={loadingTier === tier.id}
+                    disabled={loadingTier !== null || loadingPack !== null}
                   >
-                    {loadingTier === tier.id ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : tier.primaryCTA}
+                    {loadingTier === tier.id
+                      ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Opening Stripe…</>
+                      : tier.primaryCTA}
                   </Button>
+                  <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 w-full">
+                    <Shield className="w-3 h-3 text-zinc-500" />
+                    Secured by Stripe · Cancel anytime
+                  </p>
                 </CardFooter>
-              </Card>
             );
           })}
+        </div>
+
+
+        {/* What happens after payment */}
+        <div className="max-w-3xl mx-auto mb-20 px-4">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">What happens after you subscribe</h2>
+          <p className="text-center text-sm text-zinc-500 mb-8">From checkout to first generation in under 60 seconds.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              { step: "1", icon: "🔒", title: "Secure checkout", desc: "You are redirected to Stripe's encrypted checkout. Virelle never sees your card details." },
+              { step: "2", icon: "📧", title: "Instant confirmation", desc: "Stripe sends a receipt to your email. Your account is upgraded within seconds of payment." },
+              { step: "3", icon: "🎬", title: "Start creating", desc: "Credits are added to your balance immediately. Open any project and begin generating." },
+            ].map(({ step, icon, title, desc }) => (
+              <div key={step} className="rounded-xl border border-amber-500/20 bg-zinc-900/40 p-6 text-center">
+                <div className="text-3xl mb-3">{icon}</div>
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-500/60 mb-1">Step {step}</p>
+                <h3 className="font-semibold text-white mb-2">{title}</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Enterprise Tiers */}
@@ -571,6 +607,24 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* Credit Explainer */}
+        <div className="max-w-3xl mx-auto mb-10 px-4">
+          <div className="rounded-xl border border-amber-500/10 bg-zinc-900/50 p-6">
+            <div className="flex gap-4 items-start">
+              <Coins className="w-6 h-6 text-amber-400 mt-0.5 shrink-0" />
+              <div>
+                <h3 className="font-semibold text-white mb-1">How credits work</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">
+                  Credits are consumed each time you use a generative feature — for example, generating a scene video costs 10 credits, the AI script writer costs 8 credits, and a storyboard costs 8 credits.
+                  Your subscription automatically tops up your balance each billing period.
+                  <span className="text-zinc-300 font-medium"> Credits never expire</span> — your balance carries forward indefinitely.
+                  You can purchase a one-time top-up pack below at any time if you need more mid-production.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Credit Packs */}
         <div className="max-w-5xl mx-auto mb-20">
           <div className="text-center mb-12">
@@ -588,20 +642,22 @@ export default function Pricing() {
                   <div className="text-2xl font-bold mt-2 gradient-text-gold">{formatAUD(pack.price)}</div>
                   <CardDescription>{pack.credits.toLocaleString()} credits</CardDescription>
                 </CardHeader>
-                <CardFooter>
+                <CardFooter className="flex flex-col gap-2 pt-4">
                   <Button
                     variant="outline"
                     className="w-full border-amber-500/20 hover:bg-amber-500/10"
                     onClick={() => handleTopUp(pack.id)}
-                    disabled={loadingPack === pack.id}
+                    disabled={loadingTier !== null || loadingPack !== null}
                   >
-                    {loadingPack === pack.id ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : null}
-                    {loadingPack === pack.id ? "Redirecting..." : isLoggedIn ? "Purchase" : "Sign in to Purchase"}
+                    {loadingPack === pack.id
+                      ? <><Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" />Opening Stripe…</>
+                      : isLoggedIn ? "Purchase" : "Sign in to Purchase"}
                   </Button>
+                  <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 w-full">
+                    <Shield className="w-3 h-3 text-zinc-500" />
+                    One-time purchase · Secured by Stripe
+                  </p>
                 </CardFooter>
-              </Card>
-            ))}
-          </div>
         </div>
 
         {/* Value framing */}
