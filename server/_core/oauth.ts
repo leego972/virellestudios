@@ -20,7 +20,7 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUrl = await sdk.getAuthorizationUrl("google", callbackUrl);
       res.redirect(302, redirectUrl);
     } catch (error) {
-      logger.error("[OAuth] Google auth initiation failed", error);
+      logger.error("[OAuth] Google auth initiation failed", { error: String(error) });
       res.redirect(302, "/login?error=oauth_failed");
     }
   });
@@ -33,7 +33,7 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUrl = await sdk.getAuthorizationUrl("github", callbackUrl);
       res.redirect(302, redirectUrl);
     } catch (error) {
-      logger.error("[OAuth] GitHub auth initiation failed", error);
+      logger.error("[OAuth] GitHub auth initiation failed", { error: String(error) });
       res.redirect(302, "/login?error=oauth_failed");
     }
   });
@@ -76,7 +76,7 @@ export function registerOAuthRoutes(app: Express) {
       // Redirect to dashboard with opener flag so the studio opener plays
       res.redirect(302, "/?opener=1");
     } catch (error) {
-      logger.error("[OAuth] Callback failed", error);
+      logger.error("[OAuth] Callback failed", { error: String(error) });
       res.status(500).json({ error: "OAuth callback failed" });
     }
   });
