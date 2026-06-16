@@ -986,6 +986,7 @@ export async function createCheckoutSession(
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: successUrl,
         cancel_url: cancelUrl,
+        payment_method_collection: "always",
         metadata: { userId: String(user.id), billing, promoCode },
         subscription_data: {
           metadata: { userId: String(user.id), billing, promoCode },
@@ -1033,6 +1034,7 @@ export async function createCheckoutSession(
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: successUrl,
     cancel_url: cancelUrl,
+    payment_method_collection: "always",
     metadata: {
       userId: String(user.id),
       billing,
