@@ -463,10 +463,10 @@ export default function Register() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/?opener=1")}
+                  onClick={() => navigate("/onboarding")}
                   className="w-full text-muted-foreground text-sm"
                 >
-                  Skip for now — do this later
+                  Skip API setup — enter the studio
                 </Button>
               </div>
             </CardContent>
