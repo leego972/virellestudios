@@ -2733,7 +2733,7 @@ async function setLastRunDate(dateStr: string): Promise<void> {
         return { channel: "threads_meta" as any, status: "skipped", content: "Threads not configured (add THREADS_ACCESS_TOKEN + THREADS_USER_ID)", duration: 0, timestamp: new Date() };
       }
 
-      const content = await generateContent({ platform: "threads_meta", topic: undefined, count: 1 });
+      const content = await generateContent({ platform: "threads_meta" as any, contentType: "organic_post", topic: undefined });
       const piece = (content as any)[0];
       if (!piece) throw new Error("No content generated");
 
