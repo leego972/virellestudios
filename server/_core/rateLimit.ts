@@ -143,3 +143,52 @@ export async function rateLimitUpload(userId: number) {
 export async function rateLimitHeavyAI(userId: number) {
   await checkRateLimit(userId, "heavy-ai", 3, 60 * 1000);
 }
+
+/**
+ * IP-based rate limit for public (unauthenticated) endpoints such as
+ * password reset requests. Uses the same Redis / in-memory store as
+ * checkRateLimit but keys by IP address instead of userId.
+ */
+export async function rateLimitPublicByIP(
+  ip: string,
+  action: string,
+  maxRequests: number,
+  windowMs: number,
+): Promise<void> {
+  const key = `rl:ip:${ip}:${action}`;
+  const now = Date.now();
+
+  if (redis) {
+    try {
+      const results = await redis
+        .multi()
+        .incr(key)
+        .pexpire(key, windowMs)
+        .exec();
+      if (results && results[0] && results[0][1]) {
+        const count = results[0][1] as number;
+        if (count > maxRequests) {
+          const ttl = await redis.pttl(key);
+          const retryAfterSec = Math.ceil(Math.max(ttl, 0) / 1000);
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: `Too many requests. Please try again in ${retryAfterSec} seconds.` });
+        }
+      }
+      return;
+    } catch (err) {
+      if (err instanceof TRPCError) throw err;
+      logger.errorWithStack("[RateLimit] Redis IP check failed", err);
+    }
+  }
+
+  // In-memory fallback
+  const entry = memoryStore.get(key);
+  if (!entry || now > entry.resetAt) {
+    memoryStore.set(key, { count: 1, resetAt: now + windowMs });
+    return;
+  }
+  entry.count++;
+  if (entry.count > maxRequests) {
+    const retryAfterSec = Math.ceil((entry.resetAt - now) / 1000);
+    throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: `Too many requests. Please try again in ${retryAfterSec} seconds.` });
+  }
+}
