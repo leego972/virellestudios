@@ -576,6 +576,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
   const [, setLocation] = useLocation();
   const [leasingId, setLeasingId] = useState<string | null>(null);
   const [showCustomOrder, setShowCustomOrder] = useState(false);
+  const [profileImgErr, setProfileImgErr] = useState(false);
 
   const { data, isLoading } = trpc.wardrobeMarket.marketplace.getDesigner.useQuery(
     { id: designerId },
@@ -691,11 +692,12 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
 
         {/* Profile hero */}
         <div className="gold-glow flex items-start gap-5 p-6 rounded-2xl border border-amber-500/20 glass-card/[0.02] hover:shadow-amber-500/20 transition-shadow">
-          {(profile as any).logoUrl ? (
+          {(profile as any).logoUrl && !profileImgErr ? (
             <img
               src={(profile as any).logoUrl}
               alt={(profile as any).brandName}
               className="w-20 h-20 rounded-2xl object-cover border border-amber-500/20 shrink-0"
+               onError={() => setProfileImgErr(true)}
             />
           ) : (
             <div className="w-20 h-20 rounded-2xl glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0 hover:shadow-amber-500/20 transition-shadow">
