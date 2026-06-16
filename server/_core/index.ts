@@ -92,16 +92,26 @@ async function startServer() {
   // Health check — registered before any other middleware.
   // Both /api/health (Phase 15 format) and /api/healthz respond identically.
   // healthcheckPath = "/" in railway.toml.
-  function healthHandler(_req: Request, res: Response) {
+  async function healthHandler(_req: Request, res: Response) {
+    let dbStatus: "ok" | "error" | "not_configured" = "not_configured";
+    if (ENV.databaseUrl) {
+      try {
+        await db.db.execute(sql`SELECT 1`);
+        dbStatus = "ok";
+      } catch {
+        dbStatus = "error";
+      }
+    }
     res.json({
-      success: true,
-      status: "ok",
+      success: dbStatus !== "error",
+      status: dbStatus === "error" ? "degraded" : "ok",
       service: "virelle-studios",
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV ?? "development",
       uptime: Math.round(process.uptime()),
-      database: ENV.databaseUrl ? "configured" : "not_configured",
+      database: dbStatus,
     });
+  }
   }
   app.get("/api/health", healthHandler);
   app.get("/api/healthz", healthHandler);
