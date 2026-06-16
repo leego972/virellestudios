@@ -123,6 +123,8 @@ import { router, adminProcedure } from "./_core/trpc";
      */
     seedExecutive: adminProcedure.mutation(async ({ ctx }) => {
       try {
+        // Ensure schema columns exist (runLamaloSeed is idempotent and adds required columns)
+        await runLamaloSeed(ctx.user.id);
         await runExecutiveSeed(ctx.user.id);
         return { success: true, message: "Executive collections seeded successfully" };
       } catch (error) {
@@ -136,6 +138,7 @@ import { router, adminProcedure } from "./_core/trpc";
      */
     seedMaster: adminProcedure.mutation(async ({ ctx }) => {
       try {
+        await runLamaloSeed(ctx.user.id);
         await runMasterSeed(ctx.user.id);
         return { success: true, message: "Master collections seeded successfully" };
       } catch (error) {
@@ -163,6 +166,7 @@ import { router, adminProcedure } from "./_core/trpc";
      */
     seedUniforms: adminProcedure.mutation(async ({ ctx }) => {
       try {
+        await runLamaloSeed(ctx.user.id);
         await runUniformSeed(ctx.user.id);
         return { success: true, message: "Uniform collections seeded successfully" };
       } catch (error) {
