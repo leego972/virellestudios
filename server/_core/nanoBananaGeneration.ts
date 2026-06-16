@@ -68,7 +68,7 @@ export async function generateNanoBananaImage(
         });
       }
     } catch (e) {
-      logger.warn("[NanoBanana] Failed to fetch reference image:", e);
+      logger.warn("[NanoBanana] Failed to fetch reference image:", { error: String(e) });
     }
   }
 
