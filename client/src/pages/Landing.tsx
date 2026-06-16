@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import { LANDING_COPY } from "@/data/showrunnerShowcase";
 import { trpc } from "@/lib/trpc";
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+const LOGO_URL = "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
 
 /* Cinematic particle canvas */
 function CinematicBackground() {
