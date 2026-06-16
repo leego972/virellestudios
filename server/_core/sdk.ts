@@ -253,7 +253,7 @@ class SDKServer {
         name,
       };
     } catch (error) {
-      logger.warn("[Auth] Session verification failed", String(error));
+      logger.warn("[Auth] Session verification failed", { error: String(error) });
       return null;
     }
   }
