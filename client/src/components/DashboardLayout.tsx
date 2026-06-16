@@ -468,7 +468,37 @@ function DashboardLayoutContent({
           </SidebarContent>
 
           <SidebarFooter className="p-2 md:p-3 space-y-1 md:space-y-2">
-            {/* Credit Balance Display */}
+            {/* Leego logo + Night Mode on same row */}
+            <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+              <div className="flex-1 flex justify-center md:flex hidden">
+                <LeegoLogo className="h-8 w-auto object-contain leego-glow" />
+              </div>
+              {switchable && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={toggleTheme}
+                      className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                      aria-label={theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="h-4 w-4 text-amber-400 shrink-0" />
+                      ) : (
+                        <Moon className="h-4 w-4 text-amber-400 shrink-0" />
+                      )}
+                      <span className="text-sm group-data-[collapsible=icon]:hidden">
+                        {theme === "dark" ? "Day Mode" : "Night Mode"}
+                      </span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+
+            {/* Credit Balance — sits just above Language */}
             {user && (
               <a
                 href="/pricing"
@@ -499,12 +529,7 @@ function DashboardLayoutContent({
                 </div>
               </a>
             )}
-            {/* Leego branding — tap to pulse to ~2cm for 2s, then shrink back */}
-            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
-              <LeegoLogo
-                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
-              />
-            </div>
+
             {/* Language Switcher */}
             <DropdownMenu open={langMenuOpen} onOpenChange={setLangMenuOpen}>
               <DropdownMenuTrigger asChild>
@@ -542,32 +567,6 @@ function DashboardLayoutContent({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Theme toggle */}
-            {switchable && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={toggleTheme}
-                    className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                    aria-label={theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
-                  >
-                    {theme === "dark" ? (
-                      <Sun className="h-4 w-4 text-amber-400 shrink-0" />
-                    ) : (
-                      <Moon className="h-4 w-4 text-amber-400 shrink-0" />
-                    )}
-                    <span className="text-sm group-data-[collapsible=icon]:hidden">
-                      {theme === "dark" ? "Day Mode" : "Night Mode"}
-                    </span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  {theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
-                </TooltipContent>
-              </Tooltip>
-            )}
-
             {/* User profile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
