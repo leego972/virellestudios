@@ -379,11 +379,11 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           </button>
         )}
       </div>
-    );
+    , document.body);
   }
 
   // Fallback SVG animation if video fails
-  return (
+  return createPortal(
     <div
       className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 ${phase === "fadeout" ? "opacity-0" : "opacity-100"}`}
       onClick={skippable ? handleSkip : undefined}
@@ -891,5 +891,5 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
         </button>
       )}
     </div>
-  );
+  , document.body);
 }
