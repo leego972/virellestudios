@@ -14,6 +14,7 @@ import { useState } from "react";
       name: "Indie",
       tagline: "Perfect for solo filmmakers getting started",
       icon: Film,
+      popular: false,
       monthlyPrice: 149,
       annualMonthly: 124, // A$1,490/yr ÷ 12
       annualTotal: 1490,
@@ -82,6 +83,7 @@ import { useState } from "react";
       name: "Industry",
       tagline: "Full production studio — for directors who mean business",
       icon: Crown,
+      popular: false,
       monthlyPrice: 1490,
       annualMonthly: 1242, // A$14,900/yr ÷ 12
       annualTotal: 14900,
