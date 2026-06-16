@@ -433,7 +433,7 @@ async function overlayAuslanOnScene(
     logger.info(`[VideoStitcher] Scene ${sceneIndex}: Auslan overlay applied (${position})`);
     return outputPath;
   } catch (e) {
-    logger.warn(`[VideoStitcher] Warning: Auslan overlay failed for scene ${sceneIndex}, skipping:`, e);
+    logger.warn(`[VideoStitcher] Warning: Auslan overlay failed for scene ${sceneIndex}, skipping:`, { error: String(e) });
     return sceneVideoPath;
   }
 }
