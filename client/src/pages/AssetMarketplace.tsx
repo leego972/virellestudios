@@ -214,7 +214,7 @@ export default function AssetMarketplace() {
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
                     {asset.isPremium ? (
                       <Badge className="bg-amber-500 text-black font-bold border-none">
-                        A${asset.price}
+                        A${asset.price.toFixed(2)}
                       </Badge>
                     ) : (
                       <Badge className="bg-green-500 text-white font-bold border-none">
