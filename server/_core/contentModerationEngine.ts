@@ -237,7 +237,7 @@ export async function handleModerationViolation(opts: {
       status: "pending_review",
     });
   } catch (err) {
-    logger.error("[Moderation] Failed to log incident to DB:", err);
+    logger.error("[Moderation] Failed to log incident to DB:", { error: String(err) });
   }
 
   // 2. Freeze account if required
@@ -250,7 +250,7 @@ export async function handleModerationViolation(opts: {
         .where(eq(users.id, userId));
       logger.warn(`[Moderation] Account ${userId} FROZEN.`);
     } catch (err) {
-      logger.error("[Moderation] Failed to freeze account:", err);
+      logger.error("[Moderation] Failed to freeze account:", { error: String(err) });
     }
   }
 
@@ -374,7 +374,7 @@ async function sendAdminAlert(opts: {
     });
     logger.info(`[Moderation] Admin alert sent to ${adminEmail}`);
   } catch (err) {
-    logger.error("[Moderation] Failed to send admin alert email:", err);
+    logger.error("[Moderation] Failed to send admin alert email:", { error: String(err) });
   }
 }
 
@@ -436,7 +436,7 @@ async function sendUserFreezeNotification(opts: {
     });
     logger.info(`[Moderation] User freeze notification sent to ${userEmail}`);
   } catch (err) {
-    logger.error("[Moderation] Failed to send user freeze notification:", err);
+    logger.error("[Moderation] Failed to send user freeze notification:", { error: String(err) });
   }
 }
 
