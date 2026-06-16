@@ -424,7 +424,8 @@ export default function Pricing() {
                     )}
                     <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">{tier.displayName}</CardTitle>
                   </div>
-                  <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.description}</CardDescription>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-500/70 mb-1">Best for</p>
+                    <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.audience}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
