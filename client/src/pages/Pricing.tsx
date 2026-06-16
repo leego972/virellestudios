@@ -729,6 +729,9 @@ export default function Pricing() {
                     One-time purchase · Secured by Stripe
                   </p>
                 </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* Value framing */}
