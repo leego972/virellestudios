@@ -233,7 +233,7 @@ export default function Landing() {
 
             {/* No-risk micro-copy */}
             <p className="text-xs text-white/30 mb-10 -mt-6 tracking-wide">
-              7-day free trial · No credit card required · Cancel anytime
+              7-day free trial · Card required · Cancel anytime before trial ends
             </p>
 
             {/* App download strip */}
@@ -1253,7 +1253,7 @@ export default function Landing() {
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 text-gold-shimmer">READY TO PRODUCE?</h2>
             <p className="text-lg text-white/50 mb-8">Your next production starts with a single click.</p>
-            <p className="text-sm text-white/30 mb-12">No credit card required to explore every tool. Cancel anytime.</p>
+            <p className="text-sm text-white/30 mb-12">Card required to start your trial. Cancel anytime before trial ends — no charge.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
                 Start Free Trial
@@ -1308,7 +1308,7 @@ export default function Landing() {
                   Explore Pricing
                 </Button>
               </div>
-              <p className="text-xs text-white/25 mt-6 tracking-wide">7-day free trial · No credit card required · Cancel anytime</p>
+              <p className="text-xs text-white/25 mt-6 tracking-wide">7-day free trial · Card required · Cancel anytime · Cancel anytime</p>
             </div>
           </section>
       </main>
