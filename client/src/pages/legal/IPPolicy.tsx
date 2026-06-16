@@ -5,7 +5,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 
 export default function IPPolicy() {
-  const EFFECTIVE_DATE = "1 January 2025";
+  const EFFECTIVE_DATE = "1 June 2026";
   const CONTACT_EMAIL = "studiosvirelle@gmail.com";
   const DMCA_EMAIL = "studiosvirelle@gmail.com";
   const [, setLocation] = useLocation();
