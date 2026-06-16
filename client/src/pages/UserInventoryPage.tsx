@@ -167,7 +167,7 @@
                       <Package className="h-6 w-6 text-muted-foreground/30" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">Collection #{lease.collectionId}</p>
+                      <p className="text-sm font-semibold truncate">{(lease as any).collectionName ?? `Collection #${lease.collectionId}`}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="outline" className="text-[10px] border-green-500/30 text-green-500 gap-1 px-1.5">
                           <CheckCircle2 className="h-2.5 w-2.5" /> Active
