@@ -75,7 +75,7 @@ export default function Login() {
                 }}
               />
               <img
-                src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
                 alt="Virelle Studios"
                 className="relative z-10 w-32 h-32 rounded-2xl"
                 style={{ boxShadow: "0 0 40px 8px rgba(180,100,10,0.45), 0 0 80px 20px rgba(120,60,5,0.25)" }}
