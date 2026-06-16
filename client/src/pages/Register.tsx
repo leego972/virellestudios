@@ -7,9 +7,18 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import {
-  Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
-  User, Building2, Palette, ChevronDown, Phone,
-} from "lucide-react";
+    Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
+    User, Building2, Palette, ChevronDown, Phone, CreditCard,
+  } from "lucide-react";
+  import { loadStripe } from "@stripe/stripe-js";
+  import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+  // Stripe promise — initialized lazily when publishableKey is received from server
+  let _stripePromise: ReturnType<typeof loadStripe> | null = null;
+  const getStripePromise = (key: string) => {
+    if (!_stripePromise) _stripePromise = loadStripe(key);
+    return _stripePromise;
+  };
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
   import StudioOpener from "@/components/StudioOpener";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
@@ -153,10 +162,11 @@ const HOW_HEARD = [
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   const steps = [
-    { num: 1, label: "Account", icon: User },
-    { num: 2, label: "Professional", icon: Building2 },
-    { num: 3, label: "Creative", icon: Palette },
-  ];
+      { num: 1, label: "Account", icon: User },
+      { num: 2, label: "Professional", icon: Building2 },
+      { num: 3, label: "Creative", icon: Palette },
+      { num: 4, label: "Payment", icon: CreditCard },
+    ];
   return (
     <div className="flex items-center justify-center gap-2 mb-6">
       {steps.slice(0, total).map((step, i) => {
@@ -233,11 +243,90 @@ function SelectField({
 
 // ─── Main Component ───
 
-export default function Register() {
+
+  // ── Stripe Card Form (must live inside <Elements>) ───────────────────────────
+  function StripeCardForm({
+    onSuccess,
+    onSkip,
+    clientSecret,
+    isPending,
+  }: {
+    onSuccess: (paymentMethodId: string) => void;
+    onSkip: () => void;
+    clientSecret: string;
+    isPending: boolean;
+  }) {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [cardError, setCardError] = useState<string | null>(null);
+    const [confirming, setConfirming] = useState(false);
+
+    const handleConfirm = async () => {
+      if (!stripe || !elements) return;
+      setConfirming(true);
+      setCardError(null);
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) { setConfirming(false); return; }
+      const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: { card: cardElement },
+      });
+      setConfirming(false);
+      if (error) {
+        setCardError(error.message || "Card declined — please check your details.");
+      } else if (setupIntent?.payment_method) {
+        onSuccess(typeof setupIntent.payment_method === "string"
+          ? setupIntent.payment_method
+          : setupIntent.payment_method.id);
+      }
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+          <CardElement
+            options={{
+              style: {
+                base: {
+                  fontSize: "15px",
+                  color: "#f5f0e8",
+                  fontFamily: "inherit",
+                  "::placeholder": { color: "#6b6b5a" },
+                  iconColor: "#d4a843",
+                },
+                invalid: { color: "#ef4444" },
+              },
+            }}
+          />
+        </div>
+        {cardError && (
+          <p className="text-sm text-red-400 flex items-center gap-1.5">
+            <span className="inline-block w-1 h-1 rounded-full bg-red-400" />
+            {cardError}
+          </p>
+        )}
+        <Button
+          onClick={handleConfirm}
+          disabled={!stripe || confirming || isPending}
+          className="w-full bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+        >
+          {confirming || isPending ? (
+            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating account...</>
+          ) : (
+            <><Check className="w-4 h-4 mr-2" /> Save Card &amp; Create Account</>
+          )}
+        </Button>
+        <Button variant="ghost" onClick={onSkip} className="w-full text-muted-foreground hover:text-foreground text-sm">
+          Skip — I'll add my card later
+        </Button>
+      </div>
+    );
+  }
+
+  export default function Register() {
   const [, navigate] = useLocation();
   const searchString = useSearch();
   const [step, setStep] = useState(1);
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   // Step 1: Account
   const [name, setName] = useState("");
@@ -314,6 +403,26 @@ export default function Register() {
     },
   });
 
+    // ── Stripe SetupIntent for card capture ──────────────────────────────────
+    const [setupIntentData, setSetupIntentData] = useState<{
+      clientSecret: string;
+      customerId: string;
+      publishableKey: string;
+    } | null>(null);
+    const [cardSkipped, setCardSkipped] = useState(false);
+
+    const createSetupIntentMutation = trpc.auth.createSetupIntent.useMutation({
+      onSuccess: (data) => {
+        setSetupIntentData({ ...data, publishableKey: data.publishableKey || "" });
+        nextStep();
+      },
+      onError: () => {
+        toast.error("Could not initialise payment — you can add your card later from account settings.");
+        setCardSkipped(true);
+        nextStep();
+      },
+    });
+
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
       prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
@@ -367,29 +476,29 @@ export default function Register() {
 
   // ─── Submit ───
 
-  const handleSubmit = () => {
-    if (!validateStep3()) return;
-    registerMutation.mutate({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      password,
-      referralCode: referralCode.trim() || undefined,
-      promoCode: promoCode.trim() || undefined,
-      phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
-      companyName: companyName.trim() || undefined,
-      companyWebsite: companyWebsite.trim() || undefined,
-      jobTitle: jobTitle.trim() || undefined,
-      professionalRole: professionalRole || undefined,
-      experienceLevel: experienceLevel || undefined,
-      industryType: industryType || undefined,
-      teamSize: teamSize || undefined,
-      preferredGenres: selectedGenres.length > 0 ? selectedGenres : undefined,
-      primaryUseCase: primaryUseCase || undefined,
-      portfolioUrl: portfolioUrl.trim() || undefined,
-      howDidYouHear: howDidYouHear || undefined,
-      marketingOptIn,
-    });
-  };
+  const handleSubmit = (stripeCustomerId?: string, _paymentMethodId?: string) => {
+      registerMutation.mutate({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        referralCode: referralCode.trim() || undefined,
+        promoCode: promoCode.trim() || undefined,
+        phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
+        companyName: companyName.trim() || undefined,
+        companyWebsite: companyWebsite.trim() || undefined,
+        jobTitle: jobTitle.trim() || undefined,
+        professionalRole: professionalRole || undefined,
+        experienceLevel: experienceLevel || undefined,
+        industryType: industryType || undefined,
+        teamSize: teamSize || undefined,
+        preferredGenres: selectedGenres.length > 0 ? selectedGenres : undefined,
+        primaryUseCase: primaryUseCase || undefined,
+        portfolioUrl: portfolioUrl.trim() || undefined,
+        howDidYouHear: howDidYouHear || undefined,
+        marketingOptIn,
+        stripeCustomerId: stripeCustomerId || setupIntentData?.customerId || undefined,
+      });
+    };
 
   if (showStudioOpener) {
       return (
@@ -953,43 +1062,107 @@ export default function Register() {
                 </label>
               </CardContent>
               <CardFooter className="flex flex-col gap-2 pt-2">
-                <div className="flex gap-3 w-full">
-                  <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                  <div className="flex gap-3 w-full">
+                    <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (!agreedToTerms) {
+                          toast.error("You must agree to the Terms of Service before creating an account.");
+                          return;
+                        }
+                        if (!validateStep3()) return;
+                        createSetupIntentMutation.mutate({ email: email.trim().toLowerCase(), name: name.trim() });
+                      }}
+                      disabled={createSetupIntentMutation.isPending || !agreedToTerms}
+                      className="flex-1 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+                      title={!agreedToTerms ? "Please agree to the Terms of Service to continue" : undefined}
+                    >
+                      {createSetupIntentMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
+                          Setting up...
+                        </>
+                      ) : (
+                        <>
+                          Next — Payment <CreditCard className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  {agreedToTerms && (
+                    <Button variant="ghost" onClick={() => { setCardSkipped(true); nextStep(); }} className="w-full text-muted-foreground hover:text-foreground text-sm">
+                      Skip card — complete profile later
+                    </Button>
+                  )}
+                </CardFooter>
+              </>
+            )}
+
+            {/* ── Step 4: Payment / Card Capture ────────────────────────────── */}
+            {step === 4 && (
+              <>
+                <CardHeader className="text-center pb-2">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <CreditCard className="w-5 h-5 text-amber-400" />
+                    <CardTitle className="text-xl font-semibold text-foreground">Secure Your Studio Access</CardTitle>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Start your <span className="text-amber-400 font-semibold">14-day free trial</span> — no charge today.
+                    Your card is saved for when your trial ends.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4 pt-0">
+                  <div className="flex items-center gap-3 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm">
+                    <span className="text-amber-400 text-lg">🔒</span>
+                    <span className="text-muted-foreground">
+                      Secured by Stripe. We <strong className="text-foreground">never</strong> store your card details.
+                    </span>
+                  </div>
+
+                  {cardSkipped || !setupIntentData ? (
+                    /* Fallback: no setup intent — just create account without card */
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground text-center">
+                        Payment setup unavailable. You can add your card later from Account Settings.
+                      </p>
+                      <Button
+                        onClick={() => handleSubmit()}
+                        disabled={registerMutation.isPending}
+                        className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        {registerMutation.isPending ? (
+                          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating account...</>
+                        ) : (
+                          <><Check className="w-4 h-4 mr-2" /> Create Account</>
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Elements stripe={getStripePromise(setupIntentData.publishableKey)}>
+                      <StripeCardForm
+                        clientSecret={setupIntentData.clientSecret}
+                        isPending={registerMutation.isPending}
+                        onSuccess={(paymentMethodId) => {
+                          handleSubmit(setupIntentData.customerId, paymentMethodId);
+                        }}
+                        onSkip={() => {
+                          setCardSkipped(true);
+                          handleSubmit();
+                        }}
+                      />
+                    </Elements>
+                  )}
+                </CardContent>
+                <CardFooter className="flex justify-center pt-0">
+                  <Button variant="ghost" onClick={prevStep} className="text-muted-foreground hover:text-foreground text-sm">
+                    <ArrowLeft className="w-3 h-3 mr-1" /> Back
                   </Button>
-                  <Button
-                    onClick={() => {
-                      if (!agreedToTerms) {
-                        toast.error("You must agree to the Terms of Service before creating an account.");
-                        return;
-                      }
-                      handleSubmit();
-                    }}
-                    disabled={registerMutation.isPending || !agreedToTerms}
-                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
-                    title={!agreedToTerms ? "Please agree to the Terms of Service to continue" : undefined}
-                  >
-                    {registerMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        Create Account <Check className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-                {agreedToTerms && (
-                  <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
-                    Skip for now — complete profile later
-                  </Button>
-                )}
-              </CardFooter>
-            </>
-          )}
-        </Card>
+                </CardFooter>
+              </>
+            )}
+          </Card>
 
         {/* Terms */}
         <p className="text-xs text-muted-foreground text-center px-4">
