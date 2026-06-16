@@ -11,7 +11,11 @@ import { ENV } from "./env";
  * be verified without storage and revoked simply by rotating the secret.
  */
 
-const SECRET = (ENV as any).cookieSecret || process.env.JWT_SECRET || process.env.SESSION_SECRET || "dev-secret-change-me";
+const _secret = (ENV as any).cookieSecret || process.env.JWT_SECRET || process.env.SESSION_SECRET;
+if (!_secret && process.env.NODE_ENV === "production") {
+  throw new Error("SESSION_SECRET (or JWT_SECRET) must be set in production");
+}
+const SECRET = _secret || "dev-secret-change-me";
 
 export function makeShareToken(projectId: number): string {
   return createHmac("sha256", SECRET)
