@@ -1,7 +1,7 @@
 import "./sentry.js";
 import "dotenv/config";
 import crypto from "crypto";
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -96,7 +96,7 @@ async function startServer() {
     let dbStatus: "ok" | "error" | "not_configured" = "not_configured";
     if (ENV.databaseUrl) {
       try {
-        await db.db.execute(sql`SELECT 1`);
+        const dbConn = await db.getDb(); if (dbConn) await (dbConn as any).execute(sql`SELECT 1`);
         dbStatus = "ok";
       } catch {
         dbStatus = "error";
@@ -111,7 +111,6 @@ async function startServer() {
       uptime: Math.round(process.uptime()),
       database: dbStatus,
     });
-  }
   }
   app.get("/api/health", healthHandler);
   app.get("/api/healthz", healthHandler);
