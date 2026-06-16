@@ -217,7 +217,7 @@ const FAQ = [
   },
   {
     q: "Is there a free trial?",
-    a: "Yes. All new accounts include a 7-day free trial with access to core features — no credit card required. After the trial you can choose a paid plan or continue with the limited free tier.",
+    a: "Yes. All new accounts include a 7-day free trial with full access to core features. A card is required upfront — you will not be charged until the trial ends. Cancel anytime before the 7 days are up and you will not be billed.",
     },
     {
       q: "Can I upgrade or downgrade my plan?",
@@ -440,7 +440,7 @@ export default function Pricing() {
                     <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
                   </div>
-                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial included</p>
+                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial · card required</p>
                   <div className="mt-2 flex items-center gap-2 text-sm font-medium text-amber-400">
                     <Coins className="w-4 h-4" />
                     {tier.credits.toLocaleString()} credits/mo included
