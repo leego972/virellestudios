@@ -500,7 +500,9 @@ function CollectionBlock({
   const [expanded, setExpanded] = useState(false);
   const items: any[] = col.items ?? [];
   const itemCount = items.length;
-  const bundleCents = col.collectionPriceAud ?? Math.floor(itemCount * 30 * 0.85);
+  const itemSum = items.reduce((s: number, i: any) => s + (i.retailPriceAud ?? 100), 0);
+  const bundleCents = itemSum > 0 ? Math.floor(itemSum * 0.90) : (col.collectionPriceAud ?? 100);
+  const minItemCents = itemCount > 0 ? Math.min(...items.map((i: any) => i.retailPriceAud ?? 100)) : 100;
   const bundleLabel = `A$${(bundleCents / 100).toFixed(2)}`;
   const isBuyingCol = leasingId === `collection-${col.id}`;
 
@@ -520,7 +522,7 @@ function CollectionBlock({
             <p className="text-xs text-white/45 line-clamp-2 leading-relaxed">{col.description}</p>
           )}
           <p className="text-[11px] text-white/30 mt-2">
-            {itemCount} items · A$0.30 each · Bundle saves 15%
+            {itemCount} items · From A${(minItemCents / 100).toFixed(2)} each · Bundle saves 10%
           </p>
         </div>
 
@@ -968,7 +970,7 @@ function MarketplaceGrid({
             no drift, no guesswork, no re-prompting.
           </p>
           <p className="text-sm text-amber-400/80 font-semibold mb-10">
-            1,400+ items across 23 collections · From A$0.30 per item · Custom AI items from A$4.99
+            1,400+ items across 23 collections · From A$1.00 per item · Custom AI items from A$4.99
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 justify-center mb-8">
