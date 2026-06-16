@@ -13,7 +13,7 @@ import { logger } from "./logger";
 
 // Use the real OpenAI API endpoint for Sora (not the proxy)
 const openai = new OpenAI({
-  apiKey: ENV.openaiApiKey || process.env.OPENAI_API_KEY || "",
+  apiKey: ENV.openaiApiKey || process.env.OPENAI_API_KEY || "sk-none",
   baseURL: "https://api.openai.com/v1",
 });
 
@@ -94,7 +94,7 @@ export async function generateVideo(
         createParams.input_reference = file;
       }
     } catch (e) {
-      logger.warn("[VideoGen] Could not fetch input image, proceeding with text-only:", e);
+      logger.warn("[VideoGen] Could not fetch input image, proceeding with text-only:", { error: String(e) });
     }
   }
 
