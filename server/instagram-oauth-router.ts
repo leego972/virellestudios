@@ -139,7 +139,7 @@ import type { Express, Request, Response } from "express";
   </body>
   </html>`);
       } catch (err) {
-        logger.error("[Instagram OAuth] Callback error", err);
+        logger.error("[Instagram OAuth] Callback error", { error: String(err) });
         res.status(500).send("Instagram OAuth callback failed. Please try again.");
       }
     });
