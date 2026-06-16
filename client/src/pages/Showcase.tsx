@@ -100,6 +100,24 @@ export default function Showcase() {
               <p className="text-neutral-500">Loading showcase...</p>
             </div>
           </div>
+        ) : isError ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="flex flex-col items-center gap-6 text-center max-w-sm">
+              <div className="w-16 h-16 rounded-full border border-amber-500/20 flex items-center justify-center" style={{ background: "rgba(212,175,55,0.05)" }}>
+                <Film className="w-8 h-8 text-amber-500/50" />
+              </div>
+              <div>
+                <p className="text-white/60 font-medium mb-1">Showcase could not be loaded right now</p>
+                <p className="text-white/30 text-sm">Check your connection and try again.</p>
+              </div>
+              <button
+                onClick={() => refetch()}
+                className="px-5 py-2 rounded-lg border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/10 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
         ) : !films || films.length === 0 ? (
           // Static sample showcase — displayed when no user films are published yet
           <div className="space-y-12">
