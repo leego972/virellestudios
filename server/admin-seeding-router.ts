@@ -347,7 +347,7 @@ import { router, adminProcedure } from "./_core/trpc";
               WHEN 'sleepwear'   THEN 100
               ELSE 100
             END
-            WHERE collectionId IS NOT NULL AND retailPriceAud IS NULL
+            WHERE collectionId IS NOT NULL AND (retailPriceAud IS NULL OR retailPriceAud < 100)
           `);
           return { success: true, updated: affected, message: `Patched ${affected} wardrobe items with Pollinations image URLs` };
       } catch (error) {
