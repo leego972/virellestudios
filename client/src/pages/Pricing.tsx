@@ -529,6 +529,7 @@ export default function Pricing() {
                     </div>
                   </div>
                 </CardFooter>
+              </Card>
             );
           })}
         </div>
