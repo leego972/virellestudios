@@ -81,7 +81,7 @@ export const contentCreatorRouter = router({
           const result = await youtubeAdapter.postCommunityUpdate({
             text: `${input.topic}\n\n${input.content}\n\nCreate your own AI film at https://virelle.life\n\n#AIFilmmaking #VirelleStudios #AICinema #IndieFilm`,
           });
-          logger.info("[YouTube] Community update posted", result);
+          logger.info("[YouTube] Community update posted", { result: JSON.stringify(result) });
           return result;
         }),
       /** Generate optimised Shorts metadata for a topic */
