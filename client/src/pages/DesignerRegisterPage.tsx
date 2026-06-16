@@ -246,8 +246,13 @@ export default function DesignerRegisterPage() {
               List Your Collections
             </h1>
             <p className="text-white/50 text-sm leading-relaxed max-w-sm mx-auto">
-              Fashion and costume designers earn recurring income by licensing their
-              work to film productions worldwide. A$150/year founding price — 95% of every lease goes to you.
+              Designers, costume houses, and fashion creators can list collections for filmmakers to reference, license, or use in AI-assisted production planning.
+            </p>
+            <p className="text-amber-400/80 text-xs font-medium mt-2">
+              95% of every lease goes directly to you — A$150/year founding membership.
+            </p>
+            <p className="text-white/30 text-xs mt-3 italic max-w-xs mx-auto">
+              Virelle is not replacing designers. It gives you another channel into the AI film production economy.
             </p>
           </div>
 
