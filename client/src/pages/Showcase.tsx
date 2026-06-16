@@ -12,7 +12,7 @@ import movie from "@/data/showrunnerMovie";
  * Shows completed AI-generated films with cinematic video players.
  */
 export default function Showcase() {
-  const { data: films, isLoading } = trpc.showcase.featured.useQuery();
+  const { data: films, isLoading, isError, refetch } = trpc.showcase.featured.useQuery();
   const [expandedFilm, setExpandedFilm] = useState<number | null>(null);
   const [activeScene, setActiveScene] = useState<Record<number, number>>({});
 
