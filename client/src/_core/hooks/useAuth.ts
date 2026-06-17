@@ -43,7 +43,6 @@ export function useAuth(options?: UseAuthOptions) {
 
   const state = useMemo(() => {
     if (meQuery.data) {
-    if (meQuery.data) {
       // SECURITY: Store only display-safe fields — never BYOK flags, admin role,
       // or subscription internals that could be exploited client-side.
       const { id, name, email, avatarUrl, subscriptionTier, creditBalance } = meQuery.data as any;
@@ -54,6 +53,7 @@ export function useAuth(options?: UseAuthOptions) {
     } else if (meQuery.data === null) {
       localStorage.removeItem("virelle:user-info");
     }
+      return {
       user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
