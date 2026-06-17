@@ -2,6 +2,7 @@ import { trpc } from "@/lib/trpc";
 import {
   Copy, Gift, Users, TrendingUp, Share2, Check,
   Trophy, Zap, ChevronRight, Briefcase, MessageCircle, Tag,
+  Star, Link2, Crown,
 } from "lucide-react";
 import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { Button } from "@/components/ui/button";
@@ -125,11 +126,11 @@ export default function Referrals() {
       {/* Referral Link Card */}
       <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Your Referral Link</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold">Your Referral Link</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <CardContent className="space-y-4">
           {isLoading ? (
-            <div className="h-12 glass-card/5 rounded-lg animate-pulse" />
+            <div className="h-12 bg-muted/30 rounded-lg animate-pulse" />
           ) : (
             <>
               <div className="flex flex-col sm:flex-row gap-2">
