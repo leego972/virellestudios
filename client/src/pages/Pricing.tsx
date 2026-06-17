@@ -32,7 +32,7 @@ const SELF_SERVE_TIERS = [
     audience: "Solo filmmakers and creators exploring AI-assisted production.",
     description: "Core tools for screenplay development, character design, and cinematic planning.",
     highlights: [
-      "500 credits/month (~50 video scenes)",
+      "700 credits/month (~70 video scenes)",
       "AI Script Writer & Screenplay Tools",
       "Character Creator & DNA Lock",
       "Director's AI Assistant (Virelle Chat)",
@@ -51,7 +51,7 @@ const SELF_SERVE_TIERS = [
       "Writers who need scripts, storyboards & pitch decks",
       "Creators exploring AI production before scaling up",
     ],
-    creditExample: "500 credits ≈ 50 scene videos · 62 storyboards · or 250 AI chats",
+    creditExample: "700 credits ≈ 70 scene videos · 87 storyboards · or 700 AI chats",
   },
   {
     id: "amateur",
@@ -68,7 +68,7 @@ const SELF_SERVE_TIERS = [
     audience: "Independent producers and creators building commercial-grade projects.",
     description: "Integrated production pipeline including video generation, voice acting, and scoring.",
     highlights: [
-      "2,000 credits/month (~200 video scenes)",
+      "3,000 credits/month (~300 video scenes)",
       "Everything in Indie, plus:",
       "Video Generation (Runway, Sora, Kling, Veo)",
       "AI Voice Acting (35 emotions, 3,000+ voices)",
@@ -86,7 +86,7 @@ const SELF_SERVE_TIERS = [
       "Creators generating commercial video with voice & score",
       "Filmmakers who need a complete end-to-end pipeline",
     ],
-    creditExample: "2,000 credits ≈ 200 scene videos · 250 storyboards · or 1,000 AI chats",
+    creditExample: "3,000 credits ≈ 300 scene videos · 375 storyboards · or 3,000 AI chats",
   },
   {
     id: "independent",
@@ -103,7 +103,7 @@ const SELF_SERVE_TIERS = [
     audience: "Boutique studios, agencies, and commercial directors with repeat pipelines.",
     description: "Full commercial production workflow. Post-production, 4K export, VFX, multi-shot sequencer, and team collaboration.",
     highlights: [
-      "6,000 credits/month (~600 video scenes)",
+      "9,000 credits/month (~900 video scenes)",
       "Everything in Creator, plus:",
       "Film Post-Production (ADR, Foley, Score, Mix)",
       "Subtitles in 130+ languages",
@@ -123,7 +123,7 @@ const SELF_SERVE_TIERS = [
       "Agencies producing branded video content at scale",
       "Directors managing multi-project teams",
     ],
-    creditExample: "6,000 credits ≈ 600 scene videos · 750 storyboards · or 3,000 AI chats",
+    creditExample: "9,000 credits ≈ 900 scene videos · 1,125 storyboards · or 9,000 AI chats",
   },
 ];
 
@@ -162,12 +162,12 @@ const ENTERPRISE_TIERS = [
 const ALL_TIERS = [...SELF_SERVE_TIERS, ...ENTERPRISE_TIERS];
 
 const CREDIT_PACKS = [
-  { id: "topup_10",   credits: 100,   price: 19,    perCredit: 0.19, label: "Starter Pack",     saving: "" },
-  { id: "topup_50",   credits: 300,   price: 49,    perCredit: 0.16, label: "Producer Pack",    saving: "Save 16%" },
-  { id: "topup_100",  credits: 750,   price: 99,    perCredit: 0.13, label: "Director Pack",    saving: "Save 32%" },
-  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Filmmaker Pack",      saving: "Save 47%", popular: true },
-  { id: "topup_500",  credits: 5000,  price: 399,   perCredit: 0.08, label: "Blockbuster Pack", saving: "Save 58%" },
-  { id: "topup_1000", credits: 12000, price: 799,   perCredit: 0.07, label: "Mogul Pack",       saving: "Save 63%" },
+  { id: "topup_10",   credits: 200,   price: 19,    perCredit: 0.095, label: "Starter Pack",    saving: "" },
+  { id: "topup_50",   credits: 600,   price: 49,    perCredit: 0.082, label: "Producer Pack",   saving: "Save 14%" },
+  { id: "topup_100",  credits: 1400,  price: 99,    perCredit: 0.071, label: "Director Pack",   saving: "Save 26%" },
+  { id: "topup_200",  credits: 3500,  price: 199,   perCredit: 0.057, label: "Filmmaker Pack",     saving: "Save 40%", popular: true },
+  { id: "topup_500",  credits: 9000,  price: 399,   perCredit: 0.044, label: "Blockbuster Pack", saving: "Save 54%" },
+  { id: "topup_1000", credits: 22000, price: 799,   perCredit: 0.036, label: "Mogul Pack",      saving: "Save 62%" },
 ];
 
 const CREDIT_COSTS = [
@@ -178,7 +178,7 @@ const CREDIT_COSTS = [
   { action: "Generate Preview Image", cost: 3, icon: "🖼️" },
   { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "📸" },
   { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "📹" },
-  { action: "Virelle AI Chat (per message)", cost: 2, icon: "💬" },
+  { action: "Virelle AI Chat (per message)", cost: 1, icon: "💬" },
   { action: "AI Script Writer", cost: 8, icon: "📝" },
   { action: "AI Storyboard Generation", cost: 8, icon: "🎨" },
   { action: "AI Dialogue Polish", cost: 5, icon: "🗣️" },
