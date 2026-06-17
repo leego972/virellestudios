@@ -376,7 +376,7 @@ import { useState } from "react";
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Creator's 2,000 credits = ~200 scene generations per month. Industry's 6,000 = ~600.
+              Creator's 3,000 credits = ~300 scene generations per month. Industry's 9,000 = ~900.
               Top up any time with credit packs if you need more mid-month.
             </p>
           </div>
