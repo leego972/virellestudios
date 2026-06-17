@@ -77,6 +77,33 @@ import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_cor
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 import { runLamaloSeed } from "./lamalo-seed";
 
+// ── returnUrl domain allowlist ────────────────────────────────────────────────
+// Stripe uses returnUrl / success_url / cancel_url to redirect the user's
+// browser after a checkout or billing-portal session.  Without domain locking
+// an authenticated attacker can craft a checkout URL with success_url pointing
+// at an external phishing site, then share that URL with a victim.
+// Only the app's own hostnames are allowed.
+function assertAppReturnUrl(url: string): void {
+  let parsed: URL;
+  try { parsed = new URL(url); } catch {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid return URL." });
+  }
+  const allowedHosts = [
+    "virelle.life",
+    process.env.RAILWAY_PUBLIC_DOMAIN ?? "",
+    "localhost",
+  ].filter(Boolean);
+  const ok = allowedHosts.some(
+    (h) => parsed.hostname === h || parsed.hostname.endsWith("." + h)
+  );
+  if (!ok) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Return URL must point to the Virelle Studios application.",
+    });
+  }
+}
+
 // v6.77 ÃÂ¢ÃÂÃÂ Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
 // generator so the model knows which real-world brands may appear (Nike, Pepsi,
@@ -1508,6 +1535,7 @@ export const appRouter = router({
       aiGenerateCheckout: protectedProcedure
         .input(z.object({ returnUrl: z.string().url().max(512) }))
         .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
           if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
           if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
           const session = await stripe.checkout.sessions.create({
@@ -1529,6 +1557,7 @@ export const appRouter = router({
       aiGenerateFromPhotoCheckout: protectedProcedure
         .input(z.object({ returnUrl: z.string().url().max(512) }))
         .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
           if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
           if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
           const session = await stripe.checkout.sessions.create({
@@ -10532,6 +10561,7 @@ Rules:
     createBillingPortal: creationProcedure
       .input(z.object({ returnUrl: z.string().url() }))
       .mutation(async ({ ctx, input }) => {
+        assertAppReturnUrl(input.returnUrl);
         if (!ctx.user.stripeCustomerId) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "No active subscription found" });
         }
