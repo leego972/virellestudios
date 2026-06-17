@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -12,7 +13,6 @@ import {
   } from "lucide-react";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
   import StudioOpener from "@/components/StudioOpener";
-import GoldWatermark from "@/components/GoldWatermark";
 
 // ─── Country Codes ───
 
@@ -449,7 +449,7 @@ function SelectField({
     ];
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <GoldWatermark />
+        <VSWatermark />
         <div className="w-full max-w-lg relative z-10">
           <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-5">
@@ -519,7 +519,7 @@ function SelectField({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-      <GoldWatermark />
+      <VSWatermark />
       <div className="w-full max-w-md space-y-5 relative z-10">
         {/* Virelle Studios Logo */}
         <div className="flex flex-col items-center gap-3">
