@@ -9536,6 +9536,55 @@ Generate a detailed production budget estimate.`,
         );
         return { success: true };
       }),
+
+    submitForPromotion: protectedProcedure
+      .input(z.object({
+        projectId:     z.number(),
+        trailerTitle:  z.string().min(1).max(255),
+        tagline:       z.string().max(500).optional(),
+        directorName:  z.string().max(255).optional(),
+        consentGiven:  z.literal(true),
+        sceneIds:      z.array(z.number()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+        // Verify the user owns this project
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+
+        // Remove any previous promotion request for this project by this user
+        await dbConn.execute(
+          sql`DELETE FROM adminCurationFlags
+              WHERE entityType = 'project'
+                AND entityId   = ${input.projectId}
+                AND flagType   = 'promotion_request'`
+        );
+
+        // Insert new promotion request — admin dashboard will surface these
+        await dbConn.execute(
+          sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId, notes)
+              VALUES (
+                'project',
+                ${input.projectId},
+                'promotion_request',
+                ${ctx.user.id},
+                ${JSON.stringify({
+                  trailerTitle:  input.trailerTitle,
+                  tagline:       input.tagline  ?? null,
+                  directorName:  input.directorName ?? ctx.user.name ?? null,
+                  userEmail:     ctx.user.email,
+                  sceneIds:      input.sceneIds ?? [],
+                  consentGiven:  true,
+                  submittedAt:   new Date().toISOString(),
+                })}
+              )`
+        );
+
+        return { success: true };
+      }),
+
   }),
 
   // Director's Assistant Chat
