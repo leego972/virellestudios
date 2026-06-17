@@ -3,6 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useIsMobile } from "@/hooks/useMobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,22 @@ interface Beat {
   soundEffect: string;
 }
 
+// ─── Virelle Studios Opener — ALWAYS first, locked, cannot be removed ───
+const VIRELLE_OPENER_BEAT: Omit<Beat, "id" | "sceneId"> = {
+  label: "Virelle Studios Opener",
+  description: "Virelle Studios branded intro — always plays first. This is an unchangeable standard.",
+  durationSec: 5,
+  customText: "",
+  titleCard: false,
+  titleCardText: "",
+  titleCardStyle: "fade",
+  musicMood: "ambient",
+  pacing: "slow",
+  transition: "fade-black",
+  soundEffect: "",
+};
+const OPENER_BEAT_ID = "virelle-opener-locked";
+
 const THEATRICAL_BEATS: Omit<Beat, "id" | "sceneId">[] = [
   { label: "Studio Logos", description: "Production company logos with ambient sound", durationSec: 5, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "ambient", pacing: "slow", transition: "fade-black", soundEffect: "" },
   { label: "World Establishment", description: "Wide establishing shots — introduce the world, time period, setting", durationSec: 15, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "atmospheric", pacing: "slow", transition: "dissolve", soundEffect: "" },
@@ -75,7 +92,9 @@ function getDefaultBeats(type: TrailerType): Beat[] {
   const templates = type === "teaser" ? TEASER_BEATS
     : type === "tv-spot" ? TV_SPOT_BEATS
     : THEATRICAL_BEATS;
-  return templates.map((b, i) => ({ ...b, id: `beat-${i}-${Date.now()}`, sceneId: null }));
+  const userBeats = templates.map((b, i) => ({ ...b, id: `beat-${i}-${Date.now()}`, sceneId: null }));
+  // Virelle Studios opener is ALWAYS the first beat — non-negotiable brand standard.
+  return [{ ...VIRELLE_OPENER_BEAT, id: OPENER_BEAT_ID, sceneId: null }, ...userBeats];
 }
 
 // ─── Music Moods ───
@@ -121,6 +140,17 @@ function TrailerStudioInner() {
     onError: (err) => toast.error(err.message),
   });
 
+  const submitForPromotion = trpc.showcase.submitForPromotion.useMutation({
+    onSuccess: () => {
+      setPromoteSubmitted(true);
+      setShowPromoteDialog(false);
+      toast.success("Trailer submitted to Virelle!", {
+        description: "Our team will review it and feature it on the platform. Thank you for sharing your work.",
+      });
+    },
+    onError: (err) => toast.error("Submission failed", { description: err.message }),
+  });
+
   // ─── State ───
   const [trailerType, setTrailerType] = useState<TrailerType>("theatrical");
   const [beats, setBeats] = useState<Beat[]>(getDefaultBeats("theatrical"));
@@ -136,6 +166,10 @@ function TrailerStudioInner() {
     const [showOpener, setShowOpener] = useState(false);
     const [pendingResult, setPendingResult] = useState<any>(null);
   const [previewPlaying, setPreviewPlaying] = useState(false);
+  const [showPromoteDialog, setShowPromoteDialog] = useState(false);
+  const [promoteConsent, setPromoteConsent] = useState(false);
+  const [promoteDirectorName, setPromoteDirectorName] = useState("");
+  const [promoteSubmitted, setPromoteSubmitted] = useState(false);
   const isMobile = useIsMobile();
   const [mobileConfigOpen, setMobileConfigOpen] = useState(false);
   const [mobileBeatOpen, setMobileBeatOpen] = useState(false);
@@ -184,16 +218,21 @@ function TrailerStudioInner() {
   };
 
   const removeBeat = (id: string) => {
+    // The Virelle Studios opener beat is a non-negotiable brand standard — it cannot be removed.
+    if (id === OPENER_BEAT_ID) return;
     setBeats(prev => prev.filter(b => b.id !== id));
     if (selectedBeatId === id) setSelectedBeatId(null);
   };
 
   const moveBeat = (id: string, direction: "up" | "down") => {
+    // The opener beat is always first and immovable.
+    if (id === OPENER_BEAT_ID) return;
     setBeats(prev => {
       const idx = prev.findIndex(b => b.id === id);
       if (idx < 0) return prev;
       const newIdx = direction === "up" ? idx - 1 : idx + 1;
-      if (newIdx < 0 || newIdx >= prev.length) return prev;
+      // Cannot move a beat above the locked opener (index 0).
+      if (newIdx <= 0 || newIdx >= prev.length) return prev;
       const copy = [...prev];
       [copy[idx], copy[newIdx]] = [copy[newIdx], copy[idx]];
       return copy;
@@ -540,7 +579,10 @@ function TrailerStudioInner() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium truncate">{beat.label}</span>
-                      {beat.titleCard && <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">TITLE CARD</span>}
+                      {beat.id === OPENER_BEAT_ID && (
+                        <span className="text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded tracking-widest uppercase">Brand Standard</span>
+                      )}
+                      {beat.titleCard && beat.id !== OPENER_BEAT_ID && <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">TITLE CARD</span>}
                     </div>
                     <p className="text-[10px] text-muted-foreground truncate mt-0.5">{beat.description || "No description"}</p>
                     <div className="flex items-center gap-2 mt-1">
@@ -556,13 +598,19 @@ function TrailerStudioInner() {
                     <p className="text-[10px] text-muted-foreground">{getSceneTitle(beat.sceneId)}</p>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={e => { e.stopPropagation(); moveBeat(beat.id, "up"); }} className="p-0.5 hover:bg-muted rounded"><MoveUp className="h-3 w-3" /></button>
-                    <button onClick={e => { e.stopPropagation(); moveBeat(beat.id, "down"); }} className="p-0.5 hover:bg-muted rounded"><MoveDown className="h-3 w-3" /></button>
-                    <button onClick={e => { e.stopPropagation(); duplicateBeat(beat.id); }} className="p-0.5 hover:bg-muted rounded"><Copy className="h-3 w-3" /></button>
-                    <button onClick={e => { e.stopPropagation(); removeBeat(beat.id); }} className="p-0.5 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3 w-3" /></button>
-                  </div>
+                  {/* Actions — opener beat is locked */}
+                  {beat.id === OPENER_BEAT_ID ? (
+                    <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[9px] font-bold tracking-widest text-amber-500/70 uppercase px-0.5">LOCKED</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={e => { e.stopPropagation(); moveBeat(beat.id, "up"); }} className="p-0.5 hover:bg-muted rounded"><MoveUp className="h-3 w-3" /></button>
+                      <button onClick={e => { e.stopPropagation(); moveBeat(beat.id, "down"); }} className="p-0.5 hover:bg-muted rounded"><MoveDown className="h-3 w-3" /></button>
+                      <button onClick={e => { e.stopPropagation(); duplicateBeat(beat.id); }} className="p-0.5 hover:bg-muted rounded"><Copy className="h-3 w-3" /></button>
+                      <button onClick={e => { e.stopPropagation(); removeBeat(beat.id); }} className="p-0.5 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3 w-3" /></button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -596,6 +644,32 @@ function TrailerStudioInner() {
                     ))}
                   </div>
                 )}
+
+                {/* ─── Promote on Virelle ─── */}
+                <div className="mt-4 pt-4 border-t border-amber-500/20">
+                  {promoteSubmitted ? (
+                    <div className="flex items-center gap-2 text-sm text-green-400">
+                      <Star className="h-4 w-4 text-amber-400" />
+                      <span>Submitted for Virelle promotion — our team will be in touch.</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-amber-400 mb-0.5">Promote your trailer on Virelle</p>
+                        <p className="text-[11px] text-muted-foreground">Let Virelle feature your trailer on our platform to help promote your film to a wider audience.</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="shrink-0 gap-1.5 h-8 text-xs font-semibold text-black"
+                        style={{ background: "linear-gradient(135deg,#D4AF37,#F5D97E)" }}
+                        onClick={() => { setPromoteConsent(false); setPromoteDirectorName(project?.title ? "" : ""); setShowPromoteDialog(true); }}
+                      >
+                        <Megaphone className="h-3.5 w-3.5" />
+                        Promote on Virelle
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}
@@ -826,6 +900,94 @@ function TrailerStudioInner() {
         </Sheet>
       )}
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
+
+      {/* ─── Promote on Virelle — Consent Dialog ─── */}
+      <Dialog open={showPromoteDialog} onOpenChange={setShowPromoteDialog}>
+        <DialogContent className="sm:max-w-md" style={{ background: "rgba(10,9,20,0.97)", border: "1px solid rgba(212,175,55,0.25)" }}>
+          <DialogHeader>
+            <DialogTitle className="gradient-text-gold flex items-center gap-2">
+              <Megaphone className="h-5 w-5 text-amber-400" />
+              Promote Your Trailer on Virelle
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm leading-relaxed pt-1">
+              Virelle will review your trailer and — if approved — feature it on our platform to help promote your film to our growing filmmaker community and audience.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Trailer being submitted */}
+            <div className="rounded-lg border border-border/40 bg-white/[0.03] p-3 space-y-1">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Trailer</p>
+              <p className="text-sm font-semibold text-white">{generatedResult?.trailerTitle || trailerTitle || project?.title}</p>
+              {(generatedResult?.tagline || tagline) && (
+                <p className="text-xs text-muted-foreground italic">"{generatedResult?.tagline || tagline}"</p>
+              )}
+            </div>
+
+            {/* Optional director name override */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground">Your name / director credit (optional)</label>
+              <Input
+                value={promoteDirectorName}
+                onChange={e => setPromoteDirectorName(e.target.value)}
+                placeholder={project?.title ? `Director of ${project.title}` : "Your name"}
+                className="h-9 bg-background/50 border-border/50 text-sm"
+                maxLength={100}
+              />
+            </div>
+
+            {/* What Virelle will do */}
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-1.5">
+              <p className="text-[10px] uppercase tracking-widest text-amber-500/80">What happens next</p>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>• Our team reviews your trailer within 3–5 business days</li>
+                <li>• Approved trailers are featured on virelle.life for all visitors</li>
+                <li>• Your film and director name are credited publicly</li>
+                <li>• You can withdraw consent at any time by contacting us</li>
+              </ul>
+            </div>
+
+            {/* Consent checkbox */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={promoteConsent}
+                onChange={e => setPromoteConsent(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-amber-500/50 accent-amber-500 cursor-pointer"
+              />
+              <span className="text-xs text-muted-foreground group-hover:text-white/70 transition-colors leading-relaxed">
+                I consent to Virelle Studios featuring this trailer on their website and promotional materials. I confirm I own the rights to this content.
+              </span>
+            </label>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowPromoteDialog(false)} className="border-border/50">
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              disabled={!promoteConsent || submitForPromotion.isPending}
+              className="gap-1.5 font-semibold text-black"
+              style={{ background: promoteConsent ? "linear-gradient(135deg,#D4AF37,#F5D97E)" : undefined }}
+              onClick={() => {
+                if (!promoteConsent) return;
+                submitForPromotion.mutate({
+                  projectId,
+                  trailerTitle: generatedResult?.trailerTitle || trailerTitle || project?.title || "Untitled",
+                  tagline: generatedResult?.tagline || tagline || undefined,
+                  directorName: promoteDirectorName || undefined,
+                  consentGiven: true,
+                  sceneIds: generatedResult?.scenes?.map((s: any) => s.id).filter(Boolean) ?? [],
+                });
+              }}
+            >
+              <Megaphone className="h-3.5 w-3.5" />
+              {submitForPromotion.isPending ? "Submitting…" : "Submit for Promotion"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
