@@ -23,14 +23,21 @@ import { parse as parseCookies } from "cookie";
         res.status(400).send("YOUTUBE_CLIENT_ID not configured in Railway.");
         return;
       }
+      // CSRF protection: generate state, store in short-lived httpOnly cookie
+      const oauthState = crypto.randomUUID();
+      res.cookie("__virelle_oauth_state_youtube", oauthState, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https",
+        maxAge: 600,
+      });
+
       const params = new URLSearchParams({
         client_id: clientId,
         redirect_uri: getRedirectUri(req),
         scope: YOUTUBE_SCOPES,
         response_type: "code",
-        // Generate CSRF state and persist it in a short-lived httpOnly cookie
-        // eslint-disable-next-line no-undef
-        state: (() => { const s = crypto.randomUUID(); res.cookie("__virelle_oauth_state_youtube", s, { httpOnly: true, sameSite: "lax", secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https", maxAge: 600 }); return s; })(),
+        state: oauthState,
         access_type: "offline",
         prompt: "consent",
       });
