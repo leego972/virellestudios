@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Film, Loader2, ArrowLeft, Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
-import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import GoldWatermark from "@/components/GoldWatermark";
 
 export default function ResetPassword() {
   const [, navigate] = useLocation();
@@ -57,7 +57,7 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <GoldWatermarkLaunch />
+        <GoldWatermark />
         <div className="w-full max-w-md space-y-8 relative z-10">
           <div className="flex flex-col items-center gap-3">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
@@ -87,7 +87,7 @@ export default function ResetPassword() {
   if (validateQuery.data && !validateQuery.data.valid) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <GoldWatermarkLaunch />
+        <GoldWatermark />
         <div className="w-full max-w-md space-y-8 relative z-10">
           <div className="flex flex-col items-center gap-3">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
@@ -117,7 +117,7 @@ export default function ResetPassword() {
   if (resetComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <GoldWatermarkLaunch />
+        <GoldWatermark />
         <div className="w-full max-w-md space-y-8 relative z-10">
           <div className="flex flex-col items-center gap-3">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
@@ -157,7 +157,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-      <GoldWatermarkLaunch />
+      <GoldWatermark />
       <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
