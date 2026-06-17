@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -7,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
-import GoldWatermark from "@/components/GoldWatermark";
 import LeegoLogo from "@/components/LeegoLogo";
 
 export default function Login() {
@@ -49,7 +49,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <GoldWatermark />
+      <VSWatermark />
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full max-w-3xl">
         {/* Left side: Login form */}
         <div className="w-full max-w-sm space-y-6">
