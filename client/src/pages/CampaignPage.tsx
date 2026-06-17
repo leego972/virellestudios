@@ -195,7 +195,7 @@ import { useRoute, useLocation } from "wouter";
               {/* Description */}
               {campaign.description && (
                 <div className="prose prose-invert prose-sm max-w-none">
-                  <div dangerouslySetInnerHTML={{ __html: campaign.description.replace(/\n/g, "<br />") }} />
+                  <p className="whitespace-pre-wrap text-sm text-foreground/80">{campaign.description}</p>
                 </div>
               )}
 
