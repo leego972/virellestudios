@@ -35,29 +35,21 @@ import { parse as parseCookies } from "cookie";
         `);
         return;
       }
+      // CSRF protection: generate state, store in short-lived httpOnly cookie
+      const oauthState = crypto.randomUUID();
+      res.cookie("__virelle_oauth_state_snapchat", oauthState, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https",
+        maxAge: 600,
+      });
+
       const params = new URLSearchParams({
         client_id: clientId,
         redirect_uri: getRedirectUri(req),
         scope: SNAPCHAT_SCOPES,
         response_type: "code",
-  
-        // Generate CSRF state and persist it in a short-lived httpOnly cookie
-  
-        const oauthState = crypto.randomUUID();
-  
-        res.cookie("__virelle_oauth_state_snapchat", oauthState, {
-  
-          httpOnly: true,
-  
-          sameSite: "lax",
-  
-          secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https",
-  
-          maxAge: 600,
-  
-        });
-  
-        // (state param included below)
+        state: oauthState,
       });
       res.redirect(302, `https://accounts.snapchat.com/login/oauth2/authorize?${params}`);
     });
