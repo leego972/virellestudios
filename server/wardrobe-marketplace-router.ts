@@ -16,6 +16,28 @@ import { ENV } from "./_core/env";
 import { isTopTierUser } from "./_core/subscription";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
+
+// returnUrl domain allowlist — prevents open redirect after Stripe checkout/portal.
+function assertAppReturnUrl(url: string): void {
+  let parsed: URL;
+  try { parsed = new URL(url); } catch {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid return URL." });
+  }
+  const allowedHosts = [
+    "virelle.life",
+    process.env.RAILWAY_PUBLIC_DOMAIN ?? "",
+    "localhost",
+  ].filter(Boolean);
+  const ok = allowedHosts.some(
+    (h) => parsed.hostname === h || parsed.hostname.endsWith("." + h)
+  );
+  if (!ok) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Return URL must point to the Virelle Studios application.",
+    });
+  }
+}
 import * as db from "./db";
 import {
   designerProfiles,
@@ -59,6 +81,7 @@ export const wardrobeMarketplaceRouter = router({
     subscribeMembership: protectedProcedure
       .input(z.object({ returnUrl: z.string().url().max(512) }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
         const s = requireStripe();
         const profile = await db.getDesignerProfileByUserId(ctx.user.id);
         if (profile?.membershipStatus === "active") {
@@ -110,6 +133,7 @@ export const wardrobeMarketplaceRouter = router({
       subscribeBundleMembership: protectedProcedure
         .input(z.object({ returnUrl: z.string().url().max(512) }))
         .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
           const s = requireStripe();
           const profile = await db.getDesignerProfileByUserId(ctx.user.id);
           if (profile?.membershipStatus === "active") {
@@ -237,6 +261,7 @@ export const wardrobeMarketplaceRouter = router({
         refreshUrl: z.string().url().max(512),
       }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
         const s = requireStripe();
         const profile = await db.getDesignerProfileByUserId(ctx.user.id);
         if (!profile || profile.membershipStatus !== "active") {
@@ -500,6 +525,7 @@ export const wardrobeMarketplaceRouter = router({
         returnUrl: z.string().url().max(512),
       }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
         const s = requireStripe();
 
         let amountCents: number;
@@ -767,6 +793,7 @@ export const wardrobeMarketplaceRouter = router({
           returnUrl:         z.string().url().max(512),
         }))
         .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.returnUrl);
           const s = requireStripe();
           const PRICE_CENTS = 499; // A$4.99
           const dbConn = await getDb();
