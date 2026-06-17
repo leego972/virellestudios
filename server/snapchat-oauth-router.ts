@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import { parse as parseCookies } from "cookie";
   import { logger } from "./_core/logger";
   import { requireAdminExpress } from "./_core/context";
   import { ENV } from "./_core/env";
@@ -39,7 +40,24 @@ import type { Express, Request, Response } from "express";
         redirect_uri: getRedirectUri(req),
         scope: SNAPCHAT_SCOPES,
         response_type: "code",
-        state: crypto.randomUUID(),
+  
+        // Generate CSRF state and persist it in a short-lived httpOnly cookie
+  
+        const oauthState = crypto.randomUUID();
+  
+        res.cookie("__virelle_oauth_state_snapchat", oauthState, {
+  
+          httpOnly: true,
+  
+          sameSite: "lax",
+  
+          secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https",
+  
+          maxAge: 600,
+  
+        });
+  
+        // (state param included below)
       });
       res.redirect(302, `https://accounts.snapchat.com/login/oauth2/authorize?${params}`);
     });
@@ -58,6 +76,15 @@ import type { Express, Request, Response } from "express";
         res.status(400).send("No authorisation code received from Snapchat.");
         return;
       }
+        // Verify OAuth state cookie to prevent CSRF
+        const _cookies = parseCookies(req.headers.cookie || "");
+        const _expectedState = _cookies["__virelle_oauth_state_snapchat"];
+        const _receivedState = req.query.state as string;
+        res.clearCookie("__virelle_oauth_state_snapchat");
+        if (!_expectedState || !_receivedState || _expectedState !== _receivedState) {
+          logger.warn("[Snapchat OAuth] State mismatch — possible CSRF", { expected: _expectedState?.slice(0,8), received: _receivedState?.slice(0,8) });
+          return res.status(403).send("Invalid OAuth state. Please try connecting again.");
+        }
 
       const clientId = ENV.snapchatClientId.trim();
       const clientSecret = ENV.snapchatClientSecret.trim();
