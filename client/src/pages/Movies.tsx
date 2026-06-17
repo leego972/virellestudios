@@ -466,7 +466,7 @@ export default function Movies() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 sm:hidden text-amber-400 hover:text-amber-400"
+                className="h-8 w-8 text-amber-400 hover:text-amber-400"
                 onClick={(e) => {
                   e.stopPropagation();
                   playMovie(movie.id, movie.type);
