@@ -62,7 +62,7 @@ import { useState } from "react";
 
     function handleBuy(packId: PackId) {
       setBuying(packId);
-      buyTopUp.mutate({ packId });
+      buyTopUp.mutate({ packId, successUrl: `${window.location.origin}/pricing?topup=success`, cancelUrl: window.location.href });
     }
 
     const { headline, body } = REASON_COPY[reason];
