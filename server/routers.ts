@@ -15153,6 +15153,31 @@ ${input.text}` }],
           return { translatedText: (data.choices?.[0]?.message?.content ?? "") as string };
         }),
     }),
+  filmMix: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        return db.getFilmMixSettings(input.projectId, ctx.user.id);
+      }),
+    save: protectedProcedure
+      .input(z.object({
+        projectId:       z.number(),
+        dialogueBus:     z.number().min(0).max(1),
+        musicBus:        z.number().min(0).max(1),
+        effectsBus:      z.number().min(0).max(1),
+        masterVolume:    z.number().min(0).max(1),
+        reverbRoom:      z.enum(["none", "small", "medium", "large", "hall", "cathedral"]).optional(),
+        reverbAmount:    z.number().min(0).max(1).optional(),
+        compressionRatio: z.number().min(1).max(20).optional(),
+        noiseReduction:  z.boolean().optional(),
+        notes:           z.string().max(8000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { projectId, ...data } = input;
+        return db.upsertFilmMixSettings(projectId, ctx.user.id, data);
+      }),
+  }),
+
   
   });
 export type AppRouter = typeof appRouter;
