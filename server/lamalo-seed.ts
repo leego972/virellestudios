@@ -11,7 +11,7 @@
  *  - Seed is additive: skips collections that already exist by name
  */
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { designerProfiles, designerCollections, wardrobeItems } from "../drizzle/schema";
 import { logger } from "./_core/logger";
@@ -726,23 +726,51 @@ export async function runLamaloSeed(
         AND (retailPriceAud IS NULL OR retailPriceAud < 100)
     `);
   
-  // ── Get or create the Lamalo Fashion designer profile (idempotent) ──
-  // Use raw INSERT IGNORE so duplicate-key errors on re-runs are silently skipped.
-  await db.execute(sql`
-    INSERT IGNORE INTO designerProfiles
-      (userId, brandName, displayName, profileType, bio, website, instagram,
-       contactEmail, logoUrl, verified, visibility, stripeAccountId,
-       stripeAccountStatus, membershipStatus, membershipSubscriptionId,
-       membershipCurrentPeriodEnd)
-    VALUES
-      (${userId}, 'Lamalo Fashion', 'Lamalo', 'brand',
-       'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
-       'https://virelle.life/wardrobe-marketplace', '@lamalofashion', 'wardrobe@virelle.life',
-       'https://image.pollinations.ai/prompt/Lamalo%20Fashion%20luxury%20gold%20black%20couture%20brand%20logo%2C%20minimalist%20letter%20L%2C%20fashion%20editorial?width=512&height=256&nologo=true&seed=99&model=flux',
-       TRUE, 'public', NULL, 'none', 'active', NULL, '2099-12-31 00:00:00')
-  `);
+  // ── Deduplicate: collapse any duplicate "Lamalo Fashion" profiles into one ──
+  // Root cause: INSERT IGNORE without a UNIQUE constraint on brandName creates a
+  // new row on every seed run, leaving orphaned profiles with no collections.
+  const allLamalo = await db
+    .select({ id: designerProfiles.id })
+    .from(designerProfiles)
+    .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
+    .orderBy(asc(designerProfiles.id));
 
-  // Always look up the real id after the upsert
+  if (allLamalo.length > 1) {
+    const canonicalId = allLamalo[0].id;
+    const dupeIds = allLamalo.slice(1).map(p => p.id);
+    // Reparent collections and items from duplicates → canonical profile
+    await db.update(designerCollections)
+      .set({ designerProfileId: canonicalId })
+      .where(inArray(designerCollections.designerProfileId, dupeIds));
+    await db.update(wardrobeItems)
+      .set({ designerProfileId: canonicalId })
+      .where(inArray(wardrobeItems.designerProfileId, dupeIds));
+    // Delete the empty duplicate shells
+    await db.delete(designerProfiles)
+      .where(inArray(designerProfiles.id, dupeIds));
+    log.info(`[Dedup] Collapsed ${dupeIds.length} duplicate Lamalo Fashion profiles → canonical id=${canonicalId}`);
+  }
+
+  // ── Get or create the Lamalo Fashion designer profile (idempotent) ──
+  // Only insert if no profile exists — prevents future duplicates on repeated seed runs
+  if (allLamalo.length === 0) {
+    await db.execute(sql`
+      INSERT INTO designerProfiles
+        (userId, brandName, displayName, profileType, bio, website, instagram,
+         contactEmail, logoUrl, verified, visibility, stripeAccountId,
+         stripeAccountStatus, membershipStatus, membershipSubscriptionId,
+         membershipCurrentPeriodEnd)
+      VALUES
+        (${userId}, 'Lamalo Fashion', 'Lamalo', 'brand',
+         'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
+         'https://virelle.life/wardrobe-marketplace', '@lamalofashion', 'wardrobe@virelle.life',
+         'https://image.pollinations.ai/prompt/Lamalo%20Fashion%20luxury%20gold%20black%20couture%20brand%20logo%2C%20minimalist%20letter%20L%2C%20fashion%20editorial?width=512&height=256&nologo=true&seed=99&model=flux',
+         TRUE, 'public', NULL, 'none', 'active', NULL, '2099-12-31 00:00:00')
+    `);
+    log.info('Created new Lamalo Fashion designer profile');
+  }
+
+  // Always look up the real id
   const profileRow = await db
     .select({ id: designerProfiles.id })
     .from(designerProfiles)
