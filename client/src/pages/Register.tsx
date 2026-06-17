@@ -1037,7 +1037,7 @@ function SelectField({
                           <span className="font-semibold text-foreground text-sm">Indie Plan — Your Trial Includes</span>
                         </div>
                         <span className="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5">
-                          500 credits/mo
+                          700 credits/mo
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-y-1.5 gap-x-3 text-sm">
