@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
-import GoldWatermark from "@/components/GoldWatermark";
 import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
@@ -378,7 +378,7 @@ export default function Pricing() {
             Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
             <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
           </div>
-      <GoldWatermark />
+      <VSWatermark />
       
       <div className="container mx-auto px-4 py-20">
         {/* Header */}
