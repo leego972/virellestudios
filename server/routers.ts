@@ -10442,6 +10442,8 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.successUrl);
+          assertAppReturnUrl(input.cancelUrl);
         // Resolve the correct Stripe price ID ÃÂ¢ÃÂÃÂ check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
@@ -10523,6 +10525,8 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.successUrl);
+          assertAppReturnUrl(input.cancelUrl);
         const { createTopUpCheckoutSession } = await import("./_core/subscription");
         const { getStripePriceId: getProvisionedId } = await import("./_core/stripeProvisioning");
         const packPriceMap: Record<string, string> = {
@@ -10580,6 +10584,8 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
+          assertAppReturnUrl(input.successUrl);
+          assertAppReturnUrl(input.cancelUrl);
         if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
         // Admins get everything free
         if (ctx.user.role === "admin") {
@@ -13025,25 +13031,53 @@ Rules:
         .mutation(async ({ ctx, input }) => { return db.deleteFeatureCut(input.id, ctx.user.id); }),
       listScenes: protectedProcedure
         .input(z.object({ cutId: z.number() }))
-        .query(async ({ ctx, input }) => { return db.getCutScenes(input.cutId); }),
+        .query(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.getCutScenes(input.cutId);
+          }),
       addScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), orderIndex: z.number().optional() }))
-        .mutation(async ({ ctx, input }) => { return db.addSceneToCut(input.cutId, input.sceneId, input.orderIndex ?? 0); }),
+          .mutation(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.addSceneToCut(input.cutId, input.sceneId, input.orderIndex ?? 0);
+          }),
       removeScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number() }))
-        .mutation(async ({ ctx, input }) => { return db.removeSceneFromCut(input.cutId, input.sceneId); }),
+          .mutation(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.removeSceneFromCut(input.cutId, input.sceneId);
+          }),
       toggleScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), included: z.boolean() }))
-        .mutation(async ({ ctx, input }) => { return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included); }),
+          .mutation(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included);
+          }),
       reorderScenes: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneIds: z.array(z.number()) }))
-        .mutation(async ({ ctx, input }) => { return db.reorderCutScenes(input.cutId, input.sceneIds); }),
+          .mutation(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.reorderCutScenes(input.cutId, input.sceneIds);
+          }),
       compile: protectedProcedure
         .input(z.object({ cutId: z.number(), format: z.string().optional() }))
-        .mutation(async ({ ctx, input }) => { return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4"); }),
+          .mutation(async ({ ctx, input }) => {
+            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
+            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
+            return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4");
+          }),
       getCompileJob: protectedProcedure
         .input(z.object({ jobId: z.number() }))
-        .query(async ({ ctx, input }) => { return db.getCompileJobById(input.jobId); }),
+          .query(async ({ ctx, input }) => {
+            const job = await db.getCompileJobById(input.jobId);
+            if (job && (job as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
+            return job;
+          }),
     }),
   // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pro Ops: Render Queue Bulk Operations ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   renderQueueBulk: router({
