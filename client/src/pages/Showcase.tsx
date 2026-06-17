@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import SiteHead from "@/components/SiteHead";
 import { trpc } from "@/lib/trpc";
-import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import GoldWatermark from "@/components/GoldWatermark";
 import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe, Mail, FileText, X as XIcon, CheckCircle2, MessageSquare, ArrowRight, Briefcase, Music, ListFilter, Image as ImageIcon, AlignLeft } from "lucide-react";
 import showrunner from "@/data/showrunnerShowcase";
 import movie from "@/data/showrunnerMovie";
@@ -381,7 +381,7 @@ export default function Showcase() {
   return (
     <div className="min-h-screen text-white relative overflow-hidden" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Golden logo watermark */}
-      <GoldWatermarkLaunch />
+      <GoldWatermark />
 
       {/* Cinematic grain overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03]"
