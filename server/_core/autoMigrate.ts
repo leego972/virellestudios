@@ -1431,6 +1431,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "monthlyGenerationsResetAt", definition: "TIMESTAMP NULL" },
     { table: "users", column: "email", definition: "VARCHAR(320) NULL" },
     { table: "users", column: "passwordHash", definition: "VARCHAR(255) NULL" },
+    { table: "users", column: "passwordChangedAt", definition: "TIMESTAMP NULL" },
     { table: "users", column: "loginMethod", definition: "VARCHAR(64) NULL" },
     // Scenes table - transition & grading (missing from original CREATE TABLE)
     { table: "scenes", column: "transitionType", definition: "VARCHAR(64) NULL DEFAULT 'cut'" },
