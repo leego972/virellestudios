@@ -298,7 +298,14 @@ export default function DirectorCut() {
   const deleteSceneMutation = trpc.scene.delete.useMutation();
   const reorderMutation = trpc.scene.reorder.useMutation();
   const generatePreviewMutation = trpc.scene.generatePreview.useMutation({
-    onSuccess: () => { refetchScenes(); toast.success("Preview regenerated"); },
+    onSuccess: (data: any) => {
+      refetchScenes();
+      if (data?.byokHint) {
+        toast.info("Generating via Pollinations (free tier). Add a video API key in Settings → API Keys for cinematic quality.", { duration: 7000 });
+      } else {
+        toast.success("Preview regenerated");
+      }
+    },
     onError: (e) => toast.error(e.message),
   });
 
