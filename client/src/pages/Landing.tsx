@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import SiteHead from "@/components/SiteHead";
@@ -74,25 +75,6 @@ function CinematicBackground() {
 }
 
 /* Gold watermark — large, fixed, perfectly centered, stays on screen while scrolling */
-function GoldWatermark() {
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center pointer-events-none select-none"
-      style={{ zIndex: 0 }}
-    >
-      <img
-        src={LOGO_URL}
-        alt=""
-        className="w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] object-contain"
-        style={{
-          opacity: 0.10,
-          filter: "sepia(1) saturate(4) brightness(1.4) hue-rotate(5deg)",
-        }}
-        draggable={false}
-      />
-    </div>
-  );
-}
 
 export default function Landing() {
   const [, setLocation] = useLocation();
@@ -120,7 +102,7 @@ export default function Landing() {
         description="Virelle Studios — script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
         jsonLd={{ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Virelle Studios", applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Unified AI film production platform" }}
       />
-      <GoldWatermark />
+      <VSWatermark />
 
       {/* ─── Navigation ─── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-amber-500/20 py-3" : "bg-transparent py-6"}`}>
