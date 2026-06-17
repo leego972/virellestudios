@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
@@ -20,7 +21,6 @@ import Admin from "./pages/Admin";
 import LocationRecreation from "./pages/LocationRecreation";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
-import GoldWatermark from "./components/GoldWatermark";
 import { useContentProtection } from "./components/ContentProtection";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import CommandPaletteGlobal from "./components/CommandPaletteGlobal";
@@ -458,7 +458,7 @@ function App() {
         switchable
       >
         <TooltipProvider>
-          <GoldWatermark />
+          <VSWatermark />
           <Toaster />
           <Router />
           <CommandPaletteGlobal />
