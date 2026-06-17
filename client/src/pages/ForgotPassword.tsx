@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -8,7 +9,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Film, Loader2, ArrowLeft, Mail } from "lucide-react";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
-import GoldWatermark from "@/components/GoldWatermark";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -35,7 +35,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <GoldWatermark />
+      <VSWatermark />
       <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
