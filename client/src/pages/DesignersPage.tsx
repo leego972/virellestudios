@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
-  import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+  import GoldWatermark from "@/components/GoldWatermark";
   import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
   import {
     Sparkles,
@@ -142,7 +142,7 @@ import { useLocation } from "wouter";
         className="min-h-screen text-foreground relative"
         style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}
       >
-        <GoldWatermarkLaunch />
+        <GoldWatermark />
 
         {/* ═══════════════ 1 — HERO ═══════════════ */}
         <section className="relative overflow-hidden pt-24 pb-20 px-4">
