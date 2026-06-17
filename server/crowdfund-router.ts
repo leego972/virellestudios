@@ -13,6 +13,29 @@ import { nanoid } from "nanoid";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// returnUrl domain allowlist — prevents open redirect after Stripe Connect onboarding.
+// Mirrors the same guard in routers.ts.
+function assertAppReturnUrl(url: string): void {
+  let parsed: URL;
+  try { parsed = new URL(url); } catch {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid return URL." });
+  }
+  const allowedHosts = [
+    "virelle.life",
+    process.env.RAILWAY_PUBLIC_DOMAIN ?? "",
+    "localhost",
+  ].filter(Boolean);
+  const ok = allowedHosts.some(
+    (h) => parsed.hostname === h || parsed.hostname.endsWith("." + h)
+  );
+  if (!ok) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Return URL must point to the Virelle Studios application.",
+    });
+  }
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -365,6 +388,7 @@ function slugify(text: string): string {
       getOnboardingUrl: protectedProcedure
         .input(z.object({ campaignId: z.number().int(), returnUrl: z.string().url() }))
         .mutation(async ({ input, ctx }) => {
+          assertAppReturnUrl(input.returnUrl);
           const db = await getDb();
           if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
           const { stripe } = await import("./_core/subscription");
