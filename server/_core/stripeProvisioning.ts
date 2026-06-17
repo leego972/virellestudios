@@ -253,12 +253,12 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
 ];
 
 // Credit pack prices match the Pricing page UI (Pricing.tsx CREDIT_PACKS array).
-// topup_10   = Starter Pack:     100 cr  A$19
-// topup_50   = Producer Pack:    300 cr  A$49
-// topup_100  = Director Pack:    750 cr  A$99
-// topup_200  = Filmmaker Pack: 2,000 cr  A$199  (most popular)
-// topup_500  = Blockbuster Pack: 5,000 cr A$399
-// topup_1000 = Mogul Pack:    12,000 cr A$799
+// topup_10   = Starter Pack:      200 cr  A$19
+// topup_50   = Producer Pack:     600 cr  A$49
+// topup_100  = Director Pack:   1,400 cr  A$99
+// topup_200  = Filmmaker Pack:  3,500 cr  A$199  (most popular)
+// topup_500  = Blockbuster Pack: 9,000 cr A$399
+// topup_1000 = Mogul Pack:     22,000 cr A$799
 const TOPUP_PRICES: PriceDefinition[] = [
   {
     key: "topup_10",
