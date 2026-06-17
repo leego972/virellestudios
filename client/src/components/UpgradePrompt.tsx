@@ -11,6 +11,7 @@ interface UpgradePromptProps {
   currentTier?: string;
   className?: string;
   compact?: boolean;
+  reason?: "credits" | "tier";
 }
 
 // Three public-facing tiers: Indie, Creator, Industry.
@@ -21,21 +22,21 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
     icon: Zap,
     color: "text-blue-400",
     price: "A$149/month or A$1,490/year",
-    credits: "500 credits/month included",
+    credits: "700 credits/month included",
   },
   amateur: {
     name: "Creator",
     icon: Camera,
     color: "text-emerald-400",
     price: "A$490/month or A$4,900/year",
-    credits: "2,000 credits/month included",
+    credits: "3,000 credits/month included",
   },
   independent: {
     name: "Industry",
     icon: Film,
     color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
-    credits: "6,000 credits/month included",
+    credits: "9,000 credits/month included",
   },
   // Legacy aliases — all resolve to Industry
   creator: {
@@ -43,21 +44,21 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
     icon: Film,
     color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
-    credits: "6,000 credits/month included",
+    credits: "9,000 credits/month included",
   },
   studio: {
     name: "Industry",
     icon: Film,
     color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
-    credits: "6,000 credits/month included",
+    credits: "9,000 credits/month included",
   },
   industry: {
     name: "Industry",
     icon: Crown,
     color: "text-yellow-400",
     price: "Custom pricing",
-    credits: "6,000+ credits/month",
+    credits: "9,000+ credits/month",
   },
 };
 
@@ -88,8 +89,25 @@ export function UpgradePrompt({
   requiredTier = "independent",
   className = "",
   compact = false,
+  reason,
 }: UpgradePromptProps) {
   const [, setLocation] = useLocation();
+
+  if (reason === "credits") {
+    return (
+      <div className={`flex items-center gap-3 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 ${className}`}>
+        <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium">Out of credits</p>
+          <p className="text-xs text-muted-foreground">Top up to keep generating</p>
+        </div>
+        <Button size="sm" className="bg-amber-600 hover:bg-amber-500 text-white shrink-0" onClick={() => setLocation("/pricing#credit-packs")}>
+          <ArrowRight className="w-3 h-3 mr-1" />
+          Top Up
+        </Button>
+      </div>
+    );
+  }
 
   const normTier = normaliseTier(requiredTier);
   const tier = TIER_DISPLAY[normTier] || TIER_DISPLAY.independent;
