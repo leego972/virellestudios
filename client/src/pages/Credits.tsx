@@ -106,9 +106,9 @@ export default function Credits() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Current Balance */}
         <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardContent className="pt-6">
             {summaryLoading ? (
-              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
+              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
             ) : (
               <div className="text-center">
                 <div className="text-4xl font-black text-amber-400">
@@ -128,10 +128,10 @@ export default function Credits() {
         </Card>
 
         {/* Monthly Allocation */}
-        <Card>
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
+          <CardContent className="pt-6">
             {summaryLoading ? (
-              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
+              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
             ) : (
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-blue-500/10 shrink-0">
@@ -155,10 +155,10 @@ export default function Credits() {
         </Card>
 
         {/* Next Renewal */}
-        <Card>
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
+          <CardContent className="pt-6">
             {summaryLoading ? (
-              <div className="h-16 glass-card/5 rounded-lg animate-pulse" />
+              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
             ) : (
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-green-500/10 shrink-0">
@@ -211,9 +211,9 @@ export default function Credits() {
       )}
 
       {/* ─── Transaction History ─── */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-          <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Transaction History</CardTitle>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <CardTitle className="text-lg gradient-text-gold">Transaction History</CardTitle>
           {total > 0 && (
             <span className="text-sm text-muted-foreground">
               {total.toLocaleString()} total
