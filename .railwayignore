@@ -1,0 +1,17 @@
+# Markdown docs/analysis — keeps Railway build context lean
+*.md
+!README.md
+
+# Dev tooling and agent internals
+.agents/
+.githooks/
+
+# Desktop app (separate product)
+desktop/
+
+# E2E tests
+e2e/
+playwright.config.ts
+
+# Scratch/notes
+stripe-ids.txt
