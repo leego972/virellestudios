@@ -493,7 +493,7 @@ export async function sendCollaborationInviteEmail(
   </div>
   <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
   </div></body></html>`;
-    return sendEmail({ to, subject: "Action Required: Payment Failed — Virelle Studios", html });
+    return getTransporter().sendMail({ from: `"Virelle Studios" <${ENV.gmailUser}>`, to, subject: "Action Required: Payment Failed — Virelle Studios", html }).then(() => true as boolean).catch(() => false as boolean);
   }
 
   export async function sendCreditsDepletedEmail(to: string, name: string, topUpUrl: string): Promise<boolean> {
@@ -515,7 +515,7 @@ export async function sendCollaborationInviteEmail(
   </div>
   <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
   </div></body></html>`;
-    return sendEmail({ to, subject: "Your Virelle Studios Credits Have Run Out", html });
+    return getTransporter().sendMail({ from: `"Virelle Studios" <${ENV.gmailUser}>`, to, subject: "Your Virelle Studios Credits Have Run Out", html }).then(() => true as boolean).catch(() => false as boolean);
   }
 
   export async function sendSubscriptionExpiredEmail(to: string, name: string): Promise<boolean> {
@@ -537,7 +537,7 @@ export async function sendCollaborationInviteEmail(
   </div>
   <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
   </div></body></html>`;
-    return sendEmail({ to, subject: "Your Virelle Studios Subscription Has Ended", html });
+    return getTransporter().sendMail({ from: `"Virelle Studios" <${ENV.gmailUser}>`, to, subject: "Your Virelle Studios Subscription Has Ended", html }).then(() => true as boolean).catch(() => false as boolean);
   }
 
   export async function sendServiceRestoredEmail(to: string, name: string): Promise<boolean> {
@@ -559,6 +559,6 @@ export async function sendCollaborationInviteEmail(
   </div>
   <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
   </div></body></html>`;
-    return sendEmail({ to, subject: "Your Virelle Studios Service Has Been Restored", html });
+    return getTransporter().sendMail({ from: `"Virelle Studios" <${ENV.gmailUser}>`, to, subject: "Your Virelle Studios Service Has Been Restored", html }).then(() => true as boolean).catch(() => false as boolean);
   }
   
