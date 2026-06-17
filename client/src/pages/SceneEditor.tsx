@@ -467,9 +467,13 @@ export default function SceneEditor() {
   });
 
   const bulkVideoMutation = trpc.scene.bulkGenerateVideos.useMutation({
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
       utils.scene.listByProject.invalidate({ projectId });
-      toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
+      if (result?.byokHint) {
+        toast.info(`Generated ${result.generated} videos via Pollinations (free tier). Add a video API key in Settings → API Keys for cinematic quality.`, { duration: 7000 });
+      } else {
+        toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
+      }
     },
     onError: handleGenerationError,
   });
