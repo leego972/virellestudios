@@ -472,3 +472,93 @@ export async function sendCollaborationInviteEmail(
     return false;
   }
 }
+
+  export async function sendPaymentFailedEmail(to: string, name: string, invoiceUrl?: string): Promise<boolean> {
+    const billingLink = invoiceUrl || "https://virelle.life/settings/billing";
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Payment Failed</title></head>
+  <body style="background:#0a0914;color:#e8e0d0;font-family:'Georgia',serif;margin:0;padding:0;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+  <div style="text-align:center;margin-bottom:32px;">
+    <h1 style="color:#d4af37;font-size:28px;letter-spacing:2px;margin:0;">VIRELLE STUDIOS</h1>
+    <p style="color:#b8a070;font-size:12px;letter-spacing:3px;margin:4px 0 0;">BILLING ALERT</p>
+  </div>
+  <div style="border:1px solid rgba(212,175,55,0.2);border-radius:4px;padding:32px;">
+    <h2 style="color:#ef4444;margin:0 0 16px;">Payment Failed</h2>
+    <p style="line-height:1.7;margin:0 0 16px;">Dear ${name},</p>
+    <p style="line-height:1.7;margin:0 0 16px;">We were unable to process your latest payment. Your account will remain active during a short grace period, but please update your billing details to avoid any interruption to your production work.</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${billingLink}" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#b8860b);color:#0a0914;text-decoration:none;padding:12px 32px;border-radius:2px;font-size:14px;letter-spacing:1px;font-weight:bold;">UPDATE PAYMENT METHOD</a>
+    </div>
+    <p style="line-height:1.7;margin:0;color:#b8a070;font-size:13px;">If you believe this is an error, please contact our support team at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4af37;">studiosvirelle@gmail.com</a>.</p>
+  </div>
+  <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
+  </div></body></html>`;
+    return sendEmail({ to, subject: "Action Required: Payment Failed — Virelle Studios", html });
+  }
+
+  export async function sendCreditsDepletedEmail(to: string, name: string, topUpUrl: string): Promise<boolean> {
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Credits Depleted</title></head>
+  <body style="background:#0a0914;color:#e8e0d0;font-family:'Georgia',serif;margin:0;padding:0;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+  <div style="text-align:center;margin-bottom:32px;">
+    <h1 style="color:#d4af37;font-size:28px;letter-spacing:2px;margin:0;">VIRELLE STUDIOS</h1>
+    <p style="color:#b8a070;font-size:12px;letter-spacing:3px;margin:4px 0 0;">GENERATION CREDITS</p>
+  </div>
+  <div style="border:1px solid rgba(212,175,55,0.2);border-radius:4px;padding:32px;">
+    <h2 style="color:#f59e0b;margin:0 0 16px;">Your Credits Are Depleted</h2>
+    <p style="line-height:1.7;margin:0 0 16px;">Dear ${name},</p>
+    <p style="line-height:1.7;margin:0 0 16px;">Your AI generation credits have run out. Top up now to continue bringing your vision to life without interruption.</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${topUpUrl}" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#b8860b);color:#0a0914;text-decoration:none;padding:12px 32px;border-radius:2px;font-size:14px;letter-spacing:1px;font-weight:bold;">TOP UP CREDITS</a>
+    </div>
+    <p style="line-height:1.7;margin:0;color:#b8a070;font-size:13px;">Questions? Reach us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4af37;">studiosvirelle@gmail.com</a>.</p>
+  </div>
+  <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
+  </div></body></html>`;
+    return sendEmail({ to, subject: "Your Virelle Studios Credits Have Run Out", html });
+  }
+
+  export async function sendSubscriptionExpiredEmail(to: string, name: string): Promise<boolean> {
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Subscription Ended</title></head>
+  <body style="background:#0a0914;color:#e8e0d0;font-family:'Georgia',serif;margin:0;padding:0;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+  <div style="text-align:center;margin-bottom:32px;">
+    <h1 style="color:#d4af37;font-size:28px;letter-spacing:2px;margin:0;">VIRELLE STUDIOS</h1>
+    <p style="color:#b8a070;font-size:12px;letter-spacing:3px;margin:4px 0 0;">MEMBERSHIP</p>
+  </div>
+  <div style="border:1px solid rgba(212,175,55,0.2);border-radius:4px;padding:32px;">
+    <h2 style="color:#e8e0d0;margin:0 0 16px;">Your Subscription Has Ended</h2>
+    <p style="line-height:1.7;margin:0 0 16px;">Dear ${name},</p>
+    <p style="line-height:1.7;margin:0 0 16px;">Your Virelle Studios subscription has ended and your account has been moved to the Independent tier. All your projects, scenes, and creative work remain safely stored and accessible.</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://virelle.life/pricing" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#b8860b);color:#0a0914;text-decoration:none;padding:12px 32px;border-radius:2px;font-size:14px;letter-spacing:1px;font-weight:bold;">RENEW SUBSCRIPTION</a>
+    </div>
+    <p style="line-height:1.7;margin:0;color:#b8a070;font-size:13px;">Need help? Contact us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4af37;">studiosvirelle@gmail.com</a>.</p>
+  </div>
+  <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
+  </div></body></html>`;
+    return sendEmail({ to, subject: "Your Virelle Studios Subscription Has Ended", html });
+  }
+
+  export async function sendServiceRestoredEmail(to: string, name: string): Promise<boolean> {
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Service Restored</title></head>
+  <body style="background:#0a0914;color:#e8e0d0;font-family:'Georgia',serif;margin:0;padding:0;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+  <div style="text-align:center;margin-bottom:32px;">
+    <h1 style="color:#d4af37;font-size:28px;letter-spacing:2px;margin:0;">VIRELLE STUDIOS</h1>
+    <p style="color:#b8a070;font-size:12px;letter-spacing:3px;margin:4px 0 0;">ACCOUNT RESTORED</p>
+  </div>
+  <div style="border:1px solid rgba(212,175,55,0.2);border-radius:4px;padding:32px;">
+    <h2 style="color:#22c55e;margin:0 0 16px;">Full Access Restored</h2>
+    <p style="line-height:1.7;margin:0 0 16px;">Dear ${name},</p>
+    <p style="line-height:1.7;margin:0 0 16px;">Your payment has been processed and your Virelle Studios subscription is fully active. All premium features and your generation credits are now available.</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://virelle.life/dashboard" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#b8860b);color:#0a0914;text-decoration:none;padding:12px 32px;border-radius:2px;font-size:14px;letter-spacing:1px;font-weight:bold;">GO TO DASHBOARD</a>
+    </div>
+    <p style="line-height:1.7;margin:0;color:#b8a070;font-size:13px;">Thank you for being part of Virelle Studios. Reach us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4af37;">studiosvirelle@gmail.com</a>.</p>
+  </div>
+  <p style="text-align:center;color:#6b5a3a;font-size:11px;margin-top:24px;">© ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
+  </div></body></html>`;
+    return sendEmail({ to, subject: "Your Virelle Studios Service Has Been Restored", html });
+  }
+  
