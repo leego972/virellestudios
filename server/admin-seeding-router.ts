@@ -220,6 +220,28 @@ import { router, adminProcedure } from "./_core/trpc";
           if (!existing.length) { await db.insert(crowdfundCampaigns).values(sample as any); }
         }
 
+
+        // ── Final image patch: fix NULL/empty/broken images for ALL seeded items ──
+        await db.execute(sql`
+          UPDATE wardrobeItems
+          SET
+            primaryImageUrl = CONCAT(
+              'https://image.pollinations.ai/prompt/',
+              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category,'fashion'), ' fashion item')),
+              ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+              '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+            ),
+            imageUrls = JSON_ARRAY(CONCAT(
+              'https://image.pollinations.ai/prompt/',
+              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                COALESCE(referencePrompt, CONCAT(name, ' ', COALESCE(category,'fashion'), ' fashion item')),
+              ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
+              '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
+            ))
+          WHERE collectionId IS NOT NULL
+            AND (primaryImageUrl IS NULL OR primaryImageUrl = '' OR primaryImageUrl LIKE '/lamalo/%' OR imageUrls IS NULL)
+        `);
         return { success: true, message: "Everything seeded successfully" };
       } catch (error) {
         logger.errorWithStack("Complete seeding error", error);
@@ -325,6 +347,7 @@ import { router, adminProcedure } from "./_core/trpc";
             AND (
               primaryImageUrl IS NULL
               OR primaryImageUrl = ''
+              OR primaryImageUrl LIKE '/lamalo/%'
               OR imageUrls IS NULL
             )
         `);
