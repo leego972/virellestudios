@@ -455,6 +455,8 @@ function slugify(text: string): string {
         })
       )
       .mutation(async ({ input, ctx }) => {
+          assertAppReturnUrl(input.successUrl);
+          assertAppReturnUrl(input.cancelUrl);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
         const { stripe, getOrCreateStripeCustomer } = await import("./_core/subscription");
