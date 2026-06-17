@@ -1,7 +1,7 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, AlertTriangle, FileText, Scale, User, MapPin, Film, Copyright, CreditCard, Mail } from "lucide-react";
-import GoldWatermark from "@/components/GoldWatermark";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 
 export default function TermsOfService() {
@@ -9,7 +9,7 @@ export default function TermsOfService() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#07070e] via-[#0c0b18] to-[#07070a]  bg-background text-foreground relative" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
-      <GoldWatermark />
+      <VSWatermark />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Home
