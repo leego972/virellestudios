@@ -62,7 +62,16 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
     const userId = payload.userId as number;
     if (userId) {
       const user = await db.getUserById(userId);
-      return user ?? null;
+      if (!user) return null;
+      // Zombie-session guard: if the user changed their password after this token
+      // was issued, the old session is no longer valid.  payload.iat is seconds
+      // since epoch (set by setIssuedAt() above); passwordChangedAt is a Date.
+      if (payload.iat && (user as any).passwordChangedAt) {
+        if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) {
+          return null;
+        }
+      }
+      return user;
     }
     // Fallback: check if it's a Manus-style JWT with openId
     const openId = payload.openId as string;
@@ -79,7 +88,13 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
       const userId = payload.userId as number;
       if (userId) {
         const user = await db.getUserById(userId);
-        return user ?? null;
+        if (!user) return null;
+        if (payload.iat && (user as any).passwordChangedAt) {
+          if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) {
+            return null;
+          }
+        }
+        return user;
       }
     } catch {
       // JWT verification failed entirely
