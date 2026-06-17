@@ -866,33 +866,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </div>
             )}
 
-            {/* Completed films */}
-            {recentCompleted.length > 0 && (
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide gradient-text-gold">Recent Completions</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {recentCompleted.map((p) => (
-                    <Card key={p.id} className="cursor-pointer hover:border-primary/30 transition-all bg-card/40 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${p.id}`)}>
-                      <CardContent className="p-3">
-                        {(p as any).posterUrl ? (
-                          <div className="h-20 w-full rounded-lg overflow-hidden bg-muted mb-2">
-                            <img src={(p as any).posterUrl} alt={p.title} className="h-full w-full object-cover" />
-                          </div>
-                        ) : (
-                          <div className="h-20 rounded-lg bg-muted/40 flex items-center justify-center mb-2">
-                            <Play className="h-6 w-6 text-muted-foreground/30" />
-                          </div>
-                        )}
-                        <p className="text-xs font-medium truncate">{p.title}</p>
-                        <p className="text-[10px] text-green-400 mt-0.5 flex items-center gap-1"><CheckCircle2 className="h-2.5 w-2.5" />Completed</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Activity Feed */}
