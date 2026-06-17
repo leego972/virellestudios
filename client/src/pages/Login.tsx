@@ -28,9 +28,9 @@ export default function Login() {
 
   const utils = trpc.useUtils();
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      utils.auth.me.invalidate();
+    onSuccess: async () => {
       toast.success("Welcome back!");
+      await utils.auth.me.refetch();
       navigate("/?opener=1");
     },
     onError: (err) => {
