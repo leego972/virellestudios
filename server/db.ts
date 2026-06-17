@@ -1354,8 +1354,11 @@ export async function updateUser(userId: number, patch: Partial<InsertUser>) {
 export async function updateUserPassword(userId: number, passwordHash: string) {
   const db = await getDb();
   if (!db) return;
+  // passwordChangedAt is stamped here so authenticateFromCookie can reject any
+  // JWT whose iat is older than this value — invalidating sessions issued before
+  // the password change without requiring a token blacklist or JTI tracking.
   await db.update(users)
-    .set({ passwordHash, updatedAt: new Date() })
+    .set({ passwordHash, passwordChangedAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, userId));
 }
 
