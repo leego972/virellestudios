@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import StudioOpener from "@/components/StudioOpener";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -346,6 +347,9 @@ export default function DirectorCut() {
   const [currentPlayingIdx, setCurrentPlayingIdx] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Virelle Studios opener — plays before every full-film preview from the start.
+  const [showOpener, setShowOpener] = useState(false);
+  const pendingPlayRef = useRef(false);
 
   // Drag state
   const dragFromIdx = useRef<number | null>(null);
@@ -407,6 +411,12 @@ export default function DirectorCut() {
 
   const startPlayback = useCallback(() => {
     if (activeScenes.length === 0) return;
+    // Always play the Virelle Studios opener when starting from the very beginning.
+    if (playheadTime === 0) {
+      pendingPlayRef.current = true;
+      setShowOpener(true);
+      return;
+    }
     setIsPlaying(true);
     let elapsed = 0;
     let sceneIdx = 0;
@@ -1376,6 +1386,41 @@ export default function DirectorCut() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Virelle Studios opener — brand standard before every full-film preview */}
+      {showOpener && (
+        <StudioOpener
+          onComplete={() => {
+            setShowOpener(false);
+            if (pendingPlayRef.current) {
+              pendingPlayRef.current = false;
+              // Resume actual playback after opener finishes
+              setIsPlaying(true);
+              let elapsed = 0;
+              let sceneIdx = 0;
+              for (let i = 0; i < activeScenes.length; i++) {
+                const dur = Math.max(1, activeScenes[i].duration - activeScenes[i].trimIn - activeScenes[i].trimOut);
+                if (elapsed + dur > 0) { sceneIdx = i; break; }
+                elapsed += dur;
+              }
+              setCurrentPlayingIdx(sceneIdx);
+              const scene = activeScenes[sceneIdx];
+              if (scene?.videoUrl && videoRef.current) {
+                videoRef.current.src = scene.videoUrl;
+                videoRef.current.currentTime = scene.trimIn;
+                videoRef.current.play().catch(() => {});
+              }
+              playIntervalRef.current = setInterval(() => {
+                setPlayheadTime((prev) => {
+                  const next = prev + 0.1;
+                  if (next >= totalDuration) { stopPlayback(); return 0; }
+                  return next;
+                });
+              }, 100);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
