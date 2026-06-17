@@ -16,6 +16,17 @@ import { ENV } from "./_core/env";
 import { isTopTierUser } from "./_core/subscription";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
+import * as db from "./db";
+import {
+  designerProfiles,
+  designerCollections,
+  wardrobeItems,
+  wardrobeAssignments,
+  characters,
+  scenes,
+  projects,
+  customItemOrders,
+} from "../drizzle/schema";
 
 // returnUrl domain allowlist — prevents open redirect after Stripe checkout/portal.
 function assertAppReturnUrl(url: string): void {
@@ -38,17 +49,6 @@ function assertAppReturnUrl(url: string): void {
     });
   }
 }
-import * as db from "./db";
-import {
-  designerProfiles,
-  designerCollections,
-  wardrobeItems,
-  wardrobeAssignments,
-  characters,
-  scenes,
-  projects,
-  customItemOrders,
-} from "../drizzle/schema";
 
 const stripe: Stripe | null = ENV.stripeSecretKey
   ? new Stripe(ENV.stripeSecretKey, { apiVersion: "2024-06-20" as any })
