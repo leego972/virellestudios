@@ -6,12 +6,12 @@ import { useState } from "react";
   import { toast } from "sonner";
 
   const TOP_UP_PACKS = [
-    { id: "topup_10",   name: "Starter",     credits: 100,   price: "A$19",  popular: false },
-    { id: "topup_50",   name: "Producer",    credits: 300,   price: "A$49",  popular: false },
-    { id: "topup_100",  name: "Director",    credits: 750,   price: "A$99",  popular: false },
-    { id: "topup_200",  name: "Filmmaker",   credits: 2000,  price: "A$199", popular: true  },
-    { id: "topup_500",  name: "Blockbuster", credits: 5000,  price: "A$399", popular: false },
-    { id: "topup_1000", name: "Mogul",       credits: 12000, price: "A$799", popular: false },
+    { id: "topup_10",   name: "Starter",     credits: 200,   price: "A$19",  popular: false },
+    { id: "topup_50",   name: "Producer",    credits: 600,   price: "A$49",  popular: false },
+    { id: "topup_100",  name: "Director",    credits: 1400,  price: "A$99",  popular: false },
+    { id: "topup_200",  name: "Filmmaker",   credits: 3500,  price: "A$199", popular: true  },
+    { id: "topup_500",  name: "Blockbuster", credits: 9000,  price: "A$399", popular: false },
+    { id: "topup_1000", name: "Mogul",       credits: 22000, price: "A$799", popular: false },
   ] as const;
 
   type PackId = typeof TOP_UP_PACKS[number]["id"];
