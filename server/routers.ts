@@ -1327,7 +1327,16 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
         const character = await db.getCharacterById(input.id);
-        if (character?.projectId) await assertCanAccessProject(character.projectId, ctx.user.id);
+        if (!character) return undefined;
+        if (character.projectId) {
+          // Project character — verify project access
+          await assertCanAccessProject(character.projectId, ctx.user.id);
+        } else {
+          // Library character (no project) — must belong to requesting user
+          if (character.userId !== ctx.user.id) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+          }
+        }
         return character;
       }),
 
@@ -8659,11 +8668,19 @@ Generate a detailed production budget estimate.`,
         role: z.enum(["viewer", "editor", "producer", "director"]),
       }))
       .mutation(async ({ ctx, input }) => {
+        const collab = await db.getCollaboratorById(input.id);
+        if (!collab) throw new TRPCError({ code: "NOT_FOUND", message: "Collaborator not found" });
+        if (collab.invitedBy !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised" });
         return db.updateCollaborator(input.id, { role: input.role });
       }),
     remove: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        const collab = await db.getCollaboratorById(input.id);
+        if (!collab) throw new TRPCError({ code: "NOT_FOUND", message: "Collaborator not found" });
+        if (collab.invitedBy !== ctx.user.id && collab.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised" });
+        }
         await db.deleteCollaborator(input.id);
         return { success: true };
       }),
@@ -12655,16 +12672,49 @@ Rules:
         return { url, sessionId, amountAud, actorName: actor.name };
       }),
 
-    // Webhook handler: fulfill actor unlock after successful Stripe payment
+    // Fulfill actor unlock after successful Stripe payment.
+    // SECURITY: We verify the Stripe session server-side before granting any
+    // entitlement. The client is NOT trusted to report the amount paid or to
+    // confirm that payment actually succeeded — we read both from Stripe directly.
     fulfillUnlock: protectedProcedure
       .input(z.object({
         actorId: z.string(),
         licenseType: z.enum(["personal", "creator", "commercial", "episodic"]),
         projectId: z.number().optional(),
-        stripeSessionId: z.string(),
-        amountPaidAud: z.number(),
+        stripeSessionId: z.string().max(255),
       }))
       .mutation(async ({ ctx, input }) => {
+        // ── 1. Verify payment with Stripe ────────────────────────────────────
+        const { stripe } = await import("./_core/subscription");
+        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
+
+        let session: import("stripe").Stripe.Checkout.Session;
+        try {
+          session = await stripe.checkout.sessions.retrieve(input.stripeSessionId);
+        } catch {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid checkout session" });
+        }
+
+        // Payment must be complete
+        if (session.payment_status !== "paid" || session.status !== "complete") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Payment not completed" });
+        }
+
+        // Session must belong to this user (metadata.userId set at checkout creation)
+        const metaUserId = session.metadata?.userId;
+        if (!metaUserId || metaUserId !== ctx.user.id.toString()) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Session does not belong to this user" });
+        }
+
+        // Actor and license type must match the checkout session
+        if (session.metadata?.actorId !== input.actorId || session.metadata?.licenseType !== input.licenseType) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Session metadata mismatch" });
+        }
+
+        // Use the amount Stripe recorded, not the client-supplied value
+        const verifiedAmountAud = (session.amount_total ?? 0) / 100;
+
+        // ── 2. Grant entitlement ─────────────────────────────────────────────
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
         try {
@@ -12674,12 +12724,12 @@ Rules:
             VALUES
               (${ctx.user.id}, ${input.actorId}, ${input.licenseType}, ${input.projectId ?? null},
                ${input.licenseType === "commercial" ? 1 : 0}, ${input.licenseType === "episodic" ? 1 : 0},
-               'stripe_checkout', ${input.stripeSessionId}, ${input.amountPaidAud}, 'active', NOW(), NOW(), NOW())
+               'stripe_checkout', ${input.stripeSessionId}, ${verifiedAmountAud}, 'active', NOW(), NOW(), NOW())
           `);
           await dbConn.execute(sql`
             INSERT INTO signatureCastEvents (userId, actorId, event, licenseType, projectId, metadata, createdAt)
             VALUES (${ctx.user.id}, ${input.actorId}, 'checkout_completed', ${input.licenseType},
-                    ${input.projectId ?? null}, ${JSON.stringify({ stripeSessionId: input.stripeSessionId, amountPaidAud: input.amountPaidAud })}, NOW())
+                    ${input.projectId ?? null}, ${JSON.stringify({ stripeSessionId: input.stripeSessionId, amountPaidAud: verifiedAmountAud })}, NOW())
           `);
         } catch (e) {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to record entitlement" });
