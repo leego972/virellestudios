@@ -1,3 +1,4 @@
+import VSWatermark from "@/components/VSWatermark";
 import { useState, useEffect } from "react";
   import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
@@ -7,8 +8,7 @@ import { useState, useEffect } from "react";
     Lightbulb, FileText, Calendar, Target, Video, Scissors,
     BookOpen, Image, Play, Package, ArrowRight, Check, Loader2,
   } from "lucide-react";
-  import GoldWatermark from "@/components/GoldWatermark";
-  import { trpc } from "@/lib/trpc";
+    import { trpc } from "@/lib/trpc";
   import { toast } from "sonner";
 
   // ─── Constants ────────────────────────────────────────────────────────────────
@@ -370,7 +370,7 @@ import { useState, useEffect } from "react";
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative"
         style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <GoldWatermark />
+        <VSWatermark />
         <div className="w-full max-w-2xl relative z-10">
           {/* Header */}
           <div className="flex items-center justify-between mb-10">
