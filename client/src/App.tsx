@@ -20,7 +20,7 @@ import Admin from "./pages/Admin";
 import LocationRecreation from "./pages/LocationRecreation";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
-import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
+import GoldWatermark from "./components/GoldWatermark";
 import { useContentProtection } from "./components/ContentProtection";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import CommandPaletteGlobal from "./components/CommandPaletteGlobal";
@@ -458,7 +458,7 @@ function App() {
         switchable
       >
         <TooltipProvider>
-          <GoldWatermarkLaunch />
+          <GoldWatermark />
           <Toaster />
           <Router />
           <CommandPaletteGlobal />
