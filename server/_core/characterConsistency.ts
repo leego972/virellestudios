@@ -220,8 +220,8 @@ export function buildCharacterDNA(character: {
     sections.push(
       "wearing a plain all-black outfit â solid black top, black trousers or skirt, " +
       "black shoes; no visible branding, no pattern, no colour accent; " +
-      "placeholder wardrobe â upgrade by leasing from the Virelle wardrobe marketplace"
-    );
+      "wardrobe not yet assigned â dress in a clean, understated neutral outfit appropriate to the scene setting; "
+      "avoid bold patterns or colours; maintain photorealistic costume quality"
   }
 
   // ââ Director consistency notes ââ
