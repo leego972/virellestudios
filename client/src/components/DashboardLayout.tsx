@@ -388,7 +388,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <a href="/" className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer hover:opacity-80 transition-opacity">
-                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
@@ -634,7 +634,7 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
               <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
+              <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
               <span className="text-base font-bold truncate">Virelle Studios</span>
               </a>
             </div>
@@ -706,7 +706,7 @@ function DashboardLayoutContent({
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              src="/virelle-logo-square.png"
               alt=""
               className="hidden dark:block w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.055]"
               style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
@@ -714,7 +714,7 @@ function DashboardLayoutContent({
             />
             {/* Light mode: very faint golden logo */}
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              src="/virelle-logo-square.png"
               alt=""
               className="block dark:hidden w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.06]"
               style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
