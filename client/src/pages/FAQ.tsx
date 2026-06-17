@@ -46,7 +46,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does each credit cost in real terms?",
-        a: "On the Indie plan (A$149/mo · ~$97 USD, 500 credits/month), each credit costs approximately A$0.30 (~$0.20 USD). On the Industry plan (A$1,490/mo · ~$965 USD, 6,000 credits/month), each credit costs approximately A$0.25 (~$0.16 USD). All plans include a 7-day free trial. A card is required to start — you won't be charged until the 7 days are up.",
+        a: "On the Indie plan (A$149/mo · ~$97 USD, 700 credits/month), each credit costs approximately A$0.21 (~$0.14 USD). On the Industry plan (A$1,490/mo · ~$965 USD, 9,000 credits/month), each credit costs approximately A$0.17 (~$0.11 USD). All plans include a 7-day free trial. A card is required to start — you won't be charged until the 7 days are up.",
       },
       {
         q: "Do unused credits roll over?",
