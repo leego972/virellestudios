@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { logger } from "./logger";
 /**
    * Production environment validation.
@@ -41,5 +42,47 @@ import { logger } from "./logger";
     } else {
       logger.info("â Production environment validation passed");
     }
+  }
+  
+  /**
+   * Validates that a URL is safe to fetch server-side.
+   * Blocks private/loopback/link-local IP ranges to prevent SSRF attacks.
+   * Throws a TRPCError if the URL is unsafe.
+   */
+  export function validatePublicUrl(raw: string, fieldName = "url"): string {
+    let parsed: URL;
+    try {
+      parsed = new URL(raw);
+    } catch {
+      throw new TRPCError({ code: "BAD_REQUEST", message: `Invalid ${fieldName}: must be a valid URL` });
+    }
+
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: `Invalid ${fieldName}: only http and https are allowed` });
+    }
+
+    const hostname = parsed.hostname.toLowerCase();
+
+    // Block loopback, private, link-local, and metadata service ranges
+    const blocked = [
+      /^localhost$/,
+      /^127\./,
+      /^0\.0\.0\.0$/,
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[01])\./,
+      /^192\.168\./,
+      /^169\.254\./,  // AWS/GCP metadata (169.254.169.254)
+      /^::1$/,          // IPv6 loopback
+      /^fc00:/,         // IPv6 unique local
+      /^fe80:/,         // IPv6 link-local
+    ];
+
+    for (const pattern of blocked) {
+      if (pattern.test(hostname)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: `Invalid ${fieldName}: private or reserved addresses are not allowed` });
+      }
+    }
+
+    return raw;
   }
   
