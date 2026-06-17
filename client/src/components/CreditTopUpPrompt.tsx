@@ -48,13 +48,13 @@ import { useState } from "react";
   }: CreditTopUpPromptProps) {
     const [buying, setBuying] = useState<string | null>(null);
 
-    const buyTopUp = trpc.system.createTopUpCheckout.useMutation({
-      onSuccess: (data) => {
+    const buyTopUp = trpc.subscription.createTopUpCheckout.useMutation({
+      onSuccess: (data: { url?: string } | null) => {
         if (data?.url) window.location.href = data.url;
         else toast.error("Could not start checkout — please try again.");
         setBuying(null);
       },
-      onError: (err) => {
+      onError: (err: { message?: string }) => {
         toast.error(err.message || "Checkout failed. Please try again.");
         setBuying(null);
       },
