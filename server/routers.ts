@@ -625,30 +625,47 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+
+        // ── IP-level gate (covers non-existent email path too) ───────────────
+        // trackLoginAttempt is keyed per-user, so it only fires when the email
+        // exists.  Without this IP-level check, an attacker can:
+        //   (a) rapidly probe non-existent emails with zero throttling, and
+        //   (b) credential-stuff across many accounts from one IP address.
+        // 20 attempts per IP per hour is generous for real users (≈1 every 3min).
+        await rateLimitPublicByIP(clientIP, "login", 20, 60 * 60 * 1000);
+
+        // ── Timing-safe lookup ───────────────────────────────────────────────
+        // We always run bcrypt.compare regardless of whether the account exists.
+        // Without this, response time reveals email registration status:
+        //   unknown email  → return immediately (no bcrypt, ~0 ms)
+        //   known email    → bcrypt comparison (~100 ms)
+        // The dummy hash is a valid bcrypt digest; compare() always takes the
+        // same ~100 ms wall-clock time whether it wins or loses.
+        const DUMMY_HASH = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TiGX6X7mLqTt7Q8kXvmfRezIj5Ba";
         let user = await db.getUserByEmail(input.email.toLowerCase());
-        if (!user || !user.passwordHash) {
-          logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
+        const hashToCompare = (user?.passwordHash) ?? DUMMY_HASH;
+        const valid = await bcrypt.compare(input.password, hashToCompare);
+
+        if (!user || !user.passwordHash || !valid) {
+          if (user) {
+            logAuditEvent(user.id, "login_failed_wrong_password", clientIP, false);
+          } else {
+            logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
+          }
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
 
-        // Admin accounts bypass brute-force lockout
+        // Admin accounts bypass per-account brute-force lockout
         const isAdminAccount = user.role === "admin";
         if (!isAdminAccount) {
-          // Security: Check for brute force / lockout before password check
+          // Secondary per-account lockout (caps repeated failures on a known account)
           const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
           if (!loginPreCheck.allowed) {
             logAuditEvent(user.id, "login_blocked_lockout", clientIP, false);
             throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: loginPreCheck.reason || "Account locked" });
           }
         } else {
-          // For admin accounts, still track but never block
           unflagUser(user.id);
-        }
-
-        const valid = await bcrypt.compare(input.password, user.passwordHash);
-        if (!valid) {
-          logAuditEvent(user.id, "login_failed_wrong_password", clientIP, false);
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
 
         // Mark login as successful
