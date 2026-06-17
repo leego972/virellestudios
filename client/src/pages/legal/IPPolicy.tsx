@@ -1,4 +1,4 @@
-import GoldWatermark from "@/components/GoldWatermark";
+import VSWatermark from "@/components/VSWatermark";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import { Shield, Mail, AlertTriangle, Copyright, Lock, FileText, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -12,7 +12,7 @@ export default function IPPolicy() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#07070e] via-[#0c0b18] to-[#07070a]  bg-background relative" style={{ background: 'linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)' }}>
-      <GoldWatermark />
+      <VSWatermark />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Home
