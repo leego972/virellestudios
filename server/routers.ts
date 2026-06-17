@@ -4289,7 +4289,7 @@ Available fields you can update:
     image: protectedProcedure
       .input(z.object({
         base64: z.string().max(14_000_000, "File too large. Max 10MB."),
-        filename: z.string(),
+        filename: z.string().max(255),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -4304,7 +4304,7 @@ Available fields you can update:
     footage: protectedProcedure
       .input(z.object({
         base64: z.string().max(200_000_000, "File too large. Max 150MB."),
-        filename: z.string(),
+        filename: z.string().max(255),
         contentType: z.enum(["video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/webm"]).default("video/mp4"),
         sceneId: z.number().optional(),
         footageType: z.enum(["replace", "overlay", "reference"]).default("replace"),
@@ -4335,7 +4335,7 @@ Available fields you can update:
     referenceImage: protectedProcedure
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
-        filename: z.string(),
+        filename: z.string().max(255),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         sceneId: z.number(),
       }))
@@ -4376,7 +4376,7 @@ Available fields you can update:
     projectReferenceImage: protectedProcedure
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
-        filename: z.string(),
+        filename: z.string().max(255),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         projectId: z.number(),
       }))
@@ -6296,7 +6296,7 @@ FORMAT RULES (always apply):
     uploadAudio: protectedProcedure
       .input(z.object({
         base64: z.string().max(70_000_000, "File too large. Max 50MB."),
-        filename: z.string(),
+        filename: z.string().max(255),
         contentType: z.enum(["audio/mpeg", "audio/wav", "audio/ogg", "audio/aac", "audio/mp4", "audio/webm"]).default("audio/mpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -11026,13 +11026,20 @@ Rules:
     // Validate a promo code (public ÃÂ¢ÃÂÃÂ called live as user types)
     validate: publicProcedure
       .input(z.object({ code: z.string() }))
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
+        // Rate-limit unauthenticated promo enumeration: 20 lookups per IP per hour.
+        // Without this, anyone could brute-force the promo code space at DB speed.
+        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+        await rateLimitPublicByIP(clientIP, "promo-validate", 20, 60 * 60 * 1000);
         return await db.validatePromoCode(input.code.trim().toUpperCase());
       }),
     // Apply a promo code to the current user's account (stores it for checkout)
     applyCode: protectedProcedure
       .input(z.object({ code: z.string() }))
       .mutation(async ({ ctx, input }) => {
+        // Secondary rate limit on the write path: 10 apply attempts per IP per hour.
+        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+        await rateLimitPublicByIP(clientIP, "promo-apply", 10, 60 * 60 * 1000);
         const code = input.code.trim().toUpperCase();
         const validation = await db.validatePromoCode(code);
         if (!validation.valid) {
