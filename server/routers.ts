@@ -45,6 +45,7 @@ import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
+import { validatePublicUrl } from "./_core/envValidation";
 import { seoRouter } from "./seo-router";
 import { communityForumRouter } from "./community-forum-router";
 import { autonomousRouter } from "./autonomous-router";
@@ -1652,6 +1653,7 @@ export const appRouter = router({
 
         if (input.referenceImageUrl) {
           // Fetch image from Wikimedia Commons URL
+          validatePublicUrl(input.referenceImageUrl, "referenceImageUrl");
           const imgRes = await fetch(input.referenceImageUrl, {
             headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" },
           });
@@ -10220,6 +10222,7 @@ Rules:
             if (!initRes.ok) { const err = await initRes.json(); throw new Error(err.error?.message || "YouTube upload init failed"); }
             const uploadUrl = initRes.headers.get("location");
             if (!uploadUrl) throw new Error("YouTube did not return an upload URL");
+            validatePublicUrl(input.mediaUrl, "mediaUrl");
             const videoRes = await fetch(input.mediaUrl);
             if (!videoRes.ok) throw new Error("Could not fetch video from provided URL");
             const videoBuffer = await videoRes.arrayBuffer();
