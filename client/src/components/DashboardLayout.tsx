@@ -81,7 +81,7 @@ import NotificationBell from "./NotificationBell";
 import RenderQueueTray from "./RenderQueueTray";
 import { HollywoodIcon } from "./HollywoodIcon";
 import { ToolIconKey } from "@/constants/hollywoodIcons";
-import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import GoldWatermark from "@/components/GoldWatermark";
 
 // Navigation grouped by production pipeline logic
 const menuGroups = [
@@ -374,7 +374,7 @@ function DashboardLayoutContent({
 
   return (
     <>
-      <GoldWatermarkLaunch />
+      <GoldWatermark />
       <div className="relative" ref={sidebarRef}>
         <Sidebar collapsible="icon" className="border-r-0" disableTransition={isResizing}>
           <SidebarHeader className="h-14 md:h-16 justify-center">
