@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
   import { ArrowLeft, Lock, Eye, Shield, Trash2, Database, Mail, Globe, CheckCircle2, AlertCircle } from "lucide-react";
-  import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+  import GoldWatermark from "@/components/GoldWatermark";
   import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 
   export default function PrivacyPolicy() {
@@ -9,7 +9,7 @@ import { useLocation } from "wouter";
 
     return (
       <div className="min-h-screen text-foreground relative" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <GoldWatermarkLaunch />
+        <GoldWatermark />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
           <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to Home
