@@ -93,6 +93,12 @@ import "@/lib/sentry";
             action: { label: "Upgrade", onClick: () => { window.location.href = "/pricing"; } },
           });
         }
+        if (msg && msg.includes("INSUFFICIENT_CREDITS")) {
+          toast.error("You've run out of credits — top up to keep creating.", {
+            duration: 10000,
+            action: { label: "Top Up", onClick: () => { window.location.href = "/pricing#credit-packs"; } },
+          });
+        }
       }
       if (import.meta.env.DEV) console.error("[API Mutation Error]", error);
     }
