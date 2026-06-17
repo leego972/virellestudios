@@ -1029,7 +1029,7 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     keyPrefix: "",
     signupUrl: "https://console.byteplus.com/ark/region:ark+ap-southeast-1/apiKey",
     pricing: "Pay-per-use via BytePlus ModelArk. ~$0.10-0.30 per video clip.",
-    models: "Seedance 1.5 Pro (API available now) Â· Seedance 2.0 (coming soon â will auto-upgrade)",
+    models: "Seedance 1.5 Pro Â· Seedance 2.0 (auto-upgrades when available)",
   },
   {
     id: "veo3",
