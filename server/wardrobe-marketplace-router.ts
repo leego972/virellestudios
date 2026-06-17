@@ -432,20 +432,24 @@ export const wardrobeMarketplaceRouter = router({
       .query(async ({ input }) => {
         const dbConn = await getDb();
         if (!dbConn) return [];
-        return dbConn
-          .select()
-          .from(designerProfiles)
-          .where(
-            and(
-              eq(designerProfiles.visibility, "public"),
-              eq(designerProfiles.membershipStatus, "active"),
-            ),
-          )
-          .orderBy(desc(designerProfiles.createdAt))
-          .limit(input?.limit ?? 24)
-          .offset(input?.offset ?? 0);
+        // Deduplicate by brandName — take the canonical (lowest-id) profile per brand.
+        // Without a UNIQUE constraint on brandName, repeated seed runs create duplicate
+        // profiles; this ensures each brand appears exactly once in the marketplace grid.
+        const lim = input?.limit ?? 24;
+        const off = input?.offset ?? 0;
+        const [rows] = await dbConn.execute(sql`
+          SELECT dp.* FROM designerProfiles dp
+          INNER JOIN (
+            SELECT MIN(id) AS min_id
+            FROM designerProfiles
+            WHERE visibility = 'public' AND membershipStatus = 'active'
+            GROUP BY brandName
+          ) deduped ON dp.id = deduped.min_id
+          ORDER BY dp.createdAt DESC
+          LIMIT ${lim} OFFSET ${off}
+        `);
+        return (rows as any[]);
       }),
-
     /** Single designer + their published collections */
     getDesigner: publicProcedure
       .input(z.object({ id: z.number().int() }))
