@@ -263,7 +263,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard"],
     maxDurationMinutes: 0,
     maxClipsPerScene: 0,
-    monthlyCredits: 500,
+    monthlyCredits: 700,
   },
 
   // âââ CREATOR (DB: "amateur") âââ A$490/month â 2,000 credits/month ââââââââââ
@@ -323,7 +323,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 5,
-    monthlyCredits: 2000,
+    monthlyCredits: 3000,
   },
 
   // âââ INDUSTRY (DB: "independent") âââ A$1,490/month â 6,000 credits/month âââ
@@ -383,7 +383,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 10,
-    monthlyCredits: 6000,
+    monthlyCredits: 9000,
   },
 
   // âââ INDUSTRY alias (DB: "creator") âââ same limits as independent âââ
@@ -412,7 +412,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
     canUseCrowdfunding: true,
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 90, maxClipsPerScene: 10,
-    monthlyCredits: 6000,
+    monthlyCredits: 9000,
   },
 
   // âââ INDUSTRY alias (DB: "studio") âââ same limits as independent âââ
@@ -441,7 +441,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
     canUseCrowdfunding: true,
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 20,
-    monthlyCredits: 15500,
+    monthlyCredits: 20000,
   },
 
   // âââ ENTERPRISE (DB: "industry") âââ Custom pricing â 50,500 credits/month âââ
@@ -501,7 +501,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
     maxClipsPerScene: 50,
-    monthlyCredits: 50500,
+    monthlyCredits: 60000,
   },
 
   // âââ BETA âââ FREE â Invite-only, full Industry Enterprise-level access âââ
@@ -533,7 +533,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
     maxClipsPerScene: 12,
-    monthlyCredits: 5000,
+    monthlyCredits: 6500,
   },
 };
 
@@ -651,8 +651,8 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   bulk_generate_previews:  { cost: 3,   label: "Bulk Generate Previews (per scene â image only)" },
   bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene â duration-scaled)" },
   // ââ AI writing & production tools âââââââââââââââââââââââââ
-  virelle_chat:            { cost: 2,   label: "Virelle AI Chat / Director Assistant (per message)" },
-  director_assistant:      { cost: 2,   label: "Director's Assistant SSE stream message" },
+  virelle_chat:            { cost: 1,   label: "Virelle AI Chat / Director Assistant (per message)" },
+  director_assistant:      { cost: 1,   label: "Director's Assistant SSE stream message" },
   voice_tts:               { cost: 2,   label: "Voice TTS synthesis (ElevenLabs / OpenAI)" },
   script_writer_ai:        { cost: 8,   label: "AI Script Writer (full screenplay generation)" },
   storyboard_ai:           { cost: 8,   label: "AI Storyboard Generation (full visual breakdown)" },
@@ -686,7 +686,7 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   film_post_adr_suggest:   { cost: 5,   label: "AI ADR Suggestions (dialogue replacement analysis per project)" },
   film_post_foley_suggest: { cost: 5,   label: "AI Foley Suggestions (sound design analysis per project)" },
   film_post_score_gen:     { cost: 8,   label: "AI Score Cue Generation (music cue breakdown per project)" },
-  film_post_mix_export:    { cost: 2,   label: "Mix Summary Export (structured post-production report)" },
+  film_post_mix_export:    { cost: 1,   label: "Mix Summary Export (structured post-production report)" },
   // ââ Funding Directory âââââââââââââââââââââââââââââââââââââ
   funding_app_submit:      { cost: 10,  label: "Funding Application Submit (compiled pack + email delivery)" },
   // ââ Blog & content ââââââââââââââââââââââââââââââââââââââââ
@@ -699,7 +699,7 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   // ââ Crowdfunding ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   crowdfund_campaign_launch: { cost: 0,   label: "Launch Crowdfunding Campaign (FREE â tier-gated, no credit fee)" },
   crowdfund_ai_copy:         { cost: 3,   label: "AI Crowdfunding Copy (tagline + pitch description via Director AI)" },
-  crowdfund_reward_gen:      { cost: 2,   label: "AI Reward Tier Suggestions (4 tiered reward ideas for campaign)" },
+  crowdfund_reward_gen:      { cost: 1,   label: "AI Reward Tier Suggestions (4 tiered reward ideas for campaign)" },
 };
 
 /**
@@ -741,12 +741,12 @@ export interface TopUpPack {
 }
 
 export const TOP_UP_PACKS: TopUpPack[] = [
-  { id: "topup_10",   name: "Starter Pack",     credits: 100,   price: 1900,    pricePerCredit: 0.19, savings: "" },
-  { id: "topup_50",   name: "Producer Pack",    credits: 300,   price: 4900,    pricePerCredit: 0.16, savings: "Save 16%" },
-  { id: "topup_100",  name: "Director Pack",    credits: 750,   price: 9900,    pricePerCredit: 0.13, savings: "Save 32%" },
-  { id: "topup_200",  name: "Filmmaker Pack",      credits: 2000,  price: 19900,   pricePerCredit: 0.10, savings: "Save 47%" },
-  { id: "topup_500",  name: "Blockbuster Pack", credits: 5000,  price: 39900,   pricePerCredit: 0.08, savings: "Save 58%" },
-  { id: "topup_1000", name: "Mogul Pack",       credits: 12000, price: 79900,   pricePerCredit: 0.07, savings: "Save 63%" },
+  { id: "topup_10",   name: "Starter Pack",     credits: 200,   price: 1900,    pricePerCredit: 0.095, savings: "" },
+  { id: "topup_50",   name: "Producer Pack",    credits: 600,   price: 4900,    pricePerCredit: 0.082, savings: "Save 14%" },
+  { id: "topup_100",  name: "Director Pack",    credits: 1400,  price: 9900,    pricePerCredit: 0.071, savings: "Save 26%" },
+  { id: "topup_200",  name: "Filmmaker Pack",   credits: 3500,  price: 19900,   pricePerCredit: 0.057, savings: "Save 40%" },
+  { id: "topup_500",  name: "Blockbuster Pack", credits: 9000,  price: 39900,   pricePerCredit: 0.044, savings: "Save 54%" },
+  { id: "topup_1000", name: "Mogul Pack",       credits: 22000, price: 79900,   pricePerCredit: 0.036, savings: "Save 62%" },
 ];
 
 // Referral Rewards
