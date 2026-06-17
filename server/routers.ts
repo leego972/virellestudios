@@ -12714,9 +12714,22 @@ Rules:
         // Use the amount Stripe recorded, not the client-supplied value
         const verifiedAmountAud = (session.amount_total ?? 0) / 100;
 
-        // ── 2. Grant entitlement ─────────────────────────────────────────────
+        // ── 2. Grant entitlement (idempotent) ────────────────────────────────
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+        // Idempotency guard: if this session was already fulfilled, return success
+        // without inserting a duplicate row. Prevents replay attacks where a valid
+        // session ID is submitted multiple times to accumulate extra entitlements.
+        const existing = await dbConn.execute(sql`
+          SELECT id FROM signatureCastEntitlements
+          WHERE stripeSessionId = ${input.stripeSessionId} AND userId = ${ctx.user.id}
+          LIMIT 1
+        `);
+        if ((existing as any)[0]?.length > 0) {
+          return { success: true };
+        }
+
         try {
           await dbConn.execute(sql`
             INSERT INTO signatureCastEntitlements
