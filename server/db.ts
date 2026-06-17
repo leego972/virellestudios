@@ -1236,6 +1236,13 @@ export async function getCollaboratorByToken(token: string) {
   return rows[0];
 }
 
+export async function getCollaboratorById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(collaborators).where(eq(collaborators.id, id));
+  return rows[0];
+}
+
 export async function updateCollaborator(id: number, data: Partial<InsertCollaborator>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
