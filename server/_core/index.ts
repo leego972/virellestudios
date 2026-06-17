@@ -44,6 +44,7 @@ const startedAt = new Date();
 import { rateLimitHeavyAI, rateLimitUpload, rateLimitAI } from "./rateLimit";
 import type { Request, Response, NextFunction } from "express";
 import { storagePut } from "../storage";
+import { sendPaymentFailedEmail, sendCreditsDepletedEmail, sendSubscriptionExpiredEmail, sendServiceRestoredEmail } from "../email";
 
 /**
  * Lightweight Express middleware for IP-based rate limiting on public endpoints
@@ -404,6 +405,13 @@ async function startServer() {
           break;
         }
         case "customer.subscription.deleted": {
+          // Billing email notification
+          try {
+            const sub = event.data.object as any;
+            const custId = sub.customer as string;
+            const user = await db.getUserByStripeCustomerId(custId).catch(() => null);
+            if (user?.email) sendSubscriptionExpiredEmail(user.email, user.name || "Filmmaker").catch(() => {});
+          } catch {}
           const sub = event.data.object;
           const customerId = sub.customer as string;
           const userId = await resolveUserId(sub.metadata, customerId);
@@ -420,6 +428,15 @@ async function startServer() {
           break;
         }
         case "invoice.paid": {
+          // Billing email — only for subscription renewals (billing_reason = subscription_cycle)
+          try {
+            const inv = event.data.object as any;
+            if (inv.billing_reason === "subscription_cycle") {
+              const custId = inv.customer as string;
+              const user = await db.getUserByStripeCustomerId(custId).catch(() => null);
+              if (user?.email) sendServiceRestoredEmail(user.email, user.name || "Filmmaker").catch(() => {});
+            }
+          } catch {}
           // Successful payment — confirm subscription is active and update period end.
           const invoice = event.data.object;
           const customerId = invoice.customer as string;
@@ -482,6 +499,14 @@ async function startServer() {
           break;
         }
         case "invoice.payment_failed": {
+          // Billing email notification
+          try {
+            const custId = (event.data.object as any).customer as string;
+            const inv = event.data.object as any;
+            const invoiceUrl = inv.hosted_invoice_url || undefined;
+            const user = await db.getUserByStripeCustomerId(custId).catch(() => null);
+            if (user?.email) sendPaymentFailedEmail(user.email, user.name || "Filmmaker", invoiceUrl).catch(() => {});
+          } catch {}
           const invoice = event.data.object;
           const customerId = invoice.customer as string;
           const user = await db.getUserByStripeCustomerId(customerId);
