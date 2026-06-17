@@ -11758,6 +11758,7 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseFullFilmGeneration", "Promo Asset Generation");
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_copy_gen.cost, "ad_poster_copy_gen", `Promo assets for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) { maybeSendCreditDepletedEmail(ctx.user.id).catch(() => {}); throw new TRPCError({ code: "FORBIDDEN", message: e.message }); } }
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
 
