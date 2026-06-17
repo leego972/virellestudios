@@ -3530,8 +3530,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Pollinations is always available as a free fallback ÃÂ¢ÃÂÃÂ no key required.
-        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
+        // If no paid key is set, Pollinations (free) is used. byokHint tells the client to prompt for a key.
+        const _hasRealVideoKey = !!(byokKeys.runwayKey || byokKeys.openaiKey || byokKeys.falKey || byokKeys.lumaKey || byokKeys.replicateKey || byokKeys.hfToken || byokKeys.byteplusKey || byokKeys.googleAiKey);
 
         // Cancel any existing processing jobs for this scene to prevent race conditions.
         // Old jobs with stale API keys would otherwise keep failing and resetting the scene status.
@@ -3789,7 +3789,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // "reserved" row id without re-deducting. Finalize/release are both
         // idempotent (status='reserved' guard) so a retry path is safe.
         // Return immediately ÃÂ¢ÃÂÃÂ frontend will poll scene status
-        return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
+        return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete.", byokHint: !_hasRealVideoKey };
       }),
 
     // Bulk generate videos for all scenes without videos
@@ -3827,8 +3827,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Pollinations is always available as a free fallback ÃÂ¢ÃÂÃÂ no key required.
-        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
+        // If no paid key is set, Pollinations (free) is used. byokHint tells the client to prompt for a key.
+        const _bulkHasRealVideoKey = !!(bulkByokKeys.runwayKey || bulkByokKeys.openaiKey || bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.replicateKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey || bulkByokKeys.googleAiKey);
 
         // Determine the active provider for this user
         const { selectProvider } = await import("./_core/byokVideoEngine");
@@ -4065,7 +4065,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }));
           }
         }
-        return { generated, total: scenes.length };
+        return { generated, total: scenes.length, byokHint: !_bulkHasRealVideoKey };
       }),
 
     // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Virelle AI Scene Editing Chat ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
@@ -14750,7 +14750,7 @@ Return JSON ONLY in this exact shape:
         providers,
         preferredVideoProvider: user?.preferredVideoProvider ?? null,
         preferredLlmProvider: user?.preferredLlmProvider ?? null,
-        byokFallbackMode: user?.byokFallbackMode ?? "byok_with_consent",
+        byokFallbackMode: user?.byokFallbackMode ?? "byok_only",
       };
     }),
 
