@@ -391,7 +391,26 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
     return parts.join('. ');
   }
 
-export const appRouter = router({
+
+  // ─── Credit depletion email — one-time notification per user per 24 h ─────────
+  const _creditDepletionEmailSent = new Map<number, number>(); // userId -> timestamp ms
+
+  async function maybeSendCreditDepletedEmail(userId: number): Promise<void> {
+    const now = Date.now();
+    const last = _creditDepletionEmailSent.get(userId) ?? 0;
+    if (now - last < 24 * 60 * 60 * 1000) return; // 24 h cooldown
+    _creditDepletionEmailSent.set(userId, now);
+    try {
+      const user = await db.getUserById(userId);
+      if (user?.email) {
+        const { sendCreditsDepletedEmail } = await import("./email");
+        const topUpUrl = "https://virelle.life/pricing#credits";
+        sendCreditsDepletedEmail(user.email, user.name || "Filmmaker", topUpUrl).catch(() => {});
+      }
+    } catch { /* non-critical */ }
+  }
+
+  export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
@@ -1601,7 +1620,7 @@ export const appRouter = router({
         // Industry-tier members get AI character generation FREE ÃÂ¢ÃÂÃÂ skip quota + credit deduction
         if (!isTopTierUser(ctx.user)) {
           requireGenerationQuota(ctx.user);
-          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) { maybeSendCreditDepletedEmail(ctx.user.id).catch(() => {}); throw new TRPCError({ code: "FORBIDDEN", message: e.message }); } }
         }
         await db.incrementGenerationCount(ctx.user.id);
 
