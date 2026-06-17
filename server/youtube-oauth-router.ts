@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import { parse as parseCookies } from "cookie";
   import { logger } from "./_core/logger";
   import { requireAdminExpress } from "./_core/context";
   import { ENV } from "./_core/env";
@@ -27,6 +28,9 @@ import type { Express, Request, Response } from "express";
         redirect_uri: getRedirectUri(req),
         scope: YOUTUBE_SCOPES,
         response_type: "code",
+        // Generate CSRF state and persist it in a short-lived httpOnly cookie
+        // eslint-disable-next-line no-undef
+        state: (() => { const s = crypto.randomUUID(); res.cookie("__virelle_oauth_state_youtube", s, { httpOnly: true, sameSite: "lax", secure: ((req.headers["x-forwarded-proto"] as string) || req.protocol) === "https", maxAge: 600 }); return s; })(),
         access_type: "offline",
         prompt: "consent",
       });
@@ -40,6 +44,15 @@ import type { Express, Request, Response } from "express";
         res.status(400).send("No authorisation code received from Google.");
         return;
       }
+        // Verify OAuth state cookie to prevent CSRF
+        const _cookies = parseCookies(req.headers.cookie || "");
+        const _expectedState = _cookies["__virelle_oauth_state_youtube"];
+        const _receivedState = req.query.state as string;
+        res.clearCookie("__virelle_oauth_state_youtube");
+        if (!_expectedState || !_receivedState || _expectedState !== _receivedState) {
+          logger.warn("[Youtube OAuth] State mismatch — possible CSRF", { expected: _expectedState?.slice(0,8), received: _receivedState?.slice(0,8) });
+          return res.status(403).send("Invalid OAuth state. Please try connecting again.");
+        }
 
       const clientId = ENV.youtubeClientId;
       const clientSecret = ENV.youtubeClientSecret;
