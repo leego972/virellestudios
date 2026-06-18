@@ -6,7 +6,6 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   passwordHash: varchar("passwordHash", { length: 255 }),
-  passwordChangedAt: timestamp("passwordChangedAt"),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -176,6 +175,8 @@ export const characters = mysqlTable("characters", {
   catchphrase: varchar("catchphrase", { length: 512 }),
   voiceType: varchar("voiceType", { length: 128 }), // deep baritone, high soprano, raspy, etc.
   voiceId: varchar("voiceId", { length: 255 }), // ElevenLabs voice ID
+  voiceSampleUrl: text("voiceSampleUrl"), // Raw uploaded sample URL (S3)
+  voiceLanguage: varchar("voiceLanguage", { length: 16 }), // BCP-47 code e.g. en, he, es, ar
   // ─── Relationships ───
   relationships: json("relationships"), // [{ characterId, type: "ally"|"enemy"|"lover", description }]
   // ─── Environment & Preferences ───
