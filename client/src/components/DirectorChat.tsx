@@ -501,18 +501,24 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         setIsSending(false);
         es.close();
         sseRef.current = null;
-        // In voice mode — auto-speak the response
+        // In voice mode — speak the response, or if empty (tool-only reply) restart listening directly
         if (voiceModeRef.current) {
-          speakTextViaHttpRef.current(finalText).catch(() => {
-            if (voiceModeRef.current) {
-              setVoiceModeState("listening");
-              voiceModeStateRef.current = "listening";
-              startVoiceModeRecordingRef.current();
-            }
-          });
+          const stripped = finalText?.replace(/[*_`#\[\]>]/g, "").trim();
+          if (!stripped) {
+            // AI responded with tools only and no text — loop back to listening immediately
+            setVoiceModeState("listening");
+            voiceModeStateRef.current = "listening";
+            setTimeout(() => { if (voiceModeRef.current) startVoiceModeRecordingRef.current(); }, 600);
+          } else {
+            speakTextViaHttpRef.current(finalText).catch(() => {
+              if (voiceModeRef.current) {
+                setVoiceModeState("listening");
+                voiceModeStateRef.current = "listening";
+                startVoiceModeRecordingRef.current();
+              }
+            });
+          }
         }
-
-
       } catch {}
     });
 
@@ -550,6 +556,8 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
 
   const transcribeMutation = trpc.directorChat.transcribeVoice.useMutation({
     onSuccess: (data) => {
+      // In voice mode the per-call onSuccess already handled everything — skip here
+      if (voiceModeRef.current) return;
       if (data.text && data.text.trim()) {
         if (voiceState === "transcribing" && preEditText) {
           setVoiceState("applying_edit");
@@ -567,6 +575,8 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       }
     },
     onError: (error) => {
+      // In voice mode the per-call onError already handled restart — skip here
+      if (voiceModeRef.current) return;
       setVoiceState("idle");
       toast.error("Transcription failed: " + error.message);
     },
