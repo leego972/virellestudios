@@ -1182,6 +1182,13 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     return () => window.removeEventListener('virelle-close-voice-mode', handler);
   }, [closeVoiceMode]);
 
+  // Allow any header button to open this panel via CustomEvent
+  useEffect(() => {
+    const handler = () => { setIsOpen(true); setIsMinimized(false); };
+    window.addEventListener('virelle-open-director-chat', handler);
+    return () => window.removeEventListener('virelle-open-director-chat', handler);
+  }, []);
+
   // ─── Standard voice recording (inline, for dictation/edit) ───
   const startRecordingInternal = useCallback(async (isEditMode: boolean) => {
     try {
