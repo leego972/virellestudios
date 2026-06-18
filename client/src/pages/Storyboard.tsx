@@ -64,7 +64,7 @@ import { toast } from "sonner";
 
           {/* Video play button */}
           {scene.videoUrl && (
-            <button className="absolute inset-0 flex items-center justify-center z-10 transition-opacity opacity-0 group-hover:opacity-100"
+            <button className="absolute inset-0 flex items-center justify-center z-10 transition-opacity opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
               onClick={e => { e.stopPropagation(); onPlay(scene.id); }}>
               <div className="h-12 w-12 rounded-full flex items-center justify-center border-2" style={{ background: "rgba(212,175,55,0.2)", borderColor: "#D4AF37", backdropFilter: "blur(4px)" }}>
                 <Play style={{ width: 20, height: 20, color: "#D4AF37", marginLeft: 2 }} />
