@@ -1431,7 +1431,6 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "monthlyGenerationsResetAt", definition: "TIMESTAMP NULL" },
     { table: "users", column: "email", definition: "VARCHAR(320) NULL" },
     { table: "users", column: "passwordHash", definition: "VARCHAR(255) NULL" },
-    { table: "users", column: "passwordChangedAt", definition: "TIMESTAMP NULL" },
     { table: "users", column: "loginMethod", definition: "VARCHAR(64) NULL" },
     // Scenes table - transition & grading (missing from original CREATE TABLE)
     { table: "scenes", column: "transitionType", definition: "VARCHAR(64) NULL DEFAULT 'cut'" },
@@ -1675,6 +1674,8 @@ export async function runAutoMigration(): Promise<void> {
     { table: "characters", column: "catchphrase", definition: "VARCHAR(512) NULL" },
     { table: "characters", column: "voiceType", definition: "VARCHAR(128) NULL" },
     { table: "characters", column: "voiceId", definition: "VARCHAR(255) NULL" },
+    { table: "characters", column: "voiceSampleUrl", definition: "TEXT NULL" },
+    { table: "characters", column: "voiceLanguage", definition: "VARCHAR(16) NULL" },
     { table: "characters", column: "relationships", definition: "JSON NULL" },
     { table: "characters", column: "environmentPreference", definition: "VARCHAR(255) NULL" },
     { table: "characters", column: "preferredWeather", definition: "VARCHAR(128) NULL" },
