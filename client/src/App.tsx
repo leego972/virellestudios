@@ -426,6 +426,7 @@ function Router() {
               <Route path="/vfx-studio">{() => <LazyPage><VFXStudio /></LazyPage>}</Route>
                 <Route path="/music-studio">{() => <LazyPage><MusicStudio /></LazyPage>}</Route>
                 <Route path="/dubbing-studio">{() => <LazyPage><DubbingStudio /></LazyPage>}</Route>
+                <Route path="/projects/:projectId/dubbing-studio">{() => <LazyPage><DubbingStudio /></LazyPage>}</Route>
                 <Route path="/projects/:projectId/audio-mixer">{() => <LazyPage><AudioMixer /></LazyPage>}</Route>
                 <Route path="/accessibility-studio">{() => <LazyPage><AccessibilityStudio /></LazyPage>}</Route>
                 <Route path="/location-studio">{() => <LazyPage><LocationStudio /></LazyPage>}</Route>
