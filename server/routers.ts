@@ -14944,7 +14944,6 @@ Return JSON ONLY in this exact shape:
           // ── Upload audio to cloud storage so FFmpeg + D-ID can fetch it via HTTPS ──
           let audioUrl: string;
           try {
-            const { storagePut } = await import("./storage");
             const audioBuf = Buffer.from(input.audioBase64, "base64");
             const stored = await storagePut(
               `lipsync/scene-${input.sceneId}-${Date.now()}.mp3`,
