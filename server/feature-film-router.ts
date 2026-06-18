@@ -1425,14 +1425,37 @@ export const featureFilmRouter = router({
 
           await db.update(filmCompileJobs).set({ progress: 20, currentStep: "Stitching scenes..." }).where(eq(filmCompileJobs.id, jobId));
 
-          // Build scene input list for stitcher
+          // Load sound effects for all scenes in this project
+          const sfxByScene = new Map<number, any[]>();
+          try {
+            const sfxRows = await db.listSoundEffectsByProject(input.projectId);
+            for (const sfx of (sfxRows || [])) {
+              if (!sfx.sceneId || !sfx.fileUrl) continue;
+              if (!sfxByScene.has(sfx.sceneId)) sfxByScene.set(sfx.sceneId, []);
+              sfxByScene.get(sfx.sceneId)!.push({
+                fileUrl:   sfx.fileUrl,
+                startTime: sfx.startTime ?? 0,
+                volume:    sfx.volume    ?? 0.7,
+                loop:      !!sfx.loop,
+                name:      sfx.name,
+              });
+            }
+          } catch (e) {
+            logger.warn(`[CompileFilm] Could not load sound effects: ${e instanceof Error ? e.message : String(e)}`);
+          }
+
+          // Build scene input list for stitcher — includes voice audio and SFX
           const userSceneInputs = scenesWithVideo.map((s: any) => ({
-            videoUrl: s.videoUrl,
-            title: s.title || undefined,
-            duration: s.duration || undefined,
-            orderIndex: s.orderIndex || 0,
-            transition: s.transitionType || "fade",
-            transitionDuration: s.transitionDuration || 0.8,
+            videoUrl:          s.videoUrl,
+            title:             s.title             || undefined,
+            duration:          s.duration          || undefined,
+            orderIndex:        s.orderIndex        || 0,
+            transition:        s.transitionType    || "fade",
+            transitionDuration:s.transitionDuration || 0.8,
+            voiceAudio:        s.voiceUrl
+              ? { voiceUrl: s.voiceUrl, voiceVolume: 0.9 }
+              : undefined,
+            soundEffects:      sfxByScene.get(s.id) || undefined,
           }));
 
           const allSceneInputs = [...openerScenes, ...userSceneInputs];
