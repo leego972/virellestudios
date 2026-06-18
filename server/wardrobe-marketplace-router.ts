@@ -789,6 +789,34 @@ export const wardrobeMarketplaceRouter = router({
             (await getDb())!.delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
             return { success: true };
           }),
+
+        /** All assignments for a specific wardrobe item owned by the user */
+        listByItem: protectedProcedure
+          .input(z.object({ wardrobeItemId: z.number().int() }))
+          .query(async ({ ctx, input }) => {
+            const _db = (await getDb())!;
+            const rows = await _db
+              .select({
+                id: wardrobeAssignments.id,
+                characterId: wardrobeAssignments.characterId,
+                projectId: wardrobeAssignments.projectId,
+                fromSceneOrder: wardrobeAssignments.fromSceneOrder,
+                toSceneOrder: wardrobeAssignments.toSceneOrder,
+                placementNotes: wardrobeAssignments.placementNotes,
+                characterName: characters.name,
+                projectTitle: projects.title,
+              })
+              .from(wardrobeAssignments)
+              .leftJoin(characters, eq(wardrobeAssignments.characterId, characters.id))
+              .leftJoin(projects, eq(wardrobeAssignments.projectId, projects.id))
+              .where(
+                and(
+                  eq(wardrobeAssignments.wardrobeItemId, input.wardrobeItemId),
+                  eq(wardrobeAssignments.userId, ctx.user.id),
+                )
+              );
+            return rows;
+          }),
       }),
 
     // ═══════════════════════════════════════════════════════════════════════════
