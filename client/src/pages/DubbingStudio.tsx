@@ -113,6 +113,7 @@ import { useState, useRef, useEffect } from "react";
     const [translating, setTranslating] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [lipSyncVideoUrl, setLipSyncVideoUrl] = useState<string | null>(null);
 
     const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: hasProject });
     const { data: scenes  } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: hasProject });
@@ -163,11 +164,25 @@ import { useState, useRef, useEffect } from "react";
 
     async function handleSave() {
       if (!selectedSceneId || !generatedAudioB64) { toast.error("Generate audio first"); return; }
+      if (lipSyncMode === "d-id" && !selectedScene?.videoUrl) {
+        toast.error("Scene has no video yet — generate the scene video first, then apply D-ID lip sync.");
+        return;
+      }
       setSaving(true);
+      setLipSyncVideoUrl(null);
       try {
-        await applyLipSync.mutateAsync({ sceneId: selectedSceneId, audioBase64: generatedAudioB64, mode: lipSyncMode as any });
+        const result = await applyLipSync.mutateAsync({
+          sceneId: selectedSceneId,
+          audioBase64: generatedAudioB64,
+          mode: lipSyncMode as any,
+        });
         await utils.scene.listByProject.invalidate({ projectId });
-        toast.success("Lip sync saved to scene");
+        if (lipSyncMode === "d-id" && (result as any).videoUrl) {
+          setLipSyncVideoUrl((result as any).videoUrl);
+          toast.success("D-ID lip sync complete — scene video updated with synced mouth movements");
+        } else {
+          toast.success(lipSyncMode === "overlay" ? "Dubbed audio saved — will be mixed into final render" : "Saved to scene");
+        }
       } catch (e: any) { toast.error(e.message || "Save failed"); }
       finally { setSaving(false); }
     }
@@ -209,6 +224,7 @@ import { useState, useRef, useEffect } from "react";
             )}
             {sortedScenes.map((s: any, i: number) => {
               const hasDub = !!(s.lipSyncAudioUrl);
+              const isDid = s.lipSyncMode === "d-id";
               return (
                 <button key={s.id}
                   onClick={() => setSelectedSceneId(s.id)}
@@ -217,9 +233,13 @@ import { useState, useRef, useEffect } from "react";
                     borderColor: selectedSceneId===s.id ? "rgba(212,175,55,0.4)" : "rgba(255,255,255,0.06)",
                     background:  selectedSceneId===s.id ? "rgba(212,175,55,0.08)" : "rgba(255,255,255,0.02)",
                   }}>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-1">
                     <span className="text-xs font-semibold truncate">{i+1}. {s.title || "Untitled"}</span>
-                    {hasDub && <CheckCircle2 className="h-3 w-3 shrink-0" style={{ color:"#4ade80" }} />}
+                    {hasDub && (
+                      <span className={`text-[8px] px-1 py-0.5 rounded shrink-0 font-bold ${isDid ? "bg-violet-500/20 text-violet-400" : "bg-emerald-500/15 text-emerald-400"}`}>
+                        {isDid ? "LIP" : "DUB"}
+                      </span>
+                    )}
                   </div>
                   <p className="text-[10px] text-muted-foreground truncate mt-0.5">{s.locationType || "Interior"} · {s.mood || "—"}</p>
                 </button>
@@ -338,11 +358,37 @@ import { useState, useRef, useEffect } from "react";
                     {generatedAudioB64 && (
                       <div className="space-y-3">
                         <AudioPlayer base64={generatedAudioB64} label={`${langLabel} dub · ${voice?.name} voice`} />
+
+                        {/* D-ID mode warning */}
+                        {lipSyncMode === "d-id" && (
+                          <div className="rounded-lg border px-3 py-2.5 flex items-start gap-2.5" style={{ borderColor:"rgba(212,175,55,0.2)", background:"rgba(212,175,55,0.04)" }}>
+                            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color:"#D4AF37" }} />
+                            <p className="text-[10px] text-muted-foreground leading-relaxed">
+                              D-ID will <strong className="text-white">replace the scene video</strong> with a new version where the character's mouth movements match your dubbed audio. This takes 30–90 seconds. Requires a D-ID API key in Settings.
+                            </p>
+                          </div>
+                        )}
+
                         <Button className="w-full gap-2 h-9" onClick={handleSave} disabled={saving}
                           style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000" }}>
-                          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                          {saving ? "Saving to scene…" : "Save Dub to Scene"}
+                          {saving
+                            ? <><Loader2 className="h-4 w-4 animate-spin" />{lipSyncMode === "d-id" ? "D-ID processing (30–90s)…" : "Saving to scene…"}</>
+                            : <><Save className="h-4 w-4" />{lipSyncMode === "d-id" ? "Apply D-ID Lip Sync" : lipSyncMode === "overlay" ? "Save Dubbed Audio to Scene" : "Save to Scene"}</>
+                          }
                         </Button>
+
+                        {/* D-ID success: show link to updated video */}
+                        {lipSyncVideoUrl && (
+                          <div className="rounded-xl border px-4 py-3 flex items-center gap-3" style={{ borderColor:"rgba(124,58,237,0.3)", background:"rgba(124,58,237,0.06)" }}>
+                            <CheckCircle2 className="h-5 w-5 shrink-0" style={{ color:"#a78bfa" }} />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold" style={{ color:"#a78bfa" }}>Lip sync applied — scene video updated</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5 truncate">Mouth movements now match your dubbed audio</div>
+                            </div>
+                            <a href={lipSyncVideoUrl} target="_blank" rel="noopener noreferrer"
+                              className="text-[10px] text-violet-400 hover:text-violet-300 underline shrink-0">Preview</a>
+                          </div>
+                        )}
                       </div>
                     )}
                   </TabsContent>
@@ -351,10 +397,10 @@ import { useState, useRef, useEffect } from "react";
                   <TabsContent value="lipsync" className="space-y-4 mt-4">
                     <div className="rounded-xl border px-4 py-3 flex items-start gap-3" style={{ borderColor:"rgba(99,102,241,0.2)", background:"rgba(99,102,241,0.04)" }}>
                       <Info className="h-4 w-4 mt-0.5 shrink-0" style={{ color:"#818cf8" }} />
-                      <p className="text-xs text-muted-foreground">
-                        Lip Sync replaces the original audio track with your dubbed audio. 
-                        <strong className="text-white"> Talking Head</strong> mode uses D-ID to animate a character portrait in sync with the dubbed audio.
-                      </p>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p><strong className="text-white">Audio Overlay</strong> — dub replaces the original audio track in the final render. Fast, works on any scene.</p>
+                        <p><strong className="text-white">Talking Head (D-ID)</strong> — re-animates the character's mouth frame-by-frame to match your dubbed audio. Requires a D-ID API key and a scene video with a visible face. Processing takes 30–90 seconds per scene.</p>
+                      </div>
                     </div>
                     <div className="grid gap-3">
                       {LIP_SYNC_MODES.map(mode => (
@@ -378,11 +424,25 @@ import { useState, useRef, useEffect } from "react";
                       ))}
                     </div>
                     {selectedScene.lipSyncAudioUrl && (
-                      <div className="rounded-xl border px-4 py-3 flex items-center gap-3" style={{ borderColor:"rgba(74,222,128,0.2)", background:"rgba(74,222,128,0.04)" }}>
-                        <CheckCircle2 className="h-5 w-5 shrink-0" style={{ color:"#4ade80" }} />
+                      <div className="rounded-xl border px-4 py-3 flex items-center gap-3"
+                        style={{
+                          borderColor: selectedScene.lipSyncMode === "d-id" ? "rgba(124,58,237,0.3)" : "rgba(74,222,128,0.2)",
+                          background:  selectedScene.lipSyncMode === "d-id" ? "rgba(124,58,237,0.06)" : "rgba(74,222,128,0.04)",
+                        }}>
+                        <CheckCircle2 className="h-5 w-5 shrink-0"
+                          style={{ color: selectedScene.lipSyncMode === "d-id" ? "#a78bfa" : "#4ade80" }} />
                         <div>
-                          <div className="text-xs font-semibold" style={{ color:"#4ade80" }}>Lip sync applied</div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5">Mode: {selectedScene.lipSyncMode} · Generate a new dub to replace.</div>
+                          <div className="text-xs font-semibold"
+                            style={{ color: selectedScene.lipSyncMode === "d-id" ? "#a78bfa" : "#4ade80" }}>
+                            {selectedScene.lipSyncMode === "d-id"
+                              ? "D-ID lip sync applied — scene video updated"
+                              : "Audio dub applied — will mix into final render"}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5">
+                            {selectedScene.lipSyncMode === "d-id"
+                              ? "Character mouth movements match dubbed audio. Generate a new dub to replace."
+                              : "Dubbed audio replaces original track on export. Generate a new dub to replace."}
+                          </div>
                         </div>
                       </div>
                     )}
