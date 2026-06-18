@@ -1,387 +1,25 @@
-import VSWatermark from "@/components/VSWatermark";
 import { useState, useRef } from "react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import SiteHead from "@/components/SiteHead";
 import { trpc } from "@/lib/trpc";
-import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe, Mail, FileText, X as XIcon, CheckCircle2, MessageSquare, ArrowRight, Briefcase, Music, ListFilter, Image as ImageIcon, AlignLeft } from "lucide-react";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe, Mail, FileText, X as XIcon, CheckCircle2, MessageSquare } from "lucide-react";
 import showrunner from "@/data/showrunnerShowcase";
 import movie from "@/data/showrunnerMovie";
-import { Button } from "@/components/ui/button";
 
-
-  // ─── Showcase data ─────────────────────────────────────────────────────────
-
-  type AssetLabel = "Script" | "Poster" | "Characters" | "Scenes" | "Trailer" | "Pitch Package" | "Shot List" | "Score";
-  type StatusBadge = "Concept Demo" | "Pitch Package" | "Trailer Demo" | "Featured Demo";
-  type FilterKey = "all" | "posters" | "trailers" | "pitch_packages" | "concepts";
-
-  interface ShowcaseItem {
-    id: string;
-    title: string;
-    genre: string;
-    description: string;
-    gradFrom: string;
-    gradTo: string;
-    gradVia: string;
-    status: StatusBadge;
-    assets: AssetLabel[];
-    filters: FilterKey[];
-    featured?: boolean;
-  }
-
-  const SHOWCASE_ITEMS: ShowcaseItem[] = [
-    {
-      id: "showrunner",
-      title: "THE SHOWRUNNER",
-      genre: "Comedy Drama",
-      description:
-        "A broke Melbourne filmmaker turns a forgotten story idea into a viral show package — script, characters, poster, trailer, and pitch deck all in one session.",
-      gradFrom: "from-amber-950",
-      gradVia: "via-amber-900",
-      gradTo: "to-orange-950",
-      status: "Featured Demo",
-      assets: ["Script", "Characters", "Scenes", "Poster", "Trailer", "Pitch Package"],
-      filters: ["all", "trailers", "pitch_packages", "posters"],
-      featured: true,
-    },
-    {
-      id: "last-signal",
-      title: "THE LAST SIGNAL",
-      genre: "Sci-Fi Thriller",
-      description:
-        "A lone radio operator on a deep-space relay station receives a transmission from a ship that disappeared 30 years ago. A concept package built inside Virelle.",
-      gradFrom: "from-blue-950",
-      gradVia: "via-indigo-950",
-      gradTo: "to-slate-900",
-      status: "Concept Demo",
-      assets: ["Script", "Poster", "Characters", "Pitch Package"],
-      filters: ["all", "posters", "pitch_packages", "concepts"],
-    },
-    {
-      id: "broken-meridian",
-      title: "BROKEN MERIDIAN",
-      genre: "Crime Drama",
-      description:
-        "An ex-detective returns to her home city to investigate disappearances connected to her own past. A full pitch package generated with Virelle Studios.",
-      gradFrom: "from-red-950",
-      gradVia: "via-rose-950",
-      gradTo: "to-neutral-950",
-      status: "Pitch Package",
-      assets: ["Script", "Characters", "Shot List", "Pitch Package"],
-      filters: ["all", "pitch_packages", "concepts"],
-    },
-    {
-      id: "iron-season",
-      title: "IRON SEASON",
-      genre: "Documentary",
-      description:
-        "A season inside an amateur football club in Western Sydney — captured, scored, and structured as a feature documentary concept using Virelle's pipeline.",
-      gradFrom: "from-slate-900",
-      gradVia: "via-teal-950",
-      gradTo: "to-slate-950",
-      status: "Concept Demo",
-      assets: ["Script", "Scenes", "Score", "Pitch Package"],
-      filters: ["all", "concepts", "pitch_packages"],
-    },
-    {
-      id: "neon-divide",
-      title: "NEON DIVIDE",
-      genre: "Action Thriller",
-      description:
-        "A street-level security officer in 2047 discovers his surveillance shift is covering up something far bigger than a robbery. Characters and poster included.",
-      gradFrom: "from-purple-950",
-      gradVia: "via-violet-950",
-      gradTo: "to-fuchsia-950",
-      status: "Concept Demo",
-      assets: ["Script", "Poster", "Characters", "Shot List"],
-      filters: ["all", "posters", "concepts"],
-    },
-    {
-      id: "deep-water",
-      title: "DEEP WATER",
-      genre: "Psychological Drama",
-      description:
-        "A marine biologist stationed alone on a floating research lab suspects her data is being altered — and she is not the only one watching. Pitch package included.",
-      gradFrom: "from-cyan-950",
-      gradVia: "via-teal-950",
-      gradTo: "to-blue-950",
-      status: "Pitch Package",
-      assets: ["Script", "Poster", "Pitch Package"],
-      filters: ["all", "posters", "pitch_packages", "concepts"],
-    },
-  ];
-
-  const FILTER_TABS: { key: FilterKey; label: string }[] = [
-    { key: "all",           label: "All" },
-    { key: "posters",       label: "Posters" },
-    { key: "trailers",      label: "Trailers" },
-    { key: "pitch_packages",label: "Pitch Packages" },
-    { key: "concepts",      label: "Concepts" },
-  ];
-
-  const STATUS_CFG: Record<StatusBadge, { label: string; color: string; bg: string }> = {
-    "Featured Demo": { label: "Featured Demo", color: "#d4af37", bg: "rgba(212,175,55,0.15)" },
-    "Concept Demo":  { label: "Concept Demo",  color: "#a3a3a3", bg: "rgba(163,163,163,0.10)" },
-    "Pitch Package": { label: "Pitch Package", color: "#34d399", bg: "rgba(52,211,153,0.12)" },
-    "Trailer Demo":  { label: "Trailer Demo",  color: "#f87171", bg: "rgba(248,113,113,0.12)" },
-  };
-
-  const ASSET_CFG: Record<AssetLabel, { icon: React.ElementType; color: string }> = {
-    "Script":        { icon: FileText,  color: "#a3a3a3" },
-    "Poster":        { icon: ImageIcon, color: "#d4af37" },
-    "Characters":    { icon: Users,     color: "#60a5fa" },
-    "Scenes":        { icon: Film,      color: "#a855f7" },
-    "Trailer":       { icon: Play,      color: "#f87171" },
-    "Pitch Package": { icon: Briefcase, color: "#34d399" },
-    "Shot List":     { icon: AlignLeft, color: "#fb923c" },
-    "Score":         { icon: Music,     color: "#f472b6" },
-  };
-
-  // ─── Sub-components ────────────────────────────────────────────────────────
-
-  function StatusPill({ status }: { status: StatusBadge }) {
-    const cfg = STATUS_CFG[status];
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border"
-        style={{ color: cfg.color, background: cfg.bg, borderColor: cfg.color + "40" }}
-      >
-        {status === "Featured Demo" && <Star className="h-2.5 w-2.5" />}
-        {cfg.label}
-      </span>
-    );
-  }
-
-  function AssetPill({ label }: { label: AssetLabel }) {
-    const cfg = ASSET_CFG[label];
-    const Icon = cfg.icon;
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border"
-        style={{ color: cfg.color, borderColor: cfg.color + "30", background: cfg.color + "12" }}
-      >
-        <Icon className="h-2.5 w-2.5" />
-        {label}
-      </span>
-    );
-  }
-
-  function PosterPlaceholder({ item }: { item: ShowcaseItem }) {
-    return (
-      <div
-        className={`relative w-full h-48 sm:h-52 bg-gradient-to-br ${item.gradFrom} ${item.gradVia} ${item.gradTo} flex flex-col items-center justify-center overflow-hidden select-none`}
-      >
-        {/* Film grain */}
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          }}
-        />
-        {/* Film-frame corners */}
-        <div className="absolute top-2 left-2 w-5 h-5 border-t border-l border-white/15" />
-        <div className="absolute top-2 right-2 w-5 h-5 border-t border-r border-white/15" />
-        <div className="absolute bottom-2 left-2 w-5 h-5 border-b border-l border-white/15" />
-        <div className="absolute bottom-2 right-2 w-5 h-5 border-b border-r border-white/15" />
-        {/* Centre */}
-        <Film className="h-9 w-9 text-white/10 mb-2" />
-        <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/20">{item.genre}</span>
-        {/* Title watermark */}
-        <div className="absolute bottom-3 left-4 right-4">
-          <p className="text-xs font-black tracking-tighter uppercase leading-none" style={{ color: "rgba(255,255,255,0.06)" }}>{item.title}</p>
-        </div>
-      </div>
-    );
-  }
-
-  function ShowcaseCard({ item, onCreateSimilar }: { item: ShowcaseItem; onCreateSimilar: (genre: string) => void }) {
-    const [expanded, setExpanded] = useState(false);
-
-    return (
-      <div
-        className={`flex flex-col rounded-2xl border overflow-hidden transition-colors duration-200 ${
-          item.featured
-            ? "border-amber-500/30 bg-gradient-to-b from-amber-950/20 to-black hover:border-amber-500/50"
-            : "border-white/[0.07] bg-white/[0.02] hover:border-white/[0.14]"
-        }`}
-      >
-        {/* Poster */}
-        <div className="relative">
-          <PosterPlaceholder item={item} />
-          <div className="absolute top-3 left-3 z-10">
-            <StatusPill status={item.status} />
-          </div>
-          <div className="absolute top-3 right-3 z-10">
-            <span className="text-[9px] font-bold uppercase tracking-widest border border-white/10 text-white/40 px-2 py-0.5 rounded-full bg-black/50">
-              {item.genre}
-            </span>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="flex flex-col flex-1 p-4 gap-3">
-          {/* Title */}
-          <h3 className="text-sm font-black tracking-tight text-white leading-snug">{item.title}</h3>
-
-          {/* Description */}
-          <p className="text-xs text-white/50 leading-relaxed line-clamp-3">{item.description}</p>
-
-          {/* Asset pills */}
-          <div className="flex flex-wrap gap-1.5 mt-auto pt-1">
-            {item.assets.map((asset) => (
-              <AssetPill key={asset} label={asset} />
-            ))}
-          </div>
-
-          {/* Expanded asset list */}
-          {expanded && (
-            <div className="border-t border-white/[0.06] pt-3 space-y-1.5">
-              <p className="text-[9px] text-white/25 uppercase tracking-widest font-bold mb-2">Assets in this package</p>
-              {item.assets.map((asset) => {
-                const Icon = ASSET_CFG[asset].icon;
-                return (
-                  <div key={asset} className="flex items-center gap-2 text-xs text-white/45">
-                    <Icon className="h-3 w-3 shrink-0" style={{ color: ASSET_CFG[asset].color }} />
-                    {asset}
-                  </div>
-                );
-              })}
-              <p className="text-[9px] text-white/20 italic pt-2">
-                {item.status === "Featured Demo" || item.status === "Concept Demo"
-                  ? "Concept demo — shows what the Virelle platform produces. Not a finished film."
-                  : "Demonstration production package — generated with Virelle Studios tools."}
-              </p>
-            </div>
-          )}
-
-          {/* CTAs */}
-          <div className="flex gap-2 pt-1">
-            <button
-              onClick={() => setExpanded((e) => !e)}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 text-white/55 text-xs font-semibold hover:border-white/25 hover:text-white/80 transition-all"
-            >
-              <Eye className="h-3 w-3" />
-              {expanded ? "Close" : "View Project"}
-            </button>
-            <button
-              onClick={() => onCreateSimilar(item.genre)}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-black transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg, #d4af37, #f5e6a3)" }}
-            >
-              <Sparkles className="h-3 w-3" />
-              Create Similar
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function CuratedShowcaseGrid() {
-    const [, setLocation] = useLocation();
-    const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
-
-    const filtered =
-      activeFilter === "all"
-        ? SHOWCASE_ITEMS
-        : SHOWCASE_ITEMS.filter((item) => item.filters.includes(activeFilter));
-
-    const countFor = (key: FilterKey) =>
-      key === "all"
-        ? SHOWCASE_ITEMS.length
-        : SHOWCASE_ITEMS.filter((i) => i.filters.includes(key)).length;
-
-    return (
-      <section className="relative z-10 max-w-7xl mx-auto px-4 pb-16">
-        {/* Section header */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            <ListFilter className="h-3.5 w-3.5" />
-            Curated Showcase
-          </div>
-          <h2
-            className="text-2xl sm:text-3xl font-bold tracking-tight mb-3"
-            style={{
-              background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            What Virelle Studios Produces
-          </h2>
-          <p className="text-sm text-neutral-500 max-w-xl mx-auto">
-            Concept demos and production packages built using Virelle's pipeline.
-            <br className="hidden sm:block" />
-            All work is clearly labelled — no finished films are claimed.
-          </p>
-        </div>
-
-        {/* Filter tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8" style={{ scrollbarWidth: "none" }}>
-          {FILTER_TABS.map((tab) => {
-            const active = activeFilter === tab.key;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveFilter(tab.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border whitespace-nowrap ${
-                  active
-                    ? "text-black border-transparent"
-                    : "bg-transparent text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-neutral-300"
-                }`}
-                style={active ? { background: "linear-gradient(135deg, #d4af37, #f5e6a3)" } : {}}
-              >
-                {tab.label}
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                    active ? "bg-black/20 text-black" : "bg-neutral-800 text-neutral-500"
-                  }`}
-                >
-                  {countFor(tab.key)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Card grid */}
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 text-neutral-500">
-            <Film className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No items in this category yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((item) => (
-              <ShowcaseCard
-                key={item.id}
-                item={item}
-                onCreateSimilar={(genre) => setLocation(`/register?genre=${encodeURIComponent(genre)}`)}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <p className="text-center text-[10px] text-neutral-700 mt-8 leading-relaxed max-w-lg mx-auto">
-          All showcase items are concept demos or production packages created with Virelle Studios tools.
-          They represent what the platform generates — not finished, distributed films.
-        </p>
-      </section>
-    );
-  }
-
-  /**
+/**
  * Showcase / Demo Reel — Public page to display VirElle Studios film quality.
  * Shows completed AI-generated films with cinematic video players.
  */
 export default function Showcase() {
+  const { data: films, isLoading, isError, refetch } = trpc.showcase.featured.useQuery();
+  const [expandedFilm, setExpandedFilm] = useState<number | null>(null);
+  const [activeScene, setActiveScene] = useState<Record<number, number>>({});
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Golden logo watermark */}
-      <VSWatermark />
+      <GoldWatermarkLaunch />
 
       {/* Cinematic grain overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03]"
@@ -396,7 +34,7 @@ export default function Showcase() {
           {/* Logo */}
           <div className="flex items-center justify-center mb-6">
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
               alt="VirElle Studios"
               className="w-28 h-28 object-contain"
               style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}
@@ -413,7 +51,7 @@ export default function Showcase() {
             SHOWCASE
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-2">
-            Platform Showcase — Demos, Pitch Packages & Concept Work
+            AI-Generated Cinema — Every Frame Crafted by Artificial Intelligence
           </p>
           <p className="text-sm text-neutral-500 max-w-xl mx-auto">
             Experience the future of filmmaking. These films were created entirely using VirElle Studios —
@@ -424,16 +62,16 @@ export default function Showcase() {
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10">
             <div className="text-center">
               <div className="text-2xl font-bold gradient-text-gold" style={{ color: "#d4af37" }}>
-                6
+                {films?.length || 0}
               </div>
-              <div className="text-xs text-neutral-500 uppercase tracking-wider">Concept Demos</div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Films</div>
             </div>
             <div className="w-px h-8 bg-neutral-800" />
             <div className="text-center">
               <div className="text-2xl font-bold gradient-text-gold" style={{ color: "#d4af37" }}>
-                30+
+                {films?.reduce((acc: number, f: any) => acc + (f.completedScenes || 0), 0) || 0}
               </div>
-              <div className="text-xs text-neutral-500 uppercase tracking-wider">Assets Shown</div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Scenes</div>
             </div>
             <div className="w-px h-8 bg-neutral-800" />
             <div className="text-center">
@@ -449,11 +87,106 @@ export default function Showcase() {
         </div>
       </header>
 
-      {/* Curated card grid — always rendered, no tRPC dependency */}
-      <CuratedShowcaseGrid />
-
-      {/* THE SHOWRUNNER — featured full deep-dive showcase */}
+      {/* THE SHOWRUNNER — featured Virelle Studios showcase */}
       <TheShowrunnerSection />
+
+      {/* Film Grid */}
+      <main className="relative z-10 max-w-7xl mx-auto px-4 pb-24">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-2 border-t-transparent rounded-full animate-spin"
+                style={{ borderColor: "#d4af37", borderTopColor: "transparent" }} />
+              <p className="text-neutral-500">Loading showcase...</p>
+            </div>
+          </div>
+        ) : isError ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="flex flex-col items-center gap-6 text-center max-w-sm">
+              <div className="w-16 h-16 rounded-full border border-amber-500/20 flex items-center justify-center" style={{ background: "rgba(212,175,55,0.05)" }}>
+                <Film className="w-8 h-8 text-amber-500/50" />
+              </div>
+              <div>
+                <p className="text-white/60 font-medium mb-1">Showcase could not be loaded right now</p>
+                <p className="text-white/30 text-sm">Check your connection and try again.</p>
+              </div>
+              <button
+                onClick={() => refetch()}
+                className="px-5 py-2 rounded-lg border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/10 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : !films || films.length === 0 ? (
+          // Static sample showcase — displayed when no user films are published yet
+          <div className="space-y-12">
+            {[
+              {
+                id: "sample-opener",
+                title: "Virelle Studios — Cinematic Opener",
+                genre: "Brand Film",
+                directorName: "VirElle Studios",
+                plotSummary: "The official Virelle Studios brand opener — a white dove descends through god rays, lands on a polished silver shield, and triggers a breathtaking golden transformation as the VS emblem is revealed. Wings flapping, angelic choir, 16 seconds of pure cinematic identity. Generated entirely within the Virelle platform.",
+                completedScenes: 3,
+                resolution: "1080p",
+                quality: "Cinematic",
+                scenes: [
+                  {
+                    id: 1,
+                    title: "Dove Approach",
+                    description: "A majestic white dove descends through dramatic god rays toward an ancient silver crest.",
+                    videoUrl: "/virelle-opener.mp4",
+                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    duration: 6,
+                    orderIndex: 0,
+                  },
+                  {
+                    id: 2,
+                    title: "The Golden Transformation",
+                    description: "The dove lands and everything it touches turns to pure 24k gold — shield, branches, emblem.",
+                    videoUrl: "/virelle-opener.mp4",
+                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    duration: 6,
+                    orderIndex: 1,
+                  },
+                  {
+                    id: 3,
+                    title: "Revelation",
+                    description: "The complete golden Virelle Studios emblem holds as the angelic choir sustains and fades.",
+                    videoUrl: "/virelle-opener.mp4",
+                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    duration: 4,
+                    orderIndex: 2,
+                  },
+                ],
+              },
+            ].map((sample) => (
+              <FilmCard
+                key={sample.id}
+                film={sample as any}
+                isExpanded={expandedFilm === (sample.id as any)}
+                onToggle={() => setExpandedFilm(expandedFilm === (sample.id as any) ? null : (sample.id as any))}
+                activeSceneIndex={activeScene[sample.id as any] || 0}
+                onSceneChange={(idx) => setActiveScene(prev => ({ ...prev, [sample.id as any]: idx }))}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {films.map((film) => (
+              <FilmCard
+                key={film.id}
+                film={film}
+                isExpanded={expandedFilm === film.id}
+                onToggle={() => setExpandedFilm(expandedFilm === film.id ? null : film.id)}
+                activeSceneIndex={activeScene[film.id] || 0}
+                onSceneChange={(idx) => setActiveScene(prev => ({ ...prev, [film.id]: idx }))}
+              />
+            ))}
+          </div>
+        )}
+      </main>
 
       {/* ─── Phase 3: Public Discovery Feed ──────────────────────────────── */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 pb-16">
@@ -497,9 +230,9 @@ export default function Showcase() {
             }}
           >
             <Film className="w-5 h-5" />
-            Start Creating
+            Start Creating Free
           </a>
-          <p className="text-xs text-neutral-600 mt-4">7-day trial · Card required · Cancel anytime</p>
+          <p className="text-xs text-neutral-600 mt-4">All prices in USD. Professional filmmaking tools included.</p>
         </div>
       </footer>
     </div>
@@ -675,7 +408,7 @@ function FilmCard({
               >
                 <div className="aspect-video bg-neutral-900 flex items-center justify-center">
                   {scene.thumbnailUrl ? (
-                    <img src={scene.thumbnailUrl} alt={scene.title} className="w-full h-full object-cover" />
+                    <img src={scene.thumbnailUrl} alt={scene.title} className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
                   ) : (
                     <Play className="w-6 h-6 text-neutral-700 group-hover:text-amber-400 transition-colors" />
                   )}
@@ -850,7 +583,7 @@ interface PublicFilm {
 
 function DiscoveryFeed() {
   const [surface, setSurface] = useState<DiscoverySurface>("featured");
-  const { data: films, isLoading, isError } = trpc.showcase.getRanked.useQuery({ surface, limit: 12 });
+  const { data: films, isLoading } = trpc.showcase.getRanked.useQuery({ surface, limit: 12 });
 
   const tabs: { key: DiscoverySurface; label: string; icon: any }[] = [
     { key: "featured", label: "Featured", icon: Star },
@@ -900,12 +633,7 @@ function DiscoveryFeed() {
             </div>
           ))}
         </div>
-      ) : isError ? (
-          <div className="text-center py-16 text-neutral-500">
-            <Globe className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm text-red-400">Failed to load films. Please refresh.</p>
-          </div>
-        ) : !films?.length ? (
+      ) : !films?.length ? (
         <div className="text-center py-16 text-neutral-500">
           <Globe className="w-10 h-10 mx-auto mb-3 opacity-30" />
           <p className="text-sm">No public films in this category yet.</p>
@@ -923,6 +651,7 @@ function DiscoveryFeed() {
                       src={film.thumbnailUrl}
                       alt={film.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
