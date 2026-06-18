@@ -155,7 +155,7 @@ import { useState } from "react";
             <Textarea value={current.visualNotes ?? ""} onChange={e => set("visualNotes", e.target.value)}
               placeholder="Any additional visual direction to enforce across all scenes…" rows={2} />
           </div>
-          <Button size="sm" onClick={() => upsertMut?.mutate?.({ projectId, ...(form ?? current) })}>
+          <Button size="sm" disabled={!!upsertMut?.isPending} onClick={() => upsertMut?.mutate?.({ projectId, ...(form ?? current) })}>
             <Lock className="w-3 h-3 mr-1" />Lock Visual DNA
           </Button>
         </CardContent>
