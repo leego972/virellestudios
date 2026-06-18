@@ -27,6 +27,7 @@ import {
   characterArcs,
   scenes,
   projects,
+  soundEffects,
   type InsertFeatureCut,
   type InsertFeatureCutScene,
   type InsertActGroup,
@@ -1428,8 +1429,11 @@ export const featureFilmRouter = router({
           // Load sound effects for all scenes in this project
           const sfxByScene = new Map<number, any[]>();
           try {
-            const sfxRows = await db.listSoundEffectsByProject(input.projectId);
-            for (const sfx of (sfxRows || [])) {
+            const sfxRows = await db
+              .select()
+              .from(soundEffects)
+              .where(eq(soundEffects.projectId, input.projectId));
+            for (const sfx of sfxRows) {
               if (!sfx.sceneId || !sfx.fileUrl) continue;
               if (!sfxByScene.has(sfx.sceneId)) sfxByScene.set(sfx.sceneId, []);
               sfxByScene.get(sfx.sceneId)!.push({
