@@ -717,7 +717,9 @@ export default function ScriptWriter() {
   // Auth guard ────────────────────────────────────────── after all hooks
   if (loading) {
     return (
-        <Loader2 className="h-6 w-6 animate-spin text-amber-400 text-amber-400" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        <Loader2 className="h-6 w-6 animate-spin text-amber-400" />
+      </div>
     );
   }
   if (!user) {
