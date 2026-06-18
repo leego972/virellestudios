@@ -59,7 +59,7 @@ import { useState } from "react";
             <p className="text-xs text-white/80 line-clamp-2">{item.text}</p>
           </div>
         )}
-        <button onClick={onDelete} className="absolute top-2 right-2 h-7 w-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background:"rgba(0,0,0,0.7)", border:"1px solid rgba(255,255,255,0.1)" }}>
+        <button onClick={onDelete} className="absolute top-2 right-2 h-7 w-7 rounded-full flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" style={{ background:"rgba(0,0,0,0.7)", border:"1px solid rgba(255,255,255,0.1)" }}>
           <X style={{ width:12, height:12, color:"white" }} />
         </button>
       </div>
@@ -72,7 +72,7 @@ import { useState } from "react";
       <div className="relative rounded-2xl border p-4 group" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
         <div className="flex items-start justify-between gap-2 mb-2">
           <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color:catColor }}>{item.category}</span>
-          <button onClick={onDelete} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/30 hover:text-red-400">
+          <button onClick={onDelete} className="sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity text-muted-foreground/30 hover:text-red-400">
             <Trash2 style={{ width:12, height:12 }} />
           </button>
         </div>
@@ -194,7 +194,7 @@ import { useState } from "react";
                     {colorItems.map((item: any) => (
                       <div key={item.id} className="relative group">
                         <ColorSwatch hex={item.colorHex || item.text || "#888"} />
-                        <button onClick={() => deleteMut.mutate({ id: item.id })} className="absolute top-1 right-1 h-5 w-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background:"rgba(0,0,0,0.8)" }}>
+                        <button onClick={() => deleteMut.mutate({ id: item.id })} className="absolute top-1 right-1 h-5 w-5 rounded-full flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" style={{ background:"rgba(0,0,0,0.8)" }}>
                           <X style={{ width:8, height:8, color:"white" }} />
                         </button>
                       </div>
