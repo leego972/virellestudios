@@ -526,7 +526,7 @@ function CollectionBlock({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Button
             size="sm"
             onClick={() => onBuyCollection(col.id)}
