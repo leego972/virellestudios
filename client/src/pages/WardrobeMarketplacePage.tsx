@@ -411,6 +411,14 @@ function CustomOrderModal({
 
 // ─── Single item card ─────────────────────────────────────────────────────────
 
+function pollinationsImgUrl(prompt: string, seed = 1) {
+  return (
+    "https://image.pollinations.ai/prompt/" +
+    encodeURIComponent(prompt) +
+    `?width=256&height=256&nologo=true&seed=${seed}&model=flux`
+  );
+}
+
 function ItemCard({
   item,
   onBuy,
@@ -421,6 +429,14 @@ function ItemCard({
   isBuying: boolean;
 }) {
   const [imgErr, setImgErr] = useState(false);
+  const imgSrc = imgErr
+    ? null
+    : (item.primaryImageUrl ??
+        pollinationsImgUrl(
+          item.referencePrompt ??
+            `${item.name} luxury fashion clothing item, studio photography, white background`,
+          item.id ?? 1,
+        ));
   const color = item.colors?.[0] ?? "";
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
@@ -429,9 +445,9 @@ function ItemCard({
   return (
     <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20 transition-shadow">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
-        {item.primaryImageUrl && !imgErr ? (
+        {imgSrc ? (
           <img
-            src={item.primaryImageUrl}
+            src={imgSrc}
             alt={item.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImgErr(true)}
@@ -484,8 +500,8 @@ function CollectionBlock({
   leasingId,
 }: {
   col: any;
-  onBuyItem: (id: number) => void;
-  onBuyCollection: (id: number) => void;
+  onBuyItem: (item: any) => void;
+  onBuyCollection: (col: any) => void;
   leasingId: string | null;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -520,7 +536,7 @@ function CollectionBlock({
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Button
             size="sm"
-            onClick={() => onBuyCollection(col.id)}
+            onClick={() => onBuyCollection(col)}
             disabled={isBuyingCol}
             className="bg-amber-500 hover:bg-amber-400 text-black font-bold h-9 px-4 text-xs"
           >
@@ -549,7 +565,7 @@ function CollectionBlock({
                 <ItemCard
                   key={item.id}
                   item={item}
-                  onBuy={() => onBuyItem(item.id)}
+                  onBuy={() => onBuyItem(item)}
                   isBuying={leasingId === `item-${item.id}`}
                 />
               ))}
@@ -563,9 +579,105 @@ function CollectionBlock({
 
 // ─── Designer detail ──────────────────────────────────────────────────────────
 
+// ─── Purchase confirmation dialog ────────────────────────────────────────────
+
+type PendingPurchase = {
+  type: "item" | "collection";
+  id: number;
+  name: string;
+  price: number;
+  imageUrl?: string | null;
+  referencePrompt?: string | null;
+};
+
+function PurchaseConfirmDialog({
+  pending,
+  onConfirm,
+  onCancel,
+  isConfirming,
+}: {
+  pending: PendingPurchase | null;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isConfirming: boolean;
+}) {
+  const [imgErr, setImgErr] = useState(false);
+  if (!pending) return null;
+
+  const priceLabel = `A$${(pending.price / 100).toFixed(2)}`;
+  const imgSrc = imgErr
+    ? null
+    : (pending.imageUrl ??
+        pollinationsImgUrl(
+          pending.referencePrompt ??
+            `${pending.name} luxury fashion clothing item, studio photography, white background`,
+          pending.id,
+        ));
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full max-w-sm bg-[#0a0a0a] border border-amber-500/20 rounded-3xl overflow-hidden shadow-2xl shadow-black/60">
+        <div className="relative h-52 bg-gradient-to-br from-white/5 to-black overflow-hidden">
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={pending.name}
+              className="w-full h-full object-cover"
+              onError={() => setImgErr(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Shirt className="h-16 w-16 text-white/10" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          <button
+            onClick={onCancel}
+            className="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-black/50 text-white/60 hover:text-white transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="p-5">
+          <h3 className="text-base font-black text-white leading-tight mb-1 line-clamp-2">{pending.name}</h3>
+          <p className="text-[11px] text-white/35 mb-4">
+            One-time purchase · Permanently yours · Costume Lock applied
+          </p>
+          <div className="flex items-end justify-between mb-5">
+            <div className="flex items-baseline gap-1 text-amber-400">
+              <span className="text-2xl font-black">{priceLabel}</span>
+              <span className="text-[10px] text-white/30 uppercase tracking-wider">AUD</span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={onCancel}
+              className="flex-1 h-11 rounded-xl border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-sm font-semibold transition-all"
+            >
+              Cancel
+            </button>
+            <Button
+              onClick={onConfirm}
+              disabled={isConfirming}
+              className="flex-1 h-11 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl text-sm"
+            >
+              {isConfirming ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting…</>
+              ) : (
+                "Confirm & Pay →"
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DesignerDetailView({ designerId }: { designerId: number }) {
   const [, setLocation] = useLocation();
   const [leasingId, setLeasingId] = useState<string | null>(null);
+  const [pendingPurchase, setPendingPurchase] = useState<PendingPurchase | null>(null);
   const [showCustomOrder, setShowCustomOrder] = useState(false);
   const [profileImgErr, setProfileImgErr] = useState(false);
 
@@ -627,13 +739,39 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
     }
   }, []);
 
-  function handleBuy(type: "item" | "collection", id: number) {
-    setLeasingId(`${type}-${id}`);
+  function handleBuyItem(item: any) {
+    setPendingPurchase({
+      type: "item",
+      id: item.id,
+      name: item.name,
+      price: item.retailPriceAud ?? 100,
+      imageUrl: item.primaryImageUrl ?? null,
+      referencePrompt: item.referencePrompt ?? null,
+    });
+  }
+
+  function handleBuyCollection(col: any) {
+    const itemSum = (col.items ?? []).reduce((s: number, i: any) => s + (i.retailPriceAud ?? 100), 0);
+    const bundleCents = itemSum > 0 ? Math.floor(itemSum * 0.90) : (col.collectionPriceAud ?? 100);
+    setPendingPurchase({
+      type: "collection",
+      id: col.id,
+      name: `${col.name} — Full Collection`,
+      price: bundleCents,
+      imageUrl: col.items?.[0]?.primaryImageUrl ?? null,
+      referencePrompt: col.items?.[0]?.referencePrompt ?? null,
+    });
+  }
+
+  function confirmBuy() {
+    if (!pendingPurchase) return;
+    setLeasingId(`${pendingPurchase.type}-${pendingPurchase.id}`);
     checkoutMut.mutate({
-      type,
-      id,
+      type: pendingPurchase.type,
+      id: pendingPurchase.id,
       returnUrl: `${window.location.origin}/wardrobe-marketplace/designer/${designerId}`,
     });
+    setPendingPurchase(null);
   }
 
   const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/wardrobe-marketplace/designer/${designerId}`;
@@ -677,6 +815,13 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
         onClose={() => setShowCustomOrder(false)}
         onOpen={() => setShowCustomOrder(true)}
         returnUrl={returnUrl}
+      />
+
+      <PurchaseConfirmDialog
+        pending={pendingPurchase}
+        onConfirm={confirmBuy}
+        onCancel={() => { setPendingPurchase(null); setLeasingId(null); }}
+        isConfirming={checkoutMut.isPending}
       />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
@@ -780,8 +925,8 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
                 <CollectionBlock
                   key={col.id}
                   col={col}
-                  onBuyItem={(id) => handleBuy("item", id)}
-                  onBuyCollection={(id) => handleBuy("collection", id)}
+                  onBuyItem={(item) => handleBuyItem(item)}
+                  onBuyCollection={(col) => handleBuyCollection(col)}
                   leasingId={leasingId}
                 />
               ))}
