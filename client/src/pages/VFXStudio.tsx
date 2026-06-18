@@ -71,10 +71,8 @@ import { useState, useRef } from "react";
       115: "medieval battle epic: armies clashing at dawn on mist-covered field, swords raised, cavalry charge dust cloud, massive scale, Braveheart cinematography, golden sunrise rim light",
     };
 
-    function packImageUrl(id: number): string {
-      const prompt = PACK_IMAGE_PROMPTS[id];
-      if (!prompt) return "";
-      return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true&width=320&height=200&seed=${id * 13 + 7}`;
+    function packImageUrl(_id: number): string {
+      return "";
     }
 
     // ─── Pack thumbnail — real AI-generated cinematic image per pack ──────────────
