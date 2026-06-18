@@ -108,7 +108,7 @@ import { useState, useEffect } from "react";
               </div>
             ))}
           </div>
-          <Button onClick={() => setLocation("/settings/billing")}
+          <Button onClick={() => setLocation("/upgrade")}
             className="w-full h-12 font-black text-base bg-amber-500 hover:bg-amber-400 text-black rounded-xl">
             <Crown className="w-5 h-5 mr-2" /> Upgrade to Join
           </Button>
