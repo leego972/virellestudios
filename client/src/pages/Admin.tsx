@@ -164,6 +164,18 @@ import React, { useState } from "react";
             </Card>
           </div>
 
+          <div className="mt-4">
+            <Card className="bg-red-500/5 border-red-500/20 shadow-lg">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 text-red-400"><Trash2 className="h-5 w-5" />Clean Up Empty Collections</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-sm text-white/60 mb-4">Deletes duplicate empty collections from repeated seed runs. Only collections with items are kept.</p>
+                <Button onClick={() => { if (confirm("Delete all empty collections? Cannot be undone.")) cleanupEmpty.mutate(); }} disabled={isAnyLoading} className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30">
+                  <Trash2 className="h-4 w-4 mr-2" />Delete Empty Collections
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="mt-6">
             <Button
               onClick={() => { if (confirm("Seed everything — marketplace, funding, and campaigns?")) seedEverything.mutate(); }}
