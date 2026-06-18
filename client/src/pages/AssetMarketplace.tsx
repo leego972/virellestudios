@@ -15,6 +15,41 @@ import { trpc } from "@/lib/trpc";
 
 type AssetCategory = "all" | "wardrobes" | "funding" | "locations" | "music" | "vfx-packs" | "color-grades" | "cinematography" | "prompt-packs" | "sfx" | "dialogue-packs";
 
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  wardrobes: Shirt,
+  locations: MapPin,
+  music: Music,
+  "vfx-packs": Zap,
+  "color-grades": Palette,
+  cinematography: Camera,
+  "prompt-packs": Layers,
+  sfx: Mic,
+  "dialogue-packs": Film,
+};
+
+function AssetPlaceholder({ category }: { category: string }) {
+  const Icon = CATEGORY_ICONS[category] ?? Package;
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+      <Icon className="w-14 h-14 text-amber-500/20" />
+    </div>
+  );
+}
+
+function AssetImage({ src, alt, category }: { src: string; alt: string; category: string }) {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) return <AssetPlaceholder category={category} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function AssetMarketplace() {
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
@@ -189,27 +224,13 @@ export default function AssetMarketplace() {
               <Card key={asset.id} className="border-amber-500/20 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
                 <div className="aspect-square bg-zinc-900 relative overflow-hidden">
                   {asset.imageUrl ? (
-                    <img
-                        src={asset.imageUrl}
-                        alt={asset.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).onerror = null;
-                          (e.currentTarget as HTMLImageElement).src = `https://image.pollinations.ai/prompt/${encodeURIComponent(`cinematic product photo of ${asset.name}, professional studio lighting, dramatic dark background, ultra-detailed 8K, fashion editorial`)}&width=512&height=512&nologo=true&model=flux`;
-                        }}
-                      />
+                    <AssetImage src={asset.imageUrl} alt={asset.name} category={asset.category} />
                   ) : asset.category === "funding" ? (
                     <div className="w-full h-full flex items-center justify-center opacity-20">
                       <DollarSign className="w-12 h-12" />
                     </div>
-                    ) : (
-                      <img
-                        src={`https://image.pollinations.ai/prompt/${encodeURIComponent(`cinematic product photo of ${asset.name}, professional studio lighting, dramatic dark background, ultra-detailed 8K, fashion editorial`)}&width=512&height=512&nologo=true&model=flux`}
-                        alt={asset.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                  ) : (
+                    <AssetPlaceholder category={asset.category} />
                   )}
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
                     {asset.isPremium ? (
