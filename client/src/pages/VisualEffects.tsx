@@ -156,7 +156,7 @@ import { useState } from "react";
     const [editingNotes,     setEditingNotes]     = useState("");
     const [expandedPreset,   setExpandedPreset]   = useState<string | null>(null);
 
-    const { data: appliedVfx, isLoading } = trpc.visualEffect.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+    const { data: appliedVfx, isLoading, isError } = trpc.visualEffect.listByProject.useQuery({ projectId }, { enabled: !!projectId });
     const { data: presets }               = trpc.visualEffect.presets.useQuery();
 
     const createMutation = trpc.visualEffect.create.useMutation({
@@ -292,7 +292,12 @@ import { useState } from "react";
 
                   {isLoading ? (
                     <div className="space-y-2">{[1,2,3,4].map(i=><div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />)}</div>
-                  ) : filteredVfx.length === 0 ? (
+                  ) : isError ? (
+                      <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-16 gap-3" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
+                        <p className="text-sm text-red-400 font-medium">Failed to load VFX shots</p>
+                        <p className="text-xs text-muted-foreground">Please refresh the page.</p>
+                      </div>
+                    ) : filteredVfx.length === 0 ? (
                     <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-24 gap-4" style={{ borderColor: "rgba(139,92,246,0.1)" }}>
                       <div className="h-16 w-16 rounded-2xl bg-violet-500/10 flex items-center justify-center">
                         <Zap className="h-8 w-8 text-violet-400 opacity-40" />
