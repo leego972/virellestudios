@@ -3,7 +3,7 @@ import React, { useState } from "react";
   import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-  import { AlertCircle, CheckCircle2, Loader2, Zap, Rocket, Shirt, DollarSign, Users, Star, Shield } from "lucide-react";
+  import { AlertCircle, CheckCircle2, Loader2, Zap, Rocket, Shirt, DollarSign, Users, Star, Shield, Trash2 } from "lucide-react";
   import { trpc } from "@/lib/trpc";
 
   export default function Admin() {
@@ -30,10 +30,11 @@ import React, { useState } from "react";
     const seedSignatureCast = trpc.adminSeeding.seedSignatureCast.useMutation(mkOpts("Seed Cast"));
     const seedUniforms      = trpc.adminSeeding.seedUniforms.useMutation(mkOpts("Seed Uniforms"));
     const seedEverything    = trpc.adminSeeding.seedEverything.useMutation(mkOpts("Seed Everything"));
+      const cleanupEmpty      = (trpc.adminSeeding as any).cleanupEmptyCollections.useMutation(mkOpts("Cleanup Empty Collections"));
     const createBeta        = trpc.adminSeeding.createBetaAccounts.useMutation(mkOpts("Create Beta Accounts"));
 
     const isAnyLoading = [seedMarketplace, seedFunding, seedCrowdfunding, seedExecutive,
-      seedMaster, seedSignatureCast, seedUniforms, seedEverything, createBeta].some(m => m.isPending);
+      seedMaster, seedSignatureCast, seedUniforms, seedEverything, createBeta, cleanupEmpty].some(m => m.isPending);
 
     if (!user || !(user as any).isAdmin) return null;
 
