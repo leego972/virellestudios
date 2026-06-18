@@ -381,5 +381,24 @@ import { router, adminProcedure } from "./_core/trpc";
         return { success: false, message: `Failed: ${error instanceof Error ? error.message : String(error)}` };
       }
     }),
-  
-  });
+
+      /** Delete all collections that have zero wardrobe items (empty duplicates) */
+      cleanupEmptyCollections: adminProcedure
+        .mutation(async () => {
+          try {
+            const dbConn = await getDb();
+            if (!dbConn) return { success: false, message: "DB not available" };
+            const result = await dbConn.execute(sql`
+              DELETE FROM designerCollections
+              WHERE id NOT IN (
+                SELECT DISTINCT collectionId FROM wardrobeItems WHERE collectionId IS NOT NULL
+              )
+            `);
+            const deleted = (result as any).rowsAffected ?? (result as any)[0]?.affectedRows ?? '?';
+            return { success: true, message: `Deleted ${deleted} empty collections` };
+          } catch (error) {
+            return { success: false, message: `Failed: ${error instanceof Error ? error.message : String(error)}` };
+          }
+        }),
+
+    });
