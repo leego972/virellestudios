@@ -110,20 +110,20 @@ import { useState } from "react";
     const { data: mixSettings }                        = trpc.filmPost.getMixSettings.useQuery({ projectId }, { enabled: !!projectId });
 
     // ── Mutations ──
-    const createCue  = trpc.filmPost.createScoreCue.useMutation({ onSuccess: () => { toast.success("Cue added"); utils.filmPost.listScoreCues.invalidate(); setEditForm(null); }, onError: e => toast.error(e.message) });
-    const updateCue  = trpc.filmPost.updateScoreCue.useMutation({ onSuccess: () => utils.filmPost.listScoreCues.invalidate(), onError: e => toast.error(e.message) });
-    const deleteCue  = trpc.filmPost.deleteScoreCue.useMutation({ onSuccess: () => { toast.success("Cue removed"); utils.filmPost.listScoreCues.invalidate(); }, onError: e => toast.error(e.message) });
+    const createCue  = trpc.filmPost.createScoreCue.useMutation({ onSuccess: () => { toast.success("Cue added"); utils.filmPost.listScoreCues.invalidate({ projectId }); setEditForm(null); }, onError: e => toast.error(e.message) });
+    const updateCue  = trpc.filmPost.updateScoreCue.useMutation({ onSuccess: () => utils.filmPost.listScoreCues.invalidate({ projectId }), onError: e => toast.error(e.message) });
+    const deleteCue  = trpc.filmPost.deleteScoreCue.useMutation({ onSuccess: () => { toast.success("Cue removed"); utils.filmPost.listScoreCues.invalidate({ projectId }); }, onError: e => toast.error(e.message) });
     const genCues    = trpc.filmPost.generateScoreCues.useMutation({ onSuccess: (d) => { toast.success(`Generated ${d.cues.length} score cues!`); d.cues.forEach(c => createCue.mutate({ projectId, cueNumber: c.cueNumber, title: c.title, cueType: c.cueType as any, description: c.description, duration: c.duration, notes: serializeCueExtras({ ...DEFAULT_EXTRAS, composerNote: c.notes }) })); }, onError: e => toast.error(e.message) });
 
-    const createAdr  = trpc.filmPost.createAdrTrack.useMutation({ onSuccess: () => { toast.success("ADR track added"); utils.filmPost.listAdrTracks.invalidate(); }, onError: e => toast.error(e.message) });
-    const deleteAdr  = trpc.filmPost.deleteAdrTrack.useMutation({ onSuccess: () => { utils.filmPost.listAdrTracks.invalidate(); }, onError: e => toast.error(e.message) });
+    const createAdr  = trpc.filmPost.createAdrTrack.useMutation({ onSuccess: () => { toast.success("ADR track added"); utils.filmPost.listAdrTracks.invalidate({ projectId }); }, onError: e => toast.error(e.message) });
+    const deleteAdr  = trpc.filmPost.deleteAdrTrack.useMutation({ onSuccess: () => { utils.filmPost.listAdrTracks.invalidate({ projectId }); }, onError: e => toast.error(e.message) });
     const genAdr     = trpc.filmPost.generateAdrSuggestions.useMutation({ onSuccess: d => { toast.success(`Generated ${d.suggestions.length} ADR suggestions`); d.suggestions.forEach((s: any) => createAdr.mutate({ projectId, characterName: s.characterName, dialogueLine: s.dialogueLine, trackType: s.trackType as any, notes: s.notes })); }, onError: e => toast.error(e.message) });
 
-    const createFoley = trpc.filmPost.createFoleyTrack.useMutation({ onSuccess: () => { toast.success("Foley track added"); utils.filmPost.listFoleyTracks.invalidate(); }, onError: e => toast.error(e.message) });
-    const deleteFoley = trpc.filmPost.deleteFoleyTrack.useMutation({ onSuccess: () => utils.filmPost.listFoleyTracks.invalidate(), onError: e => toast.error(e.message) });
+    const createFoley = trpc.filmPost.createFoleyTrack.useMutation({ onSuccess: () => { toast.success("Foley track added"); utils.filmPost.listFoleyTracks.invalidate({ projectId }); }, onError: e => toast.error(e.message) });
+    const deleteFoley = trpc.filmPost.deleteFoleyTrack.useMutation({ onSuccess: () => utils.filmPost.listFoleyTracks.invalidate({ projectId }), onError: e => toast.error(e.message) });
     const genFoley    = trpc.filmPost.generateFoleySuggestions.useMutation({ onSuccess: d => { toast.success(`Generated ${d.suggestions.length} Foley suggestions`); d.suggestions.forEach((s: any) => createFoley.mutate({ projectId, name: s.name, foleyType: s.foleyType as any, description: s.description, notes: s.notes })); }, onError: e => toast.error(e.message) });
 
-    const saveMix    = trpc.filmPost.saveMixSettings.useMutation({ onSuccess: () => { toast.success("Mix settings saved"); utils.filmPost.getMixSettings.invalidate(); }, onError: e => toast.error(e.message) });
+    const saveMix    = trpc.filmPost.saveMixSettings.useMutation({ onSuccess: () => { toast.success("Mix settings saved"); utils.filmPost.getMixSettings.invalidate({ projectId }); }, onError: e => toast.error(e.message) });
     const exportMix  = trpc.filmPost.exportMixSummary.useMutation({ onSuccess: d => { const blob = new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `mix-summary-${projectId}.json`; a.click(); toast.success("Mix summary exported"); }, onError: e => toast.error(e.message) });
 
     const allCues = cues || [];
@@ -159,9 +159,20 @@ import { useState } from "react";
     };
 
     const [mixState, setMixState] = useState({ dialogueBus: 0.9, musicBus: 0.7, effectsBus: 0.75, masterVolume: 0.85, reverbRoom: "medium" as const, compressionRatio: 2, noiseReduction: false, notes: "" });
-    // Load mix state from server
-    if (mixSettings && !mixState.notes && mixSettings.dialogueBus) {
-      // Already loaded — just show values
+    const [mixLoaded, setMixLoaded] = useState(false);
+    // Sync server mix settings into local state once on first load
+    if (mixSettings && !mixLoaded) {
+      setMixLoaded(true);
+      setMixState({
+        dialogueBus:     (mixSettings as any).dialogueBus     ?? 0.9,
+        musicBus:        (mixSettings as any).musicBus        ?? 0.7,
+        effectsBus:      (mixSettings as any).effectsBus      ?? 0.75,
+        masterVolume:    (mixSettings as any).masterVolume    ?? 0.85,
+        reverbRoom:      (mixSettings as any).reverbRoom      ?? "medium",
+        compressionRatio:(mixSettings as any).compressionRatio ?? 2,
+        noiseReduction:  (mixSettings as any).noiseReduction  ?? false,
+        notes:           (mixSettings as any).notes           ?? "",
+      });
     }
 
     return (
