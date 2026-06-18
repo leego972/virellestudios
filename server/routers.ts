@@ -14938,13 +14938,83 @@ Return JSON ONLY in this exact shape:
           const scene = await db.getSceneById(input.sceneId);
           if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
           await assertCanAccessProject(scene.projectId, ctx.user.id);
-          const audioDataUrl = `data:audio/mpeg;base64,${input.audioBase64}`;
+
+          const mode = input.mode ?? "overlay";
+
+          // ── Upload audio to cloud storage so FFmpeg + D-ID can fetch it via HTTPS ──
+          let audioUrl: string;
+          try {
+            const { storagePut } = await import("./storage");
+            const audioBuf = Buffer.from(input.audioBase64, "base64");
+            const stored = await storagePut(
+              `lipsync/scene-${input.sceneId}-${Date.now()}.mp3`,
+              audioBuf,
+              "audio/mpeg",
+            );
+            audioUrl = stored.url;
+          } catch (storageErr) {
+            // Storage not configured — fall back to data URL (overlay only)
+            if (mode === "d-id") {
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Cloud storage must be configured (AWS_S3_BUCKET) to use D-ID lip sync.",
+              });
+            }
+            audioUrl = `data:audio/mpeg;base64,${input.audioBase64}`;
+            logger.warn(`[dubbing.applyLipSync] Storage unavailable, using data URL fallback for overlay`);
+          }
+
+          if (mode === "d-id") {
+            // ── D-ID Clips: generate a lip-synced version of the scene video ──
+            if (!scene.videoUrl) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Scene has no video yet — generate the scene video before applying D-ID lip sync.",
+              });
+            }
+            const userKeys = await db.getUserApiKeys(ctx.user.id);
+            const didKey = (userKeys as any).didKey;
+            if (!didKey) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "D-ID API key required. Add it in Settings → API Keys.",
+              });
+            }
+
+            // Save mode + audio immediately so UI can show "processing"
+            await db.updateScene(input.sceneId, {
+              lipSyncMode:     "d-id",
+              lipSyncAudioUrl: audioUrl,
+            } as any);
+
+            // Run D-ID Clips — this blocks for 30-90s per scene
+            const { generateLipSync } = await import("./_core/lipSyncEngine");
+            const result = await generateLipSync({
+              videoUrl: scene.videoUrl as string,
+              audioUrl,
+              apiKey: didKey as string,
+            });
+
+            // Replace scene video with lip-synced version
+            await db.updateScene(input.sceneId, {
+              videoUrl:        result.videoUrl,
+              lipSyncMode:     "d-id",
+              lipSyncAudioUrl: audioUrl,
+            } as any);
+
+            logger.info(`[dubbing.applyLipSync] D-ID lip sync done for scene ${input.sceneId}: ${result.videoUrl}`);
+            return { success: true, mode: "d-id" as const, videoUrl: result.videoUrl };
+          }
+
+          // ── overlay / none: save audio as voiceUrl so videoStitcher mixes it in ──
           await db.updateScene(input.sceneId, {
-            lipSyncMode:    input.mode ?? "overlay",
-            lipSyncAudioUrl: audioDataUrl,
+            voiceUrl:        audioUrl,
+            lipSyncMode:     mode,
+            lipSyncAudioUrl: audioUrl,
           } as any);
-          logger.info(`[dubbing.applyLipSync] mode=${input.mode ?? "overlay"} scene ${input.sceneId}`);
-          return { success: true };
+
+          logger.info(`[dubbing.applyLipSync] mode=${mode} scene ${input.sceneId} audio saved`);
+          return { success: true, mode };
         }),
 
       translateText: protectedProcedure
