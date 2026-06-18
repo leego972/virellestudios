@@ -1,4 +1,3 @@
-import VSWatermark from "@/components/VSWatermark";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
@@ -21,6 +20,7 @@ import Admin from "./pages/Admin";
 import LocationRecreation from "./pages/LocationRecreation";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
+import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
 import { useContentProtection } from "./components/ContentProtection";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import CommandPaletteGlobal from "./components/CommandPaletteGlobal";
@@ -37,7 +37,6 @@ const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
 const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
 const DesignerStudioPage = lazy(() => import("./pages/DesignerStudioPage"));
 const DesignerRegisterPage = lazy(() => import("./pages/DesignerRegisterPage"));
-const DesignersPage = lazy(() => import("./pages/DesignersPage"));
 const UserInventoryPage = lazy(() => import("./pages/UserInventoryPage"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
@@ -62,12 +61,13 @@ const AdminGrowthDashboard = lazy(() => import("./pages/AdminGrowthDashboard"));
 const AdminSignatureCast = lazy(() => import("./pages/AdminSignatureCast"));
 const AdvertisingDashboard = lazy(() => import("./pages/AdvertisingDashboard"));
 const SeoDashboard = lazy(() => import("./pages/SeoDashboard"));
+const VoiceStudio = lazy(() => import("./pages/VoiceStudio"));
+const ScriptTranslation = lazy(() => import("./pages/ScriptTranslation"));
 
 // Auth pages — lazy loaded (less frequently visited)
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Pricing = lazy(() => import("./pages/Pricing"));
-  const UpgradePage = lazy(() => import("./pages/Upgrade"));
 
 // Public pages — lazy loaded
 const Blog = lazy(() => import("./pages/Blog"));
@@ -82,8 +82,6 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
-  const AIUsePolicy = lazy(() => import("./pages/legal/AIUsePolicy"));
-  const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy"));
 const Press = lazy(() => import("./pages/Press"));
 const Changelog = lazy(() => import("./pages/Changelog"));
 
@@ -91,7 +89,6 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const About = lazy(() => import("./pages/About"));
-  const Onboarding = lazy(() => import("./pages/Onboarding"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Solutions = lazy(() => import("./pages/Solutions"));
 
@@ -259,11 +256,9 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/designer-register">{() => <LazyPage><DesignerRegisterPage /></LazyPage>}</Route>
-      <Route path="/designers">{() => <LazyPage><DesignersPage /></LazyPage>}</Route>
 
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
-            <Route path="/upgrade">{() => <LazyPage><UpgradePage /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
       <Route path="/billing/portal">{() => <LazyPage><BillingPortal /></LazyPage>}</Route>
       <Route path="/contact">{() => <LazyPage><Contact /></LazyPage>}</Route>
@@ -278,8 +273,6 @@ function Router() {
       <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
-      <Route path="/ai-use-policy">{() => <LazyPage><AIUsePolicy /></LazyPage>}</Route>
-      <Route path="/refund-policy">{() => <LazyPage><RefundPolicy /></LazyPage>}</Route>
       <Route path="/press">{() => <LazyPage><Press /></LazyPage>}</Route>
       <Route path="/changelog">{() => <LazyPage><Changelog /></LazyPage>}</Route>
       <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
@@ -293,7 +286,6 @@ function Router() {
       <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
-        <Route path="/onboarding">{() => <LazyPage><Onboarding /></LazyPage>}</Route>
       <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
       <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
       <Route path="/download">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
@@ -305,6 +297,8 @@ function Router() {
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
       <Route path="/projects/:projectId/script" component={GatedScriptWriter} />
+      <Route path="/projects/:projectId/voice-studio">{() => <LazyPage><VoiceStudio /></LazyPage>}</Route>
+      <Route path="/projects/:projectId/script-translation">{() => <LazyPage><ScriptTranslation /></LazyPage>}</Route>
       <Route path="/projects/:projectId/storyboard" component={GatedStoryboard} />
       <Route path="/projects/:projectId/credits" component={GatedCreditsEditor} />
       <Route path="/projects/:projectId/shot-list" component={GatedShotList} />
@@ -458,7 +452,7 @@ function App() {
         switchable
       >
         <TooltipProvider>
-          <VSWatermark />
+          <GoldWatermarkLaunch />
           <Toaster />
           <Router />
           <CommandPaletteGlobal />
