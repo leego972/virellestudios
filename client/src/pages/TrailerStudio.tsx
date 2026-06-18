@@ -356,7 +356,7 @@ function TrailerStudioInner() {
               {previewPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
               <span className="hidden sm:inline ml-1">{previewPlaying ? "Stop" : "Preview"}</span>
             </Button>
-            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400" onClick={autoAssignScenes}>
+            <Button variant="outline" size="sm" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={autoAssignScenes}>
               <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
             <Button size="sm" className="h-7 text-xs bg-amber-600 hover:bg-amber-700" onClick={handleGenerate} disabled={generateTrailer.isPending} title="20 credits">
