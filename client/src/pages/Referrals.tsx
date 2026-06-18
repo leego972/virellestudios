@@ -25,12 +25,12 @@ function formatCredits(n: number) {
 }
 
 function MilestoneIcon({ icon }: { icon: string }) {
-  if (icon === "STAR") return <span className="text-2xl">&#11088;</span>;
-  if (icon === "LINK") return <span className="text-2xl">&#128279;</span>;
-  if (icon === "TROPHY") return <span className="text-2xl">&#127942;</span>;
-  if (icon === "CROWN") return <span className="text-2xl">&#128081;</span>;
-  return null;
-}
+    if (icon === "STAR")   return <Star   className="h-6 w-6 text-amber-400" />;
+    if (icon === "LINK")   return <Link2  className="h-6 w-6 text-blue-400" />;
+    if (icon === "TROPHY") return <Trophy className="h-6 w-6 text-amber-400" />;
+    if (icon === "CROWN")  return <Crown  className="h-6 w-6 text-purple-400" />;
+    return null;
+  }
 
 export default function Referrals() {
   const [copied, setCopied] = useState<"link" | "code" | null>(null);
@@ -111,12 +111,12 @@ export default function Referrals() {
 
       {/* Reward Banner */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
+        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center gold-glow">
           <div className="text-3xl font-black text-amber-400">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits you earn</div>
           <div className="text-xs text-amber-400/60 mt-0.5">per successful signup</div>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center">
           <div className="text-3xl font-black text-purple-400 gradient-text-gold">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits they get</div>
           <div className="text-xs text-purple-400/60 mt-0.5">instant on signup</div>
@@ -124,7 +124,7 @@ export default function Referrals() {
       </div>
 
       {/* Referral Link Card */}
-      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20">
         <CardHeader>
           <CardTitle className="text-lg gradient-text-gold">Your Referral Link</CardTitle>
         </CardHeader>
@@ -185,8 +185,8 @@ export default function Referrals() {
           ? "border-green-500/20 bg-green-600/5"
           : "border-border/50"
         }>
-          <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Tag className="h-4 w-4 text-green-400" />
               Your Promo Code
             </CardTitle>
@@ -224,7 +224,7 @@ export default function Referrals() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Users className="h-5 w-5 text-blue-400" />
@@ -237,7 +237,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-green-500/10">
                 <TrendingUp className="h-5 w-5 text-green-400" />
@@ -250,7 +250,7 @@ export default function Referrals() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Zap className="h-5 w-5 text-amber-400" />
@@ -265,14 +265,14 @@ export default function Referrals() {
       </div>
 
       {/* Milestone Progress */}
-      <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+      <Card className="border-amber-500/20">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <Trophy className="h-5 w-5 text-amber-400" />
             Milestone Rewards
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <CardContent className="space-y-5">
           {successful < MILESTONES[MILESTONES.length - 1].count && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -333,7 +333,7 @@ export default function Referrals() {
       {/* How It Works */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">How It Works</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold">How It Works</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -368,12 +368,12 @@ export default function Referrals() {
       {stats?.referrals && stats.referrals.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Referral History</CardTitle>
+            <CardTitle className="text-lg gradient-text-gold">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {stats.referrals.map((ref: any, i: number) => (
-                <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg glass-card/3 border border-amber-500/20">
+                <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
                   <div className="flex items-center gap-3">
                     <div className={
                       "w-2 h-2 rounded-full shrink-0 " +
