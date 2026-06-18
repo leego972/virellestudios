@@ -39,9 +39,16 @@ import { useState } from "react";
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <div className="flex items-center gap-2 mb-1">
-              <Gift className="w-5 h-5 text-yellow-500 shrink-0" />
-              <DialogTitle className="text-base leading-snug gradient-text-gold">Welcome Gift — 2 Free Lamalo Outfits</DialogTitle>
+            <div className="flex items-center gap-3 mb-1">
+              <img
+                src="/lamalo/lamalo-logo.png"
+                alt="Lamalo Fashions"
+                className="h-9 w-9 rounded-lg object-cover border border-amber-500/20 shrink-0"
+              />
+              <div className="flex items-center gap-2">
+                <Gift className="w-5 h-5 text-yellow-500 shrink-0" />
+                <DialogTitle className="text-base leading-snug gradient-text-gold">Welcome Gift — 2 Free Lamalo Outfits</DialogTitle>
+              </div>
             </div>
             <DialogDescription className="text-sm">
               Choose any 2 outfits from Lamalo Fashions as a welcome gift. These are yours permanently at no cost.
