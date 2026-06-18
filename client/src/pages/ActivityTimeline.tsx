@@ -39,7 +39,7 @@ export default function ActivityTimeline() {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id || "0");
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
-  const { data: events = [], isLoading } = trpc.activity.list.useQuery({ projectId, limit: 200 }, { enabled: !!projectId });
+  const { data: events = [], isLoading, isError } = trpc.activity.list.useQuery({ projectId, limit: 200 }, { enabled: !!projectId });
 
   return (
     <div className="min-h-screen text-zinc-100 p-4 md:p-6" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
@@ -58,7 +58,9 @@ export default function ActivityTimeline() {
 
         {isLoading ? (
           <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />Loading…</div>
-        ) : (events as any[]).length === 0 ? (
+        ) : isError ? (
+            <Card className="bg-zinc-950 border-red-500/20 glass-card"><CardContent className="p-8 text-center text-sm text-red-400 flex flex-col items-center gap-2"><AlertTriangle className="w-5 h-5" />Failed to load activity. Please refresh the page.</CardContent></Card>
+          ) : (events as any[]).length === 0 ? (
           <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
         ) : (
           <div className="space-y-2">
