@@ -46,6 +46,7 @@ interface DirectorChatProps {
   projectId?: number;
   defaultOpen?: boolean;
   hideVoiceOverlay?: boolean;
+  pageEmbed?: boolean;
 }
 interface ActionBadge {
   type: string;
@@ -222,7 +223,7 @@ type VoiceState = "idle" | "recording" | "recording_edit" | "transcribing" | "ap
 // Voice mode states (full-screen overlay)
 type VoiceModeState = "listening" | "thinking" | "speaking" | "inactive";
 
-export default function DirectorChat({ projectId, defaultOpen = false, hideVoiceOverlay = false }: DirectorChatProps) {
+export default function DirectorChat({ projectId, defaultOpen = false, hideVoiceOverlay = false, pageEmbed = false }: DirectorChatProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Array<{ url: string; name: string; mimeType: string }>>([]);
@@ -458,6 +459,23 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             generation: "/generation",
             settings: "/settings",
             pricing: "/pricing",
+            // Full app coverage
+            movies: "/movies",
+            series: "/series",
+            assistant: "/assistant",
+            poster_maker: "/poster-maker",
+            content_creator: "/content-creator",
+            showcase: "/showcase",
+            festivals: "/festivals",
+            campaigns: "/campaigns",
+            funding: "/funding",
+            crowdfunding: "/crowdfunding",
+            brand_outreach: "/brand-outreach",
+            marketplace: "/marketplace",
+            vfx_studio: "/vfx-studio",
+            music_studio: "/music-studio",
+            signature_cast: "/signature-cast",
+            talent_search: "/talent-search",
           };
           const route = pageRoutes[d.action.page] || "/";
           setTimeout(() => setLocation(route), 1200);
@@ -620,6 +638,14 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   }, [voiceModeActive]);
 
   useEffect(() => { voiceModeStateRef.current = voiceModeState; }, [voiceModeState]);
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('virelle-voice-transcript', { detail: voiceModeTranscript }));
+  }, [voiceModeTranscript]);
+
+  // ─── pageEmbed refs: allow the zero-dep viewport effect to read live state ───
+  const pageEmbedRef = useRef(pageEmbed);
+  const hasMessagesRef = useRef(false);
+  useEffect(() => { pageEmbedRef.current = pageEmbed; }, [pageEmbed]);
 
   // ─── iOS Safari: lock panel to visual viewport so keyboard doesn't jump the UI ───
   // When the iOS soft keyboard opens, window.innerHeight stays the same but
@@ -637,7 +663,13 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         chatPanelRef.current.style.top = "";
         return;
       }
-      // Mobile: pin to visual viewport top/height so keyboard shrinks the panel
+      // pageEmbed bottom-sheet mode (empty state): don't pin top — CSS handles it
+      if (pageEmbedRef.current && !hasMessagesRef.current) {
+        chatPanelRef.current.style.top = "";
+        chatPanelRef.current.style.height = `${vv.height}px`;
+        return;
+      }
+      // Mobile: full-screen — pin top to visual viewport so keyboard shrinks the panel
       const top = vv.offsetTop ?? 0;
       chatPanelRef.current.style.top = `${top}px`;
       chatPanelRef.current.style.height = `${vv.height}px`;
@@ -1143,6 +1175,13 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     setVmRecordingDuration(0);
   }, [stopSpeaking]);
 
+  // Allow AssistantPage (pageEmbed mode) to close voice mode via CustomEvent
+  useEffect(() => {
+    const handler = () => closeVoiceMode();
+    window.addEventListener('virelle-close-voice-mode', handler);
+    return () => window.removeEventListener('virelle-close-voice-mode', handler);
+  }, [closeVoiceMode]);
+
   // ─── Standard voice recording (inline, for dictation/edit) ───
   const startRecordingInternal = useCallback(async (isEditMode: boolean) => {
     try {
@@ -1438,6 +1477,8 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   const formatTime = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   const displayMessages = localMessages.filter((m) => m.role !== "system");
+  // Keep hasMessagesRef in sync so the zero-dep viewport effect can read it
+  useEffect(() => { hasMessagesRef.current = displayMessages.length > 0; }, [displayMessages.length]);
   const isBusy = isSending || voiceState !== "idle";
   const hasInputText = input.trim().length > 0;
   const filteredSlashCmds = SLASH_COMMANDS.filter((c) =>
@@ -1586,12 +1627,17 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       <div
         ref={chatPanelRef}
         className={cn(
-          "fixed z-50 flex flex-col bg-[#07070e] border border-border shadow-2xl transition-all duration-300 ease-out",
-          // Mobile: full screen anchored to visual viewport (iOS keyboard stability)
-          "inset-x-0 bottom-0 top-0 sm:inset-auto",
+          "fixed z-50 flex flex-col border border-border shadow-2xl transition-all duration-300 ease-out",
+          // Background: transparent in pageEmbed empty state so VirelleFace mask shows through
+          pageEmbed && displayMessages.length === 0 ? "bg-transparent sm:bg-[#07070e]" : "bg-[#07070e]",
+          // Mobile layout: bottom-sheet when pageEmbed+empty (mask visible above), full-screen otherwise
+          pageEmbed && displayMessages.length === 0
+            ? "inset-x-0 bottom-0 sm:inset-auto"
+            : "inset-x-0 bottom-0 top-0 sm:inset-auto",
           // Desktop: floating window
           "sm:w-[420px] sm:rounded-2xl",
-          isOpen && !isMinimized
+          // Fully hidden when pageEmbed+voice — AssistantPage shows mask + speech bubble
+          isOpen && !isMinimized && !(pageEmbed && voiceModeActive)
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-4 scale-95 pointer-events-none"
         )}
@@ -1612,13 +1658,13 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           onMouseDown={(e) => { if (e.button === 0) startDrag(e.clientX, e.clientY); }}
           onTouchStart={(e) => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }}
         >
-          <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="size-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0">
               <Sparkles className="size-4 text-black" />
             </div>
-            <div>
-              <h3 className="font-semibold text-sm gradient-text-gold">Director's Assistant</h3>
-              <p className="text-xs text-muted-foreground">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-sm gradient-text-gold truncate">Director's Assistant</h3>
+              <p className="text-xs text-muted-foreground truncate">
                 {voiceModeActive && voiceModeState === "listening" && <span className="text-amber-400">Listening…</span>}
                 {voiceModeActive && voiceModeState === "thinking" && <span className="text-blue-400">Thinking…</span>}
                 {voiceModeActive && voiceModeState === "speaking" && <span className="text-emerald-400">Speaking…</span>}
@@ -1626,11 +1672,11 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-1 shrink-0" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
             <Button
               variant="ghost"
               size="icon"
-              className="size-8"
+              className="size-8 hidden sm:flex"
               onClick={() => setShowInstructions((prev) => !prev)}
               title="Director instructions"
               aria-label="Toggle director instructions"
@@ -1641,7 +1687,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             <Button
               variant="ghost"
               size="icon"
-              className="size-8"
+              className="size-8 hidden sm:flex"
               onClick={() => setShowShortcutHint((prev) => !prev)}
               title="Keyboard shortcuts (?)"
               aria-label="Toggle keyboard shortcuts"
@@ -1739,6 +1785,20 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         <div className="relative flex-1 min-h-0">
         <div className="flex-1 overflow-y-auto min-h-0" ref={scrollRef} style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" as any }}>
           {displayMessages.length === 0 && !historyLoading ? (
+            pageEmbed ? (
+              // pageEmbed: transparent area — VirelleFace mask shows behind. Prompts float at bottom.
+              <div className="flex flex-col justify-end h-full px-4 pb-3 gap-1.5">
+                {suggestedPrompts.map((prompt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setInput(prompt); textareaRef.current?.focus(); }}
+                    className="text-left text-xs px-3 py-2 rounded-xl border border-amber-500/20 bg-black/50 hover:bg-black/70 transition-colors text-white/70 backdrop-blur-sm w-full"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            ) : (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center gap-4">
               <div className="size-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center">
                 <MessageSquare className="size-8 text-amber-500/60" />
@@ -1762,6 +1822,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
                 ))}
               </div>
             </div>
+            )
           ) : (
             <div className="flex flex-col gap-3 p-4">
               {historyLoading && (
