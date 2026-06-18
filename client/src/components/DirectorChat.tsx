@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { VirelleFace } from "./VirelleFace";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -1518,7 +1519,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         "Show me my projects",
       ];
 
-  return (
+  return createPortal(
     <>
       {/* ─── Floating trigger pill — only visible when chat is fully closed ─── */}
       {!isOpen && (
@@ -2377,6 +2378,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
