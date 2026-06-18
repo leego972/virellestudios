@@ -116,7 +116,6 @@ import { useState, useRef, useEffect } from "react";
 
     const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: hasProject });
     const { data: scenes  } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: hasProject });
-    const updateScene       = trpc.scene.update.useMutation();
     const generateDub       = trpc.dubbing.generateDub.useMutation();
     const translateText     = trpc.dubbing.translateText.useMutation();
     const applyLipSync      = trpc.dubbing.applyLipSync.useMutation();
