@@ -339,7 +339,7 @@ export default function TVCommercial() {
                 <Settings2 className="h-3 w-3" />
               </Button>
             )}
-            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400" onClick={autoAssignScenes}>
+            <Button variant="outline" size="sm" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={autoAssignScenes}>
               <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
             <Button variant="outline" size="sm" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={generateAIScript} disabled={aiScriptLoading}>
