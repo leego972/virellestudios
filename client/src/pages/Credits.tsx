@@ -224,7 +224,7 @@ export default function Credits() {
           {historyLoading ? (
             <div className="space-y-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-14 glass-card/5 rounded-lg animate-pulse" />
+                <div key={i} className="h-14 bg-muted/20 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : transactions.length === 0 ? (
@@ -251,7 +251,7 @@ export default function Credits() {
                   return (
                     <div
                       key={tx.id}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-1 sm:gap-4 items-start sm:items-center px-3 py-3 rounded-lg hover:glass-card/3 transition-colors border border-transparent hover:border-amber-500/20"
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-1 sm:gap-4 items-start sm:items-center px-3 py-3 rounded-lg hover:bg-amber-500/5 transition-colors border border-transparent hover:border-amber-500/20"
                     >
                       {/* Action */}
                       <div className="flex items-center gap-2.5">
@@ -327,7 +327,7 @@ export default function Credits() {
       {/* ─── How Credits Work ─── */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">How Credits Work</CardTitle>
+          <CardTitle className="text-base gradient-text-gold">How Credits Work</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
