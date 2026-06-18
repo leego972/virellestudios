@@ -23,8 +23,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const LOGO_URL =
-  "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
 
 const PROFILE_TYPE_LABELS: Record<string, string> = {
   designer: "Fashion Designer",
@@ -41,20 +39,14 @@ const PROFILE_TYPE_LABELS: Record<string, string> = {
 function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) {
   const [, setLocation] = useLocation();
   return (
-    <header className="border-b border-amber-500/20 px-4 sm:px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur-md z-20">
+    <header className="border-b border-amber-500/20 px-4 sm:px-6 py-3 flex items-center gap-2">
       {onBack && (
         <button onClick={onBack} className="text-white/40 hover:text-white transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </button>
       )}
-      <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
-        <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
-        <span className="text-sm font-black tracking-tighter uppercase italic text-white">
-          Virelle <span className="text-amber-400">Studios</span>
-        </span>
-      </button>
-      <span className="text-white/25 text-xs hidden sm:block">
-        {crumb ? `/ Lamalo Fashions / ${crumb}` : "/ Lamalo Fashions"}
+      <span className="text-white/35 text-xs truncate min-w-0">
+        {crumb ? `Lamalo Fashions / ${crumb}` : "Lamalo Fashions"}
       </span>
       <div className="ml-auto flex items-center gap-2">
         <Button
