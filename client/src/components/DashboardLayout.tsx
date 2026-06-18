@@ -129,6 +129,7 @@ const menuGroups = [
         { icon: Headphones, label: "Music Studio", path: "/music-studio" },
         { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
         { icon: Shirt, label: "Wardrobe", path: "/wardrobe-marketplace" },
+        { icon: Package, label: "My Inventory", path: "/wardrobe-inventory" },
       ],
     },
     {
