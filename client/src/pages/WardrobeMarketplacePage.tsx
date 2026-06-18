@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+const LOGO_URL =
+  "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
 
 const PROFILE_TYPE_LABELS: Record<string, string> = {
   designer: "Fashion Designer",
@@ -37,15 +39,22 @@ const PROFILE_TYPE_LABELS: Record<string, string> = {
 // ─── Shared page header ───────────────────────────────────────────────────────
 
 function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) {
+  const [, setLocation] = useLocation();
   return (
-    <header className="border-b border-amber-500/20 px-4 sm:px-6 py-3 flex items-center gap-2">
+    <header className="border-b border-amber-500/20 px-4 sm:px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur-md z-20">
       {onBack && (
         <button onClick={onBack} className="text-white/40 hover:text-white transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </button>
       )}
-      <span className="text-white/35 text-xs truncate min-w-0">
-        {crumb ? `Lamalo Fashions / ${crumb}` : "Lamalo Fashions"}
+      <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
+        <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
+        <span className="text-sm font-black tracking-tighter uppercase italic text-white">
+          Virelle <span className="text-amber-400">Studios</span>
+        </span>
+      </button>
+      <span className="text-white/25 text-xs hidden sm:block">
+        {crumb ? `/ Lamalo Fashions / ${crumb}` : "/ Lamalo Fashions"}
       </span>
       <div className="ml-auto flex items-center gap-2">
         <Button
@@ -98,6 +107,13 @@ function ValueProps() {
   return (
     <section className="border-b border-amber-500/20 bg-black py-14 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
+        <div className="flex justify-center mb-5">
+          <img
+            src="/lamalo/lamalo-logo.png"
+            alt="Lamalo Fashions"
+            className="h-16 w-16 rounded-2xl object-cover border border-amber-500/20"
+          />
+        </div>
         <p className="text-center text-[11px] font-black uppercase tracking-widest text-amber-400/60 mb-8">
           Why Lamalo beats describing clothes in your prompt
         </p>
@@ -411,14 +427,6 @@ function CustomOrderModal({
 
 // ─── Single item card ─────────────────────────────────────────────────────────
 
-function pollinationsImgUrl(prompt: string, seed = 1) {
-  return (
-    "https://image.pollinations.ai/prompt/" +
-    encodeURIComponent(prompt) +
-    `?width=256&height=256&nologo=true&seed=${seed}&model=flux`
-  );
-}
-
 function ItemCard({
   item,
   onBuy,
@@ -429,14 +437,6 @@ function ItemCard({
   isBuying: boolean;
 }) {
   const [imgErr, setImgErr] = useState(false);
-  const imgSrc = imgErr
-    ? null
-    : (item.primaryImageUrl ??
-        pollinationsImgUrl(
-          item.referencePrompt ??
-            `${item.name} luxury fashion clothing item, studio photography, white background`,
-          item.id ?? 1,
-        ));
   const color = item.colors?.[0] ?? "";
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
@@ -445,9 +445,9 @@ function ItemCard({
   return (
     <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20 transition-shadow">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
-        {imgSrc ? (
+        {item.primaryImageUrl && !imgErr ? (
           <img
-            src={imgSrc}
+            src={item.primaryImageUrl}
             alt={item.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImgErr(true)}
@@ -500,8 +500,8 @@ function CollectionBlock({
   leasingId,
 }: {
   col: any;
-  onBuyItem: (item: any) => void;
-  onBuyCollection: (col: any) => void;
+  onBuyItem: (id: number) => void;
+  onBuyCollection: (id: number) => void;
   leasingId: string | null;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -533,10 +533,10 @@ function CollectionBlock({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Button
             size="sm"
-            onClick={() => onBuyCollection(col)}
+            onClick={() => onBuyCollection(col.id)}
             disabled={isBuyingCol}
             className="bg-amber-500 hover:bg-amber-400 text-black font-bold h-9 px-4 text-xs"
           >
@@ -565,7 +565,7 @@ function CollectionBlock({
                 <ItemCard
                   key={item.id}
                   item={item}
-                  onBuy={() => onBuyItem(item)}
+                  onBuy={() => onBuyItem(item.id)}
                   isBuying={leasingId === `item-${item.id}`}
                 />
               ))}
@@ -579,105 +579,9 @@ function CollectionBlock({
 
 // ─── Designer detail ──────────────────────────────────────────────────────────
 
-// ─── Purchase confirmation dialog ────────────────────────────────────────────
-
-type PendingPurchase = {
-  type: "item" | "collection";
-  id: number;
-  name: string;
-  price: number;
-  imageUrl?: string | null;
-  referencePrompt?: string | null;
-};
-
-function PurchaseConfirmDialog({
-  pending,
-  onConfirm,
-  onCancel,
-  isConfirming,
-}: {
-  pending: PendingPurchase | null;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isConfirming: boolean;
-}) {
-  const [imgErr, setImgErr] = useState(false);
-  if (!pending) return null;
-
-  const priceLabel = `A$${(pending.price / 100).toFixed(2)}`;
-  const imgSrc = imgErr
-    ? null
-    : (pending.imageUrl ??
-        pollinationsImgUrl(
-          pending.referencePrompt ??
-            `${pending.name} luxury fashion clothing item, studio photography, white background`,
-          pending.id,
-        ));
-
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-sm bg-[#0a0a0a] border border-amber-500/20 rounded-3xl overflow-hidden shadow-2xl shadow-black/60">
-        <div className="relative h-52 bg-gradient-to-br from-white/5 to-black overflow-hidden">
-          {imgSrc ? (
-            <img
-              src={imgSrc}
-              alt={pending.name}
-              className="w-full h-full object-cover"
-              onError={() => setImgErr(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Shirt className="h-16 w-16 text-white/10" />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-          <button
-            onClick={onCancel}
-            className="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-black/50 text-white/60 hover:text-white transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="p-5">
-          <h3 className="text-base font-black text-white leading-tight mb-1 line-clamp-2">{pending.name}</h3>
-          <p className="text-[11px] text-white/35 mb-4">
-            One-time purchase · Permanently yours · Costume Lock applied
-          </p>
-          <div className="flex items-end justify-between mb-5">
-            <div className="flex items-baseline gap-1 text-amber-400">
-              <span className="text-2xl font-black">{priceLabel}</span>
-              <span className="text-[10px] text-white/30 uppercase tracking-wider">AUD</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={onCancel}
-              className="flex-1 h-11 rounded-xl border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-sm font-semibold transition-all"
-            >
-              Cancel
-            </button>
-            <Button
-              onClick={onConfirm}
-              disabled={isConfirming}
-              className="flex-1 h-11 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl text-sm"
-            >
-              {isConfirming ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting…</>
-              ) : (
-                "Confirm & Pay →"
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function DesignerDetailView({ designerId }: { designerId: number }) {
   const [, setLocation] = useLocation();
   const [leasingId, setLeasingId] = useState<string | null>(null);
-  const [pendingPurchase, setPendingPurchase] = useState<PendingPurchase | null>(null);
   const [showCustomOrder, setShowCustomOrder] = useState(false);
   const [profileImgErr, setProfileImgErr] = useState(false);
 
@@ -739,39 +643,13 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
     }
   }, []);
 
-  function handleBuyItem(item: any) {
-    setPendingPurchase({
-      type: "item",
-      id: item.id,
-      name: item.name,
-      price: item.retailPriceAud ?? 100,
-      imageUrl: item.primaryImageUrl ?? null,
-      referencePrompt: item.referencePrompt ?? null,
-    });
-  }
-
-  function handleBuyCollection(col: any) {
-    const itemSum = (col.items ?? []).reduce((s: number, i: any) => s + (i.retailPriceAud ?? 100), 0);
-    const bundleCents = itemSum > 0 ? Math.floor(itemSum * 0.90) : (col.collectionPriceAud ?? 100);
-    setPendingPurchase({
-      type: "collection",
-      id: col.id,
-      name: `${col.name} — Full Collection`,
-      price: bundleCents,
-      imageUrl: col.items?.[0]?.primaryImageUrl ?? null,
-      referencePrompt: col.items?.[0]?.referencePrompt ?? null,
-    });
-  }
-
-  function confirmBuy() {
-    if (!pendingPurchase) return;
-    setLeasingId(`${pendingPurchase.type}-${pendingPurchase.id}`);
+  function handleBuy(type: "item" | "collection", id: number) {
+    setLeasingId(`${type}-${id}`);
     checkoutMut.mutate({
-      type: pendingPurchase.type,
-      id: pendingPurchase.id,
+      type,
+      id,
       returnUrl: `${window.location.origin}/wardrobe-marketplace/designer/${designerId}`,
     });
-    setPendingPurchase(null);
   }
 
   const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/wardrobe-marketplace/designer/${designerId}`;
@@ -817,18 +695,17 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
         returnUrl={returnUrl}
       />
 
-      <PurchaseConfirmDialog
-        pending={pendingPurchase}
-        onConfirm={confirmBuy}
-        onCancel={() => { setPendingPurchase(null); setLeasingId(null); }}
-        isConfirming={checkoutMut.isPending}
-      />
-
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
 
         {/* Profile hero */}
         <div className="gold-glow flex items-start gap-5 p-6 rounded-2xl border border-amber-500/20 glass-card/[0.02] hover:shadow-amber-500/20 transition-shadow">
-          {(profile as any).logoUrl && !profileImgErr ? (
+          {isLamalo ? (
+            <img
+              src="/lamalo/lamalo-logo.png"
+              alt="Lamalo Fashions"
+              className="w-20 h-20 rounded-2xl object-cover border border-amber-500/20 shrink-0"
+            />
+          ) : (profile as any).logoUrl && !profileImgErr ? (
             <img
               src={(profile as any).logoUrl}
               alt={(profile as any).brandName}
@@ -925,8 +802,8 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
                 <CollectionBlock
                   key={col.id}
                   col={col}
-                  onBuyItem={(item) => handleBuyItem(item)}
-                  onBuyCollection={(col) => handleBuyCollection(col)}
+                  onBuyItem={(id) => handleBuy("item", id)}
+                  onBuyCollection={(id) => handleBuy("collection", id)}
                   leasingId={leasingId}
                 />
               ))}
