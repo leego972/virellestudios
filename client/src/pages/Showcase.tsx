@@ -850,7 +850,7 @@ interface PublicFilm {
 
 function DiscoveryFeed() {
   const [surface, setSurface] = useState<DiscoverySurface>("featured");
-  const { data: films, isLoading } = trpc.showcase.getRanked.useQuery({ surface, limit: 12 });
+  const { data: films, isLoading, isError } = trpc.showcase.getRanked.useQuery({ surface, limit: 12 });
 
   const tabs: { key: DiscoverySurface; label: string; icon: any }[] = [
     { key: "featured", label: "Featured", icon: Star },
@@ -900,7 +900,12 @@ function DiscoveryFeed() {
             </div>
           ))}
         </div>
-      ) : !films?.length ? (
+      ) : isError ? (
+          <div className="text-center py-16 text-neutral-500">
+            <Globe className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm text-red-400">Failed to load films. Please refresh.</p>
+          </div>
+        ) : !films?.length ? (
         <div className="text-center py-16 text-neutral-500">
           <Globe className="w-10 h-10 mx-auto mb-3 opacity-30" />
           <p className="text-sm">No public films in this category yet.</p>
