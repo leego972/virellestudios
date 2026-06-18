@@ -212,7 +212,7 @@ export default function LocationScout() {
                 <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{loc.name}</CardTitle>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })} aria-label={`Delete location ${loc.name}`}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })} aria-label={`Delete location ${loc.name}`}>
                       <Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
                     </Button>
                   </div>
