@@ -855,10 +855,10 @@ import { useState } from "react";
                     </div>
                   </div>
                   <div className="flex gap-1 shrink-0">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => { e.stopPropagation(); exportJSON(s); }}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity" onClick={e => { e.stopPropagation(); exportJSON(s); }}>
                       <FileJson className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive" onClick={e => { e.stopPropagation(); deleteSeries(s.id); }}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity hover:text-destructive" onClick={e => { e.stopPropagation(); deleteSeries(s.id); }}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/40 self-center group-hover:text-amber-400/60 transition-colors" />
