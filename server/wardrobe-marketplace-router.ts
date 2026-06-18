@@ -468,7 +468,18 @@ export const wardrobeMarketplaceRouter = router({
             return { ...col, items: leasable };
           }),
         );
-        return { profile, collections: collectionsWithItems };
+        // Deduplicate by name — keep the canonical collection (most items wins, tie → lowest id)
+          const seenNames = new Map<string, typeof collectionsWithItems[0]>();
+          for (const col of collectionsWithItems) {
+            const existing = seenNames.get(col.name);
+            if (!existing || col.items.length > existing.items.length ||
+                (col.items.length === existing.items.length && col.id < existing.id)) {
+              seenNames.set(col.name, col);
+            }
+          }
+          // Filter: only show collections that actually have leasable items
+          const deduped = Array.from(seenNames.values()).filter(c => c.items.length > 0);
+          return { profile, collections: deduped };
       }),
 
     /** Single collection + items available for lease */
