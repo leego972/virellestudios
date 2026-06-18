@@ -1,4 +1,3 @@
-import VSWatermark from "./VSWatermark";
 import { useAuth } from "@/_core/hooks/useAuth";
 import LeegoFooter from "@/components/LeegoFooterLaunch";
 import LeegoLogo from "@/components/LeegoLogo";
@@ -82,6 +81,7 @@ import NotificationBell from "./NotificationBell";
 import RenderQueueTray from "./RenderQueueTray";
 import { HollywoodIcon } from "./HollywoodIcon";
 import { ToolIconKey } from "@/constants/hollywoodIcons";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // Navigation grouped by production pipeline logic
 const menuGroups = [
@@ -129,7 +129,6 @@ const menuGroups = [
         { icon: Headphones, label: "Music Studio", path: "/music-studio" },
         { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
         { icon: Shirt, label: "Wardrobe", path: "/wardrobe-marketplace" },
-        { icon: Package, label: "My Inventory", path: "/wardrobe-inventory" },
       ],
     },
     {
@@ -375,7 +374,7 @@ function DashboardLayoutContent({
 
   return (
     <>
-      <VSWatermark />
+      <GoldWatermarkLaunch />
       <div className="relative" ref={sidebarRef}>
         <Sidebar collapsible="icon" className="border-r-0" disableTransition={isResizing}>
           <SidebarHeader className="h-14 md:h-16 justify-center">
@@ -389,7 +388,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <a href="/" className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer hover:opacity-80 transition-opacity">
-                  <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <img src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
@@ -469,37 +468,7 @@ function DashboardLayoutContent({
           </SidebarContent>
 
           <SidebarFooter className="p-2 md:p-3 space-y-1 md:space-y-2">
-            {/* Leego logo + Night Mode on same row */}
-            <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-              <div className="flex-1 flex justify-center md:flex hidden">
-                <LeegoLogo className="h-8 w-auto object-contain leego-glow" />
-              </div>
-              {switchable && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={toggleTheme}
-                      className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                      aria-label={theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
-                    >
-                      {theme === "dark" ? (
-                        <Sun className="h-4 w-4 text-amber-400 shrink-0" />
-                      ) : (
-                        <Moon className="h-4 w-4 text-amber-400 shrink-0" />
-                      )}
-                      <span className="text-sm group-data-[collapsible=icon]:hidden">
-                        {theme === "dark" ? "Day Mode" : "Night Mode"}
-                      </span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    {theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-
-            {/* Credit Balance — sits just above Language */}
+            {/* Credit Balance Display */}
             {user && (
               <a
                 href="/pricing"
@@ -530,7 +499,12 @@ function DashboardLayoutContent({
                 </div>
               </a>
             )}
-
+            {/* Leego branding — tap to pulse to ~2cm for 2s, then shrink back */}
+            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
+              <LeegoLogo
+                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
+              />
+            </div>
             {/* Language Switcher */}
             <DropdownMenu open={langMenuOpen} onOpenChange={setLangMenuOpen}>
               <DropdownMenuTrigger asChild>
@@ -568,6 +542,32 @@ function DashboardLayoutContent({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Theme toggle */}
+            {switchable && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleTheme}
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                    aria-label={theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
+                  >
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4 text-amber-400 shrink-0" />
+                    ) : (
+                      <Moon className="h-4 w-4 text-amber-400 shrink-0" />
+                    )}
+                    <span className="text-sm group-data-[collapsible=icon]:hidden">
+                      {theme === "dark" ? "Day Mode" : "Night Mode"}
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
+                </TooltipContent>
+              </Tooltip>
+            )}
+
             {/* User profile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -635,7 +635,7 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg shrink-0" />
               <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-              <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
+              <img src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux" alt="Virelle Studios" className="h-8 w-8 rounded shrink-0" />
               <span className="text-base font-bold truncate">Virelle Studios</span>
               </a>
             </div>
@@ -702,12 +702,12 @@ function DashboardLayoutContent({
             </div>
           </div>
         )}
-        <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative z-10 overscroll-contain" style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
+        <main className={`flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative z-10 overscroll-contain${location === "/assistant" ? " overflow-hidden" : ""}`} style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
           {/* Gold VS watermark branding — bottom-right corner, subtle and non-intrusive */}
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
-              src="/virelle-logo-square.png"
+              src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
               alt=""
               className="hidden dark:block w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.055]"
               style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
@@ -715,7 +715,7 @@ function DashboardLayoutContent({
             />
             {/* Light mode: very faint golden logo */}
             <img
-              src="/virelle-logo-square.png"
+              src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
               alt=""
               className="block dark:hidden w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.06]"
               style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
@@ -723,7 +723,7 @@ function DashboardLayoutContent({
             />
           </div>
           <div className="flex-1 relative z-10">{children}</div>
-          <LeegoFooter />
+          {location !== "/assistant" && <LeegoFooter />}
         </main>
       </SidebarInset>
     </>
