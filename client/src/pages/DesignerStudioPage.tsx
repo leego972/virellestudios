@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+const LOGO_URL = "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux";
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "active") {
@@ -350,9 +350,16 @@ export default function DesignerStudioPage() {
           </header>
           <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="flex items-end justify-between mb-6">
-              <div>
-                <h1 className="text-3xl font-black mb-1 text-gold-shimmer">Lamalo Fashion</h1>
-                <p className="text-white/40 text-sm">Browse the full wardrobe catalogue and lease items for your production.</p>
+              <div className="flex items-center gap-4">
+                <img
+                  src="/lamalo/lamalo-logo.png"
+                  alt="Lamalo Fashions"
+                  className="h-14 w-14 rounded-xl object-cover border border-amber-500/20 shrink-0"
+                />
+                <div>
+                  <h1 className="text-3xl font-black mb-1 text-gold-shimmer">Lamalo Fashion</h1>
+                  <p className="text-white/40 text-sm">Browse the full wardrobe catalogue and lease items for your production.</p>
+                </div>
               </div>
               <span className="text-white/30 text-xs">{publicItems?.length ?? 0} items</span>
             </div>
