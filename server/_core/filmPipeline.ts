@@ -593,6 +593,7 @@ export async function generateFullFilm(
         // Build consistency-enhanced prompt
         let scenePrompt = scene.visualDescription || scene.description || scene.title || "A cinematic scene";
         let referenceImageUrl: string | undefined;
+        let _filmWardrobeCtx: string | undefined;
 
         if (continuityChain) {
           // Build per-scene coherence context for wardrobe, location, props,
@@ -633,6 +634,14 @@ export async function generateFullFilm(
               })(),
             visualDNA: _visualDNA,
           };
+          _filmWardrobeCtx = (() => {
+            const wb = coherenceCtx.wardrobeByCharacter || {};
+            const parts = Object.entries(wb).map(([cid, desc]) => {
+              const char = characters.find((c: any) => String(c.id) === cid);
+              return char ? `${char.name}: ${desc}` : String(desc);
+            }).filter(Boolean);
+            return parts.length ? parts.join("; ") : undefined;
+          })();
           const consistent = generateConsistentScenePrompt(continuityChain, sceneIdx, scenePrompt, coherenceCtx);
           scenePrompt = consistent.enhancedPrompt;
           referenceImageUrl = consistent.referenceImageUrl;
@@ -663,6 +672,13 @@ export async function generateFullFilm(
             locationDescription: scene.locationType || undefined,
             negativePrompt: buildNegativePrompt(config.genre),
             previousSceneLastFrameUrl: previousLastFrame,
+            aiPromptOverride: scene.aiPromptOverride || undefined,
+            wardrobeContext: _filmWardrobeCtx,
+            sceneType: (scene as any).sceneType || undefined,
+            sfxNotes: (scene as any).sfxNotes || undefined,
+            ambientSound: (scene as any).ambientSound || undefined,
+            musicMood: (scene as any).musicMood || undefined,
+            seed: (scene as any).seed || undefined,
           },
           (clipIdx, totalClips) => {
             progress.completedClips++;
@@ -945,6 +961,20 @@ export async function generateSingleScene(
     characterDescriptions: chain.characters.map(c => c.promptAnchor),
     locationDescription: scene.locationType || undefined,
     previousSceneLastFrameUrl: input.previousSceneLastFrameUrl,
+    negativePrompt: buildNegativePrompt(input.genre),
+    aiPromptOverride: scene.aiPromptOverride || undefined,
+    wardrobeContext: (() => {
+      const parts = Object.entries(wardrobeByCharacter).map(([cid, desc]) => {
+        const char = characters.find((c: any) => String(c.id) === cid);
+        return char ? `${char.name}: ${desc}` : String(desc);
+      }).filter(Boolean);
+      return parts.length ? parts.join("; ") : undefined;
+    })(),
+    sceneType: (scene as any).sceneType || undefined,
+    sfxNotes: (scene as any).sfxNotes || undefined,
+    ambientSound: (scene as any).ambientSound || undefined,
+    musicMood: (scene as any).musicMood || undefined,
+    seed: (scene as any).seed || undefined,
   });
 
   // Generate dialogue
