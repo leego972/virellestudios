@@ -20,7 +20,7 @@ import { assertOwnsProject, assertCanAccessProject } from "./_core/ownership";
 import { safeJsonExtract } from "./_core/safeParse";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
-import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload, rateLimitPublicByIP } from "./_core/rateLimit";
+import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
 import { sanitizeText } from "./_core/sanitize";
 import type { WardrobeItem } from "../drizzle/schema";
 import {
@@ -45,7 +45,6 @@ import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
-import { validatePublicUrl } from "./_core/envValidation";
 import { seoRouter } from "./seo-router";
 import { communityForumRouter } from "./community-forum-router";
 import { autonomousRouter } from "./autonomous-router";
@@ -76,33 +75,6 @@ import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 import { runLamaloSeed } from "./lamalo-seed";
-
-// ── returnUrl domain allowlist ────────────────────────────────────────────────
-// Stripe uses returnUrl / success_url / cancel_url to redirect the user's
-// browser after a checkout or billing-portal session.  Without domain locking
-// an authenticated attacker can craft a checkout URL with success_url pointing
-// at an external phishing site, then share that URL with a victim.
-// Only the app's own hostnames are allowed.
-function assertAppReturnUrl(url: string): void {
-  let parsed: URL;
-  try { parsed = new URL(url); } catch {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid return URL." });
-  }
-  const allowedHosts = [
-    "virelle.life",
-    process.env.RAILWAY_PUBLIC_DOMAIN ?? "",
-    "localhost",
-  ].filter(Boolean);
-  const ok = allowedHosts.some(
-    (h) => parsed.hostname === h || parsed.hostname.endsWith("." + h)
-  );
-  if (!ok) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Return URL must point to the Virelle Studios application.",
-    });
-  }
-}
 
 // v6.77 ÃÂ¢ÃÂÃÂ Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
@@ -391,109 +363,31 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
     return parts.join('. ');
   }
 
-
-  // ─── Credit depletion email — one-time notification per user per 24 h ─────────
-  const _creditDepletionEmailSent = new Map<number, number>(); // userId -> timestamp ms
-
-  async function maybeSendCreditDepletedEmail(userId: number): Promise<void> {
-    const now = Date.now();
-    const last = _creditDepletionEmailSent.get(userId) ?? 0;
-    if (now - last < 24 * 60 * 60 * 1000) return; // 24 h cooldown
-    _creditDepletionEmailSent.set(userId, now);
-    try {
-      const user = await db.getUserById(userId);
-      if (user?.email) {
-        const { sendCreditsDepletedEmail } = await import("./email");
-        const topUpUrl = "https://virelle.life/pricing#credits";
-        sendCreditsDepletedEmail(user.email, user.name || "Filmmaker", topUpUrl).catch(() => {});
-      }
-    } catch { /* non-critical */ }
-  }
-
-  export const appRouter = router({
+export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
       if (!ctx.user) return null;
+      // Admin status is determined solely by database role
       const isAdmin = ctx.user.role === "admin";
-      const u = ctx.user;
-      // SECURITY: Explicit field whitelist — BYOK API keys, Stripe IDs, and
-      // openId are server-only. Never spread the full user row to the client.
+      // Explicitly omit passwordHash ÃÂ¢ÃÂÃÂ never send credential material to the client
+      const { passwordHash: _ph, ...safeUser } = ctx.user;
       return {
-        // Identity
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        avatarUrl: u.avatarUrl,
-        role: u.role,
+        ...safeUser,
         isAdmin,
-        loginMethod: u.loginMethod,
-        createdAt: u.createdAt,
-        updatedAt: u.updatedAt,
-        lastSignedIn: u.lastSignedIn,
-        // Subscription
-        subscriptionTier: u.subscriptionTier,
-        subscriptionStatus: u.subscriptionStatus,
-        subscriptionCurrentPeriodEnd: u.subscriptionCurrentPeriodEnd,
-        creditBalance: isAdmin ? -1 : (u.creditBalance ?? 0),
-        totalCreditsEarned: u.totalCreditsEarned,
-        totalCreditsSpent: u.totalCreditsSpent,
-        creditsResetAt: u.creditsResetAt,
-        monthlyGenerationsUsed: u.monthlyGenerationsUsed,
-        monthlyGenerationsResetAt: u.monthlyGenerationsResetAt,
-        bonusGenerations: u.bonusGenerations,
-        betaExpiresAt: u.betaExpiresAt,
-        // Referral
-        referralCode: u.referralCode,
-        referralStats: u.referralStats,
-        // Profile
-        phone: u.phone,
-        bio: u.bio,
-        country: u.country,
-        city: u.city,
-        timezone: u.timezone,
-        companyName: u.companyName,
-        companyWebsite: u.companyWebsite,
-        jobTitle: u.jobTitle,
-        professionalRole: u.professionalRole,
-        experienceLevel: u.experienceLevel,
-        industryType: u.industryType,
-        teamSize: u.teamSize,
-        preferredGenres: u.preferredGenres,
-        primaryUseCase: u.primaryUseCase,
-        portfolioUrl: u.portfolioUrl,
-        socialLinks: u.socialLinks,
-        howDidYouHear: u.howDidYouHear,
-        marketingOptIn: u.marketingOptIn,
-        onboardingCompleted: u.onboardingCompleted,
-        // Account status
-        isFrozen: u.isFrozen,
-        frozenReason: u.frozenReason,
-        frozenAt: u.frozenAt,
-        accountExpiresAt: (u as any).accountExpiresAt,
-        // BYOK metadata (preferences + presence flags — never the raw key values)
-        byokFallbackMode: u.byokFallbackMode,
-        preferredVideoProvider: u.preferredVideoProvider,
-        preferredLlmProvider: u.preferredLlmProvider,
-        directorInstructions: u.directorInstructions,
-        apiKeysUpdatedAt: u.apiKeysUpdatedAt,
-        byokKeys: {
-          hasOpenai:      Boolean(u.userOpenaiKey),
-          hasRunway:      Boolean(u.userRunwayKey),
-          hasReplicate:   Boolean(u.userReplicateKey),
-          hasFal:         Boolean(u.userFalKey),
-          hasLuma:        Boolean(u.userLumaKey),
-          hasHuggingFace: Boolean(u.userHfToken),
-          hasElevenlabs:  Boolean(u.userElevenlabsKey),
-          hasSuno:        Boolean(u.userSunoKey),
-          hasBytePlus:    Boolean(u.userByteplusKey),
-          hasAnthropic:   Boolean(u.userAnthropicKey),
-          hasGoogleAi:    Boolean(u.userGoogleAiKey),
-          hasVenice:      Boolean(u.userVeniceKey),
-          hasDid:         Boolean(u.userDidKey),
-        },
+        creditBalance: isAdmin ? -1 : (ctx.user.creditBalance ?? 0),
       };
     }),
+
+    getApiKeyStatus: protectedProcedure.query(async ({ ctx }) => {
+      const keys = await db.getUserApiKeys(ctx.user.id);
+      return {
+        hasElevenLabs: Boolean(keys.elevenlabsKey),
+        hasOpenAI: Boolean(keys.openaiKey),
+        hasVenice: Boolean(keys.veniceKey),
+      };
+    }),
+
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
@@ -544,8 +438,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
         portfolioUrl: z.string().max(512).optional(),
         howDidYouHear: z.string().max(128).optional(),
         marketingOptIn: z.boolean().optional(),
-          stripeCustomerId: z.string().max(64).optional(),
-        }))
+      }))
       .mutation(async ({ ctx, input }) => {
         // Security: Fraud detection on registration
         const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
@@ -579,7 +472,6 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
           portfolioUrl: input.portfolioUrl,
           howDidYouHear: input.howDidYouHear,
           marketingOptIn: input.marketingOptIn,
-          stripeCustomerId: input.stripeCustomerId,
         });
         if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create account" });
 
@@ -658,11 +550,11 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
             sendNewSignupNotification(user!.email!, user!.name || "Unknown", user!.role || "user").catch(() => {});
           }).catch(() => {});
         }
-        // Grant 500 welcome credits — enough to explore the platform for a full week
-        try {
-          await db.addCredits(user.id, 500, "signup_welcome_bonus", "Welcome bonus — 500 credits to explore Virelle Studios");
-        } catch (_) { /* non-critical */ }
-        return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+        // Grant 2 free AI character generations on signup (matches the 2 free Lamalo outfits welcome package)
+          try {
+            await db.addCredits(user.id, CREDIT_COSTS.character_gen_ai.cost * 2, "signup_char_gen_bonus", "Welcome bonus ÃÂ¢ÃÂÃÂ 2 free AI character generations");
+          } catch (_) { /* non-critical ÃÂ¢ÃÂÃÂ never fail registration */ }
+          return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
       .input(z.object({
@@ -671,47 +563,30 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
       }))
       .mutation(async ({ ctx, input }) => {
         const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
-
-        // ── IP-level gate (covers non-existent email path too) ───────────────
-        // trackLoginAttempt is keyed per-user, so it only fires when the email
-        // exists.  Without this IP-level check, an attacker can:
-        //   (a) rapidly probe non-existent emails with zero throttling, and
-        //   (b) credential-stuff across many accounts from one IP address.
-        // 20 attempts per IP per hour is generous for real users (≈1 every 3min).
-        await rateLimitPublicByIP(clientIP, "login", 20, 60 * 60 * 1000);
-
-        // ── Timing-safe lookup ───────────────────────────────────────────────
-        // We always run bcrypt.compare regardless of whether the account exists.
-        // Without this, response time reveals email registration status:
-        //   unknown email  → return immediately (no bcrypt, ~0 ms)
-        //   known email    → bcrypt comparison (~100 ms)
-        // The dummy hash is a valid bcrypt digest; compare() always takes the
-        // same ~100 ms wall-clock time whether it wins or loses.
-        const DUMMY_HASH = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TiGX6X7mLqTt7Q8kXvmfRezIj5Ba";
         let user = await db.getUserByEmail(input.email.toLowerCase());
-        const hashToCompare = (user?.passwordHash) ?? DUMMY_HASH;
-        const valid = await bcrypt.compare(input.password, hashToCompare);
-
-        if (!user || !user.passwordHash || !valid) {
-          if (user) {
-            logAuditEvent(user.id, "login_failed_wrong_password", clientIP, false);
-          } else {
-            logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
-          }
+        if (!user || !user.passwordHash) {
+          logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
 
-        // Admin accounts bypass per-account brute-force lockout
+        // Admin accounts bypass brute-force lockout
         const isAdminAccount = user.role === "admin";
         if (!isAdminAccount) {
-          // Secondary per-account lockout (caps repeated failures on a known account)
+          // Security: Check for brute force / lockout before password check
           const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
           if (!loginPreCheck.allowed) {
             logAuditEvent(user.id, "login_blocked_lockout", clientIP, false);
             throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: loginPreCheck.reason || "Account locked" });
           }
         } else {
+          // For admin accounts, still track but never block
           unflagUser(user.id);
+        }
+
+        const valid = await bcrypt.compare(input.password, user.passwordHash);
+        if (!valid) {
+          logAuditEvent(user.id, "login_failed_wrong_password", clientIP, false);
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
 
         // Mark login as successful
@@ -729,38 +604,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
-    createSetupIntent: publicProcedure
-      .input(z.object({
-        email: z.string().email().max(320).optional(),
-        name: z.string().max(255).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-          // Rate limit: max 5 password reset requests per IP per hour to prevent email flooding
-          const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
-          await rateLimitPublicByIP(clientIP, "password-reset", 5, 60 * 60 * 1000);
-        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
-        // Create or retrieve Stripe customer
-        const customerData: { email?: string; name?: string; metadata?: Record<string, string> } = {
-          metadata: { source: "registration_trial" },
-        };
-        if (input.email) customerData.email = input.email;
-        if (input.name) customerData.name = input.name;
-        const customer = await stripe.customers.create(customerData);
-        // Create SetupIntent — saves card for future billing when trial ends
-        const setupIntent = await stripe.setupIntents.create({
-          customer: customer.id,
-          usage: "off_session",
-          payment_method_types: ["card"],
-          metadata: { source: "registration_trial", email: input.email || "" },
-        });
-        return {
-            clientSecret: setupIntent.client_secret,
-            customerId: customer.id,
-            setupIntentId: setupIntent.id,
-            publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
-          };
-        }),
-      requestPasswordReset: publicProcedure
+    requestPasswordReset: publicProcedure
       .input(z.object({ email: z.string().email().max(320), origin: z.string().url().max(256) }))
       .mutation(async ({ input }) => {
         const user = await db.getUserByEmail(input.email.toLowerCase());
@@ -829,7 +673,6 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
           const char = await db.getCharacterById(input.characterId);
           if (!char) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
           if (char.projectId) await assertCanAccessProject(char.projectId, ctx.user.id);
-            else if (char.userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "You do not have access to this character." });
           const userKeys = await db.getUserApiKeys(ctx.user.id);
           const elevenlabsKey = userKeys.elevenlabsKey;
           if (!elevenlabsKey) throw new TRPCError({ code: "BAD_REQUEST", message: "ElevenLabs API key required for voice cloning. Add it in Settings ÃÂ¢ÃÂÃÂ API Keys." });
@@ -853,6 +696,67 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
           await db.updateCharacter(input.characterId, { voiceId } as any);
           logger.info(`[character.cloneVoice] voice ${voiceId} for char ${input.characterId}`);
           return { voiceId, success: true };
+        }),
+
+      uploadVoiceSample: protectedProcedure
+        .input(z.object({
+          characterId: z.number(),
+          audioBase64: z.string().min(1),
+          contentType: z.string().default("audio/mpeg"),
+          filename: z.string().default("sample.mp3"),
+          language: z.string().max(16).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const char = await db.getCharacterById(input.characterId);
+          if (!char) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+          if (char.projectId) await assertCanAccessProject(char.projectId, ctx.user.id);
+          else if (char.userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
+          const buffer = Buffer.from(input.audioBase64, "base64");
+          const ext = (input.filename.split(".").pop() ?? "mp3").toLowerCase();
+          const key = `voice-samples/user-${ctx.user.id}/char-${input.characterId}-${Date.now()}.${ext}`;
+          const { url } = await storagePut(key, buffer, input.contentType);
+          const updates: Record<string, unknown> = { voiceSampleUrl: url };
+          if (input.language) updates.voiceLanguage = input.language;
+          await db.updateCharacter(input.characterId, updates as any);
+          logger.info(`[auth.uploadVoiceSample] stored for char ${input.characterId}`);
+          return { sampleUrl: url, success: true };
+        }),
+
+      translateScript: protectedProcedure
+        .input(z.object({
+          scriptContent: z.string().min(1).max(200000),
+          targetLanguage: z.string().min(2).max(64),
+          sourceLanguage: z.string().max(64).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const target = input.targetLanguage;
+          const source = input.sourceLanguage ?? "auto-detect";
+          const systemPrompt = [
+            `You are a professional screenplay translator with 30 years of experience in Hollywood international distribution.`,
+            ``,
+            `TASK: Translate the following screenplay from ${source} to ${target}.`,
+            ``,
+            `STRICT RULES:`,
+            `1. Preserve EXACT screenplay format: INT./EXT. headings keep their format, character names stay in ALL CAPS and are NOT translated, FADE IN/FADE OUT/CUT TO/DISSOLVE TO stay as-is`,
+            `2. Maintain each character's unique voice, rhythm, and speech patterns in ${target}`,
+            `3. Translate dialogue so it sounds natural and cinematic in ${target} -- not word-for-word literal`,
+            `4. Adapt idioms, slang, and cultural references to natural ${target} equivalents`,
+            `5. Preserve parentheticals -- translate only when there is a natural equivalent`,
+            `6. For Hebrew: use modern Israeli Hebrew, natural spoken rhythm, full RTL -- do NOT romanize`,
+            `7. For Arabic: use Modern Standard Arabic, sensitive to regional variation`,
+            `8. Preserve all line breaks and blank lines exactly as they appear`,
+            `9. Scene description / action lines: vivid, present-tense cinematic prose in ${target}`,
+            `10. Return ONLY the translated screenplay -- no commentary, no preamble`,
+          ].join("\n");
+          const result = await invokeLLM({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: input.scriptContent },
+            ],
+            maxTokens: 16000,
+          });
+          logger.info(`[auth.translateScript] user ${ctx.user.id} -> ${target}`);
+          return { translated: (result.choices[0]?.message?.content as string) ?? "", targetLanguage: target, success: true };
         }),
     }),
 
@@ -900,10 +804,9 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
       }),
     provisionBetaTester: adminProcedure
       .mutation(async ({ ctx }) => {
-        const BETA_EMAIL = process.env.BETA_TESTER_EMAIL ?? "tester@virelle.life";
+        const BETA_EMAIL = "tester@virelle.life";
         const BETA_NAME  = "Virelle Beta Tester";
-        const BETA_PASS  = process.env.BETA_TESTER_PASSWORD;
-        if (!BETA_PASS) throw new Error("BETA_TESTER_PASSWORD env var not set");
+        const BETA_PASS  = "Hello123";
 
         try {
           // Already exists ÃÂ¢ÃÂÃÂ sync API keys from admin caller
@@ -1390,16 +1293,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
         const character = await db.getCharacterById(input.id);
-        if (!character) return undefined;
-        if (character.projectId) {
-          // Project character — verify project access
-          await assertCanAccessProject(character.projectId, ctx.user.id);
-        } else {
-          // Library character (no project) — must belong to requesting user
-          if (character.userId !== ctx.user.id) {
-            throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
-          }
-        }
+        if (character?.projectId) await assertCanAccessProject(character.projectId, ctx.user.id);
         return character;
       }),
 
@@ -1439,6 +1333,8 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
         catchphrase: z.string().optional(),
         voiceType: z.string().optional(),
         voiceId: z.string().optional(),
+        voiceSampleUrl: z.string().optional(),
+        voiceLanguage: z.string().max(16).optional(),
         relationships: z.any().optional(),
         environmentPreference: z.string().optional(),
         preferredWeather: z.string().optional(),
@@ -1513,6 +1409,8 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
         catchphrase: z.string().optional(),
         voiceType: z.string().optional(),
         voiceId: z.string().optional(),
+        voiceSampleUrl: z.string().optional(),
+        voiceLanguage: z.string().max(16).optional(),
         relationships: z.any().optional(),
         environmentPreference: z.string().optional(),
         preferredWeather: z.string().optional(),
@@ -1554,7 +1452,6 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
       aiGenerateCheckout: protectedProcedure
         .input(z.object({ returnUrl: z.string().url().max(512) }))
         .mutation(async ({ ctx, input }) => {
-          assertAppReturnUrl(input.returnUrl);
           if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
           if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
           const session = await stripe.checkout.sessions.create({
@@ -1576,7 +1473,6 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
       aiGenerateFromPhotoCheckout: protectedProcedure
         .input(z.object({ returnUrl: z.string().url().max(512) }))
         .mutation(async ({ ctx, input }) => {
-          assertAppReturnUrl(input.returnUrl);
           if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
           if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
           const session = await stripe.checkout.sessions.create({
@@ -1620,7 +1516,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
         // Industry-tier members get AI character generation FREE ÃÂ¢ÃÂÃÂ skip quota + credit deduction
         if (!isTopTierUser(ctx.user)) {
           requireGenerationQuota(ctx.user);
-          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) { maybeSendCreditDepletedEmail(ctx.user.id).catch(() => {}); throw new TRPCError({ code: "FORBIDDEN", message: e.message }); } }
+          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         }
         await db.incrementGenerationCount(ctx.user.id);
 
@@ -1727,7 +1623,6 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
 
         if (input.referenceImageUrl) {
           // Fetch image from Wikimedia Commons URL
-          validatePublicUrl(input.referenceImageUrl, "referenceImageUrl");
           const imgRes = await fetch(input.referenceImageUrl, {
             headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" },
           });
@@ -3549,8 +3444,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // If no paid key is set, Pollinations (free) is used. byokHint tells the client to prompt for a key.
-        const _hasRealVideoKey = !!(byokKeys.runwayKey || byokKeys.openaiKey || byokKeys.falKey || byokKeys.lumaKey || byokKeys.replicateKey || byokKeys.hfToken || byokKeys.byteplusKey || byokKeys.googleAiKey);
+        // Pollinations is always available as a free fallback ÃÂ¢ÃÂÃÂ no key required.
+        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         // Cancel any existing processing jobs for this scene to prevent race conditions.
         // Old jobs with stale API keys would otherwise keep failing and resetting the scene status.
@@ -3808,7 +3703,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // "reserved" row id without re-deducting. Finalize/release are both
         // idempotent (status='reserved' guard) so a retry path is safe.
         // Return immediately ÃÂ¢ÃÂÃÂ frontend will poll scene status
-        return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete.", byokHint: !_hasRealVideoKey };
+        return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),
 
     // Bulk generate videos for all scenes without videos
@@ -3846,8 +3741,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // If no paid key is set, Pollinations (free) is used. byokHint tells the client to prompt for a key.
-        const _bulkHasRealVideoKey = !!(bulkByokKeys.runwayKey || bulkByokKeys.openaiKey || bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.replicateKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey || bulkByokKeys.googleAiKey);
+        // Pollinations is always available as a free fallback ÃÂ¢ÃÂÃÂ no key required.
+        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         // Determine the active provider for this user
         const { selectProvider } = await import("./_core/byokVideoEngine");
@@ -4084,7 +3979,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }));
           }
         }
-        return { generated, total: scenes.length, byokHint: !_bulkHasRealVideoKey };
+        return { generated, total: scenes.length };
       }),
 
     // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Virelle AI Scene Editing Chat ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
@@ -4354,7 +4249,7 @@ Available fields you can update:
     image: protectedProcedure
       .input(z.object({
         base64: z.string().max(14_000_000, "File too large. Max 10MB."),
-        filename: z.string().max(255),
+        filename: z.string(),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -4369,7 +4264,7 @@ Available fields you can update:
     footage: protectedProcedure
       .input(z.object({
         base64: z.string().max(200_000_000, "File too large. Max 150MB."),
-        filename: z.string().max(255),
+        filename: z.string(),
         contentType: z.enum(["video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/webm"]).default("video/mp4"),
         sceneId: z.number().optional(),
         footageType: z.enum(["replace", "overlay", "reference"]).default("replace"),
@@ -4400,7 +4295,7 @@ Available fields you can update:
     referenceImage: protectedProcedure
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
-        filename: z.string().max(255),
+        filename: z.string(),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         sceneId: z.number(),
       }))
@@ -4441,7 +4336,7 @@ Available fields you can update:
     projectReferenceImage: protectedProcedure
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
-        filename: z.string().max(255),
+        filename: z.string(),
         contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         projectId: z.number(),
       }))
@@ -6361,7 +6256,7 @@ FORMAT RULES (always apply):
     uploadAudio: protectedProcedure
       .input(z.object({
         base64: z.string().max(70_000_000, "File too large. Max 50MB."),
-        filename: z.string().max(255),
+        filename: z.string(),
         contentType: z.enum(["audio/mpeg", "audio/wav", "audio/ogg", "audio/aac", "audio/mp4", "audio/webm"]).default("audio/mpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -8733,19 +8628,11 @@ Generate a detailed production budget estimate.`,
         role: z.enum(["viewer", "editor", "producer", "director"]),
       }))
       .mutation(async ({ ctx, input }) => {
-        const collab = await db.getCollaboratorById(input.id);
-        if (!collab) throw new TRPCError({ code: "NOT_FOUND", message: "Collaborator not found" });
-        if (collab.invitedBy !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised" });
         return db.updateCollaborator(input.id, { role: input.role });
       }),
     remove: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        const collab = await db.getCollaboratorById(input.id);
-        if (!collab) throw new TRPCError({ code: "NOT_FOUND", message: "Collaborator not found" });
-        if (collab.invitedBy !== ctx.user.id && collab.userId !== ctx.user.id) {
-          throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised" });
-        }
         await db.deleteCollaborator(input.id);
         return { success: true };
       }),
@@ -9555,55 +9442,6 @@ Generate a detailed production budget estimate.`,
         );
         return { success: true };
       }),
-
-    submitForPromotion: protectedProcedure
-      .input(z.object({
-        projectId:     z.number(),
-        trailerTitle:  z.string().min(1).max(255),
-        tagline:       z.string().max(500).optional(),
-        directorName:  z.string().max(255).optional(),
-        consentGiven:  z.literal(true),
-        sceneIds:      z.array(z.number()).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        const dbConn = await db.getDb();
-        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-        // Verify the user owns this project
-        const project = await db.getProjectById(input.projectId, ctx.user.id);
-        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-
-        // Remove any previous promotion request for this project by this user
-        await dbConn.execute(
-          sql`DELETE FROM adminCurationFlags
-              WHERE entityType = 'project'
-                AND entityId   = ${input.projectId}
-                AND flagType   = 'promotion_request'`
-        );
-
-        // Insert new promotion request — admin dashboard will surface these
-        await dbConn.execute(
-          sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId, notes)
-              VALUES (
-                'project',
-                ${input.projectId},
-                'promotion_request',
-                ${ctx.user.id},
-                ${JSON.stringify({
-                  trailerTitle:  input.trailerTitle,
-                  tagline:       input.tagline  ?? null,
-                  directorName:  input.directorName ?? ctx.user.name ?? null,
-                  userEmail:     ctx.user.email,
-                  sceneIds:      input.sceneIds ?? [],
-                  consentGiven:  true,
-                  submittedAt:   new Date().toISOString(),
-                })}
-              )`
-        );
-
-        return { success: true };
-      }),
-
   }),
 
   // Director's Assistant Chat
@@ -10353,7 +10191,6 @@ Rules:
             if (!initRes.ok) { const err = await initRes.json(); throw new Error(err.error?.message || "YouTube upload init failed"); }
             const uploadUrl = initRes.headers.get("location");
             if (!uploadUrl) throw new Error("YouTube did not return an upload URL");
-            validatePublicUrl(input.mediaUrl, "mediaUrl");
             const videoRes = await fetch(input.mediaUrl);
             if (!videoRes.ok) throw new Error("Could not fetch video from provided URL");
             const videoBuffer = await videoRes.arrayBuffer();
@@ -10510,8 +10347,6 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-          assertAppReturnUrl(input.successUrl);
-          assertAppReturnUrl(input.cancelUrl);
         // Resolve the correct Stripe price ID ÃÂ¢ÃÂÃÂ check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
@@ -10593,8 +10428,6 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-          assertAppReturnUrl(input.successUrl);
-          assertAppReturnUrl(input.cancelUrl);
         const { createTopUpCheckoutSession } = await import("./_core/subscription");
         const { getStripePriceId: getProvisionedId } = await import("./_core/stripeProvisioning");
         const packPriceMap: Record<string, string> = {
@@ -10633,7 +10466,6 @@ Rules:
     createBillingPortal: creationProcedure
       .input(z.object({ returnUrl: z.string().url() }))
       .mutation(async ({ ctx, input }) => {
-        assertAppReturnUrl(input.returnUrl);
         if (!ctx.user.stripeCustomerId) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "No active subscription found" });
         }
@@ -10652,8 +10484,6 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-          assertAppReturnUrl(input.successUrl);
-          assertAppReturnUrl(input.cancelUrl);
         if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
         // Admins get everything free
         if (ctx.user.role === "admin") {
@@ -10864,7 +10694,10 @@ Rules:
     lamaloGifts: lamaloGiftsRouter,
   lamaloAdmin: router({
     /** Seed Lamalo Fashion in-house designer. Admin-only. Idempotent. */
-    seedLamalo: adminProcedure.mutation(async ({ ctx }) => {
+    seedLamalo: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      }
       return runLamaloSeed(ctx.user.id);
     }),
   }),
@@ -11147,20 +10980,13 @@ Rules:
     // Validate a promo code (public ÃÂ¢ÃÂÃÂ called live as user types)
     validate: publicProcedure
       .input(z.object({ code: z.string() }))
-      .query(async ({ input, ctx }) => {
-        // Rate-limit unauthenticated promo enumeration: 20 lookups per IP per hour.
-        // Without this, anyone could brute-force the promo code space at DB speed.
-        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
-        await rateLimitPublicByIP(clientIP, "promo-validate", 20, 60 * 60 * 1000);
+      .query(async ({ input }) => {
         return await db.validatePromoCode(input.code.trim().toUpperCase());
       }),
     // Apply a promo code to the current user's account (stores it for checkout)
     applyCode: protectedProcedure
       .input(z.object({ code: z.string() }))
       .mutation(async ({ ctx, input }) => {
-        // Secondary rate limit on the write path: 10 apply attempts per IP per hour.
-        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
-        await rateLimitPublicByIP(clientIP, "promo-apply", 10, 60 * 60 * 1000);
         const code = input.code.trim().toUpperCase();
         const validation = await db.validatePromoCode(code);
         if (!validation.valid) {
@@ -11758,7 +11584,6 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseFullFilmGeneration", "Promo Asset Generation");
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_copy_gen.cost, "ad_poster_copy_gen", `Promo assets for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) { maybeSendCreditDepletedEmail(ctx.user.id).catch(() => {}); throw new TRPCError({ code: "FORBIDDEN", message: e.message }); } }
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
 
@@ -12801,64 +12626,18 @@ Rules:
         return { url, sessionId, amountAud, actorName: actor.name };
       }),
 
-    // Fulfill actor unlock after successful Stripe payment.
-    // SECURITY: We verify the Stripe session server-side before granting any
-    // entitlement. The client is NOT trusted to report the amount paid or to
-    // confirm that payment actually succeeded — we read both from Stripe directly.
+    // Webhook handler: fulfill actor unlock after successful Stripe payment
     fulfillUnlock: protectedProcedure
       .input(z.object({
         actorId: z.string(),
         licenseType: z.enum(["personal", "creator", "commercial", "episodic"]),
         projectId: z.number().optional(),
-        stripeSessionId: z.string().max(255),
+        stripeSessionId: z.string(),
+        amountPaidAud: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // ── 1. Verify payment with Stripe ────────────────────────────────────
-        const { stripe } = await import("./_core/subscription");
-        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
-
-        let session: import("stripe").Stripe.Checkout.Session;
-        try {
-          session = await stripe.checkout.sessions.retrieve(input.stripeSessionId);
-        } catch {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid checkout session" });
-        }
-
-        // Payment must be complete
-        if (session.payment_status !== "paid" || session.status !== "complete") {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Payment not completed" });
-        }
-
-        // Session must belong to this user (metadata.userId set at checkout creation)
-        const metaUserId = session.metadata?.userId;
-        if (!metaUserId || metaUserId !== ctx.user.id.toString()) {
-          throw new TRPCError({ code: "FORBIDDEN", message: "Session does not belong to this user" });
-        }
-
-        // Actor and license type must match the checkout session
-        if (session.metadata?.actorId !== input.actorId || session.metadata?.licenseType !== input.licenseType) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Session metadata mismatch" });
-        }
-
-        // Use the amount Stripe recorded, not the client-supplied value
-        const verifiedAmountAud = (session.amount_total ?? 0) / 100;
-
-        // ── 2. Grant entitlement (idempotent) ────────────────────────────────
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-        // Idempotency guard: if this session was already fulfilled, return success
-        // without inserting a duplicate row. Prevents replay attacks where a valid
-        // session ID is submitted multiple times to accumulate extra entitlements.
-        const existing = await dbConn.execute(sql`
-          SELECT id FROM signatureCastEntitlements
-          WHERE stripeSessionId = ${input.stripeSessionId} AND userId = ${ctx.user.id}
-          LIMIT 1
-        `);
-        if ((existing as any)[0]?.length > 0) {
-          return { success: true };
-        }
-
         try {
           await dbConn.execute(sql`
             INSERT INTO signatureCastEntitlements
@@ -12866,12 +12645,12 @@ Rules:
             VALUES
               (${ctx.user.id}, ${input.actorId}, ${input.licenseType}, ${input.projectId ?? null},
                ${input.licenseType === "commercial" ? 1 : 0}, ${input.licenseType === "episodic" ? 1 : 0},
-               'stripe_checkout', ${input.stripeSessionId}, ${verifiedAmountAud}, 'active', NOW(), NOW(), NOW())
+               'stripe_checkout', ${input.stripeSessionId}, ${input.amountPaidAud}, 'active', NOW(), NOW(), NOW())
           `);
           await dbConn.execute(sql`
             INSERT INTO signatureCastEvents (userId, actorId, event, licenseType, projectId, metadata, createdAt)
             VALUES (${ctx.user.id}, ${input.actorId}, 'checkout_completed', ${input.licenseType},
-                    ${input.projectId ?? null}, ${JSON.stringify({ stripeSessionId: input.stripeSessionId, amountPaidAud: verifiedAmountAud })}, NOW())
+                    ${input.projectId ?? null}, ${JSON.stringify({ stripeSessionId: input.stripeSessionId, amountPaidAud: input.amountPaidAud })}, NOW())
           `);
         } catch (e) {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to record entitlement" });
@@ -13100,53 +12879,25 @@ Rules:
         .mutation(async ({ ctx, input }) => { return db.deleteFeatureCut(input.id, ctx.user.id); }),
       listScenes: protectedProcedure
         .input(z.object({ cutId: z.number() }))
-        .query(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.getCutScenes(input.cutId);
-          }),
+        .query(async ({ ctx, input }) => { return db.getCutScenes(input.cutId); }),
       addScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), orderIndex: z.number().optional() }))
-          .mutation(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.addSceneToCut(input.cutId, input.sceneId, input.orderIndex ?? 0);
-          }),
+        .mutation(async ({ ctx, input }) => { return db.addSceneToCut(input.cutId, input.sceneId, input.orderIndex ?? 0); }),
       removeScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number() }))
-          .mutation(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.removeSceneFromCut(input.cutId, input.sceneId);
-          }),
+        .mutation(async ({ ctx, input }) => { return db.removeSceneFromCut(input.cutId, input.sceneId); }),
       toggleScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), included: z.boolean() }))
-          .mutation(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included);
-          }),
+        .mutation(async ({ ctx, input }) => { return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included); }),
       reorderScenes: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneIds: z.array(z.number()) }))
-          .mutation(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.reorderCutScenes(input.cutId, input.sceneIds);
-          }),
+        .mutation(async ({ ctx, input }) => { return db.reorderCutScenes(input.cutId, input.sceneIds); }),
       compile: protectedProcedure
         .input(z.object({ cutId: z.number(), format: z.string().optional() }))
-          .mutation(async ({ ctx, input }) => {
-            const cut = await db.getFeatureCutById(input.cutId, ctx.user.id);
-            if (!cut) throw new TRPCError({ code: "FORBIDDEN", message: "Cut not found or access denied" });
-            return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4");
-          }),
+        .mutation(async ({ ctx, input }) => { return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4"); }),
       getCompileJob: protectedProcedure
         .input(z.object({ jobId: z.number() }))
-          .query(async ({ ctx, input }) => {
-            const job = await db.getCompileJobById(input.jobId);
-            if (job && (job as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
-            return job;
-          }),
+        .query(async ({ ctx, input }) => { return db.getCompileJobById(input.jobId); }),
     }),
   // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pro Ops: Render Queue Bulk Operations ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   renderQueueBulk: router({
@@ -14819,7 +14570,7 @@ Return JSON ONLY in this exact shape:
         providers,
         preferredVideoProvider: user?.preferredVideoProvider ?? null,
         preferredLlmProvider: user?.preferredLlmProvider ?? null,
-        byokFallbackMode: user?.byokFallbackMode ?? "byok_only",
+        byokFallbackMode: user?.byokFallbackMode ?? "byok_with_consent",
       };
     }),
 
@@ -15222,31 +14973,6 @@ ${input.text}` }],
           return { translatedText: (data.choices?.[0]?.message?.content ?? "") as string };
         }),
     }),
-  filmMix: router({
-    get: protectedProcedure
-      .input(z.object({ projectId: z.number() }))
-      .query(async ({ ctx, input }) => {
-        return db.getFilmMixSettings(input.projectId, ctx.user.id);
-      }),
-    save: protectedProcedure
-      .input(z.object({
-        projectId:       z.number(),
-        dialogueBus:     z.number().min(0).max(1),
-        musicBus:        z.number().min(0).max(1),
-        effectsBus:      z.number().min(0).max(1),
-        masterVolume:    z.number().min(0).max(1),
-        reverbRoom:      z.enum(["none", "small", "medium", "large", "hall", "cathedral"]).optional(),
-        reverbAmount:    z.number().min(0).max(1).optional(),
-        compressionRatio: z.number().min(1).max(20).optional(),
-        noiseReduction:  z.boolean().optional(),
-        notes:           z.string().max(8000).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        const { projectId, ...data } = input;
-        return db.upsertFilmMixSettings(projectId, ctx.user.id, data);
-      }),
-  }),
-
   
   });
 export type AppRouter = typeof appRouter;
