@@ -71,6 +71,7 @@ import {
   Camera,
   Package,
   Settings2,
+  Sparkles,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -82,6 +83,7 @@ import RenderQueueTray from "./RenderQueueTray";
 import { HollywoodIcon } from "./HollywoodIcon";
 import { ToolIconKey } from "@/constants/hollywoodIcons";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import DirectorChat from "@/components/DirectorChat";
 
 // Navigation grouped by production pipeline logic
 const menuGroups = [
@@ -639,6 +641,14 @@ function DashboardLayoutContent({
               <span className="text-base font-bold truncate">Virelle Studios</span>
               </a>
             </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('virelle-open-director-chat'))}
+              className="h-11 w-11 flex items-center justify-center rounded-lg hover:bg-accent active:bg-accent/70 transition-colors shrink-0 relative"
+              aria-label="Open AI Assistant"
+              title="Virelle AI Assistant"
+            >
+              <Sparkles className="h-5 w-5 text-amber-400" />
+            </button>
             {switchable && (
               <button
                 onClick={toggleTheme}
@@ -672,6 +682,14 @@ function DashboardLayoutContent({
               </button>
               <RenderQueueTray />
               <NotificationBell />
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('virelle-open-director-chat'))}
+                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-accent transition-colors relative"
+                aria-label="Open AI Assistant"
+                title="Virelle AI Assistant"
+              >
+                <Sparkles className="h-4 w-4 text-amber-400" />
+              </button>
               {switchable && (
                 <button
                   onClick={toggleTheme}
@@ -726,6 +744,11 @@ function DashboardLayoutContent({
           {location !== "/assistant" && <LeegoFooter />}
         </main>
       </SidebarInset>
+
+      {/* Global DirectorChat — available on all pages except /assistant (has its own) and /projects/* (ProjectDetail has its own) */}
+      {location !== "/assistant" && !location.startsWith("/projects/") && (
+        <DirectorChat />
+      )}
     </>
   );
 }
