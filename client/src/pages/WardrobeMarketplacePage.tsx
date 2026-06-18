@@ -37,7 +37,6 @@ const PROFILE_TYPE_LABELS: Record<string, string> = {
 // ─── Shared page header ───────────────────────────────────────────────────────
 
 function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) {
-  const [, setLocation] = useLocation();
   return (
     <header className="border-b border-amber-500/20 px-4 sm:px-6 py-3 flex items-center gap-2">
       {onBack && (
