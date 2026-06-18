@@ -10,7 +10,6 @@ import { useState, useRef } from "react";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Slider } from "@/components/ui/slider";
   import { Switch } from "@/components/ui/switch";
-  import { Separator } from "@/components/ui/separator";
   import { toast } from "sonner";
   import {
     ArrowLeft, Plus, Trash2, Wand2, Upload, Loader2, Volume2, Music,
