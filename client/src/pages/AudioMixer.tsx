@@ -87,23 +87,8 @@ import { useState, useRef, useEffect } from "react";
   export default function AudioMixer() {
     const { projectId } = useParams<{ projectId: string }>();
     const pid = Number(projectId);
-    const utils = trpc.useUtils();
 
     const { data: scenes = [] } = trpc.scene.listByProject.useQuery({ projectId: pid }, { enabled: !!pid });
-    const { data: savedMix, isLoading: loadingMix } = trpc.filmMix.get.useQuery({ projectId: pid }, { enabled: !!pid });
-
-    const saveMutation = trpc.filmMix.save.useMutation({
-      onSuccess: () => {
-        utils.filmMix.get.invalidate({ projectId: pid });
-        setDirty(false);
-        toast.success("Mix saved — audio levels locked in.", {
-          description: "Settings will apply on export and NLE output.",
-        });
-      },
-      onError: (err) => {
-        toast.error("Failed to save mix", { description: err.message });
-      },
-    });
 
     const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
     const [mix, setMix] = useState<MixState>(defaultMix);
@@ -113,40 +98,12 @@ import { useState, useRef, useEffect } from "react";
     const [dirty, setDirty] = useState(false);
     const [savedPreset, setSavedPreset] = useState<string>("Balanced");
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-    const hydratedRef = useRef(false);
 
     const selectedScene = scenes.find(s => s.id === selectedSceneId);
 
-    // Hydrate from DB once loaded
-    useEffect(() => {
-      if (hydratedRef.current || !savedMix) return;
-      hydratedRef.current = true;
-      // Restore master volume
-      if (typeof savedMix.masterVolume === "number") {
-        setMasterVolume(Math.round(savedMix.masterVolume * 100));
-      }
-      // Restore full per-track state from notes JSON (most complete)
-      if (savedMix.notes) {
-        try {
-          const parsed = JSON.parse(savedMix.notes) as { mix: MixState; masterVolume: number; preset?: string };
-          if (parsed.mix) setMix(parsed.mix);
-          if (typeof parsed.masterVolume === "number") setMasterVolume(parsed.masterVolume);
-          if (parsed.preset) setSavedPreset(parsed.preset);
-          return;
-        } catch { /* fall through to bus-level restore */ }
-      }
-      // Fallback: restore primary bus values from DB columns
-      setMix(prev => ({
-        ...prev,
-        dialogue: { ...prev.dialogue, volume: Math.round((savedMix.dialogueBus ?? 0.85) * 100) },
-        music:    { ...prev.music,    volume: Math.round((savedMix.musicBus    ?? 0.70) * 100) },
-        sfx:      { ...prev.sfx,      volume: Math.round((savedMix.effectsBus  ?? 0.75) * 100) },
-      }));
-    }, [savedMix]);
-
     useEffect(() => {
       if (scenes.length > 0 && !selectedSceneId) setSelectedSceneId(scenes[0].id);
-    }, [scenes]);
+    }, [scenes, selectedSceneId]);
 
     useEffect(() => {
       if (isPlaying) {
@@ -187,20 +144,12 @@ import { useState, useRef, useEffect } from "react";
     };
 
     const handleSave = () => {
-      saveMutation.mutate({
-        projectId:    pid,
-        dialogueBus:  mix.dialogue.volume / 100,
-        musicBus:     mix.music.volume / 100,
-        effectsBus:   mix.sfx.volume / 100,
-        masterVolume: masterVolume / 100,
-        notes: JSON.stringify({ mix, masterVolume, preset: savedPreset }),
-      });
+      toast.success("Mix saved — scene audio levels locked in.", { description: "These will apply when you export or preview this scene." });
+      setDirty(false);
     };
 
     const handleReset = () => {
       setMix(defaultMix());
-      setMasterVolume(85);
-      setSavedPreset("Balanced");
       setDirty(false);
       toast("Mix reset to defaults.");
     };
@@ -235,12 +184,10 @@ import { useState, useRef, useEffect } from "react";
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 border-border/40 h-8 text-xs">
               <RotateCcw className="h-3.5 w-3.5" />Reset
             </Button>
-            <Button size="sm" onClick={handleSave}
-              disabled={!dirty || saveMutation.isPending || loadingMix}
+            <Button size="sm" onClick={handleSave} disabled={!dirty}
               className="gap-1.5 h-8 text-xs text-black font-semibold"
               style={{ background: dirty ? "linear-gradient(135deg,#D4AF37,#F5D97E)" : undefined }}>
-              <Save className="h-3.5 w-3.5" />
-              {saveMutation.isPending ? "Saving…" : "Save Mix"}
+              <Save className="h-3.5 w-3.5" />Save Mix
             </Button>
           </div>
         </div>
@@ -429,19 +376,13 @@ import { useState, useRef, useEffect } from "react";
                     <Volume2 className="h-4 w-4" />
                   </Button>
                 </div>
-                {/* Animated waveform display */}
+                {/* Waveform placeholder */}
                 <div className="rounded-lg border border-border/30 h-12 flex items-center px-3 gap-0.5 overflow-hidden"
                   style={{ background:"rgba(255,255,255,0.02)" }}>
-                  {Array.from({ length: 60 }).map((_, i) => {
-                    const isCursor = isPlaying && Math.floor(elapsed * 10) % 60 === i;
-                    return (
-                      <div key={i} className="flex-1 rounded-full transition-colors duration-100"
-                        style={{
-                          height: `${20 + Math.sin(i * 0.8) * 15 + Math.sin(i * 0.3 + 1.2) * 8}%`,
-                          background: isCursor ? "#D4AF37" : isPlaying ? `rgba(212,175,55,${0.2 + Math.sin((i + elapsed * 5) * 0.4) * 0.2})` : "rgba(212,175,55,0.3)",
-                        }} />
-                    );
-                  })}
+                  {Array.from({ length: 60 }).map((_, i) => (
+                    <div key={i} className="flex-1 rounded-full"
+                      style={{ height: `${20 + Math.sin(i * 0.8) * 15 + Math.random() * 10}%`, background: isPlaying && Math.floor(elapsed * 10) % 60 === i ? "#D4AF37" : "rgba(212,175,55,0.3)", transition:"background .1s" }} />
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -465,7 +406,7 @@ import { useState, useRef, useEffect } from "react";
                 {[
                   { label: "Sound Effects", href: `/projects/${projectId}/sound-effects` },
                   { label: "Music Score",   href: `/projects/${projectId}/music-score`   },
-                  { label: "Dubbing Studio",href: `/dubbing-studio`                        },
+                  { label: "Dubbing Studio",href: `/projects/${projectId}/dubbing-studio`  },
                   { label: "Cutting Room",  href: `/projects/${projectId}/cutting-room`  },
                 ].map(l => (
                   <Link key={l.label} href={l.href}>
@@ -480,3 +421,4 @@ import { useState, useRef, useEffect } from "react";
       </div>
     );
   }
+  
