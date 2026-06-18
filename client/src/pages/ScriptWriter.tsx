@@ -31,6 +31,8 @@ import {
   Type,
   Upload,
   Wand2,
+  Globe,
+  Mic2,
   Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -717,9 +719,7 @@ export default function ScriptWriter() {
   // Auth guard ────────────────────────────────────────── after all hooks
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <Loader2 className="h-6 w-6 animate-spin text-amber-400" />
-      </div>
+        <Loader2 className="h-6 w-6 animate-spin text-amber-400 text-amber-400" />
     );
   }
   if (!user) {
@@ -1011,6 +1011,36 @@ export default function ScriptWriter() {
                 <SelectItem value="txt">Plain Text (.txt)</SelectItem>
               </SelectContent>
             </Select>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 gap-1 text-amber-400/80 hover:text-amber-400 hover:bg-amber-400/10"
+                  onClick={() => navigate(`/projects/${projectId}/voice-studio`)}
+                >
+                  <Mic2 className="h-4 w-4" />
+                  <span className="text-xs hidden sm:inline">Voice Studio</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Cast & clone character voices</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 gap-1 text-amber-400/80 hover:text-amber-400 hover:bg-amber-400/10"
+                  onClick={() => navigate(`/projects/${projectId}/script-translation`)}
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="text-xs hidden sm:inline">Translate</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Translate script to any language</TooltipContent>
+            </Tooltip>
 
             {scriptId && scriptId !== "new" && (
               <Tooltip>
