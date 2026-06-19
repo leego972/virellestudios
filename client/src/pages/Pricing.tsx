@@ -1,4 +1,3 @@
-import VSWatermark from "@/components/VSWatermark";
 import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
@@ -32,7 +32,7 @@ const SELF_SERVE_TIERS = [
     audience: "Solo filmmakers and creators exploring AI-assisted production.",
     description: "Core tools for screenplay development, character design, and cinematic planning.",
     highlights: [
-      "700 credits/month (~70 video scenes)",
+      "500 credits/month (~50 video scenes)",
       "AI Script Writer & Screenplay Tools",
       "Character Creator & DNA Lock",
       "Director's AI Assistant (Virelle Chat)",
@@ -46,12 +46,6 @@ const SELF_SERVE_TIERS = [
     primaryCTA: "Start Creating",
     secondaryCTA: "View Feature Breakdown",
     selfServe: true,
-    bestFor: [
-      "Solo filmmakers writing their first AI-produced film",
-      "Writers who need scripts, storyboards & pitch decks",
-      "Creators exploring AI production before scaling up",
-    ],
-    creditExample: "700 credits ≈ 70 scene videos · 87 storyboards · or 700 AI chats",
   },
   {
     id: "amateur",
@@ -68,7 +62,7 @@ const SELF_SERVE_TIERS = [
     audience: "Independent producers and creators building commercial-grade projects.",
     description: "Integrated production pipeline including video generation, voice acting, and scoring.",
     highlights: [
-      "3,000 credits/month (~300 video scenes)",
+      "2,000 credits/month (~200 video scenes)",
       "Everything in Indie, plus:",
       "Video Generation (Runway, Sora, Kling, Veo)",
       "AI Voice Acting (35 emotions, 3,000+ voices)",
@@ -81,12 +75,6 @@ const SELF_SERVE_TIERS = [
     primaryCTA: "Start Producing",
     secondaryCTA: "See Workflow Features",
     selfServe: true,
-    bestFor: [
-      "Independent producers building full-length projects",
-      "Creators generating commercial video with voice & score",
-      "Filmmakers who need a complete end-to-end pipeline",
-    ],
-    creditExample: "3,000 credits ≈ 300 scene videos · 375 storyboards · or 3,000 AI chats",
   },
   {
     id: "independent",
@@ -103,7 +91,7 @@ const SELF_SERVE_TIERS = [
     audience: "Boutique studios, agencies, and commercial directors with repeat pipelines.",
     description: "Full commercial production workflow. Post-production, 4K export, VFX, multi-shot sequencer, and team collaboration.",
     highlights: [
-      "9,000 credits/month (~900 video scenes)",
+      "6,000 credits/month (~600 video scenes)",
       "Everything in Creator, plus:",
       "Film Post-Production (ADR, Foley, Score, Mix)",
       "Subtitles in 130+ languages",
@@ -118,12 +106,6 @@ const SELF_SERVE_TIERS = [
     primaryCTA: "Scale Production",
     secondaryCTA: "See Workflow Features",
     selfServe: true,
-    bestFor: [
-      "Boutique studios with recurring commercial pipelines",
-      "Agencies producing branded video content at scale",
-      "Directors managing multi-project teams",
-    ],
-    creditExample: "9,000 credits ≈ 900 scene videos · 1,125 storyboards · or 9,000 AI chats",
   },
 ];
 
@@ -162,12 +144,12 @@ const ENTERPRISE_TIERS = [
 const ALL_TIERS = [...SELF_SERVE_TIERS, ...ENTERPRISE_TIERS];
 
 const CREDIT_PACKS = [
-  { id: "topup_10",   credits: 200,   price: 19,    perCredit: 0.095, label: "Starter Pack",    saving: "" },
-  { id: "topup_50",   credits: 600,   price: 49,    perCredit: 0.082, label: "Producer Pack",   saving: "Save 14%" },
-  { id: "topup_100",  credits: 1400,  price: 99,    perCredit: 0.071, label: "Director Pack",   saving: "Save 26%" },
-  { id: "topup_200",  credits: 3500,  price: 199,   perCredit: 0.057, label: "Filmmaker Pack",     saving: "Save 40%", popular: true },
-  { id: "topup_500",  credits: 9000,  price: 399,   perCredit: 0.044, label: "Blockbuster Pack", saving: "Save 54%" },
-  { id: "topup_1000", credits: 22000, price: 799,   perCredit: 0.036, label: "Mogul Pack",      saving: "Save 62%" },
+  { id: "topup_10",   credits: 100,   price: 19,    perCredit: 0.19, label: "Starter Pack",     saving: "" },
+  { id: "topup_50",   credits: 300,   price: 49,    perCredit: 0.16, label: "Producer Pack",    saving: "Save 16%" },
+  { id: "topup_100",  credits: 750,   price: 99,    perCredit: 0.13, label: "Director Pack",    saving: "Save 32%" },
+  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Filmmaker Pack",      saving: "Save 47%", popular: true },
+  { id: "topup_500",  credits: 5000,  price: 399,   perCredit: 0.08, label: "Blockbuster Pack", saving: "Save 58%" },
+  { id: "topup_1000", credits: 12000, price: 799,   perCredit: 0.07, label: "Mogul Pack",       saving: "Save 63%" },
 ];
 
 const CREDIT_COSTS = [
@@ -178,7 +160,7 @@ const CREDIT_COSTS = [
   { action: "Generate Preview Image", cost: 3, icon: "🖼️" },
   { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "📸" },
   { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "📹" },
-  { action: "Virelle AI Chat (per message)", cost: 1, icon: "💬" },
+  { action: "Virelle AI Chat (per message)", cost: 2, icon: "💬" },
   { action: "AI Script Writer", cost: 8, icon: "📝" },
   { action: "AI Storyboard Generation", cost: 8, icon: "🎨" },
   { action: "AI Dialogue Polish", cost: 5, icon: "🗣️" },
@@ -235,7 +217,7 @@ const FAQ = [
   },
   {
     q: "Is there a free trial?",
-    a: "Yes. All new accounts include a 7-day free trial with full access to core features. A card is required upfront — you will not be charged until the trial ends. Cancel anytime before the 7 days are up and you will not be billed.",
+    a: "Yes. All new accounts include a 7-day free trial with access to core features — no credit card required. After the trial you can choose a paid plan or continue with the limited free tier.",
     },
     {
       q: "Can I upgrade or downgrade my plan?",
@@ -378,7 +360,7 @@ export default function Pricing() {
             Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
             <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
           </div>
-      <VSWatermark />
+      <GoldWatermarkLaunch />
       
       <div className="container mx-auto px-4 py-20">
         {/* Header */}
@@ -390,26 +372,8 @@ export default function Pricing() {
             Professional AI <span className="text-amber-400">Film Production</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From screenplay to final mix. One platform handles every step — script, characters, scenes, voice, score, and export.
+            From screenplay to final mix. Choose the membership that fits your production volume.
           </p>
-          <p className="text-sm text-zinc-500 max-w-2xl mx-auto mt-3">
-            Choose the plan that fits your production volume. Every plan starts with a 7-day trial — card required, no charge until the trial ends.
-          </p>
-
-          {/* Value proposition row */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 mt-7 mb-2">
-            {[
-              { icon: "🎬", label: "Script to screen in one platform" },
-              { icon: "🔒", label: "You own 100% of what you create" },
-              { icon: "⚡", label: "Start generating in under 60 seconds" },
-              { icon: "🌐", label: "Commercial rights on every plan" },
-            ].map(({ icon, label }) => (
-              <span key={label} className="flex items-center gap-2 text-sm text-zinc-400">
-                <span>{icon}</span>
-                <span>{label}</span>
-              </span>
-            ))}
-          </div>
 
           
             {/* Trust badges */}
@@ -419,6 +383,7 @@ export default function Pricing() {
                 { icon: "✓", label: "Credits never expire" },
                 { icon: "✓", label: "100% commercial ownership" },
                 { icon: "✓", label: "BYOK support" },
+              { icon: "🛡", label: "14-day money-back guarantee" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="text-emerald-400 font-bold">{icon}</span>
@@ -467,37 +432,21 @@ export default function Pricing() {
                     )}
                     <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">{tier.displayName}</CardTitle>
                   </div>
-                  <div className="mt-2 mb-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-2">Best for</p>
-                    <ul className="space-y-1">
-                      {((tier as any).bestFor as string[] | undefined)?.map((item, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-xs text-zinc-400 leading-snug">
-                          <span className="text-amber-500/60 mt-0.5 shrink-0">•</span>
-                          {item}
-                        </li>
-                      )) ?? (
-                        <li className="text-xs text-zinc-400">{tier.audience}</li>
-                      )}
-                    </ul>
+                  <div className="flex items-center gap-2 mt-1 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded px-2 py-0.5">Best for</span>
                   </div>
+                  <CardDescription className="text-sm text-zinc-300 leading-relaxed min-h-[3rem]">{tier.audience}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
                     <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
                   </div>
-                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial · card required</p>
+                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial included</p>
                   <div className="mt-2 flex items-center gap-2 text-sm font-medium text-amber-400">
                     <Coins className="w-4 h-4" />
                     {tier.credits.toLocaleString()} credits/mo included
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                  {/* Credit example callout */}
-                  {(tier as any).creditExample && (
-                    <div className="mb-4 rounded-lg bg-amber-500/5 border border-amber-500/15 px-3 py-2.5">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-amber-500/60 mb-0.5">What your credits build</p>
-                      <p className="text-xs text-zinc-400 leading-snug">{(tier as any).creditExample}</p>
-                    </div>
-                  )}
                   <ul className="space-y-3">
                     {tier.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
@@ -517,17 +466,10 @@ export default function Pricing() {
                       ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Opening Stripe…</>
                       : tier.primaryCTA}
                   </Button>
-                  <div className="w-full space-y-1.5 pt-1">
-                    <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500">
-                      <Shield className="w-3 h-3 text-emerald-500/70" />
-                      <span>Secured by Stripe · 256-bit SSL encrypted</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-x-4 gap-y-1 flex-wrap text-[10px] text-zinc-600">
-                      <span className="flex items-center gap-1"><Check className="w-2.5 h-2.5" /> Cancel anytime</span>
-                      <span className="flex items-center gap-1"><Check className="w-2.5 h-2.5" /> Credits never expire</span>
-                      <span className="flex items-center gap-1"><Check className="w-2.5 h-2.5" /> You own your content</span>
-                    </div>
-                  </div>
+                  <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 w-full">
+                    <Shield className="w-3 h-3 text-zinc-500" />
+                    Secured by Stripe · Cancel anytime
+                  </p>
                 </CardFooter>
               </Card>
             );
@@ -536,19 +478,6 @@ export default function Pricing() {
 
 
         {/* What happens after payment */}
-        {/* Ownership + commercial rights callout */}
-        <div className="max-w-3xl mx-auto mb-12 px-4">
-          <div className="rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-black p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg">🔒</div>
-            <div>
-              <h3 className="font-semibold text-white mb-1">You own everything you create — commercially</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Scripts, images, videos, storyboards, and exports are yours from the moment they generate. No royalties, no revenue share, no restrictions on commercial use or distribution. The Industry plan also includes an explicit commercial licence for Signature Cast actor likenesses.
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div className="max-w-3xl mx-auto mb-20 px-4">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">What happens after you subscribe</h2>
           <p className="text-center text-sm text-zinc-500 mb-8">From checkout to first generation in under 60 seconds.</p>
