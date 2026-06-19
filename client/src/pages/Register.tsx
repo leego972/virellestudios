@@ -1,4 +1,3 @@
-import VSWatermark from "@/components/VSWatermark";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -8,11 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import {
-    Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
-    User, Building2, Palette, ChevronDown, Phone, CreditCard, Zap,
-  } from "lucide-react";
+  Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
+  User, Building2, Palette, ChevronDown, Phone,
+} from "lucide-react";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
   import StudioOpener from "@/components/StudioOpener";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // ─── Country Codes ───
 
@@ -153,11 +153,10 @@ const HOW_HEARD = [
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   const steps = [
-      { num: 1, label: "Account", icon: User },
-      { num: 2, label: "Professional", icon: Building2 },
-      { num: 3, label: "Creative", icon: Palette },
-      { num: 4, label: "Payment", icon: CreditCard },
-    ];
+    { num: 1, label: "Account", icon: User },
+    { num: 2, label: "Professional", icon: Building2 },
+    { num: 3, label: "Creative", icon: Palette },
+  ];
   return (
     <div className="flex items-center justify-center gap-2 mb-6">
       {steps.slice(0, total).map((step, i) => {
@@ -217,7 +216,7 @@ function SelectField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-amber-4002 disabled:cursor-not-allowed disabled:opacity-50 appearance-none pr-8"
+          className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-50 appearance-none pr-8"
         >
           <option value="">{placeholder || "Select..."}</option>
           {options.map((opt) => (
@@ -234,13 +233,11 @@ function SelectField({
 
 // ─── Main Component ───
 
-
-  // ── Stripe Card Form (must live inside <Elements>) ───────────────────────────
-  export default function Register() {
+export default function Register() {
   const [, navigate] = useLocation();
   const searchString = useSearch();
   const [step, setStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 3;
 
   // Step 1: Account
   const [name, setName] = useState("");
@@ -308,7 +305,7 @@ function SelectField({
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
       utils.auth.me.invalidate();
-      setShowStudioOpener(true);
+      setShowWelcome(true);
     },
     onError: (err) => {
       toast.error(err.message || "Registration failed");
@@ -317,57 +314,6 @@ function SelectField({
     },
   });
 
-    // ── Trial checkout mutation ─────────────────────────────────────────────
-      const createCheckoutMutation = trpc.subscription.createCheckout.useMutation({
-        onSuccess: (data) => {
-          if (data.url) window.location.href = data.url;
-          else toast.error("Could not start checkout — please try again.");
-        },
-        onError: (err) => toast.error(err.message || "Something went wrong. Please try again."),
-      });
-
-      const buildRegisterPayload = () => ({
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        password,
-        referralCode: referralCode.trim() || undefined,
-        promoCode: promoCode.trim() || undefined,
-        phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
-        companyName: companyName.trim() || undefined,
-        companyWebsite: companyWebsite.trim() || undefined,
-        jobTitle: jobTitle.trim() || undefined,
-        professionalRole: professionalRole || undefined,
-        experienceLevel: experienceLevel || undefined,
-        industryType: industryType || undefined,
-        teamSize: teamSize || undefined,
-        preferredGenres: selectedGenres.length > 0 ? selectedGenres : undefined,
-        primaryUseCase: primaryUseCase || undefined,
-        portfolioUrl: portfolioUrl.trim() || undefined,
-        howDidYouHear: howDidYouHear || undefined,
-        marketingOptIn,
-      });
-
-      const handleTrialStart = () => {
-        if (registerMutation.isPending || createCheckoutMutation.isPending) return;
-        registerMutation.mutate(buildRegisterPayload(), {
-          onSuccess: () => {
-            const origin = window.location.origin;
-            createCheckoutMutation.mutate({
-              tier: "indie",
-              billing: "monthly",
-              successUrl: `${origin}/billing/success?trial_started=1`,
-              cancelUrl: `${origin}/dashboard?trial_skipped=1`,
-            });
-          },
-        });
-      };
-
-      const handleSkipTrial = () => {
-        if (registerMutation.isPending) return;
-        registerMutation.mutate(buildRegisterPayload());
-      };
-
-  
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
       prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
@@ -387,14 +333,8 @@ function SelectField({
   };
 
   const validateStep2 = (): boolean => {
-    if (!companyName.trim()) { toast.error("Please enter your company or studio name"); return false; }
     if (!professionalRole) { toast.error("Please select your professional role"); return false; }
     if (!experienceLevel) { toast.error("Please select your experience level"); return false; }
-    return true;
-  };
-
-  const validateStep3 = (): boolean => {
-    if (!primaryUseCase) { toast.error("Please select what you'll mainly use Virelle Studios for"); return false; }
     return true;
   };
 
@@ -422,8 +362,27 @@ function SelectField({
   // ─── Submit ───
 
   const handleSubmit = () => {
-        registerMutation.mutate(buildRegisterPayload());
-      };
+    registerMutation.mutate({
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      password,
+      referralCode: referralCode.trim() || undefined,
+      promoCode: promoCode.trim() || undefined,
+      phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
+      companyName: companyName.trim() || undefined,
+      companyWebsite: companyWebsite.trim() || undefined,
+      jobTitle: jobTitle.trim() || undefined,
+      professionalRole: professionalRole || undefined,
+      experienceLevel: experienceLevel || undefined,
+      industryType: industryType || undefined,
+      teamSize: teamSize || undefined,
+      preferredGenres: selectedGenres.length > 0 ? selectedGenres : undefined,
+      primaryUseCase: primaryUseCase || undefined,
+      portfolioUrl: portfolioUrl.trim() || undefined,
+      howDidYouHear: howDidYouHear || undefined,
+      marketingOptIn,
+    });
+  };
 
   if (showStudioOpener) {
       return (
@@ -449,7 +408,7 @@ function SelectField({
     ];
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        <VSWatermark />
+        <GoldWatermarkLaunch />
         <div className="w-full max-w-lg relative z-10">
           <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-5">
@@ -504,10 +463,10 @@ function SelectField({
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/onboarding")}
+                  onClick={() => navigate("/?opener=1")}
                   className="w-full text-muted-foreground text-sm"
                 >
-                  Skip API setup — enter the studio
+                  Skip for now — do this later
                 </Button>
               </div>
             </CardContent>
@@ -519,7 +478,7 @@ function SelectField({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-      <VSWatermark />
+      <GoldWatermarkLaunch />
       <div className="w-full max-w-md space-y-5 relative z-10">
         {/* Virelle Studios Logo */}
         <div className="flex flex-col items-center gap-3">
@@ -987,137 +946,58 @@ function SelectField({
                 </label>
               </CardContent>
               <CardFooter className="flex flex-col gap-2 pt-2">
-                  <div className="flex gap-3 w-full">
-                    <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
-                      <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (!agreedToTerms) {
-                          toast.error("You must agree to the Terms of Service before continuing.");
-                          return;
-                        }
-                        if (!validateStep3()) return;
-                        nextStep();
-                      }}
-                      disabled={!agreedToTerms}
-                      className="flex-1 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
-                      title={!agreedToTerms ? "Please agree to the Terms of Service to continue" : undefined}
-                    >
-                      Review Trial Offer <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </CardFooter>
-              </>
-            )}
+                <div className="flex gap-3 w-full">
+                  <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!agreedToTerms) {
+                        toast.error("You must agree to the Terms of Service before creating an account.");
+                        return;
+                      }
+                      handleSubmit();
+                    }}
+                    disabled={registerMutation.isPending || !agreedToTerms}
+                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+                    title={!agreedToTerms ? "Please agree to the Terms of Service to continue" : undefined}
+                  >
+                    {registerMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        Create Account <Check className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {agreedToTerms && (
+                  <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
+                    Skip for now — complete profile later
+                  </Button>
+                )}
+              </CardFooter>
+            </>
+          )}
+        </Card>
 
-            {/* ── Step 4: Free Trial ─────────────────────────────── */}
-              {step === 4 && (
-                <>
-                  <CardHeader className="text-center pb-2">
-                    <div className="flex items-center justify-center gap-3 mb-2">
-                      <div className="p-2 rounded-full bg-amber-500/10 border border-amber-500/20">
-                        <CreditCard className="w-6 h-6 text-amber-400" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-xl font-semibold text-foreground">Your 7-Day Free Trial</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1.5">
-                      Start creating today —{" "}
-                      <span className="text-amber-400 font-semibold">no charge for 7 days</span>.
-                      Auto-renews at A$149/mo after trial ends.
-                    </p>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4 pt-0">
-                    {/* Indie tier feature highlights */}
-                    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Zap className="w-4 h-4 text-amber-400" />
-                          <span className="font-semibold text-foreground text-sm">Indie Plan — Your Trial Includes</span>
-                        </div>
-                        <span className="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5">
-                          700 credits/mo
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-y-1.5 gap-x-3 text-sm">
-                        {[
-                          "AI Character Generation",
-                          "AI Script Writer",
-                          "Director's AI Assistant",
-                          "Shot List & Mood Board",
-                          "Budget Estimator AI",
-                          "Dialogue & Location AI",
-                        ].map((f) => (
-                          <div key={f} className="flex items-center gap-1.5">
-                            <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                            <span className="text-muted-foreground">{f}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-2.5 rounded-lg border border-border/60 bg-background/50 px-3.5 py-3 text-sm">
-                      <span className="text-lg leading-none pt-0.5">🔒</span>
-                      <span className="text-muted-foreground leading-relaxed">
-                        Secured by Stripe. You'll enter card details on the next screen —{" "}
-                        <strong className="text-foreground">nothing is charged for 7 days</strong>.
-                        Cancel anytime before the trial ends.
-                      </span>
-                    </div>
-
-                    <Button
-                      onClick={handleTrialStart}
-                      disabled={registerMutation.isPending || createCheckoutMutation.isPending}
-                      className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-5 text-base"
-                    >
-                      {registerMutation.isPending || createCheckoutMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Setting up your account…
-                        </>
-                      ) : (
-                        <>
-                          Start My Free Trial <ArrowRight className="w-4 h-4 ml-2" />
-                        </>
-                      )}
-                    </Button>
-
-                    <p className="text-center text-xs text-muted-foreground">
-                      Want to compare plans first?{" "}
-                      <a
-                        href="/upgrade"
-                        className="text-amber-400 hover:text-amber-300 underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        View all tiers &amp; pricing
-                      </a>
-                    </p>
-                  </CardContent>
-
-                  <CardFooter className="flex flex-col gap-2 pt-0">
-                    <Button
-                      variant="ghost"
-                      onClick={handleSkipTrial}
-                      disabled={registerMutation.isPending}
-                      className="w-full text-muted-foreground hover:text-foreground text-sm"
-                    >
-                      {registerMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      Skip — I'll subscribe later from my dashboard
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={prevStep}
-                      className="text-muted-foreground hover:text-foreground text-xs"
-                    >
-                      <ArrowLeft className="w-3 h-3 mr-1" /> Back
-                    </Button>
-                  </CardFooter>
-                </>
-              )}
-          </Card>
-        </div>
+        {/* Terms */}
+        <p className="text-xs text-muted-foreground text-center px-4">
+          By creating an account you confirm you have read and agreed to our{" "}
+          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">Terms of Service</a>,{" "}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">Privacy Policy</a>, and{" "}
+          <a href="/ip-policy" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">IP &amp; Copyright Policy</a>.
+          You accept full responsibility as Director for all content you create.
+        </p>
       </div>
-    );
-  }
-  
+
+      {/* Leego Footer */}
+      <div className="mt-6">
+        <LeegoFooterLaunch />
+      </div>
+    </div>
+  );
+}
