@@ -245,6 +245,8 @@ function GatedTaxIncentives() { return <LazyPage><SubscriptionGate feature="Tax 
 function GatedSeriesBible() { return <LazyPage><SubscriptionGate feature="Series Bible" featureKey="canUseScriptWriter" requiredTier="indie"><SeriesBible /></SubscriptionGate></LazyPage>; }
 function GatedFilmComps() { return <LazyPage><SubscriptionGate feature="Film Comps" featureKey="canUseBudgetEstimator" requiredTier="indie"><FilmComps /></SubscriptionGate></LazyPage>; }
 function GatedCommunity() { return <LazyPage><SubscriptionGate feature="Community" featureKey="canUseDirectorAssistant" requiredTier="indie"><Community /></SubscriptionGate></LazyPage>; }
+function GatedVoiceStudio() { return <LazyPage><SubscriptionGate feature="Voice Studio" featureKey="canUseAIVoiceActing" requiredTier="amateur"><VoiceStudio /></SubscriptionGate></LazyPage>; }
+function GatedScriptTranslation() { return <LazyPage><SubscriptionGate feature="Script Translation" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptTranslation /></SubscriptionGate></LazyPage>; }
 
 function Router() {
   return (
@@ -297,8 +299,8 @@ function Router() {
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
       <Route path="/projects/:projectId/script" component={GatedScriptWriter} />
-      <Route path="/projects/:projectId/voice-studio">{() => <LazyPage><VoiceStudio /></LazyPage>}</Route>
-      <Route path="/projects/:projectId/script-translation">{() => <LazyPage><ScriptTranslation /></LazyPage>}</Route>
+      <Route path="/projects/:projectId/voice-studio">{() => <GatedVoiceStudio />}</Route>
+      <Route path="/projects/:projectId/script-translation">{() => <GatedScriptTranslation />}</Route>
       <Route path="/projects/:projectId/storyboard" component={GatedStoryboard} />
       <Route path="/projects/:projectId/credits" component={GatedCreditsEditor} />
       <Route path="/projects/:projectId/shot-list" component={GatedShotList} />
