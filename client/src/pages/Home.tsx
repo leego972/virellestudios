@@ -563,7 +563,40 @@ import { useAuth } from "@/_core/hooks/useAuth";
             firstProjectId={projects?.[0]?.id ?? null}
           />
 
-          {/* Studio Status Bar */}
+        {/* Header */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">
+              Welcome back{user?.name ? `, ${user.name}` : ""}
+            </h1>
+            <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio — let's make something great.</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
+              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
+                <DollarSign className="h-4 w-4" />Funding
+              </Button>
+            )}
+            {user && (user as any).role === "admin" && (
+              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
+                <DollarSign className="h-4 w-4" />Funding
+              </Button>
+            )}
+            <Button variant="ghost" onClick={() => setForceOnboarding(true)} className="gap-2 text-muted-foreground hover:text-foreground" size="sm">
+              <PlayCircle className="h-4 w-4" /><span className="hidden sm:inline">Getting Started</span>
+            </Button>
+            <a href="https://d2xsxph8kpxj0f.cloudfront.net/310519663524747580/RcWVgE53GVrjFSCRF9TVPg/Virelle_User_Manual_v1.0_f850d2ee.pdf" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground" size="sm">
+                <BookOpen className="h-4 w-4" /><span className="hidden sm:inline">User Manual</span>
+              </Button>
+            </a>
+            <Button onClick={() => setLocation("/projects")} className="gap-2" size="sm">
+              <Plus className="h-4 w-4" />New Film
+            </Button>
+          </div>
+        </div>
+
+        {/* Studio Status Bar */}
         {user && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="Studio status overview">
             <Card style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)"}}>
@@ -606,39 +639,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
             </Card>
           </div>
         )}
-
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">
-              Welcome back{user?.name ? `, ${user.name}` : ""}
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio — let's make something great.</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
-              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
-                <DollarSign className="h-4 w-4" />Funding
-              </Button>
-            )}
-            {user && (user as any).role === "admin" && (
-              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
-                <DollarSign className="h-4 w-4" />Funding
-              </Button>
-            )}
-            <Button variant="ghost" onClick={() => setForceOnboarding(true)} className="gap-2 text-muted-foreground hover:text-foreground" size="sm">
-              <PlayCircle className="h-4 w-4" /><span className="hidden sm:inline">Getting Started</span>
-            </Button>
-            <a href="https://d2xsxph8kpxj0f.cloudfront.net/310519663524747580/RcWVgE53GVrjFSCRF9TVPg/Virelle_User_Manual_v1.0_f850d2ee.pdf" target="_blank" rel="noopener noreferrer">
-              <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground" size="sm">
-                <BookOpen className="h-4 w-4" /><span className="hidden sm:inline">User Manual</span>
-              </Button>
-            </a>
-            <Button onClick={() => setLocation("/projects")} className="gap-2" size="sm">
-              <Plus className="h-4 w-4" />New Film
-            </Button>
-          </div>
-        </div>
 
         <WhatsNewPanel />
 
