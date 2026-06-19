@@ -85,64 +85,43 @@ import { ToolIconKey } from "@/constants/hollywoodIcons";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import DirectorChat from "@/components/DirectorChat";
 
-// Navigation grouped by production pipeline logic
+// Navigation grouped by production pipeline logic — consolidated for clarity
 const menuGroups = [
-    {
-      label: "My Films",
-      items: [
-        { icon: Film, label: "Projects", path: "/projects" },
-        { icon: Clapperboard, label: "My Movies", path: "/movies" },
-        { icon: Tv, label: "Series", path: "/series" },
-        { icon: MessageSquare, label: "Director's AI", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
-        { icon: Key, label: "Generation Keys", path: "/settings?tab=api-keys", hollywoodKey: "settings" as ToolIconKey },
-      ],
-    },
-    {
-      label: "Cast & Talent",
-      items: [
-        { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
-        { icon: Star, label: "Signature Cast", path: "/signature-cast" },
-        { icon: Search, label: "Talent Search", path: "/talent-search" },
-      ],
-    },
-    {
-      label: "Marketing & Release",
-      items: [
-        { icon: Megaphone, label: "Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
-        { icon: PenTool, label: "Content Creator", path: "/content-creator" },
-        { icon: Globe, label: "Film Showcase", path: "/showcase" },
-        { icon: Calendar, label: "Festival Tracker", path: "/festivals" },
-        { icon: Wand2, label: "Campaigns", path: "/campaigns" },
-      ],
-    },
-    {
-      label: "Funding",
-      items: [
-        { icon: DollarSign, label: "Funding Directory", path: "/funding" },
-        { icon: Rocket, label: "Crowdfunding", path: "/crowdfunding" },
-        { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
-      ],
-    },
-    {
-      label: "Marketplace",
-      items: [
-        { icon: ShoppingBag, label: "Asset Market", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
-        { icon: Zap, label: "VFX & Sound Studio", path: "/vfx-studio" },
-        { icon: Headphones, label: "Music Studio", path: "/music-studio" },
-        { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
-        { icon: Shirt, label: "Wardrobe", path: "/wardrobe-marketplace" },
-      ],
-    },
-    {
-      label: "Account",
-      items: [
-        { icon: CreditCard, label: "Subscription", path: "/pricing", hollywoodKey: "subscription_plans" as ToolIconKey },
-        { icon: Coins, label: "Credits", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
-        { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
-        { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
-      ],
-    },
-  ];
+  {
+    label: "Studio",
+    items: [
+      { icon: Film, label: "Projects", path: "/projects" },
+      { icon: MessageSquare, label: "Director's AI", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
+      { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
+      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
+    ],
+  },
+  {
+    label: "Create",
+    items: [
+      { icon: Megaphone, label: "Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
+      { icon: Zap, label: "VFX & Sound", path: "/vfx-studio" },
+      { icon: Headphones, label: "Music Studio", path: "/music-studio" },
+      { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
+    ],
+  },
+  {
+    label: "Release",
+    items: [
+      { icon: Globe, label: "Film Showcase", path: "/showcase" },
+      { icon: DollarSign, label: "Funding", path: "/funding" },
+      { icon: ShoppingBag, label: "Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
+      { icon: Wand2, label: "Campaigns", path: "/campaigns" },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { icon: Coins, label: "Credits", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
+      { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
+    ],
+  },
+];
 
 // Flat list for backward compatibility
 const menuItems = menuGroups.flatMap((g) => g.items);
