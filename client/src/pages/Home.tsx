@@ -607,8 +607,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
           </div>
         )}
 
-        <WhatsNewPanel />
-
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -618,7 +616,12 @@ import { useAuth } from "@/_core/hooks/useAuth";
             <p className="text-muted-foreground mt-1 text-sm">Your AI film production studio — let's make something great.</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {user && (["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") || (user as any).role === "admin") && (
+            {user && ["indie","amateur","independent","creator","studio","industry","beta"].includes((user as any).subscriptionTier || "") && (
+              <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
+                <DollarSign className="h-4 w-4" />Funding
+              </Button>
+            )}
+            {user && (user as any).role === "admin" && (
               <Button variant="outline" onClick={() => setLocation("/funding")} className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-400/10 hover:text-amber-400" size="sm">
                 <DollarSign className="h-4 w-4" />Funding
               </Button>
@@ -636,6 +639,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
             </Button>
           </div>
         </div>
+
+        <WhatsNewPanel />
 
         {/* API Key Banner */}
         {providers !== undefined && !hasApiKey && (
@@ -696,27 +701,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
             </div>
           );
         })()}
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          {[
-            { label: "Total Projects", value: stats.total, icon: Film, color: "text-muted-foreground" },
-            { label: "In Production", value: stats.generating, icon: Loader2, color: "text-amber-400", spin: stats.generating > 0 },
-            { label: "Completed", value: stats.completed, icon: CheckCircle2, color: "text-green-400" },
-            { label: "Drafts", value: stats.draft, icon: Clock, color: "text-amber-400" },
-            { label: "Characters", value: stats.characters, icon: Users, color: "text-purple-400" },
-          ].map((stat) => (
-            <Card key={stat.label} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)"}}>
-              <CardContent className="p-4 flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <stat.icon className={`h-3.5 w-3.5 ${stat.color} ${"spin" in stat && stat.spin ? "animate-spin" : ""}`} />
-                  <span className="text-xs text-muted-foreground">{stat.label}</span>
-                </div>
-                {isLoading ? <Skeleton className="h-7 w-10" /> : <span className="stat-number">{stat.value}</span>}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
         {projectsError && (
             <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-5 py-4 flex items-center justify-between gap-4 mb-2">
@@ -866,6 +850,33 @@ import { useAuth } from "@/_core/hooks/useAuth";
               </div>
             )}
 
+            {/* Completed films */}
+            {recentCompleted.length > 0 && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide gradient-text-gold">Recent Completions</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {recentCompleted.map((p) => (
+                    <Card key={p.id} className="cursor-pointer hover:border-primary/30 transition-all bg-card/40 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${p.id}`)}>
+                      <CardContent className="p-3">
+                        {(p as any).posterUrl ? (
+                          <div className="h-20 w-full rounded-lg overflow-hidden bg-muted mb-2">
+                            <img src={(p as any).posterUrl} alt={p.title} className="h-full w-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="h-20 rounded-lg bg-muted/40 flex items-center justify-center mb-2">
+                            <Play className="h-6 w-6 text-muted-foreground/30" />
+                          </div>
+                        )}
+                        <p className="text-xs font-medium truncate">{p.title}</p>
+                        <p className="text-[10px] text-green-400 mt-0.5 flex items-center gap-1"><CheckCircle2 className="h-2.5 w-2.5" />Completed</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Activity Feed */}
