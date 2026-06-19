@@ -383,10 +383,10 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            {menuGroups.filter(group => group.label !== "Tools" || isCreator).map((group) => (
+            {menuGroups.filter(group => group.label !== "Tools" || isCreator).map((group, idx) => (
               <SidebarMenu key={group.label} className="px-2 py-1">
-                <div className="px-2 mb-1 mt-2 group-data-[collapsible=icon]:hidden">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">{group.label}</span>
+                <div className={`px-2 mb-1 mt-3 group-data-[collapsible=icon]:hidden flex items-center gap-2 ${idx > 0 ? "pt-2 border-t border-white/[0.06]" : ""}`}>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/40">{group.label}</span>
                 </div>
                 {group.items.map((item) => {
                   const active = isActive(item.path);
