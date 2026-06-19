@@ -58,10 +58,14 @@ export default function DownloadApp() {
       .then(r => r.json())
       .then(setLinks)
       .catch(() => setLinks({
-        // Honest fallback: only iOS is publicly available today.
         ios: { url: "https://apps.apple.com/app/virelle-studios/id6761315616", version: "1.0.0", available: true },
         android: { url: null, version: "1.0.0", available: false },
-        desktop: { mac: null, win: null, linux: null, version: "1.0.0", available: false, availability: { mac: false, win: false, linux: false } },
+        desktop: {
+          mac: "https://github.com/leego972/virellestudios/releases/download/desktop-v1.1.1/Virelle.Studios-1.1.0-arm64.dmg",
+          win: "https://github.com/leego972/virellestudios/releases/download/desktop-v1.1.1/Virelle.Studios.Setup.1.1.0.exe",
+          linux: "https://github.com/leego972/virellestudios/releases/download/desktop-v1.1.1/Virelle.Studios-1.1.0.AppImage",
+          version: "1.1.1", available: true, availability: { mac: true, win: true, linux: true },
+        },
       }))
       .finally(() => setLoading(false));
   }, []);
@@ -115,7 +119,7 @@ export default function DownloadApp() {
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>
           <p className="text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
-            Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — available on iOS today, with Android and desktop apps coming soon. One subscription. All platforms.
+            Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — available on iOS, Mac, Windows & Linux today. One subscription. All platforms.
           </p>
         </div>
       </div>
@@ -128,7 +132,7 @@ export default function DownloadApp() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">📱 Mobile App</h2>
             <p className="text-zinc-400">iOS available now on the App Store</p>
             <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
-              🤖 Android — launching Q3 2026 · <a href="mailto:studiosvirelle@gmail.com?subject=Android%20Waitlist" className="underline hover:text-amber-300">Join the waitlist</a>
+              🤖 Android — <a href="mailto:studiosvirelle@gmail.com?subject=Android%20Waitlist" className="underline hover:text-amber-300">Join the waitlist</a>
             </div>
           </div>
 
@@ -141,7 +145,7 @@ export default function DownloadApp() {
                   onClick={() => { if (androidReady && links?.android?.url) window.open(links.android.url, "_blank"); }}
                   disabled={loading || !androidReady}
                   aria-disabled={!androidReady}
-                  title={androidReady ? "Download Android APK" : "Android app coming soon"}
+                  title={androidReady ? "Download Android APK" : "Join the Android waitlist"}
                   className={`group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] ${
                     androidReady
                       ? "bg-amber-500 text-black border-amber-400/40 hover:bg-amber-500/90 hover:scale-105 cursor-pointer"
@@ -156,7 +160,7 @@ export default function DownloadApp() {
                     <div className="text-xs opacity-70">{androidReady ? "Get it on" : "Status"}</div>
                     <div className="text-lg font-bold leading-tight">Android</div>
                     <div className="text-xs opacity-70">
-                      {androidReady ? `v${links?.android?.version ?? "1.0.0"} · APK` : "Coming soon"}
+                      {androidReady ? `v${links?.android?.version ?? "1.0.0"} · APK` : "Join waitlist"}
                     </div>
                   </div>
                 </button>
@@ -226,9 +230,7 @@ export default function DownloadApp() {
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">🖥️ Desktop App</h2>
             <p className="text-zinc-400">
-              {links?.desktop?.available
-                ? "macOS, Windows & Linux — native performance"
-                : "macOS · Windows · Linux — launching Q4 2026"}
+              macOS, Windows & Linux — native performance
             </p>
           </div>
 
@@ -244,7 +246,7 @@ export default function DownloadApp() {
                   onClick={() => { if (ready && url) window.open(url, "_blank"); }}
                   disabled={loading || !ready}
                   aria-disabled={!ready}
-                  title={ready ? `Download for ${label}` : `${label} app coming soon`}
+                  title={`Download for ${label}`}
                   className={`flex items-center gap-3 px-6 py-3 rounded-xl border text-sm font-semibold w-full sm:w-auto justify-center transition-all ${
                     ready
                       ? "border-white/20 bg-white/5 hover:bg-white/10 hover:scale-105 cursor-pointer"
@@ -252,7 +254,7 @@ export default function DownloadApp() {
                   } disabled:opacity-60`}
                 >
                   <span className="text-xl">{emoji}</span>
-                  {ready ? `Download for ${label}` : `${label} — Coming Soon`}
+                  {`Download for ${label}`}
                   {ready && (
                     <span className="text-xs opacity-50 ml-1">v{links?.desktop?.version ?? "1.0.0"}</span>
                   )}
