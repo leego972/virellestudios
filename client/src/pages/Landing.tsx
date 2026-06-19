@@ -139,14 +139,9 @@ export default function Landing() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => setLocation("/blog")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Blog</button>
-              <button onClick={() => setLocation("/showcase")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Showcase</button>
+            <button onClick={() => setLocation("/showcase")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Showcase</button>
             <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Pricing</button>
-            <button onClick={() => setLocation("/download")} className="text-sm font-bold text-white/60 hover:text-white transition-colors flex items-center gap-1">
-              <Smartphone className="h-3.5 w-3.5" />
-              Get the App
-            </button>
-            <button onClick={() => setLocation("/contact")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Industry</button>
+            <button onClick={() => setLocation("/contact")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Enterprise</button>
           </div>
 
           {/* Auth buttons */}
@@ -158,8 +153,7 @@ export default function Landing() {
             ) : (
               <>
                 <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Sign In</button>
-                <Button onClick={() => setLocation("/register")} className="hidden sm:flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-5 shadow-lg shadow-amber-500/20 text-sm"><Film className="h-3.5 w-3.5" />Join as Director</Button>
-                <Button onClick={() => setLocation("/designer-register")} className="hidden sm:flex items-center gap-1.5 bg-transparent hover:glass-card/10 text-white border border-white/30 hover:border-white/50 font-bold rounded-full px-5 text-sm"><Shirt className="h-3.5 w-3.5" />Join as Designer</Button>
+                <Button onClick={() => setLocation("/register")} className="hidden sm:flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-5 shadow-lg shadow-amber-500/20 text-sm">Get Started <ArrowRight className="h-3.5 w-3.5" /></Button>
               </>
             )}
             {/* Mobile hamburger */}
@@ -176,15 +170,12 @@ export default function Landing() {
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-amber-500/20 py-4 px-6 space-y-1 shadow-2xl">
-            <button onClick={() => { setLocation("/blog"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Blog</button>
-              <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Showcase</button>
+            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Showcase</button>
             <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Pricing</button>
-            <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
-            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Industry</button>
+            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all">Enterprise</button>
             <div className="border-t border-amber-500/20 pt-3 mt-1 flex flex-col gap-2">
               <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:glass-card/5 rounded-lg transition-all text-left">Sign In</button>
-              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Film className="h-4 w-4" />Join as Director</Button>
-              <Button onClick={() => { setLocation("/designer-register"); setMobileMenuOpen(false); }} className="w-full bg-transparent hover:glass-card/10 text-white border border-white/30 font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Shirt className="h-4 w-4" />Join as Designer</Button>
+              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2">Get Started <ArrowRight className="h-4 w-4" /></Button>
             </div>
           </div>
         )}
@@ -217,7 +208,7 @@ export default function Landing() {
             </p>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
               <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 h-13 text-base gap-2 shadow-lg shadow-amber-500/20">
                 Start Free
                 <ArrowRight className="h-4 w-4" />
@@ -226,63 +217,20 @@ export default function Landing() {
                 <Play className="h-4 w-4" />
                 Watch The Showrunner
               </Button>
-              <Button size="lg" variant="ghost" onClick={() => setLocation("/signature-cast")} className="h-13 text-base px-6 gap-2 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/5">
-                Browse Digital Cast
-              </Button>
             </div>
 
             {/* No-risk micro-copy */}
-            <p className="text-xs text-white/30 mb-10 -mt-6 tracking-wide">
+            <p className="text-xs text-white/30 mb-14 tracking-wide">
               7-day free trial · No credit card required · Cancel anytime
             </p>
 
-            {/* App download strip */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
-              <p className="text-xs text-white/40 font-semibold uppercase tracking-widest">Also available on</p>
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                iOS App
-              </button>
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
-                </svg>
-                Android App
-              </button>
-            </div>
-
-            {/* Trust bar */}
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
-                {[
-                  "14 AI Provider Integrations",
-                  "Zero AI Usage Markup",
-                  "7-Day Free Trial",
-                  "Global Film Funding Directory",
-                  "ADR · Foley · Score Suite",
-                  "130+ Subtitle Languages",
-                ].map((label) => (
-                  <span key={label} className="text-[11px] font-bold uppercase tracking-widest text-white/35 flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-amber-500/50 inline-block" />
-                    {label}
-                  </span>
-                ))}
-              </div>
-
-            {/* Product stats — verifiable platform facts */}
-            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 mt-10 mb-2">
+            {/* Product stats */}
+            <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-16 mb-2">
               {[
+                { value: "5+", label: "AI Video Providers" },
                 { value: "130+", label: "Subtitle Languages" },
-                { value: "14", label: "AI Providers" },
-                { value: "8-Stage", label: "Production Pipeline" },
-                { value: "50+", label: "Production Tools" },
+                { value: "4K", label: "Max Export Res" },
+                { value: "100%", label: "You Own It" },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center gap-1">
                   <span className="text-2xl sm:text-3xl font-black text-amber-400 tabular-nums">{stat.value}</span>
