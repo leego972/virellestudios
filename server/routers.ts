@@ -10044,7 +10044,7 @@ Rules:
 
           // Test a platform connection using stored credentials
     test: protectedProcedure
-      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]) }))
+      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube", "reddit", "linkedin", "telegram", "twitter", "mastodon", "pinterest", "threads", "devto", "medium", "hashnode"]) }))
       .mutation(async ({ ctx, input }) => {
         const cred = await db.getUserSocialCredentialByPlatform(ctx.user.id, input.platform);
         if (!cred) throw new TRPCError({ code: "NOT_FOUND", message: "No credentials saved for this platform" });
@@ -10097,7 +10097,7 @@ Rules:
 
     // Remove credentials for a platform
     remove: protectedProcedure
-      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]) }))
+      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube", "reddit", "linkedin", "telegram", "twitter", "mastodon", "pinterest", "threads", "devto", "medium", "hashnode"]) }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteUserSocialCredential(ctx.user.id, input.platform);
         return { success: true };
@@ -10106,7 +10106,7 @@ Rules:
     // Publish an image or video to a connected platform
     publish: protectedProcedure
       .input(z.object({
-        platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]),
+        platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube", "reddit", "linkedin", "telegram", "twitter", "mastodon", "pinterest", "threads", "devto", "medium", "hashnode"]),
         mediaUrl: z.string().url(),
         mediaType: z.enum(["image", "video"]),
         caption: z.string().max(2200).optional(),
