@@ -164,7 +164,7 @@ const PUBLIC_PAGES: PageSeoConfig[] = [
   },
   {
     path: "/blog",
-    title: "Blog — VirÉlle Studios | Developer Security & AI Insights",
+    title: "Blog — VirÉlle Studios | Filmmaker & AI Cinema Insights",
     description:
       "Expert articles on AI filmmaking, cinematography, prompt engineering, AI actors, and the future of cinema. Stay ahead with VirÉlle Studios.",
     keywords: [
