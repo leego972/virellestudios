@@ -298,7 +298,45 @@ const COMMUNITY_TARGETS = {
   },
   creative_cow: {
     strategy: "Technical discussions about AI video production, post-production workflows, and AI tool integrations for the Creative COW professional community.",
-  },
+  },  filmSchoolStudents: {
+      subreddits: [
+        "r/filmschool",
+        "r/studentfilms",
+        "r/cinematography",
+        "r/MediaProduction",
+        "r/AfterEffects",
+        "r/DaVinciResolve",
+        "r/premiere",
+        "r/videoproduction",
+        "r/college",
+      ],
+      strategy: "Share student success stories, free trial callouts, and educational content about AI in film. Target film school students and educators. Emphasize Virelle Studios gives students industry-level tools. Post in r/filmschool on Mondays with the weekly prompt: 'What AI tools are you using in your film projects?'",
+    },
+    filmSchoolSEO: {
+      platforms: ["devto", "medium", "hashnode", "linkedin"],
+      seoKeywords: [
+        "AI filmmaking tools for students",
+        "best AI video generator for film school",
+        "free AI film production software for beginners",
+        "AI cinematography tool for film students",
+        "how to make a movie with AI",
+        "film school AI tools 2026",
+      ],
+      strategy: "Publish blog posts and LinkedIn articles targeting film school administrators, professors, and students. Pitch Virelle Studios as the tool every film program should be teaching. Submit to No Film School, IndieWire, and FilmFreeway newsletters.",
+    },
+    universityOutreach: {
+      platforms: ["linkedin"],
+      targetTitles: [
+        "Film Department Chair", "Cinema Studies Professor", "Media Arts Instructor",
+        "High School Film Teacher", "Digital Media Teacher", "A/V Club Advisor",
+      ],
+      strategy: "LinkedIn content targeting film educators — articles on how AI is transforming film education, case studies of student projects made with AI tools. Position Virelle as the platform film schools should adopt for their curriculum.",
+    },
+    communityPlatforms: {
+      platforms: ["nofilmschool", "stage32", "letterboxd", "vimeo"],
+      strategy: "Engage authentically with No Film School forums, Stage 32 filmmaker network, and Vimeo's professional film community. Share cinematic AI showcases on Vimeo (the filmmaker-respected video platform). Comment value-first on Letterboxd lists and filmmaker discussions.",
+    },
+  
 };
 // ============================================
 // TYPES
