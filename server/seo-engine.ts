@@ -1481,32 +1481,25 @@ Focus on topics that:
       return briefs.map((b: any) => ({ ...b, generatedAt: Date.now() }));
     }
   } catch (err: unknown) {
-    log.error("[SEO] Content brief generation failed:", { error: String(err instanceof Error ? err.message : String(err)) });
-  }
-
-  // Fallback briefs
-  return [
-    {
-      title: "How to Automate API Key Management in 2026",
-      targetKeyword: "AI film generation platform",
-      secondaryKeywords: [
-        "AI video generation",
-        "AI filmmaking tool",
-        "developer security",
-      ],
-      outline: [
-        "The Problem with Manual Key Management",
-        "What is Automated Key Management?",
-        "Step-by-Step Setup Guide",
-        "Security Best Practices",
-        "Conclusion",
-      ],
-      wordCountTarget: 2000,
-      intent: "informational",
-      suggestedUrl: "/blog/automate-api-key-management",
-      competitorUrls: [],
-      generatedAt: Date.now(),
-    },
+    log.error("[SEO] Content brief generation failed:", {
+        keyword: "AI filmmaking tools for beginners",
+        title: "AI Filmmaking Tools for Beginners: A Complete 2026 Guide",
+        primaryKeyword: "AI filmmaking tools",
+        secondaryKeywords: [
+          "AI video generation",
+          "AI filmmaking for students",
+          "best AI film tools 2026",
+        ],
+        outline: [
+          "Why AI is Changing Filmmaking Forever",
+          "Top AI Tools Every Filmmaker Should Know",
+          "How to Generate Your First AI Film Scene",
+          "Prompting for Cinematic Quality",
+          "Building a Full Short Film with AI",
+          "Conclusion",
+        ],
+        wordCountTarget: 2000,
+        intent: "informational",,
     {
       title: "VirÉlle Studios vs Runway ML: Which AI Film Platform is Better?",
       targetKeyword: "virelle studios vs runway ml",
