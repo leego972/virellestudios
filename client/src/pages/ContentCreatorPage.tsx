@@ -49,7 +49,7 @@ const PLATFORM_META: Record<string, { label: string; color: string; bg: string; 
   discord: { label: "Discord", color: "text-indigo-400", bg: "bg-indigo-500/10 border-indigo-500/20", icon: <MessageSquare className="h-4 w-4" /> },
   telegram: { label: "Telegram", color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20", icon: <Send className="h-4 w-4" /> },
   medium: { label: "Medium", color: "text-zinc-300", bg: "bg-gray-500/10 border-gray-500/20", icon: <BookOpen className="h-4 w-4" /> },
-  hackernews: { label: "Hacker News", color: "text-orange-500", bg: "bg-orange-600/10 border-orange-600/20", icon: <Globe className="h-4 w-4" /> },
+  filmforum: { label: "Film Forum", color: "text-orange-500", bg: "bg-orange-600/10 border-orange-600/20", icon: <Globe className="h-4 w-4" /> },
   whatsapp: { label: "WhatsApp", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", icon: <MessageSquare className="h-4 w-4" /> },
 };
 
@@ -60,7 +60,7 @@ const STATUS_META: Record<string, { label: string; color: string; icon: React.Re
   scheduled: { label: "Scheduled", color: "bg-blue-500/20 text-blue-300 border-blue-500/30", icon: <Clock className="h-3 w-3" /> },
   published: { label: "Published", color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30", icon: <CheckCircle className="h-3 w-3" /> },
   failed: { label: "Failed", color: "bg-red-500/20 text-red-300 border-red-500/30", icon: <XCircle className="h-3 w-3" /> },
-  archived: { label: "Archived", color: "bg-zinc-500/20 text-zinc-400 border-amber-500/20/30", icon: <Trash2 className="h-3 w-3" /> },
+  archived: { label: "Archived", color: "bg-zinc-500/20 text-zinc-400 border-amber-500/20", icon: <Trash2 className="h-3 w-3" /> },
 };
 
 const PLATFORMS = [
@@ -499,7 +499,7 @@ export default function ContentCreatorPage() {
   const [bulkIncludeImages, setBulkIncludeImages] = useState(false);
 
   // Admin guard
-  if (!user || user.role !== "admin") {
+  if (!user || !user?.isAdmin) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
