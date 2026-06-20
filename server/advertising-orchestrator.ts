@@ -18,7 +18,7 @@ import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
 import { getDb } from "./db";
 import { generateContent, allocateBudget, runAutonomousCycle as runMarketingCycle } from "./marketing-engine";
-import { runAutonomousContentCycle } from "./content-creator-engine";
+import { runAutonomousContentCycle, runMondayContentPublish } from "./content-creator-engine";
 import { runScheduledSeoOptimization, analyzeSeoHealth, analyzeKeywords, generateSeoReport, submitToIndexNow } from "./seo-engine";
 import { getAffiliateRecommendationContext } from "./affiliate-recommendation-engine";
 import {
@@ -2288,7 +2288,26 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     }
   }
 
-  // 7. Affiliate Network Optimization (Wed/Fri)
+
+    // Monday: auto-generate & publish Virelle Studios film content to all free channels
+    if (dayOfWeek === 1) {
+      const t0Mon = Date.now();
+      try {
+        const mondayResult = await runMondayContentPublish();
+        actions.push({
+          channel: "monday_content_publish" as any,
+          action: "auto_publish_all_channels",
+          status: mondayResult.published > 0 ? "success" : "failed",
+          details: `Monday publish: ${mondayResult.published} channel(s) live (${mondayResult.channels.join(", ")})${mondayResult.errors.length ? ` | Skipped: ${mondayResult.errors.join("; ")}` : ""}`,
+          cost: 0,
+        });
+        recordChannelPerformance("monday_content_publish", mondayResult.published > 0, Date.now() - t0Mon);
+      } catch (err: unknown) {
+        errors.push(`Monday publish: ${getErrorMessage(err)}`);
+      }
+    }
+
+    // 7. Affiliate Network Optimization (Wed/Fri)
   if ([3, 5].includes(dayOfWeek)) {
     try {
       const affiliateAction = await optimizeAffiliateNetwork();
