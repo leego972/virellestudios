@@ -42,6 +42,8 @@ import {
 import { eq, desc, and, gte, lte, sql, count, lt } from "drizzle-orm";
 import { generateContentBriefs, analyzeKeywords } from "./seo-engine";
 import { runTikTokContentPipeline, isTikTokContentConfigured } from "./tiktok-content-service";
+import { discordAdapter, telegramAdapter, youtubeAdapter, devtoAdapter } from "./expanded-channels";
+  import { postToLinkedIn, postToFilmSubreddits } from "./_core/socialPostingEngine";
 import { getStrategyOverview } from "./advertising-orchestrator";
 
 const log = logger;
@@ -1476,5 +1478,200 @@ export async function runContentCreatorJob(
 }
 
 
+
+  // ─── Monday Auto-Publish ──────────────────────────────────────────────────────
+  /**
+   * runMondayContentPublish
+   *
+   * Every Monday the Advertising Orchestrator calls this function to generate
+   * fresh Virelle Studios film/cinema content and push it live to every
+   * configured free channel: TikTok, LinkedIn, Reddit (film subs), Discord,
+   * Telegram, YouTube Community, Dev.to.
+   *
+   * No manual approval needed — content is generated, posted, and logged
+   * automatically. Topics rotate weekly so content stays fresh.
+   */
+  export async function runMondayContentPublish(): Promise<{
+    published: number;
+    channels: string[];
+    errors: string[];
+  }> {
+    const published: string[] = [];
+    const errors: string[] = [];
+
+    // Rotate weekly topics — stays fresh without repetition
+    const FILM_TOPICS = [
+      "How AI is democratising Hollywood-quality filmmaking for indie creators",
+      "From script to cinematic scene in minutes — AI film production with Virelle Studios",
+      "AI character generation is rewriting the future of casting",
+      "Create a full short film with AI — no camera crew, no budget required",
+      "The AI tools replacing $500K production budgets for indie filmmakers",
+      "AI colour grading and visual effects: Hollywood quality, zero cost",
+      "Why 2026 is the breakthrough year for AI filmmaking",
+      "Automated scriptwriting to final render: the complete Virelle Studios pipeline",
+    ];
+    const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+    const topic = FILM_TOPICS[weekNumber % FILM_TOPICS.length];
+    const filmHashtags = ["AIFilmmaking", "VirelloStudios", "IndieFilm", "AIVideo", "CinematicAI", "FilmProduction"];
+
+    log.info(`[MondayPublish] Starting weekly auto-publish. Topic: "${topic}"`);
+
+    // ── 1. TikTok (carousel from latest blog post) ─────────────────────────────
+    if (isTikTokContentConfigured()) {
+      try {
+        const tikResult = await runTikTokContentPipeline();
+        if (tikResult.success) published.push("tiktok");
+        else errors.push(`TikTok: ${tikResult.details}`);
+      } catch (e) {
+        errors.push(`TikTok: ${getErrorMessage(e)}`);
+      }
+    }
+
+    // ── 2. LinkedIn ────────────────────────────────────────────────────────────
+    try {
+      const liContent = await generateCreatorContent({
+        platform: "linkedin",
+        contentType: "social_post",
+        topic,
+        useViralHook: true,
+      });
+      const liResult = await postToLinkedIn({
+        text: `${liContent.body}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n${BRAND.website}`,
+        imageUrl: liContent.mediaUrl,
+      });
+      if (liResult.success) published.push("linkedin");
+      else errors.push(`LinkedIn: ${liResult.error || "not configured"}`);
+    } catch (e) {
+      errors.push(`LinkedIn: ${getErrorMessage(e)}`);
+    }
+
+    // ── 3. Reddit (film subreddits — 2 per week to avoid spam) ────────────────
+    try {
+      const redditContent = await generateCreatorContent({
+        platform: "reddit",
+        contentType: "social_post",
+        topic,
+        useViralHook: false,
+      });
+      const redditResults = await postToFilmSubreddits(
+        redditContent.title || topic,
+        `${redditContent.body}\n\n${BRAND.website}`,
+        BRAND.website,
+        2,
+      );
+      if (redditResults.some(r => r.success)) published.push("reddit");
+      else errors.push(`Reddit: ${redditResults.map(r => r.error).join(", ")}`);
+    } catch (e) {
+      errors.push(`Reddit: ${getErrorMessage(e)}`);
+    }
+
+    // ── 4. Discord ─────────────────────────────────────────────────────────────
+    if (discordAdapter.isConfigured) {
+      try {
+        const discordContent = await generateCreatorContent({
+          platform: "discord",
+          contentType: "social_post",
+          topic,
+          useViralHook: true,
+        });
+        const discordResult = await discordAdapter.postMessage({
+          embeds: [{
+            title: `🎬 ${discordContent.title || "Virelle Studios — Weekly Film Drop"}`,
+            description: discordContent.body,
+            url: BRAND.website,
+            color: 0xD4AF37,
+            footer: { text: "virelle.life • AI Film Production" },
+          }],
+        });
+        if (discordResult.success) published.push("discord");
+        else errors.push(`Discord: ${discordResult.error || "not configured"}`);
+      } catch (e) {
+        errors.push(`Discord: ${getErrorMessage(e)}`);
+      }
+    }
+
+    // ── 5. Telegram ────────────────────────────────────────────────────────────
+    if (telegramAdapter.isConfigured) {
+      try {
+        const tgContent = await generateCreatorContent({
+          platform: "telegram",
+          contentType: "social_post",
+          topic,
+          useViralHook: true,
+        });
+        const tgResult = await telegramAdapter.sendMessage({
+          text: `🎬 <b>${tgContent.title || "Virelle Studios — Weekly Film Drop"}</b>\n\n${tgContent.body}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n🔗 <a href="${BRAND.website}">virelle.life</a>`,
+          parseMode: "HTML",
+        });
+        if (tgResult.success) published.push("telegram");
+        else errors.push(`Telegram: ${tgResult.error || "not configured"}`);
+      } catch (e) {
+        errors.push(`Telegram: ${getErrorMessage(e)}`);
+      }
+    }
+
+    // ── 6. YouTube Community post ──────────────────────────────────────────────
+    if (youtubeAdapter.isConfigured) {
+      try {
+        const ytContent = await generateCreatorContent({
+          platform: "youtube_shorts",
+          contentType: "social_post",
+          topic,
+          useViralHook: true,
+        });
+        const ytResult = await youtubeAdapter.postCommunityUpdate({
+          text: `${ytContent.body}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n🔗 ${BRAND.website}`,
+          imageUrl: ytContent.mediaUrl,
+        });
+        if (ytResult.success) published.push("youtube_community");
+        else errors.push(`YouTube: ${ytResult.error || "not configured"}`);
+      } catch (e) {
+        errors.push(`YouTube: ${getErrorMessage(e)}`);
+      }
+    }
+
+    // ── 7. Dev.to ──────────────────────────────────────────────────────────────
+    if (devtoAdapter.isConfigured) {
+      try {
+        const devtoContent = await generateCreatorContent({
+          platform: "blog",
+          contentType: "blog_article",
+          topic,
+          useViralHook: false,
+        });
+        const devtoResult = await devtoAdapter.publishArticle({
+          title: devtoContent.title || topic,
+          body: devtoContent.body,
+          tags: filmHashtags.slice(0, 4).map(h => h.toLowerCase()),
+          canonicalUrl: BRAND.website,
+          published: true,
+        });
+        if (devtoResult.success) published.push("devto");
+        else errors.push(`Dev.to: ${devtoResult.error || "not configured"}`);
+      } catch (e) {
+        errors.push(`Dev.to: ${getErrorMessage(e)}`);
+      }
+    }
+
+    // ── Log to DB ──────────────────────────────────────────────────────────────
+    try {
+      const db = await getDb();
+      if (db && published.length > 0) {
+        await db.insert(marketingActivityLog).values({
+          channel: "monday_content_publish" as any,
+          action: "auto_publish_all_channels",
+          status: "success",
+          details: `Monday auto-publish fired to: ${published.join(", ")}${errors.length ? ` | Skipped: ${errors.join("; ")}` : ""}`,
+          cost: 0,
+        } as any);
+      }
+    } catch (_) { /* non-fatal */ }
+
+    log.info(`[MondayPublish] Complete — ${published.length} channels live: ${published.join(", ")}`);
+    if (errors.length) log.warn(`[MondayPublish] Skipped channels: ${errors.join(" | ")}`);
+
+    return { published: published.length, channels: published, errors };
+  }
+  
 // ─── Alias for backward compatibility ────────────────────────────────────────
 export const generateSeoContentBriefs = getSeoDrivenBriefs;
