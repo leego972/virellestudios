@@ -1481,8 +1481,9 @@ Focus on topics that:
       return briefs.map((b: any) => ({ ...b, generatedAt: Date.now() }));
     }
   } catch (err: unknown) {
-    log.error("[SEO] Content brief generation failed:", {
-        keyword: "AI filmmaking tools for beginners",
+    log.error("[SEO] Content brief generation failed:", err);
+    return [
+      {
         title: "AI Filmmaking Tools for Beginners: A Complete 2026 Guide",
         primaryKeyword: "AI filmmaking tools",
         secondaryKeywords: [
@@ -1499,23 +1500,26 @@ Focus on topics that:
           "Conclusion",
         ],
         wordCountTarget: 2000,
-        intent: "informational",,
-    {
-      title: "VirÉlle Studios vs Runway ML: Which AI Film Platform is Better?",
-      targetKeyword: "virelle studios vs runway ml",
-      secondaryKeywords: [
-        "1password alternative",
-        "developer password manager",
-        "AI video creator",
-      ],
-      outline: ["Overview", "Feature Comparison", "Pricing Comparison", "Use Cases", "Verdict"],
-      wordCountTarget: 2500,
-      intent: "transactional",
-      suggestedUrl: "/blog/titan-vs-1password",
-      competitorUrls: ["https://1password.com/developers"],
-      generatedAt: Date.now(),
-    },
-  ];
+        intent: "informational",
+        generatedAt: Date.now(),
+      },
+      {
+        title: "VirÉlle Studios vs Runway ML: Which AI Film Platform is Better?",
+        targetKeyword: "virelle studios vs runway ml",
+        secondaryKeywords: [
+          "1password alternative",
+          "developer password manager",
+          "AI video creator",
+        ],
+        outline: ["Overview", "Feature Comparison", "Pricing Comparison", "Use Cases", "Verdict"],
+        wordCountTarget: 2500,
+        intent: "transactional",
+        suggestedUrl: "/blog/titan-vs-1password",
+        competitorUrls: ["https://1password.com/developers"],
+        generatedAt: Date.now(),
+      },
+    ];
+  }
 }
 
 // ─── Meta Tag Analysis & SEO Health Score ───────────────────────────
