@@ -311,7 +311,7 @@ Return JSON with these fields:
 - hashtags: Array of relevant hashtags (include #filmmaking #AIfilm #indiefilm #cinematography)
 - hook: The attention-grabbing opening line
 - visualStyle: Description of the visual style for the carousel/video
-- imagePrompt: A detailed prompt for generating a cyberpunk-style infographic image
+- imagePrompt: A detailed prompt for generating a gold and black cinematic style infographic image
 - contentType: "photo_carousel" (prefer this for organic reach)`,
         },
         {
@@ -359,7 +359,7 @@ export async function generateCarouselImages(plan: TikTokContentPlan): Promise<s
 
   const slidePrompts = [
     // Slide 1: Hook
-    `Cinematic-style social media slide for TikTok. Bold neon text: "${plan.hook}" on a dark cinematic background with film grain and anamorphic lens flares. VirÉlle Studios branding. ${plan.visualStyle}. Clean, readable text. 1080x1920 portrait.`,
+    `Cinematic-style social media slide for TikTok. Bold gold text: "${plan.hook}" on a dark cinematic background with film grain and anamorphic lens flares. VirÉlle Studios branding. ${plan.visualStyle}. Clean, readable text. 1080x1920 portrait.`,
     // Slide 2: Key insight
     `Cinematic infographic slide for TikTok. Topic: ${plan.title}. Dark cinematic background with golden hour lighting, film grain. Key statistics or facts displayed with icons. Professional filmmaking aesthetic. 1080x1920 portrait.`,
     // Slide 3: CTA
