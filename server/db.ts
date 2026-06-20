@@ -2196,6 +2196,11 @@ export async function deleteUserSocialCredential(userId: number, platform: strin
     .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
 }
 
+export async function getAllActiveSocialCredentials(): Promise<UserSocialCredential[]> {
+  return db.select().from(userSocialCredentials)
+    .where(eq(userSocialCredentials.isActive, true));
+}
+
 // ─── Beta Tier Management ───
 export async function assignBetaTier(userId: number, expiresAt: Date): Promise<void> {
   const db = await getDb();
