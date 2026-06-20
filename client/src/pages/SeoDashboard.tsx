@@ -171,7 +171,7 @@ export default function SeoDashboard() {
   });
 
   // ─── Access Guard ─────────────────────────────────────────────────────────
-  if (user?.role !== "admin") {
+  if (!user?.isAdmin) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
         <Card className="border-border/50 bg-card/80 max-w-md glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
@@ -321,7 +321,7 @@ export default function SeoDashboard() {
                     {(report?.score as any)?.issues && (report?.score as any)?.issues.length > 0 && (
                       <div className="mt-3 pt-3 border-t border-border/30">
                         <p className="text-xs text-muted-foreground mb-2">Issues to Address</p>
-                        {(report?.score as any)?.issues.slice(0, 3).map((issue: any, i: number) => (
+                        {((report?.score as any)?.issues as any[] | undefined)?.slice(0, 3).map((issue: any, i: number) => (
                           <div key={i} className="flex items-start gap-2 text-xs mb-1">
                             <AlertCircle className="w-3 h-3 text-yellow-400 mt-0.5 flex-shrink-0" />
                             <span className="text-foreground/70">{issue.message || issue}</span>
