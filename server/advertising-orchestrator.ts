@@ -14,6 +14,7 @@
  */
 
 import { safeJsonExtract } from "./_core/safeParse";
+import { loadCredentialsBridge } from "./_core/credentialsBridge";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
 import { getDb } from "./db";
@@ -2213,6 +2214,7 @@ export async function getCrossChannelAttribution(days = 30): Promise<{
  * 9. Report results to owner
  */
 export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
+  await loadCredentialsBridge();
   const startTime = Date.now();
   const actions: AdvertisingAction[] = [];
   const errors: string[] = [];
