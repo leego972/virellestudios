@@ -81,7 +81,7 @@ export interface CampaignPlan {
 }
 
 // ============================================
-// TITAN BRAND CONTEXT
+// VIRELLE BRAND CONTEXT
 // ============================================
 
 const VIRELLE_BRAND = {
@@ -101,15 +101,15 @@ const VIRELLE_BRAND = {
     "Cross-platform (Web + Desktop via Electron)",
   ],
   targetAudiences: [
-    "Cybersecurity professionals and penetration testers",
-    "Software developers and DevOps engineers",
-    "IT administrators and security teams",
-    "Tech-savvy professionals who value security",
-    "Small business owners needing security tools",
+    "Indie filmmakers and content creators",
+    "Film students and aspiring directors",
+    "Marketing agencies needing cinematic video content",
+    "YouTubers and social media creators",
+    "Small production studios and brand video teams",
   ],
-  tone: "Confident, technical, authoritative but approachable. Think Iron Man's JARVIS meets a cybersecurity expert.",
-  colors: { primary: "#dc2626", secondary: "#1e1e2e", accent: "#f59e0b" },
-  competitors: ["1Password", "LastPass", "Bitwarden", "GitHub Copilot", "ChatGPT"],
+  tone: "Cinematic, visionary, inspiring. Think Christopher Nolan meets Silicon Valley. Confident but accessible — democratising Hollywood-quality filmmaking for everyone.",
+  colors: { primary: "#D4AF37", secondary: "#07070E", accent: "#F59E0B" },
+  competitors: ["Runway ML", "Pika Labs", "Sora", "Adobe Premiere Pro", "DaVinci Resolve"],
   // Campaign creative assets uploaded by owner (rotated across campaigns)
   campaignImages: [
     "https://image.pollinations.ai/prompt/Hollywood%20cinematic%20film%20production%2C%20dramatic%20golden%20hour%2C%20director%20and%20camera%20crew%2C%20film%20set%20atmosphere?width=1200&height=630&nologo=true&seed=201&model=flux",
@@ -133,8 +133,8 @@ const VIRELLE_BRAND = {
   },
   // Art style guide for AI-generated campaign images
   artStyle: {
-    description: "Dark futuristic cyberpunk aesthetic with a chrome-armored knight/warrior figure as the VirÉlle director. Deep navy/midnight blue background with glowing cyan and electric blue circuit board patterns, digital particle effects, and subtle cityscape silhouettes. The VirÉlle director has glowing blue eyes and metallic silver armor with blue LED accents. Text uses bold metallic 3D lettering with chrome/silver gradients. Gold accent banners for key messaging. Overall mood: powerful, technological, futuristic, commanding.",
-    imagePromptPrefix: "Dark futuristic cyberpunk digital art, chrome-armored AI knight warrior with glowing blue eyes, deep navy midnight blue background with electric blue circuit patterns and digital particles, metallic silver armor with blue LED accents, bold metallic 3D text,",
+    description: "Prestige gold and black Hollywood cinematic aesthetic. Deep black background with rich gold and amber accents, dramatic golden-hour lighting, anamorphic lens flares, film grain texture, and cinematic bokeh. Composition evokes premium film production — clapperboards, directors chairs, professional cinema cameras. Overall mood: luxurious, cinematic, inspirational, Hollywood-prestige.",
+    imagePromptPrefix: "Prestige Hollywood cinematic photography, dramatic golden-hour lighting, deep black and rich gold color palette, anamorphic lens flares, film grain texture, professional cinema cameras and film sets,",
     imagePromptSuffix: "high quality digital illustration, cinematic lighting, tech aesthetic, dark background with blue glow effects, professional marketing campaign art",
     mustInclude: ["VirÉlle Studios branding", "cinematic lighting", "film grain", "anamorphic lens flares"],
     avoid: ["cartoonish style", "flat design", "pastel colors", "minimalist", "stock photo look"],
@@ -180,7 +180,7 @@ COMPETITORS TO DIFFERENTIATE FROM: ${VIRELLE_BRAND.competitors.join(", ")}
 WEBSITE: ${VIRELLE_BRAND.website}
 
 You create compelling, authentic marketing content that drives engagement and conversions.
-Never be generic. Every post should feel like it was written by someone who genuinely understands cybersecurity and AI.
+Never be generic. Every post should feel like it was written by someone who genuinely understands filmmaking and cinema.
 Use real technical terminology. Our audience can smell fake marketing from a mile away.
 
 IMAGE STYLE GUIDE: When writing the imagePrompt, describe a scene matching this aesthetic: ${VIRELLE_BRAND.artStyle.description}
@@ -193,7 +193,7 @@ IMPORTANT: Return your response as valid JSON with these fields:
   "body": "The full post/article body text",
   "hashtags": ["relevant", "hashtags"],
   "callToAction": "Clear CTA text",
-  "imagePrompt": "Detailed prompt for generating an accompanying image in the dark cyberpunk VirÉlle art style"
+  "imagePrompt": "Detailed prompt for generating an accompanying image in the cinematic Hollywood Virelle Studios style (gold, black, dramatic lighting)"
 }`;
 
   const userPrompt = `Create a ${params.contentType} for ${params.platform}.
@@ -302,7 +302,7 @@ TARGET AUDIENCE: ${VIRELLE_BRAND.targetAudiences.join("; ")}
 HISTORICAL PERFORMANCE:
 ${performanceContext}
 
-INDUSTRY BENCHMARKS FOR CYBERSECURITY SAAS:
+INDUSTRY BENCHMARKS FOR AI FILMMAKING SAAS:
 • Google Ads: CPC $3-8, CTR 2-4%, best for high-intent search traffic
 • LinkedIn: CPC $5-12, CTR 0.4-0.8%, best for B2B professionals
 • Meta (FB/IG): CPC $1-3, CTR 0.8-1.5%, best for awareness and retargeting
@@ -328,7 +328,7 @@ Return your allocation as JSON:
       { role: "system", content: systemPrompt },
       {
         role: "user",
-        content: `Allocate a monthly budget of $${params.monthlyBudget.toFixed(2)} across the connected channels. Optimize for maximum signups to ${VIRELLE_BRAND.website}. Consider that we're a cybersecurity/AI product targeting technical professionals.`,
+        content: `Allocate a monthly budget of $${params.monthlyBudget.toFixed(2)} across the connected channels. Optimize for maximum signups to ${VIRELLE_BRAND.website}. Consider that we're an AI film production platform targeting indie filmmakers and content creators.`,
       },
     ],
     response_format: {
@@ -419,7 +419,7 @@ Return a campaign plan as JSON:
       { role: "system", content: systemPrompt },
       {
         role: "user",
-        content: `Create a ${params.durationDays}-day ${params.goal} campaign with a $${params.budget} budget. Make it specific, actionable, and optimized for our cybersecurity/AI audience.`,
+        content: `Create a ${params.durationDays}-day ${params.goal} campaign with a $${params.budget} budget. Make it specific, actionable, and optimized for our filmmaking and creative audience.`,
       },
     ],
     response_format: {
@@ -508,7 +508,7 @@ export async function executeCampaign(params: {
       if (content.type === "ad_copy" || content.platform === "instagram") {
         try {
           // Use the VirÉlle art style for campaign ad creatives
-          const adPrompt = `${VIRELLE_BRAND.artStyle.imagePromptPrefix} marketing campaign image for ${content.platform}, cybersecurity AI technology product promotion. ${VIRELLE_BRAND.artStyle.imagePromptSuffix}. No text in image.`;
+          const adPrompt = `${VIRELLE_BRAND.artStyle.imagePromptPrefix} marketing campaign image for ${content.platform}, AI filmmaking platform promotion. ${VIRELLE_BRAND.artStyle.imagePromptSuffix}. No text in image.`;
           const imgResult = await generateImage({
             prompt: adPrompt,
             originalImages: [{
@@ -625,17 +625,17 @@ export async function executeCampaign(params: {
             name: `${params.plan.name} - Google`,
             dailyBudget: Math.round(dailyBudget * 1_000_000), // micros
             keywords: params.plan.targeting.interests.concat([
-              "AI security tool",
-              "credential manager",
-              "cybersecurity AI",
-              "password manager alternative",
-              "AI code assistant",
+              "AI film generator",
+              "AI video production",
+              "AI filmmaking tool",
+              "text to video AI",
+              "AI movie maker",
             ]),
             headlines: [
               content.headline.substring(0, 30),
               VIRELLE_BRAND.tagline.substring(0, 30),
-              "Try VirÉlle Studios Free",
-              "AI-Powered Security Suite",
+              "Try Virelle Studios Free",
+              "AI-Powered Film Production",
             ],
             descriptions: [
               content.body.substring(0, 90),
@@ -657,7 +657,7 @@ export async function executeCampaign(params: {
             dailyBudget: Math.round(dailyBudget * 100),
             targetAudiences: {
               industries: params.plan.targeting.interests,
-              jobTitles: ["Security Engineer", "DevOps Engineer", "CTO", "CISO", "Software Developer"],
+              jobTitles: ["Film Director", "Content Creator", "Creative Director", "Video Producer", "Marketing Manager"],
             },
             adText: `${content.headline}\n\n${content.body}`,
             destinationUrl: VIRELLE_BRAND.website,
