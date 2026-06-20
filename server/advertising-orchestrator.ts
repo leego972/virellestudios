@@ -1,7 +1,7 @@
 /**
  * Autonomous Advertising Orchestrator
  * 
- * The master brain that coordinates ALL of Titan's growth systems:
+ * The master brain that coordinates ALL of Virelle Studios' growth systems:
  * - SEO Engine â organic search traffic (FREE)
  * - Blog System â content marketing & long-tail keywords (FREE)
  * - Marketing Engine â social media & paid campaigns ($500 AUD/month)
@@ -121,7 +121,7 @@ const FREE_CHANNELS = [
 
 type FreeChannel = (typeof FREE_CHANNELS)[number];
 
-// Content topics that drive organic traffic for cybersecurity SaaS
+// Content topics that drive organic traffic for AI filmmaking SaaS
 const CONTENT_PILLARS = [
   {
     pillar: "AI Filmmaking & Scene Generation",
@@ -758,7 +758,7 @@ Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(mark
       slug,
       content: post.content,
       excerpt: post.metaDescription,
-      category: (post.category || "cybersecurity").toLowerCase().replace(/\s+/g, "-"),
+      category: (post.category || "filmmaking").toLowerCase().replace(/\s+/g, "-"),
       status: "published",
       tags: post.tags || [],
       metaTitle: post.title,
@@ -1339,7 +1339,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         model: "fast",
         messages: [
           { role: "system", content: `Generate a short, engaging Discord message about AI filmmaking or cinematic AI generation. Include an emoji, a creative tip or showcase, and a link to https://virelle.life. Keep it under 200 words. Return JSON: { "content": "..." }` },
-          { role: "user", content: `Generate a Discord security tip about ${pillar.pillar}` },
+          { role: "user", content: `Generate a Discord filmmaking tip about ${pillar.pillar}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "discord_msg", strict: true, schema: { type: "object", properties: { content: { type: "string" } }, required: ["content"], additionalProperties: false } } },
       });
@@ -1409,7 +1409,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
     try {
       const result = await whatsappAdapter.sendTemplateMessage({
         to: "", // Requires subscriber list â will be populated from DB
-        templateName: "security_tip_weekly",
+        templateName: "filmmaking_tip_weekly",
         languageCode: "en_US",
       });
       actions.push({ channel: "whatsapp_broadcast", action: "send_template", status: result.success ? "success" : "failed", details: result.success ? `WhatsApp weekly broadcast sent` : `WhatsApp: ${result.error}`, cost: 0 });
@@ -1422,12 +1422,12 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
 }
 
 // ============================================
-// HACKER FORUM & INFOSEC COMMUNITY CONTENT
+// FILM COMMUNITY CONTENT
 // ============================================
 
 /**
- * Generate content specifically for hacker forums and infosec communities.
- * This content is more technical and positions Titan as a tool hackers/researchers need.
+ * Generate content specifically for film communities and creative platforms.
+ * This content provides genuine value and positions Virelle Studios as the essential tool filmmakers need.
  */
 async function generateHackerForumContent(): Promise<AdvertisingAction> {
   try {
@@ -1498,8 +1498,8 @@ Return JSON: { "title": "...", "content": "...(markdown)...", "forum": "${forum.
     const db = await getDb();
     if (db) {
       await db.insert(marketingContent).values({
-        channel: "hacker_forum" as any,
-        contentType: "hacker_forum_post" as any,
+        channel: "film_community" as any,
+        contentType: "film_community_post" as any,
         title: post.title,
         body: post.content,
         platform: forum.name.toLowerCase().replace(/\s+/g, "_"),
@@ -2137,7 +2137,7 @@ export async function getCrossChannelAttribution(days = 30): Promise<{
     pillarCounts.set(pillar.pillar, 0);
   }
 
-  const topPerformingPillar = CONTENT_PILLARS[0]?.pillar || "API Key Security";
+  const topPerformingPillar = CONTENT_PILLARS[0]?.pillar || "AI Filmmaking";
 
   // Generate recommendations
   const recommendedFocus: string[] = [];
@@ -2858,11 +2858,11 @@ export function getStrategyOverview() {
       backlinkOutreach: "Monday only",
       affiliateOptimization: "Wed/Fri",
       expandedChannels: "Every cycle (Dev.to, Medium, Hashnode, Discord, Mastodon, Telegram)",
-      hackerForums: "Mon/Wed/Fri (HackForums, 0x00sec, HTB, TryHackMe, OWASP, etc.)",
+      filmCommunities: "Mon/Wed/Fri (No Film School, Cinema5D, r/filmmaking, Stage 32, Creative COW)",
       tiktokContent: "Wed/Fri (auto-generate & post carousels from blog content)",
       videoScripts: "Wed/Fri (YouTube Shorts scripts)",
       contentQueue: "Every cycle (Quora, Skool, IndieHackers, Pinterest, HN, LinkedIn, Slack)",
-      whatsappBroadcast: "Monday (weekly security tip)",
+      whatsappBroadcast: "Monday (weekly filmmaking tip)",
       marketingEngineCycle: "Every cycle",
     },
   };
