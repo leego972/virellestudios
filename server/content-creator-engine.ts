@@ -23,6 +23,7 @@
  *  7. Track performance and feed back into next cycle
  */
 import { getDb } from "./db";
+import { loadCredentialsBridge } from "./_core/credentialsBridge";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { generateVideoWithFallback } from "./_core/videoGeneration";
@@ -1496,6 +1497,7 @@ export async function runContentCreatorJob(
     channels: string[];
     errors: string[];
   }> {
+    await loadCredentialsBridge();
     const published: string[] = [];
     const errors: string[] = [];
 
