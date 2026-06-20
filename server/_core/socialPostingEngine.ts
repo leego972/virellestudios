@@ -393,17 +393,44 @@ export async function broadcastWhatsApp(text: string, mediaUrl?: string): Promis
 // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export const VIRELLE_REDDIT_TARGETS = [
-  { subreddit: "artificial", description: "AI general community" },
-  { subreddit: "MachineLearning", description: "ML research community" },
-  { subreddit: "filmmaking", description: "Filmmakers community" },
-  { subreddit: "Screenwriting", description: "Screenwriters community" },
-  { subreddit: "indiefilm", description: "Independent filmmakers" },
-  { subreddit: "VideoEditing", description: "Video editors" },
-  { subreddit: "AIArt", description: "AI art community" },
-  { subreddit: "ChatGPT", description: "AI tools community" },
-  { subreddit: "Entrepreneur", description: "Entrepreneurs" },
-  { subreddit: "SideProject", description: "Side projects showcase" },
-];
+    // ── Core filmmaking ──────────────────────────────────────────────────────
+    { subreddit: "filmmaking",       description: "Filmmakers community",                       category: "core" },
+    { subreddit: "Filmmakers",       description: "Broad filmmakers hub",                        category: "core" },
+    { subreddit: "indiefilm",        description: "Independent filmmakers",                      category: "core" },
+    { subreddit: "shortfilm",        description: "Short film makers",                           category: "core" },
+    { subreddit: "cinematography",   description: "Cinematography students & pros",              category: "core" },
+    { subreddit: "Screenwriting",    description: "Screenwriters community",                     category: "core" },
+    { subreddit: "VideoEditing",     description: "Video editors",                               category: "core" },
+    { subreddit: "videoproduction",  description: "Video production students & pros",            category: "core" },
+    { subreddit: "vfx",              description: "VFX artists and students",                    category: "core" },
+    { subreddit: "MotionDesign",     description: "Motion designers",                            category: "core" },
+    { subreddit: "animation",        description: "Animation community",                         category: "core" },
+    // ── Film school & education ───────────────────────────────────────────────
+    { subreddit: "filmschool",       description: "Film school students",                        category: "education" },
+    { subreddit: "studentfilms",     description: "Student film makers",                         category: "education" },
+    { subreddit: "MediaProduction",  description: "Media production students",                   category: "education" },
+    { subreddit: "AfterEffects",     description: "AE users transitioning to AI tools",          category: "education" },
+    { subreddit: "premiere",         description: "Premiere Pro students & editors",             category: "education" },
+    { subreddit: "DaVinciResolve",   description: "DaVinci Resolve users",                       category: "education" },
+    { subreddit: "college",          description: "College students exploring creative tools",   category: "education" },
+    { subreddit: "learnart",         description: "Students learning visual arts",               category: "education" },
+    // ── AI & tech crossover ───────────────────────────────────────────────────
+    { subreddit: "artificial",       description: "AI general community",                        category: "ai" },
+    { subreddit: "AIArt",            description: "AI art community",                            category: "ai" },
+    { subreddit: "AIVideo",          description: "AI video generation community",               category: "ai" },
+    { subreddit: "StableDiffusion",  description: "SD users exploring AI video",                 category: "ai" },
+    { subreddit: "MediaSynthesis",   description: "AI media generation",                         category: "ai" },
+    { subreddit: "MachineLearning",  description: "ML research community",                       category: "ai" },
+    { subreddit: "ChatGPT",          description: "AI tools enthusiasts",                        category: "ai" },
+    // ── Creators & builders ───────────────────────────────────────────────────
+    { subreddit: "NewTubers",        description: "New YouTubers wanting cinematic quality",     category: "creators" },
+    { subreddit: "youtube",          description: "YouTubers upgrading production quality",      category: "creators" },
+    { subreddit: "contentcreation",  description: "Content creators",                            category: "creators" },
+    { subreddit: "Entrepreneur",     description: "Entrepreneurs building video brands",         category: "creators" },
+    { subreddit: "SideProject",      description: "Side projects showcase",                      category: "creators" },
+    { subreddit: "gamedev",          description: "Game devs needing cinematic cutscenes",       category: "creators" },
+  ];
+
 
 /**
  * Post to multiple Virelle-relevant subreddits
