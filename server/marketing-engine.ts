@@ -90,6 +90,8 @@ const VIRELLE_BRAND = {
   description:
     "VirÉlle Studios is a cutting-edge AI-powered platform that combines autonomous character creation, cinematic scene generation, voice acting, and intelligent storytelling into one powerful film production suite. Built for indie filmmakers, content creators, and studios who demand Hollywood-quality results.",
   website: "https://virelle.life",
+  logoUrl: "https://virelle.life/virelle-logo-square.png",
+  openerVideoUrl: "https://virelle.life/virelle-opener.mp4",
   keyFeatures: [
     "AI-powered film director assistant",
     "Photorealistic character generation with consistent identity",
