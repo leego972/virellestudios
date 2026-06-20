@@ -43,7 +43,7 @@ import {
 import { eq, desc, and, gte, lte, sql, count, lt } from "drizzle-orm";
 import { generateContentBriefs, analyzeKeywords } from "./seo-engine";
 import { runTikTokContentPipeline, isTikTokContentConfigured } from "./tiktok-content-service";
-import { discordAdapter, telegramAdapter, youtubeAdapter, devtoAdapter } from "./expanded-channels";
+import { discordAdapter, telegramAdapter, youtubeAdapter, devtoAdapter, mediumAdapter, hashnodeAdapter, mastodonAdapter, threadsAdapter } from "./expanded-channels";
   import { postToLinkedIn, postToFilmSubreddits } from "./_core/socialPostingEngine";
 import { getStrategyOverview } from "./advertising-orchestrator";
 
@@ -54,6 +54,8 @@ const BRAND = {
   name: "VirÃlle Studios",
   tagline: "The World's Most Advanced AI Film Production Platform",
   website: "https://virelle.life",
+  logoUrl: "https://virelle.life/virelle-logo-square.png",
+  openerVideoUrl: "https://virelle.life/virelle-opener.mp4",
   tone: "Cinematic, visionary, inspiring. Think Christopher Nolan meets Silicon Valley. Confident but accessible â democratising Hollywood-quality filmmaking for everyone.",
   keyFeatures: [
     "AI-powered film director assistant",
@@ -1511,6 +1513,11 @@ export async function runContentCreatorJob(
       "AI colour grading and visual effects: Hollywood quality, zero cost",
       "Why 2026 is the breakthrough year for AI filmmaking",
       "Automated scriptwriting to final render: the complete Virelle Studios pipeline",
+        // ── Film school & student audience ──────────────────────────────────
+        "AI filmmaking tools every film school student should know in 2026",
+        "How film students are making festival-ready shorts with AI — no budget needed",
+        "What film professors aren't teaching yet: AI is reshaping cinema education",
+        "From university assignment to award-winning short — the complete AI filmmaking workflow",
     ];
     const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
     const topic = FILM_TOPICS[weekNumber % FILM_TOPICS.length];
@@ -1539,7 +1546,7 @@ export async function runContentCreatorJob(
       });
       const liResult = await postToLinkedIn({
         text: `${liContent.body}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n${BRAND.website}`,
-        imageUrl: liContent.mediaUrl,
+        imageUrl: liContent.mediaUrl || BRAND.logoUrl,
       });
       if (liResult.success) published.push("linkedin");
       else errors.push(`LinkedIn: ${liResult.error || "not configured"}`);
@@ -1582,7 +1589,9 @@ export async function runContentCreatorJob(
             description: discordContent.body,
             url: BRAND.website,
             color: 0xD4AF37,
-            footer: { text: "virelle.life • AI Film Production" },
+            thumbnail: { url: BRAND.logoUrl },
+            image: { url: BRAND.defaultImage },
+            footer: { text: "Virelle Studios • virelle.life • AI Film Production" },
           }],
         });
         if (discordResult.success) published.push("discord");
@@ -1643,7 +1652,7 @@ export async function runContentCreatorJob(
         });
         const devtoResult = await devtoAdapter.publishArticle({
           title: devtoContent.title || topic,
-          body: devtoContent.body,
+          body: `![Virelle Studios — AI Film Production](https://virelle.life/virelle-logo-square.png)\n\n---\n\n${devtoContent.body}\n\n---\n_Originally published at [virelle.life](https://virelle.life) · Watch the [Virelle Studios opener video](https://virelle.life/virelle-opener.mp4)_`,
           tags: filmHashtags.slice(0, 4).map(h => h.toLowerCase()),
           canonicalUrl: BRAND.website,
           published: true,
@@ -1655,7 +1664,68 @@ export async function runContentCreatorJob(
       }
     }
 
-    // ── Log to DB ──────────────────────────────────────────────────────────────
+
+      // ── 8. Medium ──────────────────────────────────────────────────────────────
+      if (mediumAdapter.isConfigured) {
+        try {
+          const medContent = await generateCreatorContent({ platform: "blog", contentType: "blog_article", topic, useViralHook: false });
+          const medResult = await mediumAdapter.publishPost({
+            title: medContent.title || topic,
+            content: `<p><img src="https://virelle.life/virelle-logo-square.png" alt="Virelle Studios" style="max-width:100%"/></p>\n\n${medContent.body}\n\n<p><em>Originally published at <a href="https://virelle.life">virelle.life</a> · <a href="https://virelle.life/virelle-opener.mp4">Watch the Virelle Studios opener</a></em></p>`,
+            contentFormat: "html",
+            tags: filmHashtags.slice(0, 5).map(h => h.toLowerCase()),
+            canonicalUrl: BRAND.website,
+            publishStatus: "public",
+          });
+          if (medResult.success) published.push("medium");
+          else errors.push(`Medium: ${medResult.error || "not configured"}`);
+        } catch (e) { errors.push(`Medium: ${getErrorMessage(e)}`); }
+      }
+
+      // ── 9. Hashnode ────────────────────────────────────────────────────────────
+      if (hashnodeAdapter.isConfigured) {
+        try {
+          const hnContent = await generateCreatorContent({ platform: "blog", contentType: "blog_article", topic, useViralHook: false });
+          const hnResult = await hashnodeAdapter.publishArticle({
+            title: hnContent.title || topic,
+            content: `![Virelle Studios](https://virelle.life/virelle-logo-square.png)\n\n${hnContent.body}\n\n---\n_Originally at [virelle.life](https://virelle.life) · [Watch our opener](https://virelle.life/virelle-opener.mp4)_`,
+            tags: filmHashtags.slice(0, 5).map(h => ({ slug: h.toLowerCase(), name: h })),
+            canonicalUrl: BRAND.website,
+            subtitle: BRAND.tagline,
+          });
+          if (hnResult.success) published.push("hashnode");
+          else errors.push(`Hashnode: ${hnResult.error || "not configured"}`);
+        } catch (e) { errors.push(`Hashnode: ${getErrorMessage(e)}`); }
+      }
+
+      // ── 10. Mastodon ───────────────────────────────────────────────────────────
+      if (mastodonAdapter.isConfigured) {
+        try {
+          const mastContent = await generateCreatorContent({ platform: "twitter", contentType: "social_post", topic, useViralHook: true });
+          const mastResult = await mastodonAdapter.postStatus({
+            status: `🎬 ${mastContent.body.slice(0, 400)}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n🔗 ${BRAND.website}\n🎬 ${BRAND.openerVideoUrl}`,
+            visibility: "public",
+          });
+          if (mastResult.success) published.push("mastodon");
+          else errors.push(`Mastodon: ${mastResult.error || "not configured"}`);
+        } catch (e) { errors.push(`Mastodon: ${getErrorMessage(e)}`); }
+      }
+
+      // ── 11. Threads ────────────────────────────────────────────────────────────
+      if (threadsAdapter.isConfigured) {
+        try {
+          const thContent = await generateCreatorContent({ platform: "twitter", contentType: "social_post", topic, useViralHook: true });
+          const thResult = await threadsAdapter.post({
+            text: `🎬 ${thContent.body.slice(0, 480)}\n\n${filmHashtags.map(h => `#${h}`).join(" ")}\n\n${BRAND.website}`,
+            imageUrl: BRAND.logoUrl,
+            linkAttachmentUrl: BRAND.website,
+          });
+          if (thResult.success) published.push("threads");
+          else errors.push(`Threads: ${thResult.error || "not configured"}`);
+        } catch (e) { errors.push(`Threads: ${getErrorMessage(e)}`); }
+      }
+
+      // ── Log to DB ──────────────────────────────────────────────────────────────
     try {
       const db = await getDb();
       if (db && published.length > 0) {
