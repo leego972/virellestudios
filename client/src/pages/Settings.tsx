@@ -1014,71 +1014,187 @@ export default function Settings() {
 
 // ─── Connected Platforms Tab ───
 const SOCIAL_PLATFORMS = [
-  {
-    id: "instagram" as const,
-    name: "Instagram",
-    icon: "📸",
-    color: "from-pink-500/20 to-purple-600/10 border-pink-500/30",
-    description: "Publish film posters and Reels directly to your Instagram Business account.",
-    docsUrl: "https://developers.facebook.com/docs/instagram-api/",
-    fields: [
-      { key: "accessToken", label: "User Access Token", placeholder: "EAAxxxxxx...", secret: true },
-      { key: "pageId", label: "Instagram Business Account ID", placeholder: "17841400000000000", secret: false },
-      { key: "pageAccessToken", label: "Page Access Token (optional)", placeholder: "EAAxxxxxx...", secret: true },
-    ],
-  },
-  {
-    id: "tiktok" as const,
-    name: "TikTok",
-    icon: "🎵",
-    color: "from-cyan-500/20 to-teal-600/10 border-cyan-500/30",
-    description: "Post short video ads and film trailers to your TikTok creator account.",
-    docsUrl: "https://developers.tiktok.com/doc/content-posting-api-get-started/",
-    fields: [
-      { key: "accessToken", label: "Access Token", placeholder: "act.xxxxxx...", secret: true },
-      { key: "openId", label: "Open ID (optional)", placeholder: "xxxxxx", secret: false },
-      { key: "refreshToken", label: "Refresh Token (optional)", placeholder: "rft.xxxxxx...", secret: true },
-    ],
-  },
-  {
-    id: "facebook" as const,
-    name: "Facebook",
-    icon: "📱",
-    color: "from-blue-500/20 to-blue-700/10 border-blue-500/30",
-    description: "Share film posters and video ads to your Facebook Page.",
-    docsUrl: "https://developers.facebook.com/docs/pages-api/",
-    fields: [
-      { key: "pageId", label: "Facebook Page ID", placeholder: "123456789", secret: false },
-      { key: "pageAccessToken", label: "Page Access Token", placeholder: "EAAxxxxxx...", secret: true },
-    ],
-  },
-  {
-    id: "discord" as const,
-    name: "Discord",
-    icon: "💬",
-    color: "from-indigo-500/20 to-indigo-700/10 border-indigo-500/30",
-    description: "Post film announcements and media to your Discord server channel.",
-    docsUrl: "https://discord.com/developers/docs/intro",
-    fields: [
-      { key: "botToken", label: "Bot Token", placeholder: "MTxxxxxx.xxxxxx.xxxxxx", secret: true },
-      { key: "guildId", label: "Server (Guild) ID", placeholder: "1234567890", secret: false },
-      { key: "channelId", label: "Channel ID", placeholder: "9876543210", secret: false },
-    ],
-  },
-  {
-    id: "youtube" as const,
-    name: "YouTube",
-    icon: "🎥",
-    color: "from-red-500/20 to-red-700/10 border-red-500/30",
-    description: "Upload film trailers and video ads directly to your YouTube channel.",
-    docsUrl: "https://developers.google.com/youtube/v3/guides/uploading_a_video",
-    fields: [
-      { key: "accessToken", label: "OAuth Access Token", placeholder: "ya29.xxxxxx", secret: true },
-      { key: "refreshToken", label: "OAuth Refresh Token (optional)", placeholder: "1//xxxxxx", secret: true },
-      { key: "channelId", label: "Channel ID (optional)", placeholder: "UCxxxxxx", secret: false },
-    ],
-  },
-];
+    // ─── FREE: Simple API key (fastest to set up) ────────────────────────────
+    {
+      id: "devto" as const,
+      name: "Dev.to",
+      icon: "📝",
+      color: "from-slate-500/20 to-slate-700/10 border-slate-500/30",
+      description: "Cross-post filmmaking & AI tutorials to 1M+ developers. Free API key — 2 mins to set up.",
+      docsUrl: "https://developers.forem.com/api",
+      fields: [
+        { key: "apiKey", label: "API Key", placeholder: "Paste your Dev.to API key", secret: true },
+      ],
+    },
+    {
+      id: "hashnode" as const,
+      name: "Hashnode",
+      icon: "⚡",
+      color: "from-blue-500/20 to-blue-700/10 border-blue-500/30",
+      description: "Publish AI filmmaking articles to your Hashnode blog. Free personal access token.",
+      docsUrl: "https://apidocs.hashnode.com/",
+      fields: [
+        { key: "apiKey", label: "Personal Access Token", placeholder: "your-hashnode-token", secret: true },
+        { key: "publicationId", label: "Publication ID", placeholder: "xxxxxxxxxxxxxxxx", secret: false },
+      ],
+    },
+    {
+      id: "medium" as const,
+      name: "Medium",
+      icon: "📖",
+      color: "from-green-500/20 to-green-700/10 border-green-500/30",
+      description: "Publish long-form AI filmmaking articles to Medium's huge audience. Free integration token.",
+      docsUrl: "https://github.com/Medium/medium-api-docs",
+      fields: [
+        { key: "accessToken", label: "Integration Token", placeholder: "your-medium-token", secret: true },
+      ],
+    },
+    // ─── FREE: Bot / webhook (10 mins to set up) ─────────────────────────────
+    {
+      id: "discord" as const,
+      name: "Discord",
+      icon: "💬",
+      color: "from-indigo-500/20 to-indigo-700/10 border-indigo-500/30",
+      description: "Post film announcements to your Discord server. Free — create a bot at discord.com/developers.",
+      docsUrl: "https://discord.com/developers/docs/intro",
+      fields: [
+        { key: "botToken", label: "Bot Token", placeholder: "MTxxxxxx.xxxxxx.xxxxxx", secret: true },
+        { key: "guildId", label: "Server (Guild) ID", placeholder: "1234567890", secret: false },
+        { key: "channelId", label: "Channel ID", placeholder: "9876543210", secret: false },
+      ],
+    },
+    {
+      id: "telegram" as const,
+      name: "Telegram",
+      icon: "✈️",
+      color: "from-sky-500/20 to-sky-700/10 border-sky-500/30",
+      description: "Broadcast to your Telegram channel. Message @BotFather to create a free bot in minutes.",
+      docsUrl: "https://core.telegram.org/bots/api",
+      fields: [
+        { key: "botToken", label: "Bot Token", placeholder: "123456789:ABCdefGhIJKlmNoPQRstuVWXyz", secret: true },
+        { key: "channelId", label: "Channel ID or @handle", placeholder: "@virellestudios", secret: false },
+      ],
+    },
+    // ─── FREE: OAuth apps (20-30 mins one-time setup) ────────────────────────
+    {
+      id: "reddit" as const,
+      name: "Reddit",
+      icon: "🤖",
+      color: "from-orange-500/20 to-orange-700/10 border-orange-500/30",
+      description: "Post to 30+ film school, filmmaking & AI subreddits. Free API — massive student audience.",
+      docsUrl: "https://www.reddit.com/wiki/api/",
+      fields: [
+        { key: "apiKey", label: "Client ID", placeholder: "xxxxxxxxxxxxxx", secret: false },
+        { key: "apiSecret", label: "Client Secret", placeholder: "xxxxxxxxxxxxxxxxxxxxxxxx", secret: true },
+        { key: "accessToken", label: "Access Token", placeholder: "your-access-token", secret: true },
+        { key: "username", label: "Reddit Username", placeholder: "u/yourusername", secret: false },
+      ],
+    },
+    {
+      id: "linkedin" as const,
+      name: "LinkedIn",
+      icon: "💼",
+      color: "from-blue-600/20 to-blue-800/10 border-blue-600/30",
+      description: "Reach film educators, studio heads & creative directors. Free organic reach — huge B2B audience.",
+      docsUrl: "https://learn.microsoft.com/en-us/linkedin/shared/authentication/",
+      fields: [
+        { key: "accessToken", label: "OAuth Access Token", placeholder: "AQxxxxxx...", secret: true },
+        { key: "organizationId", label: "Organization ID (optional)", placeholder: "12345678", secret: false },
+      ],
+    },
+    {
+      id: "mastodon" as const,
+      name: "Mastodon",
+      icon: "🐘",
+      color: "from-purple-500/20 to-purple-700/10 border-purple-500/30",
+      description: "Reach the open-source creative & film community. Completely free — no algorithm.",
+      docsUrl: "https://docs.joinmastodon.org/api/",
+      fields: [
+        { key: "channelId", label: "Instance URL", placeholder: "https://mastodon.social", secret: false },
+        { key: "accessToken", label: "Access Token", placeholder: "your-access-token", secret: true },
+      ],
+    },
+    {
+      id: "pinterest" as const,
+      name: "Pinterest",
+      icon: "📌",
+      color: "from-red-500/20 to-red-700/10 border-red-500/30",
+      description: "Pin cinematic mood boards & AI film stills. 450M+ users — huge visual discovery audience.",
+      docsUrl: "https://developers.pinterest.com/docs/api/v5/",
+      fields: [
+        { key: "accessToken", label: "Access Token", placeholder: "your-pinterest-token", secret: true },
+        { key: "boardId", label: "Board ID (optional)", placeholder: "your-board-id", secret: false },
+      ],
+    },
+    {
+      id: "threads" as const,
+      name: "Threads",
+      icon: "🧵",
+      color: "from-zinc-500/20 to-zinc-700/10 border-zinc-500/30",
+      description: "Post to Meta Threads — free, same Meta developer app as Instagram.",
+      docsUrl: "https://developers.facebook.com/docs/threads",
+      fields: [
+        { key: "accessToken", label: "Access Token", placeholder: "your-threads-token", secret: true },
+        { key: "userId", label: "Threads User ID", placeholder: "12345678", secret: false },
+      ],
+    },
+    {
+      id: "twitter" as const,
+      name: "Twitter / X",
+      icon: "🐦",
+      color: "from-neutral-500/20 to-neutral-700/10 border-neutral-500/30",
+      description: "Daily AI film showcases & cinematic tips. Free developer tier (1,500 posts/month).",
+      docsUrl: "https://developer.twitter.com/en/docs/twitter-api",
+      fields: [
+        { key: "apiKey", label: "API Key (Consumer Key)", placeholder: "xxxxxxxxxxxxxx", secret: true },
+        { key: "apiSecret", label: "API Secret (Consumer Secret)", placeholder: "xxxxxxxxxxxxxxxxxxxxxxxxx", secret: true },
+        { key: "accessToken", label: "Access Token", placeholder: "xxxxxxxxx-xxxxxxxxxxxxxxxx", secret: true },
+        { key: "refreshToken", label: "Access Token Secret", placeholder: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", secret: true },
+      ],
+    },
+    // ─── FREE: Video platforms ────────────────────────────────────────────────
+    {
+      id: "youtube" as const,
+      name: "YouTube",
+      icon: "🎥",
+      color: "from-red-500/20 to-red-700/10 border-red-500/30",
+      description: "Upload film tutorials & AI generation walkthroughs. Free Google API — world's 2nd largest search engine.",
+      docsUrl: "https://developers.google.com/youtube/v3/guides/uploading_a_video",
+      fields: [
+        { key: "accessToken", label: "OAuth Access Token", placeholder: "ya29.xxxxxx", secret: true },
+        { key: "refreshToken", label: "OAuth Refresh Token", placeholder: "1//xxxxxx", secret: true },
+        { key: "channelId", label: "Channel ID", placeholder: "UCxxxxxx", secret: false },
+      ],
+    },
+    // ─── FREE: Photo & social ─────────────────────────────────────────────────
+    {
+      id: "instagram" as const,
+      name: "Instagram",
+      icon: "📸",
+      color: "from-pink-500/20 to-purple-600/10 border-pink-500/30",
+      description: "Publish film posters & Reels to your Instagram Business account. Free Meta API.",
+      docsUrl: "https://developers.facebook.com/docs/instagram-api/",
+      fields: [
+        { key: "accessToken", label: "User Access Token", placeholder: "EAAxxxxxx...", secret: true },
+        { key: "pageId", label: "Instagram Business Account ID", placeholder: "17841400000000000", secret: false },
+        { key: "pageAccessToken", label: "Page Access Token (optional)", placeholder: "EAAxxxxxx...", secret: true },
+      ],
+    },
+    // ─── ADD LATER (requires paid plan / creator approval) ───────────────────
+    {
+      id: "tiktok" as const,
+      name: "TikTok",
+      icon: "🎵",
+      color: "from-cyan-500/20 to-teal-600/10 border-cyan-500/30",
+      description: "Post short film trailers & AI demos. Requires TikTok Creator account approval — add when ready.",
+      docsUrl: "https://developers.tiktok.com/doc/content-posting-api-get-started/",
+      fields: [
+        { key: "accessToken", label: "Access Token", placeholder: "act.xxxxxx...", secret: true },
+        { key: "openId", label: "Open ID (optional)", placeholder: "xxxxxx", secret: false },
+        { key: "refreshToken", label: "Refresh Token (optional)", placeholder: "rft.xxxxxx...", secret: true },
+      ],
+    },
+  ];
 
 // ─── BillingTab Component ─────────────────────────────────────────────────────
 function BillingTab({ profile }: { profile: any }) {
