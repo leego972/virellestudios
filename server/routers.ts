@@ -9993,42 +9993,56 @@ Rules:
     }),
 
     // Save or update credentials for a platform
-    save: protectedProcedure
-      .input(z.object({
-        platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]),
-        displayName: z.string().max(255).optional(),
-        accessToken: z.string().optional(),
-        refreshToken: z.string().optional(),
-        pageId: z.string().optional(),
-        pageAccessToken: z.string().optional(),
-        userId: z.string().optional(),
-        openId: z.string().optional(),
-        channelId: z.string().optional(),
-        botToken: z.string().optional(),
-        guildId: z.string().optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        const { platform, displayName, ...fields } = input;
-        const credObj: Record<string, string> = {};
-        if (fields.accessToken) credObj.accessToken = fields.accessToken;
-        if (fields.refreshToken) credObj.refreshToken = fields.refreshToken;
-        if (fields.pageId) credObj.pageId = fields.pageId;
-        if (fields.pageAccessToken) credObj.pageAccessToken = fields.pageAccessToken;
-        if (fields.userId) credObj.userId = fields.userId;
-        if (fields.openId) credObj.openId = fields.openId;
-        if (fields.channelId) credObj.channelId = fields.channelId;
-        if (fields.botToken) credObj.botToken = fields.botToken;
-        if (fields.guildId) credObj.guildId = fields.guildId;
-        if (Object.keys(credObj).length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No credentials provided" });
-        await db.upsertUserSocialCredential(ctx.user.id, platform, {
-          displayName,
-          credentials: JSON.stringify(credObj),
-          isActive: true,
-        });
-        return { success: true };
-      }),
+      save: protectedProcedure
+        .input(z.object({
+          platform: z.enum([
+            "instagram", "tiktok", "facebook", "discord", "youtube",
+            "reddit", "linkedin", "telegram", "twitter", "mastodon",
+            "pinterest", "threads", "devto", "medium", "hashnode",
+          ]),
+          displayName: z.string().max(255).optional(),
+          // Generic OAuth / token fields
+          accessToken: z.string().optional(),
+          refreshToken: z.string().optional(),
+          // Instagram / Facebook
+          pageId: z.string().optional(),
+          pageAccessToken: z.string().optional(),
+          // TikTok / Threads
+          userId: z.string().optional(),
+          openId: z.string().optional(),
+          // Discord
+          botToken: z.string().optional(),
+          guildId: z.string().optional(),
+          channelId: z.string().optional(),
+          // Reddit / Twitter
+          apiKey: z.string().optional(),
+          apiSecret: z.string().optional(),
+          username: z.string().optional(),
+          // LinkedIn
+          organizationId: z.string().optional(),
+          // Hashnode
+          publicationId: z.string().optional(),
+          // Pinterest
+          boardId: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const { platform, displayName, ...fields } = input;
+          const credObj: Record<string, string> = {};
+          const add = (k: string) => { if ((fields as any)[k]) credObj[k] = (fields as any)[k]; };
+          add("accessToken"); add("refreshToken"); add("pageId"); add("pageAccessToken");
+          add("userId"); add("openId"); add("channelId"); add("botToken"); add("guildId");
+          add("apiKey"); add("apiSecret"); add("username"); add("organizationId");
+          add("publicationId"); add("boardId");
+          if (Object.keys(credObj).length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No credentials provided" });
+          await db.upsertUserSocialCredential(ctx.user.id, platform, {
+            displayName,
+            credentials: JSON.stringify(credObj),
+            isActive: true,
+          });
+          return { success: true };
+        }),
 
-    // Test a platform connection using stored credentials
+          // Test a platform connection using stored credentials
     test: protectedProcedure
       .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]) }))
       .mutation(async ({ ctx, input }) => {
