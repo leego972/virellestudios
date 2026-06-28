@@ -770,7 +770,67 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── 7. FAQ ─── */}
+
+          {/* ─── 6.5 No generic clips. Trust Section ─── */}
+          <section
+            className="py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20"
+            style={{ background: "linear-gradient(180deg, #000 0%, #080608 60%, #000 100%)" }}
+          >
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-8">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Virelle is built different
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter mb-6 text-gold-shimmer">
+                No generic clips.
+              </h2>
+              <p className="text-base text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed">
+                Any AI tool can export a five-second clip. Virelle orchestrates the entire
+                production pipeline — story, cast, scenes, score, subtitles, poster, trailer,
+                and distribution package — in one controlled workflow you own.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto mb-10">
+                {[
+                  {
+                    icon: "🎬",
+                    title: "Full pipeline, not just clips",
+                    body: "Script → characters → scenes → post → distribution. Every stage connected, every output linked.",
+                  },
+                  {
+                    icon: "🔐",
+                    title: "You own 100% of every output",
+                    body: "No platform watermarks. No royalties. No licensing. Commercial rights are yours from the first render.",
+                  },
+                  {
+                    icon: "🤖",
+                    title: "Human control at every stage",
+                    body: "AI handles the heavy lifting. You approve, edit, and direct. Nothing publishes without your sign-off.",
+                  },
+                  {
+                    icon: "📋",
+                    title: "Production readiness verified",
+                    body: "Before you distribute, Virelle checks every stage — script, cast, scenes, subtitles, credits, and export.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex gap-4 rounded-xl border border-amber-500/15 bg-amber-500/[0.04] p-5"
+                  >
+                    <span className="text-2xl shrink-0 leading-none mt-0.5">{item.icon}</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white mb-1">{item.title}</p>
+                      <p className="text-xs text-white/45 leading-relaxed">{item.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-white/25 italic tracking-wide">
+                Generic AI tools generate clips. Virelle builds the show.
+              </p>
+            </div>
+          </section>
+
+          {/* ─── 7. FAQ ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-amber-500/20 bg-black">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
