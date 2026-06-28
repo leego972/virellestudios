@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import {
   BarChart3, Film, Users, TrendingUp, Star, Eye, Play, Share2,
   CheckCircle2, XCircle, Clock, AlertTriangle, Loader2, Megaphone,
-  Shield, Zap, RefreshCw,
+  Shield, Zap, RefreshCw, Rocket,
 } from "lucide-react";
 
 // ─── Stat card ───────────────────────────────────────────────────────────────
@@ -355,6 +355,34 @@ export default function AdminGrowthDashboard() {
   const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 5 });
   const { data: pending } = trpc.submissions.listPending.useQuery();
   const { data: abuseFlags } = trpc.abuse.listPending.useQuery();
+
+    // ── One-click content blast ───────────────────────────────────────────────
+    const [blasting, setBlasting] = useState(false);
+    const [blastResult, setBlastResult] = useState<{
+      succeeded: number; failed: number; total: number;
+      results: { channelId: string; channelName: string; ok: boolean; error?: string }[];
+      message: string;
+    } | null>(null);
+    const [blastErr, setBlastErr] = useState("");
+
+    const blastMutation = trpc.advertising.blast.useMutation({
+      onSuccess: (data) => {
+        setBlastResult(data as any);
+        setBlasting(false);
+        toast.success(`✅ ${(data as any).succeeded}/${(data as any).total} content pieces generated — saved as drafts`);
+      },
+      onError: (err) => {
+        setBlastErr(err.message || "Blast failed");
+        setBlasting(false);
+      },
+    });
+
+    const runBlast = () => {
+      setBlasting(true);
+      setBlastResult(null);
+      setBlastErr("");
+      blastMutation.mutate({});
+    };
 
   return (
     <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
