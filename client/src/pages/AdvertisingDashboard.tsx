@@ -41,6 +41,30 @@ const PLATFORM_META: Record<string, { label: string; color: string; icon: React.
 
 // ─── Status Badge ──────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
+    const channelConfigQuery = trpc.advertising.getChannelConfig.useQuery();
+    const setChannelConfig = trpc.advertising.setChannelConfig.useMutation({
+      onSuccess: (d) => {
+        channelConfigQuery.refetch();
+        toast.success(`✅ Saved — auto-posting active for ${Object.values(d.configured).filter(Boolean).length} channel(s)`);
+        setConfigForm({ linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "", reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "", devto_api_key: "", discord_webhook_url: "", instagram_access_token: "", twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "" });
+      },
+      onError: (e) => toast.error(e.message),
+    });
+    const publishContent = trpc.advertising.publishContent.useMutation({
+      onSuccess: (d) => {
+        if (d.posted) { toast.success(`✅ Published to ${d.platform}!`); contentQuery.refetch?.(); }
+        else if (d.manual) { toast.info(`Manual action needed — open ${d.manualUrl} and paste the content.`); }
+        else { toast.error(d.error ?? "Publish failed"); }
+      },
+      onError: (e) => toast.error(e.message),
+    });
+    const [configForm, setConfigForm] = useState({
+      linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "",
+      reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "",
+      devto_api_key: "", discord_webhook_url: "", instagram_access_token: "",
+      twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "",
+    });
+  
   const map: Record<string, { label: string; className: string }> = {
     draft: { label: "Draft", className: "border-amber-500/20 text-zinc-400 bg-zinc-500/10" },
     approved: { label: "Approved", className: "border-green-500/50 text-green-400 bg-green-500/10" },
@@ -81,10 +105,11 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
 }
 
 // ─── Content Queue Item ────────────────────────────────────────────────────
-function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting }: {
+function ContentQueueItem({ item, onApprove, onReject, onPublish, isApproving, isRejecting }: {
   item: any;
   onApprove: (id: number) => void;
   onReject: (id: number) => void;
+  onPublish?: (id: number, platform: string) => void;
   isApproving: boolean;
   isRejecting: boolean;
 }) {
@@ -182,6 +207,15 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
             {isRejecting ? <Loader2 className="w-3 h-3 animate-spin mr-1 text-amber-400" /> : <XCircle className="w-3 h-3 mr-1" />}
             Reject
           </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="border border-violet-700/40 text-violet-400 hover:bg-violet-900/20 h-8 px-3"
+              onClick={() => onPublish?.(item.id, item.platform)}
+              title="Auto-submit to channel"
+            >
+              ⚡
+            </Button>
         </div>
       )}
     </div>
@@ -370,6 +404,13 @@ export default function AdvertisingDashboard() {
           <TabsTrigger value="tiktok" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">TikTok</TabsTrigger>
           <TabsTrigger value="strategy" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Strategy</TabsTrigger>
           <TabsTrigger value="activity" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Activity</TabsTrigger>
+        
+            <TabsTrigger value="settings" className="text-xs relative">
+              ⚙️ Publish Settings
+              {!channelConfigQuery.data?.configured?.linkedin && !channelConfigQuery.data?.configured?.reddit && !channelConfigQuery.data?.configured?.devto && (
+                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
+            </TabsTrigger>
         </TabsList>
 
         {/* ─── Overview Tab ──────────────────────────────────────────────── */}
@@ -856,7 +897,106 @@ export default function AdvertisingDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+      
+          {/* ── PUBLISH SETTINGS TAB ─────────────────────────────────────── */}
+          <TabsContent value="settings" className="space-y-5 mt-0">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Enter credentials for channels that can auto-post. Saved values take effect immediately and survive until the server restarts.
+              For permanent storage, also set them as environment variables on Railway.
+            </p>
+
+            {/* Status cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {([
+                { key: "linkedin", label: "LinkedIn", hint: "Access token + URN" },
+                { key: "reddit",   label: "Reddit",   hint: "Client ID + secret + login" },
+                { key: "devto",    label: "Dev.to",   hint: "API key" },
+                { key: "discord",  label: "Discord",  hint: "Webhook URL" },
+                { key: "instagram",label: "Instagram",hint: "Access token" },
+                { key: "twilio",   label: "WhatsApp", hint: "Twilio SID + token" },
+              ] as const).map(({ key, label, hint }) => {
+                const ok = channelConfigQuery.data?.configured?.[key] ?? false;
+                return (
+                  <div key={key} className={`rounded-lg border p-3 ${ok ? "border-green-700/60 bg-green-950/20" : "border-neutral-800 bg-neutral-900/40"}`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${ok ? "bg-green-400" : "bg-neutral-600"}`} />
+                      <span className="text-xs font-semibold text-white">{label}</span>
+                    </div>
+                    <p className="text-[10px] text-neutral-500 mt-1">{ok ? "✓ Auto-posting active" : `Needs: ${hint}`}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* LinkedIn */}
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm text-white">LinkedIn</CardTitle>
+                  {channelConfigQuery.data?.configured?.linkedin && <Badge className="text-[10px] bg-green-900/40 text-green-400 border-green-700">✓ configured</Badge>}
+                </div>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 space-y-2">
+                <p className="text-[11px] text-neutral-500">Create an app at <a href="https://www.linkedin.com/developers/apps" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline">linkedin.com/developers/apps</a> to get an access token.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Access Token</label><input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.linkedin_access_token || "Paste token…"} value={configForm.linkedin_access_token} onChange={e => setConfigForm(f => ({...f, linkedin_access_token: e.target.value}))} /></div>
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Person URN (optional)</label><input type="text" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder="urn:li:person:XXXXX" value={configForm.linkedin_person_urn} onChange={e => setConfigForm(f => ({...f, linkedin_person_urn: e.target.value}))} /></div>
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Org URN (optional)</label><input type="text" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder="urn:li:organization:XXXXX" value={configForm.linkedin_org_urn} onChange={e => setConfigForm(f => ({...f, linkedin_org_urn: e.target.value}))} /></div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Reddit */}
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm text-white">Reddit</CardTitle>
+                  {channelConfigQuery.data?.configured?.reddit && <Badge className="text-[10px] bg-green-900/40 text-green-400 border-green-700">✓ configured</Badge>}
+                </div>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 space-y-2">
+                <p className="text-[11px] text-neutral-500">Create a "script" app at <a href="https://www.reddit.com/prefs/apps" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline">reddit.com/prefs/apps</a>. Posts to r/MachineLearning, r/SideProject, r/artificial.</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Client ID</label><input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.reddit_client_id || "App client ID"} value={configForm.reddit_client_id} onChange={e => setConfigForm(f => ({...f, reddit_client_id: e.target.value}))} /></div>
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Client Secret</label><input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.reddit_client_secret || "App secret"} value={configForm.reddit_client_secret} onChange={e => setConfigForm(f => ({...f, reddit_client_secret: e.target.value}))} /></div>
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Username</label><input type="text" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.reddit_username || "Reddit username"} value={configForm.reddit_username} onChange={e => setConfigForm(f => ({...f, reddit_username: e.target.value}))} /></div>
+                  <div className="space-y-1"><label className="text-[11px] text-neutral-400">Password</label><input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder="Reddit password" value={configForm.reddit_password} onChange={e => setConfigForm(f => ({...f, reddit_password: e.target.value}))} /></div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dev.to + Discord */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Card className="bg-neutral-900 border-neutral-800">
+                <CardHeader className="pb-2 pt-4 px-4"><div className="flex items-center justify-between"><CardTitle className="text-sm text-white">Dev.to</CardTitle>{channelConfigQuery.data?.configured?.devto && <Badge className="text-[10px] bg-green-900/40 text-green-400 border-green-700">✓</Badge>}</div></CardHeader>
+                <CardContent className="px-4 pb-4 space-y-2">
+                  <p className="text-[11px] text-neutral-500">Get key at <a href="https://dev.to/settings/extensions" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline">dev.to/settings/extensions</a></p>
+                  <input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.devto_api_key || "Paste API key…"} value={configForm.devto_api_key} onChange={e => setConfigForm(f => ({...f, devto_api_key: e.target.value}))} />
+                </CardContent>
+              </Card>
+              <Card className="bg-neutral-900 border-neutral-800">
+                <CardHeader className="pb-2 pt-4 px-4"><div className="flex items-center justify-between"><CardTitle className="text-sm text-white">Discord Webhook</CardTitle>{channelConfigQuery.data?.configured?.discord && <Badge className="text-[10px] bg-green-900/40 text-green-400 border-green-700">✓</Badge>}</div></CardHeader>
+                <CardContent className="px-4 pb-4 space-y-2">
+                  <p className="text-[11px] text-neutral-500">Server Settings → Integrations → Webhooks → New Webhook → Copy URL</p>
+                  <input type="password" className="w-full rounded border border-neutral-700 bg-neutral-950 text-neutral-200 text-xs px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder:text-neutral-600" placeholder={channelConfigQuery.data?.discord_webhook_url || "https://discord.com/api/webhooks/…"} value={configForm.discord_webhook_url} onChange={e => setConfigForm(f => ({...f, discord_webhook_url: e.target.value}))} />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Save */}
+            <Button onClick={() => setChannelConfig.mutate(configForm)} disabled={setChannelConfig.isPending} className="bg-amber-600 hover:bg-amber-500 text-black font-semibold h-9 px-6">
+              {setChannelConfig.isPending ? <><Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />Saving…</> : "💾 Save Credentials"}
+            </Button>
+
+            {/* Manual channels notice */}
+            <div className="rounded-lg border border-neutral-800 bg-neutral-900/30 p-3">
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                <span className="text-neutral-300 font-medium">Manual channels</span> (Product Hunt, Hacker News, Twitter/X, Instagram, TikTok, newsletters) require you to log in on their site. Click <strong className="text-neutral-300">⚡ Publish</strong> on content queue drafts — for those channels the system will show you exactly where to go and what to paste.
+              </p>
+            </div>
+          </TabsContent>
+
+  </Tabs>
     </div>
   );
 }
