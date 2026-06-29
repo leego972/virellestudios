@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import { LANDING_COPY } from "@/data/showrunnerShowcase";
 import { trpc } from "@/lib/trpc";
 
-const LOGO_URL = "/virelle-logo-square.png";
+const LOGO_URL = "/icons/icon.svg";
 
 /* Cinematic particle canvas */
 function CinematicBackground() {
