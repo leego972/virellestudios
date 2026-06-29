@@ -34,7 +34,7 @@ export default function Showcase() {
           {/* Logo */}
           <div className="flex items-center justify-center mb-6">
             <img
-              src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
+              src="/virelle-logo-square.png"
               alt="VirElle Studios"
               className="w-28 h-28 object-contain"
               style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}
@@ -137,7 +137,7 @@ export default function Showcase() {
                     title: "Dove Approach",
                     description: "A majestic white dove descends through dramatic god rays toward an ancient silver crest.",
                     videoUrl: "/virelle-opener.mp4",
-                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    thumbnailUrl: "/virelle-logo-square.png",
                     duration: 6,
                     orderIndex: 0,
                   },
@@ -146,7 +146,7 @@ export default function Showcase() {
                     title: "The Golden Transformation",
                     description: "The dove lands and everything it touches turns to pure 24k gold — shield, branches, emblem.",
                     videoUrl: "/virelle-opener.mp4",
-                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    thumbnailUrl: "/virelle-logo-square.png",
                     duration: 6,
                     orderIndex: 1,
                   },
@@ -155,7 +155,7 @@ export default function Showcase() {
                     title: "Revelation",
                     description: "The complete golden Virelle Studios emblem holds as the angelic choir sustains and fades.",
                     videoUrl: "/virelle-opener.mp4",
-                    thumbnailUrl: "https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux",
+                    thumbnailUrl: "/virelle-logo-square.png",
                     duration: 4,
                     orderIndex: 2,
                   },
