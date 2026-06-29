@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-/** Virelle Studios logo mark */
+/** LeegoLogo — the green Leego brand mark. */
 
 const TARGET_PX = 76; // ≈ 2cm at 96 DPI
 const HOLD_MS = 2000; // user-requested 2 second hold at peak
@@ -19,7 +19,7 @@ interface LeegoLogoProps {
 
 export default function LeegoLogo({
   className = "",
-  alt = "Virelle Studios",
+  alt = "Created by Leego",
   disablePulse = false,
 }: LeegoLogoProps) {
   const ref = useRef<HTMLImageElement>(null);
@@ -57,7 +57,7 @@ export default function LeegoLogo({
   return (
     <img
       ref={ref}
-      src="/virelle-logo-square.png"
+      src="/leego-logo.png"
       alt={alt}
       draggable={false}
       onClick={handlePulse}
