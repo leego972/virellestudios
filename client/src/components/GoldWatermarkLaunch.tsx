@@ -24,7 +24,7 @@ export default function GoldWatermarkLaunch({ className = "" }: { className?: st
         {/* Full-page centered watermark logo */}
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
+            src="/virelle-logo-square.png"
             alt=""
             className="hidden dark:block object-contain"
             style={{
@@ -37,7 +37,7 @@ export default function GoldWatermarkLaunch({ className = "" }: { className?: st
             draggable={false}
           />
           <img
-            src="https://image.pollinations.ai/prompt/Virelle%20Studios%20luxury%20gold%20film%20logo%20icon%2C%20minimalist%20V%20monogram%2C%20black%20background%2C%20ultra-sharp?width=256&height=256&nologo=true&seed=42&model=flux"
+            src="/virelle-logo-square.png"
             alt=""
             className="block dark:hidden object-contain"
             style={{
