@@ -124,7 +124,7 @@ import SiteHead from "@/components/SiteHead";
                 { label: "Gold Logo (PNG)", url: LOGO_GOLD },
                 { label: "Square Logo", url: "/virelle-logo-square.png" },
                 { label: "Favicon 512px", url: "/virelle-favicon-512.png" },
-                { label: "Light Watermark", url: "/vs-wm-light.png" },
+                { label: "Light Watermark", url: "/virelle-logo-square.png" },
               ].map(asset => (
                 <a
                   key={asset.label}
