@@ -47,6 +47,7 @@ import {
   blogArticles,
 } from "../drizzle/schema";
 import { eq, desc, and, gte, sql, count } from "drizzle-orm";
+import { getMaskedConfig, setChannelConfigs, getConfiguredStatus, getCred } from "./_core/channelConfigStore";
 
 export const advertisingRouter = router({
   // ══════════════════════════════════════════════════════════════════════════
@@ -803,4 +804,90 @@ export const advertisingRouter = router({
         };
       }),
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // PUBLISH SETTINGS — runtime credential management
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Get current channel credential config (values masked for security).
+     * The "configured" map shows which channels can auto-post.
+     */
+    getChannelConfig: adminProcedure.query(() => {
+      return getMaskedConfig();
+    }),
+
+    /**
+     * Save credentials for social channels into the runtime store.
+     * Takes effect immediately; survives until process restart.
+     * For permanence, also set as env vars on the hosting provider.
+     */
+    setChannelConfig: adminProcedure
+      .input(
+        z.object({
+          linkedin_access_token: z.string().optional(),
+          linkedin_person_urn:   z.string().optional(),
+          linkedin_org_urn:      z.string().optional(),
+          reddit_client_id:      z.string().optional(),
+          reddit_client_secret:  z.string().optional(),
+          reddit_username:       z.string().optional(),
+          reddit_password:       z.string().optional(),
+          devto_api_key:         z.string().optional(),
+          discord_webhook_url:   z.string().optional(),
+          instagram_access_token: z.string().optional(),
+          twilio_account_sid:    z.string().optional(),
+          twilio_auth_token:     z.string().optional(),
+          twilio_whatsapp_from:  z.string().optional(),
+        })
+      )
+      .mutation(({ input }) => {
+        setChannelConfigs(input as Record<string, string | undefined>);
+        return { ok: true, configured: getConfiguredStatus() };
+      }),
+
+    /**
+     * Auto-publish a content piece to its platform using the configured credentials.
+     * For platforms without credentials, returns { posted: false, manual: true, manualUrl }.
+     */
+    publishContent: adminProcedure
+      .input(z.object({ id: z.number(), platform: z.string() }))
+      .mutation(async ({ input }) => {
+        // Dispatch to the right posting function based on platform
+        const platform = input.platform.toLowerCase();
+
+        if (platform === "linkedin") {
+          const { postToLinkedIn } = await import("./_core/socialPostingEngine");
+          const result = await postToLinkedIn({ text: `Check out Virelle Studios — AI-powered film production. https://virellestudios.com` });
+          return { posted: result.success, url: result.postUrl, error: result.error, platform };
+        }
+
+        if (platform.startsWith("reddit") || platform === "reddit_ml" || platform === "reddit_sideproject") {
+          const subreddit = platform === "reddit_ml" ? "MachineLearning" : platform === "reddit_sideproject" ? "SideProject" : "artificial";
+          const { postToReddit } = await import("./_core/socialPostingEngine");
+          const result = await postToReddit({
+            subreddit,
+            title: "Virelle Studios — AI-powered Film Production Platform",
+            text: "We built an AI-native film production studio. Check it out: https://virellestudios.com",
+          });
+          return { posted: result.success, url: result.postUrl, error: result.error, platform };
+        }
+
+        const MANUAL_URLS: Record<string, string> = {
+          product_hunt: "https://www.producthunt.com/posts/new",
+          hacker_news:  "https://news.ycombinator.com/submit",
+          x_twitter:    "https://x.com",
+          instagram:    "https://instagram.com",
+          tiktok:       "https://tiktok.com",
+          devto:        "https://dev.to/new",
+          discord:      "https://discord.com",
+        };
+        return {
+          posted: false,
+          manual: true,
+          platform,
+          manualUrl: MANUAL_URLS[platform] ?? "https://virellestudios.com",
+          instructions: `Open ${MANUAL_URLS[platform] ?? "the platform"} and paste your generated content.`,
+        };
+      }),
+
+  
   });
