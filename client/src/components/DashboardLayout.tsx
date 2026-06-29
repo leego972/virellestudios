@@ -297,7 +297,7 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
-  const avatarSrc = localAvatar ?? (user?.role === "admin" ? "/leego-logo.png" : (user as any)?.avatarUrl) ?? undefined;
+  const avatarSrc = localAvatar ?? (user?.role === "admin" ? "/virelle-logo-square.png" : (user as any)?.avatarUrl) ?? undefined;
   const handleAvatarClick = () => fileInputRef.current?.click();
   const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -556,7 +556,7 @@ function DashboardLayoutContent({
                   <Avatar className="h-8 w-8 border shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick} title="Change profile picture">
                     {avatarSrc && <img src={avatarSrc} alt="" className="absolute inset-0 w-full h-full object-cover rounded-full" />}
                     <AvatarFallback className="p-0 bg-transparent">
-                      <img src="/leego-logo.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
+                      <img src="/virelle-logo-square.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
@@ -683,7 +683,7 @@ function DashboardLayoutContent({
                   <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent/50 transition-colors focus:outline-none">
                     <Avatar className="h-7 w-7 border shrink-0">
                       <AvatarFallback className="p-0 bg-transparent">
-                        <img src="/leego-logo.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
+                        <img src="/virelle-logo-square.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium hidden md:block">{user?.name || 'Director'}</span>
