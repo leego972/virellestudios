@@ -565,6 +565,7 @@ export default function AdvertisingDashboard() {
                   item={item}
                   onApprove={handleApprove}
                   onReject={handleReject}
+                  onPublish={(id, platform) => publishContent.mutate({ id, platform: platform ?? "linkedin" })}
                   isApproving={approvingId === item.id && updateStatusMutation.isPending}
                   isRejecting={rejectingId === item.id && updateStatusMutation.isPending}
                 />
