@@ -6,6 +6,7 @@
 
 import { ENV } from "./env";
 import { logger } from "./logger";
+import { getCred } from "./channelConfigStore";
 
 // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // TYPES
@@ -47,9 +48,9 @@ export interface WhatsAppMessageOptions {
 // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function postToLinkedIn(options: LinkedInPostOptions): Promise<PostResult> {
-  const accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
-  const personUrn = process.env.LINKEDIN_PERSON_URN; // urn:li:person:XXXXX
-  const orgUrn = process.env.LINKEDIN_ORG_URN; // urn:li:organization:XXXXX
+  const accessToken = getCred("LINKEDIN_ACCESS_TOKEN", "linkedin_access_token");
+  const personUrn = getCred("LINKEDIN_PERSON_URN", "linkedin_person_urn"); // urn:li:person:XXXXX
+  const orgUrn = getCred("LINKEDIN_ORG_URN", "linkedin_org_urn"); // urn:li:organization:XXXXX
 
   if (!accessToken) {
     return {
@@ -214,10 +215,10 @@ async function getRedditAccessToken(): Promise<string> {
     return redditAccessToken;
   }
 
-  const clientId = process.env.REDDIT_CLIENT_ID;
-  const clientSecret = process.env.REDDIT_CLIENT_SECRET;
-  const username = process.env.REDDIT_USERNAME;
-  const password = process.env.REDDIT_PASSWORD;
+  const clientId = getCred("REDDIT_CLIENT_ID", "reddit_client_id");
+  const clientSecret = getCred("REDDIT_CLIENT_SECRET", "reddit_client_secret");
+  const username = getCred("REDDIT_USERNAME", "reddit_username");
+  const password = getCred("REDDIT_PASSWORD", "reddit_password");
 
   if (!clientId || !clientSecret || !username || !password) {
     throw new Error("Reddit credentials not configured. Set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD in Railway environment variables.");
@@ -314,9 +315,9 @@ export async function postToReddit(options: RedditPostOptions): Promise<PostResu
 // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export async function sendWhatsAppMessage(options: WhatsAppMessageOptions): Promise<PostResult> {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const from = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
+  const accountSid = getCred("TWILIO_ACCOUNT_SID", "twilio_account_sid");
+  const authToken = getCred("TWILIO_AUTH_TOKEN", "twilio_auth_token");
+  const from = getCred("TWILIO_WHATSAPP_FROM", "twilio_whatsapp_from") || "whatsapp:+14155238886";
 
   if (!accountSid || !authToken) {
     return {
@@ -365,7 +366,7 @@ export async function sendWhatsAppMessage(options: WhatsAppMessageOptions): Prom
  * Broadcast a WhatsApp message to all numbers in TWILIO_WHATSAPP_BROADCAST_LIST
  */
 export async function broadcastWhatsApp(text: string, mediaUrl?: string): Promise<PostResult[]> {
-  const broadcastList = process.env.TWILIO_WHATSAPP_BROADCAST_LIST;
+  const broadcastList = getCred("TWILIO_WHATSAPP_BROADCAST_LIST", "twilio_whatsapp_broadcast_list");
   if (!broadcastList) {
     return [{
       platform: "whatsapp_broadcast",
@@ -469,28 +470,28 @@ export async function postToFilmSubreddits(
 export function getSocialCredentialStatus(): Record<string, { configured: boolean; missing: string[] }> {
   return {
     linkedin: {
-      configured: !!(process.env.LINKEDIN_ACCESS_TOKEN && (process.env.LINKEDIN_PERSON_URN || process.env.LINKEDIN_ORG_URN)),
+      configured: !!(getCred("LINKEDIN_ACCESS_TOKEN", "linkedin_access_token") && (getCred("LINKEDIN_PERSON_URN", "linkedin_person_urn") || getCred("LINKEDIN_ORG_URN", "linkedin_org_urn"))),
       missing: [
-        ...(!process.env.LINKEDIN_ACCESS_TOKEN ? ["LINKEDIN_ACCESS_TOKEN"] : []),
-        ...(!process.env.LINKEDIN_PERSON_URN && !process.env.LINKEDIN_ORG_URN ? ["LINKEDIN_PERSON_URN or LINKEDIN_ORG_URN"] : []),
+        ...(!getCred("LINKEDIN_ACCESS_TOKEN", "linkedin_access_token") ? ["LINKEDIN_ACCESS_TOKEN"] : []),
+        ...(!getCred("LINKEDIN_PERSON_URN", "linkedin_person_urn") && !getCred("LINKEDIN_ORG_URN", "linkedin_org_urn") ? ["LINKEDIN_PERSON_URN or LINKEDIN_ORG_URN"] : []),
       ],
     },
     reddit: {
-      configured: !!(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET && process.env.REDDIT_USERNAME && process.env.REDDIT_PASSWORD),
+      configured: !!(getCred("REDDIT_CLIENT_ID", "reddit_client_id") && getCred("REDDIT_CLIENT_SECRET", "reddit_client_secret") && getCred("REDDIT_USERNAME", "reddit_username") && getCred("REDDIT_PASSWORD", "reddit_password")),
       missing: [
-        ...(!process.env.REDDIT_CLIENT_ID ? ["REDDIT_CLIENT_ID"] : []),
-        ...(!process.env.REDDIT_CLIENT_SECRET ? ["REDDIT_CLIENT_SECRET"] : []),
-        ...(!process.env.REDDIT_USERNAME ? ["REDDIT_USERNAME"] : []),
-        ...(!process.env.REDDIT_PASSWORD ? ["REDDIT_PASSWORD"] : []),
+        ...(!getCred("REDDIT_CLIENT_ID", "reddit_client_id") ? ["REDDIT_CLIENT_ID"] : []),
+        ...(!getCred("REDDIT_CLIENT_SECRET", "reddit_client_secret") ? ["REDDIT_CLIENT_SECRET"] : []),
+        ...(!getCred("REDDIT_USERNAME", "reddit_username") ? ["REDDIT_USERNAME"] : []),
+        ...(!getCred("REDDIT_PASSWORD", "reddit_password") ? ["REDDIT_PASSWORD"] : []),
       ],
     },
     whatsapp: {
-      configured: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN),
+      configured: !!(getCred("TWILIO_ACCOUNT_SID", "twilio_account_sid") && getCred("TWILIO_AUTH_TOKEN", "twilio_auth_token")),
       missing: [
-        ...(!process.env.TWILIO_ACCOUNT_SID ? ["TWILIO_ACCOUNT_SID"] : []),
-        ...(!process.env.TWILIO_AUTH_TOKEN ? ["TWILIO_AUTH_TOKEN"] : []),
-        ...(!process.env.TWILIO_WHATSAPP_FROM ? ["TWILIO_WHATSAPP_FROM (optional, defaults to sandbox)"] : []),
-        ...(!process.env.TWILIO_WHATSAPP_BROADCAST_LIST ? ["TWILIO_WHATSAPP_BROADCAST_LIST"] : []),
+        ...(!getCred("TWILIO_ACCOUNT_SID", "twilio_account_sid") ? ["TWILIO_ACCOUNT_SID"] : []),
+        ...(!getCred("TWILIO_AUTH_TOKEN", "twilio_auth_token") ? ["TWILIO_AUTH_TOKEN"] : []),
+        ...(!getCred("TWILIO_WHATSAPP_FROM", "twilio_whatsapp_from") ? ["TWILIO_WHATSAPP_FROM (optional, defaults to sandbox)"] : []),
+        ...(!getCred("TWILIO_WHATSAPP_BROADCAST_LIST", "twilio_whatsapp_broadcast_list") ? ["TWILIO_WHATSAPP_BROADCAST_LIST"] : []),
       ],
     },
   };
