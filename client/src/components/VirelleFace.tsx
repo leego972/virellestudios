@@ -112,7 +112,7 @@ import React from 'react';
 
           {/* z:2 — Mask PNG on top; transparent sockets reveal the glow behind */}
           <img
-            src="/virelle-face.png"
+            src="/virelle-logo-square.png"
             alt=""
             draggable={false}
             style={{
@@ -143,7 +143,7 @@ import React from 'react';
   export const VirelleFaceAvatar = ({ speaking = false }: { speaking?: boolean }) => (
     <div style={{ position: 'relative', width: 28, height: 28, flexShrink: 0 }}>
       <img
-        src="/virelle-face.png"
+        src="/virelle-logo-square.png"
         alt="Virelle"
         style={{
           width: '100%', height: '100%',
