@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,30 +38,15 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 import { useSubscription } from "@/hooks/useSubscription";
 
 const VFX_LABELS: Record<string, string> = {
-  "scene-extension-outpaint": "Scene Extension / Outpainting",
-  "object-removal-inpaint": "Object Removal / Inpainting",
-  "stabilization": "Stabilization / Camera Shake Repair",
-  "upscale-4k": "Upscale to 4K",
-  "upscale-8k": "Upscale to 8K",
-  "denoising-grain-removal": "Denoising / Grain Repair",
-  "face-enhancement": "Face Enhancement / Detail Recovery",
-  "style-transfer": "Style Transfer",
-  "color-match": "Colour Match to Source Plate",
-  "motion-blur-add": "Cinematic Motion Blur",
-  "lens-flare-add": "Anamorphic Lens Flare",
-  "film-grain-add": "Film Grain / Analog Texture",
-  "depth-of-field-post": "Post Depth of Field / Rack Focus",
-  "vignette-add": "Cinematic Vignette",
-
-  // Swappys / digital-double feature set.
   "swappys-digital-double": "Swappys Digital Double",
   "stunt-face-replacement": "Stunt Face Replacement",
   "actor-continuity-match": "Actor Continuity Match",
   "pickup-scene-match": "Pickup / Reshoot Match",
   "ai-stunt-insert": "AI Stunt Insert",
   "performance-polish": "Performance Polish",
+  "multi-anchor-character-lock": "Multi-Anchor Character Lock",
+  "temporal-consistency-pass": "Temporal Consistency Pass",
 
-  // Advanced professional studio effects.
   "roto-person-isolation": "AI Rotoscope / Person Isolation",
   "green-screen-keying": "Green Screen / Keying",
   "background-replacement": "Background Replacement",
@@ -69,25 +54,54 @@ const VFX_LABELS: Record<string, string> = {
   "sky-replacement": "Sky Replacement",
   "set-extension": "Set Extension",
   "crowd-multiplication": "Crowd Multiplication",
+  "camera-matchmove-solve": "Camera Matchmove / Plate Solve",
+
+  "object-removal-inpaint": "Object Removal / Inpainting",
   "wire-rig-removal": "Wire / Rig Removal",
   "safety-gear-removal": "Safety Gear Cleanup",
   "reflection-cleanup": "Reflection Cleanup",
   "screen-replacement": "Screen Replacement",
+  "neural-matte-edge-refine": "Neural Matte Edge Refinement",
+
   "muzzle-flash-practical": "Practical Action Flash / Spark",
   "debris-dust-impact": "Debris / Dust Impact",
   "weather-rain-snow": "Rain / Snow / Weather Layer",
   "fire-smoke-atmosphere": "Fire / Smoke Atmosphere",
-  "night-for-day": "Day-for-Night / Night-for-Day",
+  "motion-blur-add": "Cinematic Motion Blur",
+  "lens-flare-add": "Anamorphic Lens Flare",
+
+  "scene-extension-outpaint": "Scene Extension / Outpainting",
+  "upscale-4k": "Upscale to 4K",
+  "upscale-8k": "Upscale to 8K",
+  "denoising-grain-removal": "Denoising / Grain Repair",
+  "face-enhancement": "Face Enhancement / Detail Recovery",
   "beauty-retouch-film": "Film Beauty Retouch",
   "de-age-subtle": "Subtle De-Aging",
   "film-damage-restore": "Film Damage Restoration",
   "deflicker-exposure": "Deflicker / Exposure Repair",
+
+  "color-match": "Colour Match to Source Plate",
+  "style-transfer": "Style Transfer",
+  "film-grain-add": "Film Grain / Analog Texture",
+  "depth-of-field-post": "Post Depth of Field / Rack Focus",
+  "vignette-add": "Cinematic Vignette",
+  "stabilization": "Stabilization / Camera Shake Repair",
   "lens-distortion-repair": "Lens Distortion Repair",
   "chromatic-repair": "Chromatic Aberration Repair",
   "final-qc-pass": "Final QC / Continuity Pass",
+  "render-pass-provenance": "Render Pass Provenance",
+  "edit-handoff-package": "Editorial Handoff Package",
 };
 
-const VFX_ICONS: Record<string, React.ReactNode> = {
+const VFX_ICONS: Record<string, ReactNode> = {
+  "swappys-digital-double": <ScanFace className="w-4 h-4" />,
+  "stunt-face-replacement": <ShieldCheck className="w-4 h-4" />,
+  "actor-continuity-match": <BadgeCheck className="w-4 h-4" />,
+  "pickup-scene-match": <Clapperboard className="w-4 h-4" />,
+  "ai-stunt-insert": <Sparkles className="w-4 h-4" />,
+  "performance-polish": <Wand2 className="w-4 h-4" />,
+  "multi-anchor-character-lock": <ScanFace className="w-4 h-4" />,
+  "temporal-consistency-pass": <Film className="w-4 h-4" />,
   "scene-extension-outpaint": <Maximize2 className="w-4 h-4" />,
   "object-removal-inpaint": <Eraser className="w-4 h-4" />,
   "stabilization": <Layers className="w-4 h-4" />,
@@ -102,12 +116,10 @@ const VFX_ICONS: Record<string, React.ReactNode> = {
   "film-grain-add": <Film className="w-4 h-4" />,
   "depth-of-field-post": <Camera className="w-4 h-4" />,
   "vignette-add": <Layers className="w-4 h-4" />,
-  "swappys-digital-double": <ScanFace className="w-4 h-4" />,
-  "stunt-face-replacement": <ShieldCheck className="w-4 h-4" />,
-  "actor-continuity-match": <BadgeCheck className="w-4 h-4" />,
-  "pickup-scene-match": <Clapperboard className="w-4 h-4" />,
-  "ai-stunt-insert": <Sparkles className="w-4 h-4" />,
-  "performance-polish": <Wand2 className="w-4 h-4" />,
+  "camera-matchmove-solve": <Camera className="w-4 h-4" />,
+  "neural-matte-edge-refine": <Layers className="w-4 h-4" />,
+  "render-pass-provenance": <FileCheck2 className="w-4 h-4" />,
+  "edit-handoff-package": <FileCheck2 className="w-4 h-4" />,
   "final-qc-pass": <FileCheck2 className="w-4 h-4" />,
 };
 
@@ -119,6 +131,8 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "pickup-scene-match",
     "ai-stunt-insert",
     "performance-polish",
+    "multi-anchor-character-lock",
+    "temporal-consistency-pass",
   ],
   "Compositing & Plates": [
     "roto-person-isolation",
@@ -128,6 +142,7 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "sky-replacement",
     "set-extension",
     "crowd-multiplication",
+    "camera-matchmove-solve",
   ],
   "Cleanup & Safety": [
     "object-removal-inpaint",
@@ -135,6 +150,7 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "safety-gear-removal",
     "reflection-cleanup",
     "screen-replacement",
+    "neural-matte-edge-refine",
   ],
   "Action & Atmosphere": [
     "muzzle-flash-practical",
@@ -145,6 +161,7 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "lens-flare-add",
   ],
   "Image Quality & Restoration": [
+    "scene-extension-outpaint",
     "upscale-4k",
     "upscale-8k",
     "denoising-grain-removal",
@@ -154,7 +171,7 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "film-damage-restore",
     "deflicker-exposure",
   ],
-  "Finishing & QC": [
+  "Finishing, QC & Handoff": [
     "color-match",
     "style-transfer",
     "film-grain-add",
@@ -164,6 +181,8 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "lens-distortion-repair",
     "chromatic-repair",
     "final-qc-pass",
+    "render-pass-provenance",
+    "edit-handoff-package",
   ],
 };
 
@@ -174,6 +193,8 @@ const SWAPPYS_OPS = new Set([
   "pickup-scene-match",
   "ai-stunt-insert",
   "performance-polish",
+  "multi-anchor-character-lock",
+  "temporal-consistency-pass",
 ]);
 
 function VFXSuiteInner() {
@@ -183,8 +204,7 @@ function VFXSuiteInner() {
   const sceneId = parseInt(params.sceneId || "0");
   const { isCreator, isIndustry } = useSubscription();
 
-  const updateSceneMutation = trpc.scene.update.useMutation();
-  const generateVideoMutation = trpc.scene.generateVideo.useMutation();
+  const createStudioVfxJob = trpc.vfxSfx.createStudioVfxJob.useMutation();
   const uploadRefImageMutation = trpc.upload.referenceImage.useMutation();
 
   const sourcePlateRef = useRef<HTMLInputElement>(null);
@@ -200,6 +220,7 @@ function VFXSuiteInner() {
   const [consentConfirmed, setConsentConfirmed] = useState(false);
   const [hideVisibleWatermark, setHideVisibleWatermark] = useState(false);
   const [exportQuality, setExportQuality] = useState<"preview" | "final" | "master">("preview");
+  const [lastJob, setLastJob] = useState<{ creditCost?: number; watermarkMode?: string; enhancedImageUrl?: string | null } | null>(null);
 
   const selectedSwappys = selectedOps.some((op) => SWAPPYS_OPS.has(op));
   const estimatedCredits = selectedSwappys
@@ -223,12 +244,7 @@ function VFXSuiteInner() {
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
-      const result = await uploadRefImageMutation.mutateAsync({
-        base64,
-        filename: file.name,
-        contentType: file.type as any,
-        sceneId,
-      });
+      const result = await uploadRefImageMutation.mutateAsync({ base64, filename: file.name, contentType: file.type as any, sceneId });
       if (kind === "source") setSourcePlateUrl(result.url);
       if (kind === "actor") setActorReferenceUrl(result.url);
       toast.success(kind === "source" ? "Source plate uploaded" : "Actor reference uploaded");
@@ -242,21 +258,8 @@ function VFXSuiteInner() {
   };
 
   const toggleOp = (op: string) => {
+    setProcessComplete(false);
     setSelectedOps((prev) => prev.includes(op) ? prev.filter((o) => o !== op) : [...prev, op]);
-  };
-
-  const buildPrompt = () => {
-    const operationText = selectedOps.map((op) => VFX_LABELS[op] || op).join(", ");
-    const studioNotes = [
-      `Apply professional VFX operations at ${intensity}% intensity: ${operationText}.`,
-      selectedSwappys ? "SWAPPYS DIGITAL DOUBLE DIRECTIVE: preserve actor identity continuity across the shot, match head angle, expression, lighting, skin detail, wardrobe continuity, motion blur, grain, lens distortion, and camera perspective. This is for consented film-production digital-double/stunt/pickup work." : "",
-      sourcePlateUrl ? "Use uploaded source plate as the live-action/VFX plate reference." : "",
-      actorReferenceUrl ? "Use uploaded actor reference as the approved likeness/continuity source." : "",
-      hideVisibleWatermark ? "Studio export setting: hide visible watermark on final production output, while retaining internal consent/audit/provenance metadata." : "Studio export setting: retain visible AI-altered disclosure/watermark.",
-      exportQuality === "master" ? "Master quality target: finishing pass suitable for edit handoff; prioritise temporal consistency, artifact reduction, edge fidelity, and colour-science match." : "",
-      retakeInstructions.trim() ? `DIRECTOR NOTES: ${retakeInstructions.trim()}` : "",
-    ];
-    return studioNotes.filter(Boolean).join(" ");
   };
 
   const handleProcess = async () => {
@@ -264,7 +267,7 @@ function VFXSuiteInner() {
       toast.error("Select at least one VFX operation");
       return;
     }
-    if (!sceneId) {
+    if (!projectId || !sceneId) {
       toast.error("No scene found. Navigate here from a specific scene.");
       return;
     }
@@ -280,28 +283,23 @@ function VFXSuiteInner() {
     setIsProcessing(true);
     setProcessComplete(false);
     try {
-      await updateSceneMutation.mutateAsync({
-        id: sceneId,
-        vfxSuiteOperations: {
-          operations: selectedOps,
-          intensity,
-          sourcePlateUrl,
-          actorReferenceUrl,
-          estimatedCredits,
-          exportQuality,
-          swappys: selectedSwappys ? {
-            consentConfirmed,
-            hideVisibleWatermark,
-            watermarkMode: hideVisibleWatermark ? "studio_hidden_visible_mark_internal_audit" : "visible_ai_altered_mark",
-            membershipGate: "creator_or_higher",
-            provenanceRequired: true,
-          } : null,
-        },
-        retakeInstructions: buildPrompt(),
-      } as any);
-      await generateVideoMutation.mutateAsync({ sceneId });
+      const result = await createStudioVfxJob.mutateAsync({
+        projectId,
+        sceneId,
+        operations: selectedOps,
+        intensity,
+        sourcePlateUrl,
+        actorReferenceUrl,
+        consentConfirmed: selectedSwappys ? consentConfirmed : false,
+        consentNotes: selectedSwappys ? retakeInstructions : null,
+        hideVisibleWatermark: selectedSwappys ? hideVisibleWatermark : false,
+        exportQuality,
+        directorNotes: retakeInstructions,
+        runImagePass: true,
+      });
+      setLastJob({ creditCost: result.creditCost, watermarkMode: result.watermarkMode, enhancedImageUrl: result.enhancedImageUrl });
       setProcessComplete(true);
-      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved and regeneration queued`);
+      toast.success(`VFX Studio job created. ${result.creditCost} credits charged.`);
     } catch (err: any) {
       toast.error(err?.message || "VFX processing failed. Please try again.");
     } finally {
@@ -314,24 +312,16 @@ function VFXSuiteInner() {
       <div className="border-b sticky top-0 z-20 px-4 py-3" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="w-4 h-4" /></Button>
             <div>
-              <h1 className="text-lg font-semibold flex items-center gap-2 text-gold-shimmer">
-                <Wand2 className="w-5 h-5 text-amber-400" />
-                VFX Suite
-                <Badge className="bg-amber-500/15 text-amber-300 border border-amber-500/30">Studio</Badge>
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Swappys digital doubles, compositing, cleanup, restoration, finishing and QC.
-              </p>
+              <h1 className="text-lg font-semibold flex items-center gap-2 text-gold-shimmer"><Wand2 className="w-5 h-5 text-amber-400" />VFX Suite<Badge className="bg-amber-500/15 text-amber-300 border border-amber-500/30">Studio</Badge></h1>
+              <p className="text-xs text-muted-foreground">Swappys digital doubles, compositing, cleanup, restoration, finishing, provenance and QC.</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {selectedOps.length > 0 && <Button variant="ghost" size="sm" onClick={() => setSelectedOps([])}>Clear All</Button>}
+            {selectedOps.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setSelectedOps([]); setProcessComplete(false); }}>Clear All</Button>}
             <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black" onClick={handleProcess} disabled={isProcessing || selectedOps.length === 0}>
-              {isProcessing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</> : processComplete ? <><CheckCircle2 className="w-4 h-4 mr-1" /> Queued</> : <><Wand2 className="w-4 h-4 mr-1" /> Apply VFX</>}
+              {isProcessing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</> : processComplete ? <><CheckCircle2 className="w-4 h-4 mr-1" /> Created</> : <><Wand2 className="w-4 h-4 mr-1" /> Create VFX Job</>}
             </Button>
           </div>
         </div>
@@ -340,9 +330,7 @@ function VFXSuiteInner() {
       <div className="max-w-6xl mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-5">
           <Card className="border-amber-500/20 glass-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-amber-300"><Sparkles className="w-4 h-4" /> Professional VFX Operations</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-amber-300"><Sparkles className="w-4 h-4" /> Professional VFX Operations</CardTitle></CardHeader>
             <CardContent className="space-y-5">
               {Object.entries(VFX_CATEGORIES).map(([category, ops]) => (
                 <div key={category}>
@@ -363,93 +351,61 @@ function VFXSuiteInner() {
               ))}
             </CardContent>
           </Card>
+
+          <Card className="border-amber-500/20 glass-card">
+            <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Competition Gap Coverage</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-muted-foreground">
+              <div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Runway-style consistency</b><br />Reference-driven character and scene continuity controls.</div>
+              <div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Wonder/Flow-style VFX</b><br />Actor-to-character, plate solve, rotoscope and compositing workflow.</div>
+              <div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Resolve/Adobe-style finishing</b><br />Cleanup, upscaling, colour match, QC, provenance and editorial handoff.</div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-4">
           <Card className="border-amber-500/20 glass-card gold-glow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div>
                 <Slider value={[intensity]} onValueChange={([v]) => setIntensity(v)} min={10} max={100} step={5} />
               </div>
-
               <Separator />
-
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Export Quality</Label>
                 <div className="grid grid-cols-3 gap-2">
-                  {(["preview", "final", "master"] as const).map((q) => (
-                    <button key={q} onClick={() => setExportQuality(q)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === q ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{q}</button>
-                  ))}
+                  {(["preview", "final", "master"] as const).map((q) => <button key={q} onClick={() => setExportQuality(q)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === q ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{q}</button>)}
                 </div>
                 <p className="text-[11px] text-muted-foreground">Estimated cost: {estimatedCredits} credits</p>
               </div>
-
               <Separator />
-
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Source Plate / Footage Reference</Label>
                 <input ref={sourcePlateRef} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => e.target.files?.[0] && uploadReference(e.target.files[0], "source")} />
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => sourcePlateRef.current?.click()} disabled={uploading === "source"}>
-                  {uploading === "source" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : sourcePlateUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}
-                  {sourcePlateUrl ? "Source plate uploaded" : "Upload source plate"}
-                </Button>
+                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => sourcePlateRef.current?.click()} disabled={uploading === "source"}>{uploading === "source" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : sourcePlateUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}{sourcePlateUrl ? "Source plate uploaded" : "Upload source plate"}</Button>
               </div>
-
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Actor Reference / Approved Likeness</Label>
                 <input ref={actorRef} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => e.target.files?.[0] && uploadReference(e.target.files[0], "actor")} />
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => actorRef.current?.click()} disabled={uploading === "actor"}>
-                  {uploading === "actor" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : actorReferenceUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}
-                  {actorReferenceUrl ? "Actor reference uploaded" : "Upload actor reference"}
-                </Button>
+                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => actorRef.current?.click()} disabled={uploading === "actor"}>{uploading === "actor" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : actorReferenceUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}{actorReferenceUrl ? "Actor reference uploaded" : "Upload actor reference"}</Button>
               </div>
-
               {selectedSwappys && (
                 <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 space-y-3">
-                  <div className="flex items-start gap-2">
-                    <Checkbox checked={consentConfirmed} onCheckedChange={(v) => setConsentConfirmed(Boolean(v))} />
-                    <div>
-                      <Label className="text-xs text-amber-200">I confirm actor likeness consent / rights clearance.</Label>
-                      <p className="text-[11px] text-muted-foreground mt-1">Required for digital-double, stunt, pickup and actor-continuity work.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <Label className="text-xs text-amber-200">Hide visible watermark</Label>
-                      <p className="text-[11px] text-muted-foreground">Creator+ only. Internal audit/provenance remains stored.</p>
-                    </div>
-                    <Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} />
-                  </div>
-                  {!isCreator && (
-                    <div className="flex gap-2 text-[11px] text-amber-200"><AlertTriangle className="w-3 h-3 mt-0.5" /> Upgrade to Virelle Creator for studio watermark controls.</div>
-                  )}
+                  <div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(v) => setConsentConfirmed(Boolean(v))} /><div><Label className="text-xs text-amber-200">I confirm actor likeness consent / rights clearance.</Label><p className="text-[11px] text-muted-foreground mt-1">Required for digital-double, stunt, pickup and actor-continuity work.</p></div></div>
+                  <div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Creator+ only. Internal audit/provenance remains stored.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div>
+                  {!isCreator && <div className="flex gap-2 text-[11px] text-amber-200"><AlertTriangle className="w-3 h-3 mt-0.5" /> Upgrade to Virelle Creator for studio watermark controls.</div>}
                 </div>
               )}
-
               <Separator />
-
-              <div>
-                <Label className="text-xs text-muted-foreground mb-1 block">Director / VFX Supervisor Notes</Label>
-                <Textarea value={retakeInstructions} onChange={(e) => setRetakeInstructions(e.target.value)} placeholder="Describe the exact VFX target: match actor face to stunt plate, remove harness, replace background, restore grain, match lighting, etc." className="text-xs min-h-[120px] resize-none" />
-              </div>
+              <div><Label className="text-xs text-muted-foreground mb-1 block">Director / VFX Supervisor Notes</Label><Textarea value={retakeInstructions} onChange={(e) => setRetakeInstructions(e.target.value)} placeholder="Describe the exact VFX target: match actor to stunt plate, remove harness, replace background, restore grain, match lighting, preserve character continuity, etc." className="text-xs min-h-[120px] resize-none" /></div>
             </CardContent>
           </Card>
 
           <Card className="border-amber-500/20 glass-card">
             <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Selected Operations</CardTitle></CardHeader>
             <CardContent>
-              {selectedOps.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No operations selected.</p>
-              ) : (
-                <div className="space-y-1">
-                  {selectedOps.map((op) => <div key={op} className="flex items-center justify-between gap-2"><span className="text-xs text-amber-400">{VFX_LABELS[op]}</span><button onClick={() => toggleOp(op)}><X className="w-3 h-3 text-muted-foreground hover:text-red-400" /></button></div>)}
-                </div>
-              )}
+              {selectedOps.length === 0 ? <p className="text-xs text-muted-foreground">No operations selected.</p> : <div className="space-y-1">{selectedOps.map((op) => <div key={op} className="flex items-center justify-between gap-2"><span className="text-xs text-amber-400">{VFX_LABELS[op]}</span><button onClick={() => toggleOp(op)}><X className="w-3 h-3 text-muted-foreground hover:text-red-400" /></button></div>)}</div>}
+              {lastJob && <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Last job: {lastJob.creditCost} credits · watermark: {lastJob.watermarkMode || "default"}</div>}
               {isIndustry && <Badge className="mt-3 bg-purple-500/15 text-purple-200 border border-purple-400/30">Industry access active</Badge>}
             </CardContent>
           </Card>
