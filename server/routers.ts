@@ -68,6 +68,7 @@ import { productionDocumentsRouter } from "./production-documents-router";
 import { epkGeneratorRouter } from "./epk-generator-router";
 import { locationRecreationRouter } from "./location-recreation-router";
 import { vfxSfxRouter } from "./vfx-sfx-router";
+import { virelleBroadcastRenderRouter } from "./virelle-broadcast-render-router";
 import { locationStudioRouter } from "./location-studio-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
@@ -10732,6 +10733,7 @@ Rules:
   crowdfundMilestones: crowdfundMilestonesRouter,
   wardrobeMarket: wardrobeMarketplaceRouter,
       vfxSfx: vfxSfxRouter,
+      virelleBroadcastRender: virelleBroadcastRenderRouter,
     backgrounds: backgroundsRouter,
     props: propsRouter,
     narrative: narrativeRouter,
