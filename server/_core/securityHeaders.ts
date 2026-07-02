@@ -21,13 +21,6 @@ import type { Request, Response, NextFunction } from "express";
 export function securityHeaders() {
   const isProd = process.env.NODE_ENV === "production";
 
-  // CSP — deliberately permissive on https: for img/media/connect to cover all
-  // the asset CDNs already in active use (files.manuscdn.com, *.cloudfront.net,
-  // OpenAI/Anthropic/Google AI providers, Sentry ingestion, payment provider
-  // domains, etc.) without enumerating each. `'unsafe-inline'` / `'unsafe-eval'`
-  // are tolerated for Vite hydration, sonner toast, and JSON-LD blocks until a
-  // nonce strategy is in place. script-src is locked down to specific trusted
-  // origins rather than `https:` to materially reduce XSS blast radius.
   const csp = [
     "default-src 'self'",
     "img-src 'self' data: blob: https:",
@@ -36,8 +29,6 @@ export function securityHeaders() {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com https://browser.sentry-cdn.com https://*.ingest.sentry.io",
     "worker-src 'self' blob:",
-    // connect-src kept open on https:/wss: so AI providers, Sentry, Stripe, and
-    // CDN telemetry all work without per-vendor allowlisting.
     "connect-src 'self' https: wss: blob:",
     "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
@@ -77,7 +68,7 @@ export function securityHeaders() {
           ok: true,
           product: "Virelle Studios",
           service: "virelle-studios-mobile-manifest",
-          version: "2026.07.swappys-v1",
+          version: "2026.07.swappys-byok-broadcast-v1",
           generatedAt: new Date().toISOString(),
           links: {
             baseUrl: "https://virelle.life",
@@ -87,13 +78,20 @@ export function securityHeaders() {
             privacy: "https://virelle.life/privacy",
             terms: "https://virelle.life/terms",
             acceptableUse: "https://virelle.life/acceptable-use",
+            apiKeys: "https://virelle.life/settings?tab=api-keys&source=swappys-mobile",
           },
           upgrade: {
             name: "Virelle Studios Creator",
             publicLabel: "Full Virelle Studios Creator Access",
-            description: "Professional video transforms, longer scenes, studio rendering, credit-based exports, project workflows and advanced watermark controls.",
+            description: "Professional video transforms, BYOK broadcast sessions, studio rendering, project workflows, credit-based orchestration and advanced watermark controls.",
             recommendedPlan: "creator",
             sourceProduct: "swappys-mobile",
+          },
+          costPolicy: {
+            byokRequiredForPremiumVideo: true,
+            membershipPaysFor: "access, orchestration, project tools, audit/provenance, workflow management",
+            userProviderPaysFor: "video generation, transformation, provider rendering and broadcast transform compute",
+            noPlatformFundedUserVideo: true,
           },
           features: {
             creatorUpgrade: true,
@@ -106,11 +104,17 @@ export function securityHeaders() {
             sourceVideoUpload: true,
             referenceVideoUpload: true,
             studioRenderQueue: true,
+            broadcastMode: true,
+            rtmpBroadcast: true,
+            webRtcBroadcast: true,
+            obsBridge: true,
+            byokVideoRequired: true,
             credits: true,
             watermarkControls: true,
             auditProvenance: true,
             mobileEntryWatermarkRequired: true,
           },
+          byokProviders: ["runway", "openai", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"],
           transformGoals: [
             "appearance_reference",
             "boy_to_girl",
@@ -128,7 +132,7 @@ export function securityHeaders() {
             },
             virelleCreator: {
               visibleWatermarkControl: true,
-              intendedUse: "professional_studio_render",
+              intendedUse: "byok_broadcast_and_professional_studio_render",
             },
           },
         });
