@@ -35,9 +35,15 @@ try {
   assert(features.json?.features?.creatorUpgrade === true, "creatorUpgrade flag missing");
   assert(features.json?.features?.swappysStudio === true, "swappysStudio flag missing");
   assert(features.json?.features?.watermarkControls === true, "watermarkControls flag missing");
+  assert(features.json?.features?.broadcastMode === true, "broadcastMode flag missing");
+  assert(features.json?.features?.rtmpBroadcast === true, "rtmpBroadcast flag missing");
+  assert(features.json?.features?.studioRenderQueue === true, "studioRenderQueue flag missing");
+  assert(features.json?.features?.byokVideoRequired === true, "byokVideoRequired flag missing");
+  assert(features.json?.costPolicy?.noPlatformFundedUserVideo === true, "noPlatformFundedUserVideo policy missing");
+  assert(Array.isArray(features.json?.byokProviders) && features.json.byokProviders.includes("runway"), "byokProviders missing runway");
   assert(Array.isArray(features.json?.transformGoals) && features.json.transformGoals.includes("adult_to_child"), "transformGoals missing adult_to_child");
 
-  console.log("PASS: Swappys Mobile can verify Virelle health and mobile feature manifest.");
+  console.log("PASS: Swappys Mobile can verify Virelle health, BYOK broadcast policy, and mobile feature manifest.");
   process.exit(0);
 } catch (error) {
   console.error("FAIL:", error?.message || error);
