@@ -7,16 +7,39 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
-import { Radio, RadioTower, Video, KeyRound, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Copy, Download, ExternalLink, KeyRound, Loader2, Radio, RadioTower, RefreshCcw, ShieldCheck, Video, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 type TransformGoal = "appearance_reference" | "boy_to_girl" | "girl_to_boy" | "younger_self" | "older_self" | "adult_to_child" | "child_to_adult" | "custom_prompt";
 type Provider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "seedance" | "veo3";
 
 const PROVIDERS: Provider[] = ["runway", "openai", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"];
+const API_KEY_SETTINGS_URL = "/settings?tab=api-keys&source=virelle-broadcast-render";
 
 function parseUrls(value: string) {
   return value.split(/\n|,/).map((v) => v.trim()).filter(Boolean);
+}
+
+function copyText(value: string, label = "Copied") {
+  navigator.clipboard?.writeText(value).then(() => toast.success(label)).catch(() => toast.error("Could not copy"));
+}
+
+function statusVariant(status: string) {
+  if (status === "failed" || status === "cancelled") return "destructive" as const;
+  if (status === "completed" || status === "broadcast_ready") return "default" as const;
+  return "outline" as const;
+}
+
+function jobInstructions(job: any) {
+  if (job.mode === "broadcast") {
+    if (job.broadcastDestination === "rtmp") return "Use the configured ingest destination in your streaming platform. Raw stream keys are never displayed or stored here.";
+    if (job.broadcastDestination === "webrtc") return "Use WebRTC bridge mode when the live bridge worker is connected.";
+    if (job.broadcastDestination === "obs") return "Use OBS bridge mode once the desktop/OBS bridge is connected.";
+    return "Custom broadcast destination. Confirm setup details with your destination provider.";
+  }
+  if (job.status === "completed") return "Studio render completed. Preview, download, or copy the output video URL.";
+  if (job.status === "failed") return "Studio render failed. Review the error, fix BYOK/provider/media issues, then create a new job.";
+  return "Studio render is queued or waiting for the BYOK provider worker.";
 }
 
 function Inner() {
@@ -24,6 +47,7 @@ function Inner() {
   const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery({ limit: 25 }, { retry: false });
   const createRender = (trpc as any).virelleBroadcastRender.createStudioRenderJob.useMutation();
   const createBroadcast = (trpc as any).virelleBroadcastRender.createBroadcastSession.useMutation();
+  const cancelJob = (trpc as any).virelleBroadcastRender.cancelJob.useMutation();
 
   const [projectId, setProjectId] = useState("");
   const [sceneId, setSceneId] = useState("");
@@ -77,6 +101,16 @@ function Inner() {
     }
   };
 
+  const doCancelJob = async (id: number) => {
+    try {
+      await cancelJob.mutateAsync({ id });
+      toast.success("Job cancelled");
+      jobs.refetch();
+    } catch (err: any) {
+      toast.error(err?.message || "Could not cancel job");
+    }
+  };
+
   const providerStatus = byokStatus.data?.providers || {};
   const hasAnyProvider = Boolean(byokStatus.data?.hasAnyProvider);
 
@@ -86,7 +120,7 @@ function Inner() {
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-semibold flex items-center gap-2"><RadioTower className="h-6 w-6 text-amber-400" /> Virelle Broadcast & Studio Render</h1>
-            <p className="text-sm text-muted-foreground">Creator+ BYOK video transformation. Virelle unlocks workflow/orchestration; users pay provider rendering with their own API keys.</p>
+            <p className="text-sm text-muted-foreground">Creator+ BYOK video workflow. Virelle unlocks orchestration and audit/provenance; users pay provider rendering with their own API keys.</p>
           </div>
           <Button variant="outline" onClick={() => { byokStatus.refetch(); jobs.refetch(); }}><RefreshCcw className="mr-2 h-4 w-4" /> Refresh</Button>
         </div>
@@ -97,8 +131,8 @@ function Inner() {
             <div className="flex flex-wrap gap-2">
               {PROVIDERS.map((p) => <Badge key={p} variant={providerStatus[p] ? "default" : "outline"}>{p}: {providerStatus[p] ? "ready" : "missing"}</Badge>)}
             </div>
-            {!hasAnyProvider && <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">BYOK required. Add your own Runway, OpenAI/Sora, Replicate, fal.ai, Luma, Hugging Face, SeedDance or Veo key in Virelle settings before creating premium video jobs.</div>}
-            <p className="text-xs text-muted-foreground">Policy: no platform-funded user video. Membership covers access/orchestration only.</p>
+            {!hasAnyProvider && <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100 flex flex-col gap-3"><div className="flex gap-2"><AlertTriangle className="h-4 w-4 mt-0.5" /><span>BYOK required. Add your own video provider key before creating Broadcast or Studio Render jobs. Virelle will not pay provider costs for user projects.</span></div><Button size="sm" className="w-fit" onClick={() => { window.location.href = API_KEY_SETTINGS_URL; }}><KeyRound className="mr-2 h-4 w-4" /> Add Provider Key</Button></div>}
+            <p className="text-xs text-muted-foreground">Policy: no platform-funded user video. Membership covers access, orchestration, workflow, audit/provenance and watermark controls only.</p>
           </CardContent>
         </Card>
 
@@ -119,7 +153,7 @@ function Inner() {
             <CardContent className="space-y-3">
               <div><Label>Transform goal</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={transformGoal} onChange={(e) => setTransformGoal(e.target.value as TransformGoal)}><option value="appearance_reference">Appearance reference</option><option value="boy_to_girl">Boy → Girl</option><option value="girl_to_boy">Girl → Boy</option><option value="younger_self">Younger self</option><option value="older_self">Older self</option><option value="adult_to_child">Adult → child / childhood self</option><option value="child_to_adult">Child → adult</option><option value="custom_prompt">Custom prompt</option></select></div>
               <div className="grid grid-cols-2 gap-3"><div><Label>Target age</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={targetAge} onChange={(e) => setTargetAge(e.target.value.replace(/[^0-9]/g, ""))} /></div><div><Label>Preferred BYOK provider</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={requestedProvider} onChange={(e) => setRequestedProvider(e.target.value as Provider | "")}><option value="">Auto from my keys</option>{PROVIDERS.map((p) => <option key={p} value={p}>{p}</option>)}</select></div></div>
-              <div><Label>Target presentation/style</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="cinematic, 10-year-old self, masculine, feminine..." value={targetPresentation} onChange={(e) => setTargetPresentation(e.target.value)} /></div>
+              <div><Label>Target presentation/style</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="cinematic, younger self, masculine, feminine..." value={targetPresentation} onChange={(e) => setTargetPresentation(e.target.value)} /></div>
               <div><Label>Director / VFX notes</Label><Textarea className="min-h-28 text-xs" value={directorNotes} onChange={(e) => setDirectorNotes(e.target.value)} /></div>
               <div className="flex items-start gap-2 rounded-lg border p-3"><Checkbox checked={consentConfirmed} onCheckedChange={(v) => setConsentConfirmed(Boolean(v))} /><p className="text-xs text-muted-foreground">I confirm consent and rights clearance for likeness, age, gender/presentation, digital-double, broadcast and render usage.</p></div>
             </CardContent>
@@ -129,20 +163,20 @@ function Inner() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <Card className="border-blue-500/20">
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Radio className="h-4 w-4 text-blue-400" /> Broadcast Mode</CardTitle></CardHeader>
-            <CardContent className="space-y-3"><div><Label>Destination</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={destination} onChange={(e) => setDestination(e.target.value as any)}><option value="rtmp">RTMP</option><option value="webrtc">WebRTC</option><option value="obs">OBS bridge</option><option value="custom">Custom</option></select></div><div><Label>Ingest URL</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ingestUrl} onChange={(e) => setIngestUrl(e.target.value)} /></div><div><Label>Stream key</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={streamKey} onChange={(e) => setStreamKey(e.target.value)} /></div><Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>{createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />} Create BYOK Broadcast Session</Button></CardContent>
+            <CardContent className="space-y-3"><div><Label>Destination</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={destination} onChange={(e) => setDestination(e.target.value as any)}><option value="rtmp">RTMP</option><option value="webrtc">WebRTC</option><option value="obs">OBS bridge</option><option value="custom">Custom</option></select></div><div><Label>Ingest URL</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ingestUrl} onChange={(e) => setIngestUrl(e.target.value)} /></div><div><Label>Stream key</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={streamKey} onChange={(e) => setStreamKey(e.target.value)} /></div><Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>{createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />} Create BYOK Broadcast Session</Button><p className="text-xs text-muted-foreground">Raw stream keys are sent only for session setup and should not be displayed back to the user.</p></CardContent>
           </Card>
 
           <Card className="border-amber-500/20">
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Video className="h-4 w-4 text-amber-400" /> Studio Render Mode</CardTitle></CardHeader>
-            <CardContent className="space-y-3"><p className="text-sm text-muted-foreground">Upload footage/reference media, queue a high-quality video transformation job, then the worker submits it to the user's own BYOK provider.</p><Button className="w-full bg-amber-500 text-black hover:bg-amber-600" onClick={submitStudioRender} disabled={createRender.isPending || !hasAnyProvider}>{createRender.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Video className="mr-2 h-4 w-4" />} Create BYOK Studio Render Job</Button></CardContent>
+            <CardContent className="space-y-3"><p className="text-sm text-muted-foreground">Queue a high-quality video transformation job. The render worker must submit it to the user's own BYOK provider; no platform-funded fallback is allowed.</p><Button className="w-full bg-amber-500 text-black hover:bg-amber-600" onClick={submitStudioRender} disabled={createRender.isPending || !hasAnyProvider}>{createRender.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Video className="mr-2 h-4 w-4" />} Create BYOK Studio Render Job</Button></CardContent>
           </Card>
         </div>
 
         <Card>
           <CardHeader><CardTitle className="text-base">Recent Broadcast / Render Jobs</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-3">
             {jobs.isLoading && <p className="text-sm text-muted-foreground">Loading jobs...</p>}
-            {(jobs.data || []).map((job: any) => <div key={job.id} className="rounded-lg border p-3 text-sm flex flex-col md:flex-row md:items-center md:justify-between gap-2"><div><div className="font-medium">#{job.id} · {job.mode} · {job.transformGoal}</div><div className="text-xs text-muted-foreground">Provider: {job.provider} · Status: {job.status} · BYOK: {job.byokRequired ? "yes" : "no"}</div></div><Badge variant={job.status === "failed" ? "destructive" : "outline"}>{job.status}</Badge></div>)}
+            {(jobs.data || []).map((job: any) => <div key={job.id} className="rounded-lg border p-3 text-sm space-y-3"><div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2"><div><div className="font-medium">#{job.id} · {job.mode} · {job.transformGoal}</div><div className="text-xs text-muted-foreground">Provider: {job.provider} · BYOK: {job.byokRequired ? "yes" : "no"} · Watermark: {job.visibleWatermarkMode || "default"}</div></div><Badge variant={statusVariant(job.status)}>{job.status}</Badge></div><p className="text-xs text-muted-foreground">{jobInstructions(job)}</p>{job.errorMessage && <div className="rounded-md border border-red-500/30 bg-red-500/10 p-2 text-xs text-red-200 flex gap-2"><XCircle className="h-4 w-4 shrink-0" /> <span>{job.errorMessage}</span></div>}{job.outputVideoUrl && <div className="space-y-2"><video src={job.outputVideoUrl} controls className="w-full rounded-md border bg-black max-h-80" /><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => window.open(job.outputVideoUrl, "_blank")}><ExternalLink className="mr-2 h-4 w-4" /> Open</Button><Button size="sm" variant="outline" onClick={() => copyText(job.outputVideoUrl, "Output URL copied")}><Copy className="mr-2 h-4 w-4" /> Copy URL</Button><Button size="sm" variant="outline" onClick={() => window.open(job.outputVideoUrl, "_blank")}><Download className="mr-2 h-4 w-4" /> Download</Button></div></div>}{job.mode === "broadcast" && <div className="rounded-md border p-2 text-xs text-muted-foreground"><div>Destination: {job.broadcastDestination || "not set"}</div>{job.ingestUrl && <div className="truncate">Ingest: {job.ingestUrl}</div>}{job.streamKeyMasked && <div>Stream key: {job.streamKeyMasked}</div>}</div>}{["queued", "waiting_for_provider", "processing", "broadcast_ready"].includes(job.status) && <Button size="sm" variant="destructive" onClick={() => doCancelJob(job.id)} disabled={cancelJob.isPending}>Cancel Job</Button>}</div>)}
             {!jobs.isLoading && (!jobs.data || jobs.data.length === 0) && <p className="text-sm text-muted-foreground">No jobs yet.</p>}
           </CardContent>
         </Card>
