@@ -26,6 +26,8 @@ import { seedBlogPosts } from "../blog-seed";
 import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
+import { startStudioRenderWorker } from "../studio-render-worker";
+import { startBroadcastWorker } from "../broadcast-worker";
 import { runAutoMigration } from "./autoMigrate";
 import { invokeLLMStream, invokeLLM } from "./llm";
 import { DIRECTOR_TOOLS, getDirectorToolDescription, buildDirectorSystemPrompt } from "../director-tools";
@@ -1695,6 +1697,8 @@ async function startServer() {
   // Start persistent video job worker — polls Runway for pending tasks, survives restarts
   startVideoJobWorker();
   logger.info("[VideoWorker] Persistent video job worker started");
+  startStudioRenderWorker();
+  startBroadcastWorker();
 
   // v6.72 — One-shot sweep of stuck Auto Recap MP4 renders. If the
   // process died mid-render last time (e.g. Railway redeploy), this
