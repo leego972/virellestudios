@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
-    "sync-mobile": "tsx scripts/sync-mobile-constants.ts"
+    "sync-mobile": "tsx scripts/sync-mobile-constants.ts",
+    "check:swappys-mobile": "node scripts/check-swappys-mobile-connection.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
@@ -118,7 +119,6 @@
     "autoprefixer": "^10.5.0",
     "drizzle-kit": "^0.31.10",
     "esbuild": "^0.28.1",
-    "pnpm": "^10.33.2",
     "postcss": "^8.5.12",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.2.4",
@@ -158,18 +158,17 @@
         "GHSA-83g3-92jg-28cx",
         "GHSA-qffp-2rhf-9h96",
         "GHSA-9ppj-qmqm-q256",
-        "GHSA-r6q2-hw4h-h46w",
-        "GHSA-mw96-cpmx-2vgc",
-        "GHSA-c2c7-rcm5-vvqj",
-        "GHSA-gv7w-rqvm-qjhr"
+        "GHSA-67mh-4wv8-2f99",
+        "GHSA-c4w7-xm78-47vh",
+        "GHSA-95m3-7q98-8xr5",
+        "GHSA-952p-6rrq-rcjv",
+        "GHSA-4hjh-wcwx-xvwj",
+        "GHSA-968p-4wvh-cqc8",
+        "GHSA-v8p9-wqvh-wc5r",
+        "GHSA-h7cp-r72f-jxh6",
+        "GHSA-f5x3-32g6-xq36",
+        "GHSA-fjxv-7rqg-78g4"
       ]
-    },
-    "ignoredBuiltDependencies": [
-      "@tailwindcss/oxide",
-      "esbuild"
-    ],
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
+    }
   }
 }
