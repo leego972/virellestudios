@@ -8,29 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  BadgeCheck,
-  Camera,
-  CheckCircle2,
-  Clapperboard,
-  Eraser,
-  Eye,
-  FileCheck2,
-  Film,
-  Layers,
-  Loader2,
-  Maximize2,
-  Palette,
-  ScanFace,
-  ShieldCheck,
-  Sparkles,
-  Upload,
-  Wand2,
-  X,
-  Zap,
-} from "lucide-react";
+import { AlertTriangle, ArrowLeft, BadgeCheck, Camera, CheckCircle2, Clapperboard, Eraser, Eye, FileCheck2, Film, Layers, Loader2, Maximize2, Palette, ScanFace, ShieldCheck, Sparkles, Upload, Wand2, X, Zap } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -46,6 +24,9 @@ const VFX_LABELS: Record<string, string> = {
   "performance-polish": "Performance Polish",
   "multi-anchor-character-lock": "Multi-Anchor Character Lock",
   "temporal-consistency-pass": "Temporal Consistency Pass",
+  "gender-transform": "Gender / Presentation Transform",
+  "age-transform": "Age Transform",
+  "childhood-self": "Childhood Self Reconstruction",
   "roto-person-isolation": "AI Rotoscope / Person Isolation",
   "green-screen-keying": "Green Screen / Keying",
   "background-replacement": "Background Replacement",
@@ -97,6 +78,9 @@ const VFX_ICONS: Record<string, ReactNode> = {
   "performance-polish": <Wand2 className="w-4 h-4" />,
   "multi-anchor-character-lock": <ScanFace className="w-4 h-4" />,
   "temporal-consistency-pass": <Film className="w-4 h-4" />,
+  "gender-transform": <ScanFace className="w-4 h-4" />,
+  "age-transform": <Eye className="w-4 h-4" />,
+  "childhood-self": <Sparkles className="w-4 h-4" />,
   "scene-extension-outpaint": <Maximize2 className="w-4 h-4" />,
   "object-removal-inpaint": <Eraser className="w-4 h-4" />,
   "stabilization": <Layers className="w-4 h-4" />,
@@ -119,7 +103,7 @@ const VFX_ICONS: Record<string, ReactNode> = {
 };
 
 const VFX_CATEGORIES: Record<string, string[]> = {
-  "Swappys Digital Double": ["swappys-digital-double", "stunt-face-replacement", "actor-continuity-match", "pickup-scene-match", "ai-stunt-insert", "performance-polish", "multi-anchor-character-lock", "temporal-consistency-pass"],
+  "Swappys Transform Studio": ["swappys-digital-double", "gender-transform", "age-transform", "childhood-self", "stunt-face-replacement", "actor-continuity-match", "pickup-scene-match", "ai-stunt-insert", "performance-polish", "multi-anchor-character-lock", "temporal-consistency-pass"],
   "Compositing & Plates": ["roto-person-isolation", "green-screen-keying", "background-replacement", "foreground-composite", "sky-replacement", "set-extension", "crowd-multiplication", "camera-matchmove-solve"],
   "Cleanup & Safety": ["object-removal-inpaint", "wire-rig-removal", "safety-gear-removal", "reflection-cleanup", "screen-replacement", "neural-matte-edge-refine"],
   "Action & Atmosphere": ["muzzle-flash-practical", "debris-dust-impact", "weather-rain-snow", "fire-smoke-atmosphere", "motion-blur-add", "lens-flare-add"],
@@ -127,7 +111,10 @@ const VFX_CATEGORIES: Record<string, string[]> = {
   "Finishing, QC & Handoff": ["color-match", "style-transfer", "film-grain-add", "depth-of-field-post", "vignette-add", "stabilization", "lens-distortion-repair", "chromatic-repair", "final-qc-pass", "render-pass-provenance", "edit-handoff-package"],
 };
 
-const SWAPPYS_OPS = new Set(["swappys-digital-double", "stunt-face-replacement", "actor-continuity-match", "pickup-scene-match", "ai-stunt-insert", "performance-polish", "multi-anchor-character-lock", "temporal-consistency-pass"]);
+const SWAPPYS_OPS = new Set(["swappys-digital-double", "gender-transform", "age-transform", "childhood-self", "stunt-face-replacement", "actor-continuity-match", "pickup-scene-match", "ai-stunt-insert", "performance-polish", "multi-anchor-character-lock", "temporal-consistency-pass"]);
+
+type UploadKind = "sourceImage" | "referenceImage" | "sourceVideo" | "referenceVideo";
+type TransformGoal = "appearance_reference" | "boy_to_girl" | "girl_to_boy" | "younger_self" | "older_self" | "adult_to_child" | "child_to_adult" | "custom_prompt";
 
 function VFXSuiteInner() {
   const [, navigate] = useLocation();
@@ -139,45 +126,62 @@ function VFXSuiteInner() {
   const createStudioVfxJob = (trpc as any).vfxSfx.createStudioVfxJob.useMutation();
   const uploadRefImageMutation = trpc.upload.referenceImage.useMutation();
 
-  const sourcePlateRef = useRef<HTMLInputElement>(null);
-  const actorRef = useRef<HTMLInputElement>(null);
+  const sourceImageRef = useRef<HTMLInputElement>(null);
+  const referenceImageRef = useRef<HTMLInputElement>(null);
+  const sourceVideoRef = useRef<HTMLInputElement>(null);
+  const referenceVideoRef = useRef<HTMLInputElement>(null);
+
   const [selectedOps, setSelectedOps] = useState<string[]>([]);
   const [intensity, setIntensity] = useState(75);
-  const [retakeInstructions, setRetakeInstructions] = useState("");
+  const [directorNotes, setDirectorNotes] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
-  const [sourcePlateUrl, setSourcePlateUrl] = useState<string | null>(null);
-  const [actorReferenceUrl, setActorReferenceUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<"source" | "actor" | null>(null);
+  const [sourceImageUrls, setSourceImageUrls] = useState<string[]>([]);
+  const [referenceImageUrls, setReferenceImageUrls] = useState<string[]>([]);
+  const [sourceVideoUrl, setSourceVideoUrl] = useState<string | null>(null);
+  const [referenceVideoUrl, setReferenceVideoUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<UploadKind | null>(null);
   const [consentConfirmed, setConsentConfirmed] = useState(false);
   const [hideVisibleWatermark, setHideVisibleWatermark] = useState(false);
   const [exportQuality, setExportQuality] = useState<"preview" | "final" | "master">("preview");
+  const [transformGoal, setTransformGoal] = useState<TransformGoal>("appearance_reference");
+  const [targetAge, setTargetAge] = useState<string>("");
+  const [targetPresentation, setTargetPresentation] = useState("");
   const [lastJob, setLastJob] = useState<{ creditCost?: number; watermarkMode?: string; enhancedImageUrl?: string | null } | null>(null);
 
-  const selectedSwappys = selectedOps.some((op) => SWAPPYS_OPS.has(op));
-  const estimatedCredits = selectedSwappys ? exportQuality === "preview" ? 12 : exportQuality === "final" ? 24 : 40 : selectedOps.length <= 2 ? 6 : selectedOps.length <= 5 ? 12 : 18;
+  const selectedSwappys = selectedOps.some((op) => SWAPPYS_OPS.has(op)) || transformGoal !== "appearance_reference";
+  const mediaCount = sourceImageUrls.length + referenceImageUrls.length + (sourceVideoUrl ? 1 : 0) + (referenceVideoUrl ? 1 : 0);
+  const estimatedCredits = selectedSwappys ? exportQuality === "preview" ? 12 + Math.ceil(mediaCount / 3) : exportQuality === "final" ? 24 + Math.ceil(mediaCount / 2) : 40 + mediaCount : selectedOps.length <= 2 ? 6 : selectedOps.length <= 5 ? 12 : 18;
 
-  const uploadReference = async (file: File, kind: "source" | "actor") => {
-    if (file.size > 40 * 1024 * 1024) return toast.error("File too large. Max 40MB.");
+  const uploadMedia = async (files: FileList | null, kind: UploadKind) => {
+    if (!files || files.length === 0) return;
     if (!sceneId) return toast.error("No scene found. Navigate here from a specific scene.");
     setUploading(kind);
     try {
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(String(reader.result).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      const result = await uploadRefImageMutation.mutateAsync({ base64, filename: file.name, contentType: file.type as any, sceneId });
-      if (kind === "source") setSourcePlateUrl(result.url);
-      if (kind === "actor") setActorReferenceUrl(result.url);
-      toast.success(kind === "source" ? "Source plate uploaded" : "Actor reference uploaded");
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(String(reader.result).split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const result = await uploadRefImageMutation.mutateAsync({ base64, filename: file.name, contentType: file.type as any, sceneId });
+        urls.push(result.url);
+      }
+      if (kind === "sourceImage") setSourceImageUrls((prev) => [...prev, ...urls]);
+      if (kind === "referenceImage") setReferenceImageUrls((prev) => [...prev, ...urls]);
+      if (kind === "sourceVideo") setSourceVideoUrl(urls[0] || null);
+      if (kind === "referenceVideo") setReferenceVideoUrl(urls[0] || null);
+      toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded`);
     } catch (err: any) {
-      toast.error(err?.message || "Upload failed");
+      toast.error(err?.message || "Upload failed. You can paste a media URL manually if needed.");
     } finally {
       setUploading(null);
-      if (sourcePlateRef.current) sourcePlateRef.current.value = "";
-      if (actorRef.current) actorRef.current.value = "";
+      if (sourceImageRef.current) sourceImageRef.current.value = "";
+      if (referenceImageRef.current) referenceImageRef.current.value = "";
+      if (sourceVideoRef.current) sourceVideoRef.current.value = "";
+      if (referenceVideoRef.current) referenceVideoRef.current.value = "";
     }
   };
 
@@ -186,10 +190,15 @@ function VFXSuiteInner() {
     setSelectedOps((prev) => prev.includes(op) ? prev.filter((o) => o !== op) : [...prev, op]);
   };
 
+  const removeUrl = (kind: "sourceImage" | "referenceImage", index: number) => {
+    if (kind === "sourceImage") setSourceImageUrls((prev) => prev.filter((_, i) => i !== index));
+    if (kind === "referenceImage") setReferenceImageUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleProcess = async () => {
-    if (selectedOps.length === 0) return toast.error("Select at least one VFX operation");
+    if (selectedOps.length === 0 && transformGoal === "appearance_reference") return toast.error("Select at least one VFX/transform operation");
     if (!projectId || !sceneId) return toast.error("No scene found. Navigate here from a specific scene.");
-    if (selectedSwappys && !consentConfirmed) return toast.error("Confirm actor likeness consent before using Swappys Digital Double.");
+    if (selectedSwappys && !consentConfirmed) return toast.error("Confirm actor likeness/media consent before using Swappys Transform Studio.");
     if (hideVisibleWatermark && !isCreator) return toast.error("Visible watermark toggle requires Virelle Creator membership or higher.");
     setIsProcessing(true);
     setProcessComplete(false);
@@ -197,15 +206,22 @@ function VFXSuiteInner() {
       const result = await createStudioVfxJob.mutateAsync({
         projectId,
         sceneId,
-        operations: selectedOps,
+        operations: selectedOps.length ? selectedOps : ["swappys-digital-double"],
         intensity,
-        sourcePlateUrl,
-        actorReferenceUrl,
+        sourcePlateUrl: sourceImageUrls[0] || null,
+        actorReferenceUrl: referenceImageUrls[0] || null,
+        sourceImageUrls,
+        referenceImageUrls,
+        sourceVideoUrl,
+        referenceVideoUrl,
+        transformGoal,
+        targetAge: targetAge.trim() ? Number(targetAge) : null,
+        targetPresentation: targetPresentation.trim() || null,
         consentConfirmed: selectedSwappys ? consentConfirmed : false,
-        consentNotes: selectedSwappys ? retakeInstructions : null,
+        consentNotes: selectedSwappys ? directorNotes : null,
         hideVisibleWatermark: selectedSwappys ? hideVisibleWatermark : false,
         exportQuality,
-        directorNotes: retakeInstructions,
+        directorNotes,
         runImagePass: true,
       });
       setLastJob({ creditCost: result.creditCost, watermarkMode: result.watermarkMode, enhancedImageUrl: result.enhancedImageUrl });
@@ -222,21 +238,25 @@ function VFXSuiteInner() {
     <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <div className="border-b sticky top-0 z-20 px-4 py-3" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="w-4 h-4" /></Button>
-            <div><h1 className="text-lg font-semibold flex items-center gap-2 text-gold-shimmer"><Wand2 className="w-5 h-5 text-amber-400" />VFX Suite<Badge className="bg-amber-500/15 text-amber-300 border border-amber-500/30">Studio</Badge></h1><p className="text-xs text-muted-foreground">Swappys digital doubles, compositing, cleanup, restoration, finishing, provenance and QC.</p></div>
-          </div>
-          <div className="flex items-center gap-2">{selectedOps.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setSelectedOps([]); setProcessComplete(false); }}>Clear All</Button>}<Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black" onClick={handleProcess} disabled={isProcessing || selectedOps.length === 0}>{isProcessing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</> : processComplete ? <><CheckCircle2 className="w-4 h-4 mr-1" /> Created</> : <><Wand2 className="w-4 h-4 mr-1" /> Create VFX Job</>}</Button></div>
+          <div className="flex items-center gap-3"><Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="w-4 h-4" /></Button><div><h1 className="text-lg font-semibold flex items-center gap-2 text-gold-shimmer"><Wand2 className="w-5 h-5 text-amber-400" />VFX Suite<Badge className="bg-amber-500/15 text-amber-300 border border-amber-500/30">Studio</Badge></h1><p className="text-xs text-muted-foreground">Multi-media Swappys transforms, digital doubles, compositing, restoration, finishing and QC.</p></div></div>
+          <div className="flex items-center gap-2">{selectedOps.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setSelectedOps([]); setProcessComplete(false); }}>Clear All</Button>}<Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black" onClick={handleProcess} disabled={isProcessing}>{isProcessing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</> : processComplete ? <><CheckCircle2 className="w-4 h-4 mr-1" /> Created</> : <><Wand2 className="w-4 h-4 mr-1" /> Create VFX Job</>}</Button></div>
         </div>
       </div>
+
       <div className="max-w-6xl mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-5">
+          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-amber-300"><Sparkles className="w-4 h-4" /> Transform Goal & Studio Media</CardTitle></CardHeader><CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3"><div><Label className="text-xs text-muted-foreground">Transform Goal</Label><select value={transformGoal} onChange={(e) => setTransformGoal(e.target.value as TransformGoal)} className="w-full mt-1 rounded-md bg-black/30 border border-border px-3 py-2 text-sm"><option value="appearance_reference">Appearance reference</option><option value="boy_to_girl">Boy → Girl / feminine presentation</option><option value="girl_to_boy">Girl → Boy / masculine presentation</option><option value="younger_self">Younger self / de-age</option><option value="older_self">Older self / age-up</option><option value="adult_to_child">Childhood self / adult → child</option><option value="child_to_adult">Child → adult progression</option><option value="custom_prompt">Custom prompt</option></select></div><div><Label className="text-xs text-muted-foreground">Target Age</Label><input value={targetAge} onChange={(e) => setTargetAge(e.target.value.replace(/[^0-9]/g, ""))} placeholder="optional" className="w-full mt-1 rounded-md bg-black/30 border border-border px-3 py-2 text-sm" /></div><div><Label className="text-xs text-muted-foreground">Target Presentation / Style</Label><input value={targetPresentation} onChange={(e) => setTargetPresentation(e.target.value)} placeholder="cinematic, feminine, masculine, 10yo self..." className="w-full mt-1 rounded-md bg-black/30 border border-border px-3 py-2 text-sm" /></div></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3"><div className="rounded-lg border border-border/40 bg-black/20 p-3"><Label className="text-xs text-amber-200">Source Person Media</Label><p className="text-[11px] text-muted-foreground mt-1">Who is being transformed. Upload multiple photos and optional source/performance video.</p><div className="flex gap-2 mt-2"><Button size="sm" variant="outline" onClick={() => sourceImageRef.current?.click()} disabled={uploading === "sourceImage"}><Upload className="w-3 h-3 mr-1" />Images</Button><Button size="sm" variant="outline" onClick={() => sourceVideoRef.current?.click()} disabled={uploading === "sourceVideo"}><Film className="w-3 h-3 mr-1" />Video</Button></div><input ref={sourceImageRef} className="hidden" type="file" accept="image/*" multiple onChange={(e) => uploadMedia(e.target.files, "sourceImage")} /><input ref={sourceVideoRef} className="hidden" type="file" accept="video/*" onChange={(e) => uploadMedia(e.target.files, "sourceVideo")} /><div className="text-[11px] text-muted-foreground mt-2">{sourceImageUrls.length} source image(s) · {sourceVideoUrl ? "source video set" : "no source video"}</div></div><div className="rounded-lg border border-border/40 bg-black/20 p-3"><Label className="text-xs text-amber-200">Target / Reference Media</Label><p className="text-[11px] text-muted-foreground mt-1">What the person should look like. Upload childhood photos, gender/presentation refs, age refs and optional reference video.</p><div className="flex gap-2 mt-2"><Button size="sm" variant="outline" onClick={() => referenceImageRef.current?.click()} disabled={uploading === "referenceImage"}><Upload className="w-3 h-3 mr-1" />Images</Button><Button size="sm" variant="outline" onClick={() => referenceVideoRef.current?.click()} disabled={uploading === "referenceVideo"}><Film className="w-3 h-3 mr-1" />Video</Button></div><input ref={referenceImageRef} className="hidden" type="file" accept="image/*" multiple onChange={(e) => uploadMedia(e.target.files, "referenceImage")} /><input ref={referenceVideoRef} className="hidden" type="file" accept="video/*" onChange={(e) => uploadMedia(e.target.files, "referenceVideo")} /><div className="text-[11px] text-muted-foreground mt-2">{referenceImageUrls.length} reference image(s) · {referenceVideoUrl ? "reference video set" : "no reference video"}</div></div></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-muted-foreground">{sourceImageUrls.map((u, i) => <div key={u} className="flex items-center gap-2 truncate rounded border border-border/40 p-2"><span className="text-amber-300">Source {i + 1}</span><span className="truncate">{u}</span><button onClick={() => removeUrl("sourceImage", i)}><X className="w-3 h-3" /></button></div>)}{referenceImageUrls.map((u, i) => <div key={u} className="flex items-center gap-2 truncate rounded border border-border/40 p-2"><span className="text-amber-300">Ref {i + 1}</span><span className="truncate">{u}</span><button onClick={() => removeUrl("referenceImage", i)}><X className="w-3 h-3" /></button></div>)}</div>
+          </CardContent></Card>
+
           <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-amber-300"><Sparkles className="w-4 h-4" /> Professional VFX Operations</CardTitle></CardHeader><CardContent className="space-y-5">{Object.entries(VFX_CATEGORIES).map(([category, ops]) => <div key={category}><h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">{category}</h3><div className="grid grid-cols-1 md:grid-cols-2 gap-2">{ops.map((op) => { const selected = selectedOps.includes(op); return <button key={op} onClick={() => toggleOp(op)} className={`text-left p-3 rounded-lg border transition-all flex items-center gap-2 ${selected ? "border-amber-500 bg-amber-500/10" : "border-border/40 bg-black/20 hover:border-amber-500/40"}`}><span className={selected ? "text-amber-400" : "text-muted-foreground"}>{VFX_ICONS[op] || <Layers className="w-4 h-4" />}</span><span className="text-xs">{VFX_LABELS[op]}</span>{selected && <CheckCircle2 className="w-3 h-3 text-amber-400 ml-auto flex-shrink-0" />}</button>; })}</div></div>)}</CardContent></Card>
-          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Competition Gap Coverage</CardTitle></CardHeader><CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-muted-foreground"><div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Runway-style consistency</b><br />Reference-driven character and scene continuity controls.</div><div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Wonder/Flow-style VFX</b><br />Actor-to-character, plate solve, rotoscope and compositing workflow.</div><div className="rounded-lg border border-border/40 p-3 bg-black/20"><b className="text-amber-300">Resolve/Adobe-style finishing</b><br />Cleanup, upscaling, colour match, QC, provenance and editorial handoff.</div></CardContent></Card>
         </div>
+
         <div className="space-y-4">
-          <Card className="border-amber-500/20 glass-card gold-glow"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader><CardContent className="space-y-4"><div><div className="flex justify-between mb-1"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div><Slider value={[intensity]} onValueChange={([v]) => setIntensity(v)} min={10} max={100} step={5} /></div><Separator /><div className="space-y-2"><Label className="text-xs text-muted-foreground">Export Quality</Label><div className="grid grid-cols-3 gap-2">{(["preview", "final", "master"] as const).map((q) => <button key={q} onClick={() => setExportQuality(q)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === q ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{q}</button>)}</div><p className="text-[11px] text-muted-foreground">Estimated cost: {estimatedCredits} credits</p></div><Separator /><div className="space-y-2"><Label className="text-xs text-muted-foreground">Source Plate / Footage Reference</Label><input ref={sourcePlateRef} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => e.target.files?.[0] && uploadReference(e.target.files[0], "source")} /><Button variant="outline" className="w-full justify-start text-xs" onClick={() => sourcePlateRef.current?.click()} disabled={uploading === "source"}>{uploading === "source" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : sourcePlateUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}{sourcePlateUrl ? "Source plate uploaded" : "Upload source plate"}</Button></div><div className="space-y-2"><Label className="text-xs text-muted-foreground">Actor Reference / Approved Likeness</Label><input ref={actorRef} type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => e.target.files?.[0] && uploadReference(e.target.files[0], "actor")} /><Button variant="outline" className="w-full justify-start text-xs" onClick={() => actorRef.current?.click()} disabled={uploading === "actor"}>{uploading === "actor" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : actorReferenceUrl ? <CheckCircle2 className="w-4 h-4 mr-2 text-green-400" /> : <Upload className="w-4 h-4 mr-2" />}{actorReferenceUrl ? "Actor reference uploaded" : "Upload actor reference"}</Button></div>{selectedSwappys && <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 space-y-3"><div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(v) => setConsentConfirmed(Boolean(v))} /><div><Label className="text-xs text-amber-200">I confirm actor likeness consent / rights clearance.</Label><p className="text-[11px] text-muted-foreground mt-1">Required for digital-double, stunt, pickup and actor-continuity work.</p></div></div><div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Creator+ only. Internal audit/provenance remains stored.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div>{!isCreator && <div className="flex gap-2 text-[11px] text-amber-200"><AlertTriangle className="w-3 h-3 mt-0.5" /> Upgrade to Virelle Creator for studio watermark controls.</div>}</div>}<Separator /><div><Label className="text-xs text-muted-foreground mb-1 block">Director / VFX Supervisor Notes</Label><Textarea value={retakeInstructions} onChange={(e) => setRetakeInstructions(e.target.value)} placeholder="Describe the exact VFX target: match actor to stunt plate, remove harness, replace background, restore grain, match lighting, preserve character continuity, etc." className="text-xs min-h-[120px] resize-none" /></div></CardContent></Card>
-          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Selected Operations</CardTitle></CardHeader><CardContent>{selectedOps.length === 0 ? <p className="text-xs text-muted-foreground">No operations selected.</p> : <div className="space-y-1">{selectedOps.map((op) => <div key={op} className="flex items-center justify-between gap-2"><span className="text-xs text-amber-400">{VFX_LABELS[op]}</span><button onClick={() => toggleOp(op)}><X className="w-3 h-3 text-muted-foreground hover:text-red-400" /></button></div>)}</div>}{lastJob && <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Last job: {lastJob.creditCost} credits · watermark: {lastJob.watermarkMode || "default"}</div>}{isIndustry && <Badge className="mt-3 bg-purple-500/15 text-purple-200 border border-purple-400/30">Industry access active</Badge>}</CardContent></Card>
+          <Card className="border-amber-500/20 glass-card gold-glow"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader><CardContent className="space-y-4"><div><div className="flex justify-between mb-1"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div><Slider value={[intensity]} onValueChange={([v]) => setIntensity(v)} min={10} max={100} step={5} /></div><Separator /><div className="space-y-2"><Label className="text-xs text-muted-foreground">Export Quality</Label><div className="grid grid-cols-3 gap-2">{(["preview", "final", "master"] as const).map((q) => <button key={q} onClick={() => setExportQuality(q)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === q ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{q}</button>)}</div><p className="text-[11px] text-muted-foreground">Estimated cost: {estimatedCredits} credits · {mediaCount} media input(s)</p></div>{selectedSwappys && <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 space-y-3"><div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(v) => setConsentConfirmed(Boolean(v))} /><div><Label className="text-xs text-amber-200">I confirm actor likeness / media consent and rights clearance.</Label><p className="text-[11px] text-muted-foreground mt-1">Required for digital-double, gender, age, childhood, stunt, pickup and actor-continuity work.</p></div></div><div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Creator+ only. Internal audit/provenance remains stored.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div>{!isCreator && <div className="flex gap-2 text-[11px] text-amber-200"><AlertTriangle className="w-3 h-3 mt-0.5" /> Upgrade to Virelle Creator for studio watermark controls.</div>}</div>}<Separator /><div><Label className="text-xs text-muted-foreground mb-1 block">Director / VFX Supervisor Notes</Label><Textarea value={directorNotes} onChange={(e) => setDirectorNotes(e.target.value)} placeholder="Describe the exact VFX target: use these childhood photos to make me look 10, transform presentation, match actor to stunt plate, preserve identity, remove harness, etc." className="text-xs min-h-[140px] resize-none" /></div></CardContent></Card>
+          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Selected Operations</CardTitle></CardHeader><CardContent>{selectedOps.length === 0 ? <p className="text-xs text-muted-foreground">No operations selected. Transform goal can still create a Swappys job.</p> : <div className="space-y-1">{selectedOps.map((op) => <div key={op} className="flex items-center justify-between gap-2"><span className="text-xs text-amber-400">{VFX_LABELS[op]}</span><button onClick={() => toggleOp(op)}><X className="w-3 h-3 text-muted-foreground hover:text-red-400" /></button></div>)}</div>}{lastJob && <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Last job: {lastJob.creditCost} credits · watermark: {lastJob.watermarkMode || "default"}</div>}{isIndustry && <Badge className="mt-3 bg-purple-500/15 text-purple-200 border border-purple-400/30">Industry access active</Badge>}</CardContent></Card>
         </div>
       </div>
     </div>
