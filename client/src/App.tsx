@@ -116,6 +116,7 @@ const Collaboration = lazy(() => import("./pages/Collaboration"));
 const MultiShotSequencer = lazy(() => import("./pages/MultiShotSequencer"));
 const NLEExport = lazy(() => import("./pages/NLEExport"));
 const VFXSuite = lazy(() => import("./pages/VFXSuite"));
+const VirelleBroadcastRender = lazy(() => import("./pages/VirelleBroadcastRender"));
 const LiveActionPlate = lazy(() => import("./pages/LiveActionPlate"));
 const AICasting = lazy(() => import("./pages/AICasting"));
 const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
@@ -319,6 +320,7 @@ function Router() {
       <Route path="/projects/:projectId/nle-export" component={GatedNLEExport} />
       <Route path="/projects/:projectId/vfx-suite/:sceneId" component={GatedVFXSuite} />
       <Route path="/projects/:projectId/vfx-suite" component={GatedVFXSuite} />
+      <Route path="/virelle-broadcast-render" component={VirelleBroadcastRender} />
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
       <Route path="/projects/:projectId/director-cut" component={GatedDirectorCut} />
