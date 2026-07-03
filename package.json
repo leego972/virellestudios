@@ -14,7 +14,7 @@
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "sync-mobile": "tsx scripts/sync-mobile-constants.ts",
     "check:swappys-mobile": "node scripts/check-swappys-mobile-connection.mjs",
-    "check:byok-policy": "node scripts/check-virelle-byok-policy.mjs"
+    "check:byok-policy": "node --input-type=module < scripts/check-byok-policy.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
