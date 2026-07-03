@@ -750,7 +750,7 @@ export default function Landing() {
                   </div>
                 </div>
                 <p className="text-white/40 text-xs mb-4 leading-relaxed">
-                  Swap any face or body with AI — no account needed. Output has a watermark. Upgrade to Virelle Creator inside the app for clean, full-quality swaps.
+                  Swap face and body with AI — no account needed. Output has a watermark. Upgrade to Virelle Creator inside the app for clean, full-quality swaps.
                 </p>
                 <button
                   onClick={() => window.open("https://apps.apple.com/app/virelle-studios/id6761315616", "_blank")}
