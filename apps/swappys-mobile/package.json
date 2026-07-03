@@ -10,8 +10,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "doctor": "npx expo-doctor",
-    "build:ios": "npx eas-cli build --platform ios --profile production --auto-submit --non-interactive",
-    "build:android": "npx eas-cli build --platform android --profile production --auto-submit --non-interactive",
+    "build:ios": "npx eas-cli build --platform ios --profile production --auto-submit",
+    "build:android": "npx eas-cli build --platform android --profile production --auto-submit",
     "build:all": "npx eas-cli build --platform all --profile production --auto-submit --non-interactive",
     "submit:ios": "npx eas-cli submit --platform ios --profile production"
   },
