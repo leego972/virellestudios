@@ -21,18 +21,21 @@ const VIDEO_PROVIDERS = [
 const LLM_PROVIDERS = ["openai", "anthropic", "google", "venice"] as const;
 
 const ALL_PROVIDERS: { id: string; label: string; capability: string; keyUrl?: string; required?: boolean }[] = [
-  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice", keyUrl: "https://platform.openai.com/api-keys" },
+  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice", keyUrl: "https://platform.openai.com/signup" },
   { id: "anthropic", label: "Anthropic Claude", capability: "LLM", keyUrl: "https://console.anthropic.com/settings/keys" },
   { id: "google", label: "Google AI Studio", capability: "LLM • Veo 3 video", keyUrl: "https://aistudio.google.com/apikey" },
   { id: "venice", label: "Venice AI", capability: "LLM (privacy-focused)", keyUrl: "https://venice.ai/settings/api" },
-  { id: "runway", label: "Runway", capability: "Video (premium quality)", keyUrl: "https://app.runwayml.com/settings" },
+  { id: "runway", label: "Runway", capability: "Video (premium quality)", keyUrl: "https://app.runwayml.com/sign-up" },
   { id: "replicate", label: "Replicate", capability: "Video • image", keyUrl: "https://replicate.com/account/api-tokens" },
   { id: "fal", label: "fal.ai", capability: "Video • image (cheapest, recommended)", keyUrl: "https://fal.ai/dashboard/keys" },
   { id: "luma", label: "Luma Dream Machine", capability: "Video", keyUrl: "https://lumalabs.ai/dream-machine/api" },
   { id: "byteplus", label: "BytePlus SeedDance", capability: "Video", keyUrl: "https://console.byteplus.com/" },
+    { id: "kling", label: "Kling AI", capability: "Video (high quality)", keyUrl: "https://klingai.com/" },
+    { id: "pika", label: "Pika", capability: "Video (stylised)", keyUrl: "https://pika.art/sign-up" },
+    { id: "stability", label: "Stability AI", capability: "Image generation", keyUrl: "https://platform.stability.ai/sign-up" },
   { id: "huggingface", label: "Hugging Face", capability: "Video • image (free tier)", keyUrl: "https://huggingface.co/settings/tokens" },
-  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX — required for all sound", keyUrl: "https://elevenlabs.io/app/settings/api-keys", required: true },
-  { id: "suno", label: "Suno", capability: "Music scores", keyUrl: "https://app.suno.ai/account" },
+  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX — required for all sound", keyUrl: "https://elevenlabs.io/sign-up", required: true },
+  { id: "suno", label: "Suno", capability: "Music scores", keyUrl: "https://suno.com/sign-up" },
   { id: "did", label: "D-ID", capability: "Auslan sign-language interpreter overlay", keyUrl: "https://studio.d-id.com/account-settings" },
 ];
 
@@ -114,7 +117,7 @@ export default function BYOKControlCenterPage() {
                         rel="noopener noreferrer"
                         className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2 whitespace-nowrap"
                       >
-                        Get key →
+                        Sign up / Get key →
                       </a>
                     )}
                   </div>
