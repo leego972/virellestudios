@@ -125,7 +125,7 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
 
     <button class="btn-swap disabled" id="btnSwap" onclick="doSwap()">Swap Face &amp; Body</button>
 
-    <div class="status" id="statusMsg"></div>
+    <div class="status" id="statusMsg">Connecting to Virelle AI...</div>
 
     <div class="result-wrap" id="resultWrap">
       <img class="result-img" id="resultImg" src="" alt="Swap result"/>
@@ -136,25 +136,36 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
           <span>virelle.life</span><span>virelle.life</span>
         </div>
         <div class="wm-center">
-          <p>SWAPPYS WATERMARK</p>
+          <p>PREVIEW WATERMARK</p>
           <small>Upgrade to remove</small>
         </div>
       </div>
     </div>
 
     <div class="upgrade" id="upgradeCard">
-      <h3>🔒 Remove the watermark</h3>
-      <p>Join Virelle Creator to get clean, full-quality swaps powered by fal.ai — no watermark, unlimited exports.</p>
-      <button class="btn-upgrade" onclick="joinCreator()">Join Virelle Creator →</button>
+      <h3>🔒 Unlock Uncensored Pro Mode</h3>
+      <p>Join Virelle Creator to get clean, full-quality, uncensored swaps — no watermark, unlimited exports, and pro tools.</p>
+      <button class="btn-upgrade" onclick="joinCreator()">Get Uncensored Pro →</button>
     </div>
 
   </div>
   <script>
-    const VIRELLE = 'https://virelle.life';
     let srcB64 = null, tgtB64 = null;
+    let virelleOk = false;
+    let virelleBaseUrl = 'https://virelle.life';
+
+    // Native Bridge
+    window.SwappysNative = {
+      setVirelleConnection: function(payload) {
+        console.log('Virelle Connection:', payload);
+        virelleOk = payload.ok;
+        if (payload.baseUrl) virelleBaseUrl = payload.baseUrl;
+        setStatus(payload.health || (virelleOk ? 'Virelle AI Online ✓' : 'Virelle AI Offline'), virelleOk ? 'ok' : 'err');
+      }
+    };
 
     function post(p){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify(p)); }
-    function joinCreator(){ post({ type:'openUrl', url: VIRELLE+'/register?source=swappys-mobile&product=swappys&intent=creator-upgrade' }); }
+    function joinCreator(){ post({ type:'openUrl', url: virelleBaseUrl + '/register?source=swappys-mobile&product=swappys&intent=creator-upgrade' }); }
 
     function loadImg(which, input){
       const file = input.files[0];
@@ -192,7 +203,7 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
       document.getElementById('upgradeCard').classList.remove('show');
 
       try {
-        const resp = await fetch(VIRELLE + '/api/trpc/swap.bodyFaceSwap', {
+        const resp = await fetch(virelleBaseUrl + '/api/trpc/vfxSfx.swappysMobileSwap', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ json: { sourceImageBase64: srcB64, targetImageBase64: tgtB64 } }),
@@ -207,7 +218,7 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
         const isWatermarked = result.hasWatermark !== false;
         document.getElementById('wmOverlay').style.display = isWatermarked ? 'flex' : 'none';
         if(isWatermarked) document.getElementById('upgradeCard').classList.add('show');
-        setStatus(isWatermarked ? 'Done — watermark applied. Upgrade to remove it.' : 'Clean swap complete ✓', isWatermarked ? '' : 'ok');
+        setStatus(isWatermarked ? 'Preview complete — upgrade for uncensored pro.' : 'Clean swap complete ✓', isWatermarked ? '' : 'ok');
       } catch(err){
         setStatus(err.message || 'Something went wrong — please try again.', 'err');
       }
@@ -222,6 +233,8 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
       el.className = 'status' + (cls ? ' '+cls : '');
     }
 
+    // Tell native we are ready
     post({ type: 'appReady' });
-  `;
-  
+  </script>
+  </body>
+  </html>`;

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,6 +53,7 @@ function jobInstructions(job: any) {
 }
 
 function Inner() {
+  const user = (trpc as any).auth.me.useQuery();
   const byokStatus = (trpc as any).virelleBroadcastRender.getByokStatus.useQuery(undefined, { retry: false });
   const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery({ limit: 25 }, { retry: false, refetchInterval: 10_000 });
   const createRender = (trpc as any).virelleBroadcastRender.createStudioRenderJob.useMutation();
@@ -78,7 +79,7 @@ function Inner() {
   const [requestedProvider, setRequestedProvider] = useState<Provider | "">("");
   const [directorNotes, setDirectorNotes] = useState("");
   const [consentConfirmed, setConsentConfirmed] = useState(false);
-  const [destination, setDestination] = useState<"rtmp" | "webrtc" | "obs" | "custom">("rtmp");
+  const [destination, setDestination] = useState<"rtmp" | "rtmp_onlyfans" | "rtmp_fansly" | "rtmp_chaturbate" | "webrtc" | "obs" | "custom">("rtmp");
   const [ingestUrl, setIngestUrl] = useState("");
   const [streamKey, setStreamKey] = useState("");
 
@@ -98,6 +99,29 @@ function Inner() {
     hideVisibleWatermark: true,
   };
 
+  // v7.2 — Preset handlers for cam platforms
+  useEffect(() => {
+    if (destination === "rtmp_onlyfans") setIngestUrl("rtmps://live.onlyfans.com/app/");
+    else if (destination === "rtmp_fansly") setIngestUrl("rtmps://live.fansly.com/live/");
+    else if (destination === "rtmp_chaturbate") setIngestUrl("rtmp://broadcast.chaturbate.com/live/");
+  }, [destination]);
+
+  // v7.3 — "Go Live as Avatar": prefill avatar media handed off from Swappys / VFX Suite
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const avatarRef = params.get("avatarRef");
+    const avatarSource = params.get("avatarSource");
+    const goal = params.get("goal");
+    const fromProject = params.get("projectId");
+    const fromScene = params.get("sceneId");
+    if (avatarRef) setReferenceImageUrls((prev) => prev || decodeURIComponent(avatarRef));
+    if (avatarSource) setSourceImageUrls((prev) => prev || decodeURIComponent(avatarSource));
+    if (goal) setTransformGoal(goal as TransformGoal);
+    if (fromProject) setProjectId(fromProject);
+    if (fromScene) setSceneId(fromScene);
+    if (avatarRef || avatarSource) toast.success("Swappys avatar loaded — ready to go live!");
+  }, []);
+
   const submitStudioRender = async () => {
     try {
       const result = await createRender.mutateAsync(basePayload);
@@ -109,6 +133,20 @@ function Inner() {
   };
 
   const submitBroadcast = async () => {
+    // v7.3 — Broadcast avatar age floor (mirrors server enforcement)
+    const ageNum = targetAge.trim() ? Number(targetAge) : null;
+    if (transformGoal === "adult_to_child") {
+      toast.error("Child-transform avatars are not permitted in live Broadcast. Broadcast avatars must be 16 or older.");
+      return;
+    }
+    if (ageNum != null && ageNum < 16) {
+      toast.error("Broadcast avatar target age must be 16 or older.");
+      return;
+    }
+    if (transformGoal === "younger_self" && ageNum == null) {
+      toast.error("\"Younger self\" broadcasts require an explicit target age of 16 or older.");
+      return;
+    }
     try {
       const result = await createBroadcast.mutateAsync({ ...basePayload, destination, ingestUrl: ingestUrl.trim() || null, streamKey: streamKey.trim() || null });
       toast.success(`Broadcast session ready with ${result.provider}. Session #${result.sessionId}`);
@@ -172,6 +210,29 @@ function Inner() {
 
     const providerStatus = byokStatus.data?.providers || {};
   const hasAnyProvider = Boolean(byokStatus.data?.hasAnyProvider);
+  const isAdultVerified = user.data?.isAdultVerified;
+
+  if (user.data && !isAdultVerified) {
+    return (
+      <div className="min-h-screen bg-background p-4 md:p-6 flex items-center justify-center">
+        <Card className="max-w-md border-red-500/30 bg-red-500/5">
+          <CardHeader className="text-center">
+            <ShieldCheck className="mx-auto h-12 w-12 text-red-500 mb-2" />
+            <CardTitle className="text-xl">Age Verification Required</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Virelle Broadcast features (including live cam presets) are strictly for users aged 18 and over. 
+              Please verify your age in your profile settings to unlock this feature.
+            </p>
+            <Button className="w-full" onClick={() => window.location.href = "/settings?tab=profile"}>
+              Verify My Age in Settings
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
@@ -258,7 +319,33 @@ function Inner() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <Card className="border-blue-500/20">
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Radio className="h-4 w-4 text-blue-400" /> Broadcast Mode</CardTitle></CardHeader>
-            <CardContent className="space-y-3"><div><Label>Destination</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={destination} onChange={(e) => setDestination(e.target.value as any)}><option value="rtmp">RTMP</option><option value="webrtc">WebRTC</option><option value="obs">OBS bridge</option><option value="custom">Custom</option></select></div><div><Label>Ingest URL</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ingestUrl} onChange={(e) => setIngestUrl(e.target.value)} /></div><div><Label>Stream key</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={streamKey} onChange={(e) => setStreamKey(e.target.value)} /></div><Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>{createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />} Create BYOK Broadcast Session</Button><p className="text-xs text-muted-foreground">Raw stream keys are sent only for session setup and should not be displayed back to the user.</p></CardContent>
+            <CardContent className="space-y-3">
+              <div>
+                <Label>Destination</Label>
+                <select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={destination} onChange={(e) => setDestination(e.target.value as any)}>
+                  <option value="rtmp">RTMP (Custom)</option>
+                  <option value="rtmp_onlyfans">OnlyFans</option>
+                  <option value="rtmp_fansly">Fansly</option>
+                  <option value="rtmp_chaturbate">Chaturbate</option>
+                  <option value="webrtc">WebRTC</option>
+                  <option value="obs">OBS bridge</option>
+                  <option value="custom">Custom Engine</option>
+                </select>
+              </div>
+              <div>
+                <Label>Ingest URL</Label>
+                <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ingestUrl} onChange={(e) => setIngestUrl(e.target.value)} />
+              </div>
+              <div>
+                <Label>Stream key</Label>
+                <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={streamKey} onChange={(e) => setStreamKey(e.target.value)} />
+              </div>
+              <Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>
+                {createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />} Go Live as Swappys Avatar
+              </Button>
+              <p className="text-xs text-muted-foreground">Raw stream keys are sent only for session setup and should not be displayed back to the user.</p>
+              <p className="text-xs text-amber-200/80 flex items-start gap-1"><ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Broadcast avatars must depict a person aged 16+. Child-transform goals are blocked in live Broadcast mode.</p>
+            </CardContent>
           </Card>
 
           <Card className="border-amber-500/20">

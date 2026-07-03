@@ -79,6 +79,7 @@ export const users = mysqlTable("users", {
   isFrozen: boolean("isFrozen").default(false).notNull(),
   frozenReason: text("frozenReason"),
   frozenAt: timestamp("frozenAt"),
+  isAdultVerified: boolean("isAdultVerified").default(false).notNull(),
 });
 
 export type User = typeof users.$inferSelect;

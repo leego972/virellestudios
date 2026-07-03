@@ -18,7 +18,7 @@
  */
 
 import { getDb } from "../db";
-import { users, moderationIncidents } from "../../drizzle/schema";
+import { moderationIncidents, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { ENV } from "./env";
 import nodemailer from "nodemailer";
@@ -137,6 +137,7 @@ const VIOLATION_RULES: ViolationRule[] = [
   // Permitted: sensual, romantic, mature drama, implied intimacy, adult glamour.
   // Prohibited: pornography, explicit sex acts, graphic nudity for sexual display,
   //             fetish content, adult-industry positioning.
+  // NOTE: Premium users (Creator+) have these restrictions relaxed for adult-industry use cases.
   {
     category: "SIGNATURE_CAST_EXPLICIT",
     severity: "HIGH",
@@ -150,7 +151,7 @@ const VIOLATION_RULES: ViolationRule[] = [
       "sofia reyes sex scene explicit", "kofi adebayo sex scene explicit",
       "virelle star fetish", "signature cast fetish",
       "virelle star adult content", "signature cast adult film",
-      "virelle star onlyfans", "signature cast onlyfans",
+      // "virelle star onlyfans", "signature cast onlyfans" -> Allowed for Creator+ users
     ],
     freeze: true,
     reportToAuthorities: false,
@@ -245,10 +246,21 @@ export async function handleModerationViolation(opts: {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error('DB unavailable');
-      await db2.update(users)
-        .set({ isFrozen: true, frozenReason: `Policy violation detected: ${scanResult.violations.map(v => v.category).join(", ")}`, frozenAt: new Date() })
-        .where(eq(users.id, userId));
-      logger.warn(`[Moderation] Account ${userId} FROZEN.`);
+
+      // v7.2 — Bypass freeze for Creator+ users on adult-industry keywords
+      const userRows = await db2.select().from(users).where(eq(users.id, userId)).limit(1);
+      const user = userRows[0] as any;
+      const isCreatorOrHigher = user && ["amateur", "independent", "creator", "studio", "industry"].includes(user.subscriptionTier || "");
+      const isAdultViolation = scanResult.violations.some(v => v.category === "SIGNATURE_CAST_EXPLICIT");
+
+      if (isCreatorOrHigher && isAdultViolation) {
+        logger.info(`[Moderation] Bypassing freeze for Creator+ user ${userId} on adult-industry content.`);
+      } else {
+        await db2.update(users)
+          .set({ isFrozen: true, frozenReason: `Policy violation detected: ${scanResult.violations.map(v => v.category).join(", ")}`, frozenAt: new Date() })
+          .where(eq(users.id, userId));
+        logger.warn(`[Moderation] Account ${userId} FROZEN.`);
+      }
     } catch (err) {
       logger.error("[Moderation] Failed to freeze account:", { error: String(err) });
     }

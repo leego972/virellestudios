@@ -22,7 +22,8 @@ export default function App() {
   const webRef = useRef<WebView>(null);
 
   const sendConnection = useCallback((payload: VirelleConnection) => {
-    const script = `window.SwappysNative && window.SwappysNative.setVirelleConnection(${JSON.stringify(payload)}); true;`;
+    const fullPayload = { ...payload, baseUrl: VIRELLE_BASE_URL };
+    const script = `window.SwappysNative && window.SwappysNative.setVirelleConnection(${JSON.stringify(fullPayload)}); true;`;
     webRef.current?.injectJavaScript(script);
   }, []);
 

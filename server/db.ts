@@ -1729,6 +1729,7 @@ export async function updateUserProfile(userId: number, data: {
   experienceLevel?: string | null;
   portfolioUrl?: string | null;
   socialLinks?: Record<string, unknown> | null;
+  isAdultVerified?: boolean;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

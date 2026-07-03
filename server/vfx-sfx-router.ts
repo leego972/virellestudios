@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { sql } from "drizzle-orm";
@@ -223,4 +223,37 @@ export const vfxSfxRouter = router({
   getProjectVfxTheme: protectedProcedure.input(z.object({ projectId: z.number() })).query(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) return null; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT * FROM project_vfx_theme WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`); const data = Array.isArray(rows[0]) ? rows[0] : []; if (!data[0]) return null; const row = data[0]; return { vfxPackIds: JSON.parse(row.vfxPackIds || "[]"), sfxPackIds: JSON.parse(row.sfxPackIds || "[]"), themeName: row.themeName }; }),
   setProjectVfxTheme: protectedProcedure.input(z.object({ projectId: z.number(), vfxPackIds: z.array(z.number()), sfxPackIds: z.array(z.number()), themeName: z.string().max(120).optional() })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await ensureTables(dbConn); await dbConn.execute(sql`INSERT INTO project_vfx_theme (projectId, userId, vfxPackIds, sfxPackIds, themeName) VALUES (${input.projectId}, ${ctx.user.id}, ${JSON.stringify(input.vfxPackIds)}, ${JSON.stringify(input.sfxPackIds)}, ${input.themeName || null}) ON DUPLICATE KEY UPDATE vfxPackIds = ${JSON.stringify(input.vfxPackIds)}, sfxPackIds = ${JSON.stringify(input.sfxPackIds)}, themeName = ${input.themeName || null}, setAt = NOW()`); return { ok: true }; }),
   getActivePipelineContext: protectedProcedure.query(async ({ ctx }) => { const dbConn = await db.getDb(); if (!dbConn) return { vfxPrompt: "", sfxPrompt: "", activeCount: 0 }; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT packId, packType FROM user_vfx_library WHERE userId = ${ctx.user.id} AND isActive = 1`); const data: any[] = Array.isArray(rows[0]) ? rows[0] : []; const vfxIds = data.filter(r => r.packType === "vfx").map(r => Number(r.packId)); const sfxIds = data.filter(r => r.packType === "sfx").map(r => Number(r.packId)); return { vfxPrompt: buildVfxPromptInjection(vfxIds), sfxPrompt: buildSfxPromptInjection(sfxIds), activeCount: data.length, vfxPackNames: VFX_PACKS.filter(p => vfxIds.includes(p.id)).map(p => p.name), sfxPackNames: SFX_PACKS.filter(p => sfxIds.includes(p.id)).map(p => p.name) }; }),
+
+  // v7.3 — Swappys Mobile funnel endpoint.
+  // Public so the free mobile app works without an account; anonymous and free-tier
+  // results always carry the visible "SWAPPYS PREVIEW" watermark. Creator+ logged-in
+  // users get the clean, full-quality output — this IS the upgrade funnel.
+  swappysMobileSwap: publicProcedure
+    .input(z.object({
+      sourceImageBase64: z.string().min(50).max(15_000_000),
+      targetImageBase64: z.string().min(50).max(15_000_000),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const user = (ctx as any).user || null;
+      const tier = (user?.subscriptionTier || "free") as string;
+      const isCreatorPlus = ["creator", "studio", "pro", "industry", "beta"].includes(tier) || user?.role === "admin";
+      const hasWatermark = !isCreatorPlus;
+      try {
+        const result = await generateImage({
+          prompt: hasWatermark
+            ? "Perform a photorealistic face swap: place the face from the first reference image naturally onto the person in the second reference image, matching skin tone, lighting and angle. Family-friendly output. Add a large semi-transparent diagonal watermark reading 'SWAPPYS PREVIEW · virelle.life' repeated across the image."
+            : "Perform a photorealistic, high-fidelity face swap: place the face from the first reference image naturally onto the person in the second reference image, seamlessly matching skin tone, lighting, grain and angle. Professional studio quality, no watermark.",
+          originalImages: [
+            { b64Json: input.sourceImageBase64.replace(/^data:image\/[a-z]+;base64,/, "") },
+            { b64Json: input.targetImageBase64.replace(/^data:image\/[a-z]+;base64,/, "") },
+          ],
+        });
+        if (!result?.url) throw new Error("no output");
+        logger.info(`[SwappysMobile] swap ok user=${user?.id || "anon"} tier=${tier} watermark=${hasWatermark}`);
+        return { imageUrl: result.url, hasWatermark, tier, upgradeUrl: "https://virelle.life/pricing" };
+      } catch (e: any) {
+        logger.warn(`[SwappysMobile] swap failed: ${e?.message}`);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Swap failed — try clearer, well-lit photos." });
+      }
+    }),
 });

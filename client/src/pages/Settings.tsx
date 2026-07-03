@@ -479,6 +479,42 @@ export default function Settings() {
             </CardContent>
           </Card>
 
+          {/* Age Verification (18+) — required for Virelle Broadcast */}
+          <Card className="bg-card/50 glass-card shadow-lg shadow-red-500/5 hover:shadow-red-500/20 transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
+                <Shield className="h-4 w-4 text-red-400" />
+                Age Verification (18+)
+              </CardTitle>
+              <CardDescription className="text-xs">Required to access Virelle Broadcast and mature content features</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {profile?.isAdultVerified ? (
+                <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-300">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Your account is verified as 18+. Broadcast features are unlocked.</span>
+                </div>
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground">
+                    By confirming below, you legally declare that you are at least 18 years of age. This unlocks
+                    Virelle Broadcast (including live streaming destinations). Providing false information may result
+                    in account termination.
+                  </p>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => updateProfileMutation.mutate({ isAdultVerified: true } as any)}
+                    disabled={updateProfileMutation.isPending}
+                  >
+                    {updateProfileMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
+                    I confirm I am 18 or older
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Location */}
           <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader className="pb-3">

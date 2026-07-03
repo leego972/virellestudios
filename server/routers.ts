@@ -11080,6 +11080,7 @@ Rules:
         portfolioUrl: u.portfolioUrl || null,
         socialLinks: u.socialLinks || null,
         createdAt: u.createdAt || null,
+        isAdultVerified: u.isAdultVerified || false,
         // Return which keys are configured (never return the actual keys)
         apiKeys: {
           openai: !!u.userOpenaiKey,
@@ -11119,6 +11120,7 @@ Rules:
         experienceLevel: z.string().max(32).optional().nullable(),
         portfolioUrl: z.string().max(512).optional().nullable(),
         socialLinks: z.record(z.string(), z.string()).optional().nullable(),
+        isAdultVerified: z.boolean().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await db.updateUserProfile(ctx.user!.id, input);

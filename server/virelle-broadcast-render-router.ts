@@ -21,7 +21,7 @@ const TRANSFORM_GOALS = [
   "custom_prompt",
 ] as const;
 
-const BROADCAST_DESTINATIONS = ["rtmp", "webrtc", "obs", "custom"] as const;
+const BROADCAST_DESTINATIONS = ["rtmp", "rtmp_onlyfans", "rtmp_fansly", "rtmp_chaturbate", "webrtc", "obs", "custom"] as const;
 const JOB_STATUS = ["queued", "waiting_for_provider", "processing", "ready", "broadcast_ready", "completed", "failed", "cancelled"] as const;
 
 function providerFromUserKeys(keys: any, requestedProvider?: string | null): StrictByokVideoProvider | null {
@@ -203,9 +203,42 @@ export const virelleBroadcastRenderRouter = router({
     streamKey: z.string().max(300).optional().nullable(),
   })).mutation(async ({ ctx, input }) => {
     requireVfxStudioTier(ctx.user as any, "creator", "Virelle Broadcast Mode");
+
+    // v6.83: Age verification enforcement for broadcast (especially adult/cam presets)
+    if (!(ctx.user as any).isAdultVerified) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "AGE_VERIFICATION_REQUIRED: You must verify that you are 18+ to use Virelle Broadcast. Please complete the verification in your Profile Settings.",
+      });
+    }
+
     if (!input.consentConfirmed) {
       throw new TRPCError({ code: "BAD_REQUEST", message: "Consent confirmation is required before live/broadcast likeness transformation." });
     }
+
+    // v7.3 — Broadcast avatar age floor: no Swappys avatar under 16 in live broadcast.
+    // Child/minor transform goals are fully blocked in broadcast mode, and any
+    // explicit targetAge below 16 is rejected regardless of tier or role.
+    const BROADCAST_MIN_AVATAR_AGE = 16;
+    if (input.transformGoal === "adult_to_child") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "BROADCAST_AGE_FLOOR: Child-transform goals are not permitted in live Broadcast mode. Broadcast avatars must depict a person aged 16 or older.",
+      });
+    }
+    if (input.targetAge != null && input.targetAge < BROADCAST_MIN_AVATAR_AGE) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `BROADCAST_AGE_FLOOR: Broadcast avatar target age must be ${BROADCAST_MIN_AVATAR_AGE} or older. Received ${input.targetAge}.`,
+      });
+    }
+    if (input.transformGoal === "younger_self" && input.targetAge == null) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `BROADCAST_AGE_FLOOR: \"Younger self\" broadcasts require an explicit target age of ${BROADCAST_MIN_AVATAR_AGE} or older.`,
+      });
+    }
+
     const provider = await requireStrictByokProvider(ctx.user.id, input.requestedProvider);
     const dbConn = await db.getDb();
     if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
@@ -230,6 +263,8 @@ export const virelleBroadcastRenderRouter = router({
       safety: {
         consentConfirmed: input.consentConfirmed,
         visibleMark: input.hideVisibleWatermark ? "creator_internal_provenance" : "visible_ai_mark_required",
+        broadcastMinAvatarAge: 16,
+        ageFloorEnforced: true,
       },
     };
 
