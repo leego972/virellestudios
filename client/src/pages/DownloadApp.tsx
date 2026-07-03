@@ -127,7 +127,38 @@ export default function DownloadApp() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-20">
 
         {/* ── Mobile Downloads ──────────────────────────────────────────────────── */}
-        <section>
+        {/* ── Swappys Free Download ──────────────────────────────────────── */}
+          <section className="mb-8">
+            <div className="max-w-xl mx-auto rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 text-center">
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <span className="text-3xl">✦</span>
+                <div className="text-left">
+                  <p className="text-white font-bold text-lg">Swappys Mobile</p>
+                  <p className="text-zinc-400 text-sm">Free AI filmmaking app</p>
+                </div>
+              </div>
+              <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
+                Script, storyboard, and generate AI video clips — no subscription needed.
+                Upgrade to Virelle Studios from inside the app to unlock BYOK, unlimited exports and watermark removal.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a
+                  href="https://apps.apple.com/app/swappys"
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all"
+                >
+                  🍎 Download on iOS — Free
+                </a>
+                <a
+                  href="mailto:studiosvirelle@gmail.com?subject=Swappys%20Android%20Waitlist"
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-sm transition-all"
+                >
+                  🤖 Android — Join Waitlist
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gold-shimmer">📱 Mobile App</h2>
             <p className="text-zinc-400">iOS available now on the App Store</p>
