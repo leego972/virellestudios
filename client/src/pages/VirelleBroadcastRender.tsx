@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
-import { AlertTriangle, Copy, Download, ExternalLink, KeyRound, Loader2, Radio, RadioTower, RefreshCcw, ShieldCheck, Video, XCircle } from "lucide-react";
+import { AlertTriangle, Copy, Download, ExternalLink, KeyRound, Loader2, Radio, RadioTower, RefreshCcw, ShieldCheck, Upload, Video, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 type TransformGoal = "appearance_reference" | "boy_to_girl" | "girl_to_boy" | "younger_self" | "older_self" | "adult_to_child" | "child_to_adult" | "custom_prompt";
@@ -24,7 +24,17 @@ function copyText(value: string, label = "Copied") {
   navigator.clipboard?.writeText(value).then(() => toast.success(label)).catch(() => toast.error("Could not copy"));
 }
 
-function statusVariant(status: string) {
+const STATUS_COPY: Record<string, string> = {
+    queued: "Job accepted. Waiting for render worker.",
+    waiting_for_provider: "Ready/submitted to BYOK provider.",
+    processing: "Provider is processing.",
+    broadcast_ready: "Broadcast session configured.",
+    completed: "Output ready.",
+    failed: "Failed. Review error.",
+    cancelled: "Cancelled.",
+  };
+
+  function statusVariant(status: string) {
   if (status === "failed" || status === "cancelled") return "destructive" as const;
   if (status === "completed" || status === "broadcast_ready") return "default" as const;
   return "outline" as const;
@@ -44,10 +54,17 @@ function jobInstructions(job: any) {
 
 function Inner() {
   const byokStatus = (trpc as any).virelleBroadcastRender.getByokStatus.useQuery(undefined, { retry: false });
-  const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery({ limit: 25 }, { retry: false });
+  const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery({ limit: 25 }, { retry: false, refetchInterval: 10_000 });
   const createRender = (trpc as any).virelleBroadcastRender.createStudioRenderJob.useMutation();
   const createBroadcast = (trpc as any).virelleBroadcastRender.createBroadcastSession.useMutation();
   const cancelJob = (trpc as any).virelleBroadcastRender.cancelJob.useMutation();
+    const uploadRefImageMutation = (trpc as any).upload.referenceImage.useMutation();
+
+    const sourceImageRef = useRef<HTMLInputElement>(null);
+    const referenceImageRef = useRef<HTMLInputElement>(null);
+    const sourceVideoRef = useRef<HTMLInputElement>(null);
+    const referenceVideoRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState<string | null>(null);
 
   const [projectId, setProjectId] = useState("");
   const [sceneId, setSceneId] = useState("");
@@ -111,7 +128,55 @@ function Inner() {
     }
   };
 
-  const providerStatus = byokStatus.data?.providers || {};
+  const uploadMedia = async (files: FileList | null, kind: "sourceImage" | "referenceImage" | "sourceVideo" | "referenceVideo") => {
+      if (!files || files.length === 0) return;
+      const sceneIdNum = sceneId.trim() ? Number(sceneId) : undefined;
+      setUploading(kind);
+      try {
+        const urls: string[] = [];
+        for (const file of Array.from(files)) {
+          if ((kind === "sourceVideo" || kind === "referenceVideo") && !file.type.startsWith("video/")) {
+            toast.error("Please select a video file.");
+            continue;
+          }
+          const reader = new FileReader();
+          const base64 = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(String(reader.result).split(",")[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          try {
+            const result = await uploadRefImageMutation.mutateAsync({ base64, filename: file.name, contentType: file.type as any, sceneId: sceneIdNum });
+            urls.push(result.url);
+          } catch (uploadErr: any) {
+            if (kind === "sourceVideo" || kind === "referenceVideo") {
+              toast.error("Video upload endpoint not ready. Paste a video URL instead.");
+            } else {
+              throw uploadErr;
+            }
+            return;
+          }
+        }
+        if (urls.length === 0) return;
+        if (kind === "sourceImage") setSourceImageUrls((prev) => prev ? prev + "
+" + urls.join("
+") : urls.join("
+"));
+        if (kind === "referenceImage") setReferenceImageUrls((prev) => prev ? prev + "
+" + urls.join("
+") : urls.join("
+"));
+        if (kind === "sourceVideo") setSourceVideoUrl(urls[0]);
+        if (kind === "referenceVideo") setReferenceVideoUrl(urls[0]);
+        toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded`);
+      } catch (err: any) {
+        toast.error(err?.message || "Upload failed");
+      } finally {
+        setUploading(null);
+      }
+    };
+
+    const providerStatus = byokStatus.data?.providers || {};
   const hasAnyProvider = Boolean(byokStatus.data?.hasAnyProvider);
 
   return (
@@ -141,10 +206,46 @@ function Inner() {
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Video className="h-4 w-4 text-amber-400" /> Source & Reference Media</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-2 gap-3"><div><Label>Project ID</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={projectId} onChange={(e) => setProjectId(e.target.value.replace(/[^0-9]/g, ""))} /></div><div><Label>Scene ID</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={sceneId} onChange={(e) => setSceneId(e.target.value.replace(/[^0-9]/g, ""))} /></div></div>
-              <div><Label>Source video URL</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="https://...source.mp4" value={sourceVideoUrl} onChange={(e) => setSourceVideoUrl(e.target.value)} /></div>
-              <div><Label>Reference video URL</Label><input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="https://...reference.mp4" value={referenceVideoUrl} onChange={(e) => setReferenceVideoUrl(e.target.value)} /></div>
-              <div><Label>Source image URLs</Label><Textarea className="min-h-20 text-xs" placeholder="One URL per line" value={sourceImageUrls} onChange={(e) => setSourceImageUrls(e.target.value)} /></div>
-              <div><Label>Reference image URLs</Label><Textarea className="min-h-20 text-xs" placeholder="One URL per line" value={referenceImageUrls} onChange={(e) => setReferenceImageUrls(e.target.value)} /></div>
+              <div>
+                  <Label>Source video URL</Label>
+                  <div className="flex gap-2">
+                    <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm" placeholder="https://...source.mp4" value={sourceVideoUrl} onChange={(e) => setSourceVideoUrl(e.target.value)} />
+                    <Button type="button" size="sm" variant="outline" disabled={uploading === "sourceVideo"} onClick={() => sourceVideoRef.current?.click()}>
+                      {uploading === "sourceVideo" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              <div>
+                  <Label>Reference video URL</Label>
+                  <div className="flex gap-2">
+                    <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm" placeholder="https://...reference.mp4" value={referenceVideoUrl} onChange={(e) => setReferenceVideoUrl(e.target.value)} />
+                    <Button type="button" size="sm" variant="outline" disabled={uploading === "referenceVideo"} onClick={() => referenceVideoRef.current?.click()}>
+                      {uploading === "referenceVideo" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label>Source image URLs</Label>
+                    <Button type="button" size="sm" variant="outline" className="h-7 text-xs" disabled={uploading === "sourceImage"} onClick={() => sourceImageRef.current?.click()}>
+                      {uploading === "sourceImage" ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />} Upload images
+                    </Button>
+                  </div>
+                  <Textarea className="min-h-20 text-xs" placeholder="One URL per line (or upload above)" value={sourceImageUrls} onChange={(e) => setSourceImageUrls(e.target.value)} />
+                </div>
+              <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label>Reference image URLs</Label>
+                    <Button type="button" size="sm" variant="outline" className="h-7 text-xs" disabled={uploading === "referenceImage"} onClick={() => referenceImageRef.current?.click()}>
+                      {uploading === "referenceImage" ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />} Upload images
+                    </Button>
+                  </div>
+                  <Textarea className="min-h-20 text-xs" placeholder="One URL per line (or upload above)" value={referenceImageUrls} onChange={(e) => setReferenceImageUrls(e.target.value)} />
+                </div>
+              <input ref={sourceImageRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => uploadMedia(e.target.files, "sourceImage")} />
+              <input ref={referenceImageRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => uploadMedia(e.target.files, "referenceImage")} />
+              <input ref={sourceVideoRef} type="file" accept="video/*" className="hidden" onChange={(e) => uploadMedia(e.target.files, "sourceVideo")} />
+              <input ref={referenceVideoRef} type="file" accept="video/*" className="hidden" onChange={(e) => uploadMedia(e.target.files, "referenceVideo")} />
             </CardContent>
           </Card>
 
