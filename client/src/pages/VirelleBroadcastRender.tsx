@@ -158,14 +158,8 @@ function Inner() {
           }
         }
         if (urls.length === 0) return;
-        if (kind === "sourceImage") setSourceImageUrls((prev) => prev ? prev + "
-" + urls.join("
-") : urls.join("
-"));
-        if (kind === "referenceImage") setReferenceImageUrls((prev) => prev ? prev + "
-" + urls.join("
-") : urls.join("
-"));
+        if (kind === "sourceImage") setSourceImageUrls((prev) => prev ? prev + "\n" + urls.join("\n") : urls.join("\n"));
+        if (kind === "referenceImage") setReferenceImageUrls((prev) => prev ? prev + "\n" + urls.join("\n") : urls.join("\n"));
         if (kind === "sourceVideo") setSourceVideoUrl(urls[0]);
         if (kind === "referenceVideo") setReferenceVideoUrl(urls[0]);
         toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded`);
