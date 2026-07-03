@@ -198,6 +198,7 @@ export const virelleBroadcastRenderRouter = router({
   }),
 
   createBroadcastSession: protectedProcedure.input(createJobInput.extend({
+    durationMinutes: z.union([z.literal(30), z.literal(60), z.literal(120)]).default(30),
     destination: z.enum(BROADCAST_DESTINATIONS).default("rtmp"),
     ingestUrl: z.string().url().optional().nullable(),
     streamKey: z.string().max(300).optional().nullable(),
@@ -244,7 +245,8 @@ export const virelleBroadcastRenderRouter = router({
     if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
     await ensureBroadcastRenderTables(dbConn);
 
-    const orchestrationCredits = 5;
+    const BROADCAST_BLOCK_CREDITS: Record<number, number> = { 30: 5, 60: 10, 120: 18 };
+    const orchestrationCredits = BROADCAST_BLOCK_CREDITS[input.durationMinutes] ?? 5;
     if ((ctx.user as any).role !== "admin") {
       try {
         await db.deductCredits(ctx.user.id, orchestrationCredits, "virelle_broadcast_orchestration", `BYOK Broadcast orchestration: ${input.destination}`);
@@ -257,6 +259,7 @@ export const virelleBroadcastRenderRouter = router({
       byok: true,
       costPolicy: "provider_cost_paid_by_user_key",
       mode: "broadcast",
+      durationMinutes: input.durationMinutes,
       destination: input.destination,
       transformGoal: input.transformGoal,
       nextWorkerStep: "create_live_transform_bridge_rtmp_webrtc_or_obs",
