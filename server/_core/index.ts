@@ -616,8 +616,15 @@ async function startServer() {
     try {
       const { FEATURE_REGISTRY, getFeaturesByCategory } = await import("../../shared/feature-registry");
       res.json({
+        ok: true,
         version: 1,
         updatedAt: new Date().toISOString(),
+        flags: {
+          creatorUpgrade: true,
+          swappysStudio: true,
+          watermarkControls: true,
+          byokVideoRequired: true,
+        },
         features: FEATURE_REGISTRY,
         byCategory: getFeaturesByCategory(),
       });
