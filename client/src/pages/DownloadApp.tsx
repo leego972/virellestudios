@@ -143,7 +143,7 @@ export default function DownloadApp() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
-                  href="https://apps.apple.com/app/swappys"
+                  href="https://apps.apple.com/app/virelle-studios/id6761315616"
                   className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all"
                 >
                   🍎 Download on iOS — Free
