@@ -508,7 +508,42 @@ export default function TermsOfService() {
             </p>
           </section>
 
-        </div>
+            {/* Governing Law */}
+            <section>
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold gradient-text-gold">
+                <Scale className="w-4 h-4 text-amber-400" />
+                Governing Law &amp; Jurisdiction
+              </h2>
+              <p className="text-muted-foreground">
+                These Terms are governed by and construed in accordance with the laws of{" "}
+                <strong className="text-foreground">Victoria, Australia</strong>, and the
+                Commonwealth of Australia. Virelle Studios is established in Melbourne, Australia,
+                and any dispute arising under or in connection with these Terms shall be subject to
+                the non-exclusive jurisdiction of the courts of Victoria, Australia.
+              </p>
+              <p className="text-muted-foreground mt-3">
+                These Terms are subject to the{" "}
+                <strong className="text-foreground">Australian Consumer Law</strong>{" "}
+                (Schedule&nbsp;2, Competition and Consumer Act 2010 (Cth)) and all other
+                applicable Commonwealth and State legislation. Nothing in these Terms excludes,
+                restricts, or modifies any right or remedy you may have under the Australian
+                Consumer Law or any other mandatory consumer protection legislation applicable
+                to you.
+              </p>
+              <p className="text-muted-foreground mt-3">
+                Where both parties to a dispute are located outside Australia, the laws of
+                England and Wales shall apply as a secondary governing law and disputes shall be
+                subject to the non-exclusive jurisdiction of the courts of England and Wales.
+              </p>
+              <p className="text-muted-foreground mt-3">
+                For legal enquiries contact:{" "}
+                <a href="mailto:legal@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                  legal@virelle.life
+                </a>
+              </p>
+            </section>
+
+          </div>
       </div>
       <LeegoFooterLaunch />
     </div>
