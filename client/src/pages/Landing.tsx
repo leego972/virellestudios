@@ -740,7 +740,30 @@ export default function Landing() {
             <p className="text-white/60 mb-10 max-w-xl mx-auto">
               The full Virelle Studios experience on iOS and Android. Monitor renders, review scenes, manage projects, and export — all from your phone.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* ── Swappys Free Download ──────────────────────────────── */}
+              <div className="mb-8 p-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 max-w-md mx-auto text-left">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-2xl">✦</span>
+                  <div>
+                    <p className="text-white font-bold text-base">Swappys Mobile — Free</p>
+                    <p className="text-white/50 text-xs">Your free entry into Hollywood AI filmmaking</p>
+                  </div>
+                </div>
+                <p className="text-white/40 text-xs mb-4 leading-relaxed">
+                  Script, storyboard, and generate AI video clips — no subscription needed.
+                  Upgrade to Virelle Studios inside the app to unlock BYOK, unlimited exports, and remove the watermark.
+                </p>
+                <button
+                  onClick={() => setLocation("/download?app=swappys")}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Swappys Free
+                </button>
+              </div>
+              <p className="text-white/30 text-xs mb-6">Or download the full Virelle Studios app:</p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => setLocation("/download")}
                 className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all w-full sm:w-auto"
