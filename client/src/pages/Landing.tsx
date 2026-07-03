@@ -754,7 +754,7 @@ export default function Landing() {
                   Upgrade to Virelle Studios inside the app to unlock BYOK, unlimited exports, and remove the watermark.
                 </p>
                 <button
-                  onClick={() => setLocation("/download?app=swappys")}
+                  onClick={() => window.open("https://apps.apple.com/app/virelle-studios/id6761315616", "_blank")}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all"
                 >
                   <Download className="h-4 w-4" />
