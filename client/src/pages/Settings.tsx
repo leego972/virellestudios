@@ -47,7 +47,7 @@ const VOICE_MUSIC_PROVIDERS = [
     id: "elevenlabs",
     name: "ElevenLabs",
     description: "Industry-leading AI voice acting. Natural, expressive dialogue for every character.",
-    signupUrl: "https://elevenlabs.io/app/settings/api-keys",
+    signupUrl: "https://elevenlabs.io/sign-up",
     pricing: "Starter: $5/mo (30K chars). Creator: $22/mo (100K chars).",
     models: "Multilingual v2, Turbo v2.5, Voice Cloning",
   },
