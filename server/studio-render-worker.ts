@@ -16,7 +16,7 @@
   import { logger } from "./_core/logger";
   import { decryptApiKey } from "./_core/securityEngine";
   import { generateVideoStrict } from "./_core/byokVideoEngine";
-  import type { VideoProvider, VideoGenerationRequest } from "./_core/byokVideoEngine";
+  import type { VideoProvider } from "./_core/byokVideoEngine";
 
   const POLL_INTERVAL_MS = 30_000;
 
@@ -79,10 +79,9 @@
 
       const req: VideoGenerationRequest = {
         prompt,
-        provider: job.provider as VideoProvider,
-        imageUrl:  sourceImageUrls[0],
-        duration:  5,
-        ratio:     "16:9",
+        imageUrl:     sourceImageUrls[0],
+        duration:     5,
+        aspectRatio:  "16:9",
       };
 
       // ── Strict BYOK dispatch — NO cascade, NO Pollinations fallback ───────────
