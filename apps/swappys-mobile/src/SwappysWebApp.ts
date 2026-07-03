@@ -1,109 +1,94 @@
 export const SWAPPYS_HTML = String.raw`<!doctype html>
   <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <title>Swappys by Virelle Studios</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+    <title>Swappys</title>
     <style>
-      :root{
-        --bg:#07070e;--panel:#0c0b18;--gold:#d4af37;--gold2:#ffbf3f;
-        --pink:#ff2e78;--cyan:#20f6ff;--purple:#a855f7;
-        --text:#f8fbff;--muted:#9ba8c7;--border:#ffffff18
-      }
       *{box-sizing:border-box;margin:0;padding:0}
-      body{
-        background:radial-gradient(circle at 12% 0,#4420ff40,transparent 38%),
-                   radial-gradient(circle at 92% 6%,#ff9a0040,transparent 28%),
-                   var(--bg);
-        color:var(--text);
-        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-        min-height:100vh
+      body{background:#07070e;color:#f8fbff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;min-height:100vh}
+      .app{padding:18px 16px 48px;max-width:480px;margin:0 auto}
+
+      /* header */
+      .hdr{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+      .logo{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#2510ff,#bc18ff 40%,#ff2e78 70%,#ffb000);display:grid;place-items:center;flex-shrink:0;box-shadow:0 8px 24px #0006}
+      .logo svg{width:38px}
+      .hdr-text h1{font-size:22px;font-weight:900;letter-spacing:-0.5px}
+      .hdr-text p{font-size:11px;color:#9ba8c7;margin-top:2px}
+
+      /* upload zones */
+      .zones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+      .zone{border:2px dashed #ffffff25;border-radius:18px;padding:0;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;position:relative;overflow:hidden;background:#0c0b18;transition:border-color .2s}
+      .zone:active{border-color:#ff2e78}
+      .zone.has-img{border-style:solid;border-color:#ffffff18}
+      .zone input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:100px}
+      .zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:16px}
+      .zone-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#9ba8c7;z-index:1;pointer-events:none}
+      .zone-icon{font-size:26px;z-index:1;pointer-events:none}
+      .zone-hint{font-size:9px;color:#ffffff40;z-index:1;pointer-events:none}
+      .zone-overlay{position:absolute;bottom:0;left:0;right:0;background:#00000099;padding:5px;text-align:center;font-size:9px;font-weight:700;color:#fff;z-index:2;pointer-events:none}
+
+      /* swap arrow */
+      .swap-arrow{text-align:center;font-size:22px;margin:0 0 14px;color:#ff2e78}
+
+      /* swap button */
+      .btn-swap{width:100%;padding:16px;border:0;border-radius:18px;font-size:17px;font-weight:900;cursor:pointer;transition:transform .1s,opacity .2s;letter-spacing:.3px}
+      .btn-swap:active{transform:scale(.97)}
+      .btn-swap.ready{background:linear-gradient(135deg,#ff2e78,#bc18ff 50%,#2510ff);color:#fff;box-shadow:0 8px 28px #ff2e7840}
+      .btn-swap.disabled{background:#1a1a2e;color:#ffffff40;cursor:not-allowed}
+      .btn-swap.loading{background:linear-gradient(135deg,#ff2e78,#bc18ff);color:#fff;opacity:.7}
+
+      /* result */
+      .result-wrap{margin-top:16px;border-radius:20px;overflow:hidden;position:relative;display:none}
+      .result-wrap.show{display:block}
+      .result-img{width:100%;display:block;border-radius:20px}
+
+      /* watermark — annoying tiled overlay */
+      .wm-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:10}
+      .wm-tile{
+        position:absolute;inset:0;
+        background-image:repeating-linear-gradient(
+          45deg,
+          transparent,transparent 60px,
+          rgba(255,255,255,0.08) 60px,rgba(255,255,255,0.08) 61px
+        );
       }
-      .app{padding:20px 16px 40px}
-
-      /* ── Hero ── */
-      .hero{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-      .logo{
-        width:72px;height:72px;border-radius:22px;flex-shrink:0;
-        background:linear-gradient(135deg,#2510ff,#bc18ff 42%,#ff2e78 72%,#ffb000);
-        display:grid;place-items:center;
-        box-shadow:0 16px 40px #0008
+      .wm-center{
+        background:#07070ecc;border:2px solid #ff2e7860;border-radius:14px;
+        padding:10px 18px;text-align:center;backdrop-filter:blur(4px)
       }
-      .logo svg{width:52px}
-      .hero-text h1{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1}
-      .hero-text p{margin-top:4px;font-size:12px;color:var(--muted)}
-
-      /* ── Badge ── */
-      .free-badge{
-        display:inline-flex;align-items:center;gap:6px;
-        background:#d4af3718;border:1px solid #d4af3730;
-        border-radius:999px;padding:5px 12px;
-        font-size:11px;font-weight:700;color:var(--gold2);
-        text-transform:uppercase;letter-spacing:.6px;
-        margin-bottom:14px
+      .wm-center p{font-size:13px;font-weight:900;color:#ff2e78;letter-spacing:1px;text-transform:uppercase}
+      .wm-center small{font-size:10px;color:#ffffff80}
+      .wm-corners span{
+        position:absolute;font-size:9px;font-weight:700;color:#ffffff50;
+        letter-spacing:.5px;text-transform:uppercase
       }
+      .wm-corners span:nth-child(1){top:8px;left:10px}
+      .wm-corners span:nth-child(2){top:8px;right:10px}
+      .wm-corners span:nth-child(3){bottom:8px;left:10px}
+      .wm-corners span:nth-child(4){bottom:8px;right:10px}
 
-      /* ── Hero copy ── */
-      .hero-copy{margin-bottom:20px}
-      .hero-copy h2{font-size:20px;font-weight:800;line-height:1.2;margin-bottom:8px}
-      .hero-copy p{font-size:13px;color:var(--muted);line-height:1.55}
+      /* upgrade banner */
+      .upgrade{margin-top:12px;background:linear-gradient(135deg,#ff2e7818,#bc18ff18);border:1px solid #ff2e7840;border-radius:18px;padding:14px 16px;display:none}
+      .upgrade.show{display:block}
+      .upgrade h3{font-size:14px;font-weight:800;color:#ff2e78;margin-bottom:4px}
+      .upgrade p{font-size:12px;color:#9ba8c7;margin-bottom:12px;line-height:1.5}
+      .btn-upgrade{width:100%;padding:13px;border:0;border-radius:14px;background:linear-gradient(135deg,#ff2e78,#bc18ff);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
 
-      /* ── Card ── */
-      .card{
-        background:#ffffff09;border:1px solid var(--border);
-        border-radius:20px;padding:16px;margin-bottom:14px
-      }
-      .card-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
-      .card-title .dot{width:8px;height:8px;border-radius:50%}
-      .dot-gold{background:var(--gold2)}
-      .dot-purple{background:var(--purple)}
-      .dot-cyan{background:var(--cyan)}
+      /* status */
+      .status{text-align:center;font-size:12px;color:#9ba8c7;margin-top:10px;min-height:18px}
+      .status.err{color:#f87171}
+      .status.ok{color:#4ade80}
 
-      /* ── Feature list ── */
-      .feature-list{display:flex;flex-direction:column;gap:9px}
-      .feature-row{display:flex;align-items:flex-start;gap:10px}
-      .feature-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
-      .feature-label{font-size:13px;font-weight:700}
-      .feature-desc{font-size:11px;color:var(--muted);margin-top:2px}
-
-      /* ── Upgrade banner ── */
-      .upgrade-banner{
-        background:linear-gradient(135deg,#d4af3712,#a855f712);
-        border:1px solid #d4af3730;border-radius:20px;
-        padding:16px;margin-bottom:14px
-      }
-      .upgrade-banner h3{font-size:14px;font-weight:800;color:var(--gold2);margin-bottom:6px}
-      .upgrade-banner p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
-      .upgrade-perks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-      .perk{
-        background:#d4af3720;border:1px solid #d4af3730;
-        border-radius:999px;padding:5px 10px;
-        font-size:11px;font-weight:600;color:var(--gold2)
-      }
-
-      /* ── Buttons ── */
-      .btn{
-        width:100%;border:0;border-radius:14px;padding:13px 14px;
-        color:#fff;font-weight:800;font-size:13px;cursor:pointer;
-        display:flex;align-items:center;justify-content:center;gap:8px
-      }
-      .btn-gold{background:linear-gradient(135deg,#ffbf3f,#ff8b2e);color:#120800}
-      .btn-pink{background:linear-gradient(135deg,#ff2e78,#8d2cff)}
-      .btn-ghost{background:#ffffff14;border:1px solid var(--border)}
-      .btn-cyan{background:linear-gradient(135deg,#20f6ff 0%,#226dff 100%)}
-      .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-
-      /* ── Connection ── */
-      .conn-label{font-size:11px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.45}
-      .good{color:#4ade80!important}
-      .bad{color:#f87171!important}
+      /* spinner */
+      @keyframes spin{to{transform:rotate(360deg)}}
+      .spin{display:inline-block;animation:spin .8s linear infinite}
     </style>
   </head>
   <body>
   <div class="app">
 
-    <!-- Hero -->
-    <div class="hero">
+    <div class="hdr">
       <div class="logo">
         <svg viewBox="0 0 120 120" fill="none">
           <rect x="10" y="30" width="100" height="65" rx="20" fill="#fff"/>
@@ -115,90 +100,128 @@ export const SWAPPYS_HTML = String.raw`<!doctype html>
           <path d="M24 21l-18 14 18 14M96 21l18 14-18 14" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <div class="hero-text">
+      <div class="hdr-text">
         <h1>Swappys</h1>
-        <p>by Virelle Studios</p>
+        <p>AI face &amp; body swap · by Virelle Studios</p>
       </div>
     </div>
 
-    <!-- Badge + copy matching the Virelle website -->
-    <div class="free-badge">✦ Free — No Subscription Needed</div>
-    <div class="hero-copy">
-      <h2>Your free entry into<br/>Hollywood AI filmmaking.</h2>
-      <p>Script, storyboard, and generate AI video clips — no subscription needed. Upgrade to Virelle Studios to unlock BYOK, unlimited exports, and remove the watermark.</p>
+    <div class="zones">
+      <div class="zone" id="zoneSource" onclick="document.getElementById('inputSource').click()">
+        <input type="file" id="inputSource" accept="image/*" onchange="loadImg('source',this)"/>
+        <div class="zone-icon">🤳</div>
+        <div class="zone-label">Your Face</div>
+        <div class="zone-hint">Tap to choose</div>
+      </div>
+      <div class="zone" id="zoneTarget" onclick="document.getElementById('inputTarget').click()">
+        <input type="file" id="inputTarget" accept="image/*" onchange="loadImg('target',this)"/>
+        <div class="zone-icon">🎬</div>
+        <div class="zone-label">Target Body</div>
+        <div class="zone-hint">Tap to choose</div>
+      </div>
     </div>
 
-    <!-- Free features — matching website copy -->
-    <div class="card">
-      <div class="card-title"><span class="dot dot-gold"></span>Free Features</div>
-      <div class="feature-list">
-        <div class="feature-row">
-          <div class="feature-icon">📝</div>
-          <div><div class="feature-label">Script Writer</div><div class="feature-desc">Write screenplays from your phone</div></div>
+    <div class="swap-arrow">⇅</div>
+
+    <button class="btn-swap disabled" id="btnSwap" onclick="doSwap()">Swap Face &amp; Body</button>
+
+    <div class="status" id="statusMsg"></div>
+
+    <div class="result-wrap" id="resultWrap">
+      <img class="result-img" id="resultImg" src="" alt="Swap result"/>
+      <div class="wm-overlay" id="wmOverlay">
+        <div class="wm-tile"></div>
+        <div class="wm-corners">
+          <span>SWAPPYS</span><span>SWAPPYS</span>
+          <span>virelle.life</span><span>virelle.life</span>
         </div>
-        <div class="feature-row">
-          <div class="feature-icon">🖼️</div>
-          <div><div class="feature-label">Storyboard</div><div class="feature-desc">Visual planning in your pocket</div></div>
-        </div>
-        <div class="feature-row">
-          <div class="feature-icon">🎥</div>
-          <div><div class="feature-label">AI Video Clips</div><div class="feature-desc">Generate clips — no key required</div></div>
-        </div>
-        <div class="feature-row">
-          <div class="feature-icon">🎬</div>
-          <div><div class="feature-label">Director Chat</div><div class="feature-desc">AI creative guidance on the go</div></div>
+        <div class="wm-center">
+          <p>SWAPPYS WATERMARK</p>
+          <small>Upgrade to remove</small>
         </div>
       </div>
     </div>
 
-    <!-- Upgrade banner — matching website upgrade copy -->
-    <div class="upgrade-banner">
-      <h3>Unlock Virelle Creator</h3>
-      <p>Upgrade inside the app to access BYOK, unlimited exports, and full watermark controls — using your own AI provider keys.</p>
-      <div class="upgrade-perks">
-        <span class="perk">BYOK provider keys</span>
-        <span class="perk">Unlimited exports</span>
-        <span class="perk">Remove watermark</span>
-        <span class="perk">Broadcast Mode</span>
-        <span class="perk">Studio Render</span>
-      </div>
-      <button class="btn btn-gold" onclick="openVirelle('/register')">Join Creator →</button>
-    </div>
-
-    <!-- Virelle connection -->
-    <div class="card">
-      <div class="card-title"><span class="dot dot-cyan"></span>Virelle Connection</div>
-      <div class="grid2" style="margin-bottom:8px">
-        <button class="btn btn-ghost" onclick="openVirelle('/login')">Login</button>
-        <button class="btn btn-pink" onclick="openVirelle('/virelle-broadcast-render')">Broadcast / Render</button>
-      </div>
-      <button class="btn btn-cyan" onclick="checkConnection()" style="margin-bottom:0">Verify Connection</button>
-      <p id="connection" class="conn-label">Connection not checked.</p>
+    <div class="upgrade" id="upgradeCard">
+      <h3>🔒 Remove the watermark</h3>
+      <p>Join Virelle Creator to get clean, full-quality swaps powered by fal.ai — no watermark, unlimited exports.</p>
+      <button class="btn-upgrade" onclick="joinCreator()">Join Virelle Creator →</button>
     </div>
 
   </div>
   <script>
-    const post = p => window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify(p));
-    function openVirelle(path) { post({ type: 'openUrl', url: 'https://virelle.life' + path }); }
-    function checkConnection() {
-      document.getElementById('connection').textContent = 'Checking Virelle connection…';
-      document.getElementById('connection').className = 'conn-label';
-      post({ type: 'checkVirelleConnection' });
+    const VIRELLE = 'https://virelle.life';
+    let srcB64 = null, tgtB64 = null;
+
+    function post(p){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify(p)); }
+    function joinCreator(){ post({ type:'openUrl', url: VIRELLE+'/register?source=swappys-mobile&product=swappys&intent=creator-upgrade' }); }
+
+    function loadImg(which, input){
+      const file = input.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const b64 = e.target.result;
+        const zone = document.getElementById('zone' + (which==='source'?'Source':'Target'));
+        let img = zone.querySelector('img.preview');
+        if(!img){ img = document.createElement('img'); img.className='preview'; zone.insertBefore(img, zone.firstChild); }
+        img.src = b64;
+        let lbl = zone.querySelector('.zone-overlay');
+        if(!lbl){ lbl = document.createElement('div'); lbl.className='zone-overlay'; zone.appendChild(lbl); }
+        lbl.textContent = which==='source' ? 'YOUR FACE' : 'TARGET BODY';
+        zone.classList.add('has-img');
+        if(which==='source') srcB64 = b64; else tgtB64 = b64;
+        updateBtn();
+      };
+      reader.readAsDataURL(file);
     }
-    window.SwappysNative = {
-      setVirelleConnection: function(p) {
-        const el = document.getElementById('connection');
-        if (p.ok) {
-          el.textContent = '✓ Connected — ' + (p.health || 'Virelle online');
-          el.className = 'conn-label good';
-        } else {
-          el.textContent = '✗ Not connected — ' + (p.error || p.health || 'check your connection');
-          el.className = 'conn-label bad';
-        }
+
+    function updateBtn(){
+      const btn = document.getElementById('btnSwap');
+      btn.className = 'btn-swap ' + (srcB64 && tgtB64 ? 'ready' : 'disabled');
+    }
+
+    async function doSwap(){
+      if(!srcB64 || !tgtB64) return;
+      const btn = document.getElementById('btnSwap');
+      if(btn.classList.contains('loading')) return;
+      btn.className = 'btn-swap loading';
+      btn.innerHTML = '<span class="spin">⟳</span> Swapping…';
+      setStatus('Sending to Virelle AI…');
+      document.getElementById('resultWrap').classList.remove('show');
+      document.getElementById('upgradeCard').classList.remove('show');
+
+      try {
+        const resp = await fetch(VIRELLE + '/api/trpc/swap.bodyFaceSwap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ json: { sourceImageBase64: srcB64, targetImageBase64: tgtB64 } }),
+          credentials: 'include',
+        });
+        const data = await resp.json();
+        const result = data?.result?.data?.json ?? data?.result?.data;
+        if(!result?.imageUrl) throw new Error(data?.error?.message || 'Swap failed — try different photos');
+
+        document.getElementById('resultImg').src = result.imageUrl;
+        document.getElementById('resultWrap').classList.add('show');
+        const isWatermarked = result.hasWatermark !== false;
+        document.getElementById('wmOverlay').style.display = isWatermarked ? 'flex' : 'none';
+        if(isWatermarked) document.getElementById('upgradeCard').classList.add('show');
+        setStatus(isWatermarked ? 'Done — watermark applied. Upgrade to remove it.' : 'Clean swap complete ✓', isWatermarked ? '' : 'ok');
+      } catch(err){
+        setStatus(err.message || 'Something went wrong — please try again.', 'err');
       }
-    };
+
+      btn.className = 'btn-swap ready';
+      btn.innerHTML = 'Swap Again';
+    }
+
+    function setStatus(msg, cls){
+      const el = document.getElementById('statusMsg');
+      el.textContent = msg;
+      el.className = 'status' + (cls ? ' '+cls : '');
+    }
+
     post({ type: 'appReady' });
-  </script>
-  </body>
-  </html>`;
+  `;
   
