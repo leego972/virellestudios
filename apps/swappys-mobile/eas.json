@@ -10,6 +10,26 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "ios": {
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "distribution": "store"
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascApiKeyIssuerId": "d7c6c514-df7f-4adb-a4a0-b0553ea751a4",
+        "ascApiKeyId": "2WG5YUFL55",
+        "ascApiKeyPath": "$EXPO_APPLE_API_KEY_PATH",
+        "appleTeamId": "5AUSX9646V",
+        "ascAppId": "FILL_IN_SWAPPYS_ASC_APP_ID",
+        "language": "en-US"
+      }
+    }
   }
 }
