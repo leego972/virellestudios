@@ -77,7 +77,7 @@
         ? (typeof job.sourceImageUrls === "string" ? JSON.parse(job.sourceImageUrls) : job.sourceImageUrls)
         : [];
 
-      const req: VideoGenerationRequest = {
+      const req = {
         prompt,
         imageUrl:     sourceImageUrls[0],
         duration:     5,
