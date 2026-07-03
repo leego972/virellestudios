@@ -189,6 +189,27 @@ import { useLocation } from "wouter";
 
           </div>
 
+            <section>
+              <h2 className="text-lg font-semibold mb-3 gradient-text-gold">Governing Law &amp; Jurisdiction</h2>
+              <p className="text-muted-foreground">
+                These terms are governed by and construed in accordance with the laws of{" "}
+                <strong className="text-foreground">Victoria, Australia</strong>, and the
+                Commonwealth of Australia. Virelle Studios is established in Melbourne, Australia.
+                Any dispute arising under this policy shall be subject to the non-exclusive
+                jurisdiction of the courts of Victoria, Australia.
+              </p>
+              <p className="text-muted-foreground mt-3">
+                These terms are subject to the{" "}
+                <strong className="text-foreground">Australian Consumer Law</strong>{" "}
+                (Schedule&nbsp;2, Competition and Consumer Act 2010 (Cth)). Nothing herein
+                excludes, restricts, or modifies any right or remedy you may have under the
+                Australian Consumer Law or other mandatory consumer protection laws applicable
+                to you. Where both parties are located outside Australia, the laws of England
+                and Wales apply as a secondary governing law.
+              </p>
+            </section>
+
+  
           <div className="mt-12 p-5 rounded-xl bg-zinc-900/50 border border-amber-500/15 text-xs text-muted-foreground">
             <p>Questions? Contact <a href="mailto:studiosvirelle@gmail.com" className="text-amber-400 hover:underline">studiosvirelle@gmail.com</a>. This policy is reviewed periodically. Continued use of the platform after changes constitutes acceptance of the updated policy.</p>
           </div>
