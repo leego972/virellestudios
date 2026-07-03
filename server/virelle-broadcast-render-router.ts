@@ -199,9 +199,11 @@ export const virelleBroadcastRenderRouter = router({
 
   createBroadcastSession: protectedProcedure.input(createJobInput.extend({
     durationMinutes: z.union([z.literal(30), z.literal(60), z.literal(120)]).default(30),
-    destination: z.enum(BROADCAST_DESTINATIONS).default("rtmp"),
-    ingestUrl: z.string().url().optional().nullable(),
-    streamKey: z.string().max(300).optional().nullable(),
+    channels: z.array(z.object({
+      destination: z.enum(BROADCAST_DESTINATIONS),
+      ingestUrl: z.string().url().optional().nullable(),
+      streamKey: z.string().max(300).optional().nullable(),
+    })).min(1).max(5),
   })).mutation(async ({ ctx, input }) => {
     requireVfxStudioTier(ctx.user as any, "creator", "Virelle Broadcast Mode");
 
@@ -260,7 +262,8 @@ export const virelleBroadcastRenderRouter = router({
       costPolicy: "provider_cost_paid_by_user_key",
       mode: "broadcast",
       durationMinutes: input.durationMinutes,
-      destination: input.destination,
+      channels: input.channels,
+      destination: input.channels[0].destination,
       transformGoal: input.transformGoal,
       nextWorkerStep: "create_live_transform_bridge_rtmp_webrtc_or_obs",
       safety: {
@@ -275,11 +278,11 @@ export const virelleBroadcastRenderRouter = router({
       INSERT INTO virelle_video_transform_jobs
         (userId, projectId, sceneId, mode, status, provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls, referenceImageUrls, transformGoal, targetAge, targetPresentation, broadcastDestination, ingestUrl, streamKeyMasked, directorNotes, consentConfirmed, visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
       VALUES
-        (${ctx.user.id}, ${input.projectId || null}, ${input.sceneId || null}, 'broadcast', 'broadcast_ready', ${provider}, ${input.sourceVideoUrl || null}, ${input.referenceVideoUrl || null}, ${JSON.stringify(input.sourceImageUrls)}, ${JSON.stringify(input.referenceImageUrls)}, ${input.transformGoal}, ${input.targetAge || null}, ${input.targetPresentation || null}, ${input.destination}, ${input.ingestUrl || null}, ${maskStreamKey(input.streamKey)}, ${input.directorNotes || null}, ${input.consentConfirmed ? 1 : 0}, ${input.hideVisibleWatermark ? 'internal_provenance_only' : 'visible_ai_mark_required'}, 1, ${orchestrationCredits}, ${JSON.stringify(metadata)})
+        (${ctx.user.id}, ${input.projectId || null}, ${input.sceneId || null}, 'broadcast', 'broadcast_ready', ${provider}, ${input.sourceVideoUrl || null}, ${input.referenceVideoUrl || null}, ${JSON.stringify(input.sourceImageUrls)}, ${JSON.stringify(input.referenceImageUrls)}, ${input.transformGoal}, ${input.targetAge || null}, ${input.targetPresentation || null}, ${input.channels[0].destination}, ${input.channels[0].ingestUrl || null}, ${maskStreamKey(input.channels[0].streamKey)}, ${input.directorNotes || null}, ${input.consentConfirmed ? 1 : 0}, ${input.hideVisibleWatermark ? 'internal_provenance_only' : 'visible_ai_mark_required'}, 1, ${orchestrationCredits}, ${JSON.stringify(metadata)})
     `);
     const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
-    logger.info(`[VirelleBroadcast] session=${sessionId} user=${ctx.user.id} provider=${provider} destination=${input.destination}`);
-    return { ok: true, sessionId, status: "broadcast_ready", mode: "broadcast", provider, destination: input.destination, byokRequired: true, orchestrationCredits };
+    logger.info(`[VirelleBroadcast] session=${sessionId} user=${ctx.user.id} provider=${provider} channels=${input.channels.length} primaryDest=${input.channels[0].destination}`);
+    return { ok: true, sessionId, status: "broadcast_ready", mode: "broadcast", provider, channels: input.channels.length, primaryDestination: input.channels[0].destination, byokRequired: true, orchestrationCredits };
   }),
 
   listJobs: protectedProcedure.input(z.object({ projectId: z.number().optional(), sceneId: z.number().optional(), mode: z.enum(["broadcast", "studio_render"]).optional(), limit: z.number().min(1).max(100).default(25) })).query(async ({ ctx, input }) => {
