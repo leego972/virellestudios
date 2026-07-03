@@ -79,9 +79,9 @@ function Inner() {
   const [requestedProvider, setRequestedProvider] = useState<Provider | "">("");
   const [directorNotes, setDirectorNotes] = useState("");
   const [consentConfirmed, setConsentConfirmed] = useState(false);
-  const [destination, setDestination] = useState<"rtmp" | "rtmp_onlyfans" | "rtmp_fansly" | "rtmp_chaturbate" | "webrtc" | "obs" | "custom">("rtmp");
-  const [ingestUrl, setIngestUrl] = useState("");
-  const [streamKey, setStreamKey] = useState("");
+  type BroadcastDestination = "rtmp" | "rtmp_onlyfans" | "rtmp_fansly" | "rtmp_chaturbate" | "webrtc" | "obs" | "custom";
+  type BroadcastChannel = { destination: BroadcastDestination; ingestUrl: string; streamKey: string };
+  const [channels, setChannels] = useState<BroadcastChannel[]>([{ destination: "rtmp", ingestUrl: "", streamKey: "" }]);
 
   const basePayload = {
     projectId: projectId.trim() ? Number(projectId) : null,
@@ -99,12 +99,12 @@ function Inner() {
     hideVisibleWatermark: true,
   };
 
-  // v7.2 — Preset handlers for cam platforms
-  useEffect(() => {
-    if (destination === "rtmp_onlyfans") setIngestUrl("rtmps://live.onlyfans.com/app/");
-    else if (destination === "rtmp_fansly") setIngestUrl("rtmps://live.fansly.com/live/");
-    else if (destination === "rtmp_chaturbate") setIngestUrl("rtmp://broadcast.chaturbate.com/live/");
-  }, [destination]);
+  function destDefaultUrl(dest: string) {
+    if (dest === "rtmp_onlyfans") return "rtmps://live.onlyfans.com/app/";
+    if (dest === "rtmp_fansly") return "rtmps://live.fansly.com/live/";
+    if (dest === "rtmp_chaturbate") return "rtmp://broadcast.chaturbate.com/live/";
+    return "";
+  }
 
   // v7.3 — "Go Live as Avatar": prefill avatar media handed off from Swappys / VFX Suite
   useEffect(() => {
@@ -148,8 +148,15 @@ function Inner() {
       return;
     }
     try {
-      const result = await createBroadcast.mutateAsync({ ...basePayload, destination, ingestUrl: ingestUrl.trim() || null, streamKey: streamKey.trim() || null });
-      toast.success(`Broadcast session ready with ${result.provider}. Session #${result.sessionId}`);
+      const result = await createBroadcast.mutateAsync({
+        ...basePayload,
+        channels: channels.map((ch) => ({
+          destination: ch.destination,
+          ingestUrl: ch.ingestUrl.trim() || null,
+          streamKey: ch.streamKey.trim() || null,
+        })),
+      });
+      toast.success(`Broadcast session ready with ${result.provider}. Session #${result.sessionId} · ${channels.length} channel${channels.length > 1 ? "s" : ""}`);
       jobs.refetch();
     } catch (err: any) {
       toast.error(err?.message || "Could not create Broadcast session");
@@ -320,26 +327,39 @@ function Inner() {
           <Card className="border-blue-500/20">
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Radio className="h-4 w-4 text-blue-400" /> Broadcast Mode</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              <div>
-                <Label>Destination</Label>
-                <select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={destination} onChange={(e) => setDestination(e.target.value as any)}>
-                  <option value="rtmp">RTMP (Custom)</option>
-                  <option value="rtmp_onlyfans">OnlyFans</option>
-                  <option value="rtmp_fansly">Fansly</option>
-                  <option value="rtmp_chaturbate">Chaturbate</option>
-                  <option value="webrtc">WebRTC</option>
-                  <option value="obs">OBS bridge</option>
-                  <option value="custom">Custom Engine</option>
-                </select>
-              </div>
-              <div>
-                <Label>Ingest URL</Label>
-                <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ingestUrl} onChange={(e) => setIngestUrl(e.target.value)} />
-              </div>
-              <div>
-                <Label>Stream key</Label>
-                <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={streamKey} onChange={(e) => setStreamKey(e.target.value)} />
-              </div>
+              {channels.map((ch, i) => (
+                <div key={i} className="rounded-md border p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">Channel {i + 1}</span>
+                    {channels.length > 1 && (
+                      <button type="button" className="text-xs text-muted-foreground hover:text-red-400" onClick={() => setChannels((prev) => prev.filter((_, j) => j !== i))}>Remove</button>
+                    )}
+                  </div>
+                  <div>
+                    <Label>Destination</Label>
+                    <select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={ch.destination} onChange={(e) => { const dest = e.target.value as BroadcastDestination; setChannels((prev) => prev.map((c, j) => j === i ? { ...c, destination: dest, ingestUrl: destDefaultUrl(dest) } : c)); }}>
+                      <option value="rtmp">RTMP (Custom)</option>
+                      <option value="rtmp_onlyfans">OnlyFans</option>
+                      <option value="rtmp_fansly">Fansly</option>
+                      <option value="rtmp_chaturbate">Chaturbate</option>
+                      <option value="webrtc">WebRTC</option>
+                      <option value="obs">OBS bridge</option>
+                      <option value="custom">Custom Engine</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Ingest URL</Label>
+                    <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="rtmp://..." value={ch.ingestUrl} onChange={(e) => setChannels((prev) => prev.map((c, j) => j === i ? { ...c, ingestUrl: e.target.value } : c))} />
+                  </div>
+                  <div>
+                    <Label>Stream key</Label>
+                    <input className="w-full rounded-md border bg-background px-3 py-2 text-sm" type="password" value={ch.streamKey} onChange={(e) => setChannels((prev) => prev.map((c, j) => j === i ? { ...c, streamKey: e.target.value } : c))} />
+                  </div>
+                </div>
+              ))}
+              {channels.length < 5 && (
+                <Button type="button" size="sm" variant="outline" className="w-full" onClick={() => setChannels((prev) => [...prev, { destination: "rtmp" as BroadcastDestination, ingestUrl: "", streamKey: "" }])}>+ Add Channel</Button>
+              )}
               <Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>
                 {createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />} Go Live as Swappys Avatar
               </Button>
