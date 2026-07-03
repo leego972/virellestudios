@@ -37,7 +37,7 @@
       "virelleUpgradeUrl": "https://virelle.life/register?source=swappys-mobile&product=swappys&intent=creator-upgrade",
       "virelleLoginUrl": "https://virelle.life/login?source=swappys-mobile",
       "eas": {
-        "projectId": "FILL_IN_AFTER_eas_init"
+        "projectId": "14f30d0d-2798-463b-b7db-b8e237286313"
       }
     },
     "icon": "./assets/icon.png",
