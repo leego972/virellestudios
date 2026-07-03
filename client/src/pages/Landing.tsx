@@ -746,12 +746,11 @@ export default function Landing() {
                   <span className="text-2xl">✦</span>
                   <div>
                     <p className="text-white font-bold text-base">Swappys Mobile — Free</p>
-                    <p className="text-white/50 text-xs">Your free entry into Hollywood AI filmmaking</p>
+                    <p className="text-white/50 text-xs">AI face &amp; body swap — free</p>
                   </div>
                 </div>
                 <p className="text-white/40 text-xs mb-4 leading-relaxed">
-                  Script, storyboard, and generate AI video clips — no subscription needed.
-                  Upgrade to Virelle Studios inside the app to unlock BYOK, unlimited exports, and remove the watermark.
+                  Swap any face or body with AI — no account needed. Output has a watermark. Upgrade to Virelle Creator inside the app for clean, full-quality swaps.
                 </p>
                 <button
                   onClick={() => window.open("https://apps.apple.com/app/virelle-studios/id6761315616", "_blank")}
