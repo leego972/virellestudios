@@ -6,7 +6,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.virelle.swappys",
@@ -15,16 +17,34 @@
         "NSMicrophoneUsageDescription": "Swappys uses the microphone when recording clips.",
         "NSPhotoLibraryUsageDescription": "Swappys lets you choose source and reference media from your library.",
         "NSPhotoLibraryAddUsageDescription": "Swappys can save exported recordings if you choose to download them."
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": []
       }
     },
     "android": {
       "package": "com.virelle.swappys",
-      "permissions": ["CAMERA", "RECORD_AUDIO", "READ_MEDIA_IMAGES", "READ_MEDIA_VIDEO", "WRITE_EXTERNAL_STORAGE"]
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "extra": {
       "virelleBaseUrl": "https://virelle.life",
       "virelleUpgradeUrl": "https://virelle.life/register?source=swappys-mobile&product=swappys&intent=creator-upgrade",
-      "virelleLoginUrl": "https://virelle.life/login?source=swappys-mobile"
+      "virelleLoginUrl": "https://virelle.life/login?source=swappys-mobile",
+      "eas": {
+        "projectId": "FILL_IN_AFTER_eas_init"
+      }
+    },
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#07070e"
     }
   }
 }
