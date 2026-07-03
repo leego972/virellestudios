@@ -16,7 +16,8 @@
         "NSCameraUsageDescription": "Swappys uses the camera for live preview and recording.",
         "NSMicrophoneUsageDescription": "Swappys uses the microphone when recording clips.",
         "NSPhotoLibraryUsageDescription": "Swappys lets you choose source and reference media from your library.",
-        "NSPhotoLibraryAddUsageDescription": "Swappys can save exported recordings if you choose to download them."
+        "NSPhotoLibraryAddUsageDescription": "Swappys can save exported recordings if you choose to download them.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": []
