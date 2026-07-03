@@ -1162,7 +1162,7 @@ export function getRecommendedPlatforms(contentType: AdContentType): AdPlatform[
     roi_breakdown: ["linkedin_producers", "linkedin_studios", "reddit_indiefilm", "reddit_filmmakers"],
     executive_briefing: ["linkedin_studios", "linkedin", "hackernews"],
   };
-  const ids = recommendations[contentType] || [];;
+  const ids = recommendations[contentType] || [];
   return AD_PLATFORMS.filter(p => ids.includes(p.id));
 }
 
