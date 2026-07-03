@@ -44,10 +44,10 @@ export default function App() {
           const featuresJson = await featuresResponse.json();
           featuresOk = Boolean(
             featuresJson?.ok &&
-              featuresJson?.features?.creatorUpgrade &&
-              featuresJson?.features?.swappysStudio &&
-              featuresJson?.features?.watermarkControls &&
-              featuresJson?.features?.byokVideoRequired,
+              featuresJson?.flags?.creatorUpgrade &&
+              featuresJson?.flags?.swappysStudio &&
+              featuresJson?.flags?.watermarkControls &&
+              featuresJson?.flags?.byokVideoRequired,
           );
         }
       } catch {
