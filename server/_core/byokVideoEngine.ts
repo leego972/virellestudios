@@ -1092,3 +1092,52 @@ export function validateApiKey(provider: VideoProvider, key: string): { valid: b
 
   return { valid: true, message: "Key format looks valid" };
 }
+
+
+  /**
+   * generateVideoStrict — strict BYOK-only single-provider dispatch.
+   *
+   * SAFETY: No cascade. No Pollinations fallback. No platform-funded video.
+   * Used exclusively by premium Virelle Studio Render and Broadcast workers.
+   * If the provider fails the error is surfaced immediately — no silent fallback.
+   *
+   * @param provider  One of the 8 strict BYOK providers (Pollinations is excluded).
+   * @param decryptedKey  The user's own decrypted API key for that provider.
+   * @param req  Video generation parameters.
+   * @throws BYOK_REQUIRED if provider is unsupported, or the provider call fails.
+   */
+  export async function generateVideoStrict(
+    provider: VideoProvider,
+    decryptedKey: string,
+    req: VideoGenerationRequest
+  ): Promise<VideoGenerationResult> {
+    const STRICT_PROVIDERS: VideoProvider[] = [
+      "runway", "openai", "replicate", "fal", "luma", "huggingface", "seedance", "veo3",
+    ];
+    if (!STRICT_PROVIDERS.includes(provider)) {
+      throw new Error(
+        `BYOK_REQUIRED: Provider "${provider}" is not allowed for premium Studio Render / Broadcast. \n` +
+        `Supported providers: ${STRICT_PROVIDERS.join(", ")}`
+      );
+    }
+
+    // Direct provider dispatch — no cascade, no Pollinations.
+    const dispatchMap: Partial<Record<VideoProvider, (key: string, req: VideoGenerationRequest) => Promise<VideoGenerationResult>>> = {
+      runway:      generateWithRunway,
+      openai:      generateWithOpenAI,
+      replicate:   generateWithReplicate,
+      fal:         generateWithFal,
+      luma:        generateWithLuma,
+      huggingface: generateWithHuggingFace,
+      seedance:    generateWithSeedance,
+      veo3:        generateWithVeo3,
+    };
+
+    const fn = dispatchMap[provider];
+    if (!fn) throw new Error(`BYOK_REQUIRED: No adapter found for provider "${provider}"`);
+
+    logger.info(`[BYOK:Strict] Dispatching to ${provider} — no cascade, no platform fallback`);
+    return fn(decryptedKey, req);
+  }
+
+  
