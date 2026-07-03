@@ -127,6 +127,12 @@
   }
 
   export function startStudioRenderWorker(): void {
+    if (!process.env.VIRELLE_BYOK_RENDER_WORKER) {
+      logger.info("Studio render worker disabled (VIRELLE_BYOK_RENDER_WORKER not set). Set VIRELLE_BYOK_RENDER_WORKER=true to enable.");
+      return;
+    }
+    logger.info("Studio render worker starting (VIRELLE_BYOK_RENDER_WORKER=true)");
+  
     logger.info("[StudioRenderWorker] Starting — BYOK-only, no platform fallback, polls every 30s");
     setTimeout(() => runStudioRenderCycle().catch(console.error), 5_000);
     setInterval(() => runStudioRenderCycle().catch(console.error), POLL_INTERVAL_MS);
