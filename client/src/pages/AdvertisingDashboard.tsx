@@ -41,30 +41,6 @@ const PLATFORM_META: Record<string, { label: string; color: string; icon: React.
 
 // ─── Status Badge ──────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
-    const channelConfigQuery = trpc.advertising.getChannelConfig.useQuery();
-    const setChannelConfig = trpc.advertising.setChannelConfig.useMutation({
-      onSuccess: (d) => {
-        channelConfigQuery.refetch();
-        toast.success(`✅ Saved — auto-posting active for ${Object.values(d.configured).filter(Boolean).length} channel(s)`);
-        setConfigForm({ linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "", reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "", devto_api_key: "", discord_webhook_url: "", instagram_access_token: "", twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "" });
-      },
-      onError: (e) => toast.error(e.message),
-    });
-    const publishContent = trpc.advertising.publishContent.useMutation({
-      onSuccess: (d) => {
-        if (d.posted) { toast.success(`✅ Published to ${d.platform}!`); contentQuery.refetch?.(); }
-        else if (d.manual) { toast.info(`Manual action needed — open ${d.manualUrl} and paste the content.`); }
-        else { toast.error(d.error ?? "Publish failed"); }
-      },
-      onError: (e) => toast.error(e.message),
-    });
-    const [configForm, setConfigForm] = useState({
-      linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "",
-      reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "",
-      devto_api_key: "", discord_webhook_url: "", instagram_access_token: "",
-      twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "",
-    });
-  
   const map: Record<string, { label: string; className: string }> = {
     draft: { label: "Draft", className: "border-amber-500/20 text-zinc-400 bg-zinc-500/10" },
     approved: { label: "Approved", className: "border-green-500/50 text-green-400 bg-green-500/10" },
@@ -293,6 +269,30 @@ export default function AdvertisingDashboard() {
     onError: (err) => toast.error(err.message || "Video generation failed"),
   });
 
+
+  const channelConfigQuery = trpc.advertising.getChannelConfig.useQuery();
+  const setChannelConfig = trpc.advertising.setChannelConfig.useMutation({
+    onSuccess: (d) => {
+      channelConfigQuery.refetch();
+      toast.success(`✅ Saved — auto-posting active for ${Object.values(d.configured).filter(Boolean).length} channel(s)`);
+      setConfigForm({ linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "", reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "", devto_api_key: "", discord_webhook_url: "", instagram_access_token: "", twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "" });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const publishContent = trpc.advertising.publishContent.useMutation({
+    onSuccess: (d) => {
+      if (d.posted) { toast.success(`✅ Published to ${d.platform}!`); contentQueueQuery.refetch?.(); }
+      else if (d.manual) { toast.info(`Manual action needed — open ${d.manualUrl} and paste the content.`); }
+      else { toast.error(d.error ?? "Publish failed"); }
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const [configForm, setConfigForm] = useState({
+    linkedin_access_token: "", linkedin_person_urn: "", linkedin_org_urn: "",
+    reddit_client_id: "", reddit_client_secret: "", reddit_username: "", reddit_password: "",
+    devto_api_key: "", discord_webhook_url: "", instagram_access_token: "",
+    twilio_account_sid: "", twilio_auth_token: "", twilio_whatsapp_from: "",
+  });
   // ─── Access Guard ─────────────────────────────────────────────────────────
   if (!user?.isAdmin) {
     return (
