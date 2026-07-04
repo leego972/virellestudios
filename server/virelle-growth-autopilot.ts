@@ -538,7 +538,7 @@ async function runOneIdea(idea: GrowthIdea): Promise<PublishResult> {
   return publishToYouTube(idea, video.videoUrl, thumbnailUrl);
 }
 
-export async function runWeeklyGrowthAutopilot(options?: { force?: boolean; reason?: RunReason }): Promise<{
+export export async function runWeeklyGrowthAutopilot(options?: { force?: boolean; reason?: RunReason }): Promise<{
   skipped: boolean;
   reason: string;
   plan?: GrowthPlan;
