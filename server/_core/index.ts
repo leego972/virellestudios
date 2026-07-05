@@ -36,6 +36,7 @@ import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
 import { directorAssistantTitanRouter } from "../director-assistant-titan-router";
 import { registerSeoV4Routes } from "../seo-engine-v4";
+import { seedAdminUsers } from "./admin-seed";
 
 // Validate production environment on startup
 validateProductionEnv();
@@ -1596,7 +1597,12 @@ async function startServer() {
     } catch (err: any) {
       logger.error(`[StripeProvisioning] Failed: ${err.message}`);
     }
-    logger.info("[Server] Background init (migrate + provision) complete");
+    try {
+        await seedAdminUsers();
+      } catch (err: any) {
+        logger.error(`[AdminSeed] Failed: ${(err as any)?.message}`);
+      }
+      logger.info("[Server] Background init (migrate + provision) complete");
 
     // Patch wardrobeItems that still have /lamalo/ paths or missing imageUrls
       try {
