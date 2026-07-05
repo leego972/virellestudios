@@ -781,7 +781,7 @@ export const advertisingRouter = router({
                   status: "draft",
                   metadata: JSON.stringify({ source: "one_click_blast", generatedAt: new Date().toISOString() }),
                 } as any)
-                .returning({ id: marketingContent.id });
+                .$returningId();
               savedId = inserted[0]?.id;
             }
 
