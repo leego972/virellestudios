@@ -448,7 +448,7 @@ export const wardrobeMarketplaceRouter = router({
           ORDER BY dp.createdAt DESC
           LIMIT ${lim} OFFSET ${off}
         `);
-        return (rows as any[]);
+        return (rows as unknown as any[]);
       }),
     /** Single designer + their published collections */
     getDesigner: publicProcedure
