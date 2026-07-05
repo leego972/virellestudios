@@ -2,6 +2,16 @@ import { safeJsonExtract } from "./_core/safeParse";
 import { invokeLLM, type Tool, type Message } from "./_core/llm";
 import * as db from "./db";
 import { analyzeProjectHealth } from "./_core/wiseAssistantEngine";
+  import {
+    DIRECTOR_CAPABILITY_REGISTRY,
+    tierSatisfies,
+  } from "./director-capability-registry";
+  import {
+    getVirelleGrowthAutopilotState,
+    startVirelleGrowthAutopilot,
+    stopVirelleGrowthAutopilot,
+    runWeeklyGrowthAutopilot,
+  } from "./virelle-growth-autopilot";
 
 // Define all tools the Director's Assistant can use
 const DIRECTOR_TOOLS: Tool[] = [
@@ -212,7 +222,45 @@ const DIRECTOR_TOOLS: Tool[] = [
       },
     },
   },
-];
+
+    // ── Growth Autopilot (admin-only) ──────────────────────────────────────────
+    {
+      type: "function",
+      function: {
+        name: "check_growth_autopilot_status",
+        description:
+          "Check the current status of the Virelle Growth Autopilot — whether it is enabled, running, when it last ran, and its last result. Admin only.",
+        parameters: { type: "object", properties: {}, required: [] },
+      },
+    },
+    {
+      type: "function",
+      function: {
+        name: "start_growth_autopilot",
+        description:
+          "Enable and start the Virelle Growth Autopilot weekly YouTube content scheduler for Virelle Studios, Swappys, and VIBA. Admin only.",
+        parameters: { type: "object", properties: {}, required: [] },
+      },
+    },
+    {
+      type: "function",
+      function: {
+        name: "stop_growth_autopilot",
+        description:
+          "Stop and disable the Virelle Growth Autopilot scheduler. Any currently running job will complete; no new runs will be scheduled. Admin only.",
+        parameters: { type: "object", properties: {}, required: [] },
+      },
+    },
+    {
+      type: "function",
+      function: {
+        name: "run_growth_autopilot_now",
+        description:
+          "Trigger an immediate Growth Autopilot run — generate a content plan and publish YouTube videos for all three brands right now, without waiting for the weekly schedule. Admin only.",
+        parameters: { type: "object", properties: {}, required: [] },
+      },
+    },
+  ];
 
 // Find a scene by name or number
 async function findScene(projectId: number, sceneName: string) {
@@ -248,7 +296,73 @@ async function executeAction(
   userId: number
 ): Promise<{ success: boolean; message: string; actionType: string; actionData: Record<string, unknown> }> {
   try {
-    switch (toolName) {
+    // ── Per-tool credit deduction + admin/tier gate ──────────────────────────
+      // Plain chat (no tool calls) never reaches this code — 0 credits for chat.
+      const _cap = DIRECTOR_CAPABILITY_REGISTRY[toolName];
+
+      // Admin-only gate (live DB lookup — does not require signature change)
+      if (_cap?.adminOnly) {
+        const _dbAdm = await db.getDb();
+        if (_dbAdm) {
+          const { sql: _sqlAdm } = await import("drizzle-orm");
+          const _rAdm: any = await _dbAdm.execute(
+            _sqlAdm`SELECT role FROM users WHERE id = ${userId} LIMIT 1`
+          );
+          const _rowsAdm = (Array.isArray(_rAdm[0]) ? _rAdm[0] : _rAdm) as any[];
+          if (_rowsAdm[0]?.role !== "admin") {
+            return {
+              success: false,
+              message: "This action requires admin access.",
+              actionType: toolName,
+              actionData: args,
+            };
+          }
+        }
+      }
+
+      // Subscription tier gate
+      const _minTier = _cap?.minTier ?? null;
+      if (_minTier) {
+        const _dbTier = await db.getDb();
+        if (_dbTier) {
+          const { sql: _sqlTier } = await import("drizzle-orm");
+          const _rTier: any = await _dbTier.execute(
+            _sqlTier`SELECT subscription_tier FROM users WHERE id = ${userId} LIMIT 1`
+          );
+          const _rowsTier = (Array.isArray(_rTier[0]) ? _rTier[0] : _rTier) as any[];
+          const _userTier =
+            (_rowsTier[0] as any)?.subscription_tier ??
+            (_rowsTier[0] as any)?.subscriptionTier ?? null;
+          if (!tierSatisfies(_userTier, _minTier)) {
+            return {
+              success: false,
+              message: `Your current plan doesn't include this feature. Upgrade to ${_minTier} or higher to use "${_cap?.description || toolName}".`,
+              actionType: toolName,
+              actionData: args,
+            };
+          }
+        }
+      }
+
+      // Per-tool credit deduction.
+      // Tools that manage credits internally have creditCost: 0 in the registry.
+      const _creditCost = _cap?.creditCost ?? 0;
+      if (_creditCost > 0) {
+        try {
+          await db.deductCredits(userId, _creditCost, "director_action", `Director: ${toolName}`);
+        } catch (_credErr: any) {
+          if ((_credErr as any).message?.includes("INSUFFICIENT_CREDITS")) {
+            return {
+              success: false,
+              message: `Not enough credits. This action costs ${_creditCost} credit${_creditCost !== 1 ? "s" : ""}.`,
+              actionType: toolName,
+              actionData: args,
+            };
+          }
+        }
+      }
+
+      switch (toolName) {
       case "add_sound_effect": {
         const scene = await findScene(projectId, args.sceneName as string);
         if (!scene) return { success: false, message: `Could not find scene "${args.sceneName}". Please check the scene name or number.`, actionType: toolName, actionData: args };
@@ -955,7 +1069,53 @@ HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
         };
       }
 
-      default:
+      // ── Growth Autopilot tools (admin access enforced above) ────────────────
+        case "check_growth_autopilot_status": {
+          const _apState = getVirelleGrowthAutopilotState();
+          return {
+            success: true,
+            message:
+              `Growth Autopilot — enabled: ${_apState.enabled}, status: ${_apState.lastStatus}${_apState.isRunning ? " (running now)" : ""}, last run: ${_apState.lastRunAt || "never"}, total runs: ${_apState.totalRuns}, YouTube configured: ${_apState.youtubeConfigured}.`,
+            actionType: toolName,
+            actionData: _apState as unknown as Record<string, unknown>,
+          };
+        }
+
+        case "start_growth_autopilot": {
+          startVirelleGrowthAutopilot();
+          return {
+            success: true,
+            message:
+              "Growth Autopilot scheduler started. It will generate and publish YouTube content weekly for Virelle Studios, Swappys, and VIBA.",
+            actionType: toolName,
+            actionData: getVirelleGrowthAutopilotState() as unknown as Record<string, unknown>,
+          };
+        }
+
+        case "stop_growth_autopilot": {
+          stopVirelleGrowthAutopilot();
+          return {
+            success: true,
+            message:
+              "Growth Autopilot stopped. Any currently running job will complete, but no new runs will be scheduled.",
+            actionType: toolName,
+            actionData: getVirelleGrowthAutopilotState() as unknown as Record<string, unknown>,
+          };
+        }
+
+        case "run_growth_autopilot_now": {
+          // Fire-and-forget — returns immediately; autopilot runs in background
+          runWeeklyGrowthAutopilot({ force: true, reason: "manual" }).catch(() => {});
+          return {
+            success: true,
+            message:
+              "Growth Autopilot triggered. A content plan is being generated and YouTube videos will be published for all three brands. Check status in a few minutes.",
+            actionType: toolName,
+            actionData: {},
+          };
+        }
+
+        default:
         return { success: false, message: `Unknown action: ${toolName}`, actionType: toolName, actionData: args };
     }
   } catch (error: any) {

@@ -8,6 +8,16 @@
 import { safeJsonExtract } from "./_core/safeParse";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
+  import {
+    DIRECTOR_CAPABILITY_REGISTRY,
+    tierSatisfies,
+  } from "./director-capability-registry";
+  import {
+    getVirelleGrowthAutopilotState,
+    startVirelleGrowthAutopilot,
+    stopVirelleGrowthAutopilot,
+    runWeeklyGrowthAutopilot,
+  } from "./virelle-growth-autopilot";
 
 export interface ExecutorContext {
   userId: number;
@@ -17,6 +27,7 @@ export interface ExecutorContext {
     creditBalance?: number | null;
     email?: string | null;
     name?: string | null;
+    role?: string | null;
   };
 }
 
@@ -30,7 +41,44 @@ export async function executeDirectorTool(
   ctx: ExecutorContext
 ): Promise<ToolResult> {
   try {
-    switch (toolName) {
+    // ── Registry enforcement: admin gate + tier gate + per-tool credit deduction ──
+      // Plain chat (no tool calls) never reaches this code — 0 credits for chat.
+      const _cap = DIRECTOR_CAPABILITY_REGISTRY[toolName];
+
+      // Admin-only gate
+      if (_cap?.adminOnly && ctx.user.role !== "admin") {
+        return {
+          success: false,
+          error: "This action requires admin access.",
+        };
+      }
+
+      // Subscription tier gate
+      const _minTier = _cap?.minTier ?? null;
+      if (_minTier && !tierSatisfies(ctx.user.subscriptionTier, _minTier)) {
+        return {
+          success: false,
+          error: `Your current plan doesn't include this feature. Upgrade to ${_minTier} or higher to use "${_cap?.description || toolName}".`,
+        };
+      }
+
+      // Per-tool credit deduction.
+      // Tools that handle credits internally have creditCost: 0 in the registry.
+      const _creditCost = _cap?.creditCost ?? 0;
+      if (_creditCost > 0) {
+        try {
+          await db.deductCredits(ctx.userId, _creditCost, "director_action", `Director: ${toolName}`);
+        } catch (_credErr: any) {
+          if ((_credErr as any).message?.includes("INSUFFICIENT_CREDITS")) {
+            return {
+              success: false,
+              error: `Not enough credits. This action costs ${_creditCost} credit${_creditCost !== 1 ? "s" : ""}.`,
+            };
+          }
+        }
+      }
+
+      switch (toolName) {
 
       // ─── Project Tools ──────────────────────────────────────────────
 
@@ -891,7 +939,55 @@ export async function executeDirectorTool(
           };
         }
 
-        default:
+        // ── Growth Autopilot tools (admin access enforced above) ─────────────────
+          case "check_growth_autopilot_status": {
+            const _apState = getVirelleGrowthAutopilotState();
+            return {
+              success: true,
+              data: {
+                ..._apState,
+                message: `Growth Autopilot — enabled: ${_apState.enabled}, status: ${_apState.lastStatus}${_apState.isRunning ? " (running now)" : ""}, last run: ${_apState.lastRunAt || "never"}, total runs: ${_apState.totalRuns}, YouTube configured: ${_apState.youtubeConfigured}.`,
+              },
+            };
+          }
+
+          case "start_growth_autopilot": {
+            startVirelleGrowthAutopilot();
+            return {
+              success: true,
+              data: {
+                message:
+                  "Growth Autopilot scheduler started. It will generate and publish YouTube content weekly for Virelle Studios, Swappys, and VIBA.",
+                state: getVirelleGrowthAutopilotState(),
+              },
+            };
+          }
+
+          case "stop_growth_autopilot": {
+            stopVirelleGrowthAutopilot();
+            return {
+              success: true,
+              data: {
+                message:
+                  "Growth Autopilot stopped. Any currently running job will complete, but no new runs will be scheduled.",
+                state: getVirelleGrowthAutopilotState(),
+              },
+            };
+          }
+
+          case "run_growth_autopilot_now": {
+            // Fire-and-forget — return immediately; autopilot runs in background
+            runWeeklyGrowthAutopilot({ force: true, reason: "manual" }).catch(() => {});
+            return {
+              success: true,
+              data: {
+                message:
+                  "Growth Autopilot triggered. A content plan is being generated and YouTube videos will be published for all three brands. Check status in a few minutes.",
+              },
+            };
+          }
+
+          default:
         return { success: false, error: `Unknown tool: ${toolName}` };
     }
   } catch (err: any) {

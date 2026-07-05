@@ -534,7 +534,50 @@ const getUserContext: Tool = {
     },
   };
   
-export const DIRECTOR_TOOLS: Tool[] = [
+
+  // ─── Growth Autopilot Tools (admin-only) ─────────────────────────────────────
+
+  const checkGrowthAutopilotStatus: Tool = {
+    type: "function",
+    function: {
+      name: "check_growth_autopilot_status",
+      description:
+        "Check the current status of the Virelle Growth Autopilot — whether it is enabled, running, when it last ran, and its last result. Admin only.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  };
+
+  const startGrowthAutopilot: Tool = {
+    type: "function",
+    function: {
+      name: "start_growth_autopilot",
+      description:
+        "Enable and start the Virelle Growth Autopilot weekly YouTube content scheduler. This will begin generating and publishing YouTube videos for Virelle Studios, Swappys, and VIBA on a weekly schedule. Admin only.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  };
+
+  const stopGrowthAutopilot: Tool = {
+    type: "function",
+    function: {
+      name: "stop_growth_autopilot",
+      description:
+        "Stop and disable the Virelle Growth Autopilot scheduler. The current run (if any) will complete, but no new runs will be scheduled. Admin only.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  };
+
+  const runGrowthAutopilotNow: Tool = {
+    type: "function",
+    function: {
+      name: "run_growth_autopilot_now",
+      description:
+        "Trigger an immediate Growth Autopilot run right now — generates a content plan and publishes YouTube videos for all three brands (Virelle Studios, Swappys, VIBA) without waiting for the weekly schedule. Admin only.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  };
+
+  export const DIRECTOR_TOOLS: Tool[] = [
   // Project management
   listProjects,
   getProject,
@@ -575,6 +618,11 @@ export const DIRECTOR_TOOLS: Tool[] = [
   // Navigation
   navigateTo,
   regenerateScene,
+  // Growth autopilot (admin-only)
+    checkGrowthAutopilotStatus,
+    startGrowthAutopilot,
+    stopGrowthAutopilot,
+    runGrowthAutopilotNow,
 ];
 
 /** Human-readable description of what a tool is doing (for streaming UI) */
@@ -605,7 +653,11 @@ export function getDirectorToolDescription(toolName: string, args: Record<string
     case "check_continuity": return "Running continuity check...";
     case "get_user_context": return "Checking your account...";
     case "navigate_to": return `Navigating to ${args.page || 'page'}...`;
-    default: return "Working on it...";
+    case "check_growth_autopilot_status": return "Checking Growth Autopilot status...";
+      case "start_growth_autopilot": return "Starting Growth Autopilot scheduler...";
+      case "stop_growth_autopilot": return "Stopping Growth Autopilot...";
+      case "run_growth_autopilot_now": return "Running Growth Autopilot now — generating content plan & publishing...";
+      default: return "Working on it...";
   }
 }
 
