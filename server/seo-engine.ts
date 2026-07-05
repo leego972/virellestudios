@@ -1481,11 +1481,11 @@ Focus on topics that:
       return briefs.map((b: any) => ({ ...b, generatedAt: Date.now() }));
     }
   } catch (err: unknown) {
-    log.error("[SEO] Content brief generation failed:", err);
+    log.error(`[SEO] Content brief generation failed: ${String(err)}`);
     return [
       {
         title: "AI Filmmaking Tools for Beginners: A Complete 2026 Guide",
-        primaryKeyword: "AI filmmaking tools",
+        targetKeyword: "AI filmmaking tools",
         secondaryKeywords: [
           "AI video generation",
           "AI filmmaking for students",
@@ -1520,6 +1520,7 @@ Focus on topics that:
       },
     ];
   }
+  return [];
 }
 
 // ─── Meta Tag Analysis & SEO Health Score ───────────────────────────
