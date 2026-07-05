@@ -54,8 +54,8 @@ export async function loadCredentialsBridge(force = false): Promise<void> {
       }
     }
     bridgeLoaded = true;
-    log.info({ loaded, platforms: allCreds.length }, "Credentials bridge loaded from DB");
+    log.info(`Credentials bridge loaded from DB — loaded: ${loaded}, platforms: ${allCreds.length}`);
   } catch (err) {
-    log.warn({ err }, "Credentials bridge skipped — continuing with Railway env vars only");
+    log.warn(`Credentials bridge skipped (${String(err)}) — continuing with Railway env vars only`);
   }
 }
