@@ -1590,7 +1590,7 @@ export async function runContentCreatorJob(
             url: BRAND.website,
             color: 0xD4AF37,
             thumbnail: { url: BRAND.logoUrl },
-            image: { url: BRAND.defaultImage },
+            ...(BRAND.defaultImage ? { image: { url: BRAND.defaultImage } } as any : {}),
             footer: { text: "Virelle Studios • virelle.life • AI Film Production" },
           }],
         });
