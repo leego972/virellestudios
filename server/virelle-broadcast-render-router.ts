@@ -251,7 +251,7 @@ export const virelleBroadcastRenderRouter = router({
     const orchestrationCredits = BROADCAST_BLOCK_CREDITS[input.durationMinutes] ?? 5;
     if ((ctx.user as any).role !== "admin") {
       try {
-        await db.deductCredits(ctx.user.id, orchestrationCredits, "virelle_broadcast_orchestration", `BYOK Broadcast orchestration: ${input.destination}`);
+        await db.deductCredits(ctx.user.id, orchestrationCredits, "virelle_broadcast_orchestration", `BYOK Broadcast orchestration (${input.durationMinutes}min)`);
       } catch (err: any) {
         throw new TRPCError({ code: "FORBIDDEN", message: err?.message || "Insufficient Virelle credits for broadcast orchestration." });
       }
