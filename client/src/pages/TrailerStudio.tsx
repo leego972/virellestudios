@@ -140,7 +140,7 @@ function TrailerStudioInner() {
     onError: (err) => toast.error(err.message),
   });
 
-  const submitForPromotion = trpc.showcase.submitForPromotion.useMutation({
+  const submitForPromotion = (trpc.showcase as any).submitForPromotion.useMutation({
     onSuccess: () => {
       setPromoteSubmitted(true);
       setShowPromoteDialog(false);
@@ -148,7 +148,7 @@ function TrailerStudioInner() {
         description: "Our team will review it and feature it on the platform. Thank you for sharing your work.",
       });
     },
-    onError: (err) => toast.error("Submission failed", { description: err.message }),
+    onError: (err: any) => toast.error("Submission failed", { description: err.message }),
   });
 
   // ─── State ───
