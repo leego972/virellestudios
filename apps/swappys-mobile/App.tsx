@@ -18,6 +18,16 @@ const VIRELLE_BASE_URL = String(extra.virelleBaseUrl || "https://virelle.life").
 const UPGRADE_URL = String(extra.virelleUpgradeUrl || `${VIRELLE_BASE_URL}/register?source=swappys-mobile&product=swappys&intent=creator-upgrade`);
 const LOGIN_URL = String(extra.virelleLoginUrl || `${VIRELLE_BASE_URL}/login?source=swappys-mobile`);
 
+function isAllowedExternalUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    const base = new URL(VIRELLE_BASE_URL);
+    return url.protocol === "https:" && (url.hostname === base.hostname || url.hostname.endsWith(`.${base.hostname}`));
+  } catch {
+    return false;
+  }
+}
+
 export default function App() {
   const webRef = useRef<WebView>(null);
 
@@ -35,7 +45,7 @@ export default function App() {
         const healthJson = await healthResponse.json();
         healthStatus = String(healthJson?.status || healthJson?.success || healthStatus);
       } catch {
-        // health endpoint may return non-JSON during failed deploys
+        // Non-JSON deploy failure is represented by the HTTP status.
       }
 
       let featuresOk = false;
@@ -43,12 +53,13 @@ export default function App() {
         const featuresResponse = await fetch(`${VIRELLE_BASE_URL}/api/mobile/features`, { method: "GET", headers: { Accept: "application/json" } });
         if (featuresResponse.ok) {
           const featuresJson = await featuresResponse.json();
+          const flags = featuresJson?.flags ?? featuresJson?.features ?? {};
           featuresOk = Boolean(
-            featuresJson?.ok &&
-              featuresJson?.flags?.creatorUpgrade &&
-              featuresJson?.flags?.swappysStudio &&
-              featuresJson?.flags?.watermarkControls &&
-              featuresJson?.flags?.byokVideoRequired,
+            featuresJson?.ok !== false &&
+              flags?.creatorUpgrade &&
+              flags?.swappysStudio &&
+              flags?.watermarkControls &&
+              flags?.byokVideoRequired,
           );
         }
       } catch {
@@ -67,6 +78,10 @@ export default function App() {
 
   const openUrl = useCallback(async (url: string) => {
     const resolved = url.includes("/register") ? UPGRADE_URL : url.includes("/login") ? LOGIN_URL : url;
+    if (!isAllowedExternalUrl(resolved)) {
+      Alert.alert("Blocked link", "Swappys prevented an untrusted external link from opening.");
+      return;
+    }
     try {
       const canOpen = await Linking.canOpenURL(resolved);
       if (!canOpen) throw new Error("Cannot open URL");
@@ -76,17 +91,31 @@ export default function App() {
     }
   }, []);
 
+  const saveResult = useCallback(async (url: string) => {
+    if (!isAllowedExternalUrl(url)) {
+      Alert.alert("Cannot save result", "The result URL was not issued by the configured Virelle service.");
+      return;
+    }
+    try {
+      await Linking.openURL(url);
+      Alert.alert("Result opened", "Use your device share or save control to keep the image. Native photo-library saving will be verified in the device build.");
+    } catch (error: any) {
+      Alert.alert("Cannot open result", error?.message || "The generated image could not be opened.");
+    }
+  }, []);
+
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
       try {
         const payload = JSON.parse(event.nativeEvent.data);
         if (payload?.type === "openUrl" && typeof payload.url === "string") void openUrl(payload.url);
+        if (payload?.type === "saveResult" && typeof payload.url === "string") void saveResult(payload.url);
         if (payload?.type === "checkVirelleConnection" || payload?.type === "appReady") void checkVirelleConnection();
       } catch {
-        // ignore malformed WebView messages
+        // Malformed WebView messages are ignored.
       }
     },
-    [checkVirelleConnection, openUrl],
+    [checkVirelleConnection, openUrl, saveResult],
   );
 
   return (
@@ -96,13 +125,15 @@ export default function App() {
         <WebView
           ref={webRef}
           source={{ html: SWAPPYS_HTML, baseUrl: VIRELLE_BASE_URL }}
-          originWhitelist={["*"]}
+          originWhitelist={["https://*", "about:blank"]}
           javaScriptEnabled
-          domStorageEnabled
+          domStorageEnabled={false}
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
-          mediaCapturePermissionGrantType="grant"
+          mediaCapturePermissionGrantType="grantIfSameHostElsePrompt"
           onMessage={onMessage}
+          onError={(event) => Alert.alert("Swappys failed to load", event.nativeEvent.description || "Unknown WebView error")}
+          onHttpError={(event) => Alert.alert("Swappys network error", `HTTP ${event.nativeEvent.statusCode}`)}
           style={styles.webview}
         />
       </View>
