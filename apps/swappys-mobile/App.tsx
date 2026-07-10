@@ -18,7 +18,15 @@ const VIRELLE_BASE_URL = String(extra.virelleBaseUrl || "https://virelle.life").
 const UPGRADE_URL = String(extra.virelleUpgradeUrl || `${VIRELLE_BASE_URL}/register?source=swappys-mobile&product=swappys&intent=creator-upgrade`);
 const LOGIN_URL = String(extra.virelleLoginUrl || `${VIRELLE_BASE_URL}/login?source=swappys-mobile`);
 
-function isAllowedExternalUrl(value: string): boolean {
+function isSecureHttpsUrl(value: string): boolean {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isAllowedVirelleUrl(value: string): boolean {
   try {
     const url = new URL(value);
     const base = new URL(VIRELLE_BASE_URL);
@@ -78,7 +86,7 @@ export default function App() {
 
   const openUrl = useCallback(async (url: string) => {
     const resolved = url.includes("/register") ? UPGRADE_URL : url.includes("/login") ? LOGIN_URL : url;
-    if (!isAllowedExternalUrl(resolved)) {
+    if (!isAllowedVirelleUrl(resolved)) {
       Alert.alert("Blocked link", "Swappys prevented an untrusted external link from opening.");
       return;
     }
@@ -92,8 +100,8 @@ export default function App() {
   }, []);
 
   const saveResult = useCallback(async (url: string) => {
-    if (!isAllowedExternalUrl(url)) {
-      Alert.alert("Cannot save result", "The result URL was not issued by the configured Virelle service.");
+    if (!isSecureHttpsUrl(url)) {
+      Alert.alert("Cannot save result", "Swappys blocked an insecure or malformed result URL.");
       return;
     }
     try {
