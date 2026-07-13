@@ -416,29 +416,22 @@ function Router() {
               <Route path="/projects/:id/daily-report">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/daily-report/:dayId">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/auto-recap">{() => <LazyPage><AutoRecap /></LazyPage>}</Route>
-                {/* ── New competitive-gap features ── */}
-                <Route path="/projects/:id/music-score" component={GatedMusicScore} />
-                <Route path="/projects/:id/opening-sequence" component={GatedOpeningSequence} />
-                <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
-                <Route path="/projects/:id/table-read" component={GatedTableRead} />
-                <Route path="/projects/:id/equipment" component={GatedEquipment} />
-                <Route path="/legal-docs" component={GatedLegalDocs} />
-                <Route path="/tax-incentives" component={GatedTaxIncentives} />
-                <Route path="/series" component={GatedSeriesBible} />
-                <Route path="/film-comps" component={GatedFilmComps} />
-                <Route path="/community" component={GatedCommunity} />
-              <Route path="/vfx-studio">{() => <LazyPage><VFXStudio /></LazyPage>}</Route>
-                <Route path="/music-studio">{() => <LazyPage><MusicStudio /></LazyPage>}</Route>
-                <Route path="/dubbing-studio">{() => <LazyPage><DubbingStudio /></LazyPage>}</Route>
-                <Route path="/projects/:projectId/dubbing-studio">{() => <LazyPage><DubbingStudio /></LazyPage>}</Route>
-                <Route path="/projects/:projectId/audio-mixer">{() => <LazyPage><AudioMixer /></LazyPage>}</Route>
-                <Route path="/accessibility-studio">{() => <LazyPage><AccessibilityStudio /></LazyPage>}</Route>
-                <Route path="/location-studio">{() => <LazyPage><LocationStudio /></LazyPage>}</Route>
-              <Route path="/404" component={NotFound} />
-              <Route component={NotFound} />
+              {/* Competitive-gap and pipeline library features */}
+              <Route path="/projects/:id/music-score" component={GatedMusicScore} />
+              <Route path="/projects/:id/opening-sequence" component={GatedOpeningSequence} />
+              <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
+              <Route path="/projects/:id/table-read" component={GatedTableRead} />
+              <Route path="/projects/:id/equipment" component={GatedEquipment} />
               <Route path="/projects/:id/backgrounds" component={BackgroundLibraryPage} />
               <Route path="/projects/:id/props" component={PropsLibraryPage} />
               <Route path="/projects/:id/narrative" component={NarrativeStructurePage} />
+              <Route path="/legal-docs" component={GatedLegalDocs} />
+              <Route path="/tax-incentives" component={GatedTaxIncentives} />
+              <Route path="/series" component={GatedSeriesBible} />
+              <Route path="/film-comps" component={GatedFilmComps} />
+              <Route path="/community" component={GatedCommunity} />
+              <Route path="/404" component={NotFound} />
+              <Route component={NotFound} />
             </Switch>
           </Suspense>
         </DashboardLayout>
