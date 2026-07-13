@@ -2,6 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { Alert, Linking, SafeAreaView, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
+import * as MediaLibrary from "expo-media-library";
 import { WebView } from "react-native-webview";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { SWAPPYS_HTML } from "./src/SwappysWebApp";
@@ -105,10 +106,20 @@ export default function App() {
       return;
     }
     try {
-      await Linking.openURL(url);
-      Alert.alert("Result opened", "Use your device share or save control to keep the image. Native photo-library saving will be verified in the device build.");
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        // Permission denied — fall back to opening in browser so user can long-press save
+        await Linking.openURL(url);
+        Alert.alert("Photo library access needed", "Allow photo access in Settings so Swappys can save results directly to your library.");
+        return;
+      }
+      const asset = await MediaLibrary.createAssetAsync(url);
+      await MediaLibrary.createAlbumAsync("Swappys", asset, false);
+      Alert.alert("Saved to Photos", "Your Swappys result was saved to your photo library.");
     } catch (error: any) {
-      Alert.alert("Cannot open result", error?.message || "The generated image could not be opened.");
+      // Fall back gracefully to browser open if MediaLibrary fails
+      try { await Linking.openURL(url); } catch {}
+      Alert.alert("Could not save to Photos", error?.message || "Open the image to save it manually.");
     }
   }, []);
 
