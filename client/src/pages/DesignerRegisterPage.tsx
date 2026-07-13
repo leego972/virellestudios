@@ -36,6 +36,7 @@ import {
 import { toast } from "sonner";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+const DESIGNER_MEMBERSHIP_PRICE = "A$300/year";
 
 const STEPS = [
   { id: 1, label: "Brand Profile" },
@@ -81,7 +82,6 @@ export default function DesignerRegisterPage() {
 
   const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
   const subscribeBundleMutation = trpc.wardrobeMarket.designer.subscribeBundleMembership.useMutation();
-  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
   const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
   const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
@@ -122,7 +122,7 @@ export default function DesignerRegisterPage() {
             } catch {
               // ignore storage errors
             }
-            toast.success("Designer membership activated!");
+            toast.success("Designer membership activated.");
             window.history.replaceState({}, "", "/designer-register");
             setStep(3);
             setLoading(false);
@@ -134,7 +134,7 @@ export default function DesignerRegisterPage() {
         },
       );
     } else if (checkoutStatus === "cancelled") {
-      toast.info("Checkout cancelled — you can try again whenever you're ready.");
+      toast.info("Checkout cancelled — no charge was made.");
       window.history.replaceState({}, "", "/designer-register");
     }
   }, []);
