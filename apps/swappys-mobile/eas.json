@@ -29,6 +29,10 @@
         "appleTeamId": "5AUSX9646V",
         "ascAppId": "6787028397",
         "language": "en-US"
+      },
+      "android": {
+        "serviceAccountKeyPath": "$GOOGLE_SERVICE_ACCOUNT_KEY",
+        "track": "internal"
       }
     }
   }
