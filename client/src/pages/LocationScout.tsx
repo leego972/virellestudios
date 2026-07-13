@@ -18,9 +18,9 @@ import { NextStageCTA } from "@/components/NextStageCTA";
 
 const LOCATION_TYPES = [
   "City Street", "Suburban Home", "Mansion", "Apartment", "Office Building",
-  "Warehouse", "Forest", "Beach", "Desert", "Mountain", "Lake", "River",
-  "Restaurant", "Bar", "Hospital", "School", "Church", "Airport", "Train Station",
-  "Rooftop", "Underground", "Castle", "Farm", "Island", "Bridge", "Tunnel",
+  "Warehouse", "Forest", "Beach", "Desert", "Snowy Mountain", "Mountain", "Lake", "River",
+  "Restaurant", "Bar", "Hospital Exterior", "Hospital Interior", "School", "Church", "Airport", "Train Station",
+  "Rooftop", "Underground", "Castle", "Farm", "Island", "Bridge", "Tunnel", "Custom Reference",
 ];
 
 export default function LocationScout() {
