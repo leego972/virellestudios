@@ -9,9 +9,20 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Swappys needs photo library access to save transformed images.",
+          "savePhotosPermission": "Swappys needs camera roll access to save transformed images.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.virelle.swappys",
+      "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Swappys uses the camera for live preview and recording.",
         "NSMicrophoneUsageDescription": "Swappys uses the microphone when recording clips.",
@@ -25,6 +36,7 @@
     },
     "android": {
       "package": "com.virelle.swappys",
+      "versionCode": 1,
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
