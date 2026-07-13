@@ -232,6 +232,7 @@ export const vfxSfxRouter = router({
     .input(z.object({
       sourceImageBase64: z.string().min(50).max(15_000_000),
       targetImageBase64: z.string().min(50).max(15_000_000),
+      consentConfirmed: z.literal(true, { errorMap: () => ({ message: "Explicit consent is required before performing a face transformation." }) }),
     }))
     .mutation(async ({ ctx, input }) => {
       const user = (ctx as any).user || null;
