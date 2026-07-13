@@ -18,7 +18,7 @@ import { useState } from "react";
 
     const claimMut = (trpc as any).lamaloGifts?.claimGift?.useMutation?.({
       onSuccess: () => {
-        toast.success("Your 2 free Lamalo outfits are now in your wardrobe!");
+        toast.success("Your 2 free Lamalo virtual outfits are now in your wardrobe inventory.");
         setOpen(false);
       },
       onError: (e: any) => toast.error(e?.message ?? "Something went wrong"),
