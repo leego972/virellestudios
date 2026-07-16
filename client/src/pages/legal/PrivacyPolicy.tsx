@@ -21,7 +21,7 @@ import { useLocation } from "wouter";
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Privacy Policy</h1>
-              <p className="text-muted-foreground text-sm mt-0.5">Last updated: June 2026 · Effective immediately upon account creation</p>
+              <p className="text-muted-foreground text-sm mt-0.5">Last updated: July 17, 2026 · Effective immediately upon account creation</p>
             </div>
           </div>
 
@@ -100,11 +100,26 @@ import { useLocation } from "wouter";
               </h2>
               <p className="mb-3">We do not sell your personal data to third parties. We share data only as follows:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong className="text-foreground">AI generation providers:</strong> Your prompts, reference images, and generation parameters are transmitted to third-party AI services (including OpenAI, Runway ML, ElevenLabs, fal.ai, Google, and others) to fulfil your generation requests. Each provider operates under its own privacy policy. We are not responsible for how these providers handle your data once received.</li>
+                <li><strong className="text-foreground">AI generation providers:</strong> Your prompts, reference images, and generation parameters are transmitted to third-party AI services (including OpenAI, Google, Pollinations, Runway ML, ElevenLabs, and fal.ai) to fulfil your generation requests. Each provider operates under its own privacy policy. We are not responsible for how these providers handle your data once received.</li>
+                <li><strong className="text-foreground">TitanAI (self-hosted):</strong> Some requests may be routed to TitanAI, a model we operate ourselves rather than a third-party AI service. TitanAI runs on GPU infrastructure we rent from providers such as Vast.ai — your prompt is processed on that rented hardware under our control, not sent to Vast.ai as a data recipient in its own right.</li>
                 <li><strong className="text-foreground">Payment processor (Stripe):</strong> Stripe processes all payment transactions. Stripe's privacy policy governs their handling of your payment data.</li>
                 <li><strong className="text-foreground">Law enforcement and regulators:</strong> When required by law, court order, or valid legal process.</li>
                 <li><strong className="text-foreground">Child protection authorities:</strong> NCMEC and relevant national authorities in cases of suspected CSAM, as required by law.</li>
               </ul>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 gradient-text-gold">
+                <Shield className="w-4 h-4 text-amber-400" />
+                4a. Mobile App Permissions
+              </h2>
+              <p className="mb-3">Our Android and iOS apps (Virelle Studios and Swappys) may request the following device permissions, used only for the features described:</p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><strong className="text-foreground">Camera</strong> — for live preview and recording when creating content.</li>
+                <li><strong className="text-foreground">Microphone</strong> — for recording audio clips you choose to include.</li>
+                <li><strong className="text-foreground">Photos/media library</strong> — to let you select source or reference media, and to save content you choose to export.</li>
+              </ul>
+              <p className="mt-3">We do not request access to your contacts, SMS messages, call log, or precise or approximate device location.</p>
             </section>
 
             <section>
