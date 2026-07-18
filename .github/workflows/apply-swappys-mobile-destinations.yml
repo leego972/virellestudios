@@ -1,0 +1,35 @@
+name: Apply Swappys Mobile Destinations
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-swappys-mobile-destinations.yml"
+      - "scripts/apply-swappys-mobile-destinations.py"
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply destination UI
+        run: python scripts/apply-swappys-mobile-destinations.py
+      - name: Commit destination UI
+        shell: bash
+        run: |
+          git config user.name "Virelle Connectivity Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add apps/swappys-mobile/src/SwappysWebApp.ts
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Swappys destination UI is already connected."
+            exit 0
+          fi
+          git commit -m "Let Swappys save results into selected Virelle scenes"
+          git push origin HEAD:${{ github.head_ref }}
