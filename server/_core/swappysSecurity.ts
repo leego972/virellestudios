@@ -107,10 +107,14 @@ export function getRequestIp(req: Request): string {
   return String(firstForwarded || req.ip || req.socket.remoteAddress || "unknown").trim().slice(0, 128);
 }
 
-export async function enforceSwappysGenerationQuota(req: Request, userId?: number): Promise<{ entitlement: "subscription" | "anonymous_preview" }> {
+export async function enforceSwappysGenerationQuota(
+  req: Request,
+  userId?: number,
+): Promise<{ entitlement: "authenticated" | "anonymous_preview" }> {
   if (userId) {
     await rateLimitHeavyAI(userId);
-    return { entitlement: "subscription" };
+    await rateLimitPublicByIP(`user-${userId}`, "swappys-daily", 20, 24 * 60 * 60 * 1000);
+    return { entitlement: "authenticated" };
   }
 
   const ip = getRequestIp(req);
