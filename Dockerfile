@@ -23,9 +23,9 @@ COPY patches/ ./patches/
 COPY .pnpmfile.cjs* ./
 RUN node scripts/railway-normalize-package.cjs && pnpm install --prod --no-frozen-lockfile
 COPY --from=builder /app/dist ./dist
-# Gateway + startup script — gateway listens on $PORT, proxies to app on $PORT+1.
-# If the app hasn't started yet, gateway returns {"ok":true,"warming":true} so
-# Railway's health check passes during cold start instead of killing the container.
+# Gateway listens on Render's injected $PORT and proxies to the Express app on
+# $PORT+1. During cold start it returns a warming response so the health check
+# does not terminate an otherwise healthy container before Express is ready.
 COPY start.sh gateway.mjs seed-admin.mjs ./
 RUN chmod +x start.sh
 EXPOSE 3000
