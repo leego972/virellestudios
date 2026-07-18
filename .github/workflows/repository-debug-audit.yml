@@ -1,0 +1,155 @@
+name: Repository Debug Audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "client/**"
+      - "server/**"
+      - "shared/**"
+      - "drizzle/**"
+      - "scripts/repository-connectivity-audit.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/repository-debug-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Full repository connectivity audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: TypeScript check
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm check 2>&1 | tee audit-typecheck.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Unit and integration tests
+        id: tests
+        shell: bash
+        run: |
+          set +e
+          pnpm test 2>&1 | tee audit-tests.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Production build
+        id: build
+        shell: bash
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: audit-stub
+          VITE_SENTRY_DSN: ""
+        run: |
+          set +e
+          pnpm build 2>&1 | tee audit-build.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: High-severity dependency audit
+        id: dependency_audit
+        shell: bash
+        run: |
+          set +e
+          pnpm audit --audit-level high 2>&1 | tee audit-dependencies.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Route, router, UI and Swappys connectivity audit
+        id: connectivity
+        shell: bash
+        run: |
+          set +e
+          node scripts/repository-connectivity-audit.mjs 2>&1 | tee audit-connectivity.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Secret-pattern scan
+        id: secrets
+        shell: bash
+        run: |
+          set +e
+          if git grep -nE '(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,})' -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!.github/workflows/*.yml' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md' ':!server/_core/byokVideoEngine.ts' | tee audit-secrets.log; then
+            code=1
+          else
+            echo "No obvious committed secret patterns found." | tee audit-secrets.log
+            code=0
+          fi
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Write audit gate summary
+        if: always()
+        shell: bash
+        run: |
+          cat > audit-results/audit-gates.md <<EOF
+          # Repository debug audit gates
+
+          - TypeScript: ${{ steps.typecheck.outputs.exit_code }}
+          - Tests: ${{ steps.tests.outputs.exit_code }}
+          - Build: ${{ steps.build.outputs.exit_code }}
+          - Dependency audit: ${{ steps.dependency_audit.outputs.exit_code }}
+          - Connectivity/UI/Swappys audit: ${{ steps.connectivity.outputs.exit_code }}
+          - Secret scan: ${{ steps.secrets.outputs.exit_code }}
+          EOF
+
+      - name: Upload complete audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-debug-audit
+          path: |
+            audit-results/
+            audit-typecheck.log
+            audit-tests.log
+            audit-build.log
+            audit-dependencies.log
+            audit-connectivity.log
+            audit-secrets.log
+          retention-days: 7
+
+      - name: Enforce audit gates
+        if: always()
+        shell: bash
+        run: |
+          failures=0
+          for code in \
+            "${{ steps.typecheck.outputs.exit_code }}" \
+            "${{ steps.tests.outputs.exit_code }}" \
+            "${{ steps.build.outputs.exit_code }}" \
+            "${{ steps.dependency_audit.outputs.exit_code }}" \
+            "${{ steps.connectivity.outputs.exit_code }}" \
+            "${{ steps.secrets.outputs.exit_code }}"; do
+            if [ "${code:-1}" != "0" ]; then failures=$((failures + 1)); fi
+          done
+          if [ "$failures" -gt 0 ]; then
+            echo "$failures audit gate(s) failed. Review the repository-debug-audit artifact."
+            exit 1
+          fi
