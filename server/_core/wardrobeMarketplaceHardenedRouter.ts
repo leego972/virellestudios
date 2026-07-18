@@ -30,7 +30,7 @@ export const wardrobeMarketplaceHardenedRouter = router({
     /** Full diagnostic is restricted to administrators. */
     auditHouseCollection: adminProcedure.query(() => auditLamaloCatalog()),
     /** Idempotently backfill the established catalogue, then independently verify it. */
-    repairHouseCollection: adminProcedure.mutation(() => repairAndAuditLamaloCatalog()),
+    repairHouseCollection: adminProcedure.mutation(({ ctx }) => repairAndAuditLamaloCatalog(ctx.user.id)),
   }),
 
   director: router({
