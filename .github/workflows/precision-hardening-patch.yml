@@ -1,0 +1,88 @@
+name: Precision Hardening Patch
+
+on:
+  push:
+    branches:
+      - gpt/professional-pipeline-hardening-2026-07-19
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: contains(github.event.head_commit.message, 'Run precision hardening patch')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gpt/professional-pipeline-hardening-2026-07-19
+      - name: Apply exact source patches
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}")
+              file.write_text(text.replace(old, new, 1))
+
+          replace_once(
+              "client/src/pages/DesignerRegisterPage.tsx",
+              '  const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();\n',
+              '  const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();\n'
+              '  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();\n',
+          )
+
+          replace_once(
+              "client/src/pages/UserInventoryPage.tsx",
+              '      notes: notes.trim() || undefined,\n      locked: true,\n',
+              '      notes: notes.trim() || undefined,\n',
+          )
+
+          replace_once(
+              "server/_core/extendedSceneGenerator.ts",
+              'import type { CanonicalSceneSpec } from "./canonicalSceneSpec";\n',
+              'import { refreshCanonicalSceneFingerprint, renderCanonicalScenePrompt, type CanonicalSceneSpec } from "./canonicalSceneSpec";\n',
+          )
+
+          replace_once(
+              "server/_core/extendedSceneGenerator.ts",
+              '  const spec = context.canonicalSpec;\n'
+              '  if (request.wardrobeContext?.trim()) spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);\n'
+              '  if (request.characterDescriptions?.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${request.characterDescriptions.join(" | ")}`);\n\n'
+              '  const provider = selectProvider(keys);\n',
+              '  let spec = context.canonicalSpec;\n'
+              '  if (request.wardrobeContext?.trim() && !context.wardrobeContext?.includes(request.wardrobeContext.trim())) {\n'
+              '    spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);\n'
+              '  }\n'
+              '  if (request.characterDescriptions?.length) {\n'
+              '    const missingDescriptions = request.characterDescriptions.filter((description) =>\n'
+              '      !context.characterDescriptions.includes(description),\n'
+              '    );\n'
+              '    if (missingDescriptions.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${missingDescriptions.join(" | ")}`);\n'
+              '  }\n'
+              '  spec = refreshCanonicalSceneFingerprint(spec);\n'
+              '  const canonicalPrompt = renderCanonicalScenePrompt(spec);\n\n'
+              '  const provider = selectProvider(keys);\n',
+          )
+
+          replace_once(
+              "server/_core/extendedSceneGenerator.ts",
+              '  const subShots = planSubShots(spec, context.canonicalPrompt, targetDuration, provider, sceneType);\n',
+              '  const subShots = planSubShots(spec, canonicalPrompt, targetDuration, provider, sceneType);\n',
+          )
+          PY
+      - name: Commit exact patches
+        shell: bash
+        run: |
+          git config user.name "Virelle Hardening Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/precision-hardening-patch.yml
+          git add client/src/pages/DesignerRegisterPage.tsx client/src/pages/UserInventoryPage.tsx server/_core/extendedSceneGenerator.ts
+          git diff --cached --check
+          git commit -m "Apply exact UX and scene-contract integration fixes"
+          git push origin HEAD:gpt/professional-pipeline-hardening-2026-07-19
