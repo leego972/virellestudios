@@ -1,0 +1,35 @@
+name: Apply Audio Mixer Persistence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-audio-mixer-persistence.yml"
+      - "scripts/apply-audio-mixer-persistence.py"
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply Audio Mixer persistence
+        run: python scripts/apply-audio-mixer-persistence.py
+      - name: Commit Audio Mixer persistence
+        shell: bash
+        run: |
+          git config user.name "Virelle Connectivity Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add client/src/pages/AudioMixer.tsx
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Audio Mixer persistence is already connected."
+            exit 0
+          fi
+          git commit -m "Persist Audio Mixer settings through film post API"
+          git push origin HEAD:${{ github.head_ref }}
