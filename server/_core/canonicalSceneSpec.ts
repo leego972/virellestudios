@@ -17,6 +17,7 @@ export interface CanonicalSceneCharacter {
 export interface CanonicalDialogueLine {
   characterName?: string;
   text?: string;
+  line?: string;
   emotion?: string;
   direction?: string;
 }
@@ -152,7 +153,8 @@ const add = (target: string[], label: string, value: unknown): void => {
 };
 
 function stableStringify(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (value === undefined) return "null";
+  if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   const object = value as Record<string, unknown>;
   return `{${Object.keys(object).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(object[key])}`).join(",")}}`;
@@ -165,6 +167,11 @@ function normalizeReferenceImages(value: unknown): string[] {
 
 function fingerprintSpec(value: Omit<CanonicalSceneSpec, "fingerprint">): string {
   return createHash("sha256").update(stableStringify(value)).digest("hex").slice(0, 24);
+}
+
+export function refreshCanonicalSceneFingerprint(spec: CanonicalSceneSpec): CanonicalSceneSpec {
+  const { fingerprint: _fingerprint, ...withoutFingerprint } = spec;
+  return { ...spec, fingerprint: fingerprintSpec(withoutFingerprint) };
 }
 
 export function compileCanonicalSceneSpec(
@@ -186,9 +193,7 @@ export function compileCanonicalSceneSpec(
   if (!actualNarrative) validationErrors.push("Scene has no usable narrative, visual description, action description, or director override.");
   if (!Number.isInteger(scene.id) || scene.id <= 0) validationErrors.push("Scene ID is invalid.");
   if (!Number.isFinite(scene.orderIndex) || scene.orderIndex < 0) validationErrors.push("Scene order is invalid.");
-  if (scene.duration != null && (!Number.isFinite(scene.duration) || scene.duration <= 0)) {
-    validationErrors.push("Scene duration must be greater than zero.");
-  }
+  if (scene.duration != null && (!Number.isFinite(scene.duration) || scene.duration <= 0)) validationErrors.push("Scene duration must be greater than zero.");
 
   const requiredCharacterIds = Array.isArray(scene.characterIds) ? scene.characterIds : [];
   const selectedCharacters = requiredCharacterIds.length
@@ -221,9 +226,7 @@ export function compileCanonicalSceneSpec(
   add(lockedRequirements, "Continuity supervisor notes", clean(scene.continuityNotes));
 
   for (const character of selectedCharacters) {
-    const details = [character.visualAnchor, character.wardrobeAnchor, character.wardrobe, character.state, character.blocking]
-      .filter(Boolean)
-      .join("; ");
+    const details = [character.visualAnchor, character.wardrobeAnchor, character.wardrobe, character.state, character.blocking].filter(Boolean).join("; ");
     add(lockedRequirements, `Character ${character.name}`, details || "Maintain established identity exactly");
   }
 
@@ -244,15 +247,7 @@ export function compileCanonicalSceneSpec(
   add(creativeDirection, "Music mood", clean(scene.musicMood));
   add(creativeDirection, "Music tempo", clean(scene.musicTempo));
 
-  const locationDescription = [
-    clean(scene.locationDetail),
-    clean(scene.locationType),
-    clean(scene.city),
-    clean(scene.country),
-    clean(scene.season),
-    clean(scene.timeOfDay),
-    clean(scene.weather),
-  ].filter(Boolean).join(", ") || undefined;
+  const locationDescription = [clean(scene.locationDetail), clean(scene.locationType), clean(scene.city), clean(scene.country), clean(scene.season), clean(scene.timeOfDay), clean(scene.weather)].filter(Boolean).join(", ") || undefined;
   add(lockedRequirements, "Location, geography and environment", locationDescription);
 
   const aspectRatio = clean(scene.aspectRatio) || "16:9";
@@ -277,14 +272,7 @@ export function compileCanonicalSceneSpec(
     frameRate,
     aspectRatio,
     resolution,
-    explicit: Boolean(
-      clean(scene.cameraAngle)
-      || clean(scene.cameraMovement)
-      || clean(scene.lensType)
-      || clean(scene.focalLength)
-      || clean(scene.shotType)
-      || clean(scene.depthOfField),
-    ),
+    explicit: Boolean(clean(scene.cameraAngle) || clean(scene.cameraMovement) || clean(scene.lensType) || clean(scene.focalLength) || clean(scene.shotType) || clean(scene.depthOfField)),
   };
 
   const withoutFingerprint: Omit<CanonicalSceneSpec, "fingerprint"> = {
@@ -350,7 +338,5 @@ export function renderCanonicalScenePrompt(spec: CanonicalSceneSpec): string {
 }
 
 export function assertCanonicalSceneSpec(spec: CanonicalSceneSpec): void {
-  if (spec.validationErrors.length) {
-    throw new Error(`Scene ${spec.sceneId} failed pre-generation validation: ${spec.validationErrors.join(" ")}`);
-  }
+  if (spec.validationErrors.length) throw new Error(`Scene ${spec.sceneId} failed pre-generation validation: ${spec.validationErrors.join(" ")}`);
 }
