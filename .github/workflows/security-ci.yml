@@ -38,7 +38,22 @@ jobs:
         run: pnpm build
 
       - name: Dependency audit
-        run: pnpm audit --audit-level high
+        id: audit
+        shell: bash
+        run: |
+          set +e
+          pnpm audit --audit-level high 2>&1 | tee dependency-audit.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload dependency audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit
+          path: dependency-audit.txt
+          retention-days: 3
 
       - name: Secret pattern scan
         shell: bash
@@ -50,3 +65,7 @@ jobs:
             exit 1
           fi
           echo "No obvious secret patterns found."
+
+      - name: Fail when dependency audit found high-severity vulnerabilities
+        if: steps.audit.outputs.exit_code != '0'
+        run: exit 1
