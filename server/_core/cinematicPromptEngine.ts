@@ -6,6 +6,14 @@ type ScenePromptArgs = Parameters<typeof buildLegacyScenePrompt>;
 type SceneInput = ScenePromptArgs[0] & {
   wardrobe?: unknown;
   wardrobeOverrides?: unknown;
+  cameraAngle?: string | null;
+  cameraMovement?: string | null;
+  lensType?: string | null;
+  focalLength?: string | null;
+  depthOfField?: string | null;
+  shotType?: string | null;
+  frameRate?: string | null;
+  aspectRatio?: string | null;
 };
 type VisualDNAInput = ScenePromptArgs[1];
 type ScenePromptOptions = NonNullable<ScenePromptArgs[2]>;
@@ -60,15 +68,32 @@ function renderInlineWardrobe(scene: SceneInput, options?: ScenePromptOptions): 
   return lines.length ? `SCENE-EDITOR WARDROBE OVERRIDES:\n${lines.join("\n")}` : undefined;
 }
 
+function renderExactCameraLock(scene: SceneInput): string | undefined {
+  const requirements = [
+    scene.shotType?.trim() && `shot type: ${scene.shotType.trim()}`,
+    scene.cameraAngle?.trim() && `camera angle: ${scene.cameraAngle.trim()}`,
+    scene.cameraMovement?.trim() && `camera movement: ${scene.cameraMovement.trim()}`,
+    scene.lensType?.trim() && `lens type: ${scene.lensType.trim()}`,
+    scene.focalLength?.trim() && `focal length: ${scene.focalLength.trim()}`,
+    scene.depthOfField?.trim() && `depth of field: ${scene.depthOfField.trim()}`,
+    scene.frameRate?.trim() && `frame rate: ${scene.frameRate.trim()}`,
+    scene.aspectRatio?.trim() && `aspect ratio: ${scene.aspectRatio.trim()}`,
+  ].filter(Boolean);
+  if (!requirements.length) return undefined;
+  return [
+    "DIRECTOR CAMERA SETTINGS — LOCKED; these exact user values override automatic shot grammar:",
+    ...requirements.map((requirement) => `- ${requirement}`),
+  ].join("\n");
+}
+
 /**
  * Compatibility wrapper around the established cinematic prompt engine.
  *
- * Two confirmed gaps are closed here without duplicating the mature prompt
- * implementation:
- * 1. A director override no longer returns early and bypasses character,
- *    wardrobe, location, camera, safety and negative-prompt requirements.
- * 2. SceneEditor inline wardrobe values are included in preview-image prompts,
- *    not only the video route.
+ * Confirmed gaps closed here without duplicating the mature prompt engine:
+ * - a director override cannot bypass character, wardrobe, location, camera,
+ *   continuity, safety or negative-prompt requirements;
+ * - SceneEditor wardrobe values are present in image and video prompts;
+ * - exact camera values override the legacy engine's enum/default mapping.
  */
 export function buildScenePrompt(
   scene: SceneInput,
@@ -97,12 +122,12 @@ export function buildScenePrompt(
       wardrobeContext: mergedWardrobe || undefined,
     },
   );
+  const cameraLock = renderExactCameraLock(scene);
 
-  return directorOverride
-    ? [
-        `DIRECTOR OVERRIDE — LOCKED: ${directorOverride}`,
-        "The override controls narrative and staging, but it does not cancel character identity, exact wardrobe, location, camera, continuity, brand, minor-safety or quality requirements below.",
-        built,
-      ].join("\n")
-    : built;
+  return [
+    directorOverride && `DIRECTOR OVERRIDE — LOCKED: ${directorOverride}`,
+    directorOverride && "The override controls narrative and staging, but it does not cancel character identity, exact wardrobe, location, camera, continuity, brand, minor-safety or quality requirements below.",
+    cameraLock,
+    built,
+  ].filter(Boolean).join("\n");
 }
