@@ -1,0 +1,35 @@
+name: Apply Connectivity Repairs V2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-connectivity-repairs-v2.yml"
+      - "scripts/apply-connectivity-repairs.py"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply source repairs
+        run: python scripts/apply-connectivity-repairs.py
+      - name: Commit source repairs
+        shell: bash
+        run: |
+          git config user.name "Virelle Connectivity Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add client/src/App.tsx client/src/components/DashboardLayout.tsx client/src/pages/SwappysHub.tsx client/src/pages/CuttingRoom.tsx client/src/pages/ProjectDetail.tsx client/src/pages/VFXStudio.tsx client/src/pages/Showcase.tsx client/src/pages/Subtitles.tsx shared/feature-registry.ts scripts/repository-connectivity-audit.mjs
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Connectivity repairs already applied."
+            exit 0
+          fi
+          git commit -m "Connect routes navigation exports media and Swappys registry"
+          git push origin HEAD:${{ github.head_ref }}
