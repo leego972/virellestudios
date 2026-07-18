@@ -6,6 +6,7 @@ import { buildCharacterDNA } from "./characterConsistency";
 import {
   assertCanonicalSceneSpec,
   compileCanonicalSceneSpec,
+  refreshCanonicalSceneFingerprint,
   renderCanonicalScenePrompt,
   type CanonicalSceneCharacter,
   type CanonicalSceneSpec,
@@ -118,9 +119,7 @@ export async function loadSceneGenerationContext(
   const overlaps = findOverlappingWardrobeAssignments(assignmentRecords).filter(({ first, second }) => first.locked || second.locked);
   if (overlaps.length) {
     const first = overlaps[0];
-    throw new Error(
-      `Conflicting locked wardrobe assignments for character ${first.characterId}: items ${first.first.wardrobeItemId} and ${first.second.wardrobeItemId} overlap scene ${sceneOrder}.`,
-    );
+    throw new Error(`Conflicting locked wardrobe assignments for character ${first.characterId}: items ${first.first.wardrobeItemId} and ${first.second.wardrobeItemId} overlap scene ${sceneOrder}.`);
   }
 
   const inlineEntries = normalizeInlineWardrobe((scene as any).wardrobe ?? (scene as any).wardrobeOverrides);
@@ -141,9 +140,7 @@ export async function loadSceneGenerationContext(
 
     if (selectedItem) {
       const itemErrors = validateWardrobeItemForInventory(selectedItem);
-      if (itemErrors.length) {
-        throw new Error(`Assigned wardrobe item ${selectedItem.id} (${selectedItem.name}) is not generation-ready: ${itemErrors.join(" ")}`);
-      }
+      if (itemErrors.length) throw new Error(`Assigned wardrobe item ${selectedItem.id} (${selectedItem.name}) is not generation-ready: ${itemErrors.join(" ")}`);
       wardrobeAnchor = buildWardrobePromptAnchor(selectedItem, selectedRow.assignment.placementNotes);
       wardrobeReferenceImageUrl = imageFromItem(selectedItem);
       wardrobeLines.push(`${character.name}: ${wardrobeAnchor}`);
@@ -197,16 +194,15 @@ export async function loadSceneGenerationContext(
     orderIndex: sceneOrder,
     wardrobeOverrides: (scene as any).wardrobeOverrides ?? (scene as any).wardrobe,
   };
-  const canonicalSpec = compileCanonicalSceneSpec(mergedScene, canonicalCharacters);
-  if (wardrobeLines.length) {
-    canonicalSpec.lockedRequirements.push(`WARDROBE AND COSTUME LOCKS: ${wardrobeLines.join(" | ")}`);
-  }
+  let canonicalSpec = compileCanonicalSceneSpec(mergedScene, canonicalCharacters);
+  if (wardrobeLines.length) canonicalSpec.lockedRequirements.push(`WARDROBE AND COSTUME LOCKS: ${wardrobeLines.join(" | ")}`);
   canonicalSpec.referenceImages = uniqueUrls([
     ...canonicalSpec.referenceImages,
     ...canonicalCharacters.map((character) => character.referenceImageUrl),
     ...wardrobeImages,
   ]);
   canonicalSpec.validationWarnings.push(...warnings);
+  canonicalSpec = refreshCanonicalSceneFingerprint(canonicalSpec);
   assertCanonicalSceneSpec(canonicalSpec);
 
   return {
