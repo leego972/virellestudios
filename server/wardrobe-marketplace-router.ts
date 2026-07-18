@@ -38,6 +38,6 @@ export const wardrobeMarketplaceRouter = router({
     ...hardenedDirectorRecord,
   }),
 
-  // Also expose the item-centric inventory route for new UI clients.
   inventory: hardenedRecord.inventory,
+  catalog: hardenedRecord.catalog,
 });
