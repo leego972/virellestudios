@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import * as db from "../db";
 import { getDb } from "../db";
-import { wardrobeAssignments, wardrobeItems } from "../../drizzle/schema";
+import { projects, wardrobeAssignments, wardrobeItems } from "../../drizzle/schema";
 import { buildCharacterDNA } from "./characterConsistency";
 import {
   assertCanonicalSceneSpec,
@@ -14,13 +14,16 @@ import {
 import {
   buildWardrobePromptAnchor,
   findOverlappingWardrobeAssignments,
+  hasWardrobeAccess,
   validateWardrobeItemForInventory,
   type WardrobeAssignmentRecord,
   type WardrobeItemRecord,
+  type WardrobeLeaseRecord,
 } from "./wardrobeContinuity";
 
 export interface SceneGenerationContext {
   scene: any;
+  projectOwnerUserId: number;
   characters: any[];
   canonicalSpec: CanonicalSceneSpec;
   canonicalPrompt: string;
@@ -38,25 +41,76 @@ type InlineWardrobeEntry = {
   accessories?: string;
 };
 
+function parseJsonValue<T>(value: unknown, fallback: T): T {
+  if (value === null || value === undefined || value === "") return fallback;
+  if (typeof value !== "string") return value as T;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 function imageFromItem(item: any): string | undefined {
   if (typeof item?.primaryImageUrl === "string" && item.primaryImageUrl.trim()) return item.primaryImageUrl.trim();
-  if (Array.isArray(item?.imageUrls)) {
-    const first = item.imageUrls.find((value: unknown) => typeof value === "string" && value.trim());
+  const images = parseJsonValue<unknown[]>(item?.imageUrls, []);
+  if (Array.isArray(images)) {
+    const first = images.find((value: unknown) => typeof value === "string" && value.trim());
     if (typeof first === "string") return first.trim();
   }
   return undefined;
 }
 
 function normalizeInlineWardrobe(value: unknown): InlineWardrobeEntry[] {
-  if (Array.isArray(value)) return value.filter((entry): entry is InlineWardrobeEntry => Boolean(entry && typeof entry === "object"));
-  if (value && typeof value === "object") {
-    return Object.entries(value as Record<string, unknown>).flatMap(([key, entry]) => {
+  const parsed = parseJsonValue<unknown>(value, []);
+  if (Array.isArray(parsed)) return parsed.filter((entry): entry is InlineWardrobeEntry => Boolean(entry && typeof entry === "object"));
+  if (parsed && typeof parsed === "object") {
+    return Object.entries(parsed as Record<string, unknown>).flatMap(([key, entry]) => {
       if (!entry || typeof entry !== "object") return [];
       const parsedId = Number(key);
       return [{ characterId: Number.isInteger(parsedId) ? parsedId : undefined, ...(entry as InlineWardrobeEntry) }];
     });
   }
   return [];
+}
+
+function normalizeCharacterIds(value: unknown): number[] {
+  const parsed = parseJsonValue<unknown[]>(value, []);
+  if (!Array.isArray(parsed)) return [];
+  return Array.from(new Set(parsed.map(Number).filter((id) => Number.isInteger(id) && id > 0)));
+}
+
+function resolveSceneCharacters(scene: any, projectCharacters: any[]): { characters: any[]; explicitIds: number[] } {
+  const explicitIds = normalizeCharacterIds(scene.characterIds);
+  if (explicitIds.length) {
+    return {
+      explicitIds,
+      characters: projectCharacters.filter((character: any) => explicitIds.includes(character.id)),
+    };
+  }
+
+  const dialogueLines = parseJsonValue<any[]>(scene.dialogueLines, []);
+  const speakerNames = new Set(
+    dialogueLines
+      .map((line) => String(line?.characterName || line?.speaker || "").trim().toLowerCase())
+      .filter(Boolean),
+  );
+  const searchableText = [
+    scene.title,
+    scene.description,
+    scene.visualDescription,
+    scene.actionDescription,
+    scene.dialogueText,
+    ...dialogueLines.flatMap((line) => [line?.characterName, line?.speaker, line?.text, line?.line]),
+  ].filter(Boolean).join(" ").toLowerCase();
+
+  return {
+    explicitIds,
+    characters: projectCharacters.filter((character: any) => {
+      const name = String(character.name || "").trim().toLowerCase();
+      return Boolean(name) && (speakerNames.has(name) || searchableText.includes(name));
+    }),
+  };
 }
 
 function assignmentAppliesToScene(assignment: any, sceneId: number, sceneOrder: number): boolean {
@@ -84,24 +138,31 @@ export async function loadSceneGenerationContext(
   if (!scene) throw new Error(`Scene ${sceneId} was not found.`);
   if (scene.projectId !== projectId) throw new Error(`Scene ${sceneId} does not belong to project ${projectId}.`);
 
-  const projectCharacters = await db.getProjectCharacters(projectId);
-  const sceneOrder = Number.isFinite((scene as any).orderIndex) ? Number((scene as any).orderIndex) : 0;
-  const activeCharacterIds = Array.isArray((scene as any).characterIds) ? (scene as any).characterIds as number[] : [];
-  const activeCharacters = activeCharacterIds.length
-    ? projectCharacters.filter((character: any) => activeCharacterIds.includes(character.id))
-    : projectCharacters;
-
   const dbConn = await getDb();
-  const rows = dbConn
-    ? await dbConn
-        .select({ assignment: wardrobeAssignments, item: wardrobeItems })
-        .from(wardrobeAssignments)
-        .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
-        .where(eq(wardrobeAssignments.projectId, projectId))
-        .catch(() => [] as any[])
-    : [];
+  if (!dbConn) throw new Error("Database is unavailable.");
+  const projectRows = await dbConn.select({ userId: projects.userId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  const projectOwnerUserId = projectRows[0]?.userId;
+  if (!projectOwnerUserId) throw new Error(`Project ${projectId} was not found.`);
+
+  const projectCharacters = await db.getProjectCharacters(projectId);
+  const sceneOrder = Number.isFinite(Number((scene as any).orderIndex)) ? Number((scene as any).orderIndex) : 0;
+  const resolvedCharacters = resolveSceneCharacters(scene, projectCharacters);
+  const activeCharacters = resolvedCharacters.characters;
+  const leases = await db.getWardrobeLeasesByUser(projectOwnerUserId);
+  const activeLeases = leases.filter((lease: any) => lease.status === "active") as WardrobeLeaseRecord[];
+
+  const rows = await dbConn
+    .select({ assignment: wardrobeAssignments, item: wardrobeItems })
+    .from(wardrobeAssignments)
+    .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
+    .where(eq(wardrobeAssignments.projectId, projectId));
 
   const applicableRows = (rows as any[]).filter((row) => assignmentAppliesToScene(row.assignment, sceneId, sceneOrder));
+  const foreignAssignments = applicableRows.filter((row) => row.assignment?.userId !== projectOwnerUserId);
+  if (foreignAssignments.length) {
+    throw new Error(`Project ${projectId} contains wardrobe assignments that do not belong to its owner. Remove or repair assignments ${foreignAssignments.map((row) => row.assignment.id).join(", ")}.`);
+  }
+
   const assignmentRecords: WardrobeAssignmentRecord[] = applicableRows
     .filter((row) => row.assignment?.characterId)
     .map((row) => ({
@@ -126,6 +187,9 @@ export async function loadSceneGenerationContext(
   const wardrobeLines: string[] = [];
   const wardrobeImages: string[] = [];
   const warnings: string[] = [];
+  if (!resolvedCharacters.explicitIds.length && projectCharacters.length > 0 && activeCharacters.length === 0) {
+    warnings.push("No project character was explicitly assigned to this scene or resolved from its dialogue and narrative. The generator will not invent cast members.");
+  }
   const canonicalCharacters: CanonicalSceneCharacter[] = [];
   const characterDescriptions: string[] = [];
 
@@ -140,6 +204,9 @@ export async function loadSceneGenerationContext(
 
     if (selectedItem) {
       const itemErrors = validateWardrobeItemForInventory(selectedItem);
+      if (!hasWardrobeAccess(projectOwnerUserId, selectedItem, activeLeases)) {
+        itemErrors.push("The project owner no longer owns or has an active purchase for this wardrobe item.");
+      }
       if (itemErrors.length) throw new Error(`Assigned wardrobe item ${selectedItem.id} (${selectedItem.name}) is not generation-ready: ${itemErrors.join(" ")}`);
       wardrobeAnchor = buildWardrobePromptAnchor(selectedItem, selectedRow.assignment.placementNotes);
       wardrobeReferenceImageUrl = imageFromItem(selectedItem);
@@ -178,9 +245,11 @@ export async function loadSceneGenerationContext(
   for (const row of applicableRows.filter((entry) => !entry.assignment?.characterId)) {
     const item = row.item as WardrobeItemRecord;
     const itemErrors = validateWardrobeItemForInventory(item);
+    if (!hasWardrobeAccess(projectOwnerUserId, item, activeLeases)) {
+      itemErrors.push("The project owner no longer owns or has an active purchase for this wardrobe item.");
+    }
     if (itemErrors.length) {
-      warnings.push(`Scene wardrobe reference ${item.id} (${item.name}) skipped: ${itemErrors.join(" ")}`);
-      continue;
+      throw new Error(`Scene wardrobe reference ${item.id} (${item.name}) is not generation-ready: ${itemErrors.join(" ")}`);
     }
     wardrobeLines.push(`Scene/set reference: ${buildWardrobePromptAnchor(item, row.assignment.placementNotes)}`);
     const image = imageFromItem(item);
@@ -192,13 +261,20 @@ export async function loadSceneGenerationContext(
     ...(scene as any),
     id: scene.id,
     orderIndex: sceneOrder,
-    wardrobeOverrides: (scene as any).wardrobeOverrides ?? (scene as any).wardrobe,
+    characterIds: resolvedCharacters.explicitIds,
+    dialogueLines: parseJsonValue<any[]>((scene as any).dialogueLines, []),
+    wardrobeOverrides: parseJsonValue<unknown>((scene as any).wardrobeOverrides ?? (scene as any).wardrobe, []),
+    wardrobe: parseJsonValue<unknown>((scene as any).wardrobe ?? (scene as any).wardrobeOverrides, []),
+    props: parseJsonValue<unknown>((scene as any).props, []),
+    visualEffects: parseJsonValue<unknown>((scene as any).visualEffects, []),
+    referenceImages: parseJsonValue<unknown[]>((scene as any).referenceImages, []),
   };
   let canonicalSpec = compileCanonicalSceneSpec(mergedScene, canonicalCharacters);
   if (wardrobeLines.length) canonicalSpec.lockedRequirements.push(`WARDROBE AND COSTUME LOCKS: ${wardrobeLines.join(" | ")}`);
   canonicalSpec.referenceImages = uniqueUrls([
     ...canonicalSpec.referenceImages,
     ...canonicalCharacters.map((character) => character.referenceImageUrl),
+    ...canonicalCharacters.map((character) => character.wardrobeReferenceImageUrl),
     ...wardrobeImages,
   ]);
   canonicalSpec.validationWarnings.push(...warnings);
@@ -207,6 +283,7 @@ export async function loadSceneGenerationContext(
 
   return {
     scene,
+    projectOwnerUserId,
     characters: activeCharacters,
     canonicalSpec,
     canonicalPrompt: renderCanonicalScenePrompt(canonicalSpec),
