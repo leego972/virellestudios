@@ -200,7 +200,7 @@ export default function UserInventoryPage() {
     onError: (error: { message: string }) => toast.error(error.message || "Item could not be assigned."),
   });
 
-  const rows = (inventory ?? []) as InventoryRow[];
+  const rows = (inventory ?? []) as unknown as InventoryRow[];
   const filtered = rows.filter((row) => {
     const needle = query.trim().toLowerCase();
     if (!needle) return true;

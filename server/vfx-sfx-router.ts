@@ -128,34 +128,7 @@ function buildStudioPrompt(input: { operations: string[]; intensity: number; sce
   ].filter(Boolean).join(" ");
 }
 
-export const vfxSfxRouter = router({
-  listVfxPacks: protectedProcedure.query(() => VFX_PACKS),
-  listSfxPacks: protectedProcedure.query(() => SFX_PACKS),
-  getStudioEffectCatalogue: protectedProcedure.query(() => VFX_STUDIO_EFFECT_CATALOGUE),
-  getSwappysFunnelPricing: protectedProcedure.query(() => getSwappysFunnelPricing()),
-  getStudioEntitlements: protectedProcedure.query(({ ctx }) => ({ pricing: getSwappysFunnelPricing(), defaultWatermarkMode: getSwappysWatermarkMode({ product: "virelle_studio", user: ctx.user as any, hideVisibleWatermark: false }), transformGoals: TRANSFORM_GOALS })),
-
-  getLibrary: protectedProcedure.query(async ({ ctx }) => {
-    const dbConn = await db.getDb();
-    if (!dbConn) return { vfx: [], sfx: [] };
-    await ensureTables(dbConn);
-    const rows: any = await dbConn.execute(sql`SELECT packId, packType, isActive FROM user_vfx_library WHERE userId = ${ctx.user.id} ORDER BY addedAt DESC`);
-    const data: any[] = Array.isArray(rows[0]) ? rows[0] : [];
-    const vfxIds = new Map(data.filter(r => r.packType === "vfx").map(r => [Number(r.packId), !!r.isActive]));
-    const sfxIds = new Map(data.filter(r => r.packType === "sfx").map(r => [Number(r.packId), !!r.isActive]));
-    return { vfx: VFX_PACKS.filter(p => vfxIds.has(p.id)).map(p => ({ ...p, isActive: vfxIds.get(p.id) ?? true })), sfx: SFX_PACKS.filter(p => sfxIds.has(p.id)).map(p => ({ ...p, isActive: sfxIds.get(p.id) ?? true })) };
-  }),
-
-  addToLibrary: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]) })).mutation(async ({ ctx, input }) => {
-    const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await ensureTables(dbConn);
-    await dbConn.execute(sql`INSERT INTO user_vfx_library (userId, packId, packType, isActive) VALUES (${ctx.user.id}, ${input.packId}, ${input.packType}, 1) ON DUPLICATE KEY UPDATE isActive = 1`); return { ok: true };
-  }),
-  removeFromLibrary: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]) })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await dbConn.execute(sql`DELETE FROM user_vfx_library WHERE userId = ${ctx.user.id} AND packId = ${input.packId} AND packType = ${input.packType}`); return { ok: true }; }),
-  setPackActive: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]), active: z.boolean() })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await dbConn.execute(sql`UPDATE user_vfx_library SET isActive = ${input.active ? 1 : 0} WHERE userId = ${ctx.user.id} AND packId = ${input.packId} AND packType = ${input.packType}`); return { ok: true }; }),
-  getSceneVfxData: protectedProcedure.input(z.object({ sceneId: z.number() })).query(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) return null; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT * FROM scene_vfx_data WHERE sceneId = ${input.sceneId} AND userId = ${ctx.user.id} LIMIT 1`); const data = Array.isArray(rows[0]) ? rows[0] : []; return data[0] || null; }),
-
-  createStudioVfxJob: protectedProcedure
-    .input(z.object({
+const createStudioVfxJobInput = z.object({
       projectId: z.number(), sceneId: z.number(), operations: z.array(z.string().min(2).max(80)).min(1).max(32), intensity: z.number().min(1).max(100).default(75),
       sourcePlateUrl: z.string().url().optional().nullable(), actorReferenceUrl: z.string().url().optional().nullable(),
       sourceImageUrls: z.array(z.string().url()).max(20).optional().default([]), referenceImageUrls: z.array(z.string().url()).max(20).optional().default([]),
@@ -163,8 +136,10 @@ export const vfxSfxRouter = router({
       transformGoal: z.enum(TRANSFORM_GOALS).optional().default("appearance_reference"), targetAge: z.number().min(1).max(120).optional().nullable(), targetPresentation: z.string().max(400).optional().nullable(),
       consentConfirmed: z.boolean().optional().default(false), consentNotes: z.string().max(2000).optional().nullable(), hideVisibleWatermark: z.boolean().optional().default(false),
       exportQuality: z.enum(["preview", "final", "master"]).default("preview"), directorNotes: z.string().max(4000).optional().nullable(), runImagePass: z.boolean().optional().default(true),
-    }))
-    .mutation(async ({ ctx, input }) => {
+    });
+type CreateStudioVfxJobInput = z.infer<typeof createStudioVfxJobInput>;
+
+async function executeStudioVfxJob(ctx: any, input: CreateStudioVfxJobInput) {
       const scene = await db.getSceneById(input.sceneId);
       if (!scene || (scene as any).projectId !== input.projectId) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found for this project." });
       const project = await db.getProjectById(input.projectId, ctx.user.id); if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project access denied." });
@@ -205,16 +180,46 @@ export const vfxSfxRouter = router({
       }
       logger.info(`[VFX Studio] scene=${input.sceneId} kind=${jobKind} goal=${input.transformGoal} media=${mediaCount} credits=${creditCost} watermark=${watermarkMode}`);
       return { ok: true, jobKind, swappysJobId, enhancedImageUrl, prompt, watermarkMode, creditCost, balanceAfter, metadata };
-    }),
+}
+
+export const vfxSfxRouter = router({
+  listVfxPacks: protectedProcedure.query(() => VFX_PACKS),
+  listSfxPacks: protectedProcedure.query(() => SFX_PACKS),
+  getStudioEffectCatalogue: protectedProcedure.query(() => VFX_STUDIO_EFFECT_CATALOGUE),
+  getSwappysFunnelPricing: protectedProcedure.query(() => getSwappysFunnelPricing()),
+  getStudioEntitlements: protectedProcedure.query(({ ctx }) => ({ pricing: getSwappysFunnelPricing(), defaultWatermarkMode: getSwappysWatermarkMode({ product: "virelle_studio", user: ctx.user as any, hideVisibleWatermark: false }), transformGoals: TRANSFORM_GOALS })),
+
+  getLibrary: protectedProcedure.query(async ({ ctx }) => {
+    const dbConn = await db.getDb();
+    if (!dbConn) return { vfx: [], sfx: [] };
+    await ensureTables(dbConn);
+    const rows: any = await dbConn.execute(sql`SELECT packId, packType, isActive FROM user_vfx_library WHERE userId = ${ctx.user.id} ORDER BY addedAt DESC`);
+    const data: any[] = Array.isArray(rows[0]) ? rows[0] : [];
+    const vfxIds = new Map(data.filter(r => r.packType === "vfx").map(r => [Number(r.packId), !!r.isActive]));
+    const sfxIds = new Map(data.filter(r => r.packType === "sfx").map(r => [Number(r.packId), !!r.isActive]));
+    return { vfx: VFX_PACKS.filter(p => vfxIds.has(p.id)).map(p => ({ ...p, isActive: vfxIds.get(p.id) ?? true })), sfx: SFX_PACKS.filter(p => sfxIds.has(p.id)).map(p => ({ ...p, isActive: sfxIds.get(p.id) ?? true })) };
+  }),
+
+  addToLibrary: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]) })).mutation(async ({ ctx, input }) => {
+    const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await ensureTables(dbConn);
+    await dbConn.execute(sql`INSERT INTO user_vfx_library (userId, packId, packType, isActive) VALUES (${ctx.user.id}, ${input.packId}, ${input.packType}, 1) ON DUPLICATE KEY UPDATE isActive = 1`); return { ok: true };
+  }),
+  removeFromLibrary: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]) })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await dbConn.execute(sql`DELETE FROM user_vfx_library WHERE userId = ${ctx.user.id} AND packId = ${input.packId} AND packType = ${input.packType}`); return { ok: true }; }),
+  setPackActive: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]), active: z.boolean() })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await dbConn.execute(sql`UPDATE user_vfx_library SET isActive = ${input.active ? 1 : 0} WHERE userId = ${ctx.user.id} AND packId = ${input.packId} AND packType = ${input.packType}`); return { ok: true }; }),
+  getSceneVfxData: protectedProcedure.input(z.object({ sceneId: z.number() })).query(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) return null; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT * FROM scene_vfx_data WHERE sceneId = ${input.sceneId} AND userId = ${ctx.user.id} LIMIT 1`); const data = Array.isArray(rows[0]) ? rows[0] : []; return data[0] || null; }),
+
+  createStudioVfxJob: protectedProcedure
+    .input(createStudioVfxJobInput)
+    .mutation(({ ctx, input }) => executeStudioVfxJob(ctx, input)),
 
   createSwappysDigitalDoubleJob: protectedProcedure
     .input(z.object({ projectId: z.number(), sceneId: z.number(), sourcePlateUrl: z.string().url().optional().nullable(), actorReferenceUrl: z.string().url().optional().nullable(), sourceImageUrls: z.array(z.string().url()).max(20).optional().default([]), referenceImageUrls: z.array(z.string().url()).max(20).optional().default([]), sourceVideoUrl: z.string().url().optional().nullable(), referenceVideoUrl: z.string().url().optional().nullable(), transformGoal: z.enum(TRANSFORM_GOALS).optional().default("appearance_reference"), targetAge: z.number().min(1).max(120).optional().nullable(), targetPresentation: z.string().max(400).optional().nullable(), consentConfirmed: z.boolean(), consentNotes: z.string().max(2000).optional().nullable(), hideVisibleWatermark: z.boolean().optional().default(false), quality: z.enum(["preview", "final", "master"]).default("preview"), mode: z.enum(["digital_double", "stunt_face_replacement", "actor_continuity_match", "pickup_scene_match", "ai_stunt_insert"]).default("digital_double"), instructions: z.string().max(4000).optional().nullable() }))
     .mutation(async ({ ctx, input }) => {
       const operationByMode: Record<string, string> = { digital_double: "swappys-digital-double", stunt_face_replacement: "stunt-face-replacement", actor_continuity_match: "actor-continuity-match", pickup_scene_match: "pickup-scene-match", ai_stunt_insert: "ai-stunt-insert" };
-      return (vfxSfxRouter as any).createCaller(ctx).createStudioVfxJob({ projectId: input.projectId, sceneId: input.sceneId, operations: [operationByMode[input.mode] || "swappys-digital-double"], intensity: 85, sourcePlateUrl: input.sourcePlateUrl, actorReferenceUrl: input.actorReferenceUrl, sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl, referenceVideoUrl: input.referenceVideoUrl, transformGoal: input.transformGoal, targetAge: input.targetAge, targetPresentation: input.targetPresentation, consentConfirmed: input.consentConfirmed, consentNotes: input.consentNotes, hideVisibleWatermark: input.hideVisibleWatermark, exportQuality: input.quality, directorNotes: input.instructions, runImagePass: true });
+      return executeStudioVfxJob(ctx, { projectId: input.projectId, sceneId: input.sceneId, operations: [operationByMode[input.mode] || "swappys-digital-double"], intensity: 85, sourcePlateUrl: input.sourcePlateUrl, actorReferenceUrl: input.actorReferenceUrl, sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl, referenceVideoUrl: input.referenceVideoUrl, transformGoal: input.transformGoal, targetAge: input.targetAge, targetPresentation: input.targetPresentation, consentConfirmed: input.consentConfirmed, consentNotes: input.consentNotes, hideVisibleWatermark: input.hideVisibleWatermark, exportQuality: input.quality, directorNotes: input.instructions, runImagePass: true });
     }),
 
-  applyVfxToScene: protectedProcedure.input(z.object({ sceneId: z.number(), vfxPackIds: z.array(z.number()).min(1).max(6) })).mutation(async ({ ctx, input }) => { const scene = await db.getSceneById(input.sceneId); if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" }); const project = await db.getProjectById((scene as any).projectId, ctx.user.id); if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project access denied." }); const vfxInjection = buildVfxPromptInjection(input.vfxPackIds); return (vfxSfxRouter as any).createCaller(ctx).createStudioVfxJob({ projectId: (scene as any).projectId, sceneId: input.sceneId, operations: input.vfxPackIds.map((id) => `library-pack-${id}`), intensity: 75, sourcePlateUrl: (scene as any).thumbnailUrl || null, actorReferenceUrl: null, sourceImageUrls: [], referenceImageUrls: [], sourceVideoUrl: null, referenceVideoUrl: null, transformGoal: "appearance_reference", consentConfirmed: false, hideVisibleWatermark: false, exportQuality: "preview", directorNotes: `Apply selected VFX library packs: ${vfxInjection}`, runImagePass: true }); }),
+  applyVfxToScene: protectedProcedure.input(z.object({ sceneId: z.number(), vfxPackIds: z.array(z.number()).min(1).max(6) })).mutation(async ({ ctx, input }) => { const scene = await db.getSceneById(input.sceneId); if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" }); const project = await db.getProjectById((scene as any).projectId, ctx.user.id); if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project access denied." }); const vfxInjection = buildVfxPromptInjection(input.vfxPackIds); return executeStudioVfxJob(ctx, { projectId: (scene as any).projectId, sceneId: input.sceneId, operations: input.vfxPackIds.map((id) => `library-pack-${id}`), intensity: 75, sourcePlateUrl: (scene as any).thumbnailUrl || null, actorReferenceUrl: null, sourceImageUrls: [], referenceImageUrls: [], sourceVideoUrl: null, referenceVideoUrl: null, transformGoal: "appearance_reference", consentConfirmed: false, hideVisibleWatermark: false, exportQuality: "preview", directorNotes: `Apply selected VFX library packs: ${vfxInjection}`, runImagePass: true }); }),
 
   generateCustomSfx: protectedProcedure.input(z.object({ prompt: z.string().min(10).max(500), durationSeconds: z.number().min(1).max(22).default(5), sceneId: z.number().optional() })).mutation(async ({ ctx, input }) => { const userKeys = await db.getUserApiKeys(ctx.user.id); const elevenlabsKey = (userKeys as any).elevenlabsKey; if (!elevenlabsKey) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "NO_ELEVENLABS_KEY: Add your ElevenLabs API key in Settings → API Keys to generate custom SFX." }); try { const response = await fetch("https://api.elevenlabs.io/v1/sound-generation", { method: "POST", headers: { "xi-api-key": elevenlabsKey, "Content-Type": "application/json" }, body: JSON.stringify({ text: input.prompt, duration_seconds: input.durationSeconds, prompt_influence: 0.3 }) }); if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `ElevenLabs error: ${await response.text()}` }); const audioBuffer = Buffer.from(await response.arrayBuffer()); const { url } = await storagePut(`sfx/${ctx.user.id}/${Date.now()}.mp3`, audioBuffer, "audio/mpeg"); if (input.sceneId) { const dbConn = await db.getDb(); if (dbConn) { await ensureTables(dbConn); await dbConn.execute(sql`INSERT INTO scene_vfx_data (sceneId, userId, sfxAudioUrl, sfxPrompt) VALUES (${input.sceneId}, ${ctx.user.id}, ${url}, ${input.prompt}) ON DUPLICATE KEY UPDATE sfxAudioUrl = ${url}, sfxPrompt = ${input.prompt}, appliedAt = NOW()`); } } return { audioUrl: url, prompt: input.prompt }; } catch (e: any) { if (e instanceof TRPCError) throw e; throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "SFX generation failed. Please try again." }); } }),
 
@@ -232,7 +237,7 @@ export const vfxSfxRouter = router({
     .input(z.object({
       sourceImageBase64: z.string().min(50).max(15_000_000),
       targetImageBase64: z.string().min(50).max(15_000_000),
-      consentConfirmed: z.literal(true, { errorMap: () => ({ message: "Explicit consent is required before performing a face transformation." }) }),
+      consentConfirmed: z.literal(true, { error: "Explicit consent is required before performing a face transformation." }),
     }))
     .mutation(async ({ ctx, input }) => {
       const user = (ctx as any).user || null;
