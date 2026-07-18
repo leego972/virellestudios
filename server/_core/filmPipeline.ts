@@ -302,13 +302,13 @@ async function normalizeSceneForAssembly(
   }
   let audioMap = "";
   if (dialogueIndex != null && musicIndex != null) {
-    args.push("-filter_complex", `[${dialogueIndex}:a]volume=1.0[dialogue];[${musicIndex}:a]volume=0.22[music];[dialogue][music]amix=inputs=2:duration=longest:dropout_transition=2:normalize=0[mix]`);
+    args.push("-filter_complex", `[${dialogueIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=1.0[dialogue];[${musicIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=0.22[music];[dialogue][music]amix=inputs=2:duration=longest:dropout_transition=2:normalize=0[mix]`);
     audioMap = "[mix]";
   } else if (dialogueIndex != null) {
-    args.push("-filter_complex", `[${dialogueIndex}:a]volume=1.0[mix]`);
+    args.push("-filter_complex", `[${dialogueIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=1.0[mix]`);
     audioMap = "[mix]";
   } else if (musicIndex != null) {
-    args.push("-filter_complex", `[${musicIndex}:a]volume=0.22[mix]`);
+    args.push("-filter_complex", `[${musicIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=0.22[mix]`);
     audioMap = "[mix]";
   } else {
     args.push("-f", "lavfi", "-t", String(Math.max(1, scene.duration)), "-i", "anullsrc=channel_layout=stereo:sample_rate=48000");
@@ -324,7 +324,7 @@ async function normalizeSceneForAssembly(
     "-vf", `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black,setsar=1,fps=${fps}`,
     "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-pix_fmt", "yuv420p",
     "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-ac", "2",
-    "-shortest", "-movflags", "+faststart", "-y", outputPath,
+    "-movflags", "+faststart", "-y", outputPath,
   );
   await execFileAsync("ffmpeg", args, { timeout: 10 * 60 * 1000, maxBuffer: 12 * 1024 * 1024 });
 }
