@@ -5,9 +5,7 @@ const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
 
 pkg.dependencies = pkg.dependencies || {};
 
-// Only downgrade versions that are genuinely broken on npm.
-// lodash@^4.18.1 resolves to nothing (latest real publish is 4.17.21).
-// lucide-react and uuid are valid published versions — leave them as-is.
+// Normalize dependency ranges that do not resolve reliably from npm.
 const safeVersions = {
   lodash: '^4.17.21',
   'lodash-es': '^4.17.21',
@@ -26,4 +24,4 @@ pkg.pnpm.overrides = {
 };
 
 fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
-console.log('Railway/package dependency ranges normalized (lodash only).');
+console.log('Package dependency ranges normalized (lodash only).');
