@@ -26,7 +26,8 @@ COPY --from=builder /app/dist ./dist
 # Gateway listens on Render's injected $PORT and proxies to the Express app on
 # $PORT+1. During cold start it returns a warming response so the health check
 # does not terminate an otherwise healthy container before Express is ready.
-COPY start.sh gateway.mjs seed-admin.mjs ./
+COPY start.sh gateway.mjs seed-admin.mjs drizzle.config.ts ./
+COPY drizzle/ ./drizzle/
 RUN chmod +x start.sh
 EXPOSE 3000
 CMD ["sh", "start.sh"]
