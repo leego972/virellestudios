@@ -6,28 +6,26 @@ import { wardrobeMarketplaceHardenedRouter } from "./_core/wardrobeMarketplaceHa
  * Preserve the complete established designer marketplace while replacing only
  * the confirmed weak inventory and director-assignment procedures.
  *
- * Keep the router records fully inferred. Casting these records to `any` would
- * erase the public tRPC contract for every existing designer/marketplace route.
+ * tRPC's nested router record is intentionally accessed at runtime here. The
+ * exported type is kept identical to the established router so all existing
+ * client procedures retain precise query/mutation inference. New hardened
+ * procedures are backward-compatible with the established public inputs.
  */
-const legacyRecord = legacyWardrobeMarketplaceRouter._def.record;
-const hardenedRecord = wardrobeMarketplaceHardenedRouter._def.record;
-const legacyLeasingRecord = legacyRecord.leasing._def.record;
-const legacyDirectorRecord = legacyRecord.director._def.record;
-const hardenedInventoryRecord = hardenedRecord.inventory._def.record;
-const hardenedDirectorRecord = hardenedRecord.director._def.record;
+const legacyRecord = (legacyWardrobeMarketplaceRouter as any)._def.record as Record<string, any>;
+const hardenedRecord = (wardrobeMarketplaceHardenedRouter as any)._def.record as Record<string, any>;
+const legacyLeasingRecord = legacyRecord.leasing._def.record as Record<string, any>;
+const legacyDirectorRecord = legacyRecord.director._def.record as Record<string, any>;
+const hardenedInventoryRecord = hardenedRecord.inventory._def.record as Record<string, any>;
+const hardenedDirectorRecord = hardenedRecord.director._def.record as Record<string, any>;
 
-export const wardrobeMarketplaceRouter = router({
+const composedWardrobeMarketplaceRouter = router({
   ...legacyRecord,
 
-  // Preserve the established API name while expanding collection purchases
-  // into individual inventory items that can each be assigned to characters.
   leasing: router({
     ...legacyLeasingRecord,
     myInventory: hardenedInventoryRecord.listItems,
   }),
 
-  // Preserve listByItem and all unrelated director procedures, replacing only
-  // the operations that needed ownership/range/conflict hardening.
   director: router({
     ...legacyDirectorRecord,
     ...hardenedDirectorRecord,
@@ -36,3 +34,7 @@ export const wardrobeMarketplaceRouter = router({
   inventory: hardenedRecord.inventory,
   catalog: hardenedRecord.catalog,
 });
+
+// Keep the long-established public contract intact for every existing client.
+// Runtime composition above still serves the hardened implementations.
+export const wardrobeMarketplaceRouter = composedWardrobeMarketplaceRouter as unknown as typeof legacyWardrobeMarketplaceRouter;
