@@ -12,6 +12,15 @@ import LeegoLogo from "@/components/LeegoLogo";
 
 export default function Login() {
   const [, navigate] = useLocation();
+  const queryParams = new URLSearchParams(window.location.search);
+  const requestedReturnTo = queryParams.get("returnTo");
+  const returnTo = requestedReturnTo
+    && requestedReturnTo.startsWith("/")
+    && !requestedReturnTo.startsWith("//")
+    && !requestedReturnTo.startsWith("/api/")
+    && !requestedReturnTo.includes("\\")
+      ? requestedReturnTo
+      : null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +30,9 @@ export default function Login() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("error") === "oauth_failed") {
       toast.error("OAuth sign-in failed. Please try again or use email/password.");
-      // Clean the URL
-      window.history.replaceState({}, "", "/login");
+      params.delete("error");
+      const remainingQuery = params.toString();
+      window.history.replaceState({}, "", `/login${remainingQuery ? `?${remainingQuery}` : ""}`);
     }
   }, []);
 
@@ -31,7 +41,7 @@ export default function Login() {
     onSuccess: async () => {
       toast.success("Welcome back!");
       await utils.auth.me.refetch();
-      navigate("/?opener=1");
+      navigate(returnTo || "/?opener=1");
     },
     onError: (err) => {
       toast.error(err.message || "Login failed");
@@ -176,7 +186,7 @@ export default function Login() {
                 {/* OAuth Buttons */}
                 <div className="grid grid-cols-2 gap-3 w-full">
                   <a
-                    href="/api/auth/google"
+                    href={returnTo ? `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}` : "/api/auth/google"}
                     className="flex items-center justify-center gap-2 h-10 rounded-md border border-border bg-background hover:bg-muted transition-colors text-sm font-medium"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -188,7 +198,7 @@ export default function Login() {
                     Google
                   </a>
                   <a
-                    href="/api/auth/github"
+                    href={returnTo ? `/api/auth/github?returnTo=${encodeURIComponent(returnTo)}` : "/api/auth/github"}
                     className="flex items-center justify-center gap-2 h-10 rounded-md border border-border bg-background hover:bg-muted transition-colors text-sm font-medium"
                   >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

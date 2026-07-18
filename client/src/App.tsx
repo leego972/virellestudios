@@ -187,6 +187,7 @@ const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage
   const AccessibilityStudio = lazy(() => import("./pages/AccessibilityStudio"));
   const LocationStudio = lazy(() => import("./pages/LocationStudio"));
   const SwappysHub = lazy(() => import("./pages/SwappysHub"));
+  const MobileAuthBridge = lazy(() => import("./pages/MobileAuthBridge"));
 // ─── Loading fallback ───
 function PageLoader() {
   return (
@@ -270,6 +271,7 @@ function Router() {
       <Route path="/opener-preview">{() => <OpenerPreview />}</Route>
       <Route path="/forgot-password">{() => <LazyPage><ForgotPassword /></LazyPage>}</Route>
       <Route path="/reset-password">{() => <LazyPage><ResetPassword /></LazyPage>}</Route>
+      <Route path="/mobile-auth/swappys">{() => <LazyPage><MobileAuthBridge /></LazyPage>}</Route>
 
       {/* Public blog pages (no auth required) */}
       <Route path="/blog">{() => <LazyPage><Blog /></LazyPage>}</Route>

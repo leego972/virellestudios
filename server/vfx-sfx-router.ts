@@ -7,6 +7,7 @@ import { logger } from "./_core/logger";
 import { generateImage } from "./_core/imageGeneration";
 import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
+import { authenticateSwappysMobileRequest } from "./_core/context";
 import {
   enforceSwappysGenerationQuota,
   moderateSwappysImages,
@@ -244,7 +245,7 @@ export const vfxSfxRouter = router({
       consentConfirmed: z.literal(true, { error: "Explicit consent is required before performing a face transformation." }),
     }))
     .mutation(async ({ ctx, input }) => {
-      const user = (ctx as any).user || null;
+      const user = (ctx as any).user || await authenticateSwappysMobileRequest(ctx.req);
       const tier = String(user?.subscriptionTier || "free").toLowerCase();
       const paidTiers = new Set(["indie", "amateur", "creator", "independent", "industry", "studio", "pro", "beta"]);
       const isPaid = paidTiers.has(tier) || user?.role === "admin";

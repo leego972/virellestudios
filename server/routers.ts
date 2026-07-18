@@ -68,6 +68,7 @@ import { productionDocumentsRouter } from "./production-documents-router";
 import { epkGeneratorRouter } from "./epk-generator-router";
 import { locationRecreationRouter } from "./location-recreation-router";
 import { vfxSfxRouter } from "./vfx-sfx-router";
+import { mobileAuthRouter } from "./mobile-auth-router";
 import { virelleBroadcastRenderRouter } from "./virelle-broadcast-render-router";
 import { locationStudioRouter } from "./location-studio-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
@@ -366,6 +367,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
 
 export const appRouter = router({
   system: systemRouter,
+  mobileAuth: mobileAuthRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
       if (!ctx.user) return null;
