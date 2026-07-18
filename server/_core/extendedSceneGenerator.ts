@@ -16,7 +16,7 @@ import { logger } from "./logger";
 import { loadSceneGenerationContext } from "./sceneGenerationContext";
 import { storagePut } from "../storage";
 import { reviewGeneratedClip, type VideoQualityPolicy, type VideoQualityReview } from "./videoQualityGate";
-import type { CanonicalSceneSpec } from "./canonicalSceneSpec";
+import { refreshCanonicalSceneFingerprint, renderCanonicalScenePrompt, type CanonicalSceneSpec } from "./canonicalSceneSpec";
 
 const execFileAsync = promisify(execFile);
 
@@ -468,9 +468,18 @@ export async function generateExtendedScene(
     musicMood: request.musicMood,
     musicTempo: request.musicTempo,
   });
-  const spec = context.canonicalSpec;
-  if (request.wardrobeContext?.trim()) spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);
-  if (request.characterDescriptions?.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${request.characterDescriptions.join(" | ")}`);
+  let spec = context.canonicalSpec;
+  if (request.wardrobeContext?.trim() && !context.wardrobeContext?.includes(request.wardrobeContext.trim())) {
+    spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);
+  }
+  if (request.characterDescriptions?.length) {
+    const missingDescriptions = request.characterDescriptions.filter((description) =>
+      !context.characterDescriptions.includes(description),
+    );
+    if (missingDescriptions.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${missingDescriptions.join(" | ")}`);
+  }
+  spec = refreshCanonicalSceneFingerprint(spec);
+  const canonicalPrompt = renderCanonicalScenePrompt(spec);
 
   const provider = selectProvider(keys);
   const sceneType = inferSceneType(request, spec);
@@ -479,7 +488,7 @@ export async function generateExtendedScene(
     request.targetDurationSeconds,
     request.dialogueAudioDuration ? request.dialogueAudioDuration + 1.5 : 0,
   );
-  const subShots = planSubShots(spec, context.canonicalPrompt, targetDuration, provider, sceneType);
+  const subShots = planSubShots(spec, canonicalPrompt, targetDuration, provider, sceneType);
   const referenceImages = uniqueUrls([
     ...(request.referenceImages || []),
     ...context.referenceImages,

@@ -230,7 +230,6 @@ export default function UserInventoryPage() {
       fromSceneOrder: start,
       toSceneOrder: end,
       notes: notes.trim() || undefined,
-      locked: true,
     });
   };
 
