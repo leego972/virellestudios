@@ -9,6 +9,7 @@
  */
 import Stripe from "stripe";
 import { generateImage } from "./_core/imageGeneration";
+import { fulfillWardrobePurchaseSession } from "./_core/wardrobePurchaseFulfillment";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { eq, and, desc, isNotNull, sql } from "drizzle-orm";
@@ -574,6 +575,7 @@ export const wardrobeMarketplaceRouter = router({
         const designerAmountCents = amountCents - platformFeeCents;
 
         const sessionMeta: Record<string, string> = {
+          type: "wardrobe_purchase",
           userId: String(ctx.user.id),
           leaseType: input.type,
           itemOrCollectionId: String(input.id),
@@ -638,36 +640,8 @@ export const wardrobeMarketplaceRouter = router({
           });
         }
 
-        const pi = session.payment_intent as Stripe.PaymentIntent | null;
-        const piId = pi?.id ?? null;
-
-        // Guard: don't create duplicate leases for the same payment intent
-        if (piId) {
-          const existing = await db.getWardrobeLeaseByPaymentIntent(piId);
-          if (existing) return existing;
-        }
-
-        const meta = session.metadata ?? {};
-        const leaseType = (meta.leaseType ?? "item") as "item" | "collection";
-        const itemOrCollectionId = parseInt(meta.itemOrCollectionId ?? "0", 10);
-        const designerProfileId = parseInt(meta.designerProfileId ?? "0", 10);
-        const platformFeeCents = parseInt(meta.platformFeeCents ?? "0", 10);
-        const designerAmountCents = parseInt(meta.designerAmountCents ?? "0", 10);
-        const amountCents = session.amount_total ?? 0;
-
-        return db.createWardrobeLease({
-          userId: ctx.user.id,
-          designerProfileId,
-          wardrobeItemId: leaseType === "item" ? itemOrCollectionId : null,
-          collectionId: leaseType === "collection" ? itemOrCollectionId : null,
-          leaseType,
-          stripePaymentIntentId: piId,
-          stripeTransferId: null,
-          amountPaidAud: amountCents,
-          designerAmountAud: designerAmountCents,
-          platformFeeAud: platformFeeCents,
-          status: "active",
-        } as any);
+        const fulfilled = await fulfillWardrobePurchaseSession(session, ctx.user.id);
+        return fulfilled.lease;
       }),
 
     /** All leases for the current user */

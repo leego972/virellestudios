@@ -37,6 +37,7 @@ import { registerSeoRoutes } from "../seo-engine";
 import { directorAssistantTitanRouter } from "../director-assistant-titan-router";
 import { registerSeoV4Routes } from "../seo-engine-v4";
 import { seedAdminUsers } from "./admin-seed";
+import { fulfillWardrobePurchaseSession } from "./wardrobePurchaseFulfillment";
 
 // Validate production environment on startup
 validateProductionEnv();
@@ -233,6 +234,12 @@ async function startServer() {
           const customerId = session.customer as string;
           const userId = await resolveUserId(session.metadata, customerId);
           if (userId) resolvedUserIdForAudit = userId;
+
+          if (session.metadata?.type === "wardrobe_purchase" && userId) {
+            const fulfilled = await fulfillWardrobePurchaseSession(session, userId);
+            logger.info(`[WardrobePurchase] ${fulfilled.alreadyFulfilled ? "Already fulfilled" : "Inventory activated"}: user=${userId} session=${session.id}`);
+            break;
+          }
 
           // Check if this is a Signature Cast actor unlock
           if (session.metadata?.type === "signature_cast_unlock" && userId) {

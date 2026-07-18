@@ -260,7 +260,14 @@ import { useState, useRef } from "react";
       onError: e => toast.error(e.message),
     });
     const applyVfx = trpc.vfxSfx.applyVfxToScene.useMutation({
-      onSuccess: data => { setApplyResult(data); toast.success("VFX rendered into scene"); },
+      onSuccess: data => {
+        if (!data.enhancedImageUrl) {
+          toast.error("VFX render completed without an output image.");
+          return;
+        }
+        setApplyResult({ enhancedImageUrl: data.enhancedImageUrl });
+        toast.success("VFX rendered into scene");
+      },
       onError: e => toast.error(e.message),
     });
     const genSfx = trpc.vfxSfx.generateCustomSfx.useMutation({
