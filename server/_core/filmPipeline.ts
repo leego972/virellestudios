@@ -1,57 +1,33 @@
+import { execFile } from "node:child_process";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { promisify } from "node:util";
 import { buildNegativePrompt } from "./cinematicPromptEngine";
-
-import { logger } from "./logger";/**
- * Full Film Generation Pipeline â The Master Orchestrator
- * 
- * This is the engine that generates a complete 90-minute film.
- * It orchestrates all sub-systems:
- * 
- * 1. SCREENPLAY PHASE â AI generates the full screenplay
- * 2. SCENE BREAKDOWN â Script is broken into 60-90 detailed scenes
- * 3. CHARACTER SETUP â Build character DNA for consistency
- * 4. CONTINUITY CHAIN â Plan visual flow between scenes
- * 5. VIDEO GENERATION â Generate extended scenes with clip chaining
- * 6. DIALOGUE AUDIO â Generate voice acting for each scene
- * 7. SOUNDTRACK â Generate AI film score
- * 8. FINAL ASSEMBLY â Stitch everything into a single film with audio
- * 
- * Architecture for 90-minute film:
- * - 60-90 scenes (avg 60-90 seconds each)
- * - Each scene = 4-8 sub-clips of 8-10 seconds
- * - Total clips: ~400-700
- * - Dialogue: ~200-400 lines of voice-acted dialogue
- * - Soundtrack: 60-90 individual score segments
- * 
- * Generation is done in BATCHES to manage:
- * - API rate limits
- * - Cost (user can pause/resume)
- * - Progress tracking (real-time updates)
- * 
- * The pipeline supports:
- * - Full auto-generation (concept â finished film)
- * - Scene-by-scene generation (generate one scene at a time)
- * - Re-generation (regenerate specific scenes)
- * - Multi-pass refinement (generate draft, then improve)
- */
-
-import { generateExtendedScene, estimateFilmGenerationCalls, type ExtendedSceneRequest, type ExtendedSceneResult } from "./extendedSceneGenerator";
-import { generateSceneDialogue, type VoiceActingKeys, type DialogueLine, type SceneDialogueRequest } from "./voiceActingEngine";
-import { generateSoundtrack, type SoundtrackKeys, type SoundtrackRequest, type SoundtrackResult, getGenreMusicPreset } from "./soundtrackEngine";
-import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityChainAfterGeneration, extractContinuityFrame, type ContinuityChain, type CharacterDNA, type SceneCoherenceContext } from "./characterConsistency";
-import { type UserApiKeys } from "./byokVideoEngine";
+import {
+  estimateFilmGenerationCalls,
+  generateExtendedScene,
+  type ExtendedSceneResult,
+} from "./extendedSceneGenerator";
+import {
+  generateSceneDialogue,
+  type CharacterVoice,
+  type DialogueLine,
+  type VoiceActingKeys,
+  type VoiceActingResult,
+} from "./voiceActingEngine";
+import {
+  generateSoundtrack,
+  getGenreMusicPreset,
+  type SoundtrackKeys,
+} from "./soundtrackEngine";
+import type { UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
-import { getDb } from "../db";
-import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, wardrobeItems, projectVisualDNA } from "../../drizzle/schema";
-import { eq, and, or, isNull } from "drizzle-orm";
-import { execFile } from "child_process";
-import { promisify } from "util";
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
+import { logger } from "./logger";
+import { loadSceneGenerationContext, type SceneGenerationContext } from "./sceneGenerationContext";
+import { reviewGeneratedClip, type VideoQualityPolicy, type VideoQualityReview } from "./videoQualityGate";
 
 const execFileAsync = promisify(execFile);
-
-// âââ Types âââ
 
 export type FilmGenerationPhase =
   | "preparing"
@@ -78,35 +54,25 @@ export interface FilmGenerationProgress {
 
 export interface FilmGenerationConfig {
   projectId: number;
-  /** Target film duration in minutes */
   targetDurationMinutes: number;
-  /** Film genre for cinematic styling */
   genre: string;
-  /** Overall film mood/tone */
   mood?: string;
-  /** Whether to generate dialogue audio */
   generateDialogue: boolean;
-  /** Whether to generate AI soundtrack */
   generateSoundtrack: boolean;
-  /** Whether to use character consistency */
   useCharacterConsistency: boolean;
-  /** Whether to use scene-to-scene continuity */
   useSceneContinuity: boolean;
-  /** Batch size for parallel scene generation */
   batchSize?: number;
-  /** Scene generation concurrency limit */
   concurrency?: number;
+  qualityPolicy?: Extract<VideoQualityPolicy, "standard" | "strict">;
+  /** Off by default. Partial assembly requires an explicit caller decision. */
+  allowPartialAssembly?: boolean;
 }
 
 export interface FilmGenerationInput {
   config: FilmGenerationConfig;
-  /** Video generation API keys (BYOK) */
   videoKeys: UserApiKeys;
-  /** Voice acting API keys */
   voiceKeys: VoiceActingKeys;
-  /** Soundtrack API keys */
   musicKeys: SoundtrackKeys;
-  /** Project data */
   project: {
     id: number;
     title: string;
@@ -116,7 +82,6 @@ export interface FilmGenerationInput {
     duration?: number;
     rating?: string;
   };
-  /** Characters from the project */
   characters: Array<{
     id: number;
     name: string;
@@ -144,7 +109,6 @@ export interface FilmGenerationInput {
     bodyDnaPrompt?: string | null;
     consistencyNotes?: string | null;
     deepProfile?: string | null;
-    // Voice & speech fields for TTS matching
     voiceId?: string | null;
     voiceType?: string | null;
     voiceDescription?: string | null;
@@ -152,7 +116,6 @@ export interface FilmGenerationInput {
     accent?: string | null;
     role?: string | null;
   }>;
-  /** Scenes from the project (already broken down) */
   scenes: Array<{
     id: number;
     orderIndex: number;
@@ -190,28 +153,39 @@ export interface FilmGenerationInput {
     stuntNotes?: string | null;
     aiPromptOverride?: string | null;
     wardrobeOverrides?: any;
+    wardrobe?: any;
     duration?: number | null;
     characterIds?: number[];
     dialogueLines?: DialogueLine[];
+    sceneType?: string | null;
+    sfxNotes?: string | null;
+    sfxProductionNotes?: string | null;
+    ambientSound?: string | null;
+    musicMood?: string | null;
+    musicTempo?: string | null;
+    negativePrompt?: string | null;
+    seed?: number | null;
   }>;
 }
 
+export interface FilmSceneResult {
+  sceneId: number;
+  orderIndex: number;
+  videoUrl?: string;
+  dialogueAudioUrl?: string;
+  soundtrackUrl?: string;
+  duration: number;
+  success: boolean;
+  error?: string;
+  lastFrameUrl?: string;
+  sceneContractFingerprint?: string;
+  qualityReviews?: VideoQualityReview[];
+}
+
 export interface FilmGenerationResult {
-  /** URL of the final assembled film */
   filmUrl?: string;
-  /** Total duration in seconds */
   totalDuration: number;
-  /** Per-scene results */
-  sceneResults: Array<{
-    sceneId: number;
-    videoUrl?: string;
-    dialogueAudioUrl?: string;
-    soundtrackUrl?: string;
-    duration: number;
-    success: boolean;
-    error?: string;
-  }>;
-  /** Generation statistics */
+  sceneResults: Array<Omit<FilmSceneResult, "orderIndex" | "lastFrameUrl">>;
   stats: {
     totalClipsGenerated: number;
     totalDialogueLinesGenerated: number;
@@ -223,285 +197,345 @@ export interface FilmGenerationResult {
   };
 }
 
-// âââ Scene Duration Calculator âââ
+function buildCharacterVoiceMap(characters: FilmGenerationInput["characters"]): Record<string, CharacterVoice> {
+  const voices: Record<string, CharacterVoice> = {};
+  for (const character of characters) {
+    const genderText = (character.gender || "").toLowerCase();
+    const gender: CharacterVoice["gender"] = genderText.includes("female")
+      ? "female"
+      : genderText.includes("male")
+        ? "male"
+        : "neutral";
+    const ageText = (character.ageRange || "").toLowerCase();
+    const age: CharacterVoice["age"] = /child|teen|young/.test(ageText)
+      ? "young"
+      : /elder|senior|old/.test(ageText)
+        ? "elderly"
+        : "adult";
+    const narrator = /narrator|storyteller|god voice/.test((character.role || "").toLowerCase());
+    voices[character.name] = {
+      voiceId: character.voiceId || (narrator ? "ErXwobaYiN019PkySvjV" : undefined),
+      gender,
+      age,
+      accent: character.accent || undefined,
+    };
+  }
+  return voices;
+}
 
 /**
- * Calculate target duration for each scene based on total film duration.
- * Distributes time based on scene importance and dialogue density.
+ * Preserves every explicit scene duration. Only scenes without an explicit
+ * duration share the remaining target runtime.
  */
 function calculateSceneDurations(
   scenes: FilmGenerationInput["scenes"],
-  totalDurationMinutes: number
+  totalDurationMinutes: number,
 ): Map<number, number> {
-  const totalSeconds = totalDurationMinutes * 60;
-  const numScenes = scenes.length;
+  const targetSeconds = Math.max(1, totalDurationMinutes * 60);
+  const result = new Map<number, number>();
+  const explicit = scenes.filter((scene) => Number(scene.duration) > 0);
+  const flexible = scenes.filter((scene) => !(Number(scene.duration) > 0));
+  const explicitTotal = explicit.reduce((sum, scene) => sum + Number(scene.duration), 0);
 
-  if (numScenes === 0) return new Map();
+  for (const scene of explicit) result.set(scene.id, Number(scene.duration));
+  if (flexible.length === 0) return result;
 
-  // Base duration per scene
-  const baseDuration = totalSeconds / numScenes;
+  const remaining = Math.max(flexible.length * 8, targetSeconds - explicitTotal);
+  const weights = flexible.map((scene) => {
+    const dialogueWeight = Math.min(2, 1 + (scene.dialogueLines?.length || 0) * 0.06);
+    const actionWeight = scene.actionDescription || scene.vfxNotes || scene.stuntNotes ? 1.2 : 1;
+    return dialogueWeight * actionWeight;
+  });
+  const totalWeight = weights.reduce((sum, value) => sum + value, 0) || flexible.length;
+  flexible.forEach((scene, index) => result.set(scene.id, Math.max(8, Math.round(remaining * weights[index] / totalWeight))));
+  return result;
+}
 
-  const durations = new Map<number, number>();
+function outputGeometry(aspectRatio: string): { width: number; height: number } {
+  switch (aspectRatio) {
+    case "9:16": return { width: 1080, height: 1920 };
+    case "1:1": return { width: 1080, height: 1080 };
+    case "4:3": return { width: 1440, height: 1080 };
+    case "3:4": return { width: 1080, height: 1440 };
+    case "2.39:1": return { width: 1920, height: 804 };
+    case "21:9": return { width: 1920, height: 822 };
+    default: return { width: 1920, height: 1080 };
+  }
+}
 
-  for (const scene of scenes) {
-    let duration = baseDuration;
+function numericFrameRate(value: string): number {
+  const match = value.match(/([0-9]+(?:\.[0-9]+)?)/);
+  const number = match ? Number(match[1]) : 24;
+  return Number.isFinite(number) && number >= 12 && number <= 120 ? number : 24;
+}
 
-    // Adjust based on dialogue density
-    const dialogueCount = scene.dialogueLines?.length || 0;
-    if (dialogueCount > 5) {
-      duration *= 1.3; // More dialogue = longer scene
-    } else if (dialogueCount === 0) {
-      duration *= 0.8; // No dialogue = shorter (visual-only scenes)
-    }
+async function downloadTo(url: string, target: string): Promise<void> {
+  const response = await fetch(url, { signal: AbortSignal.timeout(120_000) });
+  if (!response.ok) throw new Error(`Asset download failed: HTTP ${response.status} for ${url}`);
+  await fs.promises.writeFile(target, Buffer.from(await response.arrayBuffer()));
+}
 
-    // Adjust based on explicit duration if set
-    if (scene.duration && scene.duration > 0) {
-      duration = scene.duration;
-    }
+async function normalizeSceneForAssembly(
+  scene: FilmSceneResult,
+  context: SceneGenerationContext,
+  outputPath: string,
+  tmpDir: string,
+): Promise<void> {
+  if (!scene.videoUrl) throw new Error(`Scene ${scene.sceneId} has no video URL.`);
+  const videoPath = path.join(tmpDir, `scene-${scene.sceneId}-video.mp4`);
+  await downloadTo(scene.videoUrl, videoPath);
+  const args: string[] = ["-hide_banner", "-loglevel", "error", "-i", videoPath];
+  let dialogueIndex: number | undefined;
+  let musicIndex: number | undefined;
 
-    // Clamp to reasonable bounds
-    duration = Math.max(20, Math.min(180, duration)); // 20s to 3min per scene
-
-    durations.set(scene.id, duration);
+  if (scene.dialogueAudioUrl) {
+    const dialoguePath = path.join(tmpDir, `scene-${scene.sceneId}-dialogue.mp3`);
+    await downloadTo(scene.dialogueAudioUrl, dialoguePath);
+    dialogueIndex = args.filter((value) => value === "-i").length;
+    args.push("-i", dialoguePath);
+  }
+  if (scene.soundtrackUrl) {
+    const musicPath = path.join(tmpDir, `scene-${scene.sceneId}-music.mp3`);
+    await downloadTo(scene.soundtrackUrl, musicPath);
+    musicIndex = args.filter((value) => value === "-i").length;
+    args.push("-i", musicPath);
+  }
+  let audioMap = "";
+  if (dialogueIndex != null && musicIndex != null) {
+    args.push("-filter_complex", `[${dialogueIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=1.0[dialogue];[${musicIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=0.22[music];[dialogue][music]amix=inputs=2:duration=longest:dropout_transition=2:normalize=0[mix]`);
+    audioMap = "[mix]";
+  } else if (dialogueIndex != null) {
+    args.push("-filter_complex", `[${dialogueIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=1.0[mix]`);
+    audioMap = "[mix]";
+  } else if (musicIndex != null) {
+    args.push("-filter_complex", `[${musicIndex}:a]apad=pad_dur=${Math.max(1, scene.duration)},volume=0.22[mix]`);
+    audioMap = "[mix]";
+  } else {
+    args.push("-f", "lavfi", "-t", String(Math.max(1, scene.duration)), "-i", "anullsrc=channel_layout=stereo:sample_rate=48000");
+    const silentIndex = args.filter((value) => value === "-i").length - 1;
+    audioMap = `${silentIndex}:a`;
   }
 
-  // Normalize to match total target duration
-  const currentTotal = Array.from(durations.values()).reduce((a, b) => a + b, 0);
-  const scaleFactor = totalSeconds / currentTotal;
+  const { width, height } = outputGeometry(context.canonicalSpec.camera.aspectRatio);
+  const fps = numericFrameRate(context.canonicalSpec.camera.frameRate);
+  args.push(
+    "-map", "0:v:0",
+    "-map", audioMap,
+    "-vf", `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black,setsar=1,fps=${fps}`,
+    "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-pix_fmt", "yuv420p",
+    "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-ac", "2",
+    "-movflags", "+faststart", "-y", outputPath,
+  );
+  await execFileAsync("ffmpeg", args, { timeout: 10 * 60 * 1000, maxBuffer: 12 * 1024 * 1024 });
+}
 
-  Array.from(durations.entries()).forEach(([id, dur]) => {
-    durations.set(id, Math.max(15, Math.round(dur * scaleFactor)));
+async function assembleFilm(
+  scenes: FilmSceneResult[],
+  contexts: Map<number, SceneGenerationContext>,
+  projectId: number,
+  projectTitle: string,
+): Promise<{ filmUrl: string; totalDuration: number; quality: VideoQualityReview }> {
+  const ordered = [...scenes].sort((a, b) => a.orderIndex - b.orderIndex);
+  if (ordered.length === 0) throw new Error("No scenes were supplied for film assembly.");
+  if (ordered.some((scene) => !scene.success || !scene.videoUrl)) throw new Error("Film assembly was blocked because one or more required scenes are incomplete.");
+
+  const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-film-assembly-"));
+  try {
+    const normalized: string[] = [];
+    for (const scene of ordered) {
+      const context = contexts.get(scene.sceneId);
+      if (!context) throw new Error(`Missing generation context for scene ${scene.sceneId}.`);
+      const output = path.join(tmpDir, `scene-${String(scene.orderIndex).padStart(4, "0")}.mp4`);
+      await normalizeSceneForAssembly(scene, context, output, tmpDir);
+      normalized.push(output);
+    }
+
+    const concatList = path.join(tmpDir, "film-concat.txt");
+    await fs.promises.writeFile(concatList, normalized.map((file) => `file '${file.replace(/'/g, "'\\''")}'`).join("\n"));
+    const outputPath = path.join(tmpDir, "film.mp4");
+    await execFileAsync("ffmpeg", [
+      "-hide_banner", "-loglevel", "error",
+      "-f", "concat", "-safe", "0", "-i", concatList,
+      "-c", "copy", "-movflags", "+faststart",
+      "-metadata", `title=${projectTitle}`,
+      "-metadata", "artist=Virelle Studios",
+      "-metadata", "comment=Generated through the Virelle canonical film pipeline",
+      "-y", outputPath,
+    ], { timeout: 30 * 60 * 1000, maxBuffer: 12 * 1024 * 1024 });
+
+    const { stdout } = await execFileAsync("ffprobe", [
+      "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", outputPath,
+    ], { timeout: 30_000 });
+    const totalDuration = Number(stdout.trim()) || 0;
+    const file = await fs.promises.readFile(outputPath);
+    const stored = await storagePut(`films/${projectId}/${projectTitle.replace(/[^a-zA-Z0-9]+/g, "_")}-${Date.now()}.mp4`, file, "video/mp4");
+    const firstContext = contexts.get(ordered[0].sceneId)!;
+    const expectedDuration = ordered.reduce((sum, scene) => sum + scene.duration, 0);
+    const quality = await reviewGeneratedClip({
+      videoUrl: stored.url,
+      canonicalSpec: firstContext.canonicalSpec,
+      expectedDurationSeconds: expectedDuration,
+      policy: "technical",
+    });
+    if (!quality.pass) throw new Error(`Final film technical validation failed: ${quality.issues.join(" ")}`);
+    if (expectedDuration > 0 && Math.abs(totalDuration - expectedDuration) / expectedDuration > 0.08) {
+      throw new Error(`Final film duration mismatch: expected approximately ${expectedDuration.toFixed(1)}s, produced ${totalDuration.toFixed(1)}s.`);
+    }
+    return { filmUrl: stored.url, totalDuration, quality };
+  } finally {
+    await fs.promises.rm(tmpDir, { recursive: true, force: true }).catch(() => undefined);
+  }
+}
+
+async function generateDialogueForScene(
+  scene: FilmGenerationInput["scenes"][number],
+  input: FilmGenerationInput,
+): Promise<VoiceActingResult | undefined> {
+  if (!input.config.generateDialogue || !scene.dialogueLines?.length) return undefined;
+  return generateSceneDialogue(input.voiceKeys, {
+    sceneId: scene.id,
+    projectId: input.project.id,
+    dialogueLines: scene.dialogueLines,
+    characterVoices: buildCharacterVoiceMap(input.characters),
+    sceneDescription: scene.visualDescription || scene.description || undefined,
+    genre: input.config.genre,
+  });
+}
+
+async function generateOneScene(
+  input: FilmGenerationInput,
+  scene: FilmGenerationInput["scenes"][number],
+  context: SceneGenerationContext,
+  targetDuration: number,
+  previousFrameUrl: string | undefined,
+  qualityPolicy: "standard" | "strict",
+  progress: FilmGenerationProgress,
+  onProgress?: (progress: FilmGenerationProgress) => void,
+): Promise<FilmSceneResult> {
+  progress.currentSceneTitle = scene.title || `Scene ${scene.orderIndex + 1}`;
+  let dialogue: VoiceActingResult | undefined;
+  if (input.config.generateDialogue && scene.dialogueLines?.length) {
+    progress.phase = "generating_dialogue";
+    onProgress?.({ ...progress });
+    dialogue = await generateDialogueForScene(scene, input);
+    if (!dialogue) throw new Error(`Dialogue was requested for scene ${scene.id} but no dialogue track was produced.`);
+    progress.dialogueLinesGenerated += dialogue.lineCount;
+  }
+
+  progress.phase = "generating_scenes";
+  onProgress?.({ ...progress });
+  const spec = context.canonicalSpec;
+  const sceneResult = await generateExtendedScene(input.videoKeys, {
+    sceneId: scene.id,
+    projectId: input.project.id,
+    description: context.canonicalPrompt,
+    targetDurationSeconds: Math.max(targetDuration, dialogue?.durationSeconds ? dialogue.durationSeconds + 1.5 : 0),
+    mood: scene.mood || input.config.mood,
+    lighting: scene.lighting || undefined,
+    timeOfDay: scene.timeOfDay || undefined,
+    weather: scene.weather || undefined,
+    genre: input.config.genre,
+    characterDescriptions: context.characterDescriptions,
+    locationDescription: spec.locationDescription,
+    previousSceneLastFrameUrl: previousFrameUrl,
+    dialogueAudioUrl: dialogue?.audioUrl,
+    dialogueAudioDuration: dialogue?.durationSeconds,
+    referenceImages: context.referenceImages,
+    aiPromptOverride: scene.aiPromptOverride || undefined,
+    negativePrompt: scene.negativePrompt || spec.negativePrompt || buildNegativePrompt(input.config.genre),
+    seed: scene.seed ?? spec.seed,
+    sceneType: scene.sceneType || undefined,
+    wardrobeContext: context.wardrobeContext,
+    sfxNotes: scene.sfxNotes || undefined,
+    sfxProductionNotes: scene.sfxProductionNotes || undefined,
+    ambientSound: scene.ambientSound || undefined,
+    musicMood: scene.musicMood || undefined,
+    musicTempo: scene.musicTempo || undefined,
+    aspectRatio: spec.camera.aspectRatio,
+    resolution: spec.camera.resolution,
+    frameRate: spec.camera.frameRate,
+    cameraAngle: spec.camera.angle,
+    cameraMovement: spec.camera.movement,
+    lensType: spec.camera.lensType,
+    focalLength: spec.camera.focalLength,
+    depthOfField: spec.camera.depthOfField,
+    shotType: spec.camera.shotType,
+    qualityPolicy,
+    maxQualityRegenerations: qualityPolicy === "strict" ? 2 : 1,
+    requireAllClips: true,
+  }, () => {
+    progress.completedClips++;
+    onProgress?.({ ...progress });
   });
 
-  return durations;
-}
-
-// âââ Final Film Assembly âââ
-
-/**
- * Assemble all scene videos, dialogue audio, and soundtrack into a single film.
- * Uses ffmpeg for multi-track mixing and concatenation.
- */
-async function assembleFilm(
-  sceneResults: Array<{
-    sceneId: number;
-    videoUrl?: string;
-    dialogueAudioUrl?: string;
-    soundtrackUrl?: string;
-    duration: number;
-    orderIndex: number;
-  }>,
-  projectId: number,
-  projectTitle: string
-): Promise<{ filmUrl: string; totalDuration: number }> {
-  const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-film-"));
-
-  try {
-    // Sort scenes by order
-    const sortedScenes = [...sceneResults]
-      .filter(s => s.videoUrl)
-      .sort((a, b) => a.orderIndex - b.orderIndex);
-
-    if (sortedScenes.length === 0) {
-      throw new Error("No scene videos to assemble");
-    }
-
-    logger.info(`[FilmPipeline] Assembling ${sortedScenes.length} scenes into final film...`);
-
-    // Download and process each scene
-    const processedFiles: string[] = [];
-
-    for (let i = 0; i < sortedScenes.length; i++) {
-      const scene = sortedScenes[i];
-      logger.info(`[FilmPipeline] Processing scene ${i + 1}/${sortedScenes.length}...`);
-
-      // Download video
-      const videoPath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_video.mp4`);
-      const videoResp = await fetch(scene.videoUrl!, { signal: AbortSignal.timeout(60000) });
-      if (!videoResp.ok) continue;
-      await fs.promises.writeFile(videoPath, Buffer.from(await videoResp.arrayBuffer()));
-
-      // Check if we have dialogue and/or soundtrack to mix
-      const hasDialogue = !!scene.dialogueAudioUrl;
-      const hasSoundtrack = !!scene.soundtrackUrl;
-
-      if (!hasDialogue && !hasSoundtrack) {
-        // Just normalize the video
-        const normalizedPath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_final.ts`);
-        await execFileAsync("ffmpeg", [
-          "-i", videoPath,
-          "-c:v", "libx264", "-preset", "slow", "-crf", "18",
-          "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1",
-          "-r", "24",
-          "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
-          "-f", "mpegts", "-y", normalizedPath,
-        ], { timeout: 120000 });
-        processedFiles.push(normalizedPath);
-        continue;
-      }
-
-      // Download audio tracks
-      const audioInputs: string[] = ["-i", videoPath];
-      let filterParts: string[] = [];
-      let audioStreamCount = 1; // video's audio is stream 0
-
-      if (hasDialogue) {
-        const dialoguePath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_dialogue.mp3`);
-        const dialogueResp = await fetch(scene.dialogueAudioUrl!, { signal: AbortSignal.timeout(30000) });
-        if (dialogueResp.ok) {
-          await fs.promises.writeFile(dialoguePath, Buffer.from(await dialogueResp.arrayBuffer()));
-          audioInputs.push("-i", dialoguePath);
-          audioStreamCount++;
-        }
-      }
-
-      if (hasSoundtrack) {
-        const soundtrackPath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_soundtrack.mp3`);
-        const soundtrackResp = await fetch(scene.soundtrackUrl!, { signal: AbortSignal.timeout(30000) });
-        if (soundtrackResp.ok) {
-          await fs.promises.writeFile(soundtrackPath, Buffer.from(await soundtrackResp.arrayBuffer()));
-          audioInputs.push("-i", soundtrackPath);
-          audioStreamCount++;
-        }
-      }
-
-      // Build ffmpeg filter for audio mixing
-      const mixedPath = path.join(tmpDir, `scene_${String(i).padStart(3, "0")}_final.ts`);
-
-      if (audioStreamCount === 1) {
-        // No additional audio, just normalize video
-        await execFileAsync("ffmpeg", [
-          ...audioInputs,
-          "-c:v", "libx264", "-preset", "slow", "-crf", "18",
-          "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1",
-          "-r", "24",
-          "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
-          "-f", "mpegts", "-y", mixedPath,
-        ], { timeout: 120000 });
-      } else {
-        // Mix audio tracks together
-        // Dialogue at full volume, soundtrack at 30% volume
-        let filterComplex = "";
-        const audioStreams: string[] = [];
-
-        // Video audio (if exists) at low volume
-        audioStreams.push(`[0:a]volume=0.3[va]`);
-        let mixInputs = "[va]";
-
-        let streamIdx = 1;
-        if (hasDialogue && audioStreamCount >= 2) {
-          audioStreams.push(`[${streamIdx}:a]volume=1.0[da]`);
-          mixInputs += "[da]";
-          streamIdx++;
-        }
-        if (hasSoundtrack && audioStreamCount >= streamIdx + 1) {
-          audioStreams.push(`[${streamIdx}:a]volume=0.3[sa]`);
-          mixInputs += "[sa]";
-        }
-
-        const actualMixCount = mixInputs.split("][").length;
-        filterComplex = `${audioStreams.join(";")};${mixInputs}amix=inputs=${actualMixCount}:duration=longest[aout]`;
-
-        try {
-          await execFileAsync("ffmpeg", [
-            ...audioInputs,
-            "-filter_complex", filterComplex,
-            "-map", "0:v",
-            "-map", "[aout]",
-            "-c:v", "libx264", "-preset", "slow", "-crf", "18",
-            "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1",
-            "-r", "24",
-            "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
-            "-f", "mpegts", "-shortest", "-y", mixedPath,
-          ], { timeout: 120000 });
-        } catch (err) {
-          // Fallback: just use video without audio mixing
-          logger.warn(`[FilmPipeline] Audio mixing failed for scene ${i}, using video only:`, { error: String(err) });
-          await execFileAsync("ffmpeg", [
-            "-i", videoPath,
-            "-c:v", "libx264", "-preset", "slow", "-crf", "18",
-            "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1",
-            "-r", "24",
-            "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
-            "-f", "mpegts", "-y", mixedPath,
-          ], { timeout: 120000 });
-        }
-      }
-
-      processedFiles.push(mixedPath);
-    }
-
-    if (processedFiles.length === 0) {
-      throw new Error("No scenes were successfully processed");
-    }
-
-    // Concatenate all scenes into final film
-    logger.info(`[FilmPipeline] Concatenating ${processedFiles.length} scenes...`);
-    const concatInput = processedFiles.join("|");
-    const outputPath = path.join(tmpDir, "final_film.mp4");
-
-    await execFileAsync("ffmpeg", [
-      "-i", `concat:${concatInput}`,
-      "-c:v", "libx264",
-      "-preset", "slow",
-      "-crf", "16",
-      "-b:v", "10M",
-      "-maxrate", "15M",
-      "-bufsize", "30M",
-      "-pix_fmt", "yuv420p",
-      "-c:a", "aac",
-      "-b:a", "320k",
-      "-ar", "48000",
-      "-movflags", "+faststart",
-      "-metadata", `title=${projectTitle}`,
-      "-metadata", `artist=Virelle Studios`,
-      "-metadata", `comment=Generated by Virelle Studios AI Film Pipeline`,
-      "-y",
-      outputPath,
-    ], { timeout: 1200000 }); // 20 min timeout for high-quality large films
-
-    // Get final duration
-    let totalDuration = 0;
-    try {
-      const { stdout } = await execFileAsync("ffprobe", [
-        "-v", "quiet", "-print_format", "json", "-show_format", outputPath,
-      ], { timeout: 15000 });
-      const info = JSON.parse(stdout);
-      totalDuration = parseFloat(info.format?.duration || "0");
-    } catch { /* estimate */ }
-
-    // Upload to S3
-    const fileBuffer = await fs.promises.readFile(outputPath);
-    const fileSize = fileBuffer.length;
-    const key = `films/${projectId}/${projectTitle.replace(/[^a-zA-Z0-9]/g, "_")}_${Date.now()}.mp4`;
-    const { url: filmUrl } = await storagePut(key, fileBuffer, "video/mp4");
-
-    logger.info(`[FilmPipeline] Film assembled: ${totalDuration.toFixed(0)}s (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
-
-    return { filmUrl, totalDuration };
-  } finally {
-    try {
-      await fs.promises.rm(tmpDir, { recursive: true, force: true });
-    } catch { /* ignore */ }
+  let soundtrackUrl: string | undefined;
+  if (input.config.generateSoundtrack) {
+    progress.phase = "generating_soundtrack";
+    onProgress?.({ ...progress });
+    const preset = getGenreMusicPreset(input.config.genre, scene.mood || input.config.mood || "neutral");
+    const soundtrack = await generateSoundtrack(input.musicKeys, {
+      projectId: input.project.id,
+      sceneId: scene.id,
+      mood: scene.mood || input.config.mood || "neutral",
+      genre: input.config.genre,
+      durationSeconds: sceneResult.totalDuration,
+      instruments: preset.instruments,
+      tempo: preset.tempo,
+      type: "score",
+    });
+    if (!soundtrack?.audioUrl) throw new Error(`Soundtrack was requested for scene ${scene.id} but no audio track was produced.`);
+    soundtrackUrl = soundtrack.audioUrl;
+    progress.soundtrackSegmentsGenerated++;
   }
+
+  return {
+    sceneId: scene.id,
+    orderIndex: scene.orderIndex,
+    videoUrl: sceneResult.videoUrl,
+    dialogueAudioUrl: dialogue?.audioUrl,
+    soundtrackUrl,
+    duration: sceneResult.totalDuration,
+    success: true,
+    lastFrameUrl: sceneResult.lastFrameUrl,
+    sceneContractFingerprint: sceneResult.sceneContractFingerprint,
+    qualityReviews: sceneResult.qualityReviews,
+  };
 }
 
-// âââ Main Pipeline âââ
+async function preflightFilm(input: FilmGenerationInput): Promise<{ orderedScenes: FilmGenerationInput["scenes"]; contexts: Map<number, SceneGenerationContext> }> {
+  if (!input.scenes.length) throw new Error("Film generation requires at least one scene.");
+  const orderedScenes = [...input.scenes].sort((a, b) => a.orderIndex - b.orderIndex);
+  const ids = new Set<number>();
+  const orders = new Set<number>();
+  for (const scene of orderedScenes) {
+    if (ids.has(scene.id)) throw new Error(`Duplicate scene ID ${scene.id}.`);
+    if (orders.has(scene.orderIndex)) throw new Error(`Duplicate scene order ${scene.orderIndex}. Scene order must be unambiguous.`);
+    ids.add(scene.id);
+    orders.add(scene.orderIndex);
+  }
 
-/**
- * Generate a complete film from start to finish.
- * This is the master orchestrator that calls all sub-systems.
- */
+  const contexts = new Map<number, SceneGenerationContext>();
+  for (const scene of orderedScenes) {
+    const context = await loadSceneGenerationContext(scene.id, input.project.id, scene as any);
+    contexts.set(scene.id, context);
+  }
+
+  const ratios = new Set(Array.from(contexts.values()).map((context) => context.canonicalSpec.camera.aspectRatio));
+  const frameRates = new Set(Array.from(contexts.values()).map((context) => context.canonicalSpec.camera.frameRate));
+  if (ratios.size > 1) throw new Error(`Full-film generation requires one delivery aspect ratio. Found: ${Array.from(ratios).join(", ")}.`);
+  if (frameRates.size > 1) throw new Error(`Full-film generation requires one delivery frame rate. Found: ${Array.from(frameRates).join(", ")}.`);
+  return { orderedScenes, contexts };
+}
+
 export async function generateFullFilm(
   input: FilmGenerationInput,
-  onProgress?: (progress: FilmGenerationProgress) => void
+  onProgress?: (progress: FilmGenerationProgress) => void,
 ): Promise<FilmGenerationResult> {
-  const startTime = Date.now();
-  const { config, videoKeys, voiceKeys, musicKeys, project, characters, scenes } = input;
-
+  const started = Date.now();
+  const qualityPolicy = input.config.qualityPolicy ?? "strict";
   const progress: FilmGenerationProgress = {
     phase: "preparing",
-    totalScenes: scenes.length,
+    totalScenes: input.scenes.length,
     completedScenes: 0,
     totalClips: 0,
     completedClips: 0,
@@ -510,377 +544,90 @@ export async function generateFullFilm(
     estimatedTimeRemainingMinutes: 0,
     errors: [],
   };
+  onProgress?.({ ...progress });
 
-  onProgress?.(progress);
+  const { orderedScenes, contexts } = await preflightFilm(input);
+  const durations = calculateSceneDurations(orderedScenes, input.config.targetDurationMinutes);
+  const estimate = estimateFilmGenerationCalls(input.config.targetDurationMinutes);
+  progress.totalClips = estimate.totalClips;
+  progress.estimatedTimeRemainingMinutes = estimate.estimatedMinutes;
+  const sceneResults: FilmSceneResult[] = [];
+  let previousFrameUrl: string | undefined;
 
-  // ââ Step 1: Calculate scene durations ââ
-  const sceneDurations = calculateSceneDurations(scenes, config.targetDurationMinutes);
-  const estimates = estimateFilmGenerationCalls(config.targetDurationMinutes);
-  progress.totalClips = estimates.totalClips;
-  progress.estimatedTimeRemainingMinutes = estimates.estimatedMinutes;
-
-  logger.info(`[FilmPipeline] Starting ${config.targetDurationMinutes}-minute film generation`);
-  logger.info(`[FilmPipeline] ${scenes.length} scenes, ~${estimates.totalClips} total clips, est. ${estimates.estimatedMinutes} min`);
-
-  // ââ Step 2: Build continuity chain ââ
-  let continuityChain: ContinuityChain | undefined;
-  if (config.useCharacterConsistency || config.useSceneContinuity) {
-    continuityChain = buildContinuityChain(characters, scenes as any, project.id);
-    logger.info(`[FilmPipeline] Continuity chain built: ${continuityChain.characters.length} characters, ${continuityChain.scenes.length} scenes`);
-  }
-
-  // ââ Step 3: Generate scenes ââ
-  progress.phase = "generating_scenes";
-  onProgress?.(progress);
-
-  const sceneResults: Array<{
-    sceneId: number;
-    orderIndex: number;
-    videoUrl?: string;
-    dialogueAudioUrl?: string;
-    soundtrackUrl?: string;
-    duration: number;
-    success: boolean;
-    error?: string;
-    lastFrameUrl?: string;
-  }> = [];
-
-  const _coherenceDb = await getDb();
-  // ââ Pre-load all coherence data for this project ââââââââââââââââââââââââââ
-  // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
-  // across every scene â covers both quick-generate and manual generate.
-  // Guard: if db is unavailable (no DATABASE_URL) fall back to empty arrays
-  // so film generation degrades gracefully instead of throwing a TypeError.
-  const [_bgRows, _rawPropAssign, _propLibRows, _stateRows, _wardRows, _vdnaRows] = _coherenceDb
-    ? await Promise.all([
-        _coherenceDb.select().from(projectBackgrounds).where(eq(projectBackgrounds.projectId, project.id)).catch(()=>[] as any[]),
-        _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
-        _coherenceDb.select().from(projectProps).where(eq(projectProps.projectId, project.id)).catch(()=>[] as any[]),
-        _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
-        _coherenceDb
-          .select({ assignment: wardrobeAssignments, item: wardrobeItems })
-          .from(wardrobeAssignments)
-          .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
-          .where(eq(wardrobeAssignments.projectId, project.id))
-          .catch(()=>[] as any[]),
-        _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
-      ])
-    : [[], [], [], [], [], []];
-  const _visualDNA = _vdnaRows[0] || null;
-  // Enrich prop assignments with library details (name, description, colors, category)
-  const _propRows = (_rawPropAssign as any[]).map((a: any) => {
-    const lib = (_propLibRows as any[]).find((p: any) => p.id === a.propId) ?? {};
-    return { ...a, name: lib.name ?? `Prop #${a.propId}`, category: lib.category, description: lib.description, colors: lib.colors };
-  });
-
-  // Sort scenes by order
-  const sortedScenes = [...scenes].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-
-  // Process scenes sequentially for continuity (or in batches for speed)
-  const batchSize = config.useSceneContinuity ? 1 : (config.batchSize || 3);
-
-  for (let batchStart = 0; batchStart < sortedScenes.length; batchStart += batchSize) {
-    const batch = sortedScenes.slice(batchStart, batchStart + batchSize);
-
-    const batchPromises = batch.map(async (scene, batchIdx) => {
-      const sceneIdx = batchStart + batchIdx;
-      const targetDuration = sceneDurations.get(scene.id) || 60;
-
-      progress.currentSceneTitle = scene.title || `Scene ${sceneIdx + 1}`;
-      onProgress?.(progress);
-
-      try {
-        // Build consistency-enhanced prompt
-        let scenePrompt = scene.visualDescription || scene.description || scene.title || "A cinematic scene";
-        let referenceImageUrl: string | undefined;
-        let _filmWardrobeCtx: string | undefined;
-
-        if (continuityChain) {
-          // Build per-scene coherence context for wardrobe, location, props,
-          // character states, and Visual DNA â wires both quick & manual generate.
-          const _ord = scene.orderIndex || sceneIdx;
-          const coherenceCtx: SceneCoherenceContext = {
-            background: (() => {
-                if (!_bgRows.length) return null;
-                const _vt = (scene as any).vehicleType;
-                const _lt = ((scene as any).locationType ?? '').toLowerCase();
-                if (_vt) {
-                  const vMatch = (_bgRows as any[]).find((b: any) => /vehicle|vessel|aircraft/.test(b.backgroundType ?? ''));
-                  if (vMatch) return vMatch;
-                }
-                const lMatch = (_bgRows as any[]).find((b: any) =>
-                  _lt && (b.name?.toLowerCase().includes(_lt) || (b.locationTags ?? []).includes(_lt))
-                );
-                return lMatch ?? (_bgRows as any[])[0] ?? null;
-              })(),
-            props: _propRows.filter((p: any) =>
-              p.sceneId === scene.id ||
-              (p.fromSceneOrder != null && p.fromSceneOrder <= _ord && (p.toSceneOrder ?? 9999) >= _ord)),
-            characterStates: _stateRows.filter((s: any) =>
-              (s.fromSceneOrder ?? 0) <= _ord && (s.toSceneOrder ?? 9999) >= _ord),
-            wardrobeByCharacter: (() => {
-                const _wmap: Record<number, string> = {};
-                for (const row of _wardRows as any[]) {
-                  const a = row.assignment ?? row;
-                  const wi = row.item;
-                  if (!wi || !a.characterId) continue;
-                  if ((a.fromSceneOrder ?? 0) > _ord || (a.toSceneOrder ?? 9999) < _ord) continue;
-                  const colors = Array.isArray(wi.colors) && wi.colors.length ? wi.colors.join(", ") : "";
-                  const mats = Array.isArray(wi.materials) && wi.materials.length ? wi.materials.join(", ") : "";
-                  const itemDesc = [wi.name, colors && `in ${colors}`, mats && `(${mats})`, wi.referencePrompt].filter(Boolean).join(" ");
-                  _wmap[a.characterId] = _wmap[a.characterId] ? `${_wmap[a.characterId]}; ${itemDesc}` : itemDesc;
-                }
-                return _wmap;
-              })(),
-            visualDNA: _visualDNA,
-          };
-          _filmWardrobeCtx = (() => {
-            const wb = coherenceCtx.wardrobeByCharacter || {};
-            const parts = Object.entries(wb).map(([cid, desc]) => {
-              const char = characters.find((c: any) => String(c.id) === cid);
-              return char ? `${char.name}: ${desc}` : String(desc);
-            }).filter(Boolean);
-            return parts.length ? parts.join("; ") : undefined;
-          })();
-          const consistent = generateConsistentScenePrompt(continuityChain, sceneIdx, scenePrompt, coherenceCtx);
-          scenePrompt = consistent.enhancedPrompt;
-          referenceImageUrl = consistent.referenceImageUrl;
-        }
-
-        // Get previous scene's last frame for continuity
-        const prevResult = sceneResults.find(r => r.orderIndex === (scene.orderIndex || 0) - 1);
-        const previousLastFrame = prevResult?.lastFrameUrl || referenceImageUrl;
-
-        // Generate extended scene video
-        logger.info(`[FilmPipeline] Generating scene ${sceneIdx + 1}/${sortedScenes.length}: "${scene.title}" (${targetDuration}s target)`);
-
-        const sceneResult = await generateExtendedScene(
-          videoKeys,
-          {
-            sceneId: scene.id,
-            projectId: project.id,
-            description: scenePrompt,
-            targetDurationSeconds: targetDuration,
-            mood: scene.mood || config.mood,
-            lighting: scene.lighting || undefined,
-            timeOfDay: scene.timeOfDay || undefined,
-            weather: scene.weather || undefined,
-            genre: config.genre,
-            characterDescriptions: continuityChain?.characters
-              .filter(c => (scene.characterIds || []).includes(c.characterId))
-              .map(c => c.promptAnchor),
-            locationDescription: scene.locationType || undefined,
-            negativePrompt: buildNegativePrompt(config.genre),
-            previousSceneLastFrameUrl: previousLastFrame,
-            aiPromptOverride: scene.aiPromptOverride || undefined,
-            wardrobeContext: _filmWardrobeCtx,
-            sceneType: (scene as any).sceneType || undefined,
-            sfxNotes: (scene as any).sfxNotes || undefined,
-            ambientSound: (scene as any).ambientSound || undefined,
-            musicMood: (scene as any).musicMood || undefined,
-            seed: (scene as any).seed || undefined,
-          },
-          (clipIdx, totalClips) => {
-            progress.completedClips++;
-            onProgress?.(progress);
-          }
-        );
-
-        // Update continuity chain
-        if (continuityChain && sceneResult.lastFrameUrl) {
-          continuityChain = updateContinuityChainAfterGeneration(
-            continuityChain,
-            sceneIdx,
-            sceneResult.lastFrameUrl,
-            scenePrompt
-          );
-        }
-
-        // Generate dialogue audio
-        let dialogueAudioUrl: string | undefined;
-        if (config.generateDialogue && scene.dialogueLines && scene.dialogueLines.length > 0) {
-          progress.phase = "generating_dialogue";
-          onProgress?.(progress);
-
-          try {
-            // Build character voice map from project character profiles
-            const characterVoices: Record<string, import('./voiceActingEngine').CharacterVoice> = {};
-            for (const c of characters) {
-              const genderRaw = (c.gender || "").toLowerCase();
-              const gender: "male" | "female" | "neutral" =
-                genderRaw.includes("male") ? "male" :
-                genderRaw.includes("female") ? "female" : "neutral";
-              const ageRaw = (c.ageRange || "").toLowerCase();
-              const age: "young" | "adult" | "elderly" =
-                ageRaw.includes("young") || ageRaw.includes("teen") || ageRaw.includes("child") ? "young" :
-                ageRaw.includes("elder") || ageRaw.includes("old") || ageRaw.includes("senior") ? "elderly" : "adult";
-              // Special narrator/V.O. roles get the narrator preset
-              const isNarrator = (c.role || "").toLowerCase().includes("narrator") ||
-                (c.role || "").toLowerCase().includes("god voice") ||
-                (c.role || "").toLowerCase().includes("storyteller");
-              characterVoices[c.name] = {
-                voiceId: c.voiceId || (isNarrator ? "ErXwobaYiN019PkySvjV" : undefined),
-                gender,
-                age,
-                accent: c.accent || undefined,
-              };
-            }
-            const dialogueResult = await generateSceneDialogue(voiceKeys, {
-              sceneId: scene.id,
-              projectId: project.id,
-              dialogueLines: scene.dialogueLines,
-              characterVoices,
-            });
-            dialogueAudioUrl = dialogueResult.audioUrl;
-            progress.dialogueLinesGenerated += dialogueResult.lineCount;
-          } catch (err: any) {
-            logger.warn(`[FilmPipeline] Dialogue generation failed for scene ${scene.id}:`, err.message);
-            progress.errors.push(`Dialogue failed for scene "${scene.title}": ${err.message}`);
-          }
-        }
-
-        // Generate soundtrack
-        let soundtrackUrl: string | undefined;
-        if (config.generateSoundtrack) {
-          progress.phase = "generating_soundtrack";
-          onProgress?.(progress);
-
-          try {
-            const musicPreset = getGenreMusicPreset(config.genre, scene.mood || config.genre || "neutral");
-            const soundtrackResult = await generateSoundtrack(musicKeys, {
-              projectId: project.id,
-              sceneId: scene.id,
-              mood: scene.mood || config.genre || "neutral",
-              genre: config.genre,
-              durationSeconds: sceneResult.totalDuration,
-              instruments: musicPreset.instruments,
-              tempo: musicPreset.tempo,
-              type: "score",
-            });
-            soundtrackUrl = soundtrackResult.audioUrl;
-            progress.soundtrackSegmentsGenerated++;
-          } catch (err: any) {
-            logger.warn(`[FilmPipeline] Soundtrack generation failed for scene ${scene.id}:`, err.message);
-            progress.errors.push(`Soundtrack failed for scene "${scene.title}": ${err.message}`);
-          }
-        }
-
-        progress.completedScenes++;
-        progress.phase = "generating_scenes";
-        onProgress?.(progress);
-
-        // Estimate remaining time
-        const elapsed = (Date.now() - startTime) / 60000;
-        const rate = progress.completedScenes / elapsed;
-        const remaining = (sortedScenes.length - progress.completedScenes) / rate;
-        progress.estimatedTimeRemainingMinutes = Math.round(remaining);
-
-        return {
-          sceneId: scene.id,
-          orderIndex: scene.orderIndex || 0,
-          videoUrl: sceneResult.videoUrl,
-          dialogueAudioUrl,
-          soundtrackUrl,
-          duration: sceneResult.totalDuration,
-          success: true,
-          lastFrameUrl: sceneResult.lastFrameUrl,
-        };
-      } catch (err: any) {
-        logger.error(`[FilmPipeline] Scene ${scene.id} failed:`, err.message);
-        progress.errors.push(`Scene "${scene.title}" failed: ${err.message}`);
-        progress.completedScenes++;
-        onProgress?.(progress);
-
-        return {
-          sceneId: scene.id,
-          orderIndex: scene.orderIndex || 0,
-          duration: 0,
-          success: false,
-          error: err.message,
-        };
-      }
-    });
-
-    const batchResults = await Promise.all(batchPromises);
-    sceneResults.push(...batchResults);
-  }
-
-  // ââ Step 4: Assemble final film ââ
-  progress.phase = "assembling";
-  onProgress?.(progress);
-
-  let filmUrl: string | undefined;
-  let totalDuration = 0;
-
-  const successfulScenes = sceneResults.filter(r => r.success && r.videoUrl);
-
-  if (successfulScenes.length > 0) {
+  for (const scene of orderedScenes) {
+    const context = contexts.get(scene.id)!;
     try {
-      const assembly = await assembleFilm(
-        successfulScenes.map(s => ({
-          sceneId: s.sceneId,
-          videoUrl: s.videoUrl,
-          dialogueAudioUrl: s.dialogueAudioUrl,
-          soundtrackUrl: s.soundtrackUrl,
-          duration: s.duration,
-          orderIndex: s.orderIndex,
-        })),
-        project.id,
-        project.title
+      const result = await generateOneScene(
+        input,
+        scene,
+        context,
+        durations.get(scene.id) || 30,
+        input.config.useSceneContinuity ? previousFrameUrl : undefined,
+        qualityPolicy,
+        progress,
+        onProgress,
       );
-      filmUrl = assembly.filmUrl;
-      totalDuration = assembly.totalDuration;
-    } catch (err: any) {
-      logger.error("[FilmPipeline] Final assembly failed:", err.message);
-      progress.errors.push(`Film assembly failed: ${err.message}`);
+      sceneResults.push(result);
+      previousFrameUrl = result.lastFrameUrl;
+      progress.completedScenes++;
+      const elapsedMinutes = Math.max(0.01, (Date.now() - started) / 60_000);
+      const rate = progress.completedScenes / elapsedMinutes;
+      progress.estimatedTimeRemainingMinutes = Math.max(0, Math.round((orderedScenes.length - progress.completedScenes) / rate));
+      onProgress?.({ ...progress });
+    } catch (error: any) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.error(`[FilmPipeline] Scene ${scene.id} failed: ${message}`);
+      progress.errors.push(`Scene "${scene.title || scene.id}" failed: ${message}`);
+      sceneResults.push({ sceneId: scene.id, orderIndex: scene.orderIndex, duration: 0, success: false, error: message });
+      progress.completedScenes++;
+      onProgress?.({ ...progress });
+      if (!input.config.allowPartialAssembly) break;
     }
   }
 
-  // ââ Complete ââ
-  const endTime = Date.now();
-  const totalTimeMinutes = (endTime - startTime) / 60000;
+  const requiredFailure = sceneResults.some((scene) => !scene.success) || sceneResults.length !== orderedScenes.length;
+  let filmUrl: string | undefined;
+  let totalDuration = 0;
+
+  if (!requiredFailure || input.config.allowPartialAssembly) {
+    const assemblyScenes = input.config.allowPartialAssembly ? sceneResults.filter((scene) => scene.success) : sceneResults;
+    if (assemblyScenes.length > 0) {
+      progress.phase = "assembling";
+      onProgress?.({ ...progress });
+      const assembly = await assembleFilm(assemblyScenes, contexts, input.project.id, input.project.title);
+      filmUrl = assembly.filmUrl;
+      totalDuration = assembly.totalDuration;
+    }
+  } else {
+    progress.errors.push("Final assembly was blocked because every required scene did not pass generation and quality control.");
+  }
 
   progress.phase = filmUrl ? "complete" : "failed";
-  onProgress?.(progress);
-
-  logger.info(`[FilmPipeline] Film generation ${filmUrl ? "COMPLETE" : "FAILED"}`);
-  logger.info(`[FilmPipeline] ${successfulScenes.length}/${sortedScenes.length} scenes, ${totalDuration.toFixed(0)}s total, ${totalTimeMinutes.toFixed(1)} min elapsed`);
-
+  onProgress?.({ ...progress });
+  const totalGenerationTimeMinutes = Math.round((Date.now() - started) / 60_000);
   return {
     filmUrl,
     totalDuration,
-    sceneResults: sceneResults.map(r => ({
-      sceneId: r.sceneId,
-      videoUrl: r.videoUrl,
-      dialogueAudioUrl: r.dialogueAudioUrl,
-      soundtrackUrl: r.soundtrackUrl,
-      duration: r.duration,
-      success: r.success,
-      error: r.error,
-    })),
+    sceneResults: sceneResults.map(({ orderIndex: _orderIndex, lastFrameUrl: _lastFrameUrl, ...scene }) => scene),
     stats: {
       totalClipsGenerated: progress.completedClips,
       totalDialogueLinesGenerated: progress.dialogueLinesGenerated,
       totalSoundtrackSegments: progress.soundtrackSegmentsGenerated,
-      totalGenerationTimeMinutes: Math.round(totalTimeMinutes),
-      videoProvider: "byok",
-      voiceProvider: voiceKeys.elevenlabsKey ? "elevenlabs" : voiceKeys.openaiKey ? "openai" : "pollinations",
-      musicProvider: musicKeys.sunoKey ? "suno" : musicKeys.replicateKey ? "replicate" : "pollinations",
+      totalGenerationTimeMinutes,
+      videoProvider: input.videoKeys.preferredProvider || "automatic-byok",
+      voiceProvider: input.voiceKeys.elevenlabsKey ? "elevenlabs" : input.voiceKeys.openaiKey ? "openai" : "pollinations",
+      musicProvider: input.musicKeys.sunoKey ? "suno" : input.musicKeys.replicateKey ? "replicate" : "pollinations",
     },
   };
 }
 
-/**
- * Generate a single scene with all audio tracks.
- * Used for scene-by-scene generation or re-generation.
- */
 export async function generateSingleScene(
   input: {
     videoKeys: UserApiKeys;
     voiceKeys: VoiceActingKeys;
     musicKeys: SoundtrackKeys;
     projectId: number;
-    scene: FilmGenerationInput["scenes"][0];
+    scene: FilmGenerationInput["scenes"][number];
     characters: FilmGenerationInput["characters"];
     genre: string;
     mood?: string;
@@ -888,165 +635,68 @@ export async function generateSingleScene(
     previousSceneLastFrameUrl?: string;
     generateDialogue?: boolean;
     generateSoundtrack?: boolean;
-  }
+    qualityPolicy?: Extract<VideoQualityPolicy, "standard" | "strict">;
+  },
 ): Promise<{
   videoUrl?: string;
   dialogueAudioUrl?: string;
   soundtrackUrl?: string;
   duration: number;
   lastFrameUrl?: string;
+  sceneContractFingerprint?: string;
+  qualityReviews?: VideoQualityReview[];
 }> {
-  const { scene, characters, videoKeys, voiceKeys, musicKeys } = input;
-
-    // ââ Resolve wardrobe assignments for this scene ââââââââââââââââââââââââââ
-    // Query wardrobeAssignments JOIN wardrobeItems for this project so the AI
-    // generates the exact leased outfit on each character in every frame.
-    const _wardDb = await getDb();
-    const wardrobeByCharacter: Record<number, string> = {};
-    if (_wardDb) {
-      try {
-        const sceneOrder = (scene as any).orderIndex ?? 0;
-        const wardRows = await _wardDb
-          .select({ assignment: wardrobeAssignments, item: wardrobeItems })
-          .from(wardrobeAssignments)
-          .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
-          .where(eq(wardrobeAssignments.projectId, input.projectId))
-          .catch(() => [] as any[]);
-        for (const row of wardRows as any[]) {
-          const a = row.assignment;
-          const wi = row.item;
-          if (!wi || !a.characterId) continue;
-          const from = a.fromSceneOrder ?? 0;
-          const to   = a.toSceneOrder   ?? 9999;
-          if (from > sceneOrder || to < sceneOrder) continue;
-          const colors   = Array.isArray(wi.colors)    && wi.colors.length    ? wi.colors.join(", ")    : "";
-          const mats     = Array.isArray(wi.materials) && wi.materials.length ? wi.materials.join(", ") : "";
-          const itemDesc = [wi.name, colors && `in ${colors}`, mats && `(${mats})`, wi.referencePrompt]
-            .filter(Boolean).join(" ");
-          wardrobeByCharacter[a.characterId] = wardrobeByCharacter[a.characterId]
-            ? `${wardrobeByCharacter[a.characterId]}; ${itemDesc}`
-            : itemDesc;
-        }
-      } catch (err: any) {
-        logger.warn("[SingleScene] Wardrobe resolution failed:", err.message);
-      }
-    }
-
-    // Pre-populate character.clothing so buildCharacterDNA bakes the outfit into
-    // the promptAnchor â every frame of the scene will show the correct clothes.
-    const charactersWithWardrobe = characters.map(c => ({
-      ...c,
-      clothing: wardrobeByCharacter[c.id] ?? c.clothing ?? undefined,
-    }));
-
-    // Build character DNA (with wardrobe already baked in)
-    const chain = buildContinuityChain(charactersWithWardrobe, [scene as any], input.projectId);
-    const { enhancedPrompt } = generateConsistentScenePrompt(
-      chain, 0,
-      scene.visualDescription || scene.description || "",
-      Object.keys(wardrobeByCharacter).length > 0 ? { wardrobeByCharacter } : undefined
-    );
-
-  // Generate video
-  const sceneResult = await generateExtendedScene(videoKeys, {
-    sceneId: scene.id,
-    projectId: input.projectId,
-    description: enhancedPrompt,
-    targetDurationSeconds: input.targetDurationSeconds,
-    mood: scene.mood || input.mood,
-    lighting: scene.lighting || undefined,
-    timeOfDay: scene.timeOfDay || undefined,
-    weather: scene.weather || undefined,
-    genre: input.genre,
-    characterDescriptions: chain.characters.map(c => c.promptAnchor),
-    locationDescription: scene.locationType || undefined,
-    previousSceneLastFrameUrl: input.previousSceneLastFrameUrl,
-    negativePrompt: buildNegativePrompt(input.genre),
-    aiPromptOverride: scene.aiPromptOverride || undefined,
-    wardrobeContext: (() => {
-      const parts = Object.entries(wardrobeByCharacter).map(([cid, desc]) => {
-        const char = characters.find((c: any) => String(c.id) === cid);
-        return char ? `${char.name}: ${desc}` : String(desc);
-      }).filter(Boolean);
-      return parts.length ? parts.join("; ") : undefined;
-    })(),
-    sceneType: (scene as any).sceneType || undefined,
-    sfxNotes: (scene as any).sfxNotes || undefined,
-    ambientSound: (scene as any).ambientSound || undefined,
-    musicMood: (scene as any).musicMood || undefined,
-    seed: (scene as any).seed || undefined,
-  });
-
-  // Generate dialogue
-  let dialogueAudioUrl: string | undefined;
-  if (input.generateDialogue && scene.dialogueLines && scene.dialogueLines.length > 0) {
-    try {
-      // Build character voice map from project character profiles
-      const characterVoices: Record<string, import('./voiceActingEngine').CharacterVoice> = {};
-      for (const c of input.characters) {
-        const genderRaw = (c.gender || "").toLowerCase();
-        const gender: "male" | "female" | "neutral" =
-          genderRaw.includes("male") ? "male" :
-          genderRaw.includes("female") ? "female" : "neutral";
-        const ageRaw = (c.ageRange || "").toLowerCase();
-        const age: "young" | "adult" | "elderly" =
-          ageRaw.includes("young") || ageRaw.includes("teen") || ageRaw.includes("child") ? "young" :
-          ageRaw.includes("elder") || ageRaw.includes("old") || ageRaw.includes("senior") ? "elderly" : "adult";
-        const isNarrator = (c.role || "").toLowerCase().includes("narrator") ||
-          (c.role || "").toLowerCase().includes("god voice") ||
-          (c.role || "").toLowerCase().includes("storyteller");
-        characterVoices[c.name] = {
-          voiceId: c.voiceId || (isNarrator ? "ErXwobaYiN019PkySvjV" : undefined),
-          gender,
-          age,
-          accent: c.accent || undefined,
-        };
-      }
-      const dialogueResult = await generateSceneDialogue(voiceKeys, {
-        sceneId: scene.id,
-        projectId: input.projectId,
-        dialogueLines: scene.dialogueLines,
-        characterVoices,
-      });
-      dialogueAudioUrl = dialogueResult.audioUrl;
-    } catch (err: any) {
-      logger.warn(`[SingleScene] Dialogue failed:`, err.message);
-    }
-  }
-
-  // Generate soundtrack
-  let soundtrackUrl: string | undefined;
-  if (input.generateSoundtrack) {
-    try {
-      const musicPreset = getGenreMusicPreset(input.genre, scene.mood || input.genre || "neutral");
-      const soundtrackResult = await generateSoundtrack(musicKeys, {
-        projectId: input.projectId,
-        sceneId: scene.id,
-        mood: scene.mood || input.genre || "neutral",
-        genre: input.genre,
-        durationSeconds: sceneResult.totalDuration,
-        instruments: musicPreset.instruments,
-        tempo: musicPreset.tempo,
-        type: "score",
-      });
-      soundtrackUrl = soundtrackResult.audioUrl;
-    } catch (err: any) {
-      logger.warn(`[SingleScene] Soundtrack failed:`, err.message);
-    }
-  }
-
+  const filmInput: FilmGenerationInput = {
+    config: {
+      projectId: input.projectId,
+      targetDurationMinutes: input.targetDurationSeconds / 60,
+      genre: input.genre,
+      mood: input.mood,
+      generateDialogue: input.generateDialogue ?? false,
+      generateSoundtrack: input.generateSoundtrack ?? false,
+      useCharacterConsistency: true,
+      useSceneContinuity: Boolean(input.previousSceneLastFrameUrl),
+      qualityPolicy: input.qualityPolicy ?? "strict",
+    },
+    videoKeys: input.videoKeys,
+    voiceKeys: input.voiceKeys,
+    musicKeys: input.musicKeys,
+    project: { id: input.projectId, title: `Project ${input.projectId}`, genre: input.genre },
+    characters: input.characters,
+    scenes: [input.scene],
+  };
+  const context = await loadSceneGenerationContext(input.scene.id, input.projectId, input.scene as any);
+  const progress: FilmGenerationProgress = {
+    phase: "preparing",
+    totalScenes: 1,
+    completedScenes: 0,
+    totalClips: 0,
+    completedClips: 0,
+    dialogueLinesGenerated: 0,
+    soundtrackSegmentsGenerated: 0,
+    estimatedTimeRemainingMinutes: 0,
+    errors: [],
+  };
+  const result = await generateOneScene(
+    filmInput,
+    input.scene,
+    context,
+    input.targetDurationSeconds,
+    input.previousSceneLastFrameUrl,
+    input.qualityPolicy ?? "strict",
+    progress,
+  );
   return {
-    videoUrl: sceneResult.videoUrl,
-    dialogueAudioUrl,
-    soundtrackUrl,
-    duration: sceneResult.totalDuration,
-    lastFrameUrl: sceneResult.lastFrameUrl,
+    videoUrl: result.videoUrl,
+    dialogueAudioUrl: result.dialogueAudioUrl,
+    soundtrackUrl: result.soundtrackUrl,
+    duration: result.duration,
+    lastFrameUrl: result.lastFrameUrl,
+    sceneContractFingerprint: result.sceneContractFingerprint,
+    qualityReviews: result.qualityReviews,
   };
 }
 
-/**
- * Get a cost estimate for generating a full film.
- */
 export function estimateFilmCost(
   durationMinutes: number,
   options: {
@@ -1054,7 +704,7 @@ export function estimateFilmCost(
     voiceProvider: string;
     musicProvider: string;
     dialogueLineCount: number;
-  }
+  },
 ): {
   videoCost: { low: number; high: number };
   voiceCost: { low: number; high: number };
@@ -1064,49 +714,33 @@ export function estimateFilmCost(
   estimatedHours: number;
 } {
   const estimates = estimateFilmGenerationCalls(durationMinutes);
-
-  // Video cost per clip by provider
   const videoRates: Record<string, { low: number; high: number }> = {
-    "openai": { low: 0.10, high: 0.50 },
-    "runway": { low: 0.05, high: 0.25 },
-    "replicate": { low: 0.02, high: 0.10 },
-    "fal": { low: 0.02, high: 0.08 },
-    "luma": { low: 0.05, high: 0.20 },
-    "pollinations": { low: 0, high: 0 },
-    "huggingface": { low: 0, high: 0.01 },
+    openai: { low: 0.10, high: 0.50 },
+    runway: { low: 0.05, high: 0.25 },
+    replicate: { low: 0.02, high: 0.10 },
+    fal: { low: 0.02, high: 0.08 },
+    luma: { low: 0.05, high: 0.20 },
+    veo3: { low: 0.08, high: 0.40 },
+    seedance: { low: 0.04, high: 0.20 },
+    pollinations: { low: 0, high: 0 },
+    huggingface: { low: 0, high: 0.01 },
   };
-
-  // Voice cost per line
   const voiceRates: Record<string, { low: number; high: number }> = {
-    "elevenlabs": { low: 0.01, high: 0.05 },
-    "openai": { low: 0.005, high: 0.02 },
-    "pollinations": { low: 0, high: 0 },
+    elevenlabs: { low: 0.01, high: 0.05 },
+    openai: { low: 0.005, high: 0.02 },
+    pollinations: { low: 0, high: 0 },
   };
-
-  // Music cost per segment
   const musicRates: Record<string, { low: number; high: number }> = {
-    "suno": { low: 0, high: 0.10 },
-    "replicate": { low: 0.01, high: 0.05 },
-    "pollinations": { low: 0, high: 0 },
+    suno: { low: 0, high: 0.10 },
+    replicate: { low: 0.01, high: 0.05 },
+    pollinations: { low: 0, high: 0 },
   };
-
-  const vr = videoRates[options.videoProvider] || videoRates["pollinations"];
-  const vor = voiceRates[options.voiceProvider] || voiceRates["pollinations"];
-  const mr = musicRates[options.musicProvider] || musicRates["pollinations"];
-
-  const videoCost = {
-    low: estimates.totalClips * vr.low,
-    high: estimates.totalClips * vr.high,
-  };
-  const voiceCost = {
-    low: options.dialogueLineCount * vor.low,
-    high: options.dialogueLineCount * vor.high,
-  };
-  const musicCost = {
-    low: estimates.totalScenes * mr.low,
-    high: estimates.totalScenes * mr.high,
-  };
-
+  const videoRate = videoRates[options.videoProvider] || videoRates.pollinations;
+  const voiceRate = voiceRates[options.voiceProvider] || voiceRates.pollinations;
+  const musicRate = musicRates[options.musicProvider] || musicRates.pollinations;
+  const videoCost = { low: estimates.totalClips * videoRate.low, high: estimates.totalClips * videoRate.high };
+  const voiceCost = { low: options.dialogueLineCount * voiceRate.low, high: options.dialogueLineCount * voiceRate.high };
+  const musicCost = { low: estimates.totalScenes * musicRate.low, high: estimates.totalScenes * musicRate.high };
   return {
     videoCost,
     voiceCost,

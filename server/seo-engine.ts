@@ -1501,6 +1501,8 @@ Focus on topics that:
         ],
         wordCountTarget: 2000,
         intent: "informational",
+        suggestedUrl: "/blog/ai-filmmaking-tools-beginners-2026",
+        competitorUrls: [],
         generatedAt: Date.now(),
       },
       {

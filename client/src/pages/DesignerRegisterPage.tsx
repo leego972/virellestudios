@@ -87,6 +87,7 @@ export default function DesignerRegisterPage() {
   const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
   const { data: membershipData } = trpc.wardrobeMarket.designer.getMembershipStatus.useQuery();
   const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();
+  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
 
   const BRAND_STORAGE_KEY = "virelle_designer_brand_draft";
 

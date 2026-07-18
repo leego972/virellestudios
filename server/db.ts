@@ -2198,6 +2198,8 @@ export async function deleteUserSocialCredential(userId: number, platform: strin
 }
 
 export async function getAllActiveSocialCredentials(): Promise<UserSocialCredential[]> {
+  const db = await getDb();
+  if (!db) return [];
   return db.select().from(userSocialCredentials)
     .where(eq(userSocialCredentials.isActive, true));
 }
