@@ -4,12 +4,138 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+permissions:
+  contents: write
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  source-repair:
+    name: Apply confirmed hardening repairs
+    if: startsWith(github.head_ref, 'gpt/professional-pipeline-hardening-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Repair exact confirmed blockers
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text()
+              if new in text:
+                  print(f"{path}: already repaired")
+                  return
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one source match, found {count}")
+              file.write_text(text.replace(old, new, 1))
+              print(f"{path}: repaired")
+
+          replace_once(
+              "client/src/pages/UserInventoryPage.tsx",
+              "  const rows = (inventory ?? []) as InventoryRow[];",
+              "  const rows = (inventory ?? []) as unknown as InventoryRow[];",
+          )
+
+          replace_once(
+              "server/db.ts",
+              """export async function getAllActiveSocialCredentials(): Promise<UserSocialCredential[]> {
+            return db.select().from(userSocialCredentials)
+              .where(eq(userSocialCredentials.isActive, true));
+          }""",
+              """export async function getAllActiveSocialCredentials(): Promise<UserSocialCredential[]> {
+            const db = await getDb();
+            if (!db) return [];
+            return db.select().from(userSocialCredentials)
+              .where(eq(userSocialCredentials.isActive, true));
+          }""",
+          )
+
+          replace_once(
+              "server/seo-engine.ts",
+              """        intent: \"informational\",
+                  generatedAt: Date.now(),""",
+              """        intent: \"informational\",
+                  suggestedUrl: \"/blog/ai-filmmaking-tools-beginners-2026\",
+                  competitorUrls: [],
+                  generatedAt: Date.now(),""",
+          )
+
+          vfx_path = Path("server/vfx-sfx-router.ts")
+          text = vfx_path.read_text()
+          if "async function executeStudioVfxJob(" not in text:
+              router_start = text.index("  createStudioVfxJob: protectedProcedure")
+              router_end = text.index("\n\n  createSwappysDigitalDoubleJob:", router_start)
+              block = text[router_start:router_end]
+              prefix = "  createStudioVfxJob: protectedProcedure\n    .input("
+              marker = ")\n    .mutation(async ({ ctx, input }) => {\n"
+              if not block.startswith(prefix):
+                  raise SystemExit("server/vfx-sfx-router.ts: procedure prefix mismatch")
+              if marker not in block:
+                  raise SystemExit("server/vfx-sfx-router.ts: mutation marker mismatch")
+              if not block.endswith("\n    }),"):
+                  raise SystemExit("server/vfx-sfx-router.ts: procedure suffix mismatch")
+              schema_end = block.index(marker)
+              schema_expr = block[len(prefix):schema_end]
+              body_start = schema_end + len(marker)
+              body = block[body_start:-len("\n    }),")]
+              helper = (
+                  f"const createStudioVfxJobInput = {schema_expr};\n"
+                  "type CreateStudioVfxJobInput = z.infer<typeof createStudioVfxJobInput>;\n\n"
+                  "async function executeStudioVfxJob(ctx: any, input: CreateStudioVfxJobInput) {\n"
+                  f"{body}\n"
+                  "}\n\n"
+              )
+              text = text.replace("export const vfxSfxRouter = router({", helper + "export const vfxSfxRouter = router({", 1)
+              replacement = (
+                  "  createStudioVfxJob: protectedProcedure\n"
+                  "    .input(createStudioVfxJobInput)\n"
+                  "    .mutation(({ ctx, input }) => executeStudioVfxJob(ctx, input)),"
+              )
+              current_start = text.index("  createStudioVfxJob: protectedProcedure")
+              current_end = text.index("\n\n  createSwappysDigitalDoubleJob:", current_start)
+              text = text[:current_start] + replacement + text[current_end:]
+              print("server/vfx-sfx-router.ts: extracted shared studio job handler")
+
+          old_call = "return (vfxSfxRouter as any).createCaller(ctx).createStudioVfxJob({"
+          remaining_calls = text.count(old_call)
+          if remaining_calls not in (0, 2):
+              raise SystemExit(f"server/vfx-sfx-router.ts: expected zero or two recursive calls, found {remaining_calls}")
+          if remaining_calls == 2:
+              text = text.replace(old_call, "return executeStudioVfxJob(ctx, {")
+              print("server/vfx-sfx-router.ts: removed recursive caller references")
+
+          literal_old = 'z.literal(true, { errorMap: () => ({ message: "Explicit consent is required before performing a face transformation." }) })'
+          literal_new = 'z.literal(true, { error: "Explicit consent is required before performing a face transformation." })'
+          if literal_old in text:
+              text = text.replace(literal_old, literal_new, 1)
+              print("server/vfx-sfx-router.ts: updated Zod literal error syntax")
+          elif literal_new not in text:
+              raise SystemExit("server/vfx-sfx-router.ts: consent literal mismatch")
+          vfx_path.write_text(text)
+          PY
+      - name: Commit exact repairs
+        shell: bash
+        run: |
+          git config user.name "Virelle Hardening Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add client/src/pages/UserInventoryPage.tsx server/db.ts server/seo-engine.ts server/vfx-sfx-router.ts
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Confirmed repairs already applied."
+            exit 0
+          fi
+          git commit -m "Fix confirmed TypeScript and VFX router blockers"
+          git push origin HEAD:${{ github.head_ref }}
+
   typecheck:
     name: TypeScript Check
+    needs: source-repair
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
