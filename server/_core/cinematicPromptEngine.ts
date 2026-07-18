@@ -7,6 +7,7 @@ type SceneInput = ScenePromptArgs[0] & {
   wardrobe?: unknown;
   wardrobeOverrides?: unknown;
 };
+type VisualDNAInput = ScenePromptArgs[1];
 type ScenePromptOptions = NonNullable<ScenePromptArgs[2]>;
 
 type InlineWardrobeEntry = {
@@ -69,17 +70,18 @@ function renderInlineWardrobe(scene: SceneInput, options?: ScenePromptOptions): 
  * 2. SceneEditor inline wardrobe values are included in preview-image prompts,
  *    not only the video route.
  */
-export function buildScenePrompt(...args: ScenePromptArgs): string {
-  const [rawScene, visualDNA, rawOptions] = args;
-  const scene = rawScene as SceneInput;
-  const options = rawOptions as ScenePromptOptions | undefined;
+export function buildScenePrompt(
+  scene: SceneInput,
+  visualDNA: VisualDNAInput,
+  options?: ScenePromptOptions,
+): string {
   const inlineWardrobe = renderInlineWardrobe(scene, options);
   const mergedWardrobe = [options?.wardrobeContext?.trim(), inlineWardrobe]
     .filter(Boolean)
     .join("\n");
   const directorOverride = scene.aiPromptOverride?.trim();
 
-  const safeScene = directorOverride
+  const safeScene: ScenePromptArgs[0] = directorOverride
     ? {
         ...scene,
         description: `DIRECTOR'S EXACT SHOT DIRECTION — execute this faithfully: ${directorOverride}`,
