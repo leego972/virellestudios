@@ -6,33 +6,28 @@ import { wardrobeMarketplaceHardenedRouter } from "./_core/wardrobeMarketplaceHa
  * Preserve the complete established designer marketplace while replacing only
  * the confirmed weak inventory and director-assignment procedures.
  *
- * This deliberately uses the tRPC router record as a composition boundary so
- * no existing designer, marketplace, checkout, membership or custom-item route
- * is copied, renamed or lost.
+ * Keep the router records fully inferred. Casting these records to `any` would
+ * erase the public tRPC contract for every existing designer/marketplace route.
  */
-const legacyRecord = (legacyWardrobeMarketplaceRouter as any)._def.record as Record<string, any>;
-const hardenedRecord = (wardrobeMarketplaceHardenedRouter as any)._def.record as Record<string, any>;
-const legacyLeasingRecord = legacyRecord.leasing?._def?.record as Record<string, any> | undefined;
-const legacyDirectorRecord = legacyRecord.director?._def?.record as Record<string, any> | undefined;
-const hardenedInventoryRecord = hardenedRecord.inventory?._def?.record as Record<string, any> | undefined;
-const hardenedDirectorRecord = hardenedRecord.director?._def?.record as Record<string, any> | undefined;
-
-if (!legacyLeasingRecord || !legacyDirectorRecord || !hardenedInventoryRecord || !hardenedDirectorRecord) {
-  throw new Error("Wardrobe marketplace router composition failed: expected inventory/director records are missing.");
-}
+const legacyRecord = legacyWardrobeMarketplaceRouter._def.record;
+const hardenedRecord = wardrobeMarketplaceHardenedRouter._def.record;
+const legacyLeasingRecord = legacyRecord.leasing._def.record;
+const legacyDirectorRecord = legacyRecord.director._def.record;
+const hardenedInventoryRecord = hardenedRecord.inventory._def.record;
+const hardenedDirectorRecord = hardenedRecord.director._def.record;
 
 export const wardrobeMarketplaceRouter = router({
   ...legacyRecord,
 
-  // Preserve the existing public API name used by UserInventoryPage while
-  // returning each purchased collection item as an individually assignable row.
+  // Preserve the established API name while expanding collection purchases
+  // into individual inventory items that can each be assigned to characters.
   leasing: router({
     ...legacyLeasingRecord,
     myInventory: hardenedInventoryRecord.listItems,
   }),
 
-  // Replace insecure/ambiguous assignment operations with ownership, range,
-  // licence, image-readiness and conflict validation.
+  // Preserve listByItem and all unrelated director procedures, replacing only
+  // the operations that needed ownership/range/conflict hardening.
   director: router({
     ...legacyDirectorRecord,
     ...hardenedDirectorRecord,
