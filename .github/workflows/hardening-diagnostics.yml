@@ -5,93 +5,9 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  exact-source-patch:
-    if: startsWith(github.head_ref, 'gpt/professional-pipeline-hardening-')
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-      - name: Apply exact asserted edits
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          def replace_once(path: str, old: str, new: str) -> bool:
-              file = Path(path)
-              text = file.read_text()
-              if new in text:
-                  return False
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"{path}: expected exactly one source match, found {count}")
-              file.write_text(text.replace(old, new, 1))
-              return True
-
-          changed = False
-          changed |= replace_once(
-              "client/src/pages/DesignerRegisterPage.tsx",
-              '  const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();\n',
-              '  const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();\n'
-              '  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();\n',
-          )
-          changed |= replace_once(
-              "client/src/pages/UserInventoryPage.tsx",
-              '      notes: notes.trim() || undefined,\n      locked: true,\n',
-              '      notes: notes.trim() || undefined,\n',
-          )
-          changed |= replace_once(
-              "server/_core/extendedSceneGenerator.ts",
-              'import type { CanonicalSceneSpec } from "./canonicalSceneSpec";\n',
-              'import { refreshCanonicalSceneFingerprint, renderCanonicalScenePrompt, type CanonicalSceneSpec } from "./canonicalSceneSpec";\n',
-          )
-          changed |= replace_once(
-              "server/_core/extendedSceneGenerator.ts",
-              '  const spec = context.canonicalSpec;\n'
-              '  if (request.wardrobeContext?.trim()) spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);\n'
-              '  if (request.characterDescriptions?.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${request.characterDescriptions.join(" | ")}`);\n\n'
-              '  const provider = selectProvider(keys);\n',
-              '  let spec = context.canonicalSpec;\n'
-              '  if (request.wardrobeContext?.trim() && !context.wardrobeContext?.includes(request.wardrobeContext.trim())) {\n'
-              '    spec.lockedRequirements.push(`ADDITIONAL WARDROBE CONTEXT: ${request.wardrobeContext.trim()}`);\n'
-              '  }\n'
-              '  if (request.characterDescriptions?.length) {\n'
-              '    const missingDescriptions = request.characterDescriptions.filter((description) =>\n'
-              '      !context.characterDescriptions.includes(description),\n'
-              '    );\n'
-              '    if (missingDescriptions.length) spec.lockedRequirements.push(`ADDITIONAL CHARACTER DNA: ${missingDescriptions.join(" | ")}`);\n'
-              '  }\n'
-              '  spec = refreshCanonicalSceneFingerprint(spec);\n'
-              '  const canonicalPrompt = renderCanonicalScenePrompt(spec);\n\n'
-              '  const provider = selectProvider(keys);\n',
-          )
-          changed |= replace_once(
-              "server/_core/extendedSceneGenerator.ts",
-              '  const subShots = planSubShots(spec, context.canonicalPrompt, targetDuration, provider, sceneType);\n',
-              '  const subShots = planSubShots(spec, canonicalPrompt, targetDuration, provider, sceneType);\n',
-          )
-          Path(".hardening-patch-changed").write_text("1" if changed else "0")
-          PY
-      - name: Commit asserted edits
-        shell: bash
-        run: |
-          if [ "$(cat .hardening-patch-changed)" != "1" ]; then
-            echo "Exact source edits already applied."
-            exit 0
-          fi
-          rm .hardening-patch-changed
-          git rm -f .github/workflows/precision-hardening-patch.yml 2>/dev/null || true
-          git config user.name "Virelle Hardening Bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add client/src/pages/DesignerRegisterPage.tsx client/src/pages/UserInventoryPage.tsx server/_core/extendedSceneGenerator.ts
-          git diff --cached --check
-          git commit -m "Apply exact UX and scene-contract integration fixes"
-          git push origin HEAD:${{ github.head_ref }}
-
   typecheck-diagnostics:
     if: startsWith(github.head_ref, 'gpt/professional-pipeline-hardening-')
     runs-on: ubuntu-24.04
