@@ -1,0 +1,35 @@
+name: Apply Swappys Endpoint Hardening
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-swappys-endpoint-hardening.yml"
+      - "scripts/apply-swappys-endpoint-hardening.py"
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply endpoint hardening
+        run: python scripts/apply-swappys-endpoint-hardening.py
+      - name: Commit endpoint hardening
+        shell: bash
+        run: |
+          git config user.name "Virelle Security Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/vfx-sfx-router.ts
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Swappys endpoint hardening already applied."
+            exit 0
+          fi
+          git commit -m "Harden Swappys uploads moderation quotas and provider access"
+          git push origin HEAD:${{ github.head_ref }}
