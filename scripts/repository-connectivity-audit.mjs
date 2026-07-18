@@ -424,7 +424,9 @@ function main() {
   const appRouterRoots = extractAppRouterRoots(routerFile);
   const mountedRoots = new Set(appRouterRoots.map((entry) => entry.root));
   const trpcUsages = extractClientTrpcRoots(clientFiles);
+  const clientHelperRoots = new Set(["Provider", "createClient", "useContext", "useUtils"]);
   for (const usage of trpcUsages) {
+    if (clientHelperRoots.has(usage.root)) continue;
     if (!mountedRoots.has(usage.root)) finding(findings, "error", "trpc-connectivity", usage.file, usage.line, `Client calls unmounted tRPC root: trpc.${usage.root}`);
   }
 

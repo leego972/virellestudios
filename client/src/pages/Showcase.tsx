@@ -1599,13 +1599,10 @@ function DiscoveryFeed() {
                   </button>
                 </Link>
 
-                <button
-                type="button"
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold cursor-pointer hover:bg-amber-500/10 transition-all active:scale-95"
-              >
-                <Sparkles className="w-4 h-4" />
-                Ready for Generation
-              </button>
+                <div role="status" className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold">
+  <Sparkles className="w-4 h-4" />
+  Ready for Generation
+</div>
             </div>
 
             <p className="text-xs text-neutral-600 mt-8 italic">

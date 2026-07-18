@@ -101,7 +101,7 @@ const menuGroups = [
     items: [
       { icon: Megaphone, label: "Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
       { icon: Zap, label: "VFX & Sound", path: "/vfx-studio" },
-      { icon: Smartphone, label: "Swappys (Face Swap)", path: "/projects" }, // Swappys is integrated into the VFX Suite per-project
+      { icon: Smartphone, label: "Swappys (Face Swap)", path: "/swappys" },
       { icon: PlaySquare, label: "Broadcast / Studio Render", path: "/virelle-broadcast-render" },
       { icon: Headphones, label: "Music Studio", path: "/music-studio" },
       { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },

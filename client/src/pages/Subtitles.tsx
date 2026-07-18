@@ -86,7 +86,7 @@ import { useState } from "react";
     const [newDeafEntry, setNewDeafEntry] = useState({ startTime: 0, endTime: 5, description: "", category: "music" });
 
     // Sign language notes
-    const [signNotes, setSignNotes] = useState<Array<{ sceneId: string; notes: string }>>([]);
+    const [signNotes, setSignNotes] = useState<Record<"ASL" | "BSL", string>>({ ASL: "", BSL: "" });
 
     const { data: tracks, isLoading } = trpc.subtitle.listByProject.useQuery({ projectId }, { enabled: !!projectId });
 
@@ -166,6 +166,24 @@ import { useState } from "react";
       downloadFile("WEBVTT\n\n" + lines.replace(/,/g,"."), "deaf-hoh-track.vtt", "text/vtt");
       toast.success("D/deaf & HoH track exported as VTT");
     };
+
+    const exportSignBrief = (language: "ASL" | "BSL") => {
+      const notes = signNotes[language].trim();
+      if (!notes) { toast.error(`Add ${language} interpreter guidance before exporting.`); return; }
+      const projectName = `project-${projectId || "untitled"}`;
+      const brief = [
+        `${language} INTERPRETER PRODUCTION BRIEF`,
+        `Project: ${projectName}`,
+        `Generated: ${new Date().toISOString()}`,
+        "",
+        notes,
+        "",
+        "Production note: confirm framing, eyelines, safe title area and interpreter visibility before final delivery.",
+      ].join("\n");
+      downloadFile(brief, `${projectName}-${language.toLowerCase()}-interpreter-brief.txt`, "text/plain;charset=utf-8");
+      toast.success(`${language} production brief exported.`);
+    };
+
 
     return (
       <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
@@ -531,10 +549,12 @@ import { useState } from "react";
                         <h4 className="text-sm font-semibold gradient-text-gold">{lang} Notes</h4>
                       </div>
                       <Textarea
+                        value={signNotes[lang as "ASL" | "BSL"]}
+                        onChange={(event) => setSignNotes((current) => ({ ...current, [lang]: event.target.value }))}
                         placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue — interpreter prominent\nScene 3: Action sequence — maintain corner frame...`}
                         className="min-h-[200px] text-xs bg-background/50 resize-none"
                       />
-                      <Button size="sm" variant="outline" className="w-full gap-2 hover:border-amber-500/50 hover:text-amber-400">
+                      <Button type="button" size="sm" variant="outline" className="w-full gap-2 hover:border-amber-500/50 hover:text-amber-400" onClick={() => exportSignBrief(lang as "ASL" | "BSL")}>
                         <Download className="h-3.5 w-3.5" />Export {lang} Brief
                       </Button>
                     </div>

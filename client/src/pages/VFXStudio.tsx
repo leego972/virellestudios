@@ -71,9 +71,12 @@ import { useState, useRef } from "react";
       115: "medieval battle epic: armies clashing at dawn on mist-covered field, swords raised, cavalry charge dust cloud, massive scale, Braveheart cinematography, golden sunrise rim light",
     };
 
-    function packImageUrl(_id: number): string {
-      return "";
-    }
+    function packImageUrl(id: number): string {
+  const prompt = PACK_IMAGE_PROMPTS[id];
+  if (!prompt) return "";
+  const seed = id * 7919 + 2026;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=512&nologo=true&enhance=true&model=flux&seed=${seed}`;
+}
 
     // ─── Pack thumbnail — real AI-generated cinematic image per pack ──────────────
     function PackThumb({ id, name, category, size = 80 }: { id: number; name: string; category: string; size?: number }) {
@@ -569,7 +572,7 @@ import { useState, useRef } from "react";
                         <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                         <div className="text-xs text-white/60">
                           <span className="text-amber-400 font-semibold">ElevenLabs key required.</span> Add your free key in{" "}
-                          <a href="/settings/api-keys" className="text-amber-400 underline">Settings → API Keys</a>.
+                          <a href="/settings/byok" className="text-amber-400 underline">Settings → API Keys</a>.
                           Get a free key at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline">elevenlabs.io</a>.
                         </div>
                       </div>

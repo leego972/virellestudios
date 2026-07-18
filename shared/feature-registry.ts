@@ -141,6 +141,17 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
 
   // ── AI VIDEO ─────────────────────────────────────────────────────────────
   {
+    id: "swappys",
+    label: "Swappys Transform Studio",
+    icon: "🎭",
+    category: "AI Video",
+    webPath: "/swappys",
+    description: "Consent-controlled still-image transformation and production VFX handoff",
+    minTier: "free",
+    hasNative: true,
+    isNew: true,
+  },
+  {
     id: "video-generation",
     label: "Video Generation",
     icon: "🎥",

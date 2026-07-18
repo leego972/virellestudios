@@ -1584,7 +1584,7 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/approval-chain`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="h-5 w-5 text-amber-400" />

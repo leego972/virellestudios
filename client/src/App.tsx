@@ -182,9 +182,11 @@ const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
 const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage"));
   const MusicStudio = lazy(() => import("./pages/MusicStudio"));
   const DubbingStudio = lazy(() => import("./pages/DubbingStudio"));
+  const DubbingHub = lazy(() => import("./pages/DubbingHub"));
   const AudioMixer = lazy(() => import("./pages/AudioMixer"));
   const AccessibilityStudio = lazy(() => import("./pages/AccessibilityStudio"));
   const LocationStudio = lazy(() => import("./pages/LocationStudio"));
+  const SwappysHub = lazy(() => import("./pages/SwappysHub"));
 // ─── Loading fallback ───
 function PageLoader() {
   return (
@@ -320,6 +322,8 @@ function Router() {
       <Route path="/projects/:projectId/nle-export" component={GatedNLEExport} />
       <Route path="/projects/:projectId/vfx-suite/:sceneId" component={GatedVFXSuite} />
       <Route path="/projects/:projectId/vfx-suite" component={GatedVFXSuite} />
+      <Route path="/projects/:projectId/dubbing" component={DubbingStudio} />
+      <Route path="/projects/:projectId/audio-mixer" component={AudioMixer} />
       <Route path="/virelle-broadcast-render" component={VirelleBroadcastRender} />
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
@@ -359,6 +363,13 @@ function Router() {
               <Route path="/movies">{() => <Movies />}</Route>
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
+              <Route path="/swappys">{() => <LazyPage><SwappysHub /></LazyPage>}</Route>
+              <Route path="/vfx-studio">{() => <LazyPage><VFXStudio /></LazyPage>}</Route>
+              <Route path="/music-studio">{() => <LazyPage><MusicStudio /></LazyPage>}</Route>
+              <Route path="/dubbing-studio">{() => <LazyPage><DubbingHub /></LazyPage>}</Route>
+              <Route path="/accessibility-studio">{() => <LazyPage><AccessibilityStudio /></LazyPage>}</Route>
+              <Route path="/location-studio">{() => <LazyPage><LocationStudio /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/characters">{() => <Characters />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>

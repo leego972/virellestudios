@@ -34,7 +34,7 @@ export default function SwappysHub() {
 
   const openStudio = () => {
     if (!projectId || !sceneId) return;
-    setLocation(`/projects/${projectId}/scenes/${sceneId}/vfx-suite`);
+    setLocation(`/projects/${projectId}/vfx-suite/${sceneId}`);
   };
 
   return (

@@ -496,7 +496,7 @@ import { useEffect, useMemo, useState } from "react";
             </div>
             {trailerMovieId && (
               <div className="px-5 pb-4">
-                <a href={`/movies/${trailerMovieId}`} className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                <a href="/movies" className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
                   <ExternalLink style={{ width:12, height:12 }} />Open in My Movies
                 </a>
               </div>
