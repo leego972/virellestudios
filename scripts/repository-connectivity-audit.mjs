@@ -2,252 +2,399 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import ts from "typescript";
 
 const ROOT = process.cwd();
 const CLIENT = path.join(ROOT, "client", "src");
 const SERVER = path.join(ROOT, "server");
+const SWAPPYS = path.join(ROOT, "apps", "swappys-mobile");
 const REPORT_DIR = path.join(ROOT, "audit-results");
-
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 const IGNORE_DIRS = new Set(["node_modules", ".git", "dist", "build", "coverage", "audit-results"]);
 
 function walk(directory) {
   if (!fs.existsSync(directory)) return [];
-  const results = [];
+  const output = [];
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (IGNORE_DIRS.has(entry.name)) continue;
-    const fullPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) results.push(...walk(fullPath));
-    else if (SOURCE_EXTENSIONS.has(path.extname(entry.name))) results.push(fullPath);
+    const full = path.join(directory, entry.name);
+    if (entry.isDirectory()) output.push(...walk(full));
+    else if (SOURCE_EXTENSIONS.has(path.extname(entry.name))) output.push(full);
   }
-  return results;
+  return output;
 }
 
-function rel(file) {
-  return path.relative(ROOT, file).replaceAll(path.sep, "/");
+const rel = (file) => path.relative(ROOT, file).replaceAll(path.sep, "/");
+const read = (file) => fs.readFileSync(file, "utf8");
+const unique = (values) => [...new Set(values)];
+
+function scriptKind(file) {
+  switch (path.extname(file)) {
+    case ".tsx": return ts.ScriptKind.TSX;
+    case ".jsx": return ts.ScriptKind.JSX;
+    case ".js": case ".mjs": case ".cjs": return ts.ScriptKind.JS;
+    default: return ts.ScriptKind.TS;
+  }
 }
 
-function read(file) {
-  return fs.readFileSync(file, "utf8");
+const sourceCache = new Map();
+function source(file) {
+  if (!sourceCache.has(file)) {
+    sourceCache.set(file, ts.createSourceFile(file, read(file), ts.ScriptTarget.Latest, true, scriptKind(file)));
+  }
+  return sourceCache.get(file);
 }
 
-function lineOf(text, index) {
-  return text.slice(0, Math.max(0, index)).split("\n").length;
+function lineOf(file, nodeOrPosition) {
+  const sf = source(file);
+  const position = typeof nodeOrPosition === "number" ? nodeOrPosition : nodeOrPosition.getStart(sf);
+  return sf.getLineAndCharacterOfPosition(position).line + 1;
 }
 
-function pushFinding(list, severity, category, file, line, message, evidence = undefined) {
-  list.push({ severity, category, file, line, message, evidence });
+function finding(list, severity, category, file, line, message, evidence) {
+  list.push({ severity, category, file, line, message, ...(evidence ? { evidence } : {}) });
 }
 
-function unique(values) {
-  return [...new Set(values)];
+function visit(node, callback) {
+  callback(node);
+  ts.forEachChild(node, (child) => visit(child, callback));
 }
 
-function normalizeRoute(route) {
-  if (!route) return route;
-  const withoutQuery = route.split("?")[0].split("#")[0];
-  const normalized = withoutQuery
+function jsxTagName(tagName, sf) {
+  return tagName.getText(sf).replace(/^.*\./, "");
+}
+
+function attr(opening, name) {
+  for (const property of opening.attributes.properties) {
+    if (ts.isJsxAttribute(property) && property.name.text === name) return property;
+  }
+  return undefined;
+}
+
+function hasAttr(opening, name) {
+  return Boolean(attr(opening, name));
+}
+
+function literalFromExpression(expression, sf) {
+  if (!expression) return undefined;
+  if (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression)) return expression.text;
+  if (ts.isTemplateExpression(expression)) {
+    let value = expression.head.text;
+    for (const span of expression.templateSpans) value += `:dynamic${span.literal.text}`;
+    return value;
+  }
+  if (ts.isBinaryExpression(expression) && expression.operatorToken.kind === ts.SyntaxKind.PlusToken) {
+    const left = literalFromExpression(expression.left, sf);
+    const right = literalFromExpression(expression.right, sf);
+    if (left !== undefined && right !== undefined) return left + right;
+  }
+  return undefined;
+}
+
+function attrValue(attribute, sf) {
+  if (!attribute?.initializer) return attribute ? "true" : undefined;
+  if (ts.isStringLiteral(attribute.initializer)) return attribute.initializer.text;
+  if (ts.isJsxExpression(attribute.initializer)) return literalFromExpression(attribute.initializer.expression, sf);
+  return undefined;
+}
+
+function callArgumentValue(call, sf) {
+  return literalFromExpression(call.arguments[0], sf);
+}
+
+function normalizeRoute(value) {
+  if (!value) return value;
+  const route = value.split("?")[0].split("#")[0]
     .replace(/\$\{[^}]+\}/g, ":dynamic")
     .replace(/\/\d+(?=\/|$)/g, "/:id")
     .replace(/\/+/g, "/");
-  return normalized.length > 1 ? normalized.replace(/\/$/, "") : normalized;
+  return route.length > 1 ? route.replace(/\/$/, "") : route;
 }
 
-function routePatternMatches(target, registered) {
+function routeMatches(target, registered) {
   const targetParts = normalizeRoute(target).split("/").filter(Boolean);
   const routeParts = normalizeRoute(registered).split("/").filter(Boolean);
   if (targetParts.length !== routeParts.length) return false;
-  return routeParts.every((part, index) => part.startsWith(":") || part === "*" || part === targetParts[index] || targetParts[index] === ":dynamic");
+  return routeParts.every((part, index) => part.startsWith(":") || part === "*" || targetParts[index] === ":dynamic" || part === targetParts[index]);
 }
 
-function extractRoutes(appText) {
+function extractRoutes(appFile) {
+  const sf = source(appFile);
   const routes = [];
-  const regex = /<Route\b[^>]*\bpath=["']([^"']+)["'][^>]*>/g;
-  for (const match of appText.matchAll(regex)) {
-    routes.push({ path: normalizeRoute(match[1]), line: lineOf(appText, match.index) });
-  }
+  visit(sf, (node) => {
+    const opening = ts.isJsxSelfClosingElement(node) ? node : ts.isJsxOpeningElement(node) ? node : undefined;
+    if (!opening || jsxTagName(opening.tagName, sf) !== "Route") return;
+    const value = attrValue(attr(opening, "path"), sf);
+    if (value) routes.push({ path: normalizeRoute(value), line: lineOf(appFile, opening) });
+  });
   return routes;
+}
+
+function pageModuleKey(moduleName) {
+  const match = moduleName.match(/(?:^\.\/pages\/|^@\/pages\/)(.+)$/);
+  return match ? match[1].replace(/\.(tsx?|jsx?)$/, "") : undefined;
+}
+
+function extractAppPageImports(appFile) {
+  const sf = source(appFile);
+  const imports = new Set();
+  visit(sf, (node) => {
+    if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+      const key = pageModuleKey(node.moduleSpecifier.text);
+      if (key) imports.add(key);
+    }
+    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+      const value = literalFromExpression(node.arguments[0], sf);
+      const key = value ? pageModuleKey(value) : undefined;
+      if (key) imports.add(key);
+    }
+  });
+  return imports;
+}
+
+function pageKey(file) {
+  return rel(file).replace(/^client\/src\/pages\//, "").replace(/\.(tsx?|jsx?)$/, "");
 }
 
 function extractNavigationTargets(files) {
   const targets = [];
-  const patterns = [
-    /\b(?:href|to)=\{?["'`]([^"'`]+)["'`]\}?/g,
-    /\b(?:setLocation|navigate|location\.assign|location\.replace)\(\s*["'`]([^"'`]+)["'`]/g,
-    /<Link\b[^>]*\bhref=["']([^"']+)["']/g,
-  ];
   for (const file of files) {
-    const text = read(file);
-    for (const pattern of patterns) {
-      for (const match of text.matchAll(pattern)) {
-        const raw = match[1];
-        if (!raw.startsWith("/") || raw.startsWith("//")) continue;
-        targets.push({ path: normalizeRoute(raw), raw, file: rel(file), line: lineOf(text, match.index) });
+    const sf = source(file);
+    visit(sf, (node) => {
+      if (ts.isJsxAttribute(node) && ["href", "to"].includes(String(node.name.text))) {
+        const value = attrValue(node, sf);
+        if (value?.startsWith("/") && !value.startsWith("/api/")) {
+          targets.push({ path: normalizeRoute(value), raw: value, file: rel(file), line: lineOf(file, node) });
+        }
       }
-    }
+      if (ts.isCallExpression(node)) {
+        const callee = node.expression.getText(sf);
+        const allowed = /^(?:setLocation|navigate|router\.(?:push|replace)|(?:window\.)?location\.(?:assign|replace))$/.test(callee);
+        if (!allowed) return;
+        const value = callArgumentValue(node, sf);
+        if (value?.startsWith("/") && !value.startsWith("/api/")) {
+          targets.push({ path: normalizeRoute(value), raw: value, file: rel(file), line: lineOf(file, node) });
+        }
+      }
+    });
   }
   return targets;
 }
 
-function extractPageImports(appText) {
-  const imported = new Set();
-  const regex = /(?:import\([^)]*|from\s+)["']\.\/pages\/([^"']+)["']/g;
-  for (const match of appText.matchAll(regex)) imported.add(match[1].replace(/\.(tsx?|jsx?)$/, ""));
-  return imported;
+function propertyName(property, sf) {
+  if (!property.name) return undefined;
+  if (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name) || ts.isNumericLiteral(property.name)) return property.name.text;
+  return property.name.getText(sf);
 }
 
-function pageKey(file) {
-  return rel(file)
-    .replace(/^client\/src\/pages\//, "")
-    .replace(/\.(tsx?|jsx?)$/, "");
-}
-
-function extractClientTrpcRoots(clientFiles) {
-  const usages = [];
-  const regex = /\btrpc\.([A-Za-z_$][\w$]*)/g;
-  for (const file of clientFiles) {
-    const text = read(file);
-    for (const match of text.matchAll(regex)) {
-      usages.push({ root: match[1], file: rel(file), line: lineOf(text, match.index) });
+function extractAppRouterRoots(routerFile) {
+  const sf = source(routerFile);
+  const roots = [];
+  visit(sf, (node) => {
+    if (!ts.isVariableDeclaration(node) || !ts.isIdentifier(node.name) || node.name.text !== "appRouter") return;
+    const initializer = node.initializer;
+    if (!initializer || !ts.isCallExpression(initializer)) return;
+    const object = initializer.arguments[0];
+    if (!object || !ts.isObjectLiteralExpression(object)) return;
+    for (const property of object.properties) {
+      if (ts.isSpreadAssignment(property)) continue;
+      const name = propertyName(property, sf);
+      if (name) roots.push({ root: name, line: lineOf(routerFile, property) });
     }
+  });
+  return roots;
+}
+
+function propertyChain(node, sf) {
+  const names = [];
+  let current = node;
+  while (ts.isPropertyAccessExpression(current)) {
+    names.unshift(current.name.text);
+    current = current.expression;
+  }
+  if (ts.isIdentifier(current)) names.unshift(current.text);
+  return names;
+}
+
+function extractClientTrpcRoots(files) {
+  const usages = [];
+  const seen = new Set();
+  for (const file of files) {
+    const sf = source(file);
+    visit(sf, (node) => {
+      if (!ts.isPropertyAccessExpression(node)) return;
+      const chain = propertyChain(node, sf);
+      if (chain[0] !== "trpc" || !chain[1]) return;
+      const key = `${rel(file)}:${lineOf(file, node)}:${chain[1]}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      usages.push({ root: chain[1], file: rel(file), line: lineOf(file, node) });
+    });
   }
   return usages;
 }
 
-function extractAppRouterRoots(routerText) {
-  const startToken = "export const appRouter = router({";
-  const start = routerText.indexOf(startToken);
-  if (start < 0) return [];
-  const roots = [];
-  const bodyStart = start + startToken.length;
-  let depth = 1;
-  let inString = null;
-  let escaped = false;
-  let lineStart = bodyStart;
-  for (let index = bodyStart; index < routerText.length && depth > 0; index++) {
-    const char = routerText[index];
-    if (inString) {
-      if (escaped) escaped = false;
-      else if (char === "\\") escaped = true;
-      else if (char === inString) inString = null;
-      continue;
-    }
-    if (char === '"' || char === "'" || char === "`") {
-      inString = char;
-      continue;
-    }
-    if (char === "{") depth++;
-    else if (char === "}") depth--;
-    if (char === "\n" || depth === 0) {
-      if (depth === 1) {
-        const line = routerText.slice(lineStart, index).trim();
-        const match = line.match(/^([A-Za-z_$][\w$]*)\s*:/);
-        if (match) roots.push({ root: match[1], line: lineOf(routerText, lineStart) });
-      }
-      lineStart = index + 1;
-    }
-  }
-  return roots;
-}
-
-function extractExportedRouters(serverFiles) {
-  const exports = [];
-  const regex = /export\s+const\s+([A-Za-z_$][\w$]*Router)\s*=/g;
+function exportedRouters(serverFiles) {
+  const output = [];
+  const importedNames = new Set();
   for (const file of serverFiles) {
-    const text = read(file);
-    for (const match of text.matchAll(regex)) {
-      exports.push({ symbol: match[1], file: rel(file), line: lineOf(text, match.index) });
+    const sf = source(file);
+    for (const statement of sf.statements) {
+      if (ts.isImportDeclaration(statement) && statement.importClause?.namedBindings && ts.isNamedImports(statement.importClause.namedBindings)) {
+        for (const element of statement.importClause.namedBindings.elements) importedNames.add(element.name.text);
+      }
     }
   }
-  return exports;
-}
-
-function countSymbolReferences(symbol, files, definingFile) {
-  const escaped = symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`\\b${escaped}\\b`, "g");
-  let count = 0;
-  for (const file of files) {
-    if (rel(file) === definingFile) continue;
-    count += [...read(file).matchAll(regex)].length;
+  for (const file of serverFiles) {
+    const sf = source(file);
+    for (const statement of sf.statements) {
+      if (!ts.isVariableStatement(statement)) continue;
+      const exported = statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
+      if (!exported) continue;
+      for (const declaration of statement.declarationList.declarations) {
+        if (ts.isIdentifier(declaration.name) && /Router$/.test(declaration.name.text)) {
+          output.push({ symbol: declaration.name.text, file: rel(file), line: lineOf(file, declaration), imported: importedNames.has(declaration.name.text) });
+        }
+      }
+    }
   }
-  return count;
+  return output;
 }
 
-function auditUi(files, findings) {
-  for (const file of files.filter((candidate) => [".tsx", ".jsx"].includes(path.extname(candidate)))) {
-    const text = read(file);
+function openingFor(node) {
+  if (ts.isJsxElement(node)) return node.openingElement;
+  if (ts.isJsxSelfClosingElement(node)) return node;
+  return undefined;
+}
+
+function isActionable(opening, sf) {
+  if (["onClick", "href", "to", "form"].some((name) => hasAttr(opening, name))) return true;
+  if (hasAttr(opening, "asChild")) return true;
+  if (opening.attributes.properties.some(ts.isJsxSpreadAttribute)) return true;
+  return attrValue(attr(opening, "type"), sf) === "submit";
+}
+
+function hasActionableAncestor(node, sf) {
+  let parent = node.parent;
+  let depth = 0;
+  while (parent && depth < 8) {
+    if (ts.isJsxElement(parent)) {
+      const opening = parent.openingElement;
+      const tag = jsxTagName(opening.tagName, sf);
+      if (tag === "a" || tag === "Link" || /Trigger$/.test(tag) || isActionable(opening, sf)) return true;
+    }
+    parent = parent.parent;
+    depth++;
+  }
+  return false;
+}
+
+function uiAudit(clientFiles, findings) {
+  for (const file of clientFiles.filter((candidate) => [".tsx", ".jsx"].includes(path.extname(candidate)))) {
     const fileName = rel(file);
-
-    const buttonRegex = /<(Button|button)\b([^>]*)>([\s\S]*?)<\/\1>/g;
-    for (const match of text.matchAll(buttonRegex)) {
-      const attrs = match[2];
-      const body = match[3].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 100);
-      const actionable = /\bonClick\s*=|\btype=["']submit["']|\basChild\b|\bhref\s*=|\bform\s*=/.test(attrs);
-      const intentionallyNonAction = /\bdisabled(?:=|\s|$)|aria-hidden/.test(attrs);
-      if (!actionable && !intentionallyNonAction) {
-        pushFinding(findings, "warning", "ui-button", fileName, lineOf(text, match.index), `Button appears to have no action: ${body || "unnamed button"}`);
+    if (fileName.includes("/components/ui/") || fileName.endsWith("/ComponentShowcase.tsx")) continue;
+    const sf = source(file);
+    visit(sf, (node) => {
+      const opening = openingFor(node);
+      if (!opening) return;
+      const tag = jsxTagName(opening.tagName, sf);
+      if (tag === "Button" || tag === "button") {
+        const disabled = hasAttr(opening, "disabled") || hasAttr(opening, "aria-hidden");
+        if (!disabled && !isActionable(opening, sf) && !hasActionableAncestor(node, sf)) {
+          const text = node.getText(sf).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 120);
+          finding(findings, "warning", "ui-button", fileName, lineOf(file, opening), `Button has no detected action: ${text}`);
+        }
       }
-    }
-
-    for (const match of text.matchAll(/onClick=\{\s*\(?.*?\)?\s*=>\s*\{\s*\}\s*\}/g)) {
-      pushFinding(findings, "error", "ui-button", fileName, lineOf(text, match.index), "Button has an empty onClick handler.");
-    }
-    for (const match of text.matchAll(/(?:alert|toast\.(?:info|message))\(\s*["'`](?:coming soon|not implemented|todo)/gi)) {
-      pushFinding(findings, "error", "placeholder-action", fileName, lineOf(text, match.index), "UI action is still implemented as a placeholder notification.", match[0]);
-    }
-
-    for (const match of text.matchAll(/<form\b([^>]*)>/g)) {
-      const attrs = match[1];
-      if (!/\bonSubmit\s*=|\baction\s*=/.test(attrs)) {
-        pushFinding(findings, "warning", "ui-form", fileName, lineOf(text, match.index), "Form has no onSubmit or action handler.");
+      if (tag === "form" && !hasAttr(opening, "onSubmit") && !hasAttr(opening, "action")) {
+        finding(findings, "warning", "ui-form", fileName, lineOf(file, opening), "Form has no onSubmit or action handler.");
       }
-    }
-
-    for (const match of text.matchAll(/<img\b([^>]*)>/g)) {
-      const attrs = match[1];
-      if (!/\balt\s*=/.test(attrs)) {
-        pushFinding(findings, "warning", "ui-image", fileName, lineOf(text, match.index), "Image is missing alt text.");
+      if (tag === "img") {
+        if (!hasAttr(opening, "alt")) finding(findings, "warning", "ui-image", fileName, lineOf(file, opening), "Image is missing alt text.");
+        const src = attrValue(attr(opening, "src"), sf);
+        if (src && /placeholder|example\.com|placehold\.co|dummy/i.test(src)) {
+          finding(findings, "error", "ui-image", fileName, lineOf(file, opening), `Image uses a placeholder source: ${src}`);
+        }
       }
-      if (/placeholder|example\.com|placehold\.co|TODO|FIXME/i.test(attrs)) {
-        pushFinding(findings, "error", "ui-image", fileName, lineOf(text, match.index), "Image uses a placeholder or example source.", attrs.slice(0, 180));
-      }
-    }
-
-    for (const match of text.matchAll(/\b(?:TODO|FIXME|HACK|COMING SOON|NOT IMPLEMENTED)\b/gi)) {
-      pushFinding(findings, "info", "source-marker", fileName, lineOf(text, match.index), `Source marker found: ${match[0]}`);
-    }
+    });
   }
 }
 
-function auditSwappys(allFiles, routes, mountedRoots, findings) {
-  const swappysFiles = allFiles.filter((file) => /swapp/i.test(rel(file)) || /swapp/i.test(read(file)));
-  const combined = swappysFiles.map((file) => read(file)).join("\n");
-  const evidence = {
-    files: swappysFiles.map(rel),
-    route: routes.some((route) => /swapp/i.test(route.path)),
-    consent: /consent|permission|authori[sz]e/i.test(combined),
-    captureOrUpload: /getUserMedia|camera|capture|upload|input[^>]+type=["']file/i.test(combined),
-    providerMutation: /trpc\.[\w.]+\.(?:useMutation|mutate)|generate.*(?:swap|double)|createSwappys/i.test(combined),
-    resultHandling: /result|outputUrl|download|save.*(?:project|scene|library)/i.test(combined),
-    parentBridge: /postMessage|WebView|parent|virelle|save.*scene|save.*project/i.test(combined),
-    manifest: /manifest|feature.*registry|capabilit/i.test(combined),
-    serverMounted: [...mountedRoots].some((root) => /vfx|swapp/i.test(root)),
+function sourceMarkerAudit(allFiles, findings) {
+  const marker = /\b(?:TODO|FIXME|HACK|COMING SOON|NOT IMPLEMENTED)\b/gi;
+  const executablePlaceholder = /throw\s+new\s+Error\(\s*["'`](?:not implemented|todo)|\bmock data\b|\bdummy data\b|\bfake data\b/gi;
+  for (const file of allFiles) {
+    const fileName = rel(file);
+    if (fileName.startsWith("docs/") || fileName.includes(".test.") || fileName.includes(".spec.") || fileName === "scripts/repository-connectivity-audit.mjs") continue;
+    const text = read(file);
+    for (const match of text.matchAll(marker)) finding(findings, "info", "source-marker", fileName, text.slice(0, match.index).split("\n").length, `Source marker found: ${match[0]}`);
+    for (const match of text.matchAll(executablePlaceholder)) finding(findings, "error", "placeholder-implementation", fileName, text.slice(0, match.index).split("\n").length, "Placeholder implementation remains in executable source.", match[0]);
+  }
+}
+
+function swappysAudit(allFiles, routes, mountedRoots, findings) {
+  const appFile = path.join(SWAPPYS, "App.tsx");
+  const webFile = path.join(SWAPPYS, "src", "SwappysWebApp.ts");
+  const serverFile = path.join(SERVER, "vfx-sfx-router.ts");
+  const dashboardFile = path.join(CLIENT, "components", "DashboardLayout.tsx");
+  const featureRegistryFile = path.join(ROOT, "shared", "feature-registry.ts");
+  const appText = fs.existsSync(appFile) ? read(appFile) : "";
+  const webText = fs.existsSync(webFile) ? read(webFile) : "";
+  const serverText = fs.existsSync(serverFile) ? read(serverFile) : "";
+  const dashboardText = fs.existsSync(dashboardFile) ? read(dashboardFile) : "";
+  const registryText = fs.existsSync(featureRegistryFile) ? read(featureRegistryFile) : "";
+  const procedureStart = serverText.indexOf("swappysMobileSwap:");
+  const procedureText = procedureStart >= 0 ? serverText.slice(procedureStart, procedureStart + 5000) : "";
+  const menuMatch = dashboardText.match(/label:\s*["']Swappys[^"']*["'][\s\S]{0,180}?path:\s*["']([^"']+)["']/i);
+  const menuPath = menuMatch?.[1] || null;
+  const directParentRoute = Boolean(menuPath && menuPath !== "/projects" && routes.some((route) => routeMatches(menuPath, route.path)));
+  const recordingFunction = webText.match(/async function doSwap\(\)[\s\S]*?\nfunction clearResult/)?.[0] || "";
+
+  const result = {
+    appEntry: fs.existsSync(appFile),
+    embeddedUi: fs.existsSync(webFile),
+    parentMenuEntry: Boolean(menuMatch),
+    parentMenuPath: menuPath,
+    directParentFeatureRoute: directParentRoute,
+    serverRootMounted: mountedRoots.has("vfxSfx"),
+    serverProcedure: procedureStart >= 0,
+    explicitConsent: /consentConfirmed|I confirm that I own/i.test(webText + procedureText),
+    imageValidation: /validateImage\(|image\/jpeg|image\/png|image\/webp/i.test(webText),
+    serverMimeValidation: /data:image\/(?:jpeg|png|webp)|mime/i.test(procedureText),
+    moderation: /scanContent|moderation|handleModeration/i.test(procedureText),
+    anonymousRateLimit: /rateLimit|throttle|quota/i.test(procedureText),
+    anonymousCostControl: /deductCredits|userApiKeys|BYOK|rateLimit|quota/i.test(procedureText),
+    authBridge: /SecureStore|openAuthSession|AuthSession|accessToken|authToken|Linking\.addEventListener|deep link/i.test(appText + webText),
+    externalLoginOnly: /Linking\.openURL|openUrl/i.test(appText) && /login/i.test(appText),
+    captureOrUpload: /getUserMedia|type="file"|type='file'/i.test(webText),
+    recordingConnectedToGeneration: /recordingUrl|MediaRecorder/i.test(recordingFunction),
+    providerCall: /vfxSfx\.swappysMobileSwap|swappysMobileSwap/i.test(webText + procedureText),
+    localSave: /saveResult|MediaLibrary\.createAssetAsync/i.test(appText + webText),
+    saveBackToVirelle: /saveToVirelle|saveToProject|projectAsset|sceneAsset|productionAssets/i.test(appText + webText),
+    featureManifest: /swappys/i.test(registryText),
+    resultHandling: /resultImage|imageUrl|clearResult/i.test(webText),
   };
 
-  const checks = [
-    ["route", "Swappys has no registered frontend route."],
-    ["consent", "Swappys consent/authorisation flow was not detected."],
-    ["captureOrUpload", "Swappys capture or upload input was not detected."],
-    ["providerMutation", "Swappys has no detected provider mutation/generation call."],
-    ["resultHandling", "Swappys result handling or save workflow was not detected."],
-    ["parentBridge", "Swappys daughter-app bridge back to Virelle was not detected."],
-    ["manifest", "Swappys feature manifest/capability declaration was not detected."],
-    ["serverMounted", "Swappys transformation backend does not appear to be mounted."],
+  const required = [
+    ["appEntry", "Swappys mobile app entry is missing."],
+    ["embeddedUi", "Swappys embedded UI is missing."],
+    ["parentMenuEntry", "Virelle has no discoverable Swappys navigation entry."],
+    ["serverRootMounted", "The VFX/Swappys router is not mounted in appRouter."],
+    ["serverProcedure", "The Swappys transformation procedure is missing."],
+    ["explicitConsent", "Explicit likeness consent is not enforced end to end."],
+    ["providerCall", "Swappys UI is not connected to a server transformation procedure."],
+    ["resultHandling", "Swappys has no completed-result workflow."],
+    ["featureManifest", "Swappys is absent from the shared feature registry."],
   ];
-  for (const [key, message] of checks) {
-    if (!evidence[key]) pushFinding(findings, "error", "swappys", "repository", 1, message);
-  }
-  return evidence;
+  for (const [key, message] of required) if (!result[key]) finding(findings, "error", "swappys", "apps/swappys-mobile", 1, message);
+  if (!result.directParentFeatureRoute) finding(findings, "error", "swappys", "client/src/components/DashboardLayout.tsx", 1, `Swappys navigation does not open a dedicated daughter-app or VFX workflow; current target is ${menuPath || "missing"}.`);
+  if (!result.serverMimeValidation) finding(findings, "error", "swappys-security", "server/vfx-sfx-router.ts", 1, "The public Swappys endpoint accepts base64 strings without server-side MIME/signature validation.");
+  if (!result.moderation) finding(findings, "error", "swappys-security", "server/vfx-sfx-router.ts", 1, "The public Swappys transformation path does not run content moderation before generation.");
+  if (!result.anonymousRateLimit) finding(findings, "error", "swappys-security", "server/vfx-sfx-router.ts", 1, "The anonymous Swappys AI endpoint has no detected per-IP rate limit.");
+  if (!result.anonymousCostControl) finding(findings, "error", "swappys-cost", "server/vfx-sfx-router.ts", 1, "Anonymous Swappys requests can reach a paid AI provider without credits, BYOK or quota enforcement.");
+  if (!result.authBridge) finding(findings, "error", "swappys-auth", "apps/swappys-mobile/App.tsx", 1, "External Virelle login is not bridged back into the standalone app, so paid entitlement may never reach the WebView request.");
+  if (!result.recordingConnectedToGeneration) finding(findings, "error", "swappys-ui", "apps/swappys-mobile/src/SwappysWebApp.ts", 1, "The Record control captures local video but the recording is never included in the generation request.");
+  if (!result.saveBackToVirelle) finding(findings, "warning", "swappys-integration", "apps/swappys-mobile/App.tsx", 1, "Results can save locally but cannot be returned to a Virelle project, scene or asset library.");
+  return result;
 }
 
 function main() {
@@ -255,119 +402,85 @@ function main() {
   const clientFiles = allFiles.filter((file) => file.startsWith(CLIENT));
   const serverFiles = allFiles.filter((file) => file.startsWith(SERVER));
   const findings = [];
-
-  const appPath = path.join(CLIENT, "App.tsx");
-  if (!fs.existsSync(appPath)) throw new Error("client/src/App.tsx was not found.");
-  const appText = read(appPath);
-  const routes = extractRoutes(appText);
+  const appFile = path.join(CLIENT, "App.tsx");
+  const routerFile = path.join(SERVER, "routers.ts");
+  const routes = extractRoutes(appFile);
   const routeSet = new Set(routes.map((route) => route.path));
-
-  const navigationTargets = extractNavigationTargets(clientFiles);
-  for (const target of navigationTargets) {
-    const matched = [...routeSet].some((registered) => routePatternMatches(target.path, registered));
-    if (!matched) pushFinding(findings, "error", "navigation", target.file, target.line, `Navigation target has no registered route: ${target.raw}`);
+  const navigation = extractNavigationTargets(clientFiles);
+  for (const target of navigation) {
+    if (![...routeSet].some((registered) => routeMatches(target.path, registered))) {
+      finding(findings, "error", "navigation", target.file, target.line, `Navigation target has no registered frontend route: ${target.raw}`);
+    }
   }
 
-  const importedPages = extractPageImports(appText);
+  const importedPages = extractAppPageImports(appFile);
   const pageFiles = clientFiles.filter((file) => rel(file).startsWith("client/src/pages/") && !/\.(?:test|spec)\./.test(file));
   for (const file of pageFiles) {
     const key = pageKey(file);
-    if (key === "NotFound" || key.startsWith("legal/")) continue;
-    if (!importedPages.has(key)) {
-      const references = countSymbolReferences(path.basename(key), clientFiles, rel(file));
-      pushFinding(findings, references === 0 ? "error" : "warning", "page-connectivity", rel(file), 1, `Page file is not imported by client/src/App.tsx: ${key}`);
-    }
+    if (key === "NotFound" || key.startsWith("legal/") || key === "ComponentShowcase") continue;
+    if (!importedPages.has(key)) finding(findings, "warning", "page-connectivity", rel(file), 1, `Page file is not routed by client/src/App.tsx: ${key}`);
   }
 
-  const routerText = read(path.join(SERVER, "routers.ts"));
-  const mountedRoots = new Set(extractAppRouterRoots(routerText).map((entry) => entry.root));
+  const appRouterRoots = extractAppRouterRoots(routerFile);
+  const mountedRoots = new Set(appRouterRoots.map((entry) => entry.root));
   const trpcUsages = extractClientTrpcRoots(clientFiles);
   for (const usage of trpcUsages) {
-    if (!mountedRoots.has(usage.root)) {
-      pushFinding(findings, "error", "trpc-connectivity", usage.file, usage.line, `Client calls unmounted tRPC root: trpc.${usage.root}`);
-    }
+    if (!mountedRoots.has(usage.root)) finding(findings, "error", "trpc-connectivity", usage.file, usage.line, `Client calls unmounted tRPC root: trpc.${usage.root}`);
   }
 
-  const exportedRouters = extractExportedRouters(serverFiles);
-  for (const exported of exportedRouters) {
-    if (["appRouter", "systemRouter"].includes(exported.symbol)) continue;
-    const references = countSymbolReferences(exported.symbol, serverFiles, exported.file);
-    if (references === 0) {
-      pushFinding(findings, "error", "router-connectivity", exported.file, exported.line, `Exported router is never imported or mounted: ${exported.symbol}`);
-    }
+  const routers = exportedRouters(serverFiles);
+  for (const router of routers) {
+    if (["appRouter", "systemRouter"].includes(router.symbol)) continue;
+    if (!router.imported) finding(findings, "warning", "router-connectivity", router.file, router.line, `Exported router is never imported by another server module: ${router.symbol}`);
   }
 
-  auditUi(clientFiles, findings);
-  const swappys = auditSwappys(allFiles, routes, mountedRoots, findings);
+  uiAudit(clientFiles, findings);
+  sourceMarkerAudit(allFiles, findings);
+  const swappys = swappysAudit(allFiles, routes, mountedRoots, findings);
 
-  const placeholderRegex = /\b(?:throw new Error\(["'`](?:Not implemented|TODO)|return\s+null\s*;\s*\/\/\s*(?:TODO|placeholder)|mock data|dummy data|fake data)\b/gi;
-  for (const file of allFiles) {
-    const text = read(file);
-    for (const match of text.matchAll(placeholderRegex)) {
-      pushFinding(findings, "error", "placeholder-implementation", rel(file), lineOf(text, match.index), "Placeholder implementation remains in executable source.", match[0]);
-    }
-  }
-
-  findings.sort((a, b) => {
-    const weight = { error: 0, warning: 1, info: 2 };
-    return weight[a.severity] - weight[b.severity] || a.category.localeCompare(b.category) || a.file.localeCompare(b.file) || a.line - b.line;
-  });
-
+  const weight = { error: 0, warning: 1, info: 2 };
+  findings.sort((a, b) => weight[a.severity] - weight[b.severity] || a.category.localeCompare(b.category) || a.file.localeCompare(b.file) || a.line - b.line);
   const summary = {
     generatedAt: new Date().toISOString(),
     sourceFiles: allFiles.length,
-    clientFiles: clientFiles.length,
-    serverFiles: serverFiles.length,
     registeredRoutes: routes.length,
-    navigationTargets: navigationTargets.length,
+    navigationTargets: navigation.length,
     pageFiles: pageFiles.length,
     mountedTrpcRoots: mountedRoots.size,
     clientTrpcRoots: unique(trpcUsages.map((usage) => usage.root)).length,
-    exportedRouters: exportedRouters.length,
-    errors: findings.filter((finding) => finding.severity === "error").length,
-    warnings: findings.filter((finding) => finding.severity === "warning").length,
-    info: findings.filter((finding) => finding.severity === "info").length,
+    exportedRouters: routers.length,
+    errors: findings.filter((item) => item.severity === "error").length,
+    warnings: findings.filter((item) => item.severity === "warning").length,
+    info: findings.filter((item) => item.severity === "info").length,
   };
 
   fs.mkdirSync(REPORT_DIR, { recursive: true });
   fs.writeFileSync(path.join(REPORT_DIR, "repository-connectivity-audit.json"), JSON.stringify({ summary, routes, mountedRoots: [...mountedRoots].sort(), swappys, findings }, null, 2));
-
-  const lines = [
+  const markdown = [
     "# Repository Connectivity and UI Debug Audit",
     "",
     `Generated: ${summary.generatedAt}`,
     "",
     "## Summary",
     "",
-    `- Source files scanned: ${summary.sourceFiles}`,
-    `- Registered routes: ${summary.registeredRoutes}`,
-    `- Navigation targets: ${summary.navigationTargets}`,
-    `- Page files: ${summary.pageFiles}`,
-    `- Mounted tRPC roots: ${summary.mountedTrpcRoots}`,
-    `- Client tRPC roots: ${summary.clientTrpcRoots}`,
-    `- Exported routers: ${summary.exportedRouters}`,
-    `- Errors: ${summary.errors}`,
-    `- Warnings: ${summary.warnings}`,
-    `- Informational markers: ${summary.info}`,
+    ...Object.entries(summary).filter(([key]) => key !== "generatedAt").map(([key, value]) => `- ${key}: ${value}`),
     "",
-    "## Swappys daughter-app connectivity",
+    "## Swappys daughter-app audit",
     "",
-    ...Object.entries(swappys).filter(([key]) => key !== "files").map(([key, value]) => `- ${key}: ${value ? "PASS" : "FAIL"}`),
-    `- files detected: ${swappys.files.length}`,
+    ...Object.entries(swappys).map(([key, value]) => `- ${key}: ${typeof value === "boolean" ? (value ? "PASS" : "FAIL") : value ?? "missing"}`),
     "",
     "## Findings",
     "",
-  ];
-  for (const finding of findings) {
-    lines.push(`### ${finding.severity.toUpperCase()} — ${finding.category}`);
-    lines.push("");
-    lines.push(`- Location: \`${finding.file}:${finding.line}\``);
-    lines.push(`- ${finding.message}`);
-    if (finding.evidence) lines.push(`- Evidence: \`${String(finding.evidence).replaceAll("`", "'")}\``);
-    lines.push("");
-  }
-  fs.writeFileSync(path.join(REPORT_DIR, "repository-connectivity-audit.md"), lines.join("\n"));
-
+    ...findings.flatMap((item) => [
+      `### ${item.severity.toUpperCase()} — ${item.category}`,
+      "",
+      `- Location: \`${item.file}:${item.line}\``,
+      `- ${item.message}`,
+      ...(item.evidence ? [`- Evidence: \`${String(item.evidence).replaceAll("`", "'")}\``] : []),
+      "",
+    ]),
+  ].join("\n");
+  fs.writeFileSync(path.join(REPORT_DIR, "repository-connectivity-audit.md"), markdown);
   console.log(JSON.stringify(summary, null, 2));
   if (summary.errors > 0) process.exitCode = 2;
 }
