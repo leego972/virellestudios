@@ -1,85 +1,80 @@
-# Render Blueprint — virellestudios
-  # https://render.com/docs/blueprint-spec
+# Render Blueprint — Virelle Studios
+# The application is MySQL-native (mysql2 + Drizzle MySQL). Render's managed
+# database product is PostgreSQL, so DATABASE_URL must point to an external
+# managed MySQL 8.x service. Do not attach a Render PostgreSQL database.
 
-  databases:
-    - name: virelle-db
-      plan: starter
-      databaseName: virelle
-      user: virelle
-      region: oregon
-
-  services:
-    - type: web
-      name: virellestudios
-      runtime: docker
-      dockerfilePath: ./Dockerfile
-      region: oregon
-      plan: starter
-      healthCheckPath: /api/healthz
-      # Render auto-injects PORT — gateway.mjs reads it, no change needed
-      envVars:
-        - key: NODE_ENV
-          value: production
-        - key: DATABASE_URL
-          fromDatabase:
-            name: virelle-db
-            property: connectionString
-        # ── Secrets: set these manually in the Render dashboard ──
-        # REDIS_URL          → Upstash Redis connection string
-        # JWT_SECRET
-        # SESSION_SECRET
-        # RUNWAY_API_KEY
-        # FAL_KEY
-        # OPENAI_API_KEY
-        # GROQ_API_KEY
-        # HUGGING_FACE_API_KEY
-        # VENICE_API_KEY
-        # VENICE_MODEL
-        # POLLINATIONS_API_KEY
-        # BUILT_IN_FORGE_API_KEY
-        # BUILT_IN_FORGE_API_URL
-        # AWS_ACCESS_KEY_ID
-        # AWS_SECRET_ACCESS_KEY
-        # AWS_S3_BUCKET
-        # AWS_S3_ENDPOINT
-        # AWS_REGION
-        # STRIPE_SECRET_KEY
-        # STRIPE_PUBLISHABLE_KEY
-        # STRIPE_WEBHOOK_SECRET
-        # (all other STRIPE_* price IDs)
-        # GMAIL_USER
-        # GMAIL_APP_PASSWORD
-        # RESEND_API_KEY
-        # EMAIL_FROM
-        # ADMIN_EMAIL
-        # TITAN_API_KEY
-        # TITAN_API_URL
-        # SENTRY_DSN
-        # SENTRY_ENVIRONMENT
-        # DEBUG_LOG_SECRET
-        # OAUTH_SERVER_URL
-        # OWNER_NAME
-        # OWNER_OPEN_ID
-        # TIKTOK_CLIENT_KEY
-        # TIKTOK_CLIENT_SECRET
-        # YOUTUBE_CLIENT_ID
-        # YOUTUBE_CLIENT_SECRET
-        # YOUTUBE_REFRESH_TOKEN
-        # YOUTUBE_DATA_API_V3
-        # YOUTUBE_CHANNEL_ID
-        # VITE_APP_ID
-        # VITE_APP_TITLE
-        # VITE_APP_LOGO
-        # VITE_STRIPE_PUBLISHABLE_KEY
-        # VITE_TITAN_API_KEY
-        # VITE_TITAN_API_URL
-        # VITE_FRONTEND_FORGE_API_KEY
-        # VITE_FRONTEND_FORGE_API_URL
-        # VITE_OAUTH_PORTAL_URL
-        # GOOGLE_ADS_DEVELOPER_TOKEN
-        # DESKTOP_VERSION
-        # DESKTOP_WIN_URL
-        # DESKTOP_MAC_URL
-        # DESKTOP_MAC_X64_URL
-        # DESKTOP_LINUX_URL
-  
+services:
+  - type: web
+    name: virellestudios
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    plan: starter
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: REDIS_URL
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RUNWAY_API_KEY
+        sync: false
+      - key: FAL_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: HUGGING_FACE_API_KEY
+        sync: false
+      - key: VENICE_API_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_S3_ENDPOINT
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: OAUTH_SERVER_URL
+        sync: false
+      - key: OWNER_NAME
+        sync: false
+      - key: OWNER_OPEN_ID
+        sync: false
+      - key: VITE_APP_ID
+        sync: false
+      - key: VITE_APP_TITLE
+        sync: false
+      - key: VITE_APP_LOGO
+        sync: false
+      - key: VITE_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: production
