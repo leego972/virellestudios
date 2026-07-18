@@ -3,12 +3,17 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { projects, wardrobeAssignments, wardrobeItems } from "../../drizzle/schema";
 import { getDb } from "../db";
-import { protectedProcedure, router } from "./trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./trpc";
 import {
   buildUserWardrobeInventory,
   removeOwnedWardrobeAssignment,
   validateAndCreateWardrobeAssignment,
 } from "./wardrobeInventoryService";
+import {
+  auditLamaloCatalog,
+  getLamaloCatalogSummary,
+  repairAndAuditLamaloCatalog,
+} from "./lamaloCatalogIntegrity";
 
 /**
  * Hardened procedures intended to replace the legacy inventory/director
@@ -17,6 +22,15 @@ import {
 export const wardrobeMarketplaceHardenedRouter = router({
   inventory: router({
     listItems: protectedProcedure.query(async ({ ctx }) => buildUserWardrobeInventory(ctx.user.id)),
+  }),
+
+  catalog: router({
+    /** Lightweight marketplace health indicator; does not expose private records. */
+    houseStatus: publicProcedure.query(() => getLamaloCatalogSummary()),
+    /** Full diagnostic is restricted to administrators. */
+    auditHouseCollection: adminProcedure.query(() => auditLamaloCatalog()),
+    /** Idempotently backfill the established catalogue, then independently verify it. */
+    repairHouseCollection: adminProcedure.mutation(() => repairAndAuditLamaloCatalog()),
   }),
 
   director: router({
