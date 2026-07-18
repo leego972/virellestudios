@@ -8,6 +8,7 @@ on:
       - "server/**"
       - "shared/**"
       - "drizzle/**"
+      - "apps/swappys-mobile/**"
       - "scripts/repository-connectivity-audit.mjs"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -34,7 +35,7 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Install dependencies
+      - name: Install Virelle dependencies
         run: pnpm install --no-frozen-lockfile
 
       - name: TypeScript check
@@ -81,6 +82,36 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Install Swappys daughter-app dependencies
+        id: swappys_install
+        shell: bash
+        run: |
+          set +e
+          pnpm --dir apps/swappys-mobile install --no-frozen-lockfile 2>&1 | tee audit-swappys-install.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Swappys TypeScript check
+        id: swappys_typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm --dir apps/swappys-mobile typecheck 2>&1 | tee audit-swappys-typecheck.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Swappys Expo compatibility check
+        id: swappys_doctor
+        shell: bash
+        run: |
+          set +e
+          (cd apps/swappys-mobile && npx --yes expo-doctor) 2>&1 | tee audit-swappys-doctor.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
       - name: Route, router, UI and Swappys connectivity audit
         id: connectivity
         shell: bash
@@ -109,14 +140,18 @@ jobs:
         if: always()
         shell: bash
         run: |
+          mkdir -p audit-results
           cat > audit-results/audit-gates.md <<EOF
           # Repository debug audit gates
 
-          - TypeScript: ${{ steps.typecheck.outputs.exit_code }}
-          - Tests: ${{ steps.tests.outputs.exit_code }}
-          - Build: ${{ steps.build.outputs.exit_code }}
-          - Dependency audit: ${{ steps.dependency_audit.outputs.exit_code }}
-          - Connectivity/UI/Swappys audit: ${{ steps.connectivity.outputs.exit_code }}
+          - Virelle TypeScript: ${{ steps.typecheck.outputs.exit_code }}
+          - Virelle tests: ${{ steps.tests.outputs.exit_code }}
+          - Virelle production build: ${{ steps.build.outputs.exit_code }}
+          - Virelle dependency audit: ${{ steps.dependency_audit.outputs.exit_code }}
+          - Swappys dependency install: ${{ steps.swappys_install.outputs.exit_code }}
+          - Swappys TypeScript: ${{ steps.swappys_typecheck.outputs.exit_code }}
+          - Swappys Expo doctor: ${{ steps.swappys_doctor.outputs.exit_code }}
+          - Connectivity/UI/Swappys integration audit: ${{ steps.connectivity.outputs.exit_code }}
           - Secret scan: ${{ steps.secrets.outputs.exit_code }}
           EOF
 
@@ -131,6 +166,9 @@ jobs:
             audit-tests.log
             audit-build.log
             audit-dependencies.log
+            audit-swappys-install.log
+            audit-swappys-typecheck.log
+            audit-swappys-doctor.log
             audit-connectivity.log
             audit-secrets.log
           retention-days: 7
@@ -145,6 +183,9 @@ jobs:
             "${{ steps.tests.outputs.exit_code }}" \
             "${{ steps.build.outputs.exit_code }}" \
             "${{ steps.dependency_audit.outputs.exit_code }}" \
+            "${{ steps.swappys_install.outputs.exit_code }}" \
+            "${{ steps.swappys_typecheck.outputs.exit_code }}" \
+            "${{ steps.swappys_doctor.outputs.exit_code }}" \
             "${{ steps.connectivity.outputs.exit_code }}" \
             "${{ steps.secrets.outputs.exit_code }}"; do
             if [ "${code:-1}" != "0" ]; then failures=$((failures + 1)); fi
