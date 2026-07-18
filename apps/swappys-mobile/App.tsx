@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Linking, SafeAreaView, StyleSheet, View } from "react-native";
+import { Alert, SafeAreaView, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
+import * as ExpoLinking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
 import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
@@ -122,7 +123,7 @@ export default function App() {
     try {
       const result = await WebBrowser.openAuthSessionAsync(MOBILE_AUTH_URL, MOBILE_AUTH_CALLBACK);
       if (result.type !== "success" || !result.url) return;
-      const parsed = Linking.parse(result.url);
+      const parsed = ExpoLinking.parse(result.url);
       const tokenValue = parsed.queryParams?.token;
       const token = Array.isArray(tokenValue) ? tokenValue[0] : tokenValue;
       if (typeof token !== "string" || token.length < 40) {
@@ -155,9 +156,9 @@ export default function App() {
       return;
     }
     try {
-      const canOpen = await Linking.canOpenURL(resolved);
+      const canOpen = await ExpoLinking.canOpenURL(resolved);
       if (!canOpen) throw new Error("Cannot open URL");
-      await Linking.openURL(resolved);
+      await ExpoLinking.openURL(resolved);
     } catch (error: any) {
       Alert.alert("Could not open Virelle Studios", error?.message || resolved);
     }
@@ -171,7 +172,7 @@ export default function App() {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
-        await Linking.openURL(url);
+        await ExpoLinking.openURL(url);
         Alert.alert("Photo library access needed", "Allow photo access in Settings so Swappys can save results directly to your library.");
         return;
       }
@@ -183,7 +184,7 @@ export default function App() {
       FileSystem.deleteAsync(tempUri, { idempotent: true }).catch(() => {});
       Alert.alert("Saved to Photos", "Your Swappys result was saved to your photo library.");
     } catch (error: any) {
-      try { await Linking.openURL(url); } catch {}
+      try { await ExpoLinking.openURL(url); } catch {}
       Alert.alert("Could not save to Photos", error?.message || "Open the image to save it manually.");
     }
   }, []);
