@@ -10,6 +10,7 @@ on:
       - "drizzle/**"
       - "apps/swappys-mobile/**"
       - "scripts/repository-connectivity-audit.mjs"
+      - "scripts/feature-reachability-audit.mjs"
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/repository-debug-audit.yml"
@@ -122,6 +123,16 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Page reachability and generated-media audit
+        id: feature_reachability
+        shell: bash
+        run: |
+          set +e
+          node scripts/feature-reachability-audit.mjs 2>&1 | tee audit-feature-reachability.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
       - name: Secret-pattern scan
         id: secrets
         shell: bash
@@ -152,6 +163,7 @@ jobs:
           - Swappys TypeScript: ${{ steps.swappys_typecheck.outputs.exit_code }}
           - Swappys Expo doctor: ${{ steps.swappys_doctor.outputs.exit_code }}
           - Connectivity/UI/Swappys integration audit: ${{ steps.connectivity.outputs.exit_code }}
+          - Feature reachability/media audit: ${{ steps.feature_reachability.outputs.exit_code }}
           - Secret scan: ${{ steps.secrets.outputs.exit_code }}
           EOF
 
@@ -170,6 +182,7 @@ jobs:
             audit-swappys-typecheck.log
             audit-swappys-doctor.log
             audit-connectivity.log
+            audit-feature-reachability.log
             audit-secrets.log
           retention-days: 7
 
@@ -187,6 +200,7 @@ jobs:
             "${{ steps.swappys_typecheck.outputs.exit_code }}" \
             "${{ steps.swappys_doctor.outputs.exit_code }}" \
             "${{ steps.connectivity.outputs.exit_code }}" \
+            "${{ steps.feature_reachability.outputs.exit_code }}" \
             "${{ steps.secrets.outputs.exit_code }}"; do
             if [ "${code:-1}" != "0" ]; then failures=$((failures + 1)); fi
           done
