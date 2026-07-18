@@ -19,7 +19,25 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
-      - run: pnpm check
+      - name: Run TypeScript check
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm check 2>&1 | tee typecheck-errors.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload TypeScript diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-diagnostics
+          path: typecheck-errors.txt
+          retention-days: 3
+      - name: Fail when TypeScript check failed
+        if: steps.typecheck.outputs.exit_code != '0'
+        run: exit 1
   build:
     name: Build
     runs-on: ubuntu-latest
