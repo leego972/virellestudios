@@ -1,0 +1,35 @@
+name: Apply Swappys Result Persistence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-swappys-result-persistence.yml"
+      - "scripts/apply-swappys-result-persistence.py"
+
+permissions:
+  contents: write
+
+jobs:
+  persist:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply persistence wiring
+        run: python scripts/apply-swappys-result-persistence.py
+      - name: Commit persistence wiring
+        shell: bash
+        run: |
+          git config user.name "Virelle Connectivity Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/vfx-sfx-router.ts
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Swappys result persistence is already wired."
+            exit 0
+          fi
+          git commit -m "Persist authenticated Swappys results into Virelle scenes"
+          git push origin HEAD:${{ github.head_ref }}
