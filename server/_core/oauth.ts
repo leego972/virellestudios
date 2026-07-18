@@ -5,15 +5,50 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import { logger } from "./logger";
 
+const OAUTH_RETURN_COOKIE = "virelle_oauth_return_to";
+const OAUTH_RETURN_MAX_AGE_MS = 10 * 60 * 1000;
+
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
   return typeof value === "string" ? value : undefined;
 }
 
+function safeInternalReturnPath(value: string | undefined): string | null {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\") || value.startsWith("/api/")) return null;
+  return value.slice(0, 512);
+}
+
+function readCookie(req: Request, name: string): string | undefined {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return undefined;
+  for (const pair of cookieHeader.split(";")) {
+    const [key, ...parts] = pair.trim().split("=");
+    if (key === name) {
+      try {
+        return decodeURIComponent(parts.join("="));
+      } catch {
+        return undefined;
+      }
+    }
+  }
+  return undefined;
+}
+
+function rememberReturnPath(req: Request, res: Response): void {
+  const returnTo = safeInternalReturnPath(getQueryParam(req, "returnTo"));
+  if (!returnTo) return;
+  const cookieOptions = getSessionCookieOptions(req);
+  res.cookie(OAUTH_RETURN_COOKIE, returnTo, {
+    ...cookieOptions,
+    httpOnly: true,
+    maxAge: OAUTH_RETURN_MAX_AGE_MS,
+  });
+}
+
 export function registerOAuthRoutes(app: Express) {
-  // OAuth initiation routes â redirect user to Google/GitHub via Manus OAuth
   app.get("/api/auth/google", async (req: Request, res: Response) => {
     try {
+      rememberReturnPath(req, res);
       const protocol = req.headers["x-forwarded-proto"] || req.protocol;
       const host = req.headers["x-forwarded-host"] || req.headers.host;
       const callbackUrl = `${protocol}://${host}/api/oauth/callback`;
@@ -27,6 +62,7 @@ export function registerOAuthRoutes(app: Express) {
 
   app.get("/api/auth/github", async (req: Request, res: Response) => {
     try {
+      rememberReturnPath(req, res);
       const protocol = req.headers["x-forwarded-proto"] || req.protocol;
       const host = req.headers["x-forwarded-host"] || req.headers.host;
       const callbackUrl = `${protocol}://${host}/api/oauth/callback`;
@@ -38,7 +74,6 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 
-  // OAuth callback â exchange code for token and create session
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
@@ -72,9 +107,9 @@ export function registerOAuthRoutes(app: Express) {
 
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
-
-      // Redirect to dashboard with opener flag so the studio opener plays
-      res.redirect(302, "/?opener=1");
+      const returnTo = safeInternalReturnPath(readCookie(req, OAUTH_RETURN_COOKIE));
+      res.clearCookie(OAUTH_RETURN_COOKIE, cookieOptions);
+      res.redirect(302, returnTo || "/?opener=1");
     } catch (error) {
       logger.error("[OAuth] Callback failed", { error: String(error) });
       res.status(500).json({ error: "OAuth callback failed" });
