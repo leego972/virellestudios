@@ -10,12 +10,22 @@
 import Stripe from "stripe";
 import { generateImage } from "./_core/imageGeneration";
 import { fulfillWardrobePurchaseSession } from "./_core/wardrobePurchaseFulfillment";
+import {
+  buildUserWardrobeInventory,
+  removeOwnedWardrobeAssignment,
+  validateAndCreateWardrobeAssignment,
+} from "./_core/wardrobeInventoryService";
+import {
+  auditLamaloCatalog,
+  getLamaloCatalogSummary,
+  repairAndAuditLamaloCatalog,
+} from "./_core/lamaloCatalogIntegrity";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { eq, and, desc, isNotNull, sql } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { isTopTierUser } from "./_core/subscription";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { adminProcedure, publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
 import {
@@ -644,22 +654,8 @@ export const wardrobeMarketplaceRouter = router({
         return fulfilled.lease;
       }),
 
-    /** All leases for the current user */
-    myInventory: protectedProcedure.query(async ({ ctx }) => {
-        const leases = await db.getWardrobeLeasesByUser(ctx.user.id);
-        // Enrich each lease with item/collection name and image for the inventory UI
-        return Promise.all(leases.map(async (l) => {
-          if (l.leaseType === "item" && l.wardrobeItemId) {
-            const item = await db.getWardrobeItemById(l.wardrobeItemId);
-            return { ...l, itemName: item?.name ?? null, imageUrl: item?.primaryImageUrl ?? null };
-          }
-          if (l.leaseType === "collection" && l.collectionId) {
-            const col = await db.getDesignerCollectionById(l.collectionId);
-            return { ...l, collectionName: col?.name ?? null };
-          }
-          return l;
-        }));
-      }),
+    /** Every purchased item, including each item inside a purchased collection. */
+    myInventory: protectedProcedure.query(({ ctx }) => buildUserWardrobeInventory(ctx.user.id)),
 
     /** Check if the current user has an active lease for a specific item */
     hasAccess: protectedProcedure
@@ -683,86 +679,44 @@ export const wardrobeMarketplaceRouter = router({
       director: router({
         /** Assign a leased wardrobe item to a character for a range of scenes */
         assign: protectedProcedure
-            .input(z.object({
-              projectId: z.number().int(),
-              characterId: z.number().int(),
-              wardrobeItemId: z.number().int(),
-              fromSceneOrder: z.number().int().min(0),
-              toSceneOrder: z.number().int().min(0),
-              notes: z.string().max(500).optional(),
-            }))
-            .mutation(async ({ ctx, input }) => {
-              const _db = (await getDb())!;
-
-              // ── Verify project ownership ──
-              const rows = await _db.select().from(projects).where(eq(projects.id, input.projectId)).limit(1).catch(()=>[] as any[]);
-              if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
-
-              // ── Verify the user has purchased this item before assigning it ──
-              // One purchase = unlimited use across all the user's projects,
-              // characters and scenes, present and future. We check:
-              //   (a) direct item lease  OR
-              //   (b) collection lease that includes this item  OR
-              //   (c) the user IS the designer who created this item
-              const userLeases = await db.getWardrobeLeasesByUser(ctx.user.id);
-              const activeLeases = userLeases.filter((l) => l.status === "active");
-              const hasDirectLease = activeLeases.some((l) => l.wardrobeItemId === input.wardrobeItemId);
-              if (!hasDirectLease) {
-                const item = await db.getWardrobeItemById(input.wardrobeItemId);
-                if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Wardrobe item not found" });
-                const isOwnItem = item.userId === ctx.user.id;
-                const hasCollectionLease = item.collectionId
-                  ? activeLeases.some((l) => l.collectionId === item.collectionId)
-                  : false;
-                if (!isOwnItem && !hasCollectionLease) {
-                  throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "Purchase this item (or its collection) before assigning it to a character.",
-                  });
-                }
-              }
-
-              await _db.delete(wardrobeAssignments).where(
-                and(
-                  eq(wardrobeAssignments.projectId, input.projectId),
-                  eq(wardrobeAssignments.characterId, input.characterId),
-                  eq(wardrobeAssignments.fromSceneOrder, input.fromSceneOrder),
-                  eq(wardrobeAssignments.toSceneOrder, input.toSceneOrder),
-                )
-              ).catch(()=>{});
-              const res = await _db.insert(wardrobeAssignments).values({
-                userId: ctx.user.id,
-                assignmentType: "character_wardrobe",
-                projectId: input.projectId,
-                characterId: input.characterId,
-                wardrobeItemId: input.wardrobeItemId,
-                fromSceneOrder: input.fromSceneOrder,
-                toSceneOrder: input.toSceneOrder,
-                placementNotes: input.notes ?? undefined,
-              });
-              return { id: (res as any).insertId, success: true };
-            }),
+          .input(z.object({
+            projectId: z.number().int().positive(),
+            characterId: z.number().int().positive(),
+            wardrobeItemId: z.number().int().positive(),
+            fromSceneOrder: z.number().int().min(0),
+            toSceneOrder: z.number().int().min(0),
+            notes: z.string().max(1000).optional(),
+            locked: z.boolean().default(true),
+          }))
+          .mutation(({ ctx, input }) => validateAndCreateWardrobeAssignment({
+            userId: ctx.user.id,
+            ...input,
+          })),
 
         /** List all wardrobe assignments for a project */
         list: protectedProcedure
-          .input(z.object({ projectId: z.number().int() }))
+          .input(z.object({ projectId: z.number().int().positive() }))
           .query(async ({ ctx, input }) => {
-            const _db = (await getDb())!;
-            const rows = await _db
+            const dbConn = await getDb();
+            if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is unavailable." });
+            const project = await dbConn.select().from(projects).where(
+              and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id)),
+            ).limit(1);
+            if (!project[0]) throw new TRPCError({ code: "FORBIDDEN", message: "You do not own this project." });
+            return dbConn
               .select({ assignment: wardrobeAssignments, item: wardrobeItems })
               .from(wardrobeAssignments)
               .leftJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
-              .where(eq(wardrobeAssignments.projectId, input.projectId));
-            return rows;
+              .where(and(
+                eq(wardrobeAssignments.projectId, input.projectId),
+                eq(wardrobeAssignments.userId, ctx.user.id),
+              ));
           }),
 
         /** Remove a wardrobe assignment */
         remove: protectedProcedure
-          .input(z.object({ assignmentId: z.number().int() }))
-          .mutation(async ({ ctx, input }) => {
-            (await getDb())!.delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
-            return { success: true };
-          }),
+          .input(z.object({ assignmentId: z.number().int().positive() }))
+          .mutation(({ ctx, input }) => removeOwnedWardrobeAssignment(ctx.user.id, input.assignmentId)),
 
         /** All assignments for a specific wardrobe item owned by the user */
         listByItem: protectedProcedure
@@ -792,6 +746,19 @@ export const wardrobeMarketplaceRouter = router({
             return rows;
           }),
       }),
+
+
+    /** Direct item inventory API retained alongside the established leasing path. */
+    inventory: router({
+      listItems: protectedProcedure.query(({ ctx }) => buildUserWardrobeInventory(ctx.user.id)),
+    }),
+
+    /** House collection status, administrator audit and idempotent repair. */
+    catalog: router({
+      houseStatus: publicProcedure.query(() => getLamaloCatalogSummary()),
+      auditHouseCollection: adminProcedure.query(() => auditLamaloCatalog()),
+      repairHouseCollection: adminProcedure.mutation(({ ctx }) => repairAndAuditLamaloCatalog(ctx.user.id)),
+    }),
 
     // ═══════════════════════════════════════════════════════════════════════════
     // CUSTOM ITEM ORDERS — AI-generated wardrobe items
