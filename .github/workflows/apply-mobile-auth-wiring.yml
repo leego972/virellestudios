@@ -1,0 +1,35 @@
+name: Apply Swappys Mobile Auth Wiring
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-mobile-auth-wiring.yml"
+      - "scripts/apply-mobile-auth-wiring.py"
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply mobile auth wiring
+        run: python scripts/apply-mobile-auth-wiring.py
+      - name: Commit mobile auth wiring
+        shell: bash
+        run: |
+          git config user.name "Virelle Mobile Auth Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/routers.ts server/vfx-sfx-router.ts client/src/App.tsx client/src/pages/Login.tsx
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Mobile auth wiring already applied."
+            exit 0
+          fi
+          git commit -m "Connect scoped Swappys mobile authentication"
+          git push origin HEAD:${{ github.head_ref }}
