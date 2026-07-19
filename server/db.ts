@@ -60,6 +60,9 @@ export async function getDb() {
           waitForConnections: true,
           connectionLimit: 10,
           queueLimit: 0,
+          ssl: process.env.DATABASE_CA_CERT
+            ? { ca: process.env.DATABASE_CA_CERT }
+            : { rejectUnauthorized: false },
         });
         _db = drizzle(pool) as MySql2Database<Record<string, unknown>>;
     } catch (error) {
