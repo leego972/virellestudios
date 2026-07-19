@@ -1,0 +1,50 @@
+name: Restore Preserved Features
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/restore-preserved-features.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Restore existing product features from main
+        shell: bash
+        run: |
+          git fetch origin main
+          git checkout origin/main -- \
+            client/src/pages/admin/AdminUsers.tsx \
+            client/src/pages/Upgrade.tsx \
+            client/src/pages/Onboarding.tsx \
+            client/src/pages/DesignersPage.tsx \
+            server/affiliate-router.ts \
+            server/blog-router.ts
+      - name: Commit restoration
+        shell: bash
+        run: |
+          git config user.name "Virelle Audit Recovery"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            client/src/pages/admin/AdminUsers.tsx \
+            client/src/pages/Upgrade.tsx \
+            client/src/pages/Onboarding.tsx \
+            client/src/pages/DesignersPage.tsx \
+            server/affiliate-router.ts \
+            server/blog-router.ts
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "All preserved feature files are already restored."
+            exit 0
+          fi
+          git commit -m "Restore product features removed during audit"
+          git push origin HEAD:${{ github.head_ref }}
