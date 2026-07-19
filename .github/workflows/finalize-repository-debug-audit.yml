@@ -1,0 +1,43 @@
+name: Finalize Repository Debug Audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/finalize-repository-debug-audit.yml"
+      - "scripts/finalize-repository-debug-audit.py"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.head_ref == 'audit/repository-debug-2026-07-19'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Generate reproducible Swappys lockfile
+        run: pnpm --dir apps/swappys-mobile install --lockfile-only --no-frozen-lockfile
+      - name: Apply final production cleanup
+        run: python scripts/finalize-repository-debug-audit.py
+      - name: Remove temporary repair machinery
+        shell: bash
+        run: |
+          git ls-files -z '.github/workflows/apply-*.yml' 'scripts/apply-*.py' 'scripts/run-connectivity-repairs*.py' | xargs -0 -r git rm -f
+          git rm -f .github/workflows/finalize-repository-debug-audit.yml scripts/finalize-repository-debug-audit.py
+      - name: Commit final audit branch
+        shell: bash
+        run: |
+          git config user.name "Virelle Audit Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/_core/index.ts client/src/pages/DownloadApp.tsx scripts/repository-connectivity-audit.mjs scripts/action-implementation-audit.mjs .github/workflows/repository-debug-audit.yml apps/swappys-mobile/pnpm-lock.yaml pnpm-lock.yaml
+          git diff --cached --check
+          git commit -m "Finalize repository connectivity audit and verification gates"
+          git push origin HEAD:${{ github.head_ref }}
