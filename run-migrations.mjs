@@ -36,6 +36,9 @@ try {
   process.exit(0);
 } catch (err) {
   console.error("[migrate] Migration failed:", err.message);
+  if (err.cause) {
+    console.error("[migrate] Underlying database error:", err.cause.message || err.cause);
+  }
   process.exit(1);
 } finally {
   await connection.end();

@@ -1,4 +1,4 @@
-CREATE TABLE `characters` (
+CREATE TABLE IF NOT EXISTS `characters` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`projectId` int,
@@ -11,7 +11,7 @@ CREATE TABLE `characters` (
 	CONSTRAINT `characters_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `generationJobs` (
+CREATE TABLE IF NOT EXISTS `generationJobs` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,
@@ -27,7 +27,7 @@ CREATE TABLE `generationJobs` (
 	CONSTRAINT `generationJobs_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `projects` (
+CREATE TABLE IF NOT EXISTS `projects` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`title` varchar(255) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `projects` (
 	CONSTRAINT `projects_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `scenes` (
+CREATE TABLE IF NOT EXISTS `scenes` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`orderIndex` int NOT NULL DEFAULT 0,

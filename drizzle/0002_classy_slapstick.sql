@@ -1,4 +1,4 @@
-CREATE TABLE `scripts` (
+CREATE TABLE IF NOT EXISTS `scripts` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,

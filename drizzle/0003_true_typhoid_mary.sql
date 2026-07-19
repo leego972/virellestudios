@@ -1,4 +1,4 @@
-CREATE TABLE `soundtracks` (
+CREATE TABLE IF NOT EXISTS `soundtracks` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,

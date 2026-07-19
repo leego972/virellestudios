@@ -1,4 +1,4 @@
-CREATE TABLE `directorChats` (
+CREATE TABLE IF NOT EXISTS `directorChats` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,

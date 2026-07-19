@@ -1,4 +1,4 @@
-CREATE TABLE `abuseFlags` (
+CREATE TABLE IF NOT EXISTS `abuseFlags` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`entityId` int NOT NULL,
 	`entityType` enum('filmPage','creatorProfile','collection') NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `abuseFlags` (
 	CONSTRAINT `abuseFlags_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `actGroups` (
+CREATE TABLE IF NOT EXISTS `actGroups` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`cutId` int NOT NULL,
 	`projectId` int NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `actGroups` (
 	CONSTRAINT `actGroups_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `adminCurationFlags` (
+CREATE TABLE IF NOT EXISTS `adminCurationFlags` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`entityType` enum('project','creatorProfile') NOT NULL,
 	`entityId` int NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `adminCurationFlags` (
 	CONSTRAINT `adminCurationFlags_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `analyticsEvents` (
+CREATE TABLE IF NOT EXISTS `analyticsEvents` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`entityType` enum('filmPage','creatorProfile','collection') NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `analyticsEvents` (
 	CONSTRAINT `analyticsEvents_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `assetPurchases` (
+CREATE TABLE IF NOT EXISTS `assetPurchases` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`assetId` varchar(64) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `assetPurchases` (
 	CONSTRAINT `assetPurchases_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `characterArcs` (
+CREATE TABLE IF NOT EXISTS `characterArcs` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`characterId` int NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE `characterArcs` (
 	CONSTRAINT `characterArcs_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `collectionItems` (
+CREATE TABLE IF NOT EXISTS `collectionItems` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`collectionId` int NOT NULL,
 	`projectId` int NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE `collectionItems` (
 	CONSTRAINT `collectionItems_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `collections` (
+CREATE TABLE IF NOT EXISTS `collections` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`slug` varchar(255) NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE `collections` (
 	CONSTRAINT `collections_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `continuityRecords` (
+CREATE TABLE IF NOT EXISTS `continuityRecords` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE `continuityRecords` (
 	CONSTRAINT `continuityRecords_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `conversionEvents` (
+CREATE TABLE IF NOT EXISTS `conversionEvents` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int,
 	`sessionId` varchar(255),
@@ -129,7 +129,7 @@ CREATE TABLE `conversionEvents` (
 	CONSTRAINT `conversionEvents_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `creatorProfiles` (
+CREATE TABLE IF NOT EXISTS `creatorProfiles` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`slug` varchar(255) NOT NULL,
@@ -150,7 +150,7 @@ CREATE TABLE `creatorProfiles` (
 	CONSTRAINT `creatorProfiles_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `featureAudioPlans` (
+CREATE TABLE IF NOT EXISTS `featureAudioPlans` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -168,7 +168,7 @@ CREATE TABLE `featureAudioPlans` (
 	CONSTRAINT `featureAudioPlans_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `featureCutScenes` (
+CREATE TABLE IF NOT EXISTS `featureCutScenes` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`cutId` int NOT NULL,
 	`sceneId` int NOT NULL,
@@ -188,7 +188,7 @@ CREATE TABLE `featureCutScenes` (
 	CONSTRAINT `featureCutScenes_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `featureCuts` (
+CREATE TABLE IF NOT EXISTS `featureCuts` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -210,7 +210,7 @@ CREATE TABLE `featureCuts` (
 	CONSTRAINT `featureCuts_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `filmCompileJobs` (
+CREATE TABLE IF NOT EXISTS `filmCompileJobs` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`cutId` int,
@@ -236,7 +236,7 @@ CREATE TABLE `filmCompileJobs` (
 	CONSTRAINT `filmCompileJobs_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `shotPackages` (
+CREATE TABLE IF NOT EXISTS `shotPackages` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`sceneId` int NOT NULL,
 	`projectId` int NOT NULL,
@@ -259,7 +259,7 @@ CREATE TABLE `shotPackages` (
 	CONSTRAINT `shotPackages_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `signatureCastActors` (
+CREATE TABLE IF NOT EXISTS `signatureCastActors` (
 	`id` varchar(64) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`tier` enum('standard','premium','flagship') NOT NULL DEFAULT 'standard',
@@ -282,7 +282,7 @@ CREATE TABLE `signatureCastActors` (
 	CONSTRAINT `signatureCastActors_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `signatureCastEntitlements` (
+CREATE TABLE IF NOT EXISTS `signatureCastEntitlements` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`actorId` varchar(64) NOT NULL,
@@ -302,7 +302,7 @@ CREATE TABLE `signatureCastEntitlements` (
 	CONSTRAINT `signatureCastEntitlements_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `signatureCastEvents` (
+CREATE TABLE IF NOT EXISTS `signatureCastEvents` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int,
 	`actorId` varchar(64) NOT NULL,
@@ -314,7 +314,7 @@ CREATE TABLE `signatureCastEvents` (
 	CONSTRAINT `signatureCastEvents_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `submissionReviews` (
+CREATE TABLE IF NOT EXISTS `submissionReviews` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,

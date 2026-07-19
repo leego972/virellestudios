@@ -1,4 +1,4 @@
-CREATE TABLE `collaborators` (
+CREATE TABLE IF NOT EXISTS `collaborators` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int,
@@ -13,7 +13,7 @@ CREATE TABLE `collaborators` (
 	CONSTRAINT `collaborators_inviteToken_unique` UNIQUE(`inviteToken`)
 );
 --> statement-breakpoint
-CREATE TABLE `soundEffects` (
+CREATE TABLE IF NOT EXISTS `soundEffects` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,

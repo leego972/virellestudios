@@ -8,7 +8,7 @@ ALTER TABLE `users`
   ADD COLUMN `frozenAt` timestamp;
 
 -- Create moderation incidents table
-CREATE TABLE `moderationIncidents` (
+CREATE TABLE IF NOT EXISTS `moderationIncidents` (
   `id` int AUTO_INCREMENT PRIMARY KEY NOT NULL,
   `userId` int NOT NULL,
   `contentType` varchar(128) NOT NULL,

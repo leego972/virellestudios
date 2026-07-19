@@ -1,4 +1,4 @@
-CREATE TABLE `locations` (
+CREATE TABLE IF NOT EXISTS `locations` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE `locations` (
 	CONSTRAINT `locations_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `moodBoardItems` (
+CREATE TABLE IF NOT EXISTS `moodBoardItems` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `moodBoardItems` (
 	CONSTRAINT `moodBoardItems_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `subtitles` (
+CREATE TABLE IF NOT EXISTS `subtitles` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,

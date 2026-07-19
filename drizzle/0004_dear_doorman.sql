@@ -1,4 +1,4 @@
-CREATE TABLE `credits` (
+CREATE TABLE IF NOT EXISTS `credits` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,

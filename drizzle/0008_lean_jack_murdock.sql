@@ -1,4 +1,4 @@
-CREATE TABLE `budgets` (
+CREATE TABLE IF NOT EXISTS `budgets` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `budgets` (
 	CONSTRAINT `budgets_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `dialogues` (
+CREATE TABLE IF NOT EXISTS `dialogues` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,

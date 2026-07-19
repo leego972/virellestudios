@@ -1,4 +1,4 @@
-CREATE TABLE `blog_articles` (
+CREATE TABLE IF NOT EXISTS `blog_articles` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`slug` varchar(255) NOT NULL,
 	`title` varchar(512) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `blog_articles` (
 	CONSTRAINT `blog_articles_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `campaign_send_log` (
+CREATE TABLE IF NOT EXISTS `campaign_send_log` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`campaignId` int NOT NULL,
 	`contactId` int NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `campaign_send_log` (
 	CONSTRAINT `campaign_send_log_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `content_creator_analytics` (
+CREATE TABLE IF NOT EXISTS `content_creator_analytics` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`pieceId` int NOT NULL,
 	`campaignId` int,
@@ -51,7 +51,7 @@ CREATE TABLE `content_creator_analytics` (
 	CONSTRAINT `content_creator_analytics_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `content_creator_campaigns` (
+CREATE TABLE IF NOT EXISTS `content_creator_campaigns` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`description` text,
@@ -74,7 +74,7 @@ CREATE TABLE `content_creator_campaigns` (
 	CONSTRAINT `content_creator_campaigns_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `content_creator_pieces` (
+CREATE TABLE IF NOT EXISTS `content_creator_pieces` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`campaignId` int,
 	`platform` varchar(64) NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE `content_creator_pieces` (
 	CONSTRAINT `content_creator_pieces_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `content_creator_schedules` (
+CREATE TABLE IF NOT EXISTS `content_creator_schedules` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`pieceId` int NOT NULL,
 	`campaignId` int,
@@ -126,7 +126,7 @@ CREATE TABLE `content_creator_schedules` (
 	CONSTRAINT `content_creator_schedules_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `credit_transactions` (
+CREATE TABLE IF NOT EXISTS `credit_transactions` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`amount` int NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE `credit_transactions` (
 	CONSTRAINT `credit_transactions_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `email_campaigns` (
+CREATE TABLE IF NOT EXISTS `email_campaigns` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`subject` varchar(512) NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE `email_campaigns` (
 	CONSTRAINT `email_campaigns_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `film_adr_tracks` (
+CREATE TABLE IF NOT EXISTS `film_adr_tracks` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,
@@ -170,7 +170,7 @@ CREATE TABLE `film_adr_tracks` (
 	CONSTRAINT `film_adr_tracks_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `film_foley_tracks` (
+CREATE TABLE IF NOT EXISTS `film_foley_tracks` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,
@@ -189,7 +189,7 @@ CREATE TABLE `film_foley_tracks` (
 	CONSTRAINT `film_foley_tracks_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `film_mix_settings` (
+CREATE TABLE IF NOT EXISTS `film_mix_settings` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`userId` int NOT NULL,
@@ -215,7 +215,7 @@ CREATE TABLE `film_mix_settings` (
 	CONSTRAINT `film_mix_settings_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `filmPages` (
+CREATE TABLE IF NOT EXISTS `filmPages` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`projectId` int NOT NULL,
@@ -236,7 +236,7 @@ CREATE TABLE `filmPages` (
 	CONSTRAINT `filmPages_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `film_score_cues` (
+CREATE TABLE IF NOT EXISTS `film_score_cues` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,
@@ -258,7 +258,7 @@ CREATE TABLE `film_score_cues` (
 	CONSTRAINT `film_score_cues_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `funding_sources` (
+CREATE TABLE IF NOT EXISTS `funding_sources` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`country` varchar(128) NOT NULL,
 	`organization` varchar(255) NOT NULL,
@@ -280,7 +280,7 @@ CREATE TABLE `funding_sources` (
 	CONSTRAINT `funding_sources_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `mailing_contacts` (
+CREATE TABLE IF NOT EXISTS `mailing_contacts` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`email` varchar(320) NOT NULL,
 	`name` varchar(255),
@@ -298,7 +298,7 @@ CREATE TABLE `mailing_contacts` (
 	CONSTRAINT `mailing_contacts_email_unique` UNIQUE(`email`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_activity_log` (
+CREATE TABLE IF NOT EXISTS `marketing_activity_log` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`action` varchar(128) NOT NULL,
 	`description` text NOT NULL,
@@ -307,7 +307,7 @@ CREATE TABLE `marketing_activity_log` (
 	CONSTRAINT `marketing_activity_log_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_budgets` (
+CREATE TABLE IF NOT EXISTS `marketing_budgets` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`month` varchar(7) NOT NULL,
 	`channel` varchar(64) NOT NULL,
@@ -320,7 +320,7 @@ CREATE TABLE `marketing_budgets` (
 	CONSTRAINT `marketing_budgets_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_campaigns` (
+CREATE TABLE IF NOT EXISTS `marketing_campaigns` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`objective` varchar(128) NOT NULL,
@@ -336,7 +336,7 @@ CREATE TABLE `marketing_campaigns` (
 	CONSTRAINT `marketing_campaigns_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_content` (
+CREATE TABLE IF NOT EXISTS `marketing_content` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`campaign_id` int,
 	`platform` varchar(64) NOT NULL,
@@ -355,7 +355,7 @@ CREATE TABLE `marketing_content` (
 	CONSTRAINT `marketing_content_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_performance` (
+CREATE TABLE IF NOT EXISTS `marketing_performance` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`date` date NOT NULL,
 	`channel` varchar(64) NOT NULL,
@@ -370,14 +370,14 @@ CREATE TABLE `marketing_performance` (
 	CONSTRAINT `marketing_performance_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `marketing_settings` (
+CREATE TABLE IF NOT EXISTS `marketing_settings` (
 	`key` varchar(128) NOT NULL,
 	`value` text,
 	`updated_at` timestamp NOT NULL DEFAULT (now()),
 	CONSTRAINT `marketing_settings_key` PRIMARY KEY(`key`)
 );
 --> statement-breakpoint
-CREATE TABLE `moderationIncidents` (
+CREATE TABLE IF NOT EXISTS `moderationIncidents` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`contentType` varchar(128) NOT NULL,
@@ -394,7 +394,7 @@ CREATE TABLE `moderationIncidents` (
 	CONSTRAINT `moderationIncidents_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `notifications` (
+CREATE TABLE IF NOT EXISTS `notifications` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`notificationType` enum('generation_complete','export_complete','subscription_change','referral_reward','system','welcome','tip') NOT NULL DEFAULT 'system',
@@ -406,7 +406,7 @@ CREATE TABLE `notifications` (
 	CONSTRAINT `notifications_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `projectSamples` (
+CREATE TABLE IF NOT EXISTS `projectSamples` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`description` text,
@@ -423,7 +423,7 @@ CREATE TABLE `projectSamples` (
 	CONSTRAINT `projectSamples_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `promoAssets` (
+CREATE TABLE IF NOT EXISTS `promoAssets` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`projectId` int NOT NULL,
@@ -434,7 +434,7 @@ CREATE TABLE `promoAssets` (
 	CONSTRAINT `promoAssets_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `referral_codes` (
+CREATE TABLE IF NOT EXISTS `referral_codes` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`code` varchar(32) NOT NULL,
@@ -448,7 +448,7 @@ CREATE TABLE `referral_codes` (
 	CONSTRAINT `referral_codes_code_unique` UNIQUE(`code`)
 );
 --> statement-breakpoint
-CREATE TABLE `referral_tracking` (
+CREATE TABLE IF NOT EXISTS `referral_tracking` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`referralCodeId` int NOT NULL,
 	`referrerId` int NOT NULL,
@@ -464,7 +464,7 @@ CREATE TABLE `referral_tracking` (
 	CONSTRAINT `referral_tracking_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `user_social_credentials` (
+CREATE TABLE IF NOT EXISTS `user_social_credentials` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`userId` int NOT NULL,
 	`platform` varchar(64) NOT NULL,
@@ -479,7 +479,7 @@ CREATE TABLE `user_social_credentials` (
 	CONSTRAINT `user_social_credentials_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `visualEffects` (
+CREATE TABLE IF NOT EXISTS `visualEffects` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`projectId` int NOT NULL,
 	`sceneId` int,
