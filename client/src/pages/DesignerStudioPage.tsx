@@ -1,3 +1,4 @@
+import DesignerLogoDropzone from "@/components/DesignerLogoDropzone";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1031,6 +1032,7 @@ export default function DesignerStudioPage() {
             <Field label="Contact email"><Input type="email" value={profileForm.contactEmail} onChange={event => updateProfile("contactEmail", event.target.value)} /></Field>
             <Field label="Website"><Input type="url" value={profileForm.website} onChange={event => updateProfile("website", event.target.value)} /></Field>
             <Field label="Instagram"><Input value={profileForm.instagram} onChange={event => updateProfile("instagram", event.target.value)} /></Field>
+            <div className="sm:col-span-2"><Field label="Designer logo"><DesignerLogoDropzone value={profileForm.logoUrl} onChange={url => updateProfile("logoUrl", url)} disabled={saveProfile.isPending} /></Field></div>
             <div className="sm:col-span-2"><Field label="Bio"><Textarea rows={4} value={profileForm.bio} onChange={event => updateProfile("bio", event.target.value)} /></Field></div>
             <div className="sm:col-span-2">
               <Label>Intended use <span className="text-amber-400">*</span></Label>

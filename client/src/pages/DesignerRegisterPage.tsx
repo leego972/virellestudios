@@ -1,3 +1,4 @@
+import DesignerLogoDropzone from "@/components/DesignerLogoDropzone";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -484,14 +485,15 @@ export default function DesignerRegisterPage() {
                   placeholder="@label"
                 />
               </FormField>
-              <FormField label="Logo URL">
-                <Input
-                  type="url"
-                  value={form.logoUrl}
-                  onChange={event => update("logoUrl", event.target.value)}
-                  placeholder="Optional public logo URL"
-                />
-              </FormField>
+              <div className="sm:col-span-2">
+                <FormField label="Designer logo">
+                  <DesignerLogoDropzone
+                    value={form.logoUrl}
+                    onChange={url => update("logoUrl", url)}
+                    disabled={saveProfile.isPending}
+                  />
+                </FormField>
+              </div>
             </div>
 
             <div className="mt-7 flex justify-end">
