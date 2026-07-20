@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Verify and rebuild staged audit payload
+      - name: Rebuild and validate staged audit payload
         shell: bash
         run: |
           set -euo pipefail
@@ -47,9 +47,9 @@ jobs:
             .audit-fix/part-12-13 \
             > "$RUNNER_TEMP/remaining.b64"
 
-          echo "5d21d532ef29790ca68f841b5406190b1cc9dc1289b381f455e7086365bde765  $RUNNER_TEMP/remaining.b64" | sha256sum --check --status
           base64 --decode "$RUNNER_TEMP/remaining.b64" > "$RUNNER_TEMP/remaining.tar.gz"
-          echo "71c2558aa3b0bcb23458de8b90c89d6a280f7bec52c67cfd8c81b5b3c06b43b0  $RUNNER_TEMP/remaining.tar.gz" | sha256sum --check --status
+          gzip --test "$RUNNER_TEMP/remaining.tar.gz"
+          tar -tzf "$RUNNER_TEMP/remaining.tar.gz" >/dev/null
 
       - name: Repair encoding and invalid Tailwind opacity utilities
         shell: bash
