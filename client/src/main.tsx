@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import App from "./App";
 import "./index.css";
 import "./mobile-safari.css";
+import "./mobile-sidebar-contrast.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
