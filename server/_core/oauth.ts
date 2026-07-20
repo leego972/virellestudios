@@ -3,12 +3,15 @@ import express, { type Express, type Request, type Response } from "express";
 import bcrypt from "bcryptjs";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
-import { sdk } from "./sdk";
 import { logger } from "./logger";
 import { ENV } from "./env";
 import crypto from "crypto";
 import { createSessionToken } from "./context";
-import { findAuthUserByEmail, markAuthLoginSuccessful } from "./authDb";
+import {
+  findAuthUserByEmail,
+  findSessionUserByOpenId,
+  markAuthLoginSuccessful,
+} from "./authDb";
 
 const STATE_COOKIE = "oauth_state";
 const PROVIDER_COOKIE = "oauth_provider";
@@ -30,8 +33,8 @@ function readCookie(req: Request, name: string): string | undefined {
   const header = req.headers.cookie;
   if (!header) return undefined;
   for (const part of header.split(";")) {
-    const [k, ...rest] = part.trim().split("=");
-    if (k === name) return decodeURIComponent(rest.join("="));
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
   }
   return undefined;
 }
@@ -39,7 +42,7 @@ function readCookie(req: Request, name: string): string | undefined {
 function setShortLivedCookie(res: Response, name: string, value: string) {
   res.cookie(name, value, {
     httpOnly: true,
-    secure: true,
+    secure: ENV.isProduction,
     sameSite: "lax",
     maxAge: STATE_MAX_AGE_MS,
     path: "/",
@@ -47,29 +50,73 @@ function setShortLivedCookie(res: Response, name: string, value: string) {
 }
 
 function clearShortLivedCookie(res: Response, name: string) {
-  res.clearCookie(name, { path: "/" });
+  res.clearCookie(name, {
+    path: "/",
+    secure: ENV.isProduction,
+    sameSite: "lax",
+  });
 }
 
 async function completeLogin(
   req: Request,
   res: Response,
-  user: { openId: string; name: string | null; email: string | null; loginMethod: string }
+  identity: {
+    openId: string;
+    name: string | null;
+    email: string | null;
+    loginMethod: "google" | "github";
+  },
 ) {
-  await db.upsertUser({
-    openId: user.openId,
-    name: user.name,
-    email: user.email,
-    loginMethod: user.loginMethod,
-    lastSignedIn: new Date(),
-  });
+  const normalizedEmail = identity.email?.trim().toLowerCase() || null;
 
-  const sessionToken = await sdk.createSessionToken(user.openId, {
-    name: user.name || "",
-    expiresInMs: ONE_YEAR_MS,
-  });
+  // Direct OAuth must attach to the account that already owns this verified
+  // email. Creating a second user row loses the original projects, role,
+  // subscription and credits and was the main reason OAuth appeared to log in
+  // but immediately returned to the login page.
+  let account = normalizedEmail
+    ? await findAuthUserByEmail(normalizedEmail)
+    : null;
 
+  if (account) {
+    await db.upsertUser({
+      openId: account.openId,
+      name: identity.name ?? account.name,
+      email: normalizedEmail,
+      loginMethod: identity.loginMethod,
+      lastSignedIn: new Date(),
+    });
+  } else {
+    await db.upsertUser({
+      openId: identity.openId,
+      name: identity.name,
+      email: normalizedEmail,
+      loginMethod: identity.loginMethod,
+      lastSignedIn: new Date(),
+    });
+    account = await findSessionUserByOpenId(identity.openId);
+  }
+
+  if (!account) {
+    throw new Error("OAuth account could not be loaded after sign-in");
+  }
+
+  // OAuth and email/password now issue the same local numeric-user-id JWT.
+  // The previous OAuth path issued a legacy openId token and depended on the
+  // obsolete broker fallback during session restoration.
+  const sessionToken = await createSessionToken(
+    Number(account.id),
+    account.name || identity.name || "",
+  );
   const cookieOptions = getSessionCookieOptions(req);
-  res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+  res.cookie(COOKIE_NAME, sessionToken, {
+    ...cookieOptions,
+    maxAge: ONE_YEAR_MS,
+  });
+
+  await markAuthLoginSuccessful(Number(account.id)).catch(error => {
+    logger.warn("[OAuth] Could not update lastSignedIn", { error: String(error) });
+  });
+
   res.redirect(302, "/?opener=1");
 }
 
@@ -170,11 +217,12 @@ export function registerOAuthRoutes(app: Express) {
   );
 
   app.get("/api/auth/google", (req: Request, res: Response) => {
-    if (!ENV.googleOAuthClientId) {
-      logger.error("[OAuth] GOOGLE_OAUTH_CLIENT_ID is not set");
+    if (!ENV.googleOAuthClientId || !ENV.googleOAuthClientSecret) {
+      logger.error("[OAuth] Google OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
       return;
     }
+
     const state = crypto.randomBytes(24).toString("hex");
     setShortLivedCookie(res, STATE_COOKIE, state);
     setShortLivedCookie(res, PROVIDER_COOKIE, "google");
@@ -190,11 +238,12 @@ export function registerOAuthRoutes(app: Express) {
   });
 
   app.get("/api/auth/github", (req: Request, res: Response) => {
-    if (!ENV.githubOAuthClientId) {
-      logger.error("[OAuth] GITHUB_OAUTH_CLIENT_ID is not set");
+    if (!ENV.githubOAuthClientId || !ENV.githubOAuthClientSecret) {
+      logger.error("[OAuth] GitHub OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
       return;
     }
+
     const state = crypto.randomBytes(24).toString("hex");
     setShortLivedCookie(res, STATE_COOKIE, state);
     setShortLivedCookie(res, PROVIDER_COOKIE, "github");
@@ -217,11 +266,11 @@ export function registerOAuthRoutes(app: Express) {
     clearShortLivedCookie(res, PROVIDER_COOKIE);
 
     if (!code || !state) {
-      res.status(400).json({ error: "code and state are required" });
+      res.redirect(302, "/login?error=oauth_failed");
       return;
     }
     if (!expectedState || state !== expectedState) {
-      logger.error("[OAuth] State mismatch -- possible CSRF attempt or expired login attempt");
+      logger.error("[OAuth] State mismatch or expired OAuth attempt");
       res.redirect(302, "/login?error=oauth_state_mismatch");
       return;
     }
@@ -234,7 +283,7 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUri = getCallbackUrl(req);
 
       if (provider === "google") {
-        const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
@@ -245,40 +294,63 @@ export function registerOAuthRoutes(app: Express) {
             redirect_uri: redirectUri,
           }),
         });
-        if (!tokenRes.ok) {
-          logger.error("[OAuth] Google token exchange failed", { status: tokenRes.status, body: await tokenRes.text() });
+
+        if (!tokenResponse.ok) {
+          logger.error("[OAuth] Google token exchange failed", {
+            status: tokenResponse.status,
+            body: await tokenResponse.text(),
+          });
           res.redirect(302, "/login?error=oauth_failed");
           return;
         }
-        const tokenData = (await tokenRes.json()) as { access_token: string };
 
-        const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        const tokenData = (await tokenResponse.json()) as { access_token?: string };
+        if (!tokenData.access_token) {
+          logger.error("[OAuth] Google token response did not include access_token");
+          res.redirect(302, "/login?error=oauth_failed");
+          return;
+        }
+
+        const userResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
-        if (!userRes.ok) {
-          logger.error("[OAuth] Google userinfo fetch failed", { status: userRes.status });
+
+        if (!userResponse.ok) {
+          logger.error("[OAuth] Google userinfo fetch failed", {
+            status: userResponse.status,
+          });
           res.redirect(302, "/login?error=oauth_failed");
           return;
         }
-        const profile = (await userRes.json()) as {
-          sub: string;
+
+        const profile = (await userResponse.json()) as {
+          sub?: string;
           email?: string;
           email_verified?: boolean;
           name?: string;
         };
 
+        if (!profile.sub || !profile.email || profile.email_verified !== true) {
+          logger.error("[OAuth] Google returned an incomplete or unverified profile");
+          res.redirect(302, "/login?error=oauth_unverified_email");
+          return;
+        }
+
         await completeLogin(req, res, {
           openId: `google_${profile.sub}`,
           name: profile.name || null,
-          email: profile.email_verified ? profile.email ?? null : null,
+          email: profile.email,
           loginMethod: "google",
         });
         return;
       }
 
-      const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+      const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
         body: new URLSearchParams({
           client_id: ENV.githubOAuthClientId,
           client_secret: ENV.githubOAuthClientSecret,
@@ -286,38 +358,75 @@ export function registerOAuthRoutes(app: Express) {
           redirect_uri: redirectUri,
         }),
       });
-      if (!tokenRes.ok) {
-        logger.error("[OAuth] GitHub token exchange failed", { status: tokenRes.status, body: await tokenRes.text() });
-        res.redirect(302, "/login?error=oauth_failed");
-        return;
-      }
-      const tokenData = (await tokenRes.json()) as { access_token?: string; error?: string };
-      if (!tokenData.access_token) {
-        logger.error("[OAuth] GitHub token exchange returned no access_token", { error: tokenData.error });
+
+      if (!tokenResponse.ok) {
+        logger.error("[OAuth] GitHub token exchange failed", {
+          status: tokenResponse.status,
+          body: await tokenResponse.text(),
+        });
         res.redirect(302, "/login?error=oauth_failed");
         return;
       }
 
-      const userRes = await fetch("https://api.github.com/user", {
-        headers: { Authorization: `Bearer ${tokenData.access_token}`, "User-Agent": "virelle-studios" },
-      });
-      if (!userRes.ok) {
-        logger.error("[OAuth] GitHub user fetch failed", { status: userRes.status });
+      const tokenData = (await tokenResponse.json()) as {
+        access_token?: string;
+        error?: string;
+      };
+      if (!tokenData.access_token) {
+        logger.error("[OAuth] GitHub token exchange returned no access_token", {
+          error: tokenData.error,
+        });
         res.redirect(302, "/login?error=oauth_failed");
         return;
       }
-      const profile = (await userRes.json()) as { id: number; login: string; name?: string; email?: string | null };
+
+      const userResponse = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "virelle-studios",
+        },
+      });
+
+      if (!userResponse.ok) {
+        logger.error("[OAuth] GitHub user fetch failed", {
+          status: userResponse.status,
+        });
+        res.redirect(302, "/login?error=oauth_failed");
+        return;
+      }
+
+      const profile = (await userResponse.json()) as {
+        id?: number;
+        login?: string;
+        name?: string;
+        email?: string | null;
+      };
 
       let email: string | null = profile.email ?? null;
       if (!email) {
-        const emailsRes = await fetch("https://api.github.com/user/emails", {
-          headers: { Authorization: `Bearer ${tokenData.access_token}`, "User-Agent": "virelle-studios" },
+        const emailsResponse = await fetch("https://api.github.com/user/emails", {
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+            "User-Agent": "virelle-studios",
+          },
         });
-        if (emailsRes.ok) {
-          const emails = (await emailsRes.json()) as Array<{ email: string; primary: boolean; verified: boolean }>;
-          const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified);
-          email = primary?.email ?? null;
+        if (emailsResponse.ok) {
+          const emails = (await emailsResponse.json()) as Array<{
+            email: string;
+            primary: boolean;
+            verified: boolean;
+          }>;
+          const selected =
+            emails.find(candidate => candidate.primary && candidate.verified) ||
+            emails.find(candidate => candidate.verified);
+          email = selected?.email ?? null;
         }
+      }
+
+      if (!profile.id || !email) {
+        logger.error("[OAuth] GitHub returned an incomplete or unverified profile");
+        res.redirect(302, "/login?error=oauth_unverified_email");
+        return;
       }
 
       await completeLogin(req, res, {
@@ -327,7 +436,7 @@ export function registerOAuthRoutes(app: Express) {
         loginMethod: "github",
       });
     } catch (error) {
-      logger.error("[OAuth] Callback failed", { error: String(error) });
+      logger.errorWithStack("[OAuth] Callback failed", error);
       res.redirect(302, "/login?error=oauth_failed");
     }
   });
