@@ -6,20 +6,11 @@ import mysql from "mysql2/promise";
 /**
  * Production-safe MySQL migration runner.
  *
- * Why this exists:
- * - The production database can contain schema changes that were applied by the
- *   legacy runtime auto-migrator while Drizzle's migration journal was not
- *   updated.
- * - Re-running a strict Drizzle migration then fails on harmless conflicts such
- *   as "duplicate column", preventing the application from starting.
- *
- * This runner reconciles that state without deleting data:
- * - honours the existing __drizzle_migrations journal;
- * - applies only migrations that are not recorded;
- * - executes each statement separately;
- * - ignores only narrowly-defined, already-applied DDL conflicts;
- * - records a migration only after every statement succeeds or is safely
- *   confirmed as already present.
+ * The production database contains legitimate schema changes that were applied
+ * before Drizzle's migration journal became authoritative. This runner repairs
+ * that mismatch without deleting data. It executes real SQL statements one at
+ * a time, tolerates only narrowly-defined "already applied" DDL conflicts, and
+ * records a migration only after every statement has completed safely.
  */
 
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -36,9 +27,176 @@ function normaliseStatement(statement) {
   return statement
     .replace(/\/\*[\s\S]*?\*\//g, " ")
     .replace(/^\s*--.*$/gm, " ")
+    .replace(/^\s*#.*$/gm, " ")
     .replace(/\s+/g, " ")
     .trim()
     .toUpperCase();
+}
+
+/**
+ * Split a migration file on semicolons that are outside strings, identifiers,
+ * and comments. Some historical migration files contain several SQL commands
+ * without Drizzle's statement-breakpoint marker, so splitting on that marker
+ * alone sends invalid multi-command SQL to mysql2.
+ */
+function splitSqlStatements(sqlText) {
+  const statements = [];
+  let buffer = "";
+  let quote = null;
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let index = 0; index < sqlText.length; index += 1) {
+    const char = sqlText[index];
+    const next = sqlText[index + 1];
+
+    if (inLineComment) {
+      if (char === "\n" || char === "\r") {
+        inLineComment = false;
+        buffer += "\n";
+      }
+      continue;
+    }
+
+    if (inBlockComment) {
+      if (char === "*" && next === "/") {
+        inBlockComment = false;
+        index += 1;
+        buffer += " ";
+      }
+      continue;
+    }
+
+    if (quote) {
+      buffer += char;
+
+      if (char === "\\" && index + 1 < sqlText.length) {
+        buffer += sqlText[index + 1];
+        index += 1;
+        continue;
+      }
+
+      // SQL escapes quote characters by doubling them: '' / "" / ``.
+      if (char === quote && next === quote) {
+        buffer += next;
+        index += 1;
+        continue;
+      }
+
+      if (char === quote) quote = null;
+      continue;
+    }
+
+    if (char === "/" && next === "*") {
+      inBlockComment = true;
+      index += 1;
+      buffer += " ";
+      continue;
+    }
+
+    // MySQL requires whitespace after -- for a comment. Drizzle's
+    // --> statement-breakpoint marker also matches this rule.
+    if (char === "-" && next === "-" && /\s|>/.test(sqlText[index + 2] || "")) {
+      inLineComment = true;
+      index += 1;
+      buffer += " ";
+      continue;
+    }
+
+    if (char === "#") {
+      inLineComment = true;
+      buffer += " ";
+      continue;
+    }
+
+    if (char === "'" || char === '"' || char === "`") {
+      quote = char;
+      buffer += char;
+      continue;
+    }
+
+    if (char === ";") {
+      const statement = buffer.trim();
+      if (statement) statements.push(statement);
+      buffer = "";
+      continue;
+    }
+
+    buffer += char;
+  }
+
+  const trailingStatement = buffer.trim();
+  if (trailingStatement) statements.push(trailingStatement);
+  return statements;
+}
+
+function splitTopLevelCommas(value) {
+  const parts = [];
+  let buffer = "";
+  let quote = null;
+  let parentheses = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index];
+    const next = value[index + 1];
+
+    if (quote) {
+      buffer += char;
+      if (char === "\\" && index + 1 < value.length) {
+        buffer += value[index + 1];
+        index += 1;
+        continue;
+      }
+      if (char === quote && next === quote) {
+        buffer += next;
+        index += 1;
+        continue;
+      }
+      if (char === quote) quote = null;
+      continue;
+    }
+
+    if (char === "'" || char === '"' || char === "`") {
+      quote = char;
+      buffer += char;
+      continue;
+    }
+
+    if (char === "(") parentheses += 1;
+    if (char === ")" && parentheses > 0) parentheses -= 1;
+
+    if (char === "," && parentheses === 0) {
+      const part = buffer.trim();
+      if (part) parts.push(part);
+      buffer = "";
+      continue;
+    }
+
+    buffer += char;
+  }
+
+  const trailingPart = buffer.trim();
+  if (trailingPart) parts.push(trailingPart);
+  return parts;
+}
+
+/**
+ * A combined ALTER TABLE can contain several ADD COLUMN operations. If one
+ * column already exists, MySQL rejects the complete ALTER and none of the other
+ * missing columns are added. On that specific conflict, retry each top-level
+ * ALTER action separately so existing columns are skipped while missing ones
+ * are still created.
+ */
+function expandCombinedAlterTable(statement) {
+  const match = statement.match(
+    /^\s*(ALTER\s+TABLE\s+(?:(?:`(?:``|[^`])+`|[A-Za-z0-9_$]+)(?:\s*\.\s*(?:`(?:``|[^`])+`|[A-Za-z0-9_$]+))?))\s+([\s\S]+?)\s*$/i,
+  );
+  if (!match) return [statement];
+
+  const [, prefix, actionsText] = match;
+  const actions = splitTopLevelCommas(actionsText);
+  if (actions.length <= 1) return [statement];
+  return actions.map((action) => `${prefix} ${action}`);
 }
 
 function isSafelyReconcilableDdlError(statement, error) {
@@ -46,17 +204,14 @@ function isSafelyReconcilableDdlError(statement, error) {
   const code = String(error?.code || "");
   const errno = Number(error?.errno);
 
-  // Existing table: safe only for CREATE TABLE.
   if ((code === "ER_TABLE_EXISTS_ERROR" || errno === 1050) && /^CREATE TABLE\b/.test(sql)) {
     return true;
   }
 
-  // Existing column: safe only for ALTER TABLE ... ADD.
   if ((code === "ER_DUP_FIELDNAME" || errno === 1060) && /^ALTER TABLE\b/.test(sql) && /\bADD\b/.test(sql)) {
     return true;
   }
 
-  // Existing index/key name: safe only while creating or adding an index/key.
   if (
     (code === "ER_DUP_KEYNAME" || errno === 1061) &&
     (/^CREATE (UNIQUE )?INDEX\b/.test(sql) || (/^ALTER TABLE\b/.test(sql) && /\bADD\b/.test(sql)))
@@ -64,7 +219,6 @@ function isSafelyReconcilableDdlError(statement, error) {
     return true;
   }
 
-  // Existing foreign-key constraint name.
   if (
     (code === "ER_FK_DUP_NAME" || errno === 1826) &&
     /^ALTER TABLE\b/.test(sql) &&
@@ -74,7 +228,6 @@ function isSafelyReconcilableDdlError(statement, error) {
     return true;
   }
 
-  // Primary key already exists.
   if (
     (code === "ER_MULTIPLE_PRI_KEY" || errno === 1068) &&
     /^ALTER TABLE\b/.test(sql) &&
@@ -83,7 +236,6 @@ function isSafelyReconcilableDdlError(statement, error) {
     return true;
   }
 
-  // Object was already removed by an earlier/manual schema repair.
   if (
     (code === "ER_CANT_DROP_FIELD_OR_KEY" || errno === 1091) &&
     /^ALTER TABLE\b/.test(sql) &&
@@ -97,6 +249,39 @@ function isSafelyReconcilableDdlError(statement, error) {
   }
 
   return false;
+}
+
+async function executeStatement(connection, statement) {
+  try {
+    await connection.query(statement);
+    return 0;
+  } catch (error) {
+    const expandedStatements = expandCombinedAlterTable(statement);
+
+    if (
+      expandedStatements.length > 1 &&
+      isSafelyReconcilableDdlError(statement, error)
+    ) {
+      console.warn(
+        `[migrate] Combined ALTER encountered ${error.code || error.errno}; ` +
+        `retrying ${expandedStatements.length} actions separately.`,
+      );
+      let reconciled = 0;
+      for (const expandedStatement of expandedStatements) {
+        reconciled += await executeStatement(connection, expandedStatement);
+      }
+      return reconciled;
+    }
+
+    if (isSafelyReconcilableDdlError(statement, error)) {
+      console.warn(
+        `[migrate] Schema operation is already applied (${error.code || error.errno}); continuing.`,
+      );
+      return 1;
+    }
+
+    throw error;
+  }
 }
 
 async function main() {
@@ -155,35 +340,23 @@ async function main() {
       const hash = crypto.createHash("sha256").update(sqlText).digest("hex");
       const createdAt = String(entry.when);
 
-      // Drizzle identifies applied migrations by timestamp ordering. Checking both
-      // timestamp and hash also tolerates historical files whose hash changed after
-      // the production schema had already been applied.
       if (appliedHashes.has(hash) || appliedTimes.has(createdAt)) {
         skippedCount += 1;
         continue;
       }
 
-      const statements = sqlText
-        .split("--> statement-breakpoint")
-        .map((statement) => statement.trim())
-        .filter(Boolean);
+      const statements = splitSqlStatements(sqlText);
+      if (statements.length === 0) {
+        throw new Error(`Migration ${entry.tag} contains no executable SQL statements.`);
+      }
 
       console.log(`[migrate] Applying ${entry.tag} (${statements.length} statements) ...`);
 
       for (let index = 0; index < statements.length; index += 1) {
         const statement = statements[index];
         try {
-          await connection.query(statement);
+          reconciledStatements += await executeStatement(connection, statement);
         } catch (error) {
-          if (isSafelyReconcilableDdlError(statement, error)) {
-            reconciledStatements += 1;
-            console.warn(
-              `[migrate] ${entry.tag} statement ${index + 1}/${statements.length} ` +
-              `already applied (${error.code || error.errno}); continuing.`,
-            );
-            continue;
-          }
-
           console.error(`[migrate] Failed migration: ${entry.tag}`);
           console.error(`[migrate] Failed statement ${index + 1}/${statements.length}:`, statement);
           throw error;
