@@ -287,6 +287,10 @@ export const designerPortalRouter = router({
             contactEmail:
               cleanNullable(input.contactEmail) || ctx.user.email || null,
             logoUrl: cleanNullable(input.logoUrl),
+            visibility:
+              profile.membershipStatus === "active"
+                ? "public"
+                : profile.visibility,
             brandingImages: mergeProfileDetails(profile, details),
           })
           .where(
@@ -389,6 +393,17 @@ export const designerPortalRouter = router({
       await assertOwnedCollection(input.collectionId, ctx.user.id);
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      if (input.publish && profile.visibility !== "public") {
+        await db
+          .update(designerProfiles)
+          .set({ visibility: "public" })
+          .where(
+            and(
+              eq(designerProfiles.id, profile.id),
+              eq(designerProfiles.userId, ctx.user.id),
+            ),
+          );
+      }
       const [result] = await db.insert(wardrobeItems).values({
         userId: ctx.user.id,
         designerProfileId: profile.id,
