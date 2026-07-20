@@ -1,0 +1,29 @@
+name: Audit Bundle
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create source bundle
+        run: |
+          tar \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=.cache \
+            -czf virelle-audit-source.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: virelle-audit-source
+          path: virelle-audit-source.tar.gz
+          retention-days: 3
