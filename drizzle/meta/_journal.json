@@ -43,6 +43,7 @@
     { "idx": 38, "version": "5", "when": 1771856145460, "tag": "0036_visual_dna_color_lock", "breakpoints": true },
     { "idx": 39, "version": "5", "when": 1771856205460, "tag": "0037_vehicle_vessel_aircraft_locks", "breakpoints": true },
     { "idx": 40, "version": "5", "when": 1771856265460, "tag": "0038_nonhuman_character_reference", "breakpoints": true },
-    { "idx": 41, "version": "5", "when": 1784554200000, "tag": "0039_auth_user_schema_repair", "breakpoints": true }
+    { "idx": 41, "version": "5", "when": 1784554200000, "tag": "0039_auth_user_schema_repair", "breakpoints": true },
+    { "idx": 42, "version": "5", "when": 1784557800000, "tag": "0040_complete_auth_user_schema", "breakpoints": true }
   ]
 }
