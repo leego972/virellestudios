@@ -57,7 +57,69 @@ export default function WelcomeOutfitPicker() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-[calc(100vw-1rem)] max-w-2xl max-h-[calc(100dvh-1rem)] overflow-y-auto border-amber-500/35 bg-[#0b0b0d] text-[#f8e7a5] shadow-2xl shadow-black/60 dark:bg-[#fffaf0] dark:text-zinc-950 dark:shadow-black/20 sm:w-[95vw] sm:max-h-[85vh]">
+      <DialogContent
+        data-lamalo-welcome-dialog
+        className="w-[calc(100vw-1rem)] max-w-2xl max-h-[calc(100dvh-1rem)] overflow-y-auto border-amber-500/35 bg-[#0b0b0d] shadow-2xl shadow-black/60 dark:bg-[#fffaf0] dark:shadow-black/20 sm:w-[95vw] sm:max-h-[85vh]"
+      >
+        <style>{`
+          :root:not(.dark) [data-lamalo-welcome-dialog] {
+            background: #0b0b0d !important;
+            color: #fff4c2 !important;
+          }
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-slot="dialog-title"] {
+            color: #ffd76a !important;
+            -webkit-text-fill-color: #ffd76a !important;
+          }
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-slot="dialog-description"],
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-copy],
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-selection] {
+            color: #fff4c2 !important;
+            -webkit-text-fill-color: #fff4c2 !important;
+            opacity: 1 !important;
+          }
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-secondary] {
+            color: #fff4c2 !important;
+            -webkit-text-fill-color: #fff4c2 !important;
+            border-color: #d9a62e !important;
+            background: #141417 !important;
+            opacity: 1 !important;
+          }
+          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-primary] {
+            color: #111111 !important;
+            -webkit-text-fill-color: #111111 !important;
+            background: #f6a533 !important;
+            opacity: 1 !important;
+          }
+          .dark [data-lamalo-welcome-dialog] {
+            background: #fffaf0 !important;
+            color: #18181b !important;
+          }
+          .dark [data-lamalo-welcome-dialog] [data-slot="dialog-title"] {
+            color: #7c4700 !important;
+            -webkit-text-fill-color: #7c4700 !important;
+          }
+          .dark [data-lamalo-welcome-dialog] [data-slot="dialog-description"],
+          .dark [data-lamalo-welcome-dialog] [data-lamalo-copy],
+          .dark [data-lamalo-welcome-dialog] [data-lamalo-selection] {
+            color: #3f3f46 !important;
+            -webkit-text-fill-color: #3f3f46 !important;
+            opacity: 1 !important;
+          }
+          .dark [data-lamalo-welcome-dialog] [data-lamalo-secondary] {
+            color: #18181b !important;
+            -webkit-text-fill-color: #18181b !important;
+            border-color: #9a6500 !important;
+            background: #fffaf0 !important;
+            opacity: 1 !important;
+          }
+          .dark [data-lamalo-welcome-dialog] [data-lamalo-primary] {
+            color: #111111 !important;
+            -webkit-text-fill-color: #111111 !important;
+            background: #f6a533 !important;
+            opacity: 1 !important;
+          }
+        `}</style>
+
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
             <img
@@ -67,12 +129,12 @@ export default function WelcomeOutfitPicker() {
             />
             <div className="flex min-w-0 items-center gap-2">
               <Gift className="h-5 w-5 shrink-0 text-amber-300 dark:text-amber-800" />
-              <DialogTitle className="text-base font-bold leading-snug text-amber-300 dark:text-amber-800 sm:text-lg">
+              <DialogTitle className="text-base font-bold leading-snug sm:text-lg">
                 Welcome Gift — 2 Free Lamalo Outfits
               </DialogTitle>
             </div>
           </div>
-          <DialogDescription className="text-sm leading-6 text-[#eadcae] dark:text-zinc-700">
+          <DialogDescription className="text-sm leading-6">
             Choose any 2 outfits from Lamalo Fashions as a welcome gift. These
             are yours permanently at no cost.
           </DialogDescription>
@@ -85,7 +147,10 @@ export default function WelcomeOutfitPicker() {
         ) : outfits.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
             <PackageOpen className="h-11 w-11 text-[#d8c98f] dark:text-zinc-600" />
-            <p className="max-w-md text-sm font-medium leading-6 text-[#eadcae] dark:text-zinc-700">
+            <p
+              data-lamalo-copy
+              className="max-w-md text-sm font-medium leading-6"
+            >
               The Lamalo collection is being set up.
               <br />
               Check back soon or contact support.
@@ -124,10 +189,7 @@ export default function WelcomeOutfitPicker() {
                       <p className="text-xs font-semibold leading-tight text-[#f8e7a5] dark:text-zinc-950">
                         {item.name}
                       </p>
-                      <Badge
-                        variant="secondary"
-                        className="mt-1 text-[10px]"
-                      >
+                      <Badge variant="secondary" className="mt-1 text-[10px]">
                         {item.category}
                       </Badge>
                     </div>
@@ -142,21 +204,23 @@ export default function WelcomeOutfitPicker() {
         )}
 
         <div className="mt-4 flex flex-col items-stretch justify-between gap-3 border-t border-amber-500/30 pt-4 sm:flex-row sm:items-center">
-          <p className="text-sm font-medium text-[#eadcae] dark:text-zinc-700">
+          <p data-lamalo-selection className="text-sm font-medium">
             {selected.length}/2 outfits selected
           </p>
           <div className="flex w-full gap-2 sm:w-auto">
             <Button
+              data-lamalo-secondary
               variant="outline"
               size="sm"
-              className="min-h-11 flex-1 border-amber-500/45 bg-transparent text-[#f8e7a5] hover:bg-amber-500/10 hover:text-white dark:text-zinc-950 dark:hover:text-zinc-950 sm:flex-none"
+              className="min-h-11 flex-1 sm:flex-none"
               onClick={() => setOpen(false)}
             >
               Choose Later
             </Button>
             <Button
+              data-lamalo-primary
               size="sm"
-              className="min-h-11 flex-1 bg-amber-500 px-4 text-zinc-950 hover:bg-amber-400 sm:flex-none"
+              className="min-h-11 flex-1 px-4 sm:flex-none"
               disabled={
                 claimMut?.isPending ||
                 (outfits.length > 0 && selected.length < 2)
