@@ -43,7 +43,10 @@ jobs:
             .audit-fix/part-05 \
             .audit-fix/part-06-07 \
             .audit-fix/part-08-09 \
-            .audit-fix/part-10-11 \
+            .audit-fix/part-10a \
+            .audit-fix/part-10b \
+            .audit-fix/part-11a \
+            .audit-fix/part-11b \
             .audit-fix/part-12-13 \
             > "$RUNNER_TEMP/remaining.b64"
 
@@ -119,6 +122,7 @@ jobs:
           rm -rf .audit-fix
           rm -f .github/workflows/audit-bundle.yml
           rm -f .github/workflows/apply-stability-audit.yml
+          rm -f .github/workflows/debug-audit-payload.yml
 
       - name: Validate executable entry points
         shell: bash
