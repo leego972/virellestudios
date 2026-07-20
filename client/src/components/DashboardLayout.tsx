@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import LeegoFooter from "@/components/LeegoFooterLaunch";
 import LeegoLogo from "@/components/LeegoLogo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -298,6 +299,13 @@ export default function DashboardLayout({
       : DEFAULT_WIDTH;
   });
   const { loading, user } = useAuth();
+  const {
+    data: designerAccess,
+    isLoading: designerAccessLoading,
+  } = trpc.wardrobeMarket.portal.getAccessStatus.useQuery(undefined, {
+    enabled: Boolean(user),
+    retry: false,
+  });
   const [currentPath] = useLocation();
   const actualPath =
     typeof window !== "undefined"
@@ -316,11 +324,19 @@ export default function DashboardLayout({
     }
   }, [loading, user]);
 
-  if (loading || (!user && !publicRoute)) {
+  if (
+    loading ||
+    (!user && !publicRoute) ||
+    (Boolean(user) && designerAccessLoading)
+  ) {
     return <DashboardLayoutSkeleton />;
   }
 
   if (!user && publicRoute) {
+    return <>{children}</>;
+  }
+
+  if (designerAccess?.designerOnly) {
     return <>{children}</>;
   }
 
