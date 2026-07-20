@@ -28,7 +28,7 @@ export default function DesignerLogoDropzone({
 }: DesignerLogoDropzoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
-  const uploadLogo = trpc.wardrobeMarket.portal.uploadLogo.useMutation({
+  const uploadLogo = trpc.wardrobeMarket.designerLogo.upload.useMutation({
     onSuccess: result => {
       onChange(result.url);
       toast.success("Designer logo uploaded");
