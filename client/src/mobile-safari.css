@@ -67,6 +67,10 @@ article,
   color: #0f766e !important;
 }
 
+.dark .text-muted-foreground {
+  color: #454545 !important;
+}
+
 .dark .gradient-text-gold,
 .dark .text-gold-shimmer {
   background: none !important;
@@ -128,6 +132,31 @@ article,
     padding-right: max(0.5rem, env(safe-area-inset-right)) !important;
   }
 
+  /* Ensure the hamburger sheet is visible, scrollable and not wider than the
+     iPhone viewport, including landscape safe areas. */
+  [data-mobile="true"][data-slot="sidebar"] {
+    width: min(88vw, 20rem) !important;
+    max-width: calc(
+      100vw - env(safe-area-inset-left) - env(safe-area-inset-right)
+    ) !important;
+    height: 100svh !important;
+    height: 100dvh !important;
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+    overflow: hidden !important;
+    z-index: 90 !important;
+  }
+
+  [data-slot="sheet-overlay"] {
+    z-index: 85 !important;
+  }
+
+  [data-mobile="true"][data-slot="sidebar"] [data-slot="sidebar-content"] {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
   h1 {
     font-size: clamp(1.55rem, 7vw, 2.15rem);
     line-height: 1.15;
@@ -143,7 +172,7 @@ article,
   }
 
   [data-slot="card-content"] {
-    overflow: hidden;
+    overflow-wrap: anywhere;
   }
 
   table {
@@ -155,7 +184,10 @@ article,
   button.fixed.bottom-6.right-6.z-50 {
     right: max(0.75rem, env(safe-area-inset-right)) !important;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem) !important;
-    max-width: calc(100vw - 1.5rem - env(safe-area-inset-left) - env(safe-area-inset-right));
+    max-width: calc(
+      100vw - 1.5rem - env(safe-area-inset-left) -
+        env(safe-area-inset-right)
+    );
     padding: 0.65rem 0.9rem !important;
   }
 
