@@ -1,151 +1,266 @@
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import {
-  Coins, TrendingUp, TrendingDown, Zap, RefreshCw,
-  ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle,
-  Calendar, CreditCard, Gift,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Coins,
+  CreditCard,
+  Gift,
+  RefreshCw,
+  ShieldCheck,
+  TrendingDown,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
-import { HollywoodIcon, HollywoodBadge } from "@/components/HollywoodIcon";
+import { HollywoodBadge, HollywoodIcon } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatCredits(n: number) {
-  if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
-  if (Math.abs(n) >= 1_000) return (n / 1_000).toFixed(1) + "K";
-  return n.toLocaleString();
+function formatCompactCredits(value: number) {
+  const absolute = Math.abs(value);
+  if (absolute >= 1_000_000) {
+    const amount = value / 1_000_000;
+    return `${Number.isInteger(amount) ? amount.toFixed(0) : amount.toFixed(1)}M`;
+  }
+  if (absolute >= 10_000) {
+    const amount = value / 1_000;
+    return `${Number.isInteger(amount) ? amount.toFixed(0) : amount.toFixed(1)}K`;
+  }
+  return value.toLocaleString();
 }
 
-function formatDate(d: string | Date) {
-  const date = new Date(d);
-  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+function formatExactCredits(value: number) {
+  return Math.max(0, Math.trunc(value)).toLocaleString();
 }
 
-function formatTime(d: string | Date) {
-  return new Date(d).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+function formatDate(value: string | Date) {
+  return new Date(value).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
-// Map action keys to human-readable labels and icons
-function getActionMeta(action: string): { label: string; color: string; icon: React.ReactNode } {
-  const a = action.toLowerCase();
-  if (a.includes("subscription_activated") || a.includes("subscription_renewal")) {
-    return { label: "Subscription Renewal", color: "text-green-400", icon: <CreditCard className="h-4 w-4" /> };
+function formatTime(value: string | Date) {
+  return new Date(value).toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function getActionMeta(action: string): {
+  label: string;
+  color: string;
+  icon: React.ReactNode;
+} {
+  const value = action.toLowerCase();
+  if (
+    value.includes("subscription_activated") ||
+    value.includes("subscription_renewal")
+  ) {
+    return {
+      label: "Subscription Renewal",
+      color: "text-green-400",
+      icon: <CreditCard className="h-4 w-4" />,
+    };
   }
-  if (a.includes("referral_reward") || a.includes("referral")) {
-    return { label: "Referral Reward", color: "text-purple-400", icon: <Gift className="h-4 w-4" /> };
+  if (value.includes("referral_reward") || value.includes("referral")) {
+    return {
+      label: "Referral Reward",
+      color: "text-purple-400",
+      icon: <Gift className="h-4 w-4" />,
+    };
   }
-  if (a.includes("beta_welcome") || a.includes("welcome")) {
-    return { label: "Welcome Bonus", color: "text-amber-400", icon: <Zap className="h-4 w-4" /> };
+  if (value.includes("beta_welcome") || value.includes("welcome")) {
+    return {
+      label: "Welcome Bonus",
+      color: "text-amber-400",
+      icon: <Zap className="h-4 w-4" />,
+    };
   }
-  if (a.includes("topup") || a.includes("top_up") || a.includes("purchase")) {
-    return { label: "Credit Top-Up", color: "text-blue-400", icon: <ArrowUpCircle className="h-4 w-4" /> };
+  if (
+    value.includes("topup") ||
+    value.includes("top_up") ||
+    value.includes("purchase")
+  ) {
+    return {
+      label: "Credit Top-Up",
+      color: "text-blue-400",
+      icon: <ArrowUpCircle className="h-4 w-4" />,
+    };
   }
-  if (a.includes("refund")) {
-    return { label: "Refund", color: "text-teal-400", icon: <RefreshCw className="h-4 w-4" /> };
+  if (value.includes("refund")) {
+    return {
+      label: "Refund",
+      color: "text-teal-400",
+      icon: <RefreshCw className="h-4 w-4" />,
+    };
   }
-  if (a.includes("admin") || a.includes("manual")) {
-    return { label: "Admin Adjustment", color: "text-orange-400", icon: <Zap className="h-4 w-4" /> };
+  if (value.includes("admin") || value.includes("manual")) {
+    return {
+      label: "Admin Adjustment",
+      color: "text-orange-400",
+      icon: <Zap className="h-4 w-4" />,
+    };
   }
-  if (a.includes("generate") || a.includes("deduct") || a.includes("film") || a.includes("video") || a.includes("image") || a.includes("voice") || a.includes("script")) {
-    return { label: "Generation Used", color: "text-red-400", icon: <ArrowDownCircle className="h-4 w-4" /> };
+  if (
+    value.includes("generate") ||
+    value.includes("deduct") ||
+    value.includes("film") ||
+    value.includes("video") ||
+    value.includes("image") ||
+    value.includes("voice") ||
+    value.includes("script")
+  ) {
+    return {
+      label: "Generation Used",
+      color: "text-red-400",
+      icon: <ArrowDownCircle className="h-4 w-4" />,
+    };
   }
-  return { label: action.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), color: "text-muted-foreground", icon: <Coins className="h-4 w-4" /> };
+  return {
+    label: action
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, character => character.toUpperCase()),
+    color: "text-muted-foreground",
+    icon: <Coins className="h-4 w-4" />,
+  };
 }
 
 const TIER_LABELS: Record<string, string> = {
-  indie:       "Indie",
-  amateur:     "Creator",
+  indie: "Indie",
+  amateur: "Creator",
   independent: "Industry",
-  creator:     "Industry",  // alias
-  studio:      "Industry",  // alias
-  industry:    "Industry",
-  free:        "Free",
+  creator: "Industry",
+  studio: "Industry",
+  industry: "Industry",
+  free: "Free",
 };
 
 const PAGE_SIZE = 25;
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function Credits() {
   const [page, setPage] = useState(0);
   const [, setLocation] = useLocation();
+  const { data: user } = trpc.auth.me.useQuery();
+  const { data: summary, isLoading: summaryLoading } =
+    trpc.credits.getSummary.useQuery();
+  const { data: history, isLoading: historyLoading } =
+    trpc.credits.getHistory.useQuery({
+      limit: PAGE_SIZE,
+      offset: page * PAGE_SIZE,
+    });
 
-  const { data: summary, isLoading: summaryLoading } = trpc.credits.getSummary.useQuery();
-  const { data: history, isLoading: historyLoading } = trpc.credits.getHistory.useQuery({
-    limit: PAGE_SIZE,
-    offset: page * PAGE_SIZE,
-  });
-
+  const isAdmin =
+    (user as any)?.role === "admin" || Boolean((user as any)?.isAdmin);
+  const displayedBalance = isAdmin ? 1_000 : Number(summary?.balance || 0);
+  const displayedAllocation = Number(summary?.monthlyAllocation || 0);
   const total = history?.total || 0;
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const transactions = history?.transactions || [];
-
-  // Derived stats from current page (all-time stats would need a separate query)
-  const earned = transactions.filter((t: any) => t.amount > 0).reduce((s: number, t: any) => s + t.amount, 0);
-  const spent = transactions.filter((t: any) => t.amount < 0).reduce((s: number, t: any) => s + Math.abs(t.amount), 0);
+  const earned = transactions
+    .filter((transaction: any) => transaction.amount > 0)
+    .reduce(
+      (sum: number, transaction: any) => sum + transaction.amount,
+      0,
+    );
+  const spent = transactions
+    .filter((transaction: any) => transaction.amount < 0)
+    .reduce(
+      (sum: number, transaction: any) =>
+        sum + Math.abs(transaction.amount),
+      0,
+    );
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
-
-      {/* ─── Header ─── */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gold-shimmer">
+    <div className="mx-auto w-full max-w-5xl space-y-5 px-0 py-1 sm:space-y-6 sm:px-1">
+      <header className="min-w-0">
+        <h1 className="flex min-w-0 items-center gap-3 text-2xl font-bold text-gold-shimmer sm:text-3xl">
           <HollywoodIcon tool="credits" size={36} />
-          Credits &amp; History
+          <span className="min-w-0">Credits &amp; History</span>
         </h1>
-        <p className="text-muted-foreground mt-1">
-          Your current balance, monthly allocation, and a full record of every credit transaction.
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-base">
+          Your current balance, account access and complete credit transaction
+          history.
         </p>
-      </div>
+      </header>
 
-      {/* ─── Balance Summary Cards ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Current Balance */}
-        <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
-          <CardContent className="pt-6">
+      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        <Card className="min-w-0 border-amber-500/25 bg-gradient-to-br from-amber-600/15 to-orange-600/5 shadow-lg shadow-amber-500/5">
+          <CardContent className="px-4 pt-5 sm:px-6 sm:pt-6">
             {summaryLoading ? (
-              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
+              <div className="h-24 animate-pulse rounded-lg bg-muted/30" />
             ) : (
               <div className="text-center">
-                <div className="text-4xl font-black text-amber-400">
-                  {formatCredits(summary?.balance || 0)}
+                <div className="text-4xl font-black leading-none text-amber-400 sm:text-5xl">
+                  {formatExactCredits(displayedBalance)}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">credits available</div>
+                <div className="mt-2 text-sm text-muted-foreground">
+                  credits available
+                </div>
                 <Button
                   size="sm"
-                  className="mt-3 bg-amber-600 hover:bg-amber-700 text-xs"
-                  onClick={() => setLocation("/pricing")}
+                  className="mt-4 min-h-10 bg-amber-600 px-5 text-sm text-black hover:bg-amber-700"
+                  onClick={() =>
+                    setLocation(isAdmin ? "/admin" : "/pricing")
+                  }
                 >
-                  Top Up
+                  {isAdmin ? "Admin Panel" : "Top Up"}
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Monthly Allocation */}
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
-          <CardContent className="pt-6">
+        <Card className="min-w-0 border-amber-500/15 shadow-lg shadow-amber-500/5">
+          <CardContent className="px-4 pt-5 sm:px-6 sm:pt-6">
             {summaryLoading ? (
-              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
+              <div className="h-24 animate-pulse rounded-lg bg-muted/30" />
+            ) : isAdmin ? (
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="shrink-0 rounded-lg bg-amber-500/12 p-2.5">
+                  <ShieldCheck className="h-5 w-5 text-amber-400" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-2xl font-black text-foreground">ADMIN</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Full platform access
+                  </p>
+                  <Badge className="mt-2 border-amber-500/35 bg-amber-500/12 text-xs font-bold text-amber-400">
+                    Administrator
+                  </Badge>
+                </div>
+              </div>
             ) : (
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10 shrink-0">
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="shrink-0 rounded-lg bg-blue-500/10 p-2.5">
                   <CreditCard className="h-5 w-5 text-blue-400" />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold gradient-text-gold">{formatCredits(summary?.monthlyAllocation || 0)}</p>
-                  <p className="text-sm text-muted-foreground">monthly allocation</p>
-                    <div className="flex items-center gap-1.5 mt-1">
+                <div className="min-w-0">
+                  <p className="text-2xl font-bold gradient-text-gold">
+                    {formatCompactCredits(displayedAllocation)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    monthly allocation
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     {summary?.tier && PRICING_TIER_BADGE[summary.tier] && (
-                      <HollywoodBadge tier={PRICING_TIER_BADGE[summary.tier] as TierBadgeKey} size={20} />
+                      <HollywoodBadge
+                        tier={
+                          PRICING_TIER_BADGE[summary.tier] as TierBadgeKey
+                        }
+                        size={20}
+                      />
                     )}
-                    <Badge className="bg-blue-600/20 text-blue-400 border-blue-500/30 text-xs capitalize">
-                      {TIER_LABELS[summary?.tier ?? "free"] ?? summary?.tier} Plan
+                    <Badge className="border-blue-500/30 bg-blue-600/15 text-xs text-blue-400">
+                      {TIER_LABELS[summary?.tier ?? "free"] ??
+                        summary?.tier} Plan
                     </Badge>
                   </div>
                 </div>
@@ -154,32 +269,51 @@ export default function Credits() {
           </CardContent>
         </Card>
 
-        {/* Next Renewal */}
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
-          <CardContent className="pt-6">
+        <Card className="min-w-0 border-amber-500/15 shadow-lg shadow-amber-500/5">
+          <CardContent className="px-4 pt-5 sm:px-6 sm:pt-6">
             {summaryLoading ? (
-              <div className="h-16 bg-muted/30 rounded-lg animate-pulse" />
+              <div className="h-24 animate-pulse rounded-lg bg-muted/30" />
             ) : (
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10 shrink-0">
-                  <Calendar className="h-5 w-5 text-green-400" />
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="shrink-0 rounded-lg bg-green-500/10 p-2.5">
+                  {isAdmin ? (
+                    <ShieldCheck className="h-5 w-5 text-green-400" />
+                  ) : (
+                    <Calendar className="h-5 w-5 text-green-400" />
+                  )}
                 </div>
-                <div>
-                  {summary?.subscriptionCurrentPeriodEnd ? (
+                <div className="min-w-0">
+                  {isAdmin ? (
                     <>
-                      <p className="text-lg font-bold">
+                      <p className="text-lg font-bold text-foreground">
+                        Administrator access
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        No paid plan or renewal required
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-green-400">
+                        Account is active
+                      </p>
+                    </>
+                  ) : summary?.subscriptionCurrentPeriodEnd ? (
+                    <>
+                      <p className="text-lg font-bold text-foreground">
                         {formatDate(summary.subscriptionCurrentPeriodEnd)}
                       </p>
-                      <p className="text-sm text-muted-foreground">next renewal</p>
-                      <p className="text-xs text-green-400 mt-0.5">
-                        Credits auto-refresh on renewal
+                      <p className="text-sm text-muted-foreground">
+                        next renewal
+                      </p>
+                      <p className="mt-1 text-xs text-green-400">
+                        Credits refresh automatically
                       </p>
                     </>
                   ) : (
                     <>
-                      <p className="text-lg font-bold text-muted-foreground">No active plan</p>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        Subscribe to get monthly credits
+                      <p className="text-lg font-bold text-foreground">
+                        No active plan
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Subscribe to receive monthly credits
                       </p>
                     </>
                   )}
@@ -190,132 +324,160 @@ export default function Credits() {
         </Card>
       </div>
 
-      {/* ─── This Page Stats ─── */}
       {!historyLoading && transactions.length > 0 && (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-green-500/20 bg-green-600/5 p-4 flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-green-400 shrink-0" />
-            <div>
-              <p className="text-lg font-bold text-green-400">+{formatCredits(earned)}</p>
-              <p className="text-xs text-muted-foreground">earned (this page)</p>
+        <div className="grid min-w-0 grid-cols-2 gap-3">
+          <div className="flex min-w-0 items-center gap-3 rounded-xl border border-green-500/25 bg-green-600/5 p-3 sm:p-4">
+            <TrendingUp className="h-5 w-5 shrink-0 text-green-400" />
+            <div className="min-w-0">
+              <p className="text-lg font-bold text-green-400">
+                +{formatCompactCredits(earned)}
+              </p>
+              <p className="text-xs leading-5 text-muted-foreground">
+                earned on this page
+              </p>
             </div>
           </div>
-          <div className="rounded-xl border border-red-500/20 bg-red-600/5 p-4 flex items-center gap-3">
-            <TrendingDown className="h-5 w-5 text-red-400 shrink-0" />
-            <div>
-              <p className="text-lg font-bold text-red-400">-{formatCredits(spent)}</p>
-              <p className="text-xs text-muted-foreground">spent (this page)</p>
+          <div className="flex min-w-0 items-center gap-3 rounded-xl border border-red-500/25 bg-red-600/5 p-3 sm:p-4">
+            <TrendingDown className="h-5 w-5 shrink-0 text-red-400" />
+            <div className="min-w-0">
+              <p className="text-lg font-bold text-red-400">
+                -{formatCompactCredits(spent)}
+              </p>
+              <p className="text-xs leading-5 text-muted-foreground">
+                spent on this page
+              </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* ─── Transaction History ─── */}
-      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/10">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg gradient-text-gold">Transaction History</CardTitle>
+      <Card className="min-w-0 border-amber-500/15 shadow-lg shadow-amber-500/5">
+        <CardHeader className="flex flex-row items-center justify-between gap-3 px-4 pb-3 sm:px-6">
+          <CardTitle className="min-w-0 text-lg text-foreground">
+            Transaction History
+          </CardTitle>
           {total > 0 && (
-            <span className="text-sm text-muted-foreground">
+            <span className="shrink-0 text-sm text-muted-foreground">
               {total.toLocaleString()} total
             </span>
           )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 sm:px-6">
           {historyLoading ? (
             <div className="space-y-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-14 bg-muted/20 rounded-lg animate-pulse" />
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="h-14 animate-pulse rounded-lg bg-muted/20"
+                />
               ))}
             </div>
           ) : transactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Coins className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No transactions yet</p>
-              <p className="text-sm mt-1">Your credit history will appear here once you start using the platform.</p>
+            <div className="py-10 text-center text-muted-foreground sm:py-12">
+              <Coins className="mx-auto mb-3 h-10 w-10 opacity-40" />
+              <p className="font-medium text-foreground">No transactions yet</p>
+              <p className="mt-1 text-sm">
+                Your credit history appears here when credits are added or used.
+              </p>
             </div>
           ) : (
             <>
-              {/* Table header — desktop only */}
-              <div className="hidden sm:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-3 pb-2 text-xs text-muted-foreground font-medium border-b border-amber-500/20">
+              <div className="hidden grid-cols-[1fr_auto_auto_auto] gap-4 border-b border-amber-500/20 px-3 pb-2 text-xs font-medium text-muted-foreground sm:grid">
                 <span>Action</span>
-                <span className="text-right w-24">Amount</span>
-                <span className="text-right w-28">Balance After</span>
-                <span className="text-right w-32">Date</span>
+                <span className="w-24 text-right">Amount</span>
+                <span className="w-28 text-right">Balance After</span>
+                <span className="w-32 text-right">Date</span>
               </div>
 
-              {/* Rows */}
-              <div className="space-y-1 mt-2">
-                {transactions.map((tx: any) => {
-                  const { label, color, icon } = getActionMeta(tx.action);
-                  const isCredit = tx.amount > 0;
+              <div className="mt-2 space-y-1">
+                {transactions.map((transaction: any) => {
+                  const { label, color, icon } = getActionMeta(
+                    transaction.action,
+                  );
+                  const isCredit = transaction.amount > 0;
                   return (
                     <div
-                      key={tx.id}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-1 sm:gap-4 items-start sm:items-center px-3 py-3 rounded-lg hover:bg-amber-500/5 transition-colors border border-transparent hover:border-amber-500/20"
+                      key={transaction.id}
+                      className="grid min-w-0 grid-cols-1 items-start gap-1 rounded-lg border border-transparent px-2 py-3 transition-colors hover:border-amber-500/20 hover:bg-amber-500/5 sm:grid-cols-[1fr_auto_auto_auto] sm:items-center sm:gap-4 sm:px-3"
                     >
-                      {/* Action */}
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex min-w-0 items-center gap-2.5">
                         <div className={`shrink-0 ${color}`}>{icon}</div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">{label}</p>
-                          {tx.description && (
-                            <p className="text-xs text-muted-foreground truncate max-w-xs">{tx.description}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-foreground">
+                            {label}
+                          </p>
+                          {transaction.description && (
+                            <p className="max-w-xs truncate text-xs text-muted-foreground">
+                              {transaction.description}
+                            </p>
                           )}
-                          {/* Mobile: show amount + date inline */}
-                          <div className="flex items-center gap-3 mt-0.5 sm:hidden">
-                            <span className={`text-xs font-bold ${isCredit ? "text-green-400" : "text-red-400"}`}>
-                              {isCredit ? "+" : ""}{tx.amount.toLocaleString()}
+                          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 sm:hidden">
+                            <span
+                              className={`text-xs font-bold ${
+                                isCredit ? "text-green-400" : "text-red-400"
+                              }`}
+                            >
+                              {isCredit ? "+" : ""}
+                              {transaction.amount.toLocaleString()}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              {formatDate(tx.createdAt)} {formatTime(tx.createdAt)}
+                              {formatDate(transaction.createdAt)} ·{" "}
+                              {formatTime(transaction.createdAt)}
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Amount — desktop */}
-                      <div className={`hidden sm:block text-right w-24 font-bold text-sm ${isCredit ? "text-green-400" : "text-red-400"}`}>
-                        {isCredit ? "+" : ""}{tx.amount.toLocaleString()}
+                      <div
+                        className={`hidden w-24 text-right text-sm font-bold sm:block ${
+                          isCredit ? "text-green-400" : "text-red-400"
+                        }`}
+                      >
+                        {isCredit ? "+" : ""}
+                        {transaction.amount.toLocaleString()}
                       </div>
-
-                      {/* Balance After — desktop */}
-                      <div className="hidden sm:block text-right w-28 text-sm text-muted-foreground">
-                        {(tx.balanceAfter ?? 0).toLocaleString()}
+                      <div className="hidden w-28 text-right text-sm text-muted-foreground sm:block">
+                        {(transaction.balanceAfter ?? 0).toLocaleString()}
                       </div>
-
-                      {/* Date — desktop */}
-                      <div className="hidden sm:block text-right w-32 text-xs text-muted-foreground">
-                        <div>{formatDate(tx.createdAt)}</div>
-                        <div className="opacity-60">{formatTime(tx.createdAt)}</div>
+                      <div className="hidden w-32 text-right text-xs text-muted-foreground sm:block">
+                        <div>{formatDate(transaction.createdAt)}</div>
+                        <div className="opacity-75">
+                          {formatTime(transaction.createdAt)}
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-amber-500/20 mt-4">
+                <div className="mt-4 flex items-center justify-between gap-3 border-t border-amber-500/20 pt-4">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage(p => Math.max(0, p - 1))}
+                    onClick={() =>
+                      setPage(current => Math.max(0, current - 1))
+                    }
                     disabled={page === 0}
                   >
-                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    <ChevronLeft className="mr-1 h-4 w-4" />
                     Previous
                   </Button>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-center text-xs text-muted-foreground sm:text-sm">
                     Page {page + 1} of {totalPages}
                   </span>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                    onClick={() =>
+                      setPage(current =>
+                        Math.min(totalPages - 1, current + 1),
+                      )
+                    }
                     disabled={page >= totalPages - 1}
                   >
                     Next
-                    <ChevronRight className="h-4 w-4 ml-1" />
+                    <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
                 </div>
               )}
@@ -324,38 +486,44 @@ export default function Credits() {
         </CardContent>
       </Card>
 
-      {/* ─── How Credits Work ─── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base gradient-text-gold">How Credits Work</CardTitle>
+      <Card className="min-w-0">
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-base text-foreground">
+            How Credits Work
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+        <CardContent className="px-4 sm:px-6">
+          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
             <div className="flex gap-3">
-              <ArrowUpCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+              <ArrowUpCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-400" />
               <div>
-                <p className="font-semibold">Earned</p>
-                <p className="text-muted-foreground text-xs mt-0.5">Credits are added on subscription renewal, referrals, welcome bonuses, and top-up purchases.</p>
+                <p className="font-semibold text-foreground">Earned</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Added through renewals, referrals, bonuses and top-ups.
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
-              <ArrowDownCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+              <ArrowDownCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
               <div>
-                <p className="font-semibold">Spent</p>
-                <p className="text-muted-foreground text-xs mt-0.5">Credits are deducted each time you generate a video, image, voice track, or use AI tools.</p>
+                <p className="font-semibold text-foreground">Spent</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Deducted when generation and production tools are used.
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
-              <RefreshCw className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
+              <RefreshCw className="mt-0.5 h-5 w-5 shrink-0 text-blue-400" />
               <div>
-                <p className="font-semibold">Auto-Refresh</p>
-                <p className="text-muted-foreground text-xs mt-0.5">Your monthly allocation is automatically topped up on each billing cycle renewal — no action needed.</p>
+                <p className="font-semibold text-foreground">Auto-Refresh</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Paid-plan allocations refresh on each billing cycle.
+                </p>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
-
-        </div>
+    </div>
   );
 }
