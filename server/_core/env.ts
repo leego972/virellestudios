@@ -77,27 +77,58 @@ export const ENV = {
   tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET ?? "",
   tiktokRefreshToken: process.env.TIKTOK_REFRESH_TOKEN ?? "",
 
+  // YouTube Data API v3
   youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
+  youtubeChannelId: process.env.YOUTUBE_CHANNEL_ID ?? "",
+
+  // YouTube OAuth (video upload & auto-posting)
   youtubeClientId: process.env.YOUTUBE_CLIENT_ID ?? "",
   youtubeClientSecret: process.env.YOUTUBE_CLIENT_SECRET ?? "",
   youtubeRefreshToken: process.env.YOUTUBE_REFRESH_TOKEN ?? "",
 
-  linkedinAccessToken: process.env.LINKEDIN_ACCESS_TOKEN ?? "",
-  linkedinPersonUrn: process.env.LINKEDIN_PERSON_URN ?? "",
-  redditClientId: process.env.REDDIT_CLIENT_ID ?? "",
-  redditClientSecret: process.env.REDDIT_CLIENT_SECRET ?? "",
-  redditRefreshToken: process.env.REDDIT_REFRESH_TOKEN ?? "",
-  redditUsername: process.env.REDDIT_USERNAME ?? "",
-  pinterestAccessToken: process.env.PINTEREST_ACCESS_TOKEN ?? "",
-  pinterestBoardId: process.env.PINTEREST_BOARD_ID ?? "",
-  facebookAccessToken: process.env.FACEBOOK_ACCESS_TOKEN ?? "",
-  facebookPageId: process.env.FACEBOOK_PAGE_ID ?? "",
-  instagramBusinessAccountId: process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID ?? "",
+  // Threads (Meta)
+  threadsAccessToken: process.env.THREADS_ACCESS_TOKEN ?? "",
+  threadsUserId: process.env.THREADS_USER_ID ?? "",
+
+  // Product Hunt
+  productHuntApiToken: process.env.PRODUCT_HUNT_API_TOKEN ?? "",
+
+  // Substack
+  substackApiKey: process.env.SUBSTACK_API_KEY ?? "",
+  substackPublicationUrl: process.env.SUBSTACK_PUBLICATION_URL ?? "",
+
+  // Google Search Console Indexing API
+  googleIndexingSaKey: process.env.GOOGLE_INDEXING_SA_KEY ?? "",
+
+  // Social media marketing channels
+  metaAccessToken: process.env.META_ACCESS_TOKEN ?? "",
+  metaAdAccountId: process.env.META_AD_ACCOUNT_ID ?? "",
+  googleAdsCustomerId: process.env.GOOGLE_ADS_CUSTOMER_ID ?? "",
+  googleAdsDeveloperToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN ?? "",
   xApiKey: process.env.X_API_KEY ?? "",
   xApiSecret: process.env.X_API_SECRET ?? "",
   xAccessToken: process.env.X_ACCESS_TOKEN ?? "",
   xAccessTokenSecret: process.env.X_ACCESS_TOKEN_SECRET ?? "",
+  linkedinAccessToken: process.env.LINKEDIN_ACCESS_TOKEN ?? "",
+  linkedinOrganizationId: process.env.LINKEDIN_ORGANIZATION_ID ?? "",
+  snapchatAccessToken: process.env.SNAPCHAT_ACCESS_TOKEN ?? "",
+  snapchatAdAccountId: process.env.SNAPCHAT_AD_ACCOUNT_ID ?? "",
+  snapchatClientId: process.env.SNAPCHAT_CLIENT_ID ?? "",
+  snapchatClientSecret: process.env.SNAPCHAT_CLIENT_SECRET ?? "",
+  snapchatRefreshToken: process.env.SNAPCHAT_REFRESH_TOKEN ?? "",
 
+  // Instagram (Meta Graph API — content publishing)
+  instagramClientId: process.env.INSTAGRAM_CLIENT_ID ?? "",
+  instagramClientSecret: process.env.INSTAGRAM_CLIENT_SECRET ?? "",
+  instagramAccessToken: process.env.INSTAGRAM_ACCESS_TOKEN ?? "",
+  instagramUserId: process.env.INSTAGRAM_USER_ID ?? "",
+  redditClientId: process.env.REDDIT_CLIENT_ID ?? "",
+  redditClientSecret: process.env.REDDIT_CLIENT_SECRET ?? "",
+  redditAccessToken: process.env.REDDIT_ACCESS_TOKEN ?? "",
+  pinterestAccessToken: process.env.PINTEREST_ACCESS_TOKEN ?? "",
+  pinterestAdAccountId: process.env.PINTEREST_AD_ACCOUNT_ID ?? "",
+
+  // Expanded channels
   devtoApiKey: process.env.DEVTO_API_KEY ?? "",
   mediumAccessToken: process.env.MEDIUM_ACCESS_TOKEN ?? "",
   mediumAuthorId: process.env.MEDIUM_AUTHOR_ID ?? "",
@@ -117,8 +148,8 @@ export const ENV = {
   titanApiKey: process.env.TITAN_API_KEY ?? "",
   veniceApiKey: process.env.VENICE_API_KEY ?? "",
 
-  // Direct Google OAuth. Accept both the current names and the legacy names
-  // already used by earlier Virelle deployments/runbooks.
+  // Direct Google OAuth. Accept both the current variable names and the
+  // legacy GOOGLE_CLIENT_* names used by the earlier production deployment.
   googleOAuthClientId:
     process.env.GOOGLE_OAUTH_CLIENT_ID ??
     process.env.GOOGLE_CLIENT_ID ??
@@ -129,7 +160,7 @@ export const ENV = {
     process.env.GOOGLE_CLIENT_SECRET ??
     "",
 
-  // Direct GitHub OAuth with backward-compatible aliases.
+  // Direct GitHub OAuth with legacy aliases.
   githubOAuthClientId:
     process.env.GITHUB_OAUTH_CLIENT_ID ??
     process.env.GITHUB_CLIENT_ID ??
