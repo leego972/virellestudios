@@ -9,6 +9,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useEffect } from "react";
+import { useLocation } from "wouter";
 
 const DESIGNER_ROUTES = [
   "/designer/studio",
@@ -141,21 +142,22 @@ function DesignerOnlyNavigation() {
 }
 
 export default function DesignerAccountGuard() {
+  const [location] = useLocation();
   const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
   const { data: access } = trpc.wardrobeMarket.portal.getAccessStatus.useQuery(
     undefined,
-    { enabled: Boolean(user) },
+    { enabled: Boolean(user), retry: false },
   );
 
   const designerOnly = Boolean(access?.designerOnly);
 
   useEffect(() => {
-    if (userLoading || !user || !access) return;
-    const path = window.location.pathname;
-    if (designerOnly && !routeAllowed(path)) {
+    if (userLoading || !user || !access || !designerOnly) return;
+    const path = window.location.pathname || location;
+    if (!routeAllowed(path)) {
       window.location.replace("/designer/studio");
     }
-  }, [access, designerOnly, user, userLoading]);
+  }, [access, designerOnly, location, user, userLoading]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -164,30 +166,58 @@ export default function DesignerAccountGuard() {
     return () => root.classList.remove("designer-account-only");
   }, [designerOnly]);
 
+  useEffect(() => {
+    if (!designerOnly) return;
+    const blockFilmmakerShortcuts = (event: KeyboardEvent) => {
+      const commandPalette =
+        (event.key === "k" || event.key === "K") &&
+        (event.metaKey || event.ctrlKey);
+      const slashPalette =
+        event.key === "/" &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey;
+      if (!commandPalette && !slashPalette) return;
+      const target = event.target as HTMLElement | null;
+      if (
+        slashPalette &&
+        (target?.tagName === "INPUT" ||
+          target?.tagName === "TEXTAREA" ||
+          target?.isContentEditable)
+      ) {
+        return;
+      }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    };
+    window.addEventListener("keydown", blockFilmmakerShortcuts, true);
+    return () =>
+      window.removeEventListener("keydown", blockFilmmakerShortcuts, true);
+  }, [designerOnly]);
+
   if (!designerOnly) return <AuthReturnGuard />;
 
   return (
     <>
       <AuthReturnGuard />
       <style>{`
-        html.designer-account-only [data-slot="sidebar"] {
-          display: none !important;
+        html.designer-account-only body {
+          min-height: 100vh;
         }
-        html.designer-account-only [data-slot="sidebar-inset"] > header {
-          display: none !important;
-        }
+        html.designer-account-only [data-slot="sidebar"],
+        html.designer-account-only [data-slot="sidebar-inset"] > header,
         html.designer-account-only [data-slot="sidebar-trigger"],
         html.designer-account-only button[aria-label*="Director"],
         html.designer-account-only button[title*="Director"] {
           display: none !important;
         }
         @media (min-width: 768px) {
-          html.designer-account-only [data-slot="sidebar-inset"] {
+          html.designer-account-only body {
             padding-left: 14rem;
           }
         }
         @media (max-width: 767px) {
-          html.designer-account-only [data-slot="sidebar-inset"] {
+          html.designer-account-only body {
             padding-bottom: calc(4rem + env(safe-area-inset-bottom));
           }
         }
