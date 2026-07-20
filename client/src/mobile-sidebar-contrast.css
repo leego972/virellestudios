@@ -1,0 +1,45 @@
+/* Mobile sidebar must remain readable even when the app is in light mode. */
+[data-mobile="true"][data-sidebar="sidebar"] {
+  background: #050505 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="header"],
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="content"],
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="footer"] {
+  color: #ffffff !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="menu-button"] {
+  color: #ffffff !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="menu-button"]:hover,
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="menu-button"]:focus-visible {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] [data-sidebar="menu-button"][data-active="true"] {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fbbf24 !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] .text-muted-foreground,
+[data-mobile="true"][data-sidebar="sidebar"] [class*="text-muted-foreground"] {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] button,
+[data-mobile="true"][data-sidebar="sidebar"] a,
+[data-mobile="true"][data-sidebar="sidebar"] span,
+[data-mobile="true"][data-sidebar="sidebar"] p,
+[data-mobile="true"][data-sidebar="sidebar"] svg {
+  visibility: visible;
+}
+
+[data-mobile="true"][data-sidebar="sidebar"] button:not([data-active="true"]),
+[data-mobile="true"][data-sidebar="sidebar"] a:not([data-active="true"]) {
+  color: #ffffff;
+}
