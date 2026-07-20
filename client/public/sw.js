@@ -25,91 +25,82 @@ const SHELL_URLS = [
   "/virelle-favicon-192.png",
 ];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(SHELL_CACHE)
-      .then(cache => cache.addAll(SHELL_URLS).catch(() => {}))
-      .then(() => self.skipWaiting()),
+      .then((cache) => cache.addAll(SHELL_URLS).catch(() => {}))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then(keys =>
+      .then((keys) =>
         Promise.all(
           keys
-            .filter(
-              key =>
-                key.startsWith("virelle-") &&
-                key !== SHELL_CACHE &&
-                key !== ASSETS_CACHE,
-            )
-            .map(key => caches.delete(key)),
-        ),
+            .filter((k) => k.startsWith("virelle-") && k !== SHELL_CACHE && k !== ASSETS_CACHE)
+            .map((k) => caches.delete(k))
+        )
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
   );
 });
 
+// Cache only Vite-emitted lightweight static assets. Video / audio is excluded
+// because a single mp4 can blow past Cache Storage quota and silently break
+// the SW for the entire origin.
 function isHashedAsset(url) {
   if (!url.pathname.startsWith("/assets/")) return false;
-  return /\.(js|css|woff2?|png|jpg|jpeg|webp|avif|svg|ico)$/.test(
-    url.pathname,
-  );
+  return /\.(js|css|woff2?|png|jpg|jpeg|webp|avif|svg|ico)$/.test(url.pathname);
 }
 
-self.addEventListener("fetch", event => {
-  const request = event.request;
-  if (request.method !== "GET") return;
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
 
-  const url = new URL(request.url);
+  const url = new URL(req.url);
+
+  // Don't intercept cross-origin requests, dev HMR, websockets, or analytics
   if (url.origin !== self.location.origin) return;
-  if (
-    url.pathname.startsWith("/@") ||
-    url.pathname.startsWith("/__vite")
-  ) {
+  if (url.pathname.startsWith("/@") || url.pathname.startsWith("/__vite")) return;
+  if (url.pathname.startsWith("/api/")) {
+    // Network-first for API; do not cache (would serve stale auth/data)
     return;
   }
-  if (url.pathname.startsWith("/api/")) return;
 
+  // Cache-first for hashed static assets
   if (isHashedAsset(url)) {
     event.respondWith(
-      caches.open(ASSETS_CACHE).then(cache =>
-        cache.match(request).then(hit => {
+      caches.open(ASSETS_CACHE).then((cache) =>
+        cache.match(req).then((hit) => {
           if (hit) return hit;
-          return fetch(request)
-            .then(response => {
-              if (response.ok && response.status === 200) {
-                cache.put(request, response.clone());
-              }
-              return response;
+          return fetch(req)
+            .then((res) => {
+              if (res.ok && res.status === 200) cache.put(req, res.clone());
+              return res;
             })
             .catch(() => hit);
-        }),
-      ),
+        })
+      )
     );
     return;
   }
 
-  if (request.mode === "navigate") {
+  // Navigation requests: network-first, fall back to offline shell
+  if (req.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() =>
-        caches
-          .match(OFFLINE_URL)
-          .then(
-            response =>
-              response || new Response("Offline", { status: 503 }),
-          ),
-      ),
+      fetch(req).catch(() => caches.match(OFFLINE_URL).then((r) => r || new Response("Offline", { status: 503 })))
     );
+    return;
   }
 });
 
-self.addEventListener("message", event => {
-  if (event.data?.type === "SKIP_WAITING") {
+// Allow the page to ask the SW to update itself ("New version available, refresh?")
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });
