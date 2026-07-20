@@ -34,7 +34,8 @@ jobs:
         run: |
           set -euo pipefail
           cat \
-            .audit-fix/part-00 \
+            .audit-fix/part-00a \
+            .audit-fix/part-00b \
             .audit-fix/part-01 \
             .audit-fix/part-02 \
             .audit-fix/part-03 \
