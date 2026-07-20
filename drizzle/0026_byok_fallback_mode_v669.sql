@@ -4,5 +4,8 @@
 --   byok_only                — only use the user's BYOK key, never fall back
 --   byok_with_consent        — prefer BYOK, ask the user before falling back to credits (default)
 --   byok_with_auto_fallback  — prefer BYOK, silently fall back to credits when the key fails
+--
+-- MySQL does not support ADD COLUMN IF NOT EXISTS. Idempotency is handled by
+-- run-migrations.mjs, which safely treats ER_DUP_FIELDNAME as already applied.
 ALTER TABLE `users`
-  ADD COLUMN IF NOT EXISTS `byokFallbackMode` VARCHAR(32) DEFAULT 'byok_with_consent';
+  ADD COLUMN `byokFallbackMode` VARCHAR(32) DEFAULT 'byok_with_consent';
