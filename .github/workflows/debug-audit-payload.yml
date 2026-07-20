@@ -1,6 +1,12 @@
 name: Debug Audit Payload
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".audit-fix/**"
+      - ".github/workflows/debug-audit-payload.yml"
   push:
     branches:
       - audit/stability-2026-07-21
