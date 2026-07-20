@@ -1,0 +1,108 @@
+name: Apply Marketplace Filter Connections
+
+on:
+  push:
+    branches:
+      - designer/connected-onboarding-listings-2026-07-21
+    paths:
+      - ".github/workflows/apply-marketplace-filter-connections.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: designer/connected-onboarding-listings-2026-07-21
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Connect marketplace filters and active membership checks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("server/wardrobe-marketplace-router-legacy.ts")
+          source = path.read_text(encoding="utf-8")
+          replacements = [
+              (
+                  'import { eq, and, desc, isNotNull, sql } from "drizzle-orm";\n',
+                  'import { eq, and, desc, getTableColumns, isNotNull, lte, sql } from "drizzle-orm";\n',
+              ),
+              (
+                  '        if (!profile || profile.visibility !== "public") return null;\n',
+                  '        if (\n          !profile ||\n          profile.visibility !== "public" ||\n          profile.membershipStatus !== "active"\n        ) return null;\n',
+              ),
+              (
+                  '        const designer = await db.getDesignerProfileById(col.designerProfileId);\n        const items = await db.getWardrobeItemsByCollection(input.id);\n',
+                  '        const designer = await db.getDesignerProfileById(col.designerProfileId);\n        if (\n          !designer ||\n          designer.visibility !== "public" ||\n          designer.membershipStatus !== "active"\n        ) return null;\n        const items = await db.getWardrobeItemsByCollection(input.id);\n',
+              ),
+              (
+                  '''        return dbConn
+          .select()
+          .from(wardrobeItems)
+          .where(
+            and(
+              eq(wardrobeItems.visibility, "public"),
+              eq(wardrobeItems.status, "active"),
+              isNotNull(wardrobeItems.retailPriceAud),
+            ),
+          )
+          .orderBy(desc(wardrobeItems.createdAt))
+          .limit(input?.limit ?? 60)
+          .offset(input?.offset ?? 0);
+''',
+                  '''        return dbConn
+          .select({ ...getTableColumns(wardrobeItems) })
+          .from(wardrobeItems)
+          .innerJoin(
+            designerProfiles,
+            eq(wardrobeItems.designerProfileId, designerProfiles.id),
+          )
+          .where(
+            and(
+              eq(wardrobeItems.visibility, "public"),
+              eq(wardrobeItems.status, "active"),
+              isNotNull(wardrobeItems.retailPriceAud),
+              eq(designerProfiles.visibility, "public"),
+              eq(designerProfiles.membershipStatus, "active"),
+              input?.category
+                ? eq(wardrobeItems.category, input.category)
+                : undefined,
+              input?.wardrobeType
+                ? eq(wardrobeItems.wardrobeType, input.wardrobeType)
+                : undefined,
+              input?.maxPriceAud !== undefined
+                ? lte(wardrobeItems.retailPriceAud, input.maxPriceAud)
+                : undefined,
+            ),
+          )
+          .orderBy(desc(wardrobeItems.createdAt))
+          .limit(input?.limit ?? 60)
+          .offset(input?.offset ?? 0);
+''',
+              ),
+          ]
+          for old, new in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected one occurrence, found {count}: {old[:120]!r}")
+              source = source.replace(old, new, 1)
+          path.write_text(source, encoding="utf-8")
+          PY
+
+      - name: Remove temporary workflow and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/apply-marketplace-filter-connections.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Connect marketplace filters and active Designer visibility"
+          git push origin HEAD:designer/connected-onboarding-listings-2026-07-21
