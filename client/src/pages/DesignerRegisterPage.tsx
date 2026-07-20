@@ -1,16 +1,3 @@
-/**
- * DesignerRegisterPage.tsx — v7.0
- *
- * Step-by-step wizard to join the Virelle Studios wardrobe marketplace as a designer.
- *
- * Steps:
- *  1 — Brand info (name, type, bio)
- *  2 — Membership payment (A$150/year Founding Partner price via Stripe Checkout redirect)
- *  3 — Stripe Connect onboarding (to receive payouts from leases)
- *  4 — Done + CTA to Designer Studio
- */
-import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,433 +11,618 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  ArrowRight,
   CheckCircle2,
   CreditCard,
-  Store,
-  Sparkles,
-  ArrowRight,
   Loader2,
-  ChevronRight,
+  ShieldCheck,
+  Store,
   Wallet,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
-const DESIGNER_MEMBERSHIP_PRICE = "A$300/year";
+const DRAFT_KEY = "virelle_designer_registration_draft";
 
-const STEPS = [
-  { id: 1, label: "Brand Profile" },
-  { id: 2, label: "Membership" },
-  { id: 3, label: "Set Up Payouts" },
-  { id: 4, label: "All Set" },
-];
+const INTENDED_USES = [
+  ["film", "Film production"],
+  ["television", "Television"],
+  ["live_broadcast", "Live broadcast"],
+  ["commercials", "Commercials"],
+  ["advertising", "Advertising"],
+  ["theatre", "Theatre / stage"],
+  ["music_video", "Music videos"],
+  ["editorial", "Editorial / fashion"],
+  ["social_media", "Social media"],
+  ["corporate", "Corporate production"],
+  ["other", "Other"],
+] as const;
 
-function StepIndicator({ current }: { current: number }) {
+const PROFILE_TYPES = [
+  ["designer", "Fashion designer"],
+  ["costume_designer", "Costume designer"],
+  ["stylist", "Stylist"],
+  ["wardrobe_department", "Wardrobe department"],
+  ["brand", "Fashion brand"],
+  ["production_designer", "Production designer"],
+  ["other", "Other"],
+] as const;
+
+type RegistrationForm = {
+  legalName: string;
+  dateOfBirth: string;
+  companyName: string;
+  companyAddress: string;
+  brandName: string;
+  displayName: string;
+  profileType: string;
+  intendedUses: string[];
+  bio: string;
+  website: string;
+  instagram: string;
+  contactEmail: string;
+  logoUrl: string;
+  accessMode: "designer_only" | "hybrid";
+};
+
+const emptyForm: RegistrationForm = {
+  legalName: "",
+  dateOfBirth: "",
+  companyName: "",
+  companyAddress: "",
+  brandName: "",
+  displayName: "",
+  profileType: "designer",
+  intendedUses: [],
+  bio: "",
+  website: "",
+  instagram: "",
+  contactEmail: "",
+  logoUrl: "",
+  accessMode: "designer_only",
+};
+
+function readDraft(): RegistrationForm {
+  try {
+    return {
+      ...emptyForm,
+      ...JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"),
+    };
+  } catch {
+    return emptyForm;
+  }
+}
+
+function FormField({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center justify-center gap-2 mb-8">
-      {STEPS.map((step, i) => (
-        <div key={step.id} className="flex items-center gap-2">
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold transition-all ${
-            current > step.id
-              ? "bg-amber-500 text-black"
-              : current === step.id
-              ? "bg-amber-500/20 border-2 border-amber-500 text-amber-400"
-              : "bg-white/5 border border-white/20 text-white/30"
-          }`}>
-            {current > step.id ? <CheckCircle2 className="h-4 w-4 text-amber-400" /> : step.id}
-          </div>
-          <span className={`text-xs font-medium hidden sm:block ${
-            current >= step.id ? "text-white/70" : "text-white/20"
-          }`}>{step.label}</span>
-          {i < STEPS.length - 1 && (
-            <ChevronRight className="h-4 w-4 text-white/20 mx-1" />
-          )}
-        </div>
-      ))}
+    <div className="space-y-1.5">
+      <Label className="text-sm">
+        {label}
+        {required && <span className="ml-1 text-amber-400">*</span>}
+      </Label>
+      {children}
     </div>
   );
 }
 
 export default function DesignerRegisterPage() {
-  const [, setLocation] = useLocation();
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState<RegistrationForm>(readDraft);
+  const [step, setStep] = useState<"profile" | "membership" | "activating">(
+    "profile",
+  );
+  const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
+  const { data: access, refetch: refetchAccess } =
+    trpc.wardrobeMarket.portal.getAccessStatus.useQuery(undefined, {
+      enabled: Boolean(user),
+    });
+  const { data: founding } =
+    trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
 
-  const [brandName, setBrandName] = useState("");
-  const [profileType, setProfileType] = useState("designer");
-  const [bio, setBio] = useState("");
+  const saveProfile = trpc.wardrobeMarket.portal.saveProfile.useMutation({
+    onError: error => toast.error(error.message),
+  });
+  const subscribeDesigner =
+    trpc.wardrobeMarket.designer.subscribeMembership.useMutation({
+      onSuccess: data => {
+        if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+      },
+      onError: error => toast.error(error.message),
+    });
+  const subscribeBundle =
+    trpc.wardrobeMarket.designer.subscribeBundleMembership.useMutation({
+      onSuccess: data => {
+        if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+      },
+      onError: error => toast.error(error.message),
+    });
+  const activateMembership =
+    trpc.wardrobeMarket.designer.activateMembership.useMutation({
+      onError: error => {
+        toast.error(error.message);
+        setStep("membership");
+      },
+    });
 
-  const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
-  const subscribeBundleMutation = trpc.wardrobeMarket.designer.subscribeBundleMembership.useMutation();
-  const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
-  const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
-  const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
-  const { data: membershipData } = trpc.wardrobeMarket.designer.getMembershipStatus.useQuery();
-  const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();
-  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
+  const profileValid = useMemo(
+    () =>
+      form.legalName.trim().length >= 2 &&
+      Boolean(form.dateOfBirth) &&
+      form.companyName.trim().length > 0 &&
+      form.companyAddress.trim().length >= 5 &&
+      form.brandName.trim().length > 0 &&
+      form.intendedUses.length > 0,
+    [form],
+  );
 
-  const BRAND_STORAGE_KEY = "virelle_designer_brand_draft";
-
-  const returnUrl = `${window.location.origin}/designer-register`;
-
-  // Handle return from Stripe Checkout
   useEffect(() => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+  }, [form]);
+
+  useEffect(() => {
+    if (!access?.active) return;
+    localStorage.removeItem(DRAFT_KEY);
+    window.location.replace("/designer/studio");
+  }, [access?.active]);
+
+  useEffect(() => {
+    if (!user) return;
     const params = new URLSearchParams(window.location.search);
-    const checkoutStatus = params.get("checkout");
+    const checkout = params.get("checkout");
     const sessionId = params.get("session_id");
+    if (checkout !== "success" || !sessionId) return;
 
-    if (checkoutStatus === "success" && sessionId) {
-      setLoading(true);
-      activateMutation.mutate(
-        { sessionId },
-        {
-          onSuccess: () => {
-            // Restore brand info saved before the Stripe redirect and persist it
-            try {
-              const saved = localStorage.getItem(BRAND_STORAGE_KEY);
-              if (saved) {
-                const draft = JSON.parse(saved) as { brandName: string; profileType: string; bio: string };
-                setBrandName(draft.brandName);
-                setProfileType(draft.profileType);
-                setBio(draft.bio);
-                updateBrandMutation.mutate({
-                  brandName: draft.brandName,
-                  profileType: draft.profileType,
-                  bio: draft.bio || null,
-                });
-                localStorage.removeItem(BRAND_STORAGE_KEY);
-              }
-            } catch {
-              // ignore storage errors
-            }
-            toast.success("Designer membership activated.");
-            window.history.replaceState({}, "", "/designer-register");
-            setStep(3);
-            setLoading(false);
-          },
-          onError: (err) => {
-            toast.error(err.message);
-            setLoading(false);
-          },
-        },
-      );
-    } else if (checkoutStatus === "cancelled") {
-      toast.info("Checkout cancelled — no charge was made.");
-      window.history.replaceState({}, "", "/designer-register");
-    }
-  }, []);
-
-  // If already has active membership, skip to step 3 or 4
-  useEffect(() => {
-    if (!membershipData) return;
-    if (membershipData.status === "active") {
-      if (connectData?.chargesEnabled && connectData?.payoutsEnabled) {
-        setStep(4);
-      } else {
-        setStep(3);
+    let cancelled = false;
+    const activate = async () => {
+      setStep("activating");
+      try {
+        await activateMembership.mutateAsync({ sessionId });
+        const draft = readDraft();
+        await saveProfile.mutateAsync(draft);
+        await refetchAccess();
+        if (!cancelled) {
+          localStorage.removeItem(DRAFT_KEY);
+          window.location.replace("/designer/studio");
+        }
+      } catch {
+        if (!cancelled) setStep("membership");
       }
-    }
-  }, [membershipData, connectData]);
+    };
+    void activate();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
-  // Step 1 → save brand info locally + move to step 2
-  function handleBrandInfoSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!brandName.trim()) {
-      toast.error("Please enter your brand name.");
+  const update = <K extends keyof RegistrationForm>(
+    key: K,
+    value: RegistrationForm[K],
+  ) => setForm(current => ({ ...current, [key]: value }));
+
+  const toggleUse = (value: string) => {
+    update(
+      "intendedUses",
+      form.intendedUses.includes(value)
+        ? form.intendedUses.filter(item => item !== value)
+        : [...form.intendedUses, value],
+    );
+  };
+
+  const continueToMembership = async () => {
+    if (!profileValid) {
+      toast.error("Complete every required Designer profile field.");
       return;
     }
-    setStep(2);
-  }
-
-  // Step 2 → save brand info to localStorage then redirect to Stripe Checkout
-  async function handleSubscribe() {
-    setLoading(true);
     try {
-      // Persist brand data so it survives the Stripe redirect
-      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
-      const result = await subscribeMutation.mutateAsync({ returnUrl });
-      if (result.checkoutUrl) {
-        window.location.href = result.checkoutUrl;
-      }
-
-    } catch (err: any) {
-      toast.error(err.message || "Could not start checkout");
-      setLoading(false);
+      await saveProfile.mutateAsync(form);
+      setStep("membership");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      // Mutation error handler shows the exact error.
     }
-  }
+  };
 
-  // Step 2 bundle — Designer membership + Virelle Indie, 20% off
-  async function handleSubscribeBundle() {
-    setLoading(true);
+  const startCheckout = async (mode: "designer_only" | "hybrid") => {
+    const nextForm = { ...form, accessMode: mode };
+    setForm(nextForm);
     try {
-      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
-      const result = await subscribeBundleMutation.mutateAsync({ returnUrl });
-      if (result.checkoutUrl) {
-        window.location.href = result.checkoutUrl;
+      await saveProfile.mutateAsync(nextForm);
+      const returnUrl = `${window.location.origin}/designer-register`;
+      if (mode === "hybrid") {
+        await subscribeBundle.mutateAsync({ returnUrl });
+      } else {
+        await subscribeDesigner.mutateAsync({ returnUrl });
       }
-    } catch (err: any) {
-      toast.error(err.message || "Could not start checkout");
-      setLoading(false);
+    } catch {
+      // Individual mutation handlers show errors.
     }
+  };
+
+  if (userLoading || step === "activating") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-6">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-9 w-9 animate-spin text-amber-400" />
+          <p className="mt-4 text-sm text-muted-foreground">
+            {step === "activating"
+              ? "Confirming your Designer membership…"
+              : "Loading Designer registration…"}
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  // Step 3 → open Stripe Connect onboarding
-  async function handleConnectOnboard() {
-    setLoading(true);
-    try {
-      const result = await onboardMutation.mutateAsync({
-        returnUrl: `${window.location.origin}/designer-register?connect=done`,
-        refreshUrl: `${window.location.origin}/designer-register?connect=refresh`,
-      });
-      if (result.onboardingUrl) {
-        window.location.href = result.onboardingUrl;
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Could not start payout setup");
-      setLoading(false);
-    }
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-6">
+        <div className="w-full max-w-lg rounded-2xl border border-amber-500/20 bg-card p-7 text-center shadow-xl">
+          <img
+            src="/virelle-logo-square.png"
+            alt="Virelle Studios"
+            className="mx-auto h-16 w-16 rounded-xl"
+          />
+          <h1 className="mt-5 text-2xl font-bold">Create a Designer account</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Designer registration is attached to a secure Virelle account so your
+            listings, payments and profile stay under your control.
+          </p>
+          <Button
+            className="mt-6 w-full bg-amber-500 font-bold text-black hover:bg-amber-400"
+            onClick={() =>
+              (window.location.href =
+                "/register?account=designer&return=%2Fdesigner-register")
+            }
+          >
+            Create Designer login
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+          <button
+            onClick={() =>
+              (window.location.href =
+                "/login?return=%2Fdesigner-register")
+            }
+            className="mt-4 text-sm text-amber-400 hover:underline"
+          >
+            Already have an account? Sign in
+          </button>
+        </div>
+      </div>
+    );
   }
-
-  // Handle return from Stripe Connect
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const connectStatus = params.get("connect");
-    if (connectStatus === "done") {
-      toast.success("Payout setup complete! You can now start listing collections.");
-      window.history.replaceState({}, "", "/designer-register");
-      setStep(4);
-    }
-  }, []);
 
   return (
-    <div className="min-h-screen text-white flex flex-col" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      {/* Header */}
-      <header className="border-b border-amber-500/20 px-6 py-4 flex items-center gap-3">
-        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
-          <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-          <span className="text-sm font-black tracking-tighter uppercase italic">
-            Virelle <span className="text-amber-400">Studios</span>
-          </span>
-        </button>
-        <span className="text-white/30 text-sm">/ Join as Designer</span>
-      </header>
-
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-lg">
-          {/* Hero */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-bold mb-4">
-              <Store className="h-3.5 w-3.5" />
-              Designer Marketplace
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tighter mb-3 text-gold-shimmer">
-              List Your Collections
-            </h1>
-            <p className="text-white/50 text-sm leading-relaxed max-w-sm mx-auto">
-              Designers, costume houses, and fashion creators can list collections for filmmakers to reference, license, or use in AI-assisted production planning.
+    <div className="min-h-screen bg-background px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-7 flex items-center gap-3">
+          <img
+            src="/virelle-logo-square.png"
+            alt="Virelle Studios"
+            className="h-11 w-11 rounded-lg"
+          />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-400">
+              Virelle Wardrobe Marketplace
             </p>
-            <p className="text-amber-400/80 text-xs font-medium mt-2">
-              95% of every lease goes directly to you — A$150/year founding membership.
-            </p>
-            <p className="text-white/30 text-xs mt-3 italic max-w-xs mx-auto">
-              Virelle is not replacing designers. It gives you another channel into the AI film production economy.
-            </p>
+            <h1 className="text-2xl font-bold">Designer registration</h1>
           </div>
+        </div>
 
-          <StepIndicator current={step} />
-
-          {loading && (
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
-            </div>
-          )}
-
-          {/* ── Step 1: Brand Info ── */}
-          {!loading && step === 1 && (
-            <form onSubmit={handleBrandInfoSubmit} className="gold-glow space-y-5 glass-card/3 border border-amber-500/20 rounded-2xl p-6 hover:shadow-amber-500/20 transition-shadow">
-              <div>
-                <Label className="text-white/80 text-sm mb-1.5 block">Brand / Studio Name *</Label>
-                <Input
-                  value={brandName}
-                  onChange={(e) => setBrandName(e.target.value)}
-                  placeholder="e.g. Cassidy Couture"
-                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/30"
-                  maxLength={255}
-                  required
-                />
+        <div className="mb-7 grid grid-cols-3 gap-2">
+          {[
+            ["1", "Profile"],
+            ["2", "Membership"],
+            ["3", "Payouts"],
+          ].map(([number, label], index) => {
+            const activeIndex = step === "profile" ? 0 : 1;
+            return (
+              <div
+                key={label}
+                className={`rounded-xl border p-3 ${
+                  index <= activeIndex
+                    ? "border-amber-500/40 bg-amber-500/10"
+                    : "border-border bg-card"
+                }`}
+              >
+                <p className="text-xs text-muted-foreground">Step {number}</p>
+                <p className="text-sm font-semibold">{label}</p>
               </div>
+            );
+          })}
+        </div>
 
-              <div>
-                <Label className="text-white/80 text-sm mb-1.5 block">Designer Type</Label>
-                <Select value={profileType} onValueChange={setProfileType}>
-                  <SelectTrigger className="bg-white/5 border-amber-500/20 text-white">
+        {step === "profile" ? (
+          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold">Designer and company details</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                These details identify the account holder and describe how your
+                work may be used across Virelle productions.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField label="Full legal name" required>
+                <Input
+                  value={form.legalName}
+                  onChange={event => update("legalName", event.target.value)}
+                  placeholder="Account holder name"
+                />
+              </FormField>
+              <FormField label="Date of birth" required>
+                <Input
+                  type="date"
+                  value={form.dateOfBirth}
+                  onChange={event => update("dateOfBirth", event.target.value)}
+                />
+              </FormField>
+              <FormField label="Company / trading name" required>
+                <Input
+                  value={form.companyName}
+                  onChange={event => update("companyName", event.target.value)}
+                  placeholder="Company or sole-trader name"
+                />
+              </FormField>
+              <FormField label="Public brand name" required>
+                <Input
+                  value={form.brandName}
+                  onChange={event => update("brandName", event.target.value)}
+                  placeholder="Name shown in the marketplace"
+                />
+              </FormField>
+              <div className="sm:col-span-2">
+                <FormField label="Company address" required>
+                  <Textarea
+                    value={form.companyAddress}
+                    onChange={event =>
+                      update("companyAddress", event.target.value)
+                    }
+                    placeholder="Street, suburb/city, state, postcode and country"
+                    rows={3}
+                  />
+                </FormField>
+              </div>
+              <FormField label="Designer type" required>
+                <Select
+                  value={form.profileType}
+                  onValueChange={value => update("profileType", value)}
+                >
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-white/20">
-                    <SelectItem value="designer">Fashion Designer</SelectItem>
-                    <SelectItem value="costume_designer">Costume Designer</SelectItem>
-                    <SelectItem value="stylist">Stylist</SelectItem>
-                    <SelectItem value="wardrobe_department">Wardrobe Department</SelectItem>
-                    <SelectItem value="brand">Fashion Brand</SelectItem>
-                    <SelectItem value="production_designer">Production Designer</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                  <SelectContent>
+                    {PROFILE_TYPES.map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label className="text-white/80 text-sm mb-1.5 block">Bio / Description</Label>
-                <Textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell productions about your style and specialty..."
-                  rows={3}
-                  className="bg-white/5 border-amber-500/20 text-white placeholder-white/30 resize-none"
-                  maxLength={2000}
+              </FormField>
+              <FormField label="Display name">
+                <Input
+                  value={form.displayName}
+                  onChange={event => update("displayName", event.target.value)}
+                  placeholder="Optional contact or creative name"
                 />
-              </div>
+              </FormField>
 
-              <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-11">
-                Continue <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </form>
-          )}
-
-          {/* ── Step 2: Membership Payment ── */}
-            {!loading && step === 2 && (
-              <div className="space-y-4">
-                <div className="text-center mb-2">
-                  <CreditCard className="h-9 w-9 text-amber-400 mx-auto mb-3" />
-                  <h2 className="text-xl font-black mb-1 gradient-text-gold">Choose Your Plan</h2>
-                  <p className="text-white/50 text-sm">Unlock the marketplace, or bundle with Virelle filmmaker tools.</p>
-                </div>
-
-                {/* Card 1 — Designer Membership Only */}
-                <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-5 space-y-3 hover:shadow-amber-500/20 transition-shadow">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-bold text-white">Designer Membership</p>
-                      <p className="text-white/40 text-xs mt-0.5">Marketplace access only</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      {foundingStatus?.foundingActive === false ? (
-                        <p className="text-lg font-black text-white">A$299<span className="text-xs font-normal text-white/40">/yr</span></p>
-                      ) : (
-                        <>
-                          <p className="text-lg font-black text-amber-400">A$150<span className="text-xs font-normal text-white/40">/yr</span></p>
-                          <p className="text-[10px] text-white/30 line-through">A$299/yr</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <ul className="space-y-1.5 text-xs text-white/60">
-                    {["List unlimited collections & items", "Get discovered by film productions", "95% of every lease via Stripe"].map(f => (
-                      <li key={f} className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400 shrink-0" />{f}</li>
-                    ))}
-                  </ul>
-                  <Button onClick={handleSubscribe} variant="outline" className="w-full border-white/20 text-white hover:bg-white/5 font-semibold hover:border-amber-500/50 hover:text-amber-400">
-                    {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
-                  </Button>
-                </div>
-
-                {/* Card 2 — Bundle Deal (highlighted) */}
-                <div className="relative bg-amber-500/5 border-2 border-amber-500/40 rounded-2xl p-5 space-y-3">
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-amber-500 text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wide">
-                      Best Value — 20% Off
-                    </span>
-                  </div>
-                  <div className="flex items-start justify-between gap-2 pt-1">
-                    <div>
-                      <p className="font-bold text-white">Designer + Filmmaker Bundle</p>
-                      <p className="text-white/40 text-xs mt-0.5">Marketplace + Virelle Indie plan</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-lg font-black text-amber-400">A$1,431<span className="text-xs font-normal text-white/40">/yr</span></p>
-                      <p className="text-[10px] text-white/30 line-through">A$1,789/yr</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-1.5 text-xs text-white/60">
-                    {[
-                      "Everything in Designer Membership",
-                      "Virelle Indie — filmmaker tools & AI scene generation",
-                      "500 generation credits/month",
-                      "Create & publish your own film projects",
-                    ].map(f => (
-                      <li key={f} className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400 shrink-0" />{f}</li>
-                    ))}
-                  </ul>
-                  <Button onClick={handleSubscribeBundle} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold">
-                    Get the Bundle — A$1,431/yr <ArrowRight className="h-4 w-4 ml-1.5" />
-                  </Button>
-                </div>
-
-                <button onClick={() => setStep(1)} className="w-full text-xs text-white/30 hover:text-white/60 transition-colors pt-1">
-                  ← Back to brand profile
-                </button>
-                <p className="text-center text-xs text-white/30">Secured by Stripe. Renews automatically each year.</p>
-              </div>
-            )}
-
-          {/* ── Step 3: Connect Onboarding ── */}
-          {!loading && step === 3 && (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 space-y-5 text-center hover:shadow-amber-500/20 transition-shadow">
-              <Wallet className="h-10 w-10 text-amber-400 mx-auto" />
-              <div>
-                <h2 className="text-xl font-black mb-2 gradient-text-gold">Set Up Your Payouts</h2>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  Connect a bank account via Stripe so lease payments land directly in your account.
-                  This takes about 3 minutes.
+              <div className="sm:col-span-2">
+                <Label className="text-sm">
+                  Intended use <span className="text-amber-400">*</span>
+                </Label>
+                <p className="mb-3 mt-1 text-xs text-muted-foreground">
+                  Select every production category your designs may support.
                 </p>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {INTENDED_USES.map(([value, label]) => {
+                    const selected = form.intendedUses.includes(value);
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => toggleUse(value)}
+                        className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
+                          selected
+                            ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
+                            : "border-border hover:bg-accent"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-4 w-4 items-center justify-center rounded border ${
+                            selected
+                              ? "border-amber-400 bg-amber-400 text-black"
+                              : "border-muted-foreground/40"
+                          }`}
+                        >
+                          {selected && <CheckCircle2 className="h-3 w-3" />}
+                        </span>
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
-                <span className="text-green-300">Membership active — you can now publish collections</span>
+
+              <div className="sm:col-span-2">
+                <FormField label="Company / designer bio">
+                  <Textarea
+                    value={form.bio}
+                    onChange={event => update("bio", event.target.value)}
+                    placeholder="Describe your label, collections, specialties and production experience"
+                    rows={4}
+                  />
+                </FormField>
               </div>
-              <Button onClick={handleConnectOnboard} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-11">
-                Set Up Payouts via Stripe
-              </Button>
-              <button
-                onClick={() => setStep(4)}
-                className="text-xs text-white/30 hover:text-white/60 transition-colors"
+              <FormField label="Contact email">
+                <Input
+                  type="email"
+                  value={form.contactEmail}
+                  onChange={event => update("contactEmail", event.target.value)}
+                  placeholder={user.email || "designer@company.com"}
+                />
+              </FormField>
+              <FormField label="Website">
+                <Input
+                  type="url"
+                  value={form.website}
+                  onChange={event => update("website", event.target.value)}
+                  placeholder="https://"
+                />
+              </FormField>
+              <FormField label="Instagram">
+                <Input
+                  value={form.instagram}
+                  onChange={event => update("instagram", event.target.value)}
+                  placeholder="@label"
+                />
+              </FormField>
+              <FormField label="Logo URL">
+                <Input
+                  type="url"
+                  value={form.logoUrl}
+                  onChange={event => update("logoUrl", event.target.value)}
+                  placeholder="Optional public logo URL"
+                />
+              </FormField>
+            </div>
+
+            <div className="mt-7 flex justify-end">
+              <Button
+                onClick={continueToMembership}
+                disabled={!profileValid || saveProfile.isPending}
+                className="bg-amber-500 font-bold text-black hover:bg-amber-400"
               >
-                Skip for now — do this later in Designer Studio
+                {saveProfile.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Save and continue
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </section>
+        ) : (
+          <section className="space-y-5">
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+              <h2 className="text-xl font-bold">Choose account access</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                The Designer plan is restricted to Designer Studio and the
+                Wardrobe Marketplace. The bundle also unlocks filmmaker tools.
+              </p>
+
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <Store className="h-6 w-6 text-amber-400" />
+                      <h3 className="font-bold">Designer only</h3>
+                    </div>
+                    {founding?.foundingActive && (
+                      <span className="rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-semibold text-amber-400">
+                        {founding.spotsRemaining} founding spots
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-4 text-3xl font-black">
+                    A${founding?.foundingActive ? "150" : "299"}
+                    <span className="text-sm font-normal text-muted-foreground">
+                      /year
+                    </span>
+                  </p>
+                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                    <li>Designer Studio and listing manager</li>
+                    <li>Wardrobe Marketplace access</li>
+                    <li>Stripe Connect payouts</li>
+                    <li>95% of each lease payment</li>
+                    <li>No access to filmmaking production tools</li>
+                  </ul>
+                  <Button
+                    onClick={() => startCheckout("designer_only")}
+                    disabled={
+                      saveProfile.isPending || subscribeDesigner.isPending
+                    }
+                    className="mt-6 w-full bg-amber-500 font-bold text-black hover:bg-amber-400"
+                  >
+                    {(saveProfile.isPending ||
+                      subscribeDesigner.isPending) && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Continue to secure payment
+                  </Button>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="h-6 w-6 text-violet-400" />
+                    <h3 className="font-bold">Designer + Filmmaker</h3>
+                  </div>
+                  <p className="mt-4 text-3xl font-black">
+                    A$1,431.20
+                    <span className="text-sm font-normal text-muted-foreground">
+                      /year
+                    </span>
+                  </p>
+                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                    <li>Every Designer feature</li>
+                    <li>Virelle Indie filmmaker plan</li>
+                    <li>Film-production workspace and AI tools</li>
+                    <li>20% bundle discount</li>
+                    <li>Hybrid access to both workspaces</li>
+                  </ul>
+                  <Button
+                    variant="outline"
+                    onClick={() => startCheckout("hybrid")}
+                    disabled={saveProfile.isPending || subscribeBundle.isPending}
+                    className="mt-6 w-full"
+                  >
+                    {(saveProfile.isPending || subscribeBundle.isPending) && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Choose bundle
+                  </Button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setStep("profile")}
+                className="mt-5 text-sm text-muted-foreground hover:text-foreground"
+              >
+                ← Edit Designer details
               </button>
             </div>
-          )}
 
-          {/* ── Step 4: Done ── */}
-          {!loading && step === 4 && (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-8 text-center space-y-5 hover:shadow-amber-500/20 transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto">
-                <Sparkles className="h-8 w-8 text-amber-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-black mb-2 gradient-text-gold">You're a Virelle Designer!</h2>
-                <p className="text-white/50 text-sm">
-                  Your designer studio is ready. Start adding items, pricing collections,
-                  and publishing to the marketplace.
-                </p>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button
-                  onClick={() => setLocation("/designer/studio")}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-11"
-                >
-                  Open Designer Studio <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setLocation("/wardrobe-marketplace")}
-                  className="w-full border-amber-500/20 text-white/70 hover:bg-white/5"
-                >
-                  Browse the Marketplace
-                </Button>
-              </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                [ShieldCheck, "Secure checkout", "Stripe-hosted payment"],
+                [Wallet, "Direct payouts", "Connect your bank after payment"],
+                [CheckCircle2, "Connected listings", "Saved into the live marketplace"],
+              ].map(([Icon, title, description]) => {
+                const FeatureIcon = Icon as typeof ShieldCheck;
+                return (
+                  <div
+                    key={String(title)}
+                    className="rounded-xl border border-border bg-card p-4"
+                  >
+                    <FeatureIcon className="h-5 w-5 text-amber-400" />
+                    <p className="mt-2 text-sm font-semibold">{String(title)}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {String(description)}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </div>
-      </main>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
