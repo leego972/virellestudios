@@ -16,7 +16,7 @@ import {
 } from "./_core/trpc";
 import { storagePut } from "./storage";
 
-const intendedUseSchema = z.enum([
+const INTENDED_USE_VALUES = new Set([
   "film",
   "television",
   "live_broadcast",
@@ -29,6 +29,14 @@ const intendedUseSchema = z.enum([
   "corporate",
   "other",
 ]);
+
+const intendedUseSchema: z.ZodType<string> = z
+  .string()
+  .max(64)
+  .refine(
+    value => INTENDED_USE_VALUES.has(value),
+    "Invalid intended use",
+  );
 
 const accessModeSchema = z.enum(["designer_only", "hybrid"]);
 
