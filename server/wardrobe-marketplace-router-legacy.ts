@@ -28,6 +28,7 @@ import { isTopTierUser } from "./_core/subscription";
 import { adminProcedure, publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
+import { toPublicDesignerProfile } from "./designer-public-profile";
 import {
   designerProfiles,
   designerCollections,
@@ -459,7 +460,7 @@ export const wardrobeMarketplaceRouter = router({
           ORDER BY dp.createdAt DESC
           LIMIT ${lim} OFFSET ${off}
         `);
-        return (rows as unknown as any[]);
+        return (rows as unknown as any[]).map(toPublicDesignerProfile);
       }),
     /** Single designer + their published collections */
     getDesigner: publicProcedure
@@ -490,7 +491,7 @@ export const wardrobeMarketplaceRouter = router({
           }
           // Filter: only show collections that actually have leasable items
           const deduped = Array.from(seenNames.values()).filter(c => c.items.length > 0);
-          return { profile, collections: deduped };
+          return { profile: toPublicDesignerProfile(profile), collections: deduped };
       }),
 
     /** Single collection + items available for lease */
@@ -504,7 +505,11 @@ export const wardrobeMarketplaceRouter = router({
         const leasable = items.filter(
           (i) => i.visibility === "public" && i.status === "active" && i.retailPriceAud,
         );
-        return { collection: col, designer, items: leasable };
+        return {
+          collection: col,
+          designer: designer ? toPublicDesignerProfile(designer) : null,
+          items: leasable,
+        };
       }),
 
     /** Search leasable wardrobe items */
