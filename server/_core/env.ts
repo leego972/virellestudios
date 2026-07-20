@@ -169,5 +169,16 @@ export const ENV = {
   titanApiKey: process.env.TITAN_API_KEY ?? "",
   /** Venice AI permanent platform key â used as the default LLM for ALL users (Assistant, script gen, scene breakdowns) when no user-specific LLM key is set. OpenAI-compatible. */
   veniceApiKey: process.env.VENICE_API_KEY ?? "",
+  // ─── Google OAuth (direct — replaces the dead third-party broker) ──────────
+  googleOAuthClientId: process.env.GOOGLE_OAUTH_CLIENT_ID ?? "",
+  googleOAuthClientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET ?? "",
+
+  // ─── GitHub OAuth (direct — replaces the dead third-party broker) ──────────
+  githubOAuthClientId: process.env.GITHUB_OAUTH_CLIENT_ID ?? "",
+  githubOAuthClientSecret: process.env.GITHUB_OAUTH_CLIENT_SECRET ?? "",
+
+  // ─── Public base URL, used to build OAuth callback/redirect URLs ───────────
+  publicAppUrl: process.env.PUBLIC_APP_URL ?? "https://virelle.life",
+
   veniceModel: process.env.VENICE_MODEL ?? "llama-3.3-70b",
 };
