@@ -1,10 +1,10 @@
 /**
  * seed-admin.mjs
  * -----------------------------------------------------------------------------
- * Ensures both platform admins exist with full access.
+ * Ensures the platform owner/admin accounts exist with full access.
  *
- *   Role  : admin
- *   Tier  : industry (highest, all features)
+ *   Role   : admin
+ *   Tier   : industry (highest, all features)
  *   Credits: 999999 (unlimited)
  *   Expires: never
  *
@@ -23,39 +23,42 @@ if (!DATABASE_URL) {
 }
 
 const ADMINS = [
-  { email: 'leego972@gmail.com',       openId: 'email_leego972',      name: 'Lee Gold'    },
-  { email: 'brobroplzcheck@gmail.com', openId: 'email_brobroplzcheck', name: 'Admin 2'     },
+  { email: 'leego972@gmail.com',          openId: 'email_leego972',          name: 'Lee Gold' },
+  { email: 'studiosvirelle@gmail.com',   openId: 'email_studiosvirelle',   name: 'Virelle Studios' },
+  { email: 'brobroplzcheck@gmail.com',   openId: 'email_brobroplzcheck',   name: 'Admin 2' },
 ];
 
-const TIER    = 'industry';
-const ROLE    = 'admin';
+const TIER = 'industry';
+const ROLE = 'admin';
 const CREDITS = 999999;
 
-// If SEED_ADMIN_PASSWORD is set, both admin accounts get that password
-// set/reset on every boot, so email+password login works even on a
-// brand-new database. Without it, accounts are created with no password
-// (Google/GitHub OAuth login only).
+// If SEED_ADMIN_PASSWORD is set, every admin account gets that password
+// set/reset on each boot. OAuth remains available independently.
 const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || null;
 const passwordHash = SEED_ADMIN_PASSWORD
   ? await bcrypt.hash(SEED_ADMIN_PASSWORD, 12)
   : null;
 
 async function main() {
-  const connection = await mysql.createConnection(DATABASE_URL);
+  const connection = await mysql.createConnection({
+    uri: DATABASE_URL,
+    ssl: process.env.DATABASE_CA_CERT
+      ? { ca: process.env.DATABASE_CA_CERT }
+      : { rejectUnauthorized: false },
+  });
 
-  // Ensure accountExpiresAt column exists (safe no-op if already present)
   try {
     await connection.execute(`
       ALTER TABLE users ADD COLUMN accountExpiresAt DATETIME NULL DEFAULT NULL
     `);
-  } catch (err) {
-    if (err.code !== 'ER_DUP_FIELDNAME') throw err;
+  } catch (error) {
+    if (error.code !== 'ER_DUP_FIELDNAME') throw error;
   }
 
   for (const admin of ADMINS) {
     const [rows] = await connection.execute(
-      'SELECT id FROM users WHERE email = ?',
-      [admin.email]
+      'SELECT id FROM users WHERE LOWER(email) = LOWER(?) ORDER BY id ASC',
+      [admin.email],
     );
 
     if (rows.length > 0) {
@@ -71,8 +74,8 @@ async function main() {
                   accountExpiresAt       = NULL,
                   passwordHash           = ?,
                   updatedAt              = NOW()
-            WHERE email = ?`,
-          [ROLE, TIER, CREDITS, CREDITS, passwordHash, admin.email]
+            WHERE LOWER(email) = LOWER(?)`,
+          [ROLE, TIER, CREDITS, CREDITS, passwordHash, admin.email],
         );
       } else {
         await connection.execute(
@@ -85,8 +88,8 @@ async function main() {
                   monthlyGenerationsUsed = 0,
                   accountExpiresAt       = NULL,
                   updatedAt              = NOW()
-            WHERE email = ?`,
-          [ROLE, TIER, CREDITS, CREDITS, admin.email]
+            WHERE LOWER(email) = LOWER(?)`,
+          [ROLE, TIER, CREDITS, CREDITS, admin.email],
         );
       }
       console.log('Updated :', admin.email, '-> admin / industry / unlimited');
@@ -104,7 +107,7 @@ async function main() {
             ?, ?, 0,
             0, 0,
             NULL, NOW(), NOW(), NOW())`,
-        [admin.openId, admin.name, admin.email, ROLE, passwordHash, TIER, CREDITS, CREDITS]
+        [admin.openId, admin.name, admin.email, ROLE, passwordHash, TIER, CREDITS, CREDITS],
       );
       console.log('Created :', admin.email);
     }
@@ -112,17 +115,18 @@ async function main() {
 
   console.log('');
   console.log('-- Admin Accounts ------------------------------------------------');
-  console.log('   leego972@gmail.com       -- admin / industry / unlimited');
-  console.log('   brobroplzcheck@gmail.com -- admin / industry / unlimited');
+  for (const admin of ADMINS) {
+    console.log(`   ${admin.email} -- admin / industry / unlimited`);
+  }
   console.log(passwordHash
     ? '   (Login via email + SEED_ADMIN_PASSWORD, or Google/GitHub OAuth)'
-    : '   (Login via Google OAuth or email if password is set)');
+    : '   (Login via Google/GitHub OAuth, or email where a password already exists)');
   console.log('--------------------------------------------------------------------');
 
   await connection.end();
 }
 
-main().catch((err) => {
-  console.error('Error:', err.message);
+main().catch((error) => {
+  console.error('Error:', error.message);
   process.exit(1);
 });
