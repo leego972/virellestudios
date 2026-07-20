@@ -56,7 +56,14 @@ function firstRow(rows: RowDataPacket[]): AuthUserRow | null {
 export async function findAuthUserByEmail(email: string): Promise<AuthUserRow | null> {
   const pool = getAuthPool();
   const [rows] = await pool.execute<RowDataPacket[]>(
-    "SELECT * FROM `users` WHERE LOWER(`email`) = LOWER(?) LIMIT 1",
+    `SELECT *
+       FROM \`users\`
+      WHERE LOWER(\`email\`) = LOWER(?)
+      ORDER BY
+        (\`role\` = 'admin') DESC,
+        (\`passwordHash\` IS NOT NULL) DESC,
+        \`id\` ASC
+      LIMIT 1`,
     [email.trim()],
   );
   return firstRow(rows);
