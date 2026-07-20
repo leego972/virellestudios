@@ -1,0 +1,78 @@
+name: Apply Designer Logo Dropzones
+
+on:
+  push:
+    branches:
+      - designer/connected-onboarding-listings-2026-07-21
+    paths:
+      - ".github/workflows/apply-designer-logo-dropzones.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: designer/connected-onboarding-listings-2026-07-21
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Add logo dropzones to registration and profile
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          register = Path("client/src/pages/DesignerRegisterPage.tsx")
+          source = register.read_text(encoding="utf-8")
+          replacements = [
+              (
+                  'import { trpc } from "@/lib/trpc";\n',
+                  'import DesignerLogoDropzone from "@/components/DesignerLogoDropzone";\nimport { trpc } from "@/lib/trpc";\n',
+              ),
+              (
+                  '''              <FormField label="Logo URL">\n                <Input\n                  type="url"\n                  value={form.logoUrl}\n                  onChange={event => update("logoUrl", event.target.value)}\n                  placeholder="Optional public logo URL"\n                />\n              </FormField>''',
+                  '''              <div className="sm:col-span-2">\n                <FormField label="Designer logo">\n                  <DesignerLogoDropzone\n                    value={form.logoUrl}\n                    onChange={url => update("logoUrl", url)}\n                    disabled={saveProfile.isPending}\n                  />\n                </FormField>\n              </div>''',
+              ),
+          ]
+          for old, new in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"DesignerRegisterPage replacement count {count}: {old[:80]!r}")
+              source = source.replace(old, new, 1)
+          register.write_text(source, encoding="utf-8")
+
+          studio = Path("client/src/pages/DesignerStudioPage.tsx")
+          source = studio.read_text(encoding="utf-8")
+          replacements = [
+              (
+                  'import { trpc } from "@/lib/trpc";\n',
+                  'import DesignerLogoDropzone from "@/components/DesignerLogoDropzone";\nimport { trpc } from "@/lib/trpc";\n',
+              ),
+              (
+                  '            <Field label="Instagram"><Input value={profileForm.instagram} onChange={event => updateProfile("instagram", event.target.value)} /></Field>\n            <div className="sm:col-span-2"><Field label="Bio">',
+                  '            <Field label="Instagram"><Input value={profileForm.instagram} onChange={event => updateProfile("instagram", event.target.value)} /></Field>\n            <div className="sm:col-span-2"><Field label="Designer logo"><DesignerLogoDropzone value={profileForm.logoUrl} onChange={url => updateProfile("logoUrl", url)} disabled={saveProfile.isPending} /></Field></div>\n            <div className="sm:col-span-2"><Field label="Bio">',
+              ),
+          ]
+          for old, new in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"DesignerStudioPage replacement count {count}: {old[:80]!r}")
+              source = source.replace(old, new, 1)
+          studio.write_text(source, encoding="utf-8")
+          PY
+
+      - name: Remove temporary workflow and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/apply-designer-logo-dropzones.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add connected Designer logo drag-and-drop upload"
+          git push origin HEAD:designer/connected-onboarding-listings-2026-07-21
