@@ -1,3 +1,4 @@
+import AuthReturnGuard from "@/components/AuthReturnGuard";
 import { trpc } from "@/lib/trpc";
 import {
   LogOut,
@@ -90,11 +91,10 @@ function DesignerOnlyNavigation() {
 
         <nav className="space-y-1">
           {navItems.map(item => {
+            const [pathname, query] = item.href.split("?");
             const active =
-              item.href === "/designer/studio"
-                ? current === "/designer/studio" && !search.includes("tab=")
-                : item.href.startsWith(current) &&
-                  (!item.href.includes("?") || search === item.href.split("?")[1]?.replace(/^/, "?"));
+              current === pathname &&
+              (query ? search === `?${query}` : !search.includes("tab="));
             return (
               <a
                 key={item.href}
@@ -164,10 +164,11 @@ export default function DesignerAccountGuard() {
     return () => root.classList.remove("designer-account-only");
   }, [designerOnly]);
 
-  if (!designerOnly) return null;
+  if (!designerOnly) return <AuthReturnGuard />;
 
   return (
     <>
+      <AuthReturnGuard />
       <style>{`
         html.designer-account-only [data-slot="sidebar"] {
           display: none !important;
