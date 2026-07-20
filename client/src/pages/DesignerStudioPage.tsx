@@ -1,646 +1,1087 @@
-/**
- * DesignerStudioPage.tsx — v7.0
- *
- * Designer dashboard: membership status, Stripe Connect payouts,
- * collection management (publish/unpublish, pricing), and earnings overview.
- */
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { useSubscription } from "@/hooks/useSubscription";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  Store,
-  Wallet,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
-  Package,
-  Tag,
-  Eye,
-  EyeOff,
-  Pencil,
-  ArrowRight,
-  TrendingUp,
+  CheckCircle2,
+  DollarSign,
+  Edit3,
+  ExternalLink,
+  ImagePlus,
   Loader2,
-  ChevronLeft,
-  Shirt,
+  Package,
+  Plus,
+  Save,
+  Store,
+  Trash2,
+  UploadCloud,
+  UserRound,
+  Wallet,
 } from "lucide-react";
+import {
+  DragEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 
-const LOGO_URL = "/virelle-logo-square.png";
+const INTENDED_USES = [
+  ["film", "Film production"],
+  ["television", "Television"],
+  ["live_broadcast", "Live broadcast"],
+  ["commercials", "Commercials"],
+  ["advertising", "Advertising"],
+  ["theatre", "Theatre / stage"],
+  ["music_video", "Music videos"],
+  ["editorial", "Editorial / fashion"],
+  ["social_media", "Social media"],
+  ["corporate", "Corporate production"],
+  ["other", "Other"],
+] as const;
 
-function StatusBadge({ status }: { status: string }) {
-  if (status === "active") {
-    return (
-      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-        <CheckCircle2 className="h-3 w-3 mr-1" /> Active
-      </Badge>
-    );
-  }
-  if (status === "pending") {
-    return (
-      <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
-        <AlertCircle className="h-3 w-3 mr-1" /> Pending
-      </Badge>
-    );
-  }
+const CATEGORIES = [
+  "outerwear",
+  "top",
+  "bottom",
+  "dress",
+  "suit",
+  "shoes",
+  "accessory",
+  "jewellery",
+  "bag",
+  "hat",
+  "uniform",
+  "costume",
+  "armour",
+  "robe",
+  "fabric",
+  "set_dressing",
+  "shopfront_display",
+  "other",
+];
+
+const WARDROBE_TYPES = [
+  "fashion",
+  "costume",
+  "period_costume",
+  "uniform",
+  "fantasy_sci_fi",
+  "character_signature",
+  "background_extra",
+  "accessory",
+  "textile",
+  "shopfront_display",
+  "set_dressing",
+  "other",
+];
+
+type Tab = "overview" | "listings" | "profile" | "payouts";
+
+type ProfileForm = {
+  legalName: string;
+  dateOfBirth: string;
+  companyName: string;
+  companyAddress: string;
+  brandName: string;
+  displayName: string;
+  profileType: string;
+  intendedUses: string[];
+  accessMode: "designer_only" | "hybrid";
+  bio: string;
+  website: string;
+  instagram: string;
+  contactEmail: string;
+  logoUrl: string;
+};
+
+type ListingForm = {
+  id?: number;
+  name: string;
+  description: string;
+  category: string;
+  subcategory: string;
+  wardrobeType: string;
+  genderFit: string;
+  sizeRange: string;
+  era: string;
+  colors: string;
+  materials: string;
+  styleTags: string;
+  imageUrls: string[];
+  retailPrice: string;
+  leasePrice: string;
+  collectionId: string;
+  publish: boolean;
+  commercialUseAllowed: boolean;
+  brandPlacementAllowed: boolean;
+  shopfrontPlacementAllowed: boolean;
+  characterWardrobeAllowed: boolean;
+  costumeUseAllowed: boolean;
+  licenseType: string;
+  licenseNotes: string;
+};
+
+const emptyProfile: ProfileForm = {
+  legalName: "",
+  dateOfBirth: "",
+  companyName: "",
+  companyAddress: "",
+  brandName: "",
+  displayName: "",
+  profileType: "designer",
+  intendedUses: [],
+  accessMode: "designer_only",
+  bio: "",
+  website: "",
+  instagram: "",
+  contactEmail: "",
+  logoUrl: "",
+};
+
+const emptyListing: ListingForm = {
+  name: "",
+  description: "",
+  category: "costume",
+  subcategory: "",
+  wardrobeType: "costume",
+  genderFit: "",
+  sizeRange: "",
+  era: "",
+  colors: "",
+  materials: "",
+  styleTags: "",
+  imageUrls: [],
+  retailPrice: "",
+  leasePrice: "",
+  collectionId: "",
+  publish: true,
+  commercialUseAllowed: true,
+  brandPlacementAllowed: true,
+  shopfrontPlacementAllowed: true,
+  characterWardrobeAllowed: true,
+  costumeUseAllowed: true,
+  licenseType: "full_license",
+  licenseNotes: "",
+};
+
+function money(cents: number | null | undefined) {
+  return `A$${((cents ?? 0) / 100).toFixed(2)}`;
+}
+
+function splitValues(value: string) {
+  return value
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function jsonStrings(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter(item => typeof item === "string")
+    : [];
+}
+
+function SectionTitle({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
   return (
-    <Badge className="bg-white/5 text-white/40 border-amber-500/20">
-      <XCircle className="h-3 w-3 mr-1" /> Inactive
-    </Badge>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        {description && (
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        )}
+      </div>
+      {action}
+    </div>
   );
 }
-const ITEM_TIERS = [
-    { label: "Accessories", min: 8, max: 20 },
-    { label: "Garments", min: 15, max: 40 },
-    { label: "Hero / Costume", min: 35, max: 80 },
-  ];
-  const COLLECTION_PRESETS = [
-    { label: "Starter", desc: "5–10 items", price: 60 },
-    { label: "Standard", desc: "10–20 items", price: 100 },
-    { label: "Signature", desc: "20+ items", price: 180 },
-    { label: "Luxury", desc: "20+ premium", price: 300 },
-  ];
-  const MEMBERSHIP_FEE_AUD = 299;
 
-  function PriceDialog({
-    open,
-    onClose,
-    title,
-    retailPrice,
-    leasePrice,
-    onSave,
-    isCollection,
-  }: {
-    open: boolean;
-    onClose: () => void;
-    title: string;
-    retailPrice?: number;
-    leasePrice?: number;
-    onSave: (retail: number, lease: number) => void;
-    isCollection?: boolean;
-  }) {
-    const [retail, setRetail] = useState(String((retailPrice ?? 0) / 100));
-    const [lease, setLease] = useState(String((leasePrice ?? 0) / 100));
-    const leaseNum = parseFloat(lease || "0");
-    const youEarn = leaseNum * 0.95;
-    const suggestedLease = parseFloat(retail) * 0.02;
-    const leasesNeeded = youEarn > 0 ? Math.ceil(MEMBERSHIP_FEE_AUD / youEarn) : null;
-
-    return (
-      <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-white max-w-md glass-dark">
-          <DialogHeader>
-            <DialogTitle className="text-base font-bold gradient-text-gold">Set Pricing</DialogTitle>
-            <p className="text-xs text-white/50 mt-0.5 truncate">{title}</p>
-          </DialogHeader>
-
-          <div className="space-y-4 py-2">
-            {/* Pricing guidance panel */}
-            <div className="rounded-xl bg-amber-500/8 border border-amber-500/20 p-3 space-y-2">
-              <p className="text-[11px] font-bold text-amber-400/80 uppercase tracking-wider">
-                {isCollection ? "Recommended collection prices — tap to apply" : "Recommended item prices — tap to apply"}
-              </p>
-              {isCollection ? (
-                <div className="grid grid-cols-2 gap-1.5">
-                  {COLLECTION_PRESETS.map((p) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      onClick={() => setLease(String(p.price))}
-                      className={`text-left rounded-lg px-2.5 py-1.5 border transition-all ${
-                        leaseNum === p.price
-                          ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
-                          : "bg-white/3 border-amber-500/20 text-white/70 hover:border-amber-500/30 hover:text-white"
-                      }`}
-                    >
-                      <span className="text-xs font-bold block">A${p.price} · {p.label}</span>
-                      <span className="text-[10px] text-white/40">{p.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-1.5">
-                  {ITEM_TIERS.map((t) => (
-                    <div key={t.label} className="flex items-center justify-between">
-                      <span className="text-[11px] text-white/60 w-28">{t.label}</span>
-                      <div className="flex gap-1">
-                        {[t.min, Math.round((t.min + t.max) / 2), t.max].map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            onClick={() => setLease(String(v))}
-                            className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
-                              leaseNum === v
-                                ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
-                                : "bg-white/5 border-amber-500/20 hover:border-amber-500/30 hover:text-amber-400"
-                            }`}
-                          >
-                            A${v}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {!isCollection && (
-              <div>
-                <Label className="text-xs text-white/70 mb-1 block">Real-world Retail Value (A$) — optional</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">$</span>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={retail}
-                    onChange={(e) => setRetail(e.target.value)}
-                    className="pl-7 bg-white/5 border-amber-500/20 text-white"
-                    placeholder="e.g. 800"
-                  />
-                </div>
-                {suggestedLease > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setLease(suggestedLease.toFixed(2))}
-                    className="text-xs text-amber-400/70 hover:text-amber-400 mt-1 transition-colors"
-                  >
-                    Use 2% of retail → A${suggestedLease.toFixed(2)}
-                  </button>
-                )}
-              </div>
-            )}
-
-            <div>
-              <Label className="text-xs text-white/70 mb-1 block">
-                {isCollection ? "Your asking price (A$)" : "Lease price per item (A$)"}
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">$</span>
-                <Input
-                  type="number"
-                  min="0.50"
-                  step="0.50"
-                  value={lease}
-                  onChange={(e) => setLease(e.target.value)}
-                  className="pl-7 bg-white/5 border-amber-500/20 text-white text-base font-bold"
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-
-            {/* Live earnings + breakeven */}
-            {leaseNum > 0 && (
-              <div className="rounded-xl glass-card/3 border border-amber-500/20 p-3 space-y-1.5 hover:shadow-amber-500/20 transition-shadow">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">You earn per lease</span>
-                  <span className="text-sm font-bold text-green-400">A${youEarn.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/40">Platform fee (5%)</span>
-                  <span className="text-xs text-white/30">−A${(leaseNum * 0.05).toFixed(2)}</span>
-                </div>
-                {leasesNeeded !== null && (
-                  <div className="pt-1.5 border-t border-amber-500/20 flex items-center justify-between">
-                    <span className="text-xs text-white/50">Leases to cover A$299 membership</span>
-                    <span className={`text-sm font-black ${leasesNeeded <= 6 ? "text-amber-400" : leasesNeeded <= 12 ? "text-amber-300/60" : "text-white/40"}`}>
-                      {leasesNeeded}×
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={onClose} className="border-amber-500/20 text-white/70 hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400">
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                const r = Math.round(parseFloat(retail || "0") * 100);
-                const l = Math.round(parseFloat(lease || "0") * 100);
-                if (l < 50) {
-                  toast.error("Lease price must be at least A$0.50");
-                  return;
-                }
-                onSave(r, l);
-              }}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
-            >
-              Save Pricing
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>
+        {label}
+        {required && <span className="ml-1 text-amber-400">*</span>}
+      </Label>
+      {children}
+    </div>
+  );
+}
 
 export default function DesignerStudioPage() {
-  const [, setLocation] = useLocation();
-  const [pricingDialog, setPricingDialog] = useState<{
-    open: boolean;
-    type: "item" | "collection";
-    id: number;
-    title: string;
-    retail?: number;
-    lease?: number;
-  } | null>(null);
-
+  const initialTab = (() => {
+    const value = new URLSearchParams(window.location.search).get("tab");
+    return ["overview", "listings", "profile", "payouts"].includes(
+      value || "",
+    )
+      ? (value as Tab)
+      : "overview";
+  })();
+  const [tab, setTab] = useState<Tab>(initialTab);
+  const [profileForm, setProfileForm] = useState<ProfileForm>(emptyProfile);
+  const [listingForm, setListingForm] = useState<ListingForm>(emptyListing);
+  const [showListingEditor, setShowListingEditor] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const utils = trpc.useUtils();
 
-  const { data: membership, isLoading: memberLoading } = trpc.wardrobeMarket.designer.getMembershipStatus.useQuery();
-  const { data: connectStatus, isLoading: connectLoading } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();
-  const { data: earnings } = trpc.wardrobeMarket.designer.getEarnings.useQuery();
+  const {
+    data: access,
+    isLoading: accessLoading,
+    refetch: refetchAccess,
+  } = trpc.wardrobeMarket.portal.getAccessStatus.useQuery();
+  const { data: listings = [], isLoading: listingsLoading } =
+    trpc.wardrobeMarket.portal.listMyListings.useQuery(undefined, {
+      enabled: Boolean(access?.active),
+    });
+  const { data: collections = [] } =
+    trpc.wardrobeMarket.portal.listMyCollections.useQuery(undefined, {
+      enabled: Boolean(access?.active),
+    });
+  const { data: connectStatus, refetch: refetchConnect } =
+    trpc.wardrobeMarket.designer.getConnectStatus.useQuery(undefined, {
+      enabled: Boolean(access?.active),
+    });
+  const { data: earnings } =
+    trpc.wardrobeMarket.designer.getEarnings.useQuery(undefined, {
+      enabled: Boolean(access?.active),
+    });
 
-  const setItemPricingMut = trpc.wardrobeMarket.designer.setItemPricing.useMutation({
-    onSuccess: () => {
-      toast.success("Pricing updated");
-      setPricingDialog(null);
+  const saveProfile = trpc.wardrobeMarket.portal.saveProfile.useMutation({
+    onSuccess: async () => {
+      toast.success("Designer profile saved");
+      await refetchAccess();
     },
-    onError: (e) => toast.error(e.message),
+    onError: error => toast.error(error.message),
   });
+  const uploadImage =
+    trpc.wardrobeMarket.portal.uploadListingImage.useMutation();
+  const createListing =
+    trpc.wardrobeMarket.portal.createListing.useMutation({
+      onSuccess: async () => {
+        toast.success("Designer listing saved");
+        setListingForm(emptyListing);
+        setShowListingEditor(false);
+        await utils.wardrobeMarket.portal.listMyListings.invalidate();
+        await utils.wardrobeMarket.marketplace.searchItems.invalidate();
+      },
+      onError: error => toast.error(error.message),
+    });
+  const updateListing =
+    trpc.wardrobeMarket.portal.updateListing.useMutation({
+      onSuccess: async () => {
+        toast.success("Designer listing updated");
+        setListingForm(emptyListing);
+        setShowListingEditor(false);
+        await utils.wardrobeMarket.portal.listMyListings.invalidate();
+        await utils.wardrobeMarket.marketplace.searchItems.invalidate();
+      },
+      onError: error => toast.error(error.message),
+    });
+  const retireListing =
+    trpc.wardrobeMarket.portal.retireListing.useMutation({
+      onSuccess: async () => {
+        toast.success("Listing retired");
+        await utils.wardrobeMarket.portal.listMyListings.invalidate();
+        await utils.wardrobeMarket.marketplace.searchItems.invalidate();
+      },
+      onError: error => toast.error(error.message),
+    });
+  const onboardConnect =
+    trpc.wardrobeMarket.designer.onboardConnect.useMutation({
+      onSuccess: result => {
+        if (result.onboardingUrl) window.location.href = result.onboardingUrl;
+      },
+      onError: error => toast.error(error.message),
+    });
 
-  const setColPricingMut = trpc.wardrobeMarket.designer.setCollectionPricing.useMutation({
-    onSuccess: () => {
-      toast.success("Collection pricing updated");
-      setPricingDialog(null);
-    },
-    onError: (e) => toast.error(e.message),
-  });
+  useEffect(() => {
+    if (!access) return;
+    const details = access.details || {};
+    const profile = access.profile as any;
+    setProfileForm({
+      legalName: String(details.legalName || ""),
+      dateOfBirth: String(details.dateOfBirth || ""),
+      companyName: String(details.companyName || ""),
+      companyAddress: String(details.companyAddress || ""),
+      brandName: String(profile?.brandName || ""),
+      displayName: String(profile?.displayName || ""),
+      profileType: String(profile?.profileType || "designer"),
+      intendedUses: Array.isArray(details.intendedUses)
+        ? details.intendedUses.map(String)
+        : [],
+      accessMode:
+        details.accessMode === "hybrid" ? "hybrid" : "designer_only",
+      bio: String(profile?.bio || ""),
+      website: String(profile?.website || ""),
+      instagram: String(profile?.instagram || ""),
+      contactEmail: String(profile?.contactEmail || ""),
+      logoUrl: String(profile?.logoUrl || ""),
+    });
+  }, [access]);
 
-  const publishMut = trpc.wardrobeMarket.designer.publishCollection.useMutation({
-    onSuccess: () => {
-      toast.success("Collection updated");
-      utils.designerWardrobe.listCollections.invalidate();
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const onboardMut = trpc.wardrobeMarket.designer.onboardConnect.useMutation({
-    onSuccess: (data) => {
-      if (data.onboardingUrl) window.location.href = data.onboardingUrl;
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const { isAdmin } = useSubscription();
-  const isMember = membership?.status === "active" || isAdmin;
-  const isConnected = connectStatus?.chargesEnabled && connectStatus?.payoutsEnabled;
-
-  const profile = membership?.profile as any;
-
-  const { data: collectionsRaw } = trpc.designerWardrobe.listCollections.useQuery(
-    { scope: "mine" },
-    { enabled: isMember },
-  );
-
-  const collections: any[] = collectionsRaw ?? [];
-
-  // Handle return from Stripe Connect onboarding
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const connectParam = params.get("connect");
-    if (connectParam === "done") {
-      toast.success("Payout setup complete! You're ready to receive lease payments.");
-      window.history.replaceState({}, "", "/designer/studio");
+    if (params.get("connect") === "done") {
+      toast.success("Stripe payout onboarding returned successfully");
+      void refetchConnect();
+      window.history.replaceState({}, "", "/designer/studio?tab=payouts");
+      setTab("payouts");
     }
   }, []);
 
-  if (memberLoading) {
+  const setActiveTab = (next: Tab) => {
+    setTab(next);
+    const url =
+      next === "overview"
+        ? "/designer/studio"
+        : `/designer/studio?tab=${next}`;
+    window.history.replaceState({}, "", url);
+  };
+
+  const updateProfile = <K extends keyof ProfileForm>(
+    key: K,
+    value: ProfileForm[K],
+  ) => setProfileForm(current => ({ ...current, [key]: value }));
+
+  const updateListingField = <K extends keyof ListingForm>(
+    key: K,
+    value: ListingForm[K],
+  ) => setListingForm(current => ({ ...current, [key]: value }));
+
+  const profileValid = useMemo(
+    () =>
+      profileForm.legalName.trim().length >= 2 &&
+      Boolean(profileForm.dateOfBirth) &&
+      profileForm.companyName.trim().length > 0 &&
+      profileForm.companyAddress.trim().length >= 5 &&
+      profileForm.brandName.trim().length > 0 &&
+      profileForm.intendedUses.length > 0,
+    [profileForm],
+  );
+
+  const saveProfileForm = () => {
+    if (!profileValid) {
+      toast.error("Complete every required profile field.");
+      return;
+    }
+    saveProfile.mutate(profileForm);
+  };
+
+  const uploadFiles = async (files: File[]) => {
+    const images = files.filter(file => file.type.startsWith("image/")).slice(0, 12);
+    if (images.length === 0) {
+      toast.error("Drop JPG, PNG or WebP image files.");
+      return;
+    }
+    const remaining = Math.max(0, 12 - listingForm.imageUrls.length);
+    for (const file of images.slice(0, remaining)) {
+      if (file.size > 8 * 1024 * 1024) {
+        toast.error(`${file.name} is larger than 8 MB.`);
+        continue;
+      }
+      try {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+        const result = await uploadImage.mutateAsync({
+          dataUrl,
+          fileName: file.name,
+        });
+        setListingForm(current => ({
+          ...current,
+          imageUrls: [...current.imageUrls, result.url].slice(0, 12),
+        }));
+      } catch (error: any) {
+        toast.error(error?.message || `Could not upload ${file.name}`);
+      }
+    }
+  };
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragging(false);
+    void uploadFiles(Array.from(event.dataTransfer.files));
+  };
+
+  const saveListing = () => {
+    const retail = Number.parseFloat(listingForm.retailPrice);
+    const lease = Number.parseFloat(listingForm.leasePrice);
+    if (
+      !listingForm.name.trim() ||
+      listingForm.description.trim().length < 5 ||
+      listingForm.imageUrls.length === 0 ||
+      !Number.isFinite(retail) ||
+      retail < 1 ||
+      !Number.isFinite(lease) ||
+      lease < 0.5
+    ) {
+      toast.error(
+        "Add a name, description, image, retail price and lease price.",
+      );
+      return;
+    }
+    const payload = {
+      name: listingForm.name.trim(),
+      description: listingForm.description.trim(),
+      category: listingForm.category,
+      subcategory: listingForm.subcategory.trim() || null,
+      wardrobeType: listingForm.wardrobeType,
+      genderFit: listingForm.genderFit.trim() || null,
+      sizeRange: listingForm.sizeRange.trim() || null,
+      era: listingForm.era.trim() || null,
+      colors: splitValues(listingForm.colors),
+      materials: splitValues(listingForm.materials),
+      styleTags: splitValues(listingForm.styleTags),
+      primaryImageUrl: listingForm.imageUrls[0],
+      imageUrls: listingForm.imageUrls,
+      retailPriceCents: Math.round(retail * 100),
+      leasePriceCents: Math.round(lease * 100),
+      collectionId: listingForm.collectionId
+        ? Number(listingForm.collectionId)
+        : null,
+      publish: listingForm.publish,
+      commercialUseAllowed: listingForm.commercialUseAllowed,
+      brandPlacementAllowed: listingForm.brandPlacementAllowed,
+      shopfrontPlacementAllowed: listingForm.shopfrontPlacementAllowed,
+      characterWardrobeAllowed: listingForm.characterWardrobeAllowed,
+      costumeUseAllowed: listingForm.costumeUseAllowed,
+      licenseType: listingForm.licenseType,
+      licenseNotes: listingForm.licenseNotes.trim() || null,
+    };
+    if (listingForm.id) {
+      updateListing.mutate({ id: listingForm.id, ...payload });
+    } else {
+      createListing.mutate(payload);
+    }
+  };
+
+  const editListing = (listing: any) => {
+    setListingForm({
+      id: listing.id,
+      name: String(listing.name || ""),
+      description: String(listing.description || ""),
+      category: String(listing.category || "other"),
+      subcategory: String(listing.subcategory || ""),
+      wardrobeType: String(listing.wardrobeType || "fashion"),
+      genderFit: String(listing.genderFit || ""),
+      sizeRange: String(listing.sizeRange || ""),
+      era: String(listing.era || ""),
+      colors: jsonStrings(listing.colors).join(", "),
+      materials: jsonStrings(listing.materials).join(", "),
+      styleTags: jsonStrings(listing.styleTags).join(", "),
+      imageUrls:
+        jsonStrings(listing.imageUrls).length > 0
+          ? jsonStrings(listing.imageUrls)
+          : listing.primaryImageUrl
+            ? [String(listing.primaryImageUrl)]
+            : [],
+      retailPrice: ((Number(listing.retailPriceAud) || 0) / 100).toFixed(2),
+      leasePrice: ((Number(listing.leasePriceAud) || 0) / 100).toFixed(2),
+      collectionId: listing.collectionId ? String(listing.collectionId) : "",
+      publish:
+        listing.visibility === "public" && listing.status === "active",
+      commercialUseAllowed: Boolean(listing.commercialUseAllowed),
+      brandPlacementAllowed: Boolean(listing.brandPlacementAllowed),
+      shopfrontPlacementAllowed: Boolean(listing.shopfrontPlacementAllowed),
+      characterWardrobeAllowed: Boolean(listing.characterWardrobeAllowed),
+      costumeUseAllowed: Boolean(listing.costumeUseAllowed),
+      licenseType: String(listing.licenseType || "full_license"),
+      licenseNotes: String(listing.licenseNotes || ""),
+    });
+    setShowListingEditor(true);
+    setActiveTab("listings");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const startNewListing = () => {
+    setListingForm(emptyListing);
+    setShowListingEditor(true);
+    setActiveTab("listings");
+  };
+
+  const startPayoutOnboarding = () => {
+    onboardConnect.mutate({
+      returnUrl: `${window.location.origin}/designer/studio?connect=done`,
+      refreshUrl: `${window.location.origin}/designer/studio?tab=payouts`,
+    });
+  };
+
+  if (accessLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     );
   }
 
-  // Public items browse — non-members see Lamalo items directly
-    const { data: publicItems } = trpc.wardrobeMarket.marketplace.searchItems.useQuery({ limit: 60, offset: 0 });
+  if (!access?.active) {
+    return (
+      <div className="mx-auto max-w-xl py-16 text-center">
+        <Store className="mx-auto h-12 w-12 text-amber-400" />
+        <h1 className="mt-5 text-2xl font-bold">Designer membership required</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Complete Designer registration before opening the Designer Studio,
+          publishing listings or connecting payouts.
+        </p>
+        <Button
+          className="mt-6 bg-amber-500 font-bold text-black hover:bg-amber-400"
+          onClick={() => (window.location.href = "/designer-register")}
+        >
+          Continue Designer registration
+        </Button>
+      </div>
+    );
+  }
 
-    if (!isMember) {
-      return (
-        <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-          <header className="border-b border-amber-500/20 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-              <span className="text-sm font-black tracking-tighter uppercase italic">
-                Virelle <span className="text-amber-400">Studios</span>
-              </span>
-            </div>
-            <Button onClick={() => setLocation("/designer-register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs">
-              <Store className="h-3.5 w-3.5 mr-1.5" />
-              Join as Designer — A$299/yr
-            </Button>
-          </header>
-          <div className="max-w-6xl mx-auto px-6 py-8">
-            <div className="flex items-end justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <img
-                  src="/lamalo/lamalo-logo.png"
-                  alt="Lamalo Fashions"
-                  className="h-14 w-14 rounded-xl object-cover border border-amber-500/20 shrink-0"
-                />
-                <div>
-                  <h1 className="text-3xl font-black mb-1 text-gold-shimmer">Lamalo Fashion</h1>
-                  <p className="text-white/40 text-sm">Browse the full wardrobe catalogue and lease items for your production.</p>
-                </div>
-              </div>
-              <span className="text-white/30 text-xs">{publicItems?.length ?? 0} items</span>
-            </div>
-            {(!publicItems || publicItems.length === 0) ? (
-              <div className="flex flex-col items-center justify-center py-24 text-white/30">
-                <Shirt className="h-10 w-10 mb-3" />
-                <p className="text-sm mb-1">No items yet.</p>
-                <p className="text-xs">Go to <strong className="text-amber-400">/admin</strong> → Seed Marketplace to load the catalogue.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {(publicItems as any[]).map((item) => (
-                  <div key={item.id} className="rounded-xl border border-amber-500/20 glass-card/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer hover:shadow-amber-500/20 transition-shadow">
-                    <div className="aspect-square bg-white/5 overflow-hidden">
-                      {item.primaryImageUrl ? (
-                        <img src={item.primaryImageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center"><Shirt className="h-8 w-8 text-white/20" /></div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-xs font-semibold line-clamp-2 leading-snug mb-1">{item.name}</p>
-                      <p className="text-[10px] text-white/40 capitalize mb-2">{item.subcategory || item.category}</p>
-                      {item.retailPriceAud && (
-                        <p className="text-amber-400 text-xs font-bold">A${(item.retailPriceAud / 100).toFixed(2)}<span className="text-white/30 font-normal ml-1">/ day</span></p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
+  const activeListings = listings.filter(
+    (listing: any) =>
+      listing.status === "active" && listing.visibility === "public",
+  ).length;
+  const connected = Boolean(
+    connectStatus?.chargesEnabled && connectStatus?.payoutsEnabled,
+  );
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-amber-500/20 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setLocation("/designer-wardrobe")}
-            className="text-white/40 hover:text-white transition-colors"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="flex items-center gap-2.5">
-            <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-            <span className="text-sm font-black tracking-tighter uppercase italic">
-              Virelle <span className="text-amber-400">Studios</span>
-            </span>
-          </div>
-          <span className="text-white/30 text-sm hidden sm:block">/ Designer Studio</span>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setLocation("/wardrobe-marketplace")}
-          className="border-amber-500/20 text-white/70 hover:bg-white/5"
-        >
-          <Store className="h-3.5 w-3.5 mr-1.5" />
-          Marketplace
-        </Button>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        {/* Brand Header */}
-        <div className="gold-glow glass-card/3 border border-amber-500/20 rounded-2xl p-6 flex items-center gap-4 hover:shadow-amber-500/20 transition-shadow">
-          {profile?.logoUrl ? (
-            <img src={profile.logoUrl} alt={profile.brandName} className="w-14 h-14 rounded-full object-cover border border-amber-500/20" />
-          ) : (
-            <div className="w-14 h-14 rounded-full glass-card/10 flex items-center justify-center border border-amber-500/20 hover:shadow-amber-500/20 transition-shadow">
-              <Shirt className="h-7 w-7 text-white/30" />
+    <div className="mx-auto w-full max-w-7xl space-y-6">
+      <header className="rounded-2xl border border-amber-500/20 bg-card p-5 sm:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10">
+              <Store className="h-6 w-6 text-amber-400" />
             </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-black tracking-tight truncate text-gold-shimmer">{profile?.brandName ?? "My Brand"}</h1>
-            {profile?.displayName && <p className="text-sm text-white/50">{profile.displayName}</p>}
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold">
+                  {(access.profile as any)?.brandName || "Designer Studio"}
+                </h1>
+                <Badge className="border-green-500/30 bg-green-500/10 text-green-400">
+                  Active Designer
+                </Badge>
+                {access.accessMode === "designer_only" && (
+                  <Badge variant="outline">Designer-only account</Badge>
+                )}
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Manage your profile, uploaded items, marketplace pricing and
+                payouts.
+              </p>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocation("/designer-wardrobe")}
-            className="border-amber-500/20 text-white/70 hover:glass-card/5 hidden sm:flex hover:shadow-amber-500/20 transition-shadow"
-          >
-            <Pencil className="h-3.5 w-3.5 mr-1.5" />
-            Edit Profile
+          <Button variant="outline" asChild>
+            <a href="/wardrobe-marketplace">
+              View marketplace
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
           </Button>
         </div>
+      </header>
 
-        {/* Status Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Membership */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
-            <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Membership</p>
-            <StatusBadge status={membership?.status ?? "none"} />
-            {membership?.expiresAt && (
-              <p className="text-xs text-white/30">
-                Renews {new Date(membership.expiresAt).toLocaleDateString("en-AU", { month: "short", day: "numeric", year: "numeric" })}
-              </p>
-            )}
-          </div>
-
-          {/* Payouts */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
-            <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Payouts</p>
-            {connectLoading ? (
-              <Skeleton className="h-5 w-24 bg-white/5" />
-            ) : isConnected ? (
-              <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                <CheckCircle2 className="h-3 w-3 mr-1" /> Connected
-              </Badge>
-            ) : (
-              <div className="space-y-2">
-                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
-                  <AlertCircle className="h-3 w-3 mr-1" /> Not set up
-                </Badge>
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    onboardMut.mutate({
-                      returnUrl: `${window.location.origin}/designer/studio?connect=done`,
-                      refreshUrl: `${window.location.origin}/designer/studio?connect=refresh`,
-                    })
-                  }
-                  disabled={onboardMut.isPending}
-                  className="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 text-xs h-7"
-                >
-                  {onboardMut.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <><Wallet className="h-3 w-3 mr-1" />Set up</>}
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* Earnings */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
-            <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Your Earnings</p>
-            <p className="text-2xl font-black text-amber-400">
-              A${earnings?.totalEarnedDisplay ?? "0.00"}
+      {!access.profileCompleted && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+          <div className="flex-1">
+            <p className="font-semibold">Complete your Designer profile</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Listings cannot be published until the required identity, company,
+              address and intended-use fields are saved.
             </p>
-            <p className="text-xs text-white/30">{earnings?.leaseCount ?? 0} active leases</p>
+          </div>
+          <Button size="sm" onClick={() => setActiveTab("profile")}>
+            Complete profile
+          </Button>
+        </div>
+      )}
+
+      <div className="flex gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1">
+        {[
+          ["overview", "Overview"],
+          ["listings", "Listings"],
+          ["profile", "Profile"],
+          ["payouts", "Payouts"],
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            onClick={() => setActiveTab(value as Tab)}
+            className={`min-w-fit rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === value
+                ? "bg-amber-500 text-black"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <div className="space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              [Package, "Total listings", listings.length],
+              [CheckCircle2, "Published", activeListings],
+              [DollarSign, "Lease earnings", money(earnings?.totalEarned)],
+              [Wallet, "Payouts", connected ? "Connected" : "Action needed"],
+            ].map(([Icon, label, value]) => {
+              const CardIcon = Icon as typeof Package;
+              return (
+                <div key={String(label)} className="rounded-xl border border-border bg-card p-5">
+                  <CardIcon className="h-5 w-5 text-amber-400" />
+                  <p className="mt-4 text-2xl font-bold">{String(value)}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{String(label)}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div className="rounded-xl border border-border bg-card p-5">
+              <SectionTitle
+                title="Recent listings"
+                description="Items saved into your connected wardrobe catalogue."
+                action={
+                  <Button size="sm" onClick={startNewListing}>
+                    <Plus className="mr-2 h-4 w-4" /> New listing
+                  </Button>
+                }
+              />
+              <div className="mt-5 space-y-3">
+                {listings.slice(0, 4).map((listing: any) => (
+                  <button
+                    key={listing.id}
+                    onClick={() => editListing(listing)}
+                    className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50"
+                  >
+                    <img
+                      src={listing.primaryImageUrl || "/virelle-logo-square.png"}
+                      alt=""
+                      className="h-12 w-12 rounded-lg object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{listing.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {money(listing.leasePriceAud)} lease · {money(listing.retailPriceAud)} retail
+                      </p>
+                    </div>
+                    <Badge variant="outline">
+                      {listing.visibility === "public" && listing.status === "active"
+                        ? "Published"
+                        : "Draft"}
+                    </Badge>
+                  </button>
+                ))}
+                {listings.length === 0 && (
+                  <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                    No listings yet. Upload your first item.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5">
+              <SectionTitle
+                title="Account readiness"
+                description="Everything required for live marketplace trading."
+              />
+              <div className="mt-5 space-y-3">
+                {[
+                  [access.profileCompleted, "Designer profile completed", "profile"],
+                  [listings.length > 0, "At least one item uploaded", "listings"],
+                  [connected, "Stripe payouts connected", "payouts"],
+                ].map(([ready, label, target]) => (
+                  <button
+                    key={String(label)}
+                    onClick={() => setActiveTab(target as Tab)}
+                    className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left"
+                  >
+                    {ready ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-400" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-amber-400" />
+                    )}
+                    <span className="text-sm font-medium">{String(label)}</span>
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      {ready ? "Complete" : "Open"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Collections */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-black tracking-tight flex items-center gap-2 gradient-text-gold">
-              <Package className="h-5 w-5 text-amber-400" />
-              Your Collections
-            </h2>
-            <Button
-              size="sm"
-              onClick={() => setLocation("/designer-wardrobe")}
-              variant="outline"
-              className="border-amber-500/20 text-white/70 hover:bg-white/5"
-            >
-              Manage in Wardrobe
-            </Button>
-          </div>
-
-          {collections.length === 0 ? (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-10 text-center hover:shadow-amber-500/20 transition-shadow">
-              <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
-              <p className="text-white/40 text-sm mb-3">No collections yet.</p>
-              <Button
-                size="sm"
-                onClick={() => setLocation("/designer-wardrobe")}
-                className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
-              >
-                Create a Collection
+      {tab === "listings" && (
+        <section className="space-y-5">
+          <SectionTitle
+            title="Designer listings"
+            description="Uploaded items feed the Wardrobe Marketplace and Virelle wardrobe-reference systems."
+            action={
+              <Button onClick={startNewListing}>
+                <Plus className="mr-2 h-4 w-4" /> Add item
               </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {collections.map((col: any) => (
-                <div
-                  key={col.id}
-                  className="glass-card/3 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3 hover:shadow-amber-500/20 transition-shadow"
-                >
-                  {col.coverImageUrl ? (
-                    <img src={col.coverImageUrl} alt={col.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-amber-500/20" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-lg glass-card/5 flex items-center justify-center shrink-0">
-                      <Package className="h-5 w-5 text-white/20" />
+            }
+          />
+
+          {showListingEditor && (
+            <div className="rounded-2xl border border-amber-500/25 bg-card p-5 sm:p-7">
+              <SectionTitle
+                title={listingForm.id ? "Edit listing" : "New designer listing"}
+                description="Upload item images, set pricing and save directly to your marketplace catalogue."
+                action={
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setShowListingEditor(false);
+                      setListingForm(emptyListing);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                }
+              />
+
+              <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+                <div className="space-y-4">
+                  <div
+                    onDragOver={event => {
+                      event.preventDefault();
+                      setDragging(true);
+                    }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-5 text-center transition-colors ${
+                      dragging
+                        ? "border-amber-400 bg-amber-500/10"
+                        : "border-border hover:border-amber-500/50 hover:bg-accent/30"
+                    }`}
+                  >
+                    {uploadImage.isPending ? (
+                      <Loader2 className="h-9 w-9 animate-spin text-amber-400" />
+                    ) : (
+                      <UploadCloud className="h-9 w-9 text-amber-400" />
+                    )}
+                    <p className="mt-3 font-semibold">Drag and drop item images</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      JPG, PNG or WebP · 8 MB maximum each · up to 12 images
+                    </p>
+                    <Button type="button" variant="outline" size="sm" className="mt-4">
+                      <ImagePlus className="mr-2 h-4 w-4" /> Select images
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      className="hidden"
+                      onChange={event => {
+                        void uploadFiles(Array.from(event.target.files || []));
+                        event.target.value = "";
+                      }}
+                    />
+                  </div>
+
+                  {listingForm.imageUrls.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {listingForm.imageUrls.map((url, index) => (
+                        <div key={url} className="group relative aspect-square overflow-hidden rounded-lg border border-border">
+                          <img src={url} alt="" className="h-full w-full object-cover" />
+                          {index === 0 && (
+                            <span className="absolute left-1 top-1 rounded bg-black/70 px-1.5 py-0.5 text-[9px] text-white">
+                              Cover
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={event => {
+                              event.stopPropagation();
+                              updateListingField(
+                                "imageUrls",
+                                listingForm.imageUrls.filter(item => item !== url),
+                              );
+                            }}
+                            className="absolute right-1 top-1 rounded bg-black/70 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
+                </div>
 
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate">{col.name}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      {col.published ? (
-                        <Badge className="bg-green-500/15 text-green-400 border-green-500/25 text-[10px] py-0 px-1.5">
-                          <Eye className="h-2.5 w-2.5 mr-1" /> Live
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-white/5 text-white/40 border-amber-500/20 text-[10px] py-0 px-1.5">
-                          <EyeOff className="h-2.5 w-2.5 mr-1" /> Draft
-                        </Badge>
-                      )}
-                      {col.collectionPriceAud ? (
-                        <span className="text-[10px] text-amber-400/70">
-                          Bundle: A${(col.collectionPriceAud / 100).toFixed(2)}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] text-white/30">No bundle price</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {/* Pricing button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-amber-500/20 text-white/60 hover:bg-white/5 text-xs h-7 px-2 hover:border-amber-500/50 hover:text-amber-400"
-                      onClick={() =>
-                        setPricingDialog({
-                          open: true,
-                          type: "collection",
-                          id: col.id,
-                          title: col.name,
-                          lease: col.collectionPriceAud,
-                        })
-                      }
-                    >
-                      <Tag className="h-3 w-3 mr-1" />
-                      Price
-                    </Button>
-
-                    {/* Publish toggle */}
-                    <div className="flex items-center gap-1.5">
-                      <Switch className="data-[state=checked]:bg-amber-500"
-                        checked={!!col.published}
-                        onCheckedChange={(v) =>
-                          publishMut.mutate({ collectionId: col.id, published: v })
-                        }
-                        disabled={publishMut.isPending}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <Field label="Item name" required>
+                      <Input
+                        value={listingForm.name}
+                        onChange={event => updateListingField("name", event.target.value)}
+                        placeholder="e.g. Hand-tailored emerald evening gown"
                       />
+                    </Field>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Field label="Description" required>
+                      <Textarea
+                        value={listingForm.description}
+                        onChange={event => updateListingField("description", event.target.value)}
+                        rows={4}
+                        placeholder="Describe the item, cut, construction, visual details and suitable production use"
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Category" required>
+                    <Select
+                      value={listingForm.category}
+                      onValueChange={value => updateListingField("category", value)}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map(value => (
+                          <SelectItem key={value} value={value}>
+                            {value.replaceAll("_", " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Wardrobe type" required>
+                    <Select
+                      value={listingForm.wardrobeType}
+                      onValueChange={value => updateListingField("wardrobeType", value)}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {WARDROBE_TYPES.map(value => (
+                          <SelectItem key={value} value={value}>
+                            {value.replaceAll("_", " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Subcategory">
+                    <Input value={listingForm.subcategory} onChange={event => updateListingField("subcategory", event.target.value)} />
+                  </Field>
+                  <Field label="Size range">
+                    <Input value={listingForm.sizeRange} onChange={event => updateListingField("sizeRange", event.target.value)} placeholder="XS–XL or measurements" />
+                  </Field>
+                  <Field label="Gender / fit">
+                    <Input value={listingForm.genderFit} onChange={event => updateListingField("genderFit", event.target.value)} placeholder="Unisex, womenswear, menswear" />
+                  </Field>
+                  <Field label="Era / period">
+                    <Input value={listingForm.era} onChange={event => updateListingField("era", event.target.value)} placeholder="Contemporary, 1920s, medieval" />
+                  </Field>
+                  <Field label="Colours">
+                    <Input value={listingForm.colors} onChange={event => updateListingField("colors", event.target.value)} placeholder="Emerald, gold, black" />
+                  </Field>
+                  <Field label="Materials">
+                    <Input value={listingForm.materials} onChange={event => updateListingField("materials", event.target.value)} placeholder="Silk, wool, leather" />
+                  </Field>
+                  <div className="sm:col-span-2">
+                    <Field label="Style tags">
+                      <Input value={listingForm.styleTags} onChange={event => updateListingField("styleTags", event.target.value)} placeholder="Luxury, noir, formal, cinematic" />
+                    </Field>
+                  </div>
+                  <Field label="Retail item price (A$)" required>
+                    <Input type="number" min="1" step="0.01" value={listingForm.retailPrice} onChange={event => updateListingField("retailPrice", event.target.value)} placeholder="800.00" />
+                  </Field>
+                  <Field label="Lease price (A$)" required>
+                    <Input type="number" min="0.50" step="0.50" value={listingForm.leasePrice} onChange={event => updateListingField("leasePrice", event.target.value)} placeholder="25.00" />
+                  </Field>
+                  {collections.length > 0 && (
+                    <div className="sm:col-span-2">
+                      <Field label="Collection">
+                        <Select value={listingForm.collectionId || "none"} onValueChange={value => updateListingField("collectionId", value === "none" ? "" : value)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">No collection</SelectItem>
+                            {collections.map((collection: any) => (
+                              <SelectItem key={collection.id} value={String(collection.id)}>{collection.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </Field>
                     </div>
+                  )}
+                  <div className="sm:col-span-2 space-y-3 rounded-xl border border-border p-4">
+                    {[
+                      ["commercialUseAllowed", "Commercial and advertising use"],
+                      ["brandPlacementAllowed", "Visible brand placement"],
+                      ["shopfrontPlacementAllowed", "Shopfront and set placement"],
+                      ["characterWardrobeAllowed", "Character wardrobe use"],
+                      ["costumeUseAllowed", "Costume production use"],
+                      ["publish", "Publish immediately in marketplace"],
+                    ].map(([key, label]) => (
+                      <div key={key} className="flex items-center justify-between gap-4">
+                        <Label>{label}</Label>
+                        <Switch checked={Boolean(listingForm[key as keyof ListingForm])} onCheckedChange={checked => updateListingField(key as any, checked as any)} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Field label="License notes">
+                      <Textarea value={listingForm.licenseNotes} onChange={event => updateListingField("licenseNotes", event.target.value)} rows={3} placeholder="Usage limits, attribution, exclusions or custom terms" />
+                    </Field>
+                  </div>
+                  <div className="sm:col-span-2 flex justify-end">
+                    <Button
+                      onClick={saveListing}
+                      disabled={createListing.isPending || updateListing.isPending || uploadImage.isPending}
+                      className="bg-amber-500 font-bold text-black hover:bg-amber-400"
+                    >
+                      {(createListing.isPending || updateListing.isPending) ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="mr-2 h-4 w-4" />
+                      )}
+                      {listingForm.id ? "Save changes" : "Save listing"}
+                    </Button>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Tips */}
-        <div className="bg-amber-500/5 border border-amber-500/15 rounded-2xl p-5">
-          <h3 className="text-sm font-bold text-amber-400 mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Tips to maximise earnings
-          </h3>
-          <ul className="space-y-1.5 text-xs text-white/60">
-            <li>• Set retail prices on individual items — we'll suggest a lease price at ~2% of retail.</li>
-            <li>• Offer a bundle price on full collections to attract productions leasing entire looks.</li>
-            <li>• Set up your Stripe Connect account so you receive payouts instantly.</li>
-            <li>• Add high-quality photos and detailed descriptions to each item.</li>
-            <li>• Keep collections organised by era, style, or genre for easier discovery.</li>
-          </ul>
-        </div>
-      </main>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {listings.map((listing: any) => (
+              <article key={listing.id} className="overflow-hidden rounded-xl border border-border bg-card">
+                <div className="aspect-[4/3] bg-muted">
+                  <img src={listing.primaryImageUrl || "/virelle-logo-square.png"} alt={listing.name} className="h-full w-full object-cover" />
+                </div>
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-semibold">{listing.name}</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{String(listing.category || "item").replaceAll("_", " ")}</p>
+                    </div>
+                    <Badge variant="outline">{listing.visibility === "public" && listing.status === "active" ? "Published" : listing.status === "retired" ? "Retired" : "Draft"}</Badge>
+                  </div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 rounded-lg bg-muted/40 p-3 text-sm">
+                    <div><p className="text-xs text-muted-foreground">Retail</p><p className="font-semibold">{money(listing.retailPriceAud)}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Lease</p><p className="font-semibold text-amber-400">{money(listing.leasePriceAud)}</p></div>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => editListing(listing)}>
+                      <Edit3 className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                    {listing.status !== "retired" && (
+                      <Button variant="ghost" size="sm" onClick={() => retireListing.mutate({ id: listing.id })} disabled={retireListing.isPending}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+          {!listingsLoading && listings.length === 0 && !showListingEditor && (
+            <div className="rounded-2xl border border-dashed border-border p-12 text-center">
+              <Package className="mx-auto h-10 w-10 text-muted-foreground" />
+              <h3 className="mt-4 font-semibold">No designer listings yet</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Upload an item, enter its price and save it to your marketplace catalogue.</p>
+              <Button className="mt-5" onClick={startNewListing}><Plus className="mr-2 h-4 w-4" /> Add first item</Button>
+            </div>
+          )}
+        </section>
+      )}
 
-      {/* Pricing Dialog */}
-      {pricingDialog && (
-        <PriceDialog
-          open={pricingDialog.open}
-          onClose={() => setPricingDialog(null)}
-          title={pricingDialog.title}
-          retailPrice={pricingDialog.retail}
-          leasePrice={pricingDialog.lease}
-          isCollection={pricingDialog.type === "collection"}
-          onSave={(retail, lease) => {
-            if (pricingDialog.type === "collection") {
-              setColPricingMut.mutate({ collectionId: pricingDialog.id, collectionPriceAud: lease });
-            } else {
-              setItemPricingMut.mutate({ itemId: pricingDialog.id, retailPriceAud: retail, leasePriceAud: lease });
-            }
-          }}
-        />
+      {tab === "profile" && (
+        <section className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+          <SectionTitle title="Designer profile" description="Identity, company and intended-use information connected to your membership and listings." />
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <Field label="Full legal name" required><Input value={profileForm.legalName} onChange={event => updateProfile("legalName", event.target.value)} /></Field>
+            <Field label="Date of birth" required><Input type="date" value={profileForm.dateOfBirth} onChange={event => updateProfile("dateOfBirth", event.target.value)} /></Field>
+            <Field label="Company / trading name" required><Input value={profileForm.companyName} onChange={event => updateProfile("companyName", event.target.value)} /></Field>
+            <Field label="Marketplace brand name" required><Input value={profileForm.brandName} onChange={event => updateProfile("brandName", event.target.value)} /></Field>
+            <div className="sm:col-span-2"><Field label="Company address" required><Textarea rows={3} value={profileForm.companyAddress} onChange={event => updateProfile("companyAddress", event.target.value)} /></Field></div>
+            <Field label="Display name"><Input value={profileForm.displayName} onChange={event => updateProfile("displayName", event.target.value)} /></Field>
+            <Field label="Contact email"><Input type="email" value={profileForm.contactEmail} onChange={event => updateProfile("contactEmail", event.target.value)} /></Field>
+            <Field label="Website"><Input type="url" value={profileForm.website} onChange={event => updateProfile("website", event.target.value)} /></Field>
+            <Field label="Instagram"><Input value={profileForm.instagram} onChange={event => updateProfile("instagram", event.target.value)} /></Field>
+            <div className="sm:col-span-2"><Field label="Bio"><Textarea rows={4} value={profileForm.bio} onChange={event => updateProfile("bio", event.target.value)} /></Field></div>
+            <div className="sm:col-span-2">
+              <Label>Intended use <span className="text-amber-400">*</span></Label>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {INTENDED_USES.map(([value, label]) => {
+                  const checked = profileForm.intendedUses.includes(value);
+                  return (
+                    <button key={value} type="button" onClick={() => updateProfile("intendedUses", checked ? profileForm.intendedUses.filter(item => item !== value) : [...profileForm.intendedUses, value])} className={`flex items-center gap-2 rounded-lg border p-3 text-left text-sm ${checked ? "border-amber-500/50 bg-amber-500/10 text-amber-400" : "border-border"}`}>
+                      {checked ? <CheckCircle2 className="h-4 w-4" /> : <span className="h-4 w-4 rounded border border-muted-foreground/40" />}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="sm:col-span-2 flex justify-end">
+              <Button onClick={saveProfileForm} disabled={!profileValid || saveProfile.isPending} className="bg-amber-500 font-bold text-black hover:bg-amber-400">
+                {saveProfile.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                Save profile
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {tab === "payouts" && (
+        <section className="space-y-5">
+          <div className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+            <SectionTitle title="Stripe payouts" description="Lease payments are processed through Stripe Connect. Virelle retains 5%; 95% is allocated to the designer." />
+            <div className="mt-6 flex flex-col gap-5 rounded-xl border border-border p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-full ${connected ? "bg-green-500/10" : "bg-amber-500/10"}`}>
+                  {connected ? <CheckCircle2 className="h-6 w-6 text-green-400" /> : <Wallet className="h-6 w-6 text-amber-400" />}
+                </div>
+                <div>
+                  <p className="font-semibold">{connected ? "Payout account connected" : connectStatus?.connected ? "Payout verification incomplete" : "Connect a payout account"}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{connected ? "Your account can receive marketplace lease payouts." : "Complete Stripe identity and bank-account onboarding."}</p>
+                </div>
+              </div>
+              <Button onClick={startPayoutOnboarding} disabled={onboardConnect.isPending}>
+                {onboardConnect.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {connected ? "Review Stripe account" : "Set up payouts"}
+              </Button>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-5"><p className="text-sm text-muted-foreground">Total earned</p><p className="mt-2 text-2xl font-bold">{money(earnings?.totalEarned)}</p></div>
+            <div className="rounded-xl border border-border bg-card p-5"><p className="text-sm text-muted-foreground">Active leases</p><p className="mt-2 text-2xl font-bold">{earnings?.leaseCount ?? 0}</p></div>
+            <div className="rounded-xl border border-border bg-card p-5"><p className="text-sm text-muted-foreground">Designer share</p><p className="mt-2 text-2xl font-bold text-green-400">95%</p></div>
+          </div>
+        </section>
       )}
     </div>
   );
