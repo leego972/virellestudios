@@ -1,7 +1,6 @@
 import VSWatermark from "@/components/VSWatermark";
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,52 +10,67 @@ import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
 import LeegoLogo from "@/components/LeegoLogo";
 
 export default function Login() {
-  const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
-  // Show OAuth error if redirected back with error param
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("error") === "oauth_failed") {
+    const error = params.get("error");
+    if (error === "oauth_failed") {
       toast.error("OAuth sign-in failed. Please try again or use email/password.");
-      // Clean the URL
+      window.history.replaceState({}, "", "/login");
+    } else if (error === "oauth_not_configured") {
+      toast.error("That sign-in provider is not configured yet. Use email/password.");
+      window.history.replaceState({}, "", "/login");
+    } else if (error === "oauth_state_mismatch") {
+      toast.error("The sign-in attempt expired. Please try again.");
       window.history.replaceState({}, "", "/login");
     }
   }, []);
 
-  const utils = trpc.useUtils();
-  const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: async () => {
-      toast.success("Welcome back!");
-      await utils.auth.me.refetch();
-      navigate("/?opener=1");
-    },
-    onError: (err) => {
-      toast.error(err.message || "Login failed");
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!email.trim() || !password) {
       toast.error("Please fill in all fields");
       return;
     }
-    loginMutation.mutate({ email, password });
+
+    setIsPending(true);
+    try {
+      const response = await fetch("/api/auth/password", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+
+      const payload = await response.json().catch(() => ({})) as {
+        success?: boolean;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || "Login failed");
+      }
+
+      toast.success("Welcome back!");
+      window.location.assign("/?opener=1");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Login failed");
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <VSWatermark />
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full max-w-3xl">
-        {/* Left side: Login form */}
         <div className="w-full max-w-sm space-y-6">
-          {/* Virelle Studios Logo */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative flex items-center justify-center">
-              {/* Outer ambient glow */}
               <div
                 className="absolute rounded-full pointer-events-none"
                 style={{
@@ -65,7 +79,6 @@ export default function Login() {
                   background: "radial-gradient(ellipse at center, rgba(180,100,10,0.35) 0%, rgba(120,60,5,0.18) 35%, transparent 70%)",
                 }}
               />
-              {/* Inner glow ring */}
               <div
                 className="absolute rounded-full pointer-events-none"
                 style={{
@@ -88,7 +101,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Login Card */}
           <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-xl text-center gradient-text-gold">Sign In</CardTitle>
@@ -103,7 +115,7 @@ export default function Login() {
                     type="email"
                     placeholder="you@example.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(event) => setEmail(event.target.value)}
                     autoComplete="email"
                     autoCapitalize="none"
                     autoCorrect="off"
@@ -111,7 +123,7 @@ export default function Login() {
                     inputMode="email"
                     enterKeyHint="next"
                     autoFocus
-                    disabled={loginMutation.isPending}
+                    disabled={isPending}
                   />
                 </div>
                 <div className="space-y-2">
@@ -122,10 +134,10 @@ export default function Login() {
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(event) => setPassword(event.target.value)}
                       autoComplete="current-password"
                       enterKeyHint="done"
-                      disabled={loginMutation.isPending}
+                      disabled={isPending}
                       className="pr-10"
                     />
                     <button
@@ -148,9 +160,9 @@ export default function Login() {
                 <Button
                   type="submit"
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold"
-                  disabled={loginMutation.isPending}
+                  disabled={isPending}
                 >
-                  {loginMutation.isPending ? (
+                  {isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" />
                       Signing in...
@@ -163,7 +175,6 @@ export default function Login() {
                   )}
                 </Button>
 
-                {/* Divider */}
                 <div className="relative w-full my-1">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-border" />
@@ -173,7 +184,6 @@ export default function Login() {
                   </div>
                 </div>
 
-                {/* OAuth Buttons */}
                 <div className="grid grid-cols-2 gap-3 w-full">
                   <a
                     href="/api/auth/google"
@@ -198,7 +208,6 @@ export default function Login() {
                   </a>
                 </div>
 
-                {/* Sign Up CTA */}
                 <div className="w-full pt-2">
                   <div className="rounded-lg border border-amber-500/20 bg-amber-600/5 p-3.5">
                     <p className="text-sm text-muted-foreground text-center mb-2.5">
@@ -221,7 +230,6 @@ export default function Login() {
           </Card>
         </div>
 
-        {/* Right side on desktop / Below on mobile: Leego logo */}
         <div className="flex-shrink-0 flex items-center justify-center">
           <LeegoLogo
             alt="Created by Leego"
