@@ -21,9 +21,9 @@ jobs:
             --exclude=node_modules \
             --exclude=dist \
             --exclude=.cache \
-            -czf virelle-audit-source.tar.gz .
+            -czf "$RUNNER_TEMP/virelle-audit-source.tar.gz" .
       - uses: actions/upload-artifact@v4
         with:
           name: virelle-audit-source
-          path: virelle-audit-source.tar.gz
+          path: ${{ runner.temp }}/virelle-audit-source.tar.gz
           retention-days: 3
