@@ -12,7 +12,7 @@
  * Bump CACHE_VERSION whenever app shell semantics change to force a refresh.
  */
 
-const CACHE_VERSION = "v1.4.0";
+const CACHE_VERSION = "v1.3.0";
 const SHELL_CACHE = `virelle-shell-${CACHE_VERSION}`;
 const ASSETS_CACHE = `virelle-assets-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline.html";
