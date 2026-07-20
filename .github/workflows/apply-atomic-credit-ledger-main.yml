@@ -1,0 +1,347 @@
+name: Apply Atomic Credit Ledger Repair Main
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-atomic-credit-ledger-main.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Patch credit ledger
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("server/db.ts")
+          source = path.read_text(encoding="utf-8")
+
+          deduct = '''export async function deductCredits(userId: number, amount: number, action: string, description?: string): Promise<number> {
+            const db = await getDb();
+            if (!db) throw new Error("Database not available");
+            if (!Number.isSafeInteger(amount) || amount <= 0) {
+              throw new Error("Credit deduction amount must be a positive whole number");
+            }
+
+            const newBalance = await db.transaction(async (tx) => {
+              await tx.execute(sql`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`);
+              const [user] = await tx
+                .select({ creditBalance: users.creditBalance, role: users.role })
+                .from(users)
+                .where(eq(users.id, userId))
+                .limit(1);
+
+              if (!user) throw new Error("User not found");
+              const currentBalance = Number(user.creditBalance || 0);
+
+              if (user.role === "admin") {
+                await tx.insert(creditTransactions).values({
+                  userId,
+                  amount: 0,
+                  action,
+                  description: `EXEMPT: ${description || action}`,
+                  balanceAfter: currentBalance,
+                });
+                return currentBalance;
+              }
+
+              if (currentBalance < amount) {
+                throw new Error(
+                  `INSUFFICIENT_CREDITS: This action requires ${amount} credit${amount !== 1 ? "s" : ""}. You have ${currentBalance} credits remaining. Purchase a credit pack to continue.`,
+                );
+              }
+
+              const balanceAfter = currentBalance - amount;
+              await tx
+                .update(users)
+                .set({
+                  creditBalance: balanceAfter,
+                  totalCreditsSpent: sql`COALESCE(totalCreditsSpent, 0) + ${amount}`,
+                  updatedAt: new Date(),
+                } as any)
+                .where(eq(users.id, userId));
+
+              await tx.insert(creditTransactions).values({
+                userId,
+                amount: -amount,
+                action,
+                description: description || action,
+                balanceAfter,
+              });
+
+              return balanceAfter;
+            });
+
+            logger.info(`[Credits] User ${userId}: -${amount} credits for ${action} (balance: ${newBalance})`);
+            return newBalance;
+          }'''
+
+          add = '''export async function addCredits(userId: number, amount: number, action: string, description?: string): Promise<number> {
+            const db = await getDb();
+            if (!db) throw new Error("Database not available");
+            if (!Number.isSafeInteger(amount) || amount <= 0) {
+              throw new Error("Credit addition amount must be a positive whole number");
+            }
+
+            const newBalance = await db.transaction(async (tx) => {
+              await tx.execute(sql`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`);
+              const [user] = await tx
+                .select({ creditBalance: users.creditBalance })
+                .from(users)
+                .where(eq(users.id, userId))
+                .limit(1);
+
+              if (!user) throw new Error("User not found");
+              const balanceAfter = Number(user.creditBalance || 0) + amount;
+
+              await tx
+                .update(users)
+                .set({ creditBalance: balanceAfter, updatedAt: new Date() } as any)
+                .where(eq(users.id, userId));
+
+              await tx.insert(creditTransactions).values({
+                userId,
+                amount,
+                action,
+                description: description || action,
+                balanceAfter,
+              });
+
+              return balanceAfter;
+            });
+
+            logger.info(`[Credits] User ${userId}: +${amount} credits for ${action} (balance: ${newBalance})`);
+            return newBalance;
+          }'''
+
+          reservations = '''export async function reserveCredits(
+            userId: number,
+            amount: number,
+            featureKey: string,
+            opts: { projectId?: number; referenceType?: string; referenceId?: number } = {},
+          ): Promise<number | null> {
+            const db = await getDb();
+            if (!db) throw new Error("Database not available");
+            if (!Number.isSafeInteger(amount) || amount <= 0) {
+              throw new Error("Credit reservation amount must be a positive whole number");
+            }
+
+            return db.transaction(async (tx) => {
+              await tx.execute(sql`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`);
+              const [user] = await tx
+                .select({ creditBalance: users.creditBalance, role: users.role })
+                .from(users)
+                .where(eq(users.id, userId))
+                .limit(1);
+
+              if (!user) throw new Error("User not found");
+              const currentBalance = Number(user.creditBalance || 0);
+
+              if (user.role === "admin") {
+                await tx.insert(creditTransactions).values({
+                  userId,
+                  amount: 0,
+                  action: featureKey,
+                  description: `EXEMPT reservation: ${featureKey}`,
+                  balanceAfter: currentBalance,
+                });
+                return null;
+              }
+
+              if (opts.referenceType && opts.referenceId !== undefined) {
+                const [existing] = await tx
+                  .select({ id: creditReservations.id })
+                  .from(creditReservations)
+                  .where(and(
+                    eq(creditReservations.userId, userId),
+                    eq(creditReservations.referenceType, opts.referenceType),
+                    eq(creditReservations.referenceId, opts.referenceId),
+                    eq(creditReservations.status, "reserved"),
+                  ))
+                  .limit(1);
+                if (existing) return existing.id;
+              }
+
+              if (currentBalance < amount) {
+                throw new Error(
+                  `INSUFFICIENT_CREDITS: This action requires ${amount} credit${amount !== 1 ? "s" : ""}. You have ${currentBalance} credits remaining. Purchase a credit pack to continue.`,
+                );
+              }
+
+              const balanceAfter = currentBalance - amount;
+              await tx
+                .update(users)
+                .set({
+                  creditBalance: balanceAfter,
+                  totalCreditsSpent: sql`COALESCE(totalCreditsSpent, 0) + ${amount}`,
+                  updatedAt: new Date(),
+                } as any)
+                .where(eq(users.id, userId));
+
+              const inserted = await tx.insert(creditReservations).values({
+                userId,
+                projectId: opts.projectId ?? null,
+                referenceType: opts.referenceType ?? null,
+                referenceId: opts.referenceId ?? null,
+                featureKey,
+                amount,
+                status: "reserved",
+              } as any);
+              const reservationId = Number((inserted as any)?.[0]?.insertId ?? (inserted as any)?.insertId ?? 0);
+              if (!reservationId) throw new Error("Failed to create credit reservation");
+
+              await tx.insert(creditTransactions).values({
+                userId,
+                amount: -amount,
+                action: featureKey,
+                description: `Reserved for ${featureKey} (#${reservationId})`,
+                balanceAfter,
+              });
+
+              return reservationId;
+            });
+          }
+
+          export async function finalizeReservation(reservationId: number): Promise<void> {
+            const db = await getDb();
+            if (!db) throw new Error("Database not available");
+            await db.transaction(async (tx) => {
+              await tx.execute(sql`SELECT id FROM creditReservations WHERE id = ${reservationId} FOR UPDATE`);
+              const [reservation] = await tx
+                .select({ status: creditReservations.status })
+                .from(creditReservations)
+                .where(eq(creditReservations.id, reservationId))
+                .limit(1);
+              if (!reservation || reservation.status !== "reserved") return;
+              await tx
+                .update(creditReservations)
+                .set({ status: "completed", finalizedAt: new Date() } as any)
+                .where(eq(creditReservations.id, reservationId));
+            });
+          }
+
+          export async function releaseReservation(reservationId: number): Promise<void> {
+            const db = await getDb();
+            if (!db) throw new Error("Database not available");
+            await db.transaction(async (tx) => {
+              await tx.execute(sql`SELECT id FROM creditReservations WHERE id = ${reservationId} FOR UPDATE`);
+              const [reservation] = await tx
+                .select({
+                  userId: creditReservations.userId,
+                  amount: creditReservations.amount,
+                  featureKey: creditReservations.featureKey,
+                  status: creditReservations.status,
+                })
+                .from(creditReservations)
+                .where(eq(creditReservations.id, reservationId))
+                .limit(1);
+              if (!reservation || reservation.status !== "reserved") return;
+
+              await tx.execute(sql`SELECT id FROM users WHERE id = ${reservation.userId} FOR UPDATE`);
+              const [user] = await tx
+                .select({ creditBalance: users.creditBalance, role: users.role })
+                .from(users)
+                .where(eq(users.id, reservation.userId))
+                .limit(1);
+              if (!user) throw new Error("Reservation user not found");
+
+              const currentBalance = Number(user.creditBalance || 0);
+              const refundAmount = Number(reservation.amount || 0);
+              if (user.role !== "admin" && refundAmount > 0) {
+                const balanceAfter = currentBalance + refundAmount;
+                await tx
+                  .update(users)
+                  .set({
+                    creditBalance: balanceAfter,
+                    totalCreditsSpent: sql`GREATEST(COALESCE(totalCreditsSpent, 0) - ${refundAmount}, 0)`,
+                    updatedAt: new Date(),
+                  } as any)
+                  .where(eq(users.id, reservation.userId));
+                await tx.insert(creditTransactions).values({
+                  userId: reservation.userId,
+                  amount: refundAmount,
+                  action: "credits.refund",
+                  description: `Released reservation #${reservationId} (${reservation.featureKey})`,
+                  balanceAfter,
+                });
+              } else {
+                await tx.insert(creditTransactions).values({
+                  userId: reservation.userId,
+                  amount: 0,
+                  action: "credits.refund",
+                  description: `EXEMPT release #${reservationId} (${reservation.featureKey})`,
+                  balanceAfter: currentBalance,
+                });
+              }
+
+              await tx
+                .update(creditReservations)
+                .set({ status: "released", releasedAt: new Date() } as any)
+                .where(eq(creditReservations.id, reservationId));
+            });
+          }'''
+
+          replacements = [
+            (r'export async function deductCredits\(.*?\n\}\n\n(?=/\*\*\n \* Add credits)', deduct, 'deductCredits'),
+            (r'export async function addCredits\(.*?\n\}\n\n(?=/\*\*\n \* Get user)', add, 'addCredits'),
+            (r'export async function reserveCredits\(.*?\n\}\n\n(?=export async function getActiveReservation)', reservations + '\n\n', 'reservations'),
+          ]
+          for pattern, replacement, label in replacements:
+            source, count = re.subn(pattern, lambda _: replacement, source, count=1, flags=re.DOTALL)
+            if count != 1:
+              raise SystemExit(f"Failed to replace {label}: {count}")
+
+          path.write_text(source, encoding="utf-8")
+          PY
+
+          cat > server/credit-ledger-regression.test.ts <<'EOF'
+          import { readFileSync } from "node:fs";
+          import { describe, expect, it } from "vitest";
+
+          const source = readFileSync(new URL("./db.ts", import.meta.url), "utf8");
+          const block = (start: string, end: string) =>
+            source.slice(source.indexOf(`export async function ${start}`), source.indexOf(`export async function ${end}`));
+
+          describe("credit ledger safety", () => {
+            it("row-locks direct deductions", () => {
+              const text = block("deductCredits", "addCredits");
+              expect(text).toContain("db.transaction");
+              expect(text).toContain("FOR UPDATE");
+              expect(text).toContain("creditTransactions");
+            });
+            it("rolls back failed reservation inserts", () => {
+              const text = block("reserveCredits", "finalizeReservation");
+              expect(text).toContain("Failed to create credit reservation");
+              expect(text).toContain("db.transaction");
+            });
+            it("makes refunds idempotent", () => {
+              const text = block("releaseReservation", "getActiveReservation");
+              expect(text).toContain("FOR UPDATE");
+              expect(text).toContain('status !== "reserved"');
+              expect(text).toContain('status: "released"');
+            });
+          });
+          EOF
+
+      - name: Commit repaired ledger
+        shell: bash
+        run: |
+          rm -f .github/workflows/apply-atomic-credit-ledger-main.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Make credit deductions and reservations atomic"
+          git push origin HEAD:main
