@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -17,6 +22,16 @@ interface ThemeProviderProps {
   switchable?: boolean;
 }
 
+function ensureMeta(name: string) {
+  let meta = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.name = name;
+    document.head.appendChild(meta);
+  }
+  return meta;
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "light",
@@ -25,18 +40,24 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
       const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      return stored === "light" || stored === "dark"
+        ? stored
+        : defaultTheme;
     }
     return defaultTheme;
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    const isDayMode = theme === "dark";
+
+    root.classList.toggle("dark", isDayMode);
+    root.style.colorScheme = isDayMode ? "light" : "dark";
+
+    // Safari uses theme-color for the URL/status-bar chrome. Keep it aligned
+    // with the actual cream day surface or black night surface.
+    ensureMeta("theme-color").content = isDayMode ? "#f5efe2" : "#09090b";
+    ensureMeta("color-scheme").content = isDayMode ? "light" : "dark";
 
     if (switchable) {
       localStorage.setItem("theme", theme);
@@ -45,12 +66,14 @@ export function ThemeProvider({
 
   const toggleTheme = switchable
     ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
+        setTheme(previous => (previous === "light" ? "dark" : "light"));
       }
     : undefined;
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, switchable }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, toggleTheme, switchable }}
+    >
       {children}
     </ThemeContext.Provider>
   );

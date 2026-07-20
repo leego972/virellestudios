@@ -1,11 +1,11 @@
 /**
  * seed-admin.mjs
  * -----------------------------------------------------------------------------
- * Ensures the platform owner/admin accounts exist with full access.
+ * Ensures the platform owner/admin accounts exist with full administrator access.
  *
  *   Role   : admin
- *   Tier   : industry (highest, all features)
- *   Credits: 999999 (unlimited)
+ *   Tier   : industry (backend feature entitlement)
+ *   Credits: 1000
  *   Expires: never
  *
  * Usage (from project root, with DATABASE_URL set):
@@ -23,14 +23,14 @@ if (!DATABASE_URL) {
 }
 
 const ADMINS = [
-  { email: 'leego972@gmail.com',          openId: 'email_leego972',          name: 'Lee Gold' },
-  { email: 'studiosvirelle@gmail.com',   openId: 'email_studiosvirelle',   name: 'Virelle Studios' },
-  { email: 'brobroplzcheck@gmail.com',   openId: 'email_brobroplzcheck',   name: 'Admin 2' },
+  { email: 'leego972@gmail.com',        openId: 'email_leego972',        name: 'Lee Gold' },
+  { email: 'studiosvirelle@gmail.com', openId: 'email_studiosvirelle', name: 'Virelle Studios' },
+  { email: 'brobroplzcheck@gmail.com', openId: 'email_brobroplzcheck', name: 'Admin 2' },
 ];
 
 const TIER = 'industry';
 const ROLE = 'admin';
-const CREDITS = 999999;
+const CREDITS = 1000;
 
 // If SEED_ADMIN_PASSWORD is set, every admin account gets that password
 // set/reset on each boot. OAuth remains available independently.
@@ -92,7 +92,7 @@ async function main() {
           [ROLE, TIER, CREDITS, CREDITS, admin.email],
         );
       }
-      console.log('Updated :', admin.email, '-> admin / industry / unlimited');
+      console.log('Updated :', admin.email, '-> ADMIN / 1000 credits');
     } else {
       await connection.execute(
         `INSERT INTO users
@@ -109,14 +109,14 @@ async function main() {
             NULL, NOW(), NOW(), NOW())`,
         [admin.openId, admin.name, admin.email, ROLE, passwordHash, TIER, CREDITS, CREDITS],
       );
-      console.log('Created :', admin.email);
+      console.log('Created :', admin.email, '-> ADMIN / 1000 credits');
     }
   }
 
   console.log('');
   console.log('-- Admin Accounts ------------------------------------------------');
   for (const admin of ADMINS) {
-    console.log(`   ${admin.email} -- admin / industry / unlimited`);
+    console.log(`   ${admin.email} -- ADMIN / 1000 credits / no expiry`);
   }
   console.log(passwordHash
     ? '   (Login via email + SEED_ADMIN_PASSWORD, or Google/GitHub OAuth)'
