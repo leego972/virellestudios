@@ -93,6 +93,51 @@ article,
   font-weight: 700;
 }
 
+/* Dialogs, sheets and floating menus are rendered through portals. They must
+   receive explicit theme colours because inherited page text can be lost when
+   the portal uses a contrasting glass/background surface. */
+:root:not(.dark) [data-slot="dialog-content"],
+:root:not(.dark) [data-slot="alert-dialog-content"],
+:root:not(.dark) [data-slot="sheet-content"],
+:root:not(.dark) [data-slot="popover-content"],
+:root:not(.dark) [data-slot="dropdown-menu-content"],
+:root:not(.dark) [data-slot="select-content"],
+:root:not(.dark) [data-slot="command"] {
+  color: #f8e7a5 !important;
+}
+
+:root:not(.dark) [data-slot="dialog-description"],
+:root:not(.dark) [data-slot="alert-dialog-description"],
+:root:not(.dark) [data-slot="dialog-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="alert-dialog-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="sheet-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="popover-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="dropdown-menu-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="select-content"] .text-muted-foreground {
+  color: #eadcae !important;
+}
+
+.dark [data-slot="dialog-content"],
+.dark [data-slot="alert-dialog-content"],
+.dark [data-slot="sheet-content"],
+.dark [data-slot="popover-content"],
+.dark [data-slot="dropdown-menu-content"],
+.dark [data-slot="select-content"],
+.dark [data-slot="command"] {
+  color: #18181b !important;
+}
+
+.dark [data-slot="dialog-description"],
+.dark [data-slot="alert-dialog-description"],
+.dark [data-slot="dialog-content"] .text-muted-foreground,
+.dark [data-slot="alert-dialog-content"] .text-muted-foreground,
+.dark [data-slot="sheet-content"] .text-muted-foreground,
+.dark [data-slot="popover-content"] .text-muted-foreground,
+.dark [data-slot="dropdown-menu-content"] .text-muted-foreground,
+.dark [data-slot="select-content"] .text-muted-foreground {
+  color: #454545 !important;
+}
+
 /* Night mode: protect body copy from hard-coded dark text on black surfaces. */
 :root:not(.dark) .text-stone-400,
 :root:not(.dark) .text-stone-500,
