@@ -335,8 +335,11 @@
     @apply cursor-pointer;
   }
 
-  /* Smooth momentum scrolling on iOS */
-  * {
+  /* Smooth momentum scrolling only on actual scroll containers. */
+  [class*="overflow-y-auto"],
+  [class*="overflow-x-auto"],
+  [class*="overflow-auto"],
+  [class*="overflow-scroll"] {
     -webkit-overflow-scrolling: touch;
   }
 
@@ -932,6 +935,14 @@
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
     border: 1px solid oklch(0.78 0.18 85 / 0.1);
+    color: oklch(0.92 0.02 85);
+    --foreground: oklch(0.92 0.02 85);
+    --popover-foreground: oklch(0.92 0.02 85);
+    --card-foreground: oklch(0.92 0.02 85);
+    --muted-foreground: oklch(0.68 0.10 85);
+    --accent-foreground: oklch(0.92 0.02 85);
+    --border: oklch(0.4 0.03 85 / 0.4);
+    --input: oklch(0.28 0.02 85 / 0.6);
   }
 
   /* ── Heading hierarchy — elegant sizing system ────────────────────────────── */
