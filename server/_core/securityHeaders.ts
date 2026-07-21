@@ -1,5 +1,27 @@
 import type { Request, Response, NextFunction } from "express";
 
+const MOBILE_FEATURE_FLAGS = {
+  creatorUpgrade: true,
+  swappysStudio: true,
+  digitalDouble: true,
+  genderTransform: true,
+  ageTransform: true,
+  childhoodSelf: true,
+  multiImageReference: true,
+  sourceVideoUpload: true,
+  referenceVideoUpload: true,
+  studioRenderQueue: true,
+  broadcastMode: true,
+  rtmpBroadcast: true,
+  webRtcBroadcast: true,
+  obsBridge: true,
+  byokVideoRequired: true,
+  credits: true,
+  watermarkControls: true,
+  auditProvenance: true,
+  mobileEntryWatermarkRequired: true,
+} as const;
+
 /** Security headers middleware and public mobile feature manifest. */
 export function securityHeaders() {
   const isProd = process.env.NODE_ENV === "production";
@@ -62,7 +84,7 @@ export function securityHeaders() {
           ok: true,
           product: "Virelle Studios",
           service: "virelle-studios-mobile-manifest",
-          version: "2026.07.swappys-byok-broadcast-v1",
+          version: "2026.07.swappys-byok-broadcast-v2",
           generatedAt: new Date().toISOString(),
           links: {
             baseUrl: "https://virelle.life",
@@ -87,27 +109,12 @@ export function securityHeaders() {
             userProviderPaysFor: "video generation, transformation, provider rendering and broadcast transform compute",
             noPlatformFundedUserVideo: true,
           },
-          features: {
-            creatorUpgrade: true,
-            swappysStudio: true,
-            digitalDouble: true,
-            genderTransform: true,
-            ageTransform: true,
-            childhoodSelf: true,
-            multiImageReference: true,
-            sourceVideoUpload: true,
-            referenceVideoUpload: true,
-            studioRenderQueue: true,
-            broadcastMode: true,
-            rtmpBroadcast: true,
-            webRtcBroadcast: true,
-            obsBridge: true,
-            byokVideoRequired: true,
-            credits: true,
-            watermarkControls: true,
-            auditProvenance: true,
-            mobileEntryWatermarkRequired: true,
-          },
+          // `features` is the original rich manifest key. `flags` is retained as
+          // a compact compatibility alias for downloadable clients introduced in
+          // v1.1. Both point to the same immutable capability record so they
+          // cannot drift again.
+          features: MOBILE_FEATURE_FLAGS,
+          flags: MOBILE_FEATURE_FLAGS,
           byokProviders: ["runway", "openai", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"],
           transformGoals: [
             "appearance_reference",
