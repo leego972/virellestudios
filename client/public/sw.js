@@ -86,6 +86,7 @@ self.addEventListener("fetch", event => {
 
 // Only a controlled same-origin page may activate a waiting service worker.
 self.addEventListener("message", event => {
+  if (event.origin && event.origin !== self.location.origin) return;
   if (!event.source || !event.data || event.data.type !== "SKIP_WAITING") return;
   try {
     const sourceUrl = new URL(event.source.url);
