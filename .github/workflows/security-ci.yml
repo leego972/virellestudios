@@ -13,7 +13,7 @@ jobs:
   apply-audit-repairs:
     if: github.head_ref == 'audit/quality-security-pass-20260721'
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,17 +30,7 @@ jobs:
         run: pnpm install --lockfile-only --no-frozen-lockfile
       - name: Verify clean dependency audit
         run: pnpm audit
-      - name: Install and verify
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm check
-          pnpm test
-          pnpm build
-        env:
-          NODE_ENV: production
-          VITE_APP_ID: security-ci-stub
-          VITE_SENTRY_DSN: ""
-      - name: Commit repairs
+      - name: Commit checkpoint repairs
         shell: bash
         run: |
           if git diff --quiet; then
@@ -66,32 +56,25 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Typecheck
         run: pnpm check
-
       - name: Unit and integration tests
         run: pnpm test
-
       - name: Build
         run: pnpm build
         env:
           NODE_ENV: production
           VITE_APP_ID: security-ci-stub
           VITE_SENTRY_DSN: ""
-
       - name: Dependency audit
         id: audit
         shell: bash
@@ -101,7 +84,6 @@ jobs:
           code=${PIPESTATUS[0]}
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
-
       - name: Upload dependency audit
         if: always()
         uses: actions/upload-artifact@v4
@@ -109,19 +91,15 @@ jobs:
           name: dependency-audit
           path: dependency-audit.txt
           retention-days: 3
-
       - name: Secret pattern scan
         shell: bash
         run: |
           set -euo pipefail
-          echo "Scanning tracked files for obvious committed secrets..."
           pattern='(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|whsec_[A-Za-z0-9]{20,}|rk_(live|test)_[A-Za-z0-9]{20,}|sk_(live|test)_[A-Za-z0-9]{20,})'
           if git grep -nEI "$pattern" -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!.github/workflows/security-ci.yml' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md'; then
             echo "Potential secret detected. Remove it from source and rotate it before merging."
             exit 1
           fi
-          echo "No obvious secret patterns found."
-
       - name: Fail when dependency audit found moderate-or-higher vulnerabilities
         if: steps.audit.outputs.exit_code != '0'
         run: exit 1
