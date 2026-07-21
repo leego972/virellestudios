@@ -8,6 +8,7 @@ Validation scope for the current production tree:
 - in-platform Open Adult Creative policy boundaries
 - exact Swappys-to-Studio-Render/Broadcast handoff
 - encrypted broadcast output credentials and HTTPS bridge submission
+- tier-safe subscription gates
 - root TypeScript, tests, production build, dependency audit, desktop build and Expo checks
 
-This validation run includes the Expo-compatible peer-resolution fix for the standalone Swappys package and tests the exact current `main` tree.
+This run validates the corrected subscription gate and Expo-compatible standalone Swappys dependency resolution against current `main`.
