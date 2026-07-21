@@ -94,8 +94,9 @@ async function hasStarterInventory(
         eq(wardrobeItems.status, "active"),
       ),
     )
-    .limit(100);
-  return new Set(rows.map(row => row.name).filter(Boolean)).size >= STARTER_OPTION_COUNT;
+    .groupBy(wardrobeItems.name)
+    .limit(STARTER_OPTION_COUNT);
+  return rows.length >= STARTER_OPTION_COUNT;
 }
 
 /**
@@ -209,16 +210,17 @@ export const lamaloGiftsRouter = router({
 
     if (ordered.length < STARTER_OPTION_COUNT) {
       const fallback = await db
-        .select(starterSelection)
-        .from(wardrobeItems)
-        .where(
-          and(
-            eq(wardrobeItems.designerProfileId, lamaloId),
-            eq(wardrobeItems.visibility, "public"),
-            eq(wardrobeItems.status, "active"),
-          ),
-        )
-        .limit(100);
+      .select(starterSelection)
+      .from(wardrobeItems)
+      .where(
+        and(
+          eq(wardrobeItems.designerProfileId, lamaloId),
+          eq(wardrobeItems.visibility, "public"),
+          eq(wardrobeItems.status, "active"),
+        ),
+      )
+      .orderBy(asc(wardrobeItems.id))
+      .limit(2000);
       const existingIds = new Set(ordered.map(item => item.id));
     const existingNames = new Set(ordered.map(item => item.name));
     for (const item of fallback) {

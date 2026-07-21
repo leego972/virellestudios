@@ -22,6 +22,8 @@ const canonicalLookup = gifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRA
 const aliasLookup = gifts.indexOf("[...LAMALO_BRAND_ALIASES]");
 assert.ok(canonicalLookup >= 0 && aliasLookup > canonicalLookup, "canonical Lamalo brand must be checked before legacy aliases");
 assert.ok(gifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");
+assert.ok(gifts.includes(".groupBy(wardrobeItems.name)"), "starter inventory readiness must count distinct catalogue names in SQL");
+assert.ok(gifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");
 assert.ok(gifts.includes("FOR UPDATE"), "welcome claim must serialize concurrent requests");
 assert.ok(gifts.includes('eq(wardrobeLeases.status, "active")'), "claim checks must ignore inactive leases");
 assert.ok(picker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");
