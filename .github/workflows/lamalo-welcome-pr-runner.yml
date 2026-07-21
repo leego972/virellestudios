@@ -33,9 +33,31 @@ jobs:
           workflow = Path('.github/workflows/lamalo-welcome-hotfix.yml').read_text().splitlines()
           start = next(i for i, line in enumerate(workflow) if "python3 - <<'PY'" in line) + 1
           end = next(i for i in range(start, len(workflow)) if workflow[i].strip() == 'PY')
-          body = []
-          for line in workflow[start:end]:
-              body.append(line[10:] if line.startswith('          ') else line)
+          body = [line[10:] if line.startswith('          ') else line for line in workflow[start:end]]
+
+          marker = next(i for i, line in enumerate(body) if '"seed initial price scope"' in line)
+          block_start = marker
+          while block_start >= 0 and body[block_start].strip() != 'text = replace_once(':
+              block_start -= 1
+          if block_start < 0:
+              raise SystemExit('Could not locate seed initial price replacement block')
+          block_end = marker + 1
+          while block_end < len(body) and body[block_end].strip() != ')':
+              block_end += 1
+          if block_end >= len(body):
+              raise SystemExit('Could not locate end of seed initial price replacement block')
+
+          body[block_start:block_end + 1] = [
+              'text, count = re.subn(',
+              '    r"WHERE collectionId IS NOT NULL\\s+AND \\(retailPriceAud IS NULL OR retailPriceAud < 100\\)",',
+              '    "WHERE designerProfileId IN (\\n        SELECT id FROM designerProfiles WHERE brandName = \'Lamalo Fashion\'\\n      )\\n        AND (retailPriceAud IS NULL OR retailPriceAud < 100)",',
+              '    text,',
+              '    count=1,',
+              ')',
+              'if count != 1:',
+              '    raise SystemExit(f"seed initial price scope: expected one match, found {count}")',
+          ]
+
           Path('/tmp/apply_lamalo_hotfix.py').write_text('\n'.join(body) + '\n')
           PY
 
