@@ -8,4 +8,4 @@ Validation scope for the downloadable-client pass:
 - identity-aware provider enforcement for face/likeness transformations
 - PWA, desktop Linux build and Swappys Expo checks
 
-The substantive fixes are present on `main` and are validated by the dedicated app-debug workflow.
+The substantive fixes are present on `main`. This validation branch intentionally changes only this note so pull-request CI tests the exact current production tree.
