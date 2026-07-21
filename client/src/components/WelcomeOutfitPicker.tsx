@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
+  AlertTriangle,
   CheckCircle,
   Gift,
   Loader2,
   PackageOpen,
+  RefreshCw,
   Shirt,
 } from "lucide-react";
 
@@ -23,7 +25,12 @@ export default function WelcomeOutfitPicker() {
   const { data: gift } =
     (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.() ?? {};
 
-  const { data: outfits = [], isLoading: outfitsLoading } =
+  const {
+    data: outfits = [],
+    isLoading: outfitsLoading,
+    error: outfitsError,
+    refetch: refetchOutfits,
+  } =
     (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.(
       undefined,
       { enabled: Boolean(gift?.eligible && !gift?.claimed) },
@@ -59,7 +66,7 @@ export default function WelcomeOutfitPicker() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         data-lamalo-welcome-dialog
-        className="w-[calc(100vw-1rem)] max-w-2xl max-h-[calc(100dvh-1rem)] overflow-y-auto border-amber-500/35 bg-[#0b0b0d] shadow-2xl shadow-black/60 dark:bg-[#fffaf0] dark:shadow-black/20 sm:w-[95vw] sm:max-h-[85vh]"
+        className="w-[calc(100vw-1rem)] max-w-4xl max-h-[calc(100dvh-1rem)] overflow-y-auto border-amber-500/35 bg-[#0b0b0d] shadow-2xl shadow-black/60 dark:bg-[#fffaf0] dark:shadow-black/20 sm:w-[95vw] sm:max-h-[88vh]"
       >
         <style>{`
           :root:not(.dark) [data-lamalo-welcome-dialog] {
@@ -135,14 +142,30 @@ export default function WelcomeOutfitPicker() {
             </div>
           </div>
           <DialogDescription className="text-sm leading-6">
-            Choose any 2 outfits from Lamalo Fashions as a welcome gift. These
-            are yours permanently at no cost.
+            Choose any 2 from these 10 real Lamalo collection pieces. They are
+            permanently added to your wardrobe inventory at no cost.
           </DialogDescription>
         </DialogHeader>
 
         {outfitsLoading ? (
           <div className="flex items-center justify-center py-10">
             <Loader2 className="h-7 w-7 animate-spin text-amber-300 dark:text-amber-800" />
+          </div>
+        ) : outfitsError ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+            <AlertTriangle className="h-11 w-11 text-amber-400 dark:text-amber-700" />
+            <p data-lamalo-copy className="max-w-lg text-sm font-medium leading-6">
+              {outfitsError?.message ?? "The Lamalo choices could not be loaded."}
+            </p>
+            <Button
+              data-lamalo-secondary
+              variant="outline"
+              size="sm"
+              onClick={() => refetchOutfits?.()}
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Retry
+            </Button>
           </div>
         ) : outfits.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
@@ -151,13 +174,21 @@ export default function WelcomeOutfitPicker() {
               data-lamalo-copy
               className="max-w-md text-sm font-medium leading-6"
             >
-              The Lamalo collection is being set up.
-              <br />
-              Check back soon or contact support.
+              No eligible Lamalo outfits were returned. Retry or contact support;
+              the gift will remain available until two outfits are claimed.
             </p>
+            <Button
+              data-lamalo-secondary
+              variant="outline"
+              size="sm"
+              onClick={() => refetchOutfits?.()}
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Retry
+            </Button>
           </div>
         ) : (
-          <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-5">
             {outfits.map((item: any) => {
               const isSelected = selected.includes(item.id);
               const disabled = !isSelected && selected.length >= 2;
@@ -179,6 +210,7 @@ export default function WelcomeOutfitPicker() {
                         src={item.primaryImageUrl}
                         alt={item.name}
                         className="aspect-square w-full rounded object-cover"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="flex aspect-square w-full items-center justify-center rounded bg-white/5 dark:bg-zinc-100">
@@ -206,6 +238,7 @@ export default function WelcomeOutfitPicker() {
         <div className="mt-4 flex flex-col items-stretch justify-between gap-3 border-t border-amber-500/30 pt-4 sm:flex-row sm:items-center">
           <p data-lamalo-selection className="text-sm font-medium">
             {selected.length}/2 outfits selected
+            {outfits.length > 0 ? ` · ${outfits.length} choices available` : ""}
           </p>
           <div className="flex w-full gap-2 sm:w-auto">
             <Button
@@ -221,15 +254,9 @@ export default function WelcomeOutfitPicker() {
               data-lamalo-primary
               size="sm"
               className="min-h-11 flex-1 px-4 sm:flex-none"
-              disabled={
-                claimMut?.isPending ||
-                (outfits.length > 0 && selected.length < 2)
-              }
+              disabled={claimMut?.isPending || selected.length !== 2}
               onClick={() => {
-                if (outfits.length === 0 || selected.length < 2) {
-                  setOpen(false);
-                  return;
-                }
+                if (selected.length !== 2) return;
                 claimMut?.mutate?.({
                   itemId1: selected[0],
                   itemId2: selected[1],
