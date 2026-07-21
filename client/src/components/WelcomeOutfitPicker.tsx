@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,9 +22,53 @@ import {
   Shirt,
 } from "lucide-react";
 
+function isStudioOpenerActive(): boolean {
+  if (typeof window === "undefined" || typeof document === "undefined") return false;
+  if (new URLSearchParams(window.location.search).get("opener") === "1") return true;
+
+  return Array.from(document.body.children).some(node =>
+    node instanceof HTMLElement &&
+    node.classList.contains("fixed") &&
+    node.classList.contains("inset-0") &&
+    node.classList.contains("z-[9999]") &&
+    node.classList.contains("bg-black"),
+  );
+}
+
 export default function WelcomeOutfitPicker() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const utils = trpc.useUtils();
+  const [openerReady, setOpenerReady] = useState(() => !isStudioOpenerActive());
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setOpenerReady(false);
+      return;
+    }
+
+    let sawOpener = isStudioOpenerActive();
+    if (!sawOpener) {
+      setOpenerReady(true);
+      return;
+    }
+
+    setOpenerReady(false);
+    const timer = window.setInterval(() => {
+      const active = isStudioOpenerActive();
+      sawOpener ||= active;
+      if (sawOpener && !active) {
+        window.clearInterval(timer);
+        window.setTimeout(() => setOpenerReady(true), 150);
+      }
+    }, 100);
+
+    return () => window.clearInterval(timer);
+  }, [isAuthenticated]);
   const { data: gift } =
-    (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.() ?? {};
+    (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.(
+      undefined,
+      { enabled: Boolean(isAuthenticated && !authLoading && openerReady) },
+    ) ?? {};
 
   const {
     data: outfits = [],
@@ -33,24 +78,33 @@ export default function WelcomeOutfitPicker() {
   } =
     (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.(
       undefined,
-      { enabled: Boolean(gift?.eligible && !gift?.claimed) },
+      { enabled: Boolean(isAuthenticated && openerReady && gift?.eligible && !gift?.claimed) },
     ) ?? {};
 
   const claimMut = (trpc as any).lamaloGifts?.claimGift?.useMutation?.({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success(
         "Your 2 free Lamalo virtual outfits are now in your wardrobe inventory.",
       );
+      setSelected([]);
       setOpen(false);
+      await Promise.allSettled([
+        (utils as any).lamaloGifts?.hasClaimedGift?.invalidate?.(),
+        (utils as any).wardrobeMarket?.leasing?.myInventory?.invalidate?.(),
+      ]);
     },
     onError: (error: any) =>
       toast.error(error?.message ?? "Something went wrong"),
   });
 
   const [selected, setSelected] = useState<number[]>([]);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
-  if (!gift?.eligible || gift?.claimed) return null;
+  useEffect(() => {
+    if (openerReady && gift?.eligible && !gift?.claimed) setOpen(true);
+  }, [gift?.claimed, gift?.eligible, openerReady]);
+
+  if (authLoading || !isAuthenticated || !openerReady || !gift?.eligible || gift?.claimed) return null;
 
   const toggle = (id: number) => {
     setSelected(previous =>
