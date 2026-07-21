@@ -1,98 +1,126 @@
-/* Final contrast layer: any explicitly white or near-white surface uses black
-   text by default. Loaded last so legacy component classes cannot make text
-   disappear against white/cream backgrounds. */
+/* Final content contrast layer. Top navigation and the sidebar are deliberately
+   excluded; this file only corrects page content and portal controls. */
 
-.dark :where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-zinc-50,
-  [class*="bg-zinc-50/"],
-  .bg-neutral-50,
-  [class*="bg-neutral-50/"],
-  .bg-stone-50,
-  [class*="bg-stone-50/"],
-  .bg-slate-50,
-  [class*="bg-slate-50/"],
-  .bg-amber-50,
-  [class*="bg-amber-50/"],
-  .bg-card,
-  [data-white-surface="true"]
-) {
-  color: #111111 !important;
-}
-
-.dark :where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-zinc-50,
-  [class*="bg-zinc-50/"],
-  .bg-neutral-50,
-  [class*="bg-neutral-50/"],
-  .bg-stone-50,
-  [class*="bg-stone-50/"],
-  .bg-slate-50,
-  [class*="bg-slate-50/"],
-  .bg-amber-50,
-  [class*="bg-amber-50/"],
-  .bg-card,
-  [data-white-surface="true"]
-) > :where(h1, h2, h3, h4, h5, h6, p, span, label, li, td, th, small, strong, em, a) {
-  color: #111111 !important;
-  opacity: 1 !important;
-}
-
-.dark :where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-zinc-50,
-  [class*="bg-zinc-50/"],
-  .bg-neutral-50,
-  [class*="bg-neutral-50/"],
-  .bg-stone-50,
-  [class*="bg-stone-50/"],
-  .bg-slate-50,
-  [class*="bg-slate-50/"],
-  .bg-amber-50,
-  [class*="bg-amber-50/"],
-  .bg-card,
-  [data-white-surface="true"]
-) :where(.text-muted-foreground, .text-zinc-400, .text-zinc-500, .text-zinc-600, .text-zinc-700, .text-stone-400, .text-stone-500, .text-stone-600, .text-slate-400, .text-slate-500, .text-slate-600, .text-neutral-400, .text-neutral-500, .text-neutral-600) {
+[data-auto-dark-text="true"] {
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
   opacity: 1 !important;
 }
 
-/* Form controls and portal surfaces in day mode are also white/cream even when
-   they do not carry a bg-white utility class. */
-.dark :where(
-  input,
-  textarea,
-  select,
-  [data-slot="card"],
-  [data-slot="dialog-content"],
-  [data-slot="alert-dialog-content"],
-  [data-slot="popover-content"],
-  [data-slot="dropdown-menu-content"],
-  [data-slot="select-content"],
-  [data-slot="sheet-content"]
+[data-auto-dark-text="true"] :where(span, p, small, strong, em, label) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+[data-auto-dark-text="true"] :where(svg) {
+  color: #111111 !important;
+  opacity: 1 !important;
+}
+
+/* Static fallback for explicit white and cream page surfaces. */
+.dark main :where(
+  .bg-white,
+  [class*="bg-white/"],
+  .bg-zinc-50,
+  [class*="bg-zinc-50/"],
+  .bg-neutral-50,
+  [class*="bg-neutral-50/"],
+  .bg-stone-50,
+  [class*="bg-stone-50/"],
+  .bg-slate-50,
+  [class*="bg-slate-50/"],
+  .bg-amber-50,
+  [class*="bg-amber-50/"],
+  .bg-card,
+  [data-white-surface="true"]
 ) {
   color: #111111 !important;
 }
 
-.dark :where(input, textarea, select)::placeholder {
-  color: #4b4b4b !important;
+.dark main :where(
+  .bg-white,
+  [class*="bg-white/"],
+  .bg-zinc-50,
+  [class*="bg-zinc-50/"],
+  .bg-neutral-50,
+  [class*="bg-neutral-50/"],
+  .bg-stone-50,
+  [class*="bg-stone-50/"],
+  .bg-slate-50,
+  [class*="bg-slate-50/"],
+  .bg-amber-50,
+  [class*="bg-amber-50/"],
+  .bg-card,
+  [data-white-surface="true"]
+) :where(h1, h2, h3, h4, h5, h6, p, span, label, li, td, th, small, strong, em) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
   opacity: 1 !important;
 }
 
-/* Preserve intentional dark buttons and dark promotional panels nested inside
-   white pages. Their own foreground colour remains authoritative. */
-.dark :where(
-  [class*="bg-black"],
-  [class*="bg-zinc-9"],
-  [class*="bg-neutral-9"],
-  [class*="bg-stone-9"],
-  [class*="bg-slate-9"],
-  [data-dark-surface="true"]
+/* Outline, ghost and transparent controls on cream/white page content must use
+   black labels. Coloured and dark filled buttons are left to the automatic
+   computed-contrast guard. */
+.dark main :where(
+  button,
+  [role="button"],
+  a
+):where(
+  .bg-white,
+  [class*="bg-white/"],
+  .bg-background,
+  [class*="bg-background/"],
+  .bg-card,
+  [class*="bg-card/"],
+  .bg-transparent,
+  [class*="bg-transparent/"]
 ) {
-  color: #fff4c2 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+.dark main :where(
+  button,
+  [role="button"],
+  a
+):where(
+  .bg-white,
+  [class*="bg-white/"],
+  .bg-background,
+  [class*="bg-background/"],
+  .bg-card,
+  [class*="bg-card/"],
+  .bg-transparent,
+  [class*="bg-transparent/"]
+) :where(span, svg) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+.dark main :where(input, textarea, select),
+.dark :where(
+  [data-slot="dialog-content"],
+  [data-slot="alert-dialog-content"],
+  [data-slot="popover-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="select-content"]
+) :where(input, textarea, select) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+.dark main :where(input, textarea, select)::placeholder,
+.dark :where(
+  [data-slot="dialog-content"],
+  [data-slot="alert-dialog-content"],
+  [data-slot="popover-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="select-content"]
+) :where(input, textarea, select)::placeholder {
+  color: #4b4b4b !important;
+  -webkit-text-fill-color: #4b4b4b !important;
+  opacity: 1 !important;
 }
