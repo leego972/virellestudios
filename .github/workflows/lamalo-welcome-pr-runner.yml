@@ -1,0 +1,62 @@
+name: Run Lamalo welcome hotfix in PR
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/lamalo-welcome-pr-runner.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Extract and apply guarded patch
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          workflow = Path('.github/workflows/lamalo-welcome-hotfix.yml').read_text().splitlines()
+          start = next(i for i, line in enumerate(workflow) if "python3 - <<'PY'" in line) + 1
+          end = next(i for i in range(start, len(workflow)) if workflow[i].strip() == 'PY')
+          body = []
+          for line in workflow[start:end]:
+              body.append(line[10:] if line.startswith('          ') else line)
+          Path('/tmp/apply_lamalo_hotfix.py').write_text('\n'.join(body) + '\n')
+          PY
+          python3 /tmp/apply_lamalo_hotfix.py
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Verify Lamalo welcome contract
+        run: node scripts/check-lamalo-welcome-contract.mjs
+      - name: TypeScript check
+        run: pnpm check
+      - name: Wardrobe regression tests
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
+      - name: Production build used by Render
+        run: pnpm build
+
+      - name: Commit verified hotfix to PR branch
+        shell: bash
+        run: |
+          git config user.name "Virelle Repair Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/lamalo-welcome-pr-runner.yml
+          git add client/src/components/WelcomeOutfitPicker.tsx server/lamalo-gifts-router.ts server/lamalo-seed.ts scripts/check-lamalo-welcome-contract.mjs .github/workflows/lamalo-wardrobe-integrity.yml
+          git commit -m "Harden Lamalo welcome gift and catalogue contract"
+          git push origin HEAD:${{ github.head_ref }}
