@@ -12,7 +12,7 @@ import { eq, and, asc, inArray, sql } from "drizzle-orm";
 import { runLamaloSeed } from "./lamalo-seed";
 
 const LAMALO_BRAND_NAME = "Lamalo Fashion";
-const LAMALO_BRAND_NAMES = [LAMALO_BRAND_NAME, "Lamalo Fashions", "Lamalo"] as const;
+const LAMALO_BRAND_ALIASES = ["Lamalo Fashions", "Lamalo"] as const;
 const STARTER_OPTION_COUNT = 10;
 
 /**
@@ -63,13 +63,21 @@ async function findLamaloProfile(
   db: Awaited<ReturnType<typeof getDb>>,
 ): Promise<LamaloProfileRef | null> {
   if (!db) return null;
-  const rows = await db
+  const exact = await db
     .select({ id: designerProfiles.id, userId: designerProfiles.userId })
     .from(designerProfiles)
-    .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_NAMES]))
+    .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
     .orderBy(asc(designerProfiles.id))
     .limit(1);
-  return rows[0] ?? null;
+  if (exact[0]) return exact[0];
+
+  const aliases = await db
+    .select({ id: designerProfiles.id, userId: designerProfiles.userId })
+    .from(designerProfiles)
+    .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_ALIASES]))
+    .orderBy(asc(designerProfiles.id))
+    .limit(1);
+  return aliases[0] ?? null;
 }
 
 async function hasStarterInventory(
@@ -77,7 +85,7 @@ async function hasStarterInventory(
   profileId: number,
 ): Promise<boolean> {
   const rows = await db
-    .select({ id: wardrobeItems.id })
+    .select({ name: wardrobeItems.name })
     .from(wardrobeItems)
     .where(
       and(
@@ -86,8 +94,8 @@ async function hasStarterInventory(
         eq(wardrobeItems.status, "active"),
       ),
     )
-    .limit(STARTER_OPTION_COUNT);
-  return rows.length >= STARTER_OPTION_COUNT;
+    .limit(100);
+  return new Set(rows.map(row => row.name).filter(Boolean)).size >= STARTER_OPTION_COUNT;
 }
 
 /**
@@ -212,13 +220,15 @@ export const lamaloGiftsRouter = router({
         )
         .limit(100);
       const existingIds = new Set(ordered.map(item => item.id));
-      for (const item of fallback) {
-        if (!item.name || existingIds.has(item.id)) continue;
-        ordered.push(item as StarterOutfit);
-        existingIds.add(item.id);
-        if (ordered.length === STARTER_OPTION_COUNT) break;
-      }
+    const existingNames = new Set(ordered.map(item => item.name));
+    for (const item of fallback) {
+      if (!item.name || existingIds.has(item.id) || existingNames.has(item.name)) continue;
+      ordered.push(item as StarterOutfit);
+      existingIds.add(item.id);
+      existingNames.add(item.name);
+      if (ordered.length === STARTER_OPTION_COUNT) break;
     }
+  }
 
     if (ordered.length < STARTER_OPTION_COUNT) {
       throw new TRPCError({
