@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
     paths:
+      - "client/src/main.tsx"
+      - "client/src/components/LandingVerifiedAppsGuard.tsx"
+      - "client/src/pages/Landing.tsx"
       - "client/src/pages/DownloadApp.tsx"
       - "client/src/pages/VFXSuite.tsx"
       - "client/src/pages/VirelleBroadcastRender.tsx"
@@ -27,6 +30,9 @@ on:
       - ".github/workflows/app-debug-pass.yml"
   pull_request:
     paths:
+      - "client/src/main.tsx"
+      - "client/src/components/LandingVerifiedAppsGuard.tsx"
+      - "client/src/pages/Landing.tsx"
       - "client/src/pages/DownloadApp.tsx"
       - "client/src/pages/VFXSuite.tsx"
       - "client/src/pages/VirelleBroadcastRender.tsx"
