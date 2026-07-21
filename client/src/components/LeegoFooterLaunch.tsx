@@ -1,5 +1,3 @@
-import LeegoLogo from "@/components/LeegoLogo";
-
 const CONTACT_EMAILS = [
   { label: "Support", email: "studiosvirelle@gmail.com" },
   { label: "Billing", email: "studiosvirelle@gmail.com" },
@@ -35,9 +33,10 @@ export default function LeegoFooterLaunch() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <LeegoLogo
-                alt="Leego"
-                className="h-7 w-7 shrink-0 object-contain opacity-90"
+              <img
+                src="/virelle-logo-square.png"
+                alt="Virelle Studios"
+                className="h-10 w-10 shrink-0 rounded-lg object-contain"
               />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">Virelle Studios</p>
