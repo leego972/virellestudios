@@ -1,0 +1,54 @@
+name: Lamalo wardrobe integrity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "server/_core/wardrobePurchaseInventory.ts"
+      - "server/_core/wardrobePurchaseFulfillment.ts"
+      - "server/_core/wardrobeInventoryService.ts"
+      - "server/_core/wardrobeContinuity.ts"
+      - "server/_core/sceneGenerationContext.ts"
+      - "server/_core/extendedSceneGenerator.ts"
+      - "server/_core/videoQualityGate.ts"
+      - "server/_core/lamaloCatalogIntegrity.ts"
+      - "server/wardrobePurchaseFulfillment.test.ts"
+      - "server/wardrobeContinuity.test.ts"
+      - ".github/workflows/lamalo-wardrobe-integrity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "server/_core/wardrobePurchaseInventory.ts"
+      - "server/_core/wardrobePurchaseFulfillment.ts"
+      - "server/_core/wardrobeInventoryService.ts"
+      - "server/_core/wardrobeContinuity.ts"
+      - "server/_core/sceneGenerationContext.ts"
+      - "server/_core/extendedSceneGenerator.ts"
+      - "server/_core/videoQualityGate.ts"
+      - "server/_core/lamaloCatalogIntegrity.ts"
+      - "server/wardrobePurchaseFulfillment.test.ts"
+      - "server/wardrobeContinuity.test.ts"
+      - ".github/workflows/lamalo-wardrobe-integrity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: TypeScript check
+        run: pnpm check
+      - name: Wardrobe regression tests
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts
