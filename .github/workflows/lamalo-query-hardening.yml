@@ -30,48 +30,76 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          def replace_once(text: str, old: str, new: str, label: str) -> str:
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"{label}: expected one match, found {count}")
-              return text.replace(old, new, 1)
+          def replace_between(text: str, start_marker: str, end_marker: str, replacement: str, label: str) -> str:
+              start = text.find(start_marker)
+              if start < 0:
+                  raise SystemExit(f"{label}: start marker not found")
+              end = text.find(end_marker, start)
+              if end < 0:
+                  raise SystemExit(f"{label}: end marker not found")
+              return text[:start] + replacement + text[end:]
 
           router = Path("server/lamalo-gifts-router.ts")
           text = router.read_text()
-          text = replace_once(
+          text = replace_between(
               text,
-              '''    )
-              .limit(100);
-            return new Set(rows.map(row => row.name).filter(Boolean)).size >= STARTER_OPTION_COUNT;
-          ''',
-              '''    )
+              "async function hasStarterInventory(",
+              "/**\n * Production should already have Lamalo seeded.",
+              '''async function hasStarterInventory(
+            db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+            profileId: number,
+          ): Promise<boolean> {
+            const rows = await db
+              .select({ name: wardrobeItems.name })
+              .from(wardrobeItems)
+              .where(
+                and(
+                  eq(wardrobeItems.designerProfileId, profileId),
+                  eq(wardrobeItems.visibility, "public"),
+                  eq(wardrobeItems.status, "active"),
+                ),
+              )
               .groupBy(wardrobeItems.name)
               .limit(STARTER_OPTION_COUNT);
             return rows.length >= STARTER_OPTION_COUNT;
+          }
+
           ''',
               "distinct starter inventory query",
           )
-          text = replace_once(
+
+          text = replace_between(
               text,
-              '''        )
-                .limit(100);
-              const existingIds = new Set(ordered.map(item => item.id));
-          ''',
-              '''        )
+              "      const fallback = await db",
+              "      const existingIds = new Set(ordered.map(item => item.id));",
+              '''      const fallback = await db
+                .select(starterSelection)
+                .from(wardrobeItems)
+                .where(
+                  and(
+                    eq(wardrobeItems.designerProfileId, lamaloId),
+                    eq(wardrobeItems.visibility, "public"),
+                    eq(wardrobeItems.status, "active"),
+                  ),
+                )
                 .orderBy(asc(wardrobeItems.id))
                 .limit(2000);
-              const existingIds = new Set(ordered.map(item => item.id));
           ''',
               "ordered full-catalogue fallback",
           )
           router.write_text(text)
 
           checker = Path("scripts/check-lamalo-welcome-contract.mjs")
-          text = checker.read_text()
+          lines = checker.read_text().splitlines()
           anchor = 'assert.ok(gifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");'
-          addition = anchor + '\nassert.ok(gifts.includes(".groupBy(wardrobeItems.name)"), "starter inventory readiness must count distinct catalogue names in SQL");\nassert.ok(gifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");'
-          text = replace_once(text, anchor, addition, "contract query assertions")
-          checker.write_text(text)
+          if anchor not in lines:
+              raise SystemExit("contract query assertion anchor not found")
+          index = lines.index(anchor)
+          lines[index + 1:index + 1] = [
+              'assert.ok(gifts.includes(".groupBy(wardrobeItems.name)"), "starter inventory readiness must count distinct catalogue names in SQL");',
+              'assert.ok(gifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");',
+          ]
+          checker.write_text("\n".join(lines) + "\n")
           PY
 
       - name: Install dependencies
