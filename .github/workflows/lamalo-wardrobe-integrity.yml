@@ -12,6 +12,10 @@ on:
       - "server/_core/extendedSceneGenerator.ts"
       - "server/_core/videoQualityGate.ts"
       - "server/_core/lamaloCatalogIntegrity.ts"
+      - "server/lamalo-gifts-router.ts"
+      - "server/lamalo-seed.ts"
+      - "client/src/components/WelcomeOutfitPicker.tsx"
+      - "scripts/check-lamalo-welcome-contract.mjs"
       - "server/wardrobePurchaseFulfillment.test.ts"
       - "server/wardrobeContinuity.test.ts"
       - "server/sceneWardrobeContinuity.test.ts"
@@ -27,6 +31,10 @@ on:
       - "server/_core/extendedSceneGenerator.ts"
       - "server/_core/videoQualityGate.ts"
       - "server/_core/lamaloCatalogIntegrity.ts"
+      - "server/lamalo-gifts-router.ts"
+      - "server/lamalo-seed.ts"
+      - "client/src/components/WelcomeOutfitPicker.tsx"
+      - "scripts/check-lamalo-welcome-contract.mjs"
       - "server/wardrobePurchaseFulfillment.test.ts"
       - "server/wardrobeContinuity.test.ts"
       - "server/sceneWardrobeContinuity.test.ts"
@@ -48,7 +56,9 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Lamalo welcome contract
+        run: node scripts/check-lamalo-welcome-contract.mjs
       - name: TypeScript check
         run: pnpm check
       - name: Wardrobe regression tests
-        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.test.ts server/sceneWardrobeContinuity.test.ts
