@@ -1,241 +1,183 @@
-/* Final content contrast layer. Top navigation and the permanent sidebar shell
-   are excluded; page content and portal controls are corrected automatically. */
+/*
+ * Final visibility layer for both Virelle themes.
+ *
+ * AutomaticContrastGuard measures the rendered foreground against the effective
+ * surface and adds one of the two data attributes below only when the measured
+ * contrast is insufficient. These selectors deliberately have high specificity
+ * and load last so hard-coded Tailwind colours cannot hide text or controls.
+ */
 
-[data-auto-dark-text="true"] {
+:root
+  [data-auto-dark-text="true"][data-auto-dark-text="true"] {
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
   opacity: 1 !important;
 }
 
-[data-auto-dark-text="true"] :where(span, p, small, strong, em, label) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  opacity: 1 !important;
-}
-
-[data-auto-dark-text="true"] :where(svg) {
-  color: #111111 !important;
-  opacity: 1 !important;
-}
-
-/* The runtime guard also marks dark-on-dark controls. This rule was previously
-   missing, which is why Cancel buttons and language names remained invisible. */
-[data-auto-light-text="true"] {
+:root
+  [data-auto-light-text="true"][data-auto-light-text="true"] {
   color: #fff4c2 !important;
   -webkit-text-fill-color: #fff4c2 !important;
   opacity: 1 !important;
 }
 
-[data-auto-light-text="true"] :where(span, p, small, strong, em, label) {
-  color: #fff4c2 !important;
-  -webkit-text-fill-color: #fff4c2 !important;
+/* Lucide and other currentColor icons inside corrected controls. */
+:root
+  [data-auto-dark-text="true"][data-auto-dark-text="true"]
+  :where(svg) {
+  color: #111111 !important;
   opacity: 1 !important;
 }
 
-[data-auto-light-text="true"] :where(svg) {
+:root
+  [data-auto-light-text="true"][data-auto-light-text="true"]
+  :where(svg) {
   color: #f6c94c !important;
   opacity: 1 !important;
 }
 
-/* Portal components use the cinematic dark-glass treatment even while the main
-   page is in cream/day mode. Their text therefore must be explicitly light. */
-:where(
-  [data-slot="alert-dialog-content"],
-  [data-slot="dialog-content"],
-  [data-slot="dropdown-menu-content"],
-  [data-slot="popover-content"],
-  [data-slot="select-content"],
-  [data-slot="command"]
-).glass-dark {
-  background: rgba(9, 9, 11, 0.98) !important;
-  color: #fff4c2 !important;
-  -webkit-text-fill-color: #fff4c2 !important;
-}
-
-:where(
-  [data-slot="alert-dialog-content"],
-  [data-slot="dialog-content"],
-  [data-slot="dropdown-menu-content"],
-  [data-slot="popover-content"],
-  [data-slot="select-content"],
-  [data-slot="command"]
-).glass-dark :where(
-  [data-slot="alert-dialog-title"],
-  [data-slot="dialog-title"],
-  [data-slot="dropdown-menu-item"],
-  [data-slot="dropdown-menu-label"],
-  [data-slot="select-item"],
-  button,
-  [role="button"],
-  a,
-  p,
-  span,
-  label
-) {
-  color: #fff4c2 !important;
-  -webkit-text-fill-color: #fff4c2 !important;
-  opacity: 1 !important;
-}
-
-:where(
-  [data-slot="alert-dialog-content"],
-  [data-slot="dialog-content"]
-).glass-dark :where(
-  [data-slot="alert-dialog-description"],
-  [data-slot="dialog-description"],
-  .text-muted-foreground
-) {
-  color: #e5d7a5 !important;
-  -webkit-text-fill-color: #e5d7a5 !important;
-  opacity: 1 !important;
-}
-
-/* Outline/cancel controls on black modal surfaces must never inherit black text. */
-:where(
-  [data-slot="alert-dialog-content"],
-  [data-slot="dialog-content"]
-).glass-dark :where(
-  [data-slot="alert-dialog-cancel"],
-  [data-slot="dialog-cancel"],
-  button[data-variant="outline"]
-) {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border-color: rgba(255, 244, 194, 0.8) !important;
-  color: #fff4c2 !important;
-  -webkit-text-fill-color: #fff4c2 !important;
-  opacity: 1 !important;
-}
-
-/* Primary gold/orange actions retain black text for correct contrast. */
-:where(
-  [data-slot="alert-dialog-content"],
-  [data-slot="dialog-content"]
-).glass-dark :where(
-  [data-slot="alert-dialog-action"],
-  [data-slot="dialog-action"],
-  .bg-amber-400,
-  .bg-amber-500,
-  .bg-orange-400,
-  .bg-orange-500
-) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-}
-
-/* Language and account dropdowns need explicit labels on their black surface. */
-[data-slot="dropdown-menu-content"].glass-dark [data-slot="dropdown-menu-item"] {
-  color: #fff4c2 !important;
-  -webkit-text-fill-color: #fff4c2 !important;
-  opacity: 1 !important;
-}
-
-[data-slot="dropdown-menu-content"].glass-dark [data-slot="dropdown-menu-item"]:focus,
-[data-slot="dropdown-menu-content"].glass-dark [data-slot="dropdown-menu-item"][data-highlighted] {
-  background: rgba(245, 158, 11, 0.16) !important;
-  color: #ffd866 !important;
-  -webkit-text-fill-color: #ffd866 !important;
-}
-
-/* Static fallback for explicit white and cream page surfaces. */
-.dark main :where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-zinc-50,
-  [class*="bg-zinc-50/"],
-  .bg-neutral-50,
-  [class*="bg-neutral-50/"],
-  .bg-stone-50,
-  [class*="bg-stone-50/"],
-  .bg-slate-50,
-  [class*="bg-slate-50/"],
-  .bg-amber-50,
-  [class*="bg-amber-50/"],
-  .bg-card,
-  [data-white-surface="true"]
-) {
-  color: #111111 !important;
-}
-
-.dark main :where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-zinc-50,
-  [class*="bg-zinc-50/"],
-  .bg-neutral-50,
-  [class*="bg-neutral-50/"],
-  .bg-stone-50,
-  [class*="bg-stone-50/"],
-  .bg-slate-50,
-  [class*="bg-slate-50/"],
-  .bg-amber-50,
-  [class*="bg-amber-50/"],
-  .bg-card,
-  [data-white-surface="true"]
-) :where(h1, h2, h3, h4, h5, h6, p, span, label, li, td, th, small, strong, em) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  opacity: 1 !important;
-}
-
-.dark main :where(
-  button,
-  [role="button"],
-  a
-):where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-background,
-  [class*="bg-background/"],
-  .bg-card,
-  [class*="bg-card/"],
-  .bg-transparent,
-  [class*="bg-transparent/"]
-) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  opacity: 1 !important;
-}
-
-.dark main :where(
-  button,
-  [role="button"],
-  a
-):where(
-  .bg-white,
-  [class*="bg-white/"],
-  .bg-background,
-  [class*="bg-background/"],
-  .bg-card,
-  [class*="bg-card/"],
-  .bg-transparent,
-  [class*="bg-transparent/"]
-) :where(span, svg) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  opacity: 1 !important;
-}
-
-.dark main :where(input, textarea, select),
-.dark :where(
-  [data-slot="dialog-content"],
-  [data-slot="alert-dialog-content"],
-  [data-slot="popover-content"],
-  [data-slot="dropdown-menu-content"],
-  [data-slot="select-content"]
-) :where(input, textarea, select) {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-}
-
-.dark main :where(input, textarea, select)::placeholder,
-.dark :where(
-  [data-slot="dialog-content"],
-  [data-slot="alert-dialog-content"],
-  [data-slot="popover-content"],
-  [data-slot="dropdown-menu-content"],
-  [data-slot="select-content"]
-) :where(input, textarea, select)::placeholder {
+/* Inputs, textareas and editable fields need readable placeholder and autofill text. */
+:root
+  :where(input, textarea)[data-auto-dark-text="true"][data-auto-dark-text="true"]::placeholder {
   color: #4b4b4b !important;
   -webkit-text-fill-color: #4b4b4b !important;
   opacity: 1 !important;
+}
+
+:root
+  :where(input, textarea)[data-auto-light-text="true"][data-auto-light-text="true"]::placeholder {
+  color: #d8c98f !important;
+  -webkit-text-fill-color: #d8c98f !important;
+  opacity: 1 !important;
+}
+
+:root
+  :where(input, textarea)[data-auto-dark-text="true"][data-auto-dark-text="true"]:-webkit-autofill {
+  -webkit-text-fill-color: #111111 !important;
+  caret-color: #111111 !important;
+}
+
+:root
+  :where(input, textarea)[data-auto-light-text="true"][data-auto-light-text="true"]:-webkit-autofill {
+  -webkit-text-fill-color: #fff4c2 !important;
+  caret-color: #fff4c2 !important;
+}
+
+/* Disabled controls must remain visibly disabled without becoming illegible. */
+:root
+  :where(button, input, textarea, select, [role="button"])[disabled][data-auto-dark-text="true"],
+:root
+  :where(button, input, textarea, select, [role="button"])[aria-disabled="true"][data-auto-dark-text="true"],
+:root
+  :where(button, input, textarea, select, [role="button"])[disabled][data-auto-light-text="true"],
+:root
+  :where(button, input, textarea, select, [role="button"])[aria-disabled="true"][data-auto-light-text="true"] {
+  opacity: 0.7 !important;
+}
+
+/*
+ * Cinematic dark-glass portals are intentionally dark in both themes. Give them
+ * a safe first-paint colour; the runtime guard still validates every child.
+ */
+:where(
+  [data-slot="alert-dialog-content"],
+  [data-slot="dialog-content"],
+  [data-slot="sheet-content"],
+  [data-slot="drawer-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="context-menu-content"],
+  [data-slot="menubar-content"],
+  [data-slot="popover-content"],
+  [data-slot="hover-card-content"],
+  [data-slot="select-content"],
+  [data-slot="command"],
+  [data-slot="tooltip-content"]
+).glass-dark {
+  background-color: rgba(9, 9, 11, 0.98) !important;
+  color: #fff4c2;
+  -webkit-text-fill-color: #fff4c2;
+}
+
+:where(
+  [data-slot="alert-dialog-content"],
+  [data-slot="dialog-content"],
+  [data-slot="sheet-content"],
+  [data-slot="drawer-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="context-menu-content"],
+  [data-slot="menubar-content"],
+  [data-slot="popover-content"],
+  [data-slot="hover-card-content"],
+  [data-slot="select-content"],
+  [data-slot="command"],
+  [data-slot="tooltip-content"]
+).glass-dark
+  :where(
+    [data-slot="alert-dialog-title"],
+    [data-slot="alert-dialog-description"],
+    [data-slot="dialog-title"],
+    [data-slot="dialog-description"],
+    [data-slot="sheet-title"],
+    [data-slot="sheet-description"],
+    [data-slot="drawer-title"],
+    [data-slot="drawer-description"],
+    [data-slot="dropdown-menu-item"],
+    [data-slot="dropdown-menu-label"],
+    [data-slot="context-menu-item"],
+    [data-slot="menubar-item"],
+    [data-slot="select-item"],
+    [data-slot="command-item"],
+    [data-slot="tooltip-content"]
+  ) {
+  color: #fff4c2;
+  -webkit-text-fill-color: #fff4c2;
+}
+
+/* Primary gold actions always use black text, including nested labels/icons. */
+:root
+  :where(
+    button,
+    [role="button"],
+    [data-slot="button"],
+    [data-slot="alert-dialog-action"]
+  ):where(
+    .bg-amber-300,
+    .bg-amber-400,
+    .bg-amber-500,
+    .bg-yellow-400,
+    .bg-yellow-500,
+    .btn-gold
+  ) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+:root
+  :where(
+    button,
+    [role="button"],
+    [data-slot="button"],
+    [data-slot="alert-dialog-action"]
+  ):where(
+    .bg-amber-300,
+    .bg-amber-400,
+    .bg-amber-500,
+    .bg-yellow-400,
+    .bg-yellow-500,
+    .btn-gold
+  )
+  :where(span, svg) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+/* Native option menus do not consistently inherit app colours across browsers. */
+:root:not(.dark) :where(option, optgroup) {
+  background-color: #111113;
+  color: #fff4c2;
+}
+
+:root.dark :where(option, optgroup) {
+  background-color: #f5efe2;
+  color: #111111;
 }
