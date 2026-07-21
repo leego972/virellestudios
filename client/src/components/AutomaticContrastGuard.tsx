@@ -32,17 +32,74 @@ const TEXT_ELEMENTS = [
 
 type Rgba = { red: number; green: number; blue: number; alpha: number };
 
-function parseColour(value: string): Rgba | null {
+function clampChannel(value: number) {
+  return Math.max(0, Math.min(255, value));
+}
+
+function linearToSrgb(value: number) {
+  const converted =
+    value <= 0.0031308
+      ? 12.92 * value
+      : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+  return clampChannel(converted * 255);
+}
+
+function parseOklch(value: string): Rgba | null {
   const match = value.match(
-    /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i,
+    /oklch\(\s*([\d.]+)(%)?\s+([\d.]+)\s+([\d.]+)(?:deg)?(?:\s*\/\s*([\d.]+)(%)?)?\s*\)/i,
   );
   if (!match) return null;
+
+  const lightness = Number(match[1]) / (match[2] ? 100 : 1);
+  const chroma = Number(match[3]);
+  const hue = (Number(match[4]) * Math.PI) / 180;
+  const alpha = match[5]
+    ? Number(match[5]) / (match[6] ? 100 : 1)
+    : 1;
+
+  const a = chroma * Math.cos(hue);
+  const b = chroma * Math.sin(hue);
+
+  const lPrime = lightness + 0.3963377774 * a + 0.2158037573 * b;
+  const mPrime = lightness - 0.1055613458 * a - 0.0638541728 * b;
+  const sPrime = lightness - 0.0894841775 * a - 1.291485548 * b;
+
+  const l = lPrime * lPrime * lPrime;
+  const m = mPrime * mPrime * mPrime;
+  const s = sPrime * sPrime * sPrime;
+
   return {
-    red: Number(match[1]),
-    green: Number(match[2]),
-    blue: Number(match[3]),
-    alpha: match[4] === undefined ? 1 : Number(match[4]),
+    red: linearToSrgb(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+    green: linearToSrgb(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+    blue: linearToSrgb(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
+    alpha,
   };
+}
+
+function parseColour(value: string): Rgba | null {
+  const rgb = value.match(
+    /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i,
+  );
+  if (rgb) {
+    return {
+      red: Number(rgb[1]),
+      green: Number(rgb[2]),
+      blue: Number(rgb[3]),
+      alpha: rgb[4] === undefined ? 1 : Number(rgb[4]),
+    };
+  }
+
+  const hex = value.match(/^#([0-9a-f]{6})([0-9a-f]{2})?$/i);
+  if (hex) {
+    return {
+      red: Number.parseInt(hex[1].slice(0, 2), 16),
+      green: Number.parseInt(hex[1].slice(2, 4), 16),
+      blue: Number.parseInt(hex[1].slice(4, 6), 16),
+      alpha: hex[2] ? Number.parseInt(hex[2], 16) / 255 : 1,
+    };
+  }
+
+  return parseOklch(value);
 }
 
 function channelLuminance(channel: number) {
