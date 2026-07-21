@@ -107,7 +107,7 @@
   "devDependencies": {
     "@builder.io/vite-plugin-jsx-loc": "^0.1.1",
     "@stripe/react-stripe-js": "^2.0.0",
-    "@stripe/stripe-js": "^4.0.0",
+    "@stripe/stripe-js": "^9.10.0",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.2.4",
     "@types/bcryptjs": "^3.0.0",
