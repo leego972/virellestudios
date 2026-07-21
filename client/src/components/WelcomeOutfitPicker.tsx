@@ -26,12 +26,13 @@ function isStudioOpenerActive(): boolean {
   if (typeof window === "undefined" || typeof document === "undefined") return false;
   if (new URLSearchParams(window.location.search).get("opener") === "1") return true;
 
-  return Array.from(document.body.children).some(node => {
-    if (!(node instanceof HTMLElement)) return false;
-    const style = window.getComputedStyle(node);
-    const zIndex = Number.parseInt(style.zIndex || "0", 10);
-    return style.position === "fixed" && zIndex >= 9000;
-  });
+  return Array.from(document.body.children).some(node =>
+    node instanceof HTMLElement &&
+    node.classList.contains("fixed") &&
+    node.classList.contains("inset-0") &&
+    node.classList.contains("z-[9999]") &&
+    node.classList.contains("bg-black"),
+  );
 }
 
 export default function WelcomeOutfitPicker() {
