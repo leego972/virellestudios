@@ -6,12 +6,12 @@ const seed = fs.readFileSync("server/lamalo-seed.ts", "utf8");
 const picker = fs.readFileSync("client/src/components/WelcomeOutfitPicker.tsx", "utf8");
 const home = fs.readFileSync("client/src/pages/Home.tsx", "utf8");
 
-const compact = (source) => source.replace(/\s+/g, " ");
+const squash = (source) => source.replace(/\s+/g, "");
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const compactGifts = compact(gifts);
-const compactSeed = compact(seed);
-const compactPicker = compact(picker);
-const compactHome = compact(home);
+const squashedGifts = squash(gifts);
+const squashedSeed = squash(seed);
+const squashedPicker = squash(picker);
+const squashedHome = squash(home);
 
 const picksBlock = gifts.match(/const STARTER_PICKS\s*=\s*\[([\s\S]*?)\]\s*as const;/)?.[1] ?? "";
 const picks = [...picksBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
@@ -29,20 +29,20 @@ for (const pick of picks) {
   assert.ok(seed.includes(`"${colour}"`), `starter colour is missing from Lamalo seed palettes: ${colour}`);
 }
 
-assert.ok(compactGifts.includes("db.transaction"), "welcome claim must be transactional");
-const canonicalLookup = compactGifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRAND_NAME)");
-const aliasLookup = compactGifts.indexOf("[...LAMALO_BRAND_ALIASES]");
+assert.ok(squashedGifts.includes("db.transaction"), "welcome claim must be transactional");
+const canonicalLookup = squashedGifts.indexOf("eq(designerProfiles.brandName,LAMALO_BRAND_NAME)");
+const aliasLookup = squashedGifts.indexOf("[...LAMALO_BRAND_ALIASES]");
 assert.ok(canonicalLookup >= 0 && aliasLookup > canonicalLookup, "canonical Lamalo brand must be checked before legacy aliases");
-assert.ok(compactGifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");
-assert.ok(compactGifts.includes(".groupBy(wardrobeItems.name)"), "starter inventory readiness must count distinct catalogue names in SQL");
-assert.ok(compactGifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");
-assert.ok(compactGifts.includes("FOR UPDATE"), "welcome claim must serialize concurrent requests");
-assert.ok(compactGifts.includes('eq(wardrobeLeases.status, "active")'), "claim checks must ignore inactive leases");
-assert.ok(compactPicker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");
-assert.ok(compactHome.includes("const [showOpener, setShowOpener] = useState(() =>"), "home must latch the opener request before the first render");
-assert.ok(compactPicker.includes("isAuthenticated && !authLoading && openerReady"), "picker must not call protected APIs while logged out");
-assert.ok(!compactSeed.includes("INSERT IGNORE INTO wardrobeItems"), "Lamalo item seeding must use an explicit idempotent upsert");
-assert.ok(!/WHERE collectionId IS NOT NULL\s+AND \(retailPriceAud/.test(seed), "price repair must not alter other designers' rows");
-assert.ok(compactSeed.includes("WHERE designerProfileId = ${designerProfileId}"), "catalogue repair SQL must be scoped to Lamalo");
+assert.ok(squashedGifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");
+assert.ok(squashedGifts.includes(".groupBy(wardrobeItems.name)"), "starter inventory readiness must count distinct catalogue names in SQL");
+assert.ok(squashedGifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");
+assert.match(gifts, /FOR\s+UPDATE/, "welcome claim must serialize concurrent requests");
+assert.ok(squashedGifts.includes('eq(wardrobeLeases.status,"active")'), "claim checks must ignore inactive leases");
+assert.ok(squashedPicker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");
+assert.ok(squashedHome.includes("const[showOpener,setShowOpener]=useState(()=>"), "home must latch the opener request before the first render");
+assert.ok(squashedPicker.includes("isAuthenticated&&!authLoading&&openerReady"), "picker must not call protected APIs while logged out");
+assert.ok(!squashedSeed.includes("INSERTIGNOREINTOwardrobeItems"), "Lamalo item seeding must use an explicit idempotent upsert");
+assert.ok(!/WHERE\s+collectionId\s+IS\s+NOT\s+NULL\s+AND\s*\(retailPriceAud/.test(seed), "price repair must not alter other designers' rows");
+assert.ok(squashedSeed.includes("WHEREdesignerProfileId=${designerProfileId}"), "catalogue repair SQL must be scoped to Lamalo");
 
 console.log("Lamalo welcome contract verified: 10 picks, gated UI, atomic claim, scoped idempotent seed.");
