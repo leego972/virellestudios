@@ -99,6 +99,18 @@ const requireUser = t.middleware(async opts => {
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
+function hasUsableBroadcastBridge(): boolean {
+  const rawUrl = process.env.BROADCAST_BRIDGE_URL?.trim();
+  const token = process.env.BROADCAST_BRIDGE_TOKEN?.trim() || "";
+  if (!rawUrl || token.length < 24) return false;
+  try {
+    const url = new URL(rawUrl);
+    return url.protocol === "https:" && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Virelle Studio Swappys guard. The public schema deliberately remains backward
  * compatible; contentMode/allSubjectsAdultsConfirmed are read before Zod strips
@@ -106,6 +118,13 @@ const requireUser = t.middleware(async opts => {
  * into the existing notes field that the VFX prompt already consumes.
  */
 const guardStudioSwappys = t.middleware(async (opts) => {
+  if (opts.path === "virelleBroadcastRender.createBroadcastSession" && !hasUsableBroadcastBridge()) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "BROADCAST_BRIDGE_NOT_CONFIGURED: Live broadcasting is unavailable until BROADCAST_BRIDGE_URL and BROADCAST_BRIDGE_TOKEN are configured in Render. No credits were charged.",
+    });
+  }
+
   const studioPath = opts.path === "vfxSfx.createStudioVfxJob" || opts.path === "vfxSfx.createSwappysDigitalDoubleJob";
   if (!studioPath) return opts.next();
   if (!opts.ctx.user) throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
