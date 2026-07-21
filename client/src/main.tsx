@@ -14,6 +14,7 @@ import "./index.css";
 import "./mobile-safari.css";
 import "./mobile-sidebar-contrast.css";
 import "./white-surface-text.css";
+import "./director-mask-identity.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
