@@ -25,7 +25,9 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Apply surgical source repairs
-        run: python scripts/apply-security-pass.py
+        run: |
+          python scripts/apply-security-pass.py
+          python scripts/port-pr84-navigation.py
       - name: Regenerate lockfile
         run: pnpm install --lockfile-only --no-frozen-lockfile
       - name: Verify clean dependency audit
@@ -44,8 +46,10 @@ jobs:
             server/_core/voiceTranscription.ts server/_core/rateLimit.ts server/_core/oauth.ts \
             server/_core/index.ts gateway.mjs client/public/sw.js server/_core/videoJobWorker.ts \
             client/src/components/ui/chart.tsx client/src/pages/SeriesBible.tsx \
-            server/advertising-orchestrator.ts server/_core/securityHeaders.ts
-          git commit -m "Complete repository quality and security repairs"
+            server/advertising-orchestrator.ts server/_core/securityHeaders.ts \
+            client/src/components/DashboardLayout.tsx client/src/components/ProjectToolHub.tsx \
+            client/src/pages/Budget.tsx client/src/pages/WardrobeMarketplacePage.tsx
+          git commit -m "Complete repository quality, security and navigation repairs"
           git push origin "HEAD:${{ github.head_ref }}"
 
   verify:
