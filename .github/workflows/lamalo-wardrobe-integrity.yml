@@ -61,4 +61,4 @@ jobs:
       - name: TypeScript check
         run: pnpm check
       - name: Wardrobe regression tests
-        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.test.ts server/sceneWardrobeContinuity.test.ts
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
