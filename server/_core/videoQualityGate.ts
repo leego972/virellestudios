@@ -53,6 +53,7 @@ export interface ReviewGeneratedClipInput {
   expectedDurationSeconds: number;
   policy?: VideoQualityPolicy;
   previousFrameUrl?: string;
+  referenceImages?: string[];
   userOpenAiKey?: string | null;
   clipIndex?: number;
   totalClips?: number;
@@ -178,6 +179,14 @@ function technicalIssues(probe: VideoProbe, spec: CanonicalSceneSpec, expectedDu
   return issues;
 }
 
+function uniqueReferenceImages(input: ReviewGeneratedClipInput): string[] {
+  return Array.from(new Set((input.referenceImages || [])
+    .filter((url): url is string => typeof url === "string" && /^https?:\/\//i.test(url.trim()))
+    .map((url) => url.trim())))
+    .filter((url) => url !== input.previousFrameUrl)
+    .slice(0, 8);
+}
+
 async function visualReview(
   frames: string[],
   input: ReviewGeneratedClipInput,
@@ -204,22 +213,35 @@ async function visualReview(
       required: ["pass", "score", "identityScore", "wardrobeScore", "actionScore", "locationScore", "cameraScore", "continuityScore", "artifactScore", "issues", "corrections"],
     },
   };
+  const contractReferences = uniqueReferenceImages(input);
   const visualContent: any[] = [{
     type: "text",
     text: [
       "Review the supplied first, middle and final frames from one generated film clip.",
-      "Judge only whether the frames comply with the scene contract below.",
-      "Be strict about character identity, exact garments, number of characters, props, location, blocking, action progression, camera requirements, continuity, anatomy, duplicate limbs/faces, warped objects, text, watermarks and unexplained visual resets.",
+      "Judge only whether the generated frames comply with the scene contract and exact reference images below.",
+      "Be strict about character identity, which named character wears which exact garment, garment colour/material/cut/fit/accessories, number of characters, props, location, blocking, action progression, camera requirements, continuity, anatomy, duplicate limbs/faces, warped objects, text, watermarks and unexplained visual resets.",
+      "A garment appearing on the wrong character is an automatic wardrobe failure. Any unexplained clothing change between generated frames or from the continuity frame is an automatic continuity failure.",
       `Clip position: ${(input.clipIndex ?? 0) + 1}/${input.totalClips ?? 1}.`,
       `Scene contract ${input.canonicalSpec.fingerprint}:`,
       input.canonicalSpec.lockedRequirements.join("\n"),
       `Camera: ${JSON.stringify(input.canonicalSpec.camera)}`,
       `Narrative: ${input.canonicalSpec.baseNarrative}`,
-      input.previousFrameUrl ? "A previous continuity reference frame follows after the generated frames." : "No previous-frame reference was supplied.",
+      input.previousFrameUrl ? "After the generated review frames, one accepted continuity/opening frame is supplied." : "No previous/opening continuity frame was supplied.",
+      contractReferences.length ? `After the continuity frame, ${contractReferences.length} authoritative character/wardrobe contract reference image(s) are supplied in canonical reference order.` : "No separate contract reference images were supplied.",
     ].join("\n"),
   }];
   for (const frame of frames) visualContent.push({ type: "image_url", image_url: { url: frame, detail: "high" } });
-  if (input.previousFrameUrl) visualContent.push({ type: "image_url", image_url: { url: input.previousFrameUrl, detail: "high" } });
+  if (input.previousFrameUrl) {
+    visualContent.push({ type: "text", text: "ACCEPTED OPENING/PREVIOUS CONTINUITY FRAME:" });
+    visualContent.push({ type: "image_url", image_url: { url: input.previousFrameUrl, detail: "high" } });
+  }
+  if (contractReferences.length) {
+    visualContent.push({ type: "text", text: "AUTHORITATIVE CHARACTER AND WARDROBE CONTRACT REFERENCES:" });
+    contractReferences.forEach((url, index) => {
+      visualContent.push({ type: "text", text: `Contract reference ${index + 1}: compare it against the named identity/garment bindings in the locked scene requirements.` });
+      visualContent.push({ type: "image_url", image_url: { url, detail: "high" } });
+    });
+  }
 
   const result = await invokeLLM({
     userApiKey: input.userOpenAiKey || undefined,
