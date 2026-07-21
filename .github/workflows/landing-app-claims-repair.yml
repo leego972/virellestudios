@@ -1,11 +1,10 @@
 name: One-time landing app claims repair
-# Trigger commit: workflow already exists on the default branch.
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
     paths:
-      - ".github/workflows/landing-app-claims-repair.yml"
+      - ".github/landing-app-claims-repair.trigger"
 
 permissions:
   contents: write
@@ -17,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.head_ref }}
       - name: Replace stale app claims
         shell: bash
         run: |
@@ -108,12 +107,13 @@ jobs:
           text = text.replace(old_faq, new_faq)
           path.write_text(text)
           PY
-      - name: Commit repaired landing page and remove this workflow
+      - name: Commit repaired landing page and remove repair scaffolding
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm .github/workflows/landing-app-claims-repair.yml
+          git rm .github/landing-app-claims-repair.trigger
           git add client/src/pages/Landing.tsx
           git commit -m "Make landing app claims release-verified"
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.head_ref }}
