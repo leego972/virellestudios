@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/apply-director-mask-identity.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write
