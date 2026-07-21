@@ -21,6 +21,7 @@ import * as path from "path";
 import * as os from "os";
 import { storagePut } from "../storage";
 import { logger } from "./logger";
+import { downloadPublicFile } from "./remoteUrlSecurity";
 
 const execFileAsync = promisify(execFile);
 
@@ -123,10 +124,13 @@ export interface StitchResult {
 // âââ Helpers âââ
 
 async function downloadFile(url: string, dest: string): Promise<void> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Failed to download ${url}: ${response.status}`);
-  const buffer = Buffer.from(await response.arrayBuffer());
-  await fs.promises.writeFile(dest, buffer);
+  const downloaded = await downloadPublicFile(url, {
+    maxBytes: 512 * 1024 * 1024,
+    timeoutMs: 120_000,
+    maxRedirects: 3,
+    allowedContentTypePrefixes: ["video/", "audio/", "application/octet-stream"],
+  });
+  await fs.promises.writeFile(dest, downloaded.buffer);
 }
 
 async function getVideoDuration(filePath: string): Promise<number> {
@@ -157,13 +161,34 @@ function getResolution(res?: string): { width: number; height: number } {
   }
 }
 
-function escapeSubtitleText(text: string): string {
-  // Escape special characters for ffmpeg drawtext
-  return text
-    .replace(/\\/g, "\\\\\\\\")
-    .replace(/'/g, "\u2019")
+function normaliseMediaText(text: string, maxLength = 8_000): string {
+  return String(text ?? "")
+    .normalize("NFKC")
+    .replace(/\u0000/g, "")
+    .replace(/[\u0001-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ")
+    .slice(0, maxLength);
+}
+
+function escapeFilterPath(filePath: string): string {
+  return filePath
+    .replace(/\\/g, "/")
+    .replace(/'/g, "\\'")
     .replace(/:/g, "\\:")
-    .replace(/%/g, "%%");
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;")
+    .replace(/\[/g, "\\[")
+    .replace(/\]/g, "\\]");
+}
+
+function safeSubtitleText(text: string): string {
+  return normaliseMediaText(text, 4_000)
+    .replace(/<[^>]*>/g, "")
+    .replace(/\{[^}]*\}/g, "")
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join("\n");
 }
 
 // âââ Title Card Generator âââ
@@ -177,49 +202,29 @@ async function generateTitleCard(
   resolution: { width: number; height: number },
 ): Promise<string> {
   const outputPath = path.join(tmpDir, "title_card.mp4");
-  const escapedTitle = escapeSubtitleText(title);
-  const escapedDirector = directorName ? escapeSubtitleText(directorName) : "";
-
-  // Build drawtext filters for title card
-  const filters: string[] = [];
-
-  // Black background
-  filters.push(`color=c=black:s=${resolution.width}x${resolution.height}:d=${duration}:r=24`);
-
-  // Title text â large, centered, fade in
-  let drawtext = `drawtext=text='${escapedTitle}':fontsize=${Math.round(resolution.height / 10)}:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2-${Math.round(resolution.height / 15)}:alpha='if(lt(t,1.5),t/1.5,if(gt(t,${duration - 1.5}),( ${duration}-t)/1.5,1))'`;
-  filters.push(drawtext);
-
-  // Director credit below title
-  if (escapedDirector) {
-    const dirText = `drawtext=text='A Film by ${escapedDirector}':fontsize=${Math.round(resolution.height / 20)}:fontcolor=0xCCCCCC:x=(w-text_w)/2:y=(h-text_h)/2+${Math.round(resolution.height / 10)}:alpha='if(lt(t,2),t/2,if(gt(t,${duration - 1.5}),(${duration}-t)/1.5,1))'`;
-    filters.push(dirText);
+  const titleFile = path.join(tmpDir, "title-card-title.txt");
+  await fs.promises.writeFile(titleFile, normaliseMediaText(title, 500), "utf8");
+  const filters: string[] = [
+    `color=c=black:s=${resolution.width}x${resolution.height}:d=${duration}:r=24`,
+    `drawtext=textfile='${escapeFilterPath(titleFile)}':fontsize=${Math.round(resolution.height / 10)}:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2-${Math.round(resolution.height / 15)}:alpha='if(lt(t,1.5),t/1.5,if(gt(t,${duration - 1.5}),(${duration}-t)/1.5,1))'`,
+  ];
+  if (directorName) {
+    const file = path.join(tmpDir, "title-card-director.txt");
+    await fs.promises.writeFile(file, `A Film by ${normaliseMediaText(directorName, 300)}`, "utf8");
+    filters.push(`drawtext=textfile='${escapeFilterPath(file)}':fontsize=${Math.round(resolution.height / 20)}:fontcolor=0xCCCCCC:x=(w-text_w)/2:y=(h-text_h)/2+${Math.round(resolution.height / 10)}:alpha='if(lt(t,2),t/2,if(gt(t,${duration - 1.5}),(${duration}-t)/1.5,1))'`);
   }
-
-  // Genre tag at bottom
   if (genre) {
-    const genreText = `drawtext=text='${escapeSubtitleText(genre)}':fontsize=${Math.round(resolution.height / 30)}:fontcolor=0x888888:x=(w-text_w)/2:y=h-${Math.round(resolution.height / 8)}:alpha='if(lt(t,2.5),t/2.5,if(gt(t,${duration - 1}),(${duration}-t)/1,1))'`;
-    filters.push(genreText);
+    const file = path.join(tmpDir, "title-card-genre.txt");
+    await fs.promises.writeFile(file, normaliseMediaText(genre, 200), "utf8");
+    filters.push(`drawtext=textfile='${escapeFilterPath(file)}':fontsize=${Math.round(resolution.height / 30)}:fontcolor=0x888888:x=(w-text_w)/2:y=h-${Math.round(resolution.height / 8)}:alpha='if(lt(t,2.5),t/2.5,if(gt(t,${duration - 1}),(${duration}-t),1))'`);
   }
-
-  const filterComplex = filters.join(",");
-
   await execFileAsync("ffmpeg", [
-    "-f", "lavfi",
-    "-i", filterComplex,
-    "-f", "lavfi",
-    "-i", `anullsrc=channel_layout=stereo:sample_rate=44100`,
-    "-c:v", "libx264",
-    "-preset", "slow",
-    "-crf", "18",
-    "-c:a", "aac",
-    "-b:a", "320k",
-    "-t", String(duration),
-    "-pix_fmt", "yuv420p",
-    "-y",
-    outputPath,
-  ], { timeout: 60000 });
-
+    "-f", "lavfi", "-i", filters.join(","),
+    "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+    "-c:a", "aac", "-b:a", "320k", "-t", String(duration),
+    "-pix_fmt", "yuv420p", "-y", outputPath,
+  ], { timeout: 60_000 });
   logger.info(`[VideoStitcher] Title card generated (${duration}s)`);
   return outputPath;
 }
@@ -234,40 +239,27 @@ async function generateEndCredits(
   resolution: { width: number; height: number },
 ): Promise<string> {
   const outputPath = path.join(tmpDir, "end_credits.mp4");
-  const escapedTitle = escapeSubtitleText(title);
-
-  // Build a scrolling credits text
-  const creditLines = credits.map(c => `${c.role}\\n${c.name}\\n`).join("\\n");
-  const fullText = `${escapedTitle}\\n\\n\\n${creditLines}\\nMade with Virelle Studios\\nwww.virelle.life`;
-
-  // Calculate scroll speed: text needs to scroll from bottom to top over the duration
-  const lineCount = credits.length * 3 + 6; // approximate line count
-  const textHeight = lineCount * Math.round(resolution.height / 25);
-  const totalScroll = resolution.height + textHeight;
-  // y position: starts at bottom (h), scrolls up to (-textHeight)
-  // y = h - (h + textHeight) * t / duration = h - totalScroll * t / duration
-
-  const filterComplex = [
+  const creditsFile = path.join(tmpDir, "end-credits.txt");
+  const safeCredits = credits.slice(0, 500).flatMap(entry => [
+    normaliseMediaText(entry.role, 300),
+    normaliseMediaText(entry.name, 300),
+    "",
+  ]);
+  const fullText = [normaliseMediaText(title, 500), "", "", ...safeCredits, "Made with Virelle Studios", "www.virelle.life"].join("\n");
+  await fs.promises.writeFile(creditsFile, fullText, "utf8");
+  const lineCount = safeCredits.length + 6;
+  const totalScroll = resolution.height + lineCount * Math.round(resolution.height / 25);
+  const filter = [
     `color=c=black:s=${resolution.width}x${resolution.height}:d=${duration}:r=24`,
-    `drawtext=text='${fullText}':fontsize=${Math.round(resolution.height / 25)}:fontcolor=white:x=(w-text_w)/2:y=h-${totalScroll}*t/${duration}:line_spacing=${Math.round(resolution.height / 40)}`,
+    `drawtext=textfile='${escapeFilterPath(creditsFile)}':fontsize=${Math.round(resolution.height / 25)}:fontcolor=white:x=(w-text_w)/2:y=h-${totalScroll}*t/${duration}:line_spacing=${Math.round(resolution.height / 40)}`,
   ].join(",");
-
   await execFileAsync("ffmpeg", [
-    "-f", "lavfi",
-    "-i", filterComplex,
-    "-f", "lavfi",
-    "-i", `anullsrc=channel_layout=stereo:sample_rate=44100`,
-    "-c:v", "libx264",
-    "-preset", "slow",
-    "-crf", "18",
-    "-c:a", "aac",
-    "-b:a", "320k",
-    "-t", String(duration),
-    "-pix_fmt", "yuv420p",
-    "-y",
-    outputPath,
-  ], { timeout: 60000 });
-
+    "-f", "lavfi", "-i", filter,
+    "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+    "-c:a", "aac", "-b:a", "320k", "-t", String(duration),
+    "-pix_fmt", "yuv420p", "-y", outputPath,
+  ], { timeout: 60_000 });
   logger.info(`[VideoStitcher] End credits generated (${duration}s, ${credits.length} entries)`);
   return outputPath;
 }
@@ -445,53 +437,39 @@ async function burnSubtitlesIntoScene(
   subtitles: SceneSubtitle[],
   resolution: { width: number; height: number },
 ): Promise<string> {
-  if (!subtitles || subtitles.length === 0) return sceneVideoPath;
-
-  // Generate SRT file for this scene
+  if (!subtitles?.length) return sceneVideoPath;
+  const stamp = (seconds: number): string => {
+    const safe = Math.max(0, Number.isFinite(seconds) ? seconds : 0);
+    const h = Math.floor(safe / 3600);
+    const m = Math.floor((safe % 3600) / 60);
+    const s = Math.floor(safe % 60);
+    const ms = Math.min(999, Math.round((safe % 1) * 1000));
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")},${String(ms).padStart(3, "0")}`;
+  };
   const srtPath = path.join(tmpDir, `subs_${sceneIndex}.srt`);
-  let srtContent = "";
-  for (let i = 0; i < subtitles.length; i++) {
-    const sub = subtitles[i];
-    const startH = Math.floor(sub.startTime / 3600);
-    const startM = Math.floor((sub.startTime % 3600) / 60);
-    const startS = Math.floor(sub.startTime % 60);
-    const startMs = Math.round((sub.startTime % 1) * 1000);
-    const endH = Math.floor(sub.endTime / 3600);
-    const endM = Math.floor((sub.endTime % 3600) / 60);
-    const endS = Math.floor(sub.endTime % 60);
-    const endMs = Math.round((sub.endTime % 1) * 1000);
-
-    srtContent += `${i + 1}\n`;
-    srtContent += `${String(startH).padStart(2, "0")}:${String(startM).padStart(2, "0")}:${String(startS).padStart(2, "0")},${String(startMs).padStart(3, "0")} --> `;
-    srtContent += `${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}:${String(endS).padStart(2, "0")},${String(endMs).padStart(3, "0")}\n`;
-    srtContent += `${sub.text}\n\n`;
+  const entries: string[] = [];
+  for (const [index, subtitle] of subtitles.slice(0, 2_000).entries()) {
+    const start = Math.max(0, Number.isFinite(subtitle.startTime) ? subtitle.startTime : 0);
+    const candidate = Number.isFinite(subtitle.endTime) ? subtitle.endTime : start + 0.5;
+    const end = Math.max(start + 0.05, candidate);
+    const text = safeSubtitleText(subtitle.text);
+    if (text) entries.push(`${index + 1}\n${stamp(start)} --> ${stamp(end)}\n${text}\n`);
   }
-
-  await fs.promises.writeFile(srtPath, srtContent, "utf-8");
-
+  if (!entries.length) return sceneVideoPath;
+  await fs.promises.writeFile(srtPath, `${entries.join("\n")}\n`, "utf8");
   const outputPath = path.join(tmpDir, `scene_subs_${String(sceneIndex).padStart(3, "0")}.mp4`);
   const fontSize = Math.round(resolution.height / 30);
-
-  // Use subtitles filter to burn in SRT
-  // Escape the path for ffmpeg filter (replace backslashes and colons)
-  const escapedSrtPath = srtPath.replace(/\\/g, "/").replace(/:/g, "\\:");
-
   try {
     await execFileAsync("ffmpeg", [
       "-i", sceneVideoPath,
-      "-vf", `subtitles='${escapedSrtPath}':force_style='FontSize=${fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=1,MarginV=40'`,
-      "-c:v", "libx264",
-      "-preset", "slow",
-      "-crf", "18",
-      "-c:a", "copy",
-      "-y",
-      outputPath,
-    ], { timeout: 120000 });
-
-    logger.info(`[VideoStitcher] Scene ${sceneIndex}: burned ${subtitles.length} subtitles`);
+      "-vf", `subtitles='${escapeFilterPath(srtPath)}':force_style='FontSize=${fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=1,MarginV=40'`,
+      "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+      "-c:a", "copy", "-y", outputPath,
+    ], { timeout: 120_000 });
+    logger.info(`[VideoStitcher] Scene ${sceneIndex}: burned ${entries.length} subtitles`);
     return outputPath;
-  } catch (e) {
-    logger.info(`[VideoStitcher] Warning: Subtitle burn-in failed for scene ${sceneIndex}: ${e}`);
+  } catch (error) {
+    logger.warn(`[VideoStitcher] Subtitle burn-in failed for scene ${sceneIndex}; using original.`, { error: String(error) });
     return sceneVideoPath;
   }
 }

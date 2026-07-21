@@ -21,7 +21,7 @@ import { safeJsonExtract } from "./_core/safeParse";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
 import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
-import { sanitizeText } from "./_core/sanitize";
+import { sanitizeText, stripHtml } from "./_core/sanitize";
 import type { WardrobeItem } from "../drizzle/schema";
 import {
   checkRegistrationFraud,
@@ -2004,7 +2004,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const searchData = await searchRes.json() as any;
         const searchResults: Array<{ title: string; snippet: string }> = (searchData?.query?.search ?? []).map((r: any) => ({
           title: r.title,
-          snippet: r.snippet?.replace(/<[^>]+>/g, "") ?? "",
+          snippet: stripHtml(r.snippet ?? ""),
         }));
 
         if (!searchResults.length) return { images: [], suggestions: [] };
