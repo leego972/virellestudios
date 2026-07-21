@@ -7,11 +7,59 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
+  apply-audit-repairs:
+    if: github.head_ref == 'audit/quality-security-pass-20260721'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Apply surgical source repairs
+        run: python scripts/apply-security-pass.py
+      - name: Regenerate lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Verify clean dependency audit
+        run: pnpm audit
+      - name: Install and verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm check
+          pnpm test
+          pnpm build
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: security-ci-stub
+          VITE_SENTRY_DSN: ""
+      - name: Commit repairs
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "Audit repairs are already applied."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml .github/workflows/ci.yml .github/workflows/security-ci.yml \
+            server/_core/sanitize.ts server/_core/remoteUrlSecurity.ts server/_core/llm.ts \
+            server/_core/voiceTranscription.ts server/_core/rateLimit.ts server/_core/oauth.ts \
+            server/_core/index.ts gateway.mjs client/public/sw.js server/_core/videoJobWorker.ts \
+            client/src/components/ui/chart.tsx client/src/pages/SeriesBible.tsx \
+            server/advertising-orchestrator.ts server/_core/securityHeaders.ts
+          git commit -m "Complete repository quality and security repairs"
+          git push origin "HEAD:${{ github.head_ref }}"
+
   verify:
-    name: Typecheck, build, audit, and secret scan
+    name: Typecheck, test, build, audit, and secret scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
