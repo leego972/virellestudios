@@ -3,11 +3,10 @@ name: Deep quality and security audit
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "**"
 
 permissions:
   contents: read
+  pull-requests: read
   security-events: write
 
 jobs:
@@ -93,6 +92,57 @@ jobs:
             production-dependency-audit.exit
             static-risk-inventory.txt
             secret-scan.txt
+          retention-days: 3
+
+  branch_inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inventory every branch and PR connection
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$REPOSITORY/branches?per_page=100" --jq '.[].name' > branches.txt
+          printf '# Branch hygiene inventory\n\n' > branch-inventory.md
+          printf '| Branch | Ahead | Behind | PR connection | Classification |\n' >> branch-inventory.md
+          printf '|---|---:|---:|---|---|\n' >> branch-inventory.md
+          while IFS= read -r branch; do
+            [ -n "$branch" ] || continue
+            if [ "$branch" = "main" ]; then
+              printf '| `main` | 0 | 0 | default branch | canonical |\n' >> branch-inventory.md
+              continue
+            fi
+            encoded=$(jq -rn --arg value "$branch" '$value|@uri')
+            compare=$(gh api "repos/$REPOSITORY/compare/main...$encoded")
+            ahead=$(jq -r '.ahead_by' <<<"$compare")
+            behind=$(jq -r '.behind_by' <<<"$compare")
+            prs=$(gh api -X GET search/issues -f q="repo:$REPOSITORY is:pr head:$branch" -f per_page=100)
+            connection=$(jq -r '[.items[] | "#\(.number) \(.state)" + (if .pull_request.merged_at then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
+            if [ "$ahead" = "0" ]; then
+              classification="fully contained in main"
+            elif jq -e '.items[]? | select(.state == "open")' <<<"$prs" >/dev/null; then
+              classification="connected to open PR"
+            elif [ "$(jq -r '.total_count' <<<"$prs")" = "0" ]; then
+              classification="floating: unique commits, no PR"
+            else
+              classification="unique commits only on closed PR branch"
+            fi
+            safe_branch=${branch//|/\\|}
+            safe_connection=${connection//|/\\|}
+            printf '| `%s` | %s | %s | %s | %s |\n' "$safe_branch" "$ahead" "$behind" "$safe_connection" "$classification" >> branch-inventory.md
+          done < branches.txt
+          cat branch-inventory.md
+      - name: Upload branch inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-hygiene-inventory
+          path: |
+            branches.txt
+            branch-inventory.md
           retention-days: 3
 
   codeql:
