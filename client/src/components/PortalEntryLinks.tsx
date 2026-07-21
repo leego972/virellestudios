@@ -1,7 +1,9 @@
+import { trpc } from "@/lib/trpc";
 import { Store } from "lucide-react";
 
 export default function PortalEntryLinks() {
-  if (typeof window === "undefined" || window.location.pathname !== "/") return null;
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
+  if (typeof window === "undefined" || window.location.pathname !== "/" || me.data) return null;
 
   return (
     <div className="fixed right-3 sm:right-6 top-[82px] z-40 rounded-2xl border border-amber-500/30 bg-black/90 backdrop-blur-xl shadow-2xl shadow-black/50 p-2 flex items-center gap-2">
