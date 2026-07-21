@@ -3,7 +3,7 @@
     "name": "Swappys",
     "slug": "swappys",
     "scheme": "swappys",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "assetBundlePatterns": [
@@ -13,21 +13,20 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "Swappys needs photo library access to save transformed images.",
-          "savePhotosPermission": "Swappys needs camera roll access to save transformed images.",
-          "isAccessMediaLocationEnabled": true
+          "photosPermission": "Swappys needs photo library access to select transformation images.",
+          "savePhotosPermission": "Swappys needs photo library access to save transformation previews.",
+          "isAccessMediaLocationEnabled": false
         }
       ]
     ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.virelle.swappys",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
-        "NSCameraUsageDescription": "Swappys uses the camera for live preview and recording.",
-        "NSMicrophoneUsageDescription": "Swappys uses the microphone when recording clips.",
-        "NSPhotoLibraryUsageDescription": "Swappys lets you choose source and reference media from your library.",
-        "NSPhotoLibraryAddUsageDescription": "Swappys can save exported recordings if you choose to download them.",
+        "NSCameraUsageDescription": "Swappys uses the camera only when you choose to capture a source face.",
+        "NSPhotoLibraryUsageDescription": "Swappys lets you choose consented source and target images from your library.",
+        "NSPhotoLibraryAddUsageDescription": "Swappys saves a transformation preview only when you tap Save.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "privacyManifests": {
@@ -36,19 +35,16 @@
     },
     "android": {
       "package": "com.virelle.swappys",
-      "versionCode": 1,
+      "versionCode": 2,
       "permissions": [
         "CAMERA",
-        "RECORD_AUDIO",
-        "READ_MEDIA_IMAGES",
-        "READ_MEDIA_VIDEO",
-        "WRITE_EXTERNAL_STORAGE"
+        "READ_MEDIA_IMAGES"
       ]
     },
     "extra": {
       "virelleBaseUrl": "https://virelle.life",
-      "virelleUpgradeUrl": "https://virelle.life/register?source=swappys-mobile&product=swappys&intent=creator-upgrade",
-      "virelleLoginUrl": "https://virelle.life/login?source=swappys-mobile",
+      "virelleUpgradeUrl": "https://virelle.life/register?source=swappys-mobile&campaign=result-upgrade&product=swappys&intent=creator-upgrade",
+      "virelleLoginUrl": "https://virelle.life/login?source=swappys-mobile&campaign=result-signin",
       "eas": {
         "projectId": "14f30d0d-2798-463b-b7db-b8e237286313"
       }
