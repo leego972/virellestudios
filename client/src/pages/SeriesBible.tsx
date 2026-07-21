@@ -451,7 +451,7 @@ import { useState } from "react";
           seasons: (s.seasons ?? []).map((ss: any) => ({
             ...ss,
             premise: ss.premise ?? "",
-            arc: ss.arc ?? ss.arc ?? "",
+            arc: ss.arc ?? "",
             episodes: (ss.episodes ?? []).map((ep: any) => ({
               ...ep, coldOpen: ep.coldOpen ?? "", status: ep.status ?? "treatment",
             })),
@@ -526,7 +526,7 @@ import { useState } from "react";
     if (editingSeries) return <SeriesForm initial={editingSeries} onSave={save} onCancel={() => setEditingSeries(null)} />;
 
     // ── DETAIL VIEW ──
-    if (activeSeries && !editingSeries) {
+    if (activeSeries) {
       const allEps = activeSeries.seasons.reduce((t, s) => t + s.episodes.length, 0);
       const lockedEps = activeSeries.seasons.reduce((t, s) => t + s.episodes.filter(e => e.status === "locked" || e.status === "produced").length, 0);
 

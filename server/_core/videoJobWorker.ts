@@ -695,10 +695,10 @@ async function runWorkerCycle() {
         // Auto-set project thumbnail if none
         try {
           if (thumbnailUrl) {
-            const project = await dbConn.execute(sql.raw(`SELECT id, thumbnailUrl FROM projects WHERE id = ${meta.projectId} LIMIT 1`));
+            const project = await dbConn.execute(sql`SELECT id, thumbnailUrl FROM projects WHERE id = ${meta.projectId} LIMIT 1`);
             const proj = (project as any)[0]?.[0];
             if (proj && !proj.thumbnailUrl) {
-              await dbConn.execute(sql.raw(`UPDATE projects SET thumbnailUrl = '${thumbnailUrl.replace(/'/g, "\\'")}' WHERE id = ${meta.projectId}`));
+              await dbConn.execute(sql`UPDATE projects SET thumbnailUrl = ${thumbnailUrl} WHERE id = ${meta.projectId}`);
             }
           }
         } catch { /* ignore */ }

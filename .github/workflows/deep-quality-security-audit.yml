@@ -1,0 +1,103 @@
+name: Scheduled deep quality and security audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * 1"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Frozen dependency installation
+        run: pnpm install --frozen-lockfile
+      - name: TypeScript check
+        run: pnpm check
+      - name: Unit and integration tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: scheduled-audit-stub
+          VITE_SENTRY_DSN: ""
+      - name: Dependency audit
+        run: pnpm audit --audit-level moderate
+      - name: Expanded tracked-secret scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          pattern='(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|whsec_[A-Za-z0-9]{20,}|rk_(live|test)_[A-Za-z0-9]{20,}|sk_(live|test)_[A-Za-z0-9]{20,})'
+          if git grep -nEI "$pattern" -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md' ':!.github/workflows/*.yml'; then
+            echo "Potential committed secret detected."
+            exit 1
+          fi
+
+  branch-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inventory branches and PR connections
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
+          printf '| Branch | Ahead | Behind | Pull requests |\n|---|---:|---:|---|\n' > branch-inventory.md
+          git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin \
+            | grep -vE '^(HEAD|main)$' \
+            | sort -u \
+            | while IFS= read -r branch; do
+                counts=$(git rev-list --left-right --count "origin/main...origin/$branch")
+                behind=$(awk '{print $1}' <<<"$counts")
+                ahead=$(awk '{print $2}' <<<"$counts")
+                prs=$(gh pr list --repo "$REPOSITORY" --head "$branch" --state all --limit 100 --json number,state,mergedAt)
+                connection=$(jq -r '[.[] | "#\(.number) \(.state)" + (if .mergedAt then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
+                printf '| `%s` | %s | %s | %s |\n' "${branch//|/\\|}" "$ahead" "$behind" "${connection//|/\\|}" >> branch-inventory.md
+              done
+          cat branch-inventory.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: branch-hygiene-inventory
+          path: branch-inventory.md
+          retention-days: 7
+
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended,security-and-quality
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:javascript-typescript
+          upload: false
+          output: codeql-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codeql-results
+          path: codeql-results/
+          retention-days: 7

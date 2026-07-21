@@ -1,25 +1,19 @@
 import type { Request, Response, NextFunction } from "express";
 
-/**
- * Lightweight security headers middleware (no helmet dependency).
- *
- * Sets the headers a security review / external pen-test would expect:
- *   - Content-Security-Policy (locked down, but allows Stripe + Google Fonts +
- *     known asset CDNs the app already uses)
- *   - Strict-Transport-Security (HTTPS-only, 1 year, includeSubDomains)
- *   - X-Content-Type-Options: nosniff
- *   - Referrer-Policy: strict-origin-when-cross-origin
- *   - X-Frame-Options: SAMEORIGIN  (clickjacking)
- *   - Permissions-Policy: deny dangerous defaults, allow camera/mic for media
- *   - Cross-Origin-Resource-Policy: cross-origin (for shared assets)
- *
- * Also exposes a lightweight public mobile feature manifest for Swappys Mobile.
- * This is intentionally placed here because securityHeaders() is loaded early by
- * the existing Express bootstrap, avoiding a fragile rewrite of the large server
- * entry file while still serving /api/mobile/features before the SPA fallback.
- */
+/** Security headers middleware and public mobile feature manifest. */
 export function securityHeaders() {
   const isProd = process.env.NODE_ENV === "production";
+  const scriptSources = [
+    "'self'",
+    // Current bootstrap and structured-data blocks are inline. They remain
+    // explicitly allowed until nonce-based rendering is introduced.
+    "'unsafe-inline'",
+    ...(isProd ? [] : ["'unsafe-eval'"]),
+    "https://js.stripe.com",
+    "https://checkout.stripe.com",
+    "https://browser.sentry-cdn.com",
+    "https://*.ingest.sentry.io",
+  ].join(" ");
 
   const csp = [
     "default-src 'self'",
@@ -27,7 +21,7 @@ export function securityHeaders() {
     "media-src 'self' blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com https://browser.sentry-cdn.com https://*.ingest.sentry.io",
+    `script-src ${scriptSources}`,
     "worker-src 'self' blob:",
     "connect-src 'self' https: wss: blob:",
     "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com",
@@ -45,7 +39,7 @@ export function securityHeaders() {
     res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader(
       "Permissions-Policy",
-      "geolocation=(), payment=(self \"https://js.stripe.com\"), usb=(), interest-cohort=(), camera=(self), microphone=(self), fullscreen=(self)"
+      'geolocation=(), payment=(self "https://js.stripe.com"), usb=(), interest-cohort=(), camera=(self), microphone=(self), fullscreen=(self)',
     );
     res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     if (isProd) {
