@@ -335,8 +335,17 @@
     @apply cursor-pointer;
   }
 
-  /* Smooth momentum scrolling on iOS */
-  * {
+  /* Smooth momentum scrolling on iOS — scoped to actual scroll containers.
+     Applying this to every element (a former wildcard `*` rule) forces each
+     one onto its own compositing layer in Safari, which is a well-known
+     cause of content appearing to detach, jump, or drift out of frame while
+     scrolling. Modern iOS Safari (15+) already has smooth momentum scroll
+     on any overflow:auto/scroll container without this hack, but keeping it
+     scoped here helps older WebKit versions without the wildcard's cost. */
+  [class*="overflow-y-auto"],
+  [class*="overflow-x-auto"],
+  [class*="overflow-auto"],
+  [class*="overflow-scroll"] {
     -webkit-overflow-scrolling: touch;
   }
 
@@ -927,11 +936,30 @@
   }
 
   /* ── Frosted dark glass panel (headers, modals) ──────────────────────────── */
+  /* This panel is always a near-black surface, in BOTH the "night" theme
+     (root default) and the "day" theme (.dark class, white page background).
+     Text and buttons inside it must not follow the page theme's foreground
+     colour swap — in the white/day theme that swap turns text black, which
+     is invisible against this panel's fixed dark background (e.g. the
+     AlertDialogCancel "Cancel" button, which has no explicit text colour
+     and simply inherits whatever the theme says foreground text should be).
+     Redeclaring these as plain (unlayered) custom properties here wins over
+     the layered Tailwind utilities/`.dark` theme rules, so every element
+     inside — including ones that only rely on inherited color, like the
+     outline-variant button — reads correctly without touching each usage. */
   .glass-dark {
     background: oklch(0.08 0.005 260 / 0.85);
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
     border: 1px solid oklch(0.78 0.18 85 / 0.1);
+    color: oklch(0.92 0.02 85);
+    --foreground: oklch(0.92 0.02 85);
+    --popover-foreground: oklch(0.92 0.02 85);
+    --card-foreground: oklch(0.92 0.02 85);
+    --muted-foreground: oklch(0.68 0.10 85);
+    --accent-foreground: oklch(0.92 0.02 85);
+    --border: oklch(0.4 0.03 85 / 0.4);
+    --input: oklch(0.28 0.02 85 / 0.6);
   }
 
   /* ── Heading hierarchy — elegant sizing system ────────────────────────────── */
