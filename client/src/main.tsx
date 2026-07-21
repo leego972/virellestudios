@@ -1,5 +1,7 @@
 import "@/lib/sentry";
 import "@/lib/analytics";
+import AutomaticContrastGuard from "@/components/AutomaticContrastGuard";
+import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -11,6 +13,7 @@ import App from "./App";
 import "./index.css";
 import "./mobile-safari.css";
 import "./mobile-sidebar-contrast.css";
+import "./white-surface-text.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -207,6 +210,8 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
+      <AutomaticContrastGuard />
+      <GlobalSidebarLogoutConfirm />
       <App />
     </QueryClientProvider>
   </trpc.Provider>,
