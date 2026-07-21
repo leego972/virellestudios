@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// Final combined release validation trigger: web, Render, desktop, Swappys mobile, and downloads.
 const baseUrl = (process.argv[2] || process.env.VIRELLE_BASE_URL || "https://virelle.life").replace(/\/$/, "");
 
 async function requestJson(path, init = {}) {
