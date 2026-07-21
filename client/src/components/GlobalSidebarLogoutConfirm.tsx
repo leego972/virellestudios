@@ -47,7 +47,8 @@ export default function GlobalSidebarLogoutConfirm() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [sidebarFooters, setSidebarFooters] = useState<HTMLElement[]>([]);
+  const [desktopFooters, setDesktopFooters] = useState<HTMLElement[]>([]);
+  const [mobileSidebars, setMobileSidebars] = useState<HTMLElement[]>([]);
 
   const email = String((user as any)?.email || "").trim().toLowerCase();
   const name = String((user as any)?.name || "Director");
@@ -57,18 +58,41 @@ export default function GlobalSidebarLogoutConfirm() {
 
   useEffect(() => {
     if (!user) {
-      setSidebarFooters([]);
+      setDesktopFooters([]);
+      setMobileSidebars([]);
       return;
     }
 
-    const applyAccountAvatarPolicy = () => {
-      const footers = Array.from(
+    const applyAccountPolicy = () => {
+      const allFooters = Array.from(
         document.querySelectorAll<HTMLElement>('[data-slot="sidebar-footer"]'),
       );
-
-      setSidebarFooters(previous =>
-        sameNodes(previous, footers) ? previous : footers,
+      const nextDesktopFooters = allFooters.filter(
+        footer => !footer.closest('[data-mobile="true"][data-slot="sidebar"]'),
       );
+      const nextMobileSidebars = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-mobile="true"][data-slot="sidebar"]',
+        ),
+      );
+
+      setDesktopFooters(previous =>
+        sameNodes(previous, nextDesktopFooters) ? previous : nextDesktopFooters,
+      );
+      setMobileSidebars(previous =>
+        sameNodes(previous, nextMobileSidebars) ? previous : nextMobileSidebars,
+      );
+
+      nextMobileSidebars.forEach(sidebar => {
+        sidebar.style.position = "relative";
+        const content = sidebar.querySelector<HTMLElement>(
+          '[data-slot="sidebar-content"]',
+        );
+        if (content) {
+          content.style.paddingBottom =
+            "calc(env(safe-area-inset-bottom, 0px) + 5.5rem)";
+        }
+      });
 
       document
         .querySelectorAll<HTMLImageElement>(
@@ -76,7 +100,10 @@ export default function GlobalSidebarLogoutConfirm() {
         )
         .forEach(image => {
           const currentSource = image.getAttribute("src") || "";
-          if (!image.dataset.virelleOriginalLeegoSrc && currentSource.includes("leego-logo")) {
+          if (
+            !image.dataset.virelleOriginalLeegoSrc &&
+            currentSource.includes("leego-logo")
+          ) {
             image.dataset.virelleOriginalLeegoSrc = currentSource;
           }
 
@@ -85,24 +112,24 @@ export default function GlobalSidebarLogoutConfirm() {
             if (original && image.getAttribute("src") !== original) {
               image.setAttribute("src", original);
             }
-          } else if (image.getAttribute("src") !== genericAvatar) {
-            image.setAttribute("src", genericAvatar);
+            image.setAttribute("alt", "Lee Gold profile");
+          } else {
+            if (image.getAttribute("src") !== genericAvatar) {
+              image.setAttribute("src", genericAvatar);
+            }
             image.setAttribute("alt", `${name} profile`);
           }
         });
 
-      footers.forEach(footer => {
+      // The Leego mark belongs in the ownership footer only. It must never be
+      // displayed as a generic sidebar control or account identity.
+      allFooters.forEach(footer => {
         footer
-          .querySelectorAll<HTMLImageElement>('img[src*="leego-logo"], img[data-virelle-owner-mark]')
+          .querySelectorAll<HTMLImageElement>('img[src*="leego-logo"]')
           .forEach(image => {
             if (image.closest('[data-slot="avatar"]')) return;
-
-            const currentSource = image.getAttribute("src") || "";
-            if (!image.dataset.virelleOwnerMark && currentSource.includes("leego-logo")) {
-              image.dataset.virelleOwnerMark = "true";
-            }
-
-            image.style.display = isLeegoAccount ? "" : "none";
+            image.style.display = "none";
+            image.setAttribute("aria-hidden", "true");
           });
       });
     };
@@ -119,9 +146,9 @@ export default function GlobalSidebarLogoutConfirm() {
       setOpen(true);
     };
 
-    applyAccountAvatarPolicy();
+    applyAccountPolicy();
 
-    const observer = new MutationObserver(applyAccountAvatarPolicy);
+    const observer = new MutationObserver(applyAccountPolicy);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -130,12 +157,12 @@ export default function GlobalSidebarLogoutConfirm() {
     });
 
     document.addEventListener("click", handleAvatarPress, true);
-    window.addEventListener("pageshow", applyAccountAvatarPolicy);
+    window.addEventListener("pageshow", applyAccountPolicy);
 
     return () => {
       observer.disconnect();
       document.removeEventListener("click", handleAvatarPress, true);
-      window.removeEventListener("pageshow", applyAccountAvatarPolicy);
+      window.removeEventListener("pageshow", applyAccountPolicy);
     };
   }, [user, genericAvatar, isLeegoAccount, name]);
 
@@ -151,25 +178,52 @@ export default function GlobalSidebarLogoutConfirm() {
 
   if (!user) return null;
 
+  const logoutButton = (compact = false) => (
+    <button
+      type="button"
+      onClick={() => setOpen(true)}
+      className={
+        compact
+          ? "flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border-2 border-red-600 bg-red-600 px-4 py-3 text-base font-black text-white shadow-lg shadow-black/20 transition-colors hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+          : "flex min-h-11 w-full items-center gap-2 rounded-lg border border-red-500/50 bg-red-500/15 px-3 py-2 text-left text-sm font-bold text-red-600 transition-colors hover:bg-red-500/25 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
+      }
+      aria-label="Log out"
+      title="Log out"
+      data-explicit-sidebar-logout
+    >
+      <LogOut className="h-4 w-4 shrink-0" />
+      <span className={compact ? "text-base" : "group-data-[collapsible=icon]:hidden"}>
+        Log out
+      </span>
+    </button>
+  );
+
   return (
     <>
-      {sidebarFooters.map((footer, index) =>
+      {desktopFooters.map((footer, index) =>
         createPortal(
-          <button
-            key={`sidebar-logout-${index}`}
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex min-h-10 w-full items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-left font-semibold text-red-500 transition-colors hover:bg-red-500/20 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
-            aria-label="Log out"
-            title="Log out"
-            data-explicit-sidebar-logout
+          <div
+            key={`desktop-sidebar-logout-${index}`}
+            className="order-last w-full pt-1"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
-            <span className="text-sm group-data-[collapsible=icon]:hidden">
-              Log out
-            </span>
-          </button>,
+            {logoutButton(false)}
+          </div>,
           footer,
+        ),
+      )}
+
+      {mobileSidebars.map((sidebar, index) =>
+        createPortal(
+          <div
+            key={`mobile-sidebar-logout-${index}`}
+            className="absolute inset-x-3 z-[100] border-t border-border/50 bg-inherit pt-3"
+            style={{
+              bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)",
+            }}
+          >
+            {logoutButton(true)}
+          </div>,
+          sidebar,
         ),
       )}
 
@@ -177,24 +231,16 @@ export default function GlobalSidebarLogoutConfirm() {
         <AlertDialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <AlertDialogHeader>
             <div className="mb-2 flex items-center gap-3">
-              {isLeegoAccount ? (
-                <img
-                  src="/leego-logo.png"
-                  alt="Lee Gold account"
-                  className="h-12 w-12 rounded-full border border-amber-500/35 object-cover"
-                />
-              ) : (
-                <img
-                  src={genericAvatar}
-                  alt={`${name} account`}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-              )}
+              <img
+                src={isLeegoAccount ? "/leego-logo.png" : genericAvatar}
+                alt={isLeegoAccount ? "Lee Gold account" : `${name} account`}
+                className="h-12 w-12 rounded-full border border-amber-500/35 object-cover"
+              />
               <AlertDialogTitle>Log out of Virelle Studios?</AlertDialogTitle>
             </div>
             <AlertDialogDescription>
-              Your saved projects remain in your account. You will need to sign in
-              again to continue working.
+              Your saved projects remain in your account. You will need to sign
+              in again to continue working.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
