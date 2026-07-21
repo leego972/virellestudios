@@ -56,33 +56,59 @@ type StarterOutfit = {
   primaryImageUrl: string | null;
 };
 
-async function findLamaloProfileId(db: Awaited<ReturnType<typeof getDb>>): Promise<number | null> {
+type LamaloProfileRef = { id: number; userId: number };
+
+async function findLamaloProfile(
+  db: Awaited<ReturnType<typeof getDb>>,
+): Promise<LamaloProfileRef | null> {
   if (!db) return null;
   const rows = await db
-    .select({ id: designerProfiles.id })
+    .select({ id: designerProfiles.id, userId: designerProfiles.userId })
     .from(designerProfiles)
     .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
     .limit(1);
-  return rows[0]?.id ?? null;
+  return rows[0] ?? null;
+}
+
+async function hasStarterInventory(
+  db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+  profileId: number,
+): Promise<boolean> {
+  const rows = await db
+    .select({ id: wardrobeItems.id })
+    .from(wardrobeItems)
+    .where(
+      and(
+        eq(wardrobeItems.designerProfileId, profileId),
+        eq(wardrobeItems.visibility, "public"),
+        eq(wardrobeItems.status, "active"),
+      ),
+    )
+    .limit(STARTER_OPTION_COUNT);
+  return rows.length >= STARTER_OPTION_COUNT;
 }
 
 /**
- * Production should already have Lamalo seeded. This self-heals an empty
- * installation using the first administrator account, never the new member
- * claiming the gift.
+ * Production should already have Lamalo seeded. This self-heals both a missing
+ * profile and an existing but empty catalogue. It uses the Lamalo profile owner
+ * when available, otherwise the first administrator—never the new member.
  */
 async function requireLamaloProfileId(
   db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
 ): Promise<number> {
-  const existingId = await findLamaloProfileId(db);
-  if (existingId) return existingId;
+  let profile = await findLamaloProfile(db);
+  if (profile && await hasStarterInventory(db, profile.id)) return profile.id;
 
-  const admins = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.role, "admin"))
-    .limit(1);
-  const ownerUserId = admins[0]?.id;
+  let ownerUserId = profile?.userId;
+  if (!ownerUserId) {
+    const admins = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.role, "admin"))
+      .limit(1);
+    ownerUserId = admins[0]?.id;
+  }
+
   if (!ownerUserId) {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
@@ -91,14 +117,14 @@ async function requireLamaloProfileId(
   }
 
   await runLamaloSeed(ownerUserId);
-  const seededId = await findLamaloProfileId(db);
-  if (!seededId) {
+  profile = await findLamaloProfile(db);
+  if (!profile || !(await hasStarterInventory(db, profile.id))) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "The Lamalo catalogue could not be initialised.",
+      message: "The Lamalo catalogue could not be initialised with ten welcome-gift choices.",
     });
   }
-  return seededId;
+  return profile.id;
 }
 
 export const lamaloGiftsRouter = router({
@@ -116,8 +142,8 @@ export const lamaloGiftsRouter = router({
       return { eligible: false, claimed: false, reason: "designer_account" };
     }
 
-    const lamaloId = await findLamaloProfileId(db);
-    if (!lamaloId) return { eligible: true, claimed: false };
+    const lamalo = await findLamaloProfile(db);
+    if (!lamalo) return { eligible: true, claimed: false };
 
     const freeLeases = await db
       .select({ id: wardrobeLeases.id })
@@ -125,7 +151,7 @@ export const lamaloGiftsRouter = router({
       .where(
         and(
           eq(wardrobeLeases.userId, ctx.user.id),
-          eq(wardrobeLeases.designerProfileId, lamaloId),
+          eq(wardrobeLeases.designerProfileId, lamalo.id),
           eq(wardrobeLeases.amountPaidAud, 0),
         ),
       );
