@@ -186,12 +186,14 @@ export function getSwappysFunnelPricing() {
       name: "Swappys Standalone",
       role: "free marked preview / traffic capture",
       suggestedMonthlyPriceAud: 0,
+      monthlyPriceAud: 0,
       watermark: "required visible Swappys mark",
       limits: ["single-image previews", "basic likeness transfer", "limited export quality", "no production continuity"],
     },
     virelleCreator: {
       name: "Virelle Creator",
       role: "professional film-production upgrade",
+      suggestedMonthlyPriceAud: 490,
       monthlyPriceAud: 490,
       watermark: "studio-controlled visible watermark with internal audit/provenance retained",
       benefits: [
