@@ -19,10 +19,10 @@ export interface DeliveryAddressInput {
 
 let commerceSchemaReady: Promise<void> | undefined;
 
-async function execute(statement: ReturnType<typeof sql.raw> | ReturnType<typeof sql>) {
+async function execute(statement: any) {
   const dbConn = await getDb();
   if (!dbConn) throw new Error("Database is unavailable.");
-  return dbConn.execute(statement as any);
+  return dbConn.execute(statement);
 }
 
 async function addColumn(table: string, column: string, definition: string): Promise<void> {
@@ -130,33 +130,20 @@ export async function ensurePortalCommerceSchema(): Promise<void> {
   return commerceSchemaReady;
 }
 
-function firstRow(result: any): any | undefined {
+function rowsFrom(result: any): any[] {
   const rows = Array.isArray(result?.[0]) ? result[0] : result;
-  return Array.isArray(rows) ? rows[0] : undefined;
+  return Array.isArray(rows) ? rows : [];
+}
+
+function firstRow(result: any): any | undefined {
+  return rowsFrom(result)[0];
 }
 
 export async function getUserPortal(userId: number, role?: string | null): Promise<PortalKind> {
   if (role === "admin") return "admin";
   await ensurePortalCommerceSchema();
-  const result = await execute(sql`SELECT portal FROM userPortalAccounts WHERE userId = ${userId} LIMIT 1`);
-  const existing = firstRow(result);
-  if (existing?.portal === "designer") return "designer";
-  if (existing?.portal === "studio") return "studio";
-
-  // Backward compatibility: an existing paid designer profile becomes a
-  // designer-only account on first authenticated request. Ordinary profiles
-  // and all existing studio users remain studio accounts.
-  const legacyResult = await execute(sql`
-    SELECT id FROM designerProfiles
-    WHERE userId = ${userId}
-      AND (membershipStatus = 'active' OR stripeAccountId IS NOT NULL)
-    LIMIT 1
-  `);
-  if (firstRow(legacyResult)) {
-    await setUserPortal(userId, "designer");
-    return "designer";
-  }
-  return "studio";
+  const existing = firstRow(await execute(sql`SELECT portal FROM userPortalAccounts WHERE userId = ${userId} LIMIT 1`));
+  return existing?.portal === "designer" ? "designer" : "studio";
 }
 
 export async function setUserPortal(userId: number, portal: Exclude<PortalKind, "admin">): Promise<void> {
@@ -168,7 +155,21 @@ export async function setUserPortal(userId: number, portal: Exclude<PortalKind, 
   `);
 }
 
+const DESIGNER_WARDROBE_MANAGEMENT_PATHS = new Set([
+  "designerWardrobe.getMyProfile",
+  "designerWardrobe.listWardrobeItems",
+  "designerWardrobe.listCollections",
+  "designerWardrobe.upsertProfile",
+  "designerWardrobe.createCollection",
+  "designerWardrobe.updateCollection",
+  "designerWardrobe.deleteCollection",
+  "designerWardrobe.createWardrobeItem",
+  "designerWardrobe.updateWardrobeItem",
+  "designerWardrobe.deleteWardrobeItem",
+]);
+
 export function isDesignerAllowedProtectedPath(path: string): boolean {
+  if (DESIGNER_WARDROBE_MANAGEMENT_PATHS.has(path)) return true;
   return [
     "auth.",
     "system.",
@@ -180,30 +181,25 @@ export function isDesignerAllowedProtectedPath(path: string): boolean {
     "wardrobeMarket.commerce.portal.",
     "wardrobeMarket.commerce.designer.",
     "wardrobeMarket.commerce.orders.",
-    "designerWardrobe.",
     "notification.",
     "notifications.",
   ].some((prefix) => path.startsWith(prefix));
 }
 
 export function isStudioForbiddenDesignerPath(path: string): boolean {
-  if ([
+  if (DESIGNER_WARDROBE_MANAGEMENT_PATHS.has(path) && ![
+    "designerWardrobe.getMyProfile",
+    "designerWardrobe.listWardrobeItems",
+    "designerWardrobe.listCollections",
+  ].includes(path)) return true;
+
+  return [
     "wardrobeMarket.designer.",
     "wardrobeMarket.collection.",
     "wardrobeMarket.item.",
     "wardrobeMarket.commerce.designer.",
     "wardrobeMarket.commerce.orders.",
-  ].some((prefix) => path.startsWith(prefix))) return true;
-
-  return [
-    "designerWardrobe.upsertProfile",
-    "designerWardrobe.createCollection",
-    "designerWardrobe.updateCollection",
-    "designerWardrobe.deleteCollection",
-    "designerWardrobe.createWardrobeItem",
-    "designerWardrobe.updateWardrobeItem",
-    "designerWardrobe.deleteWardrobeItem",
-  ].some((exact) => path === exact);
+  ].some((prefix) => path.startsWith(prefix));
 }
 
 export async function saveDeliveryAddress(userId: number, input: DeliveryAddressInput, addressId?: number): Promise<number> {
@@ -243,21 +239,18 @@ export async function saveDeliveryAddress(userId: number, input: DeliveryAddress
 
 export async function listDeliveryAddresses(userId: number): Promise<any[]> {
   await ensurePortalCommerceSchema();
-  const result = await execute(sql`
+  return rowsFrom(await execute(sql`
     SELECT * FROM savedDeliveryAddresses
     WHERE userId = ${userId}
     ORDER BY isDefault DESC, updatedAt DESC, id DESC
-  `);
-  const rows = Array.isArray(result?.[0]) ? result[0] : result;
-  return Array.isArray(rows) ? rows : [];
+  `));
 }
 
 export async function getSavedAddressById(userId: number, addressId: number): Promise<any> {
   await ensurePortalCommerceSchema();
-  const result = await execute(sql`
+  const address = firstRow(await execute(sql`
     SELECT * FROM savedDeliveryAddresses WHERE id = ${addressId} AND userId = ${userId} LIMIT 1
-  `);
-  const address = firstRow(result);
+  `));
   if (!address) throw new TRPCError({ code: "NOT_FOUND", message: "Delivery address not found." });
   return address;
 }
