@@ -1,22 +1,55 @@
 // Virelle Studios desktop wrapper.
-// Loads the production web app in a native window with persistent session,
-// single-instance lock, deep-link support (virelle://), and a stable user-agent
-// the server can recognise via the X-Virelle-Client header.
+// Loads the production web app in a sandboxed native window with persistent
+// session, single-instance locking and restricted virelle:// deep links.
 
 const { app, BrowserWindow, shell, Menu, session } = require("electron");
 const path = require("path");
 
-const TARGET_URL = process.env.VIRELLE_TARGET || "https://www.virelle.life";
+const DEFAULT_TARGET = "https://www.virelle.life";
+const TARGET_URL = process.env.VIRELLE_TARGET || DEFAULT_TARGET;
 const PROTOCOL = "virelle";
+const IS_DEV = !app.isPackaged;
 
-// ── Single-instance lock ────────────────────────────────────────────────────
+function parseTargetOrigin() {
+  const parsed = new URL(TARGET_URL);
+  if (!IS_DEV && parsed.protocol !== "https:") {
+    throw new Error("Packaged Virelle desktop builds require an HTTPS target.");
+  }
+  return parsed.origin;
+}
+
+const TARGET_ORIGIN = parseTargetOrigin();
+
+function isAllowedInternalUrl(value) {
+  try {
+    const parsed = new URL(value);
+    if (parsed.username || parsed.password) return false;
+    if (parsed.origin === TARGET_ORIGIN && (parsed.protocol === "https:" || IS_DEV)) return true;
+    if (IS_DEV && ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname)) {
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function safeExternalUrl(value) {
+  try {
+    const parsed = new URL(value);
+    if (parsed.username || parsed.password) return null;
+    return ["https:", "mailto:"].includes(parsed.protocol) ? parsed.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
   app.quit();
   process.exit(0);
 }
 
-// ── Deep-link protocol registration ────────────────────────────────────────
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
@@ -29,27 +62,39 @@ let mainWindow = null;
 let pendingDeepLink = null;
 
 function extractDeepLink(argv) {
-  for (const a of argv) {
-    if (typeof a === "string" && a.startsWith(`${PROTOCOL}://`)) return a;
-  }
-  return null;
+  return argv.find((argument) => typeof argument === "string" && argument.startsWith(`${PROTOCOL}://`)) || null;
 }
 
-function handleDeepLink(url) {
-  if (!mainWindow || !url) {
-    pendingDeepLink = url;
+function resolveDeepLink(value) {
+  try {
+    if (typeof value !== "string" || value.length > 4096 || /[\u0000-\u001f\u007f]/.test(value)) return null;
+    const parsed = new URL(value);
+    if (parsed.protocol !== `${PROTOCOL}:` || parsed.username || parsed.password) return null;
+
+    // virelle://projects/42 -> https://www.virelle.life/projects/42
+    // The custom-scheme host is treated as the first path segment, never as a hostname.
+    const segments = [parsed.hostname, ...parsed.pathname.split("/")]
+      .filter(Boolean)
+      .map((segment) => encodeURIComponent(decodeURIComponent(segment)));
+    const target = new URL(`/${segments.join("/")}`, `${TARGET_ORIGIN}/`);
+    target.search = parsed.search;
+    target.hash = parsed.hash;
+    return isAllowedInternalUrl(target.toString()) ? target.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+function handleDeepLink(value) {
+  const target = resolveDeepLink(value);
+  if (!target) return;
+  if (!mainWindow) {
+    pendingDeepLink = value;
     return;
   }
-  // virelle://path/foo?x=1  →  https://www.virelle.life/path/foo?x=1
-  try {
-    const parsed = new URL(url);
-    const target = `${TARGET_URL}/${parsed.host}${parsed.pathname}${parsed.search}${parsed.hash}`.replace(/\/+/g, "/").replace(":/", "://");
-    mainWindow.loadURL(target);
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
-  } catch {
-    // Bad URL — ignore.
-  }
+  mainWindow.loadURL(target);
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.focus();
 }
 
 app.on("second-instance", (_event, argv) => {
@@ -61,13 +106,22 @@ app.on("second-instance", (_event, argv) => {
   }
 });
 
-// macOS deep-link delivery
 app.on("open-url", (event, url) => {
   event.preventDefault();
   handleDeepLink(url);
 });
 
-// ── Window creation ─────────────────────────────────────────────────────────
+function openExternalSafely(value) {
+  const external = safeExternalUrl(value);
+  if (external) void shell.openExternal(external);
+}
+
+function guardNavigation(event, value) {
+  if (isAllowedInternalUrl(value)) return;
+  event.preventDefault();
+  openExternalSafely(value);
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
@@ -83,50 +137,36 @@ function createWindow() {
       nodeIntegration: false,
       sandbox: true,
       spellcheck: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
   });
 
-  // Identify desktop traffic to the server. Virelle's analytics/telemetry can key off this.
-  session.defaultSession.webRequest.onBeforeSendHeaders((details, cb) => {
-    details.requestHeaders["X-Virelle-Client"] = "desktop";
-    details.requestHeaders["X-Virelle-Desktop-Version"] = app.getVersion();
-    cb({ requestHeaders: details.requestHeaders });
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    if (isAllowedInternalUrl(details.url)) {
+      details.requestHeaders["X-Virelle-Client"] = "desktop";
+      details.requestHeaders["X-Virelle-Desktop-Version"] = app.getVersion();
+    }
+    callback({ requestHeaders: details.requestHeaders });
   });
 
-  mainWindow.loadURL(TARGET_URL);
-
-  // Open all external links (target=_blank, anchors to other origins) in the user's
-  // real browser instead of inside the Electron window.
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    try {
-      const u = new URL(url);
-      const host = u.hostname;
-      const internal = host === "www.virelle.life" || host === "virelle.life" || host === "localhost";
-      if (!internal) {
-        shell.openExternal(url);
-        return { action: "deny" };
-      }
-    } catch {
-      shell.openExternal(url);
-      return { action: "deny" };
-    }
-    return { action: "allow" };
+    if (isAllowedInternalUrl(url)) return { action: "allow" };
+    openExternalSafely(url);
+    return { action: "deny" };
   });
+  mainWindow.webContents.on("will-navigate", guardNavigation);
+  mainWindow.webContents.on("will-redirect", guardNavigation);
+  mainWindow.webContents.on("will-attach-webview", (event) => event.preventDefault());
 
-  // Same rule for in-window navigations to off-site URLs.
-  mainWindow.webContents.on("will-navigate", (event, url) => {
-    try {
-      const u = new URL(url);
-      const internal = u.hostname === "www.virelle.life" || u.hostname === "virelle.life" || u.hostname === "localhost";
-      if (!internal) {
-        event.preventDefault();
-        shell.openExternal(url);
-      }
-    } catch {
-      // ignore
-    }
-  });
+  if (!IS_DEV) {
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+      const devToolsShortcut = input.key === "F12" || (input.control && input.shift && input.key.toLowerCase() === "i");
+      if (devToolsShortcut) event.preventDefault();
+    });
+  }
 
+  mainWindow.loadURL(TARGET_ORIGIN);
   mainWindow.on("closed", () => { mainWindow = null; });
 
   if (pendingDeepLink) {
@@ -135,34 +175,26 @@ function createWindow() {
   }
 }
 
-// ── Minimal application menu ────────────────────────────────────────────────
 function buildMenu() {
   const isMac = process.platform === "darwin";
+  const viewMenu = [
+    { role: "reload" },
+    { role: "forceReload" },
+    { type: "separator" },
+    { role: "togglefullscreen" },
+  ];
+  if (IS_DEV) viewMenu.push({ role: "toggleDevTools" });
+
   const template = [
     ...(isMac ? [{ role: "appMenu" }] : []),
-    {
-      label: "View",
-      submenu: [
-        { role: "reload" },
-        { role: "forceReload" },
-        { type: "separator" },
-        { role: "togglefullscreen" },
-        { role: "toggleDevTools" },
-      ],
-    },
+    { label: "View", submenu: viewMenu },
     { role: "editMenu" },
     { role: "windowMenu" },
     {
       label: "Help",
       submenu: [
-        {
-          label: "Open virelle.life",
-          click: () => shell.openExternal("https://www.virelle.life"),
-        },
-        {
-          label: "Support",
-          click: () => shell.openExternal("https://www.virelle.life/support"),
-        },
+        { label: "Open virelle.life", click: () => openExternalSafely(DEFAULT_TARGET) },
+        { label: "Support", click: () => openExternalSafely(`${DEFAULT_TARGET}/support`) },
       ],
     },
   ];
@@ -173,7 +205,6 @@ app.whenReady().then(() => {
   pendingDeepLink = pendingDeepLink || extractDeepLink(process.argv);
   buildMenu();
   createWindow();
-
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
