@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ArrowRight,
-  Broadcast,
   Clapperboard,
   Download,
   Film,
@@ -48,7 +47,7 @@ export default function SwappysBroadcastHub() {
             </div>
             <div>
               <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight md:text-4xl">
-                <Broadcast className="h-8 w-8 text-amber-400" />
+                <RadioTower className="h-8 w-8 text-amber-400" />
                 Swappys & Broadcast
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
