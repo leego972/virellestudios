@@ -1,0 +1,85 @@
+name: Apply Sidebar Account Control
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-sidebar-account-control.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Patch dashboard account controls and CSS import
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          dashboard = Path("client/src/components/DashboardLayout.tsx")
+          source = dashboard.read_text(encoding="utf-8")
+
+          source = source.replace(
+            'import LeegoFooter from "@/components/LeegoFooterLaunch";\n',
+            'import LeegoFooter from "@/components/LeegoFooterLaunch";\nimport SidebarAccountControl from "@/components/SidebarAccountControl";\n',
+            1,
+          )
+          source = source.replace(
+            'import { Avatar, AvatarFallback } from "@/components/ui/avatar";\n',
+            '',
+            1,
+          )
+          source = source.replace('  Camera,\n', '', 1)
+          source = source.replace('  LogOut,\n', '', 1)
+
+          pattern = re.compile(
+            r'''            <DropdownMenu>\n'''
+            r'''              <DropdownMenuTrigger asChild>\n'''
+            r'''                <button className="flex w-full items-center gap-2 rounded-lg p-1\.5 text-left transition-colors hover:bg-accent/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 group-data-\[collapsible=icon\]:justify-center">.*?'''
+            r'''            </DropdownMenu>\n''',
+            re.DOTALL,
+          )
+          replacement = '''            <SidebarAccountControl
+              avatarSrc={avatarSrc}
+              name={user?.name || "Director"}
+              profileBadge={profileBadge}
+              onLogout={logout}
+              onSettings={() => navigate("/settings")}
+              onChangePhoto={handleAvatarClick}
+            />
+'''
+          source, count = pattern.subn(replacement, source, count=1)
+          if count != 1:
+            raise SystemExit(f"Expected one sidebar profile dropdown, replaced {count}")
+
+          dashboard.write_text(source, encoding="utf-8")
+
+          main = Path("client/src/main.tsx")
+          main_source = main.read_text(encoding="utf-8")
+          old = 'import "./mobile-sidebar-contrast.css";\n'
+          new = 'import "./mobile-sidebar-contrast.css";\nimport "./white-surface-text.css";\n'
+          if old not in main_source:
+            raise SystemExit("mobile sidebar contrast import not found")
+          main.write_text(main_source.replace(old, new, 1), encoding="utf-8")
+          PY
+
+      - name: Remove workflow and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/apply-sidebar-account-control.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add sidebar logout confirmation and white-surface text contrast"
+          git push origin HEAD:main
