@@ -48,7 +48,7 @@ export default function WardrobePurchaseChoiceDialog({ item, returnUrl, onClose,
     enabled: Boolean(item?.id), retry: false,
   });
 
-  const checkout = trpc.wardrobeMarket.leasing.checkout.useMutation({
+  const checkout = trpc.wardrobeMarket.commercePurchase.checkout.useMutation({
     onSuccess: (result) => {
       onCheckoutStarted?.();
       if (result.checkoutUrl) window.location.href = result.checkoutUrl;
@@ -135,8 +135,7 @@ export default function WardrobePurchaseChoiceDialog({ item, returnUrl, onClose,
       return;
     }
     checkout.mutate({
-      type: "item",
-      id: Number(item.id),
+      itemId: Number(item.id),
       purchaseMode: mode,
       shippingAddressId: mode === "physical" ? selectedAddressId ?? undefined : undefined,
       returnUrl,
