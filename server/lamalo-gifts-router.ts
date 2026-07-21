@@ -1,124 +1,283 @@
 import { z } from "zod";
-  import { router, protectedProcedure } from "./_core/trpc";
-  import { TRPCError } from "@trpc/server";
-  import { getDb } from "./db";
-  import { wardrobeItems, wardrobeLeases, designerProfiles, designerCollections, users } from "../drizzle/schema";
-  import { eq, and, inArray } from "drizzle-orm";
+import { router, protectedProcedure } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { getDb } from "./db";
+import {
+  wardrobeItems,
+  wardrobeLeases,
+  designerProfiles,
+  users,
+} from "../drizzle/schema";
+import { eq, and, inArray } from "drizzle-orm";
+import { runLamaloSeed } from "./lamalo-seed";
 
-  /** Curated starter outfit picks from Lamalo Fashion — shown to new studio users */
-  const STARTER_PICKS = [
-    "Lamalo Premium Tee",
-    "Lamalo Classic Polo",
-    "Lamalo Slim Chino",
-    "Lamalo Straight Denim",
-    "Lamalo Bomber Jacket",
-    "Lamalo Canvas Lo Sneaker",
-    "Lamalo Tapered Jogger",
-    "Lamalo Full-Zip Hoodie",
-  ];
-  const CATEGORY_LABELS = new Set(["Lamalo Men", "Lamalo Women", "Lamalo Kids", "Lamalo Girls", "Lamalo Boys", "Lamalo Teens", "Lamalo Watches", "Lamalo Eyewear", "Lamalo Headwear", "Lamalo Accessories", "Lamalo Bags & Handbags", "Lamalo Professional Uniforms", "Lamalo Comfort Swimwear"]);
+const LAMALO_BRAND_NAME = "Lamalo Fashion";
+const STARTER_OPTION_COUNT = 10;
 
-  export const lamaloGiftsRouter = router({
-    /** Check if this user (non-designer) has already claimed their 2 free outfits */
-    hasClaimedGift: protectedProcedure.query(async ({ ctx }) => {
-      const db = (await getDb())!;
-      // Designers are not eligible
-      const designer = await db.select({ id: designerProfiles.id })
-        .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
-      if (designer.length > 0) return { eligible: false, claimed: false, reason: "designer_account" };
+/**
+ * Ten real, colour-qualified items from the Lamalo catalogue.
+ * The seed expands every base garment into separate colour products, so these
+ * names intentionally include the exact ` — Colour` suffix stored in MySQL.
+ */
+const STARTER_PICKS = [
+  "Lamalo Premium Tee — Black",
+  "Lamalo Bomber Jacket — Olive",
+  "Lamalo Suit Jacket — Navy",
+  "Lamalo Straight Denim — Indigo",
+  "Lamalo Classic Polo — White",
+  "Lamalo Structured Blazer — Black",
+  "Lamalo Pure Silk Blouse — White",
+  "Lamalo Satin Slip Dress — Champagne",
+  "Lamalo Wrap Midi Dress — Sage Green",
+  "Lamalo Wide-Leg Formal Trouser — Camel",
+] as const;
 
-      // Check for existing free leases from Lamalo Fashion
-      const lamalo = await db.select({ id: designerProfiles.id })
-        .from(designerProfiles).where(eq(designerProfiles.brandName, "Lamalo Fashion")).limit(1);
-      if (!lamalo.length) return { eligible: true, claimed: false };
+const starterSelection = {
+  id: wardrobeItems.id,
+  name: wardrobeItems.name,
+  description: wardrobeItems.description,
+  category: wardrobeItems.category,
+  subcategory: wardrobeItems.subcategory,
+  genderFit: wardrobeItems.genderFit,
+  colors: wardrobeItems.colors,
+  referencePrompt: wardrobeItems.referencePrompt,
+  primaryImageUrl: wardrobeItems.primaryImageUrl,
+};
 
-      const freeLeases = await db.select({ id: wardrobeLeases.id })
-        .from(wardrobeLeases)
-        .where(and(
+async function findLamaloProfileId(db: Awaited<ReturnType<typeof getDb>>): Promise<number | null> {
+  if (!db) return null;
+  const rows = await db
+    .select({ id: designerProfiles.id })
+    .from(designerProfiles)
+    .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
+    .limit(1);
+  return rows[0]?.id ?? null;
+}
+
+/**
+ * Production should already have Lamalo seeded. This self-heals an empty
+ * installation using the first administrator account, never the new member
+ * claiming the gift.
+ */
+async function requireLamaloProfileId(
+  db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+): Promise<number> {
+  const existingId = await findLamaloProfileId(db);
+  if (existingId) return existingId;
+
+  const admins = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.role, "admin"))
+    .limit(1);
+  const ownerUserId = admins[0]?.id;
+  if (!ownerUserId) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "The Lamalo catalogue has not been initialised and no administrator account is available to initialise it.",
+    });
+  }
+
+  await runLamaloSeed(ownerUserId);
+  const seededId = await findLamaloProfileId(db);
+  if (!seededId) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "The Lamalo catalogue could not be initialised.",
+    });
+  }
+  return seededId;
+}
+
+export const lamaloGiftsRouter = router({
+  /** Check if this user (non-designer) has already claimed their 2 free outfits. */
+  hasClaimedGift: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable." });
+
+    const designer = await db
+      .select({ id: designerProfiles.id })
+      .from(designerProfiles)
+      .where(eq(designerProfiles.userId, ctx.user.id))
+      .limit(1);
+    if (designer.length > 0) {
+      return { eligible: false, claimed: false, reason: "designer_account" };
+    }
+
+    const lamaloId = await findLamaloProfileId(db);
+    if (!lamaloId) return { eligible: true, claimed: false };
+
+    const freeLeases = await db
+      .select({ id: wardrobeLeases.id })
+      .from(wardrobeLeases)
+      .where(
+        and(
           eq(wardrobeLeases.userId, ctx.user.id),
-          eq(wardrobeLeases.designerProfileId, lamalo[0].id),
+          eq(wardrobeLeases.designerProfileId, lamaloId),
           eq(wardrobeLeases.amountPaidAud, 0),
-        ));
+        ),
+      );
 
-      return { eligible: true, claimed: freeLeases.length >= 2 };
+    return { eligible: true, claimed: freeLeases.length >= 2 };
+  }),
+
+  /** Return exactly ten curated, real Lamalo catalogue choices. */
+  getStarterOutfits: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable." });
+
+    const designer = await db
+      .select({ id: designerProfiles.id })
+      .from(designerProfiles)
+      .where(eq(designerProfiles.userId, ctx.user.id))
+      .limit(1);
+    if (designer.length > 0) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Designer accounts are not eligible for welcome gifts.",
+      });
+    }
+
+    const lamaloId = await requireLamaloProfileId(db);
+    const curated = await db
+      .select(starterSelection)
+      .from(wardrobeItems)
+      .where(
+        and(
+          eq(wardrobeItems.designerProfileId, lamaloId),
+          inArray(wardrobeItems.name, [...STARTER_PICKS]),
+          eq(wardrobeItems.visibility, "public"),
+          eq(wardrobeItems.status, "active"),
+        ),
+      );
+
+    const curatedByName = new Map(curated.map(item => [item.name, item]));
+    const ordered = STARTER_PICKS
+      .map(name => curatedByName.get(name))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+    if (ordered.length < STARTER_OPTION_COUNT) {
+      const fallback = await db
+        .select(starterSelection)
+        .from(wardrobeItems)
+        .where(
+          and(
+            eq(wardrobeItems.designerProfileId, lamaloId),
+            eq(wardrobeItems.visibility, "public"),
+            eq(wardrobeItems.status, "active"),
+          ),
+        )
+        .limit(100);
+      const existingIds = new Set(ordered.map(item => item.id));
+      for (const item of fallback) {
+        if (!item.name || existingIds.has(item.id)) continue;
+        ordered.push(item);
+        existingIds.add(item.id);
+        if (ordered.length === STARTER_OPTION_COUNT) break;
+      }
+    }
+
+    if (ordered.length < STARTER_OPTION_COUNT) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: `Lamalo needs at least ${STARTER_OPTION_COUNT} active public wardrobe items before the welcome gift can be offered.`,
+      });
+    }
+
+    return ordered.slice(0, STARTER_OPTION_COUNT);
+  }),
+
+  /** Claim two free welcome outfits. Regular studio users only. */
+  claimGift: protectedProcedure
+    .input(
+      z
+        .object({
+          itemId1: z.number().int().positive(),
+          itemId2: z.number().int().positive(),
+        })
+        .refine(input => input.itemId1 !== input.itemId2, {
+          message: "Choose two different outfits.",
+        }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable." });
+
+      const designer = await db
+        .select({ id: designerProfiles.id })
+        .from(designerProfiles)
+        .where(eq(designerProfiles.userId, ctx.user.id))
+        .limit(1);
+      if (designer.length > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Designer accounts are not eligible.",
+        });
+      }
+
+      const lamaloId = await requireLamaloProfileId(db);
+      const existing = await db
+        .select({ id: wardrobeLeases.id })
+        .from(wardrobeLeases)
+        .where(
+          and(
+            eq(wardrobeLeases.userId, ctx.user.id),
+            eq(wardrobeLeases.designerProfileId, lamaloId),
+            eq(wardrobeLeases.amountPaidAud, 0),
+          ),
+        );
+      if (existing.length >= 2) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Welcome gift already claimed.",
+        });
+      }
+
+      const selectedIds = [input.itemId1, input.itemId2];
+      const items = await db
+        .select({ id: wardrobeItems.id })
+        .from(wardrobeItems)
+        .where(
+          and(
+            inArray(wardrobeItems.id, selectedIds),
+            eq(wardrobeItems.designerProfileId, lamaloId),
+            eq(wardrobeItems.visibility, "public"),
+            eq(wardrobeItems.status, "active"),
+          ),
+        );
+      if (items.length !== 2) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid Lamalo outfits selected.",
+        });
+      }
+
+      await db.insert(wardrobeLeases).values([
+        {
+          userId: ctx.user.id,
+          designerProfileId: lamaloId,
+          wardrobeItemId: input.itemId1,
+          leaseType: "item",
+          amountPaidAud: 0,
+          designerAmountAud: 0,
+          platformFeeAud: 0,
+          status: "active",
+        },
+        {
+          userId: ctx.user.id,
+          designerProfileId: lamaloId,
+          wardrobeItemId: input.itemId2,
+          leaseType: "item",
+          amountPaidAud: 0,
+          designerAmountAud: 0,
+          platformFeeAud: 0,
+          status: "active",
+        },
+      ]);
+
+      return {
+        success: true,
+        message: "Welcome outfits unlocked! They are available in your wardrobe inventory.",
+      };
     }),
-
-    /** Returns curated Lamalo Fashion starter items for the picker */
-    getStarterOutfits: protectedProcedure.query(async ({ ctx }) => {
-      const db = (await getDb())!;
-      // Must not be a designer
-      const designer = await db.select({ id: designerProfiles.id })
-        .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
-      if (designer.length > 0) throw new TRPCError({ code: "FORBIDDEN", message: "Designer accounts are not eligible for welcome gifts." });
-
-      // Get Lamalo items from starter picks
-      const items = await db.select({
-        id: wardrobeItems.id,
-        name: wardrobeItems.name,
-        description: wardrobeItems.description,
-        category: wardrobeItems.category,
-        subcategory: wardrobeItems.subcategory,
-        genderFit: wardrobeItems.genderFit,
-        colors: wardrobeItems.colors,
-        referencePrompt: wardrobeItems.referencePrompt,
-        primaryImageUrl: wardrobeItems.primaryImageUrl,
-      }).from(wardrobeItems)
-        .leftJoin(designerCollections, eq(wardrobeItems.collectionId, designerCollections.id))
-        .leftJoin(designerProfiles, eq(designerCollections.designerProfileId, designerProfiles.id))
-        .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
-        .limit(24);
-
-      // Prioritise named starter picks, then fill with any other real items
-      const realItems = items.filter(i => i.name && !CATEGORY_LABELS.has(i.name));
-      const picks = realItems.filter(i => STARTER_PICKS.includes(i.name));
-      const rest  = realItems.filter(i => !STARTER_PICKS.includes(i.name));
-      return [...picks, ...rest].slice(0, 8);
-    }),
-
-    /** Claim 2 free welcome outfits. Regular studio users only. */
-    claimGift: protectedProcedure
-      .input(z.object({
-        itemId1: z.number().int(),
-        itemId2: z.number().int(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        const db = (await getDb())!;
-
-        // Block designers
-        const designer = await db.select({ id: designerProfiles.id })
-          .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
-        if (designer.length > 0) throw new TRPCError({ code: "FORBIDDEN", message: "Designer accounts are not eligible." });
-
-        // Get Lamalo Fashion designer profile
-        const lamalo = await db.select({ id: designerProfiles.id })
-          .from(designerProfiles).where(eq(designerProfiles.brandName, "Lamalo Fashion")).limit(1);
-        if (!lamalo.length) throw new TRPCError({ code: "NOT_FOUND", message: "Lamalo Fashion not found." });
-        const lamaloId = lamalo[0].id;
-
-        // Block double-claims
-        const existing = await db.select({ id: wardrobeLeases.id })
-          .from(wardrobeLeases)
-          .where(and(eq(wardrobeLeases.userId, ctx.user.id), eq(wardrobeLeases.designerProfileId, lamaloId), eq(wardrobeLeases.amountPaidAud, 0)));
-        if (existing.length >= 2) throw new TRPCError({ code: "CONFLICT", message: "Welcome gift already claimed." });
-
-        // Verify both items belong to Lamalo Fashion
-        const items = await db.select({ id: wardrobeItems.id })
-          .from(wardrobeItems)
-          .leftJoin(designerCollections, eq(wardrobeItems.collectionId, designerCollections.id))
-          .where(and(
-            inArray(wardrobeItems.id, [input.itemId1, input.itemId2]),
-            eq(designerCollections.designerProfileId, lamaloId),
-          ));
-        if (items.length < 2) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid items selected." });
-
-        // Grant 2 permanent free leases
-
-        await db.insert(wardrobeLeases).values([
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId1, leaseType: "item", amountPaidAud: 0, designerAmountAud: 0, platformFeeAud: 0, status: "active" },
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId2, leaseType: "item", amountPaidAud: 0, designerAmountAud: 0, platformFeeAud: 0, status: "active" },
-        ]);
-
-        return { success: true, message: "Welcome outfits unlocked! They are available in your wardrobe inventory." };
-      }),
-  });
-  
+});
