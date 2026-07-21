@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -u
 
 # Render exposes deployment metadata under RENDER_* variables. A few older
 # application paths still read the previous host's variable names, so provide
@@ -69,8 +69,8 @@ cleanup() {
 }
 trap cleanup TERM INT
 
-wait "$GW_PID"
-EXIT_CODE=$?
+EXIT_CODE=0
+wait "$GW_PID" || EXIT_CODE=$?
 echo "[start] Gateway exited ($EXIT_CODE)"
 kill "$APP_PID" 2>/dev/null || true
 exit "$EXIT_CODE"
