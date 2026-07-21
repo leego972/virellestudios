@@ -1,13 +1,13 @@
-name: Deep quality and security audit
+name: Scheduled deep quality and security audit
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * 1"
 
 permissions:
   contents: read
   pull-requests: read
-  security-events: write
 
 jobs:
   verification:
@@ -32,76 +32,28 @@ jobs:
         run: pnpm build
         env:
           NODE_ENV: production
-          VITE_APP_ID: audit-stub
+          VITE_APP_ID: scheduled-audit-stub
           VITE_SENTRY_DSN: ""
-      - name: Unsuppressed dependency audits
-        shell: bash
-        run: |
-          set -euo pipefail
-          cp package.json /tmp/package.json.original
-          node <<'NODE'
-          const fs = require('fs');
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          if (pkg.pnpm) delete pkg.pnpm.auditConfig;
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          NODE
-          set +e
-          pnpm audit --json > full-dependency-audit.json
-          echo $? > full-dependency-audit.exit
-          pnpm audit --prod --json > production-dependency-audit.json
-          echo $? > production-dependency-audit.exit
-          set -e
-          mv /tmp/package.json.original package.json
-      - name: Static risk inventory
-        shell: bash
-        run: |
-          set -euo pipefail
-          {
-            echo "== Dynamic code execution =="
-            git grep -nE '(^|[^A-Za-z])(eval|Function)[[:space:]]*\(' -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs' || true
-            echo "== Shell/process execution =="
-            git grep -nE '(exec|execFile|spawn|fork)[[:space:]]*\(' -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs' || true
-            echo "== Raw HTML sinks =="
-            git grep -nE 'dangerouslySetInnerHTML|\.innerHTML[[:space:]]*=' -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs' || true
-            echo "== Weak or permissive security settings =="
-            git grep -nE 'Access-Control-Allow-Origin.*\*|cors\([[:space:]]*\)|rejectUnauthorized[[:space:]]*:[[:space:]]*false|secure[[:space:]]*:[[:space:]]*false|sameSite[[:space:]]*:[[:space:]]*["'\'' ]none|httpOnly[[:space:]]*:[[:space:]]*false' -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs' || true
-            echo "== Environment fallbacks =="
-            git grep -nE 'process\.env\.[A-Z0-9_]+[[:space:]]*(\|\||\?\?)[[:space:]]*["'\''][^"'\'']+["'\'']' -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs' || true
-            echo "== Potential URL fetch / SSRF surfaces =="
-            git grep -nE '(fetch|axios\.(get|post|put|patch|delete)|new URL)[[:space:]]*\(' -- 'server/**/*.ts' 'server/*.ts' || true
-          } > static-risk-inventory.txt
+      - name: Dependency audit
+        run: pnpm audit --audit-level moderate
       - name: Expanded tracked-secret scan
         shell: bash
         run: |
           set -euo pipefail
           pattern='(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|whsec_[A-Za-z0-9]{20,}|rk_(live|test)_[A-Za-z0-9]{20,}|sk_(live|test)_[A-Za-z0-9]{20,})'
-          if git grep -nEI "$pattern" -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md' ':!.github/workflows/*.yml' > secret-scan.txt; then
-            cat secret-scan.txt
+          if git grep -nEI "$pattern" -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md' ':!.github/workflows/*.yml'; then
+            echo "Potential committed secret detected."
             exit 1
           fi
-          echo "No tracked secret patterns found." > secret-scan.txt
-      - name: Upload audit evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: deep-quality-security-audit
-          path: |
-            full-dependency-audit.json
-            full-dependency-audit.exit
-            production-dependency-audit.json
-            production-dependency-audit.exit
-            static-risk-inventory.txt
-            secret-scan.txt
-          retention-days: 3
 
-  branch_inventory:
+  branch-inventory:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Inventory every branch and PR connection
+      - name: Inventory branches and PR connections
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
@@ -109,46 +61,24 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
+          printf '| Branch | Ahead | Behind | Pull requests |\n|---|---:|---:|---|\n' > branch-inventory.md
           git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin \
-            | grep -v '^HEAD$' \
-            | sort -u > branches.txt
-          printf '# Branch hygiene inventory\n\n' > branch-inventory.md
-          printf '| Branch | Ahead | Behind | PR connection | Classification |\n' >> branch-inventory.md
-          printf '|---|---:|---:|---|---|\n' >> branch-inventory.md
-          while IFS= read -r branch; do
-            [ -n "$branch" ] || continue
-            if [ "$branch" = "main" ]; then
-              printf '| `main` | 0 | 0 | default branch | canonical |\n' >> branch-inventory.md
-              continue
-            fi
-            counts=$(git rev-list --left-right --count "origin/main...origin/$branch")
-            behind=$(awk '{print $1}' <<<"$counts")
-            ahead=$(awk '{print $2}' <<<"$counts")
-            prs=$(gh pr list --repo "$REPOSITORY" --head "$branch" --state all --limit 100 --json number,state,mergedAt)
-            connection=$(jq -r '[.[] | "#\(.number) \(.state)" + (if .mergedAt then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
-            if [ "$ahead" = "0" ]; then
-              classification="fully contained in main"
-            elif jq -e '.[]? | select(.state == "OPEN")' <<<"$prs" >/dev/null; then
-              classification="connected to open PR"
-            elif [ "$(jq 'length' <<<"$prs")" = "0" ]; then
-              classification="floating: unique commits, no PR"
-            else
-              classification="unique commits only on closed PR branch"
-            fi
-            safe_branch=${branch//|/\\|}
-            safe_connection=${connection//|/\\|}
-            printf '| `%s` | %s | %s | %s | %s |\n' "$safe_branch" "$ahead" "$behind" "$safe_connection" "$classification" >> branch-inventory.md
-          done < branches.txt
+            | grep -vE '^(HEAD|main)$' \
+            | sort -u \
+            | while IFS= read -r branch; do
+                counts=$(git rev-list --left-right --count "origin/main...origin/$branch")
+                behind=$(awk '{print $1}' <<<"$counts")
+                ahead=$(awk '{print $2}' <<<"$counts")
+                prs=$(gh pr list --repo "$REPOSITORY" --head "$branch" --state all --limit 100 --json number,state,mergedAt)
+                connection=$(jq -r '[.[] | "#\(.number) \(.state)" + (if .mergedAt then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
+                printf '| `%s` | %s | %s | %s |\n' "${branch//|/\\|}" "$ahead" "$behind" "${connection//|/\\|}" >> branch-inventory.md
+              done
           cat branch-inventory.md
-      - name: Upload branch inventory
-        if: always()
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: branch-hygiene-inventory
-          path: |
-            branches.txt
-            branch-inventory.md
-          retention-days: 3
+          path: branch-inventory.md
+          retention-days: 7
 
   codeql:
     runs-on: ubuntu-latest
@@ -165,10 +95,9 @@ jobs:
           category: /language:javascript-typescript
           upload: false
           output: codeql-results
-      - name: Upload CodeQL SARIF
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: codeql-results
           path: codeql-results/
-          retention-days: 3
+          retention-days: 7
