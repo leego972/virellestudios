@@ -30,12 +30,6 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          def replace_once(text: str, old: str, new: str, label: str) -> str:
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"{label}: expected one match, found {count}")
-              return text.replace(old, new, 1)
-
           def replace_between(text: str, start_marker: str, end_marker: str, replacement: str, label: str) -> str:
               start = text.find(start_marker)
               if start < 0:
@@ -47,12 +41,11 @@ jobs:
 
           router = Path("server/lamalo-gifts-router.ts")
           text = router.read_text()
-          text = replace_once(
-              text,
-              'const LAMALO_BRAND_NAMES = [LAMALO_BRAND_NAME, "Lamalo Fashions", "Lamalo"] as const;',
-              'const LAMALO_BRAND_ALIASES = ["Lamalo Fashions", "Lamalo"] as const;',
-              "brand alias declaration",
-          )
+          old_brand = 'const LAMALO_BRAND_NAMES = [LAMALO_BRAND_NAME, "Lamalo Fashions", "Lamalo"] as const;'
+          if text.count(old_brand) != 1:
+              raise SystemExit(f"brand alias declaration: expected one match, found {text.count(old_brand)}")
+          text = text.replace(old_brand, 'const LAMALO_BRAND_ALIASES = ["Lamalo Fashions", "Lamalo"] as const;', 1)
+
           text = replace_between(
               text,
               "async function findLamaloProfile(",
@@ -106,16 +99,13 @@ jobs:
           ''',
               "unique inventory count",
           )
-          text = replace_once(
+
+          fallback_start = "      const existingIds = new Set(ordered.map(item => item.id));"
+          fallback_end = "\n    if (ordered.length < STARTER_OPTION_COUNT) {"
+          text = replace_between(
               text,
-              '''      const existingIds = new Set(ordered.map(item => item.id));
-              for (const item of fallback) {
-                if (!item.name || existingIds.has(item.id)) continue;
-                ordered.push(item as StarterOutfit);
-                existingIds.add(item.id);
-                if (ordered.length === STARTER_OPTION_COUNT) break;
-              }
-          ''',
+              fallback_start,
+              fallback_end,
               '''      const existingIds = new Set(ordered.map(item => item.id));
               const existingNames = new Set(ordered.map(item => item.name));
               for (const item of fallback) {
@@ -125,37 +115,39 @@ jobs:
                 existingNames.add(item.name);
                 if (ordered.length === STARTER_OPTION_COUNT) break;
               }
+            }
           ''',
               "fallback name deduplication",
           )
           router.write_text(text)
 
           checker = Path("scripts/check-lamalo-welcome-contract.mjs")
-          text = checker.read_text()
-          text = replace_once(
-              text,
-              'const picker = fs.readFileSync("client/src/components/WelcomeOutfitPicker.tsx", "utf8");',
-              'const picker = fs.readFileSync("client/src/components/WelcomeOutfitPicker.tsx", "utf8");\nconst home = fs.readFileSync("client/src/pages/Home.tsx", "utf8");',
-              "contract home source",
-          )
-          text = replace_once(
-              text,
-              'assert.ok(gifts.includes("db.transaction"), "welcome claim must be transactional");',
-              '''assert.ok(gifts.includes("db.transaction"), "welcome claim must be transactional");
-          const canonicalLookup = gifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRAND_NAME)");
-          const aliasLookup = gifts.indexOf("[...LAMALO_BRAND_ALIASES]");
-          assert.ok(canonicalLookup >= 0 && aliasLookup > canonicalLookup, "canonical Lamalo brand must be checked before legacy aliases");
-          assert.ok(gifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");''',
-              "contract catalogue assertions",
-          )
-          text = replace_once(
-              text,
-              'assert.ok(picker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");',
-              '''assert.ok(picker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");
-          assert.ok(home.includes("const [showOpener, setShowOpener] = useState(() =>"), "home must latch the opener request before the first render");''',
-              "contract opener latch",
-          )
-          checker.write_text(text)
+          lines = checker.read_text().splitlines()
+
+          picker_line = 'const picker = fs.readFileSync("client/src/components/WelcomeOutfitPicker.tsx", "utf8");'
+          if picker_line not in lines:
+              raise SystemExit("contract picker source line not found")
+          picker_index = lines.index(picker_line)
+          lines.insert(picker_index + 1, 'const home = fs.readFileSync("client/src/pages/Home.tsx", "utf8");')
+
+          transaction_line = 'assert.ok(gifts.includes("db.transaction"), "welcome claim must be transactional");'
+          if transaction_line not in lines:
+              raise SystemExit("contract transaction assertion not found")
+          transaction_index = lines.index(transaction_line)
+          lines[transaction_index + 1:transaction_index + 1] = [
+              'const canonicalLookup = gifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRAND_NAME)");',
+              'const aliasLookup = gifts.indexOf("[...LAMALO_BRAND_ALIASES]");',
+              'assert.ok(canonicalLookup >= 0 && aliasLookup > canonicalLookup, "canonical Lamalo brand must be checked before legacy aliases");',
+              'assert.ok(gifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");',
+          ]
+
+          opener_line = 'assert.ok(picker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");'
+          if opener_line not in lines:
+              raise SystemExit("contract opener assertion not found")
+          opener_index = lines.index(opener_line)
+          lines.insert(opener_index + 1, 'assert.ok(home.includes("const [showOpener, setShowOpener] = useState(() =>"), "home must latch the opener request before the first render");')
+
+          checker.write_text("\n".join(lines) + "\n")
           PY
 
       - name: Install dependencies
