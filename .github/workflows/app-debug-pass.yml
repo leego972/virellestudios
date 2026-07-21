@@ -19,6 +19,7 @@ on:
       - "server/_core/imageGeneration.ts"
       - "server/_core/swappysValidation.ts"
       - "server/_core/trpc.ts"
+      - ".github/workflows/app-debug-pass.yml"
   workflow_dispatch:
 
 permissions:
