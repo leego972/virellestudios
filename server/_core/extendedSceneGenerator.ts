@@ -12,8 +12,12 @@ import {
   type VideoProvider,
 } from "./byokVideoEngine";
 import { buildNegativePrompt } from "./cinematicPromptEngine";
+import { generateImage } from "./imageGeneration";
 import { logger } from "./logger";
-import { loadSceneGenerationContext } from "./sceneGenerationContext";
+import {
+  loadSceneGenerationContext,
+  type SceneGenerationContext,
+} from "./sceneGenerationContext";
 import { storagePut } from "../storage";
 import { reviewGeneratedClip, type VideoQualityPolicy, type VideoQualityReview } from "./videoQualityGate";
 import { refreshCanonicalSceneFingerprint, renderCanonicalScenePrompt, type CanonicalSceneSpec } from "./canonicalSceneSpec";
@@ -195,7 +199,7 @@ function buildSubShotPrompt(
     spec.camera.depthOfField && `LOCKED DEPTH OF FIELD: ${spec.camera.depthOfField}.`,
     progression,
     "Render one continuous physically plausible action beat. Preserve exact faces, body proportions, garments, colours, materials, accessories, held props, injuries, dirt, lighting direction, weather and screen direction.",
-    "No montage, no jump in time, no new character, no costume substitution, no duplicate person, no object teleportation, no unexplained camera-side reversal.",
+    "No montage, no jump in time, no new character, no costume substitution, no garment transfer between characters, no duplicate person, no object teleportation, no unexplained camera-side reversal.",
   ].filter(Boolean).join("\n");
 }
 
@@ -312,6 +316,93 @@ async function generateRunwayKeyframe(prompt: string, aspectRatio: string): Prom
   } catch {
     return undefined;
   }
+}
+
+function openingReferenceInstructions(context: SceneGenerationContext): string[] {
+  const instructions: string[] = [];
+  let referenceIndex = 1;
+  for (const binding of context.wardrobeBindings) {
+    if (binding.characterReferenceImageUrl) {
+      instructions.push(`Reference image ${referenceIndex}: exact face and body identity for CHARACTER ${binding.characterId}, ${binding.characterName}.`);
+      referenceIndex++;
+    }
+    if (binding.wardrobeReferenceImageUrl) {
+      instructions.push(`Reference image ${referenceIndex}: exact garment assigned only to CHARACTER ${binding.characterId}, ${binding.characterName}; never place it on another person.`);
+      referenceIndex++;
+    }
+  }
+  return instructions;
+}
+
+async function buildOpeningReferenceFrame(
+  keys: UserApiKeys,
+  request: ExtendedSceneRequest,
+  context: SceneGenerationContext,
+  canonicalPrompt: string,
+  referenceImages: string[],
+): Promise<string | undefined> {
+  const bindingsWithCostume = context.wardrobeBindings.filter((binding) => binding.promptAnchor || binding.wardrobeReferenceImageUrl);
+  const explicitCostumeChange = context.wardrobeBindings.some((binding) => binding.explicitChange);
+
+  // With no new costume instruction, the previous scene's accepted final frame
+  // remains the strongest possible identity, geography and wardrobe anchor.
+  if (request.previousSceneLastFrameUrl && !explicitCostumeChange) {
+    return request.previousSceneLastFrameUrl;
+  }
+
+  if (!bindingsWithCostume.length && request.previousSceneLastFrameUrl) {
+    return request.previousSceneLastFrameUrl;
+  }
+  if (!bindingsWithCostume.length && !referenceImages.length) return undefined;
+
+  const orderedReferences = uniqueUrls([
+    request.previousSceneLastFrameUrl,
+    ...context.wardrobeBindings.flatMap((binding) => [
+      binding.characterReferenceImageUrl,
+      binding.wardrobeReferenceImageUrl,
+    ]),
+    ...referenceImages,
+  ]).slice(0, 4);
+
+  const transitionDirective = explicitCostumeChange
+    ? "An explicit outfit change begins in this scene. Preserve the same person, face, body and scene continuity from the previous frame, but replace the old outfit only with the newly assigned costume stated below. Do not retain any superseded garment."
+    : "This is the first authoritative scene wardrobe frame. Establish every named character in the exact assigned costume before motion begins.";
+
+  const bindingText = context.wardrobeBindings
+    .filter((binding) => binding.promptAnchor)
+    .map((binding) => `CHARACTER ${binding.characterId} — ${binding.characterName}: ${binding.promptAnchor}`)
+    .join("\n");
+
+  const prompt = [
+    "Create one photorealistic opening film keyframe used as the immutable image-to-video reference for this scene.",
+    transitionDirective,
+    ...openingReferenceInstructions(context),
+    "Match each face/body reference to its named character and match each garment reference only to that same named character. Never swap clothes, faces, bodies or accessories between characters.",
+    bindingText,
+    canonicalPrompt,
+    "Show the required characters clearly enough that face identity, complete garment silhouette, exact colour, material, fit, footwear and accessories can be verified. No text, labels, collage borders or watermark in the output.",
+  ].filter(Boolean).join("\n");
+
+  try {
+    const generated = await generateImage({
+      prompt,
+      originalImages: orderedReferences.map((url) => ({ url })),
+      userOpenAiKey: keys.openaiKey,
+    });
+    if (generated.url) {
+      logger.info(`[ExtendedScene] Scene ${request.sceneId}: opening character/costume reference composed with ${generated.provider || "image provider"}.`);
+      return generated.url;
+    }
+  } catch (error: any) {
+    logger.warn(`[ExtendedScene] Scene ${request.sceneId}: opening character/costume composite failed: ${error.message}`);
+  }
+
+  // Never reuse the prior scene's old costume when an explicit change was
+  // requested. A garment reference is safer than silently preserving old attire.
+  if (explicitCostumeChange) {
+    return context.wardrobeBindings.find((binding) => binding.wardrobeReferenceImageUrl)?.wardrobeReferenceImageUrl;
+  }
+  return request.previousSceneLastFrameUrl || referenceImages[0];
 }
 
 async function extractFrame(videoUrl: string, position: "first" | "last", projectId: number, sceneId: number): Promise<string | undefined> {
@@ -493,15 +584,22 @@ export async function generateExtendedScene(
     ...(request.referenceImages || []),
     ...context.referenceImages,
   ]);
+  const openingReferenceFrame = await buildOpeningReferenceFrame(
+    keys,
+    request,
+    context,
+    canonicalPrompt,
+    referenceImages,
+  );
   const negativePrompt = request.negativePrompt || spec.negativePrompt || buildNegativePrompt(request.genre || "Drama");
   const policy = request.qualityPolicy ?? "standard";
   const maxQualityRegenerations = Math.max(0, Math.min(3, request.maxQualityRegenerations ?? (policy === "strict" ? 2 : 1)));
   const requireAllClips = request.requireAllClips ?? true;
   const acceptedUrls: string[] = [];
   const qualityReviews: VideoQualityReview[] = [];
-  let previousFrame = request.previousSceneLastFrameUrl;
+  let previousFrame = openingReferenceFrame;
 
-  logger.info(`[ExtendedScene] Scene ${request.sceneId}: contract=${spec.fingerprint}, provider=${provider}, clips=${subShots.length}, policy=${policy}`);
+  logger.info(`[ExtendedScene] Scene ${request.sceneId}: contract=${spec.fingerprint}, provider=${provider}, clips=${subShots.length}, policy=${policy}, wardrobeBindings=${context.wardrobeBindings.length}`);
 
   for (let index = 0; index < subShots.length; index++) {
     const subShot = subShots[index];
@@ -532,6 +630,7 @@ export async function generateExtendedScene(
           expectedDurationSeconds: subShot.durationSeconds,
           policy,
           previousFrameUrl: previousFrame,
+          referenceImages,
           userOpenAiKey: keys.openaiKey,
           clipIndex: index,
           totalClips: subShots.length,
@@ -571,7 +670,8 @@ export async function generateExtendedScene(
     canonicalSpec: spec,
     expectedDurationSeconds: Math.max(3, acceptedUrls.reduce((sum, _, index) => sum + subShots[index].durationSeconds, 0)),
     policy: policy === "strict" ? "strict" : "technical",
-    previousFrameUrl: request.previousSceneLastFrameUrl,
+    previousFrameUrl: openingReferenceFrame,
+    referenceImages,
     userOpenAiKey: keys.openaiKey,
     clipIndex: 0,
     totalClips: 1,
