@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import { storagePut } from "../storage";
 import { ENV } from "./env";
 import { logger } from "./logger";
@@ -5,6 +6,7 @@ import { logger } from "./logger";
 const PROVIDER_TIMEOUT_MS = 120_000;
 const REFERENCE_FETCH_TIMEOUT_MS = 20_000;
 const MAX_REFERENCE_BYTES = 25 * 1024 * 1024;
+const MAX_GENERATED_IMAGE_BYTES = 30 * 1024 * 1024;
 
 export type GenerateImageOptions = {
   prompt: string;
@@ -50,6 +52,14 @@ function normalizedMimeType(value: string | undefined): string {
   return ["image/jpeg", "image/png", "image/webp"].includes(type) ? type : "image/jpeg";
 }
 
+async function detectedMimeType(buffer: Buffer, fallback?: string): Promise<string> {
+  const metadata = await sharp(buffer, { failOn: "error", limitInputPixels: 40_000_000 }).metadata();
+  if (metadata.format === "png") return "image/png";
+  if (metadata.format === "webp") return "image/webp";
+  if (metadata.format === "jpeg" || metadata.format === "jpg") return "image/jpeg";
+  return normalizedMimeType(fallback);
+}
+
 async function resolveReferenceBase64(
   images: GenerateImageOptions["originalImages"],
 ): Promise<Array<{ b64: string; mimeType: string }>> {
@@ -60,7 +70,8 @@ async function resolveReferenceBase64(
     if (image.b64Json) {
       const buffer = Buffer.from(image.b64Json, "base64");
       if (!buffer.length || buffer.length > MAX_REFERENCE_BYTES) throw new Error("Reference image is empty or too large");
-      results.push({ b64: buffer.toString("base64"), mimeType: normalizedMimeType(image.mimeType) });
+      const mimeType = await detectedMimeType(buffer, image.mimeType);
+      results.push({ b64: buffer.toString("base64"), mimeType });
       continue;
     }
 
@@ -75,12 +86,12 @@ async function resolveReferenceBase64(
       signal: AbortSignal.timeout(REFERENCE_FETCH_TIMEOUT_MS),
     });
     if (!response.ok) throw new Error(`Reference image fetch failed (${response.status})`);
-    const contentType = normalizedMimeType(response.headers.get("content-type") || image.mimeType);
     const contentLength = Number(response.headers.get("content-length") || "0");
     if (contentLength > MAX_REFERENCE_BYTES) throw new Error("Reference image is too large");
     const buffer = Buffer.from(await response.arrayBuffer());
     if (!buffer.length || buffer.length > MAX_REFERENCE_BYTES) throw new Error("Reference image is empty or too large");
-    results.push({ b64: buffer.toString("base64"), mimeType: contentType });
+    const mimeType = await detectedMimeType(buffer, response.headers.get("content-type") || image.mimeType);
+    results.push({ b64: buffer.toString("base64"), mimeType });
   }
 
   return results;
@@ -124,13 +135,21 @@ async function generateWithOpenAI(options: GenerateImageOptions): Promise<Genera
     const item = result.data?.[0];
     if (item?.b64_json) {
       const buffer = Buffer.from(item.b64_json, "base64");
-      return { url: await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png"), provider: "openai-gpt-image-1-edit", referenceAware: true };
+      return {
+        url: await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png"),
+        provider: "openai-gpt-image-1-edit",
+        referenceAware: true,
+      };
     }
     if (item?.url) {
       const download = await fetch(item.url, { signal: AbortSignal.timeout(REFERENCE_FETCH_TIMEOUT_MS) });
       if (download.ok) {
         const buffer = Buffer.from(await download.arrayBuffer());
-        return { url: await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png", item.url), provider: "openai-gpt-image-1-edit", referenceAware: true };
+        return {
+          url: await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png", item.url),
+          provider: "openai-gpt-image-1-edit",
+          referenceAware: true,
+        };
       }
       return { url: item.url, provider: "openai-gpt-image-1-edit", referenceAware: true };
     }
@@ -148,8 +167,11 @@ async function generateWithOpenAI(options: GenerateImageOptions): Promise<Genera
   const result = await response.json() as { data?: Array<{ b64_json?: string; url?: string }> };
   const item = result.data?.[0];
   if (item?.b64_json) {
-    const buffer = Buffer.from(item.b64_json, "base64");
-    return { url: await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png"), provider: "openai-gpt-image-1", referenceAware: false };
+    return {
+      url: await uploadImage(Buffer.from(item.b64_json, "base64"), `generated/${Date.now()}.png`, "image/png"),
+      provider: "openai-gpt-image-1",
+      referenceAware: false,
+    };
   }
   if (item?.url) return { url: item.url, provider: "openai-gpt-image-1", referenceAware: false };
   throw new Error("OpenAI returned no image");
@@ -187,7 +209,11 @@ async function generateWithGoogle(options: GenerateImageOptions): Promise<Genera
   const mimeType = normalizedMimeType(prediction.mimeType);
   const extension = mimeType === "image/png" ? "png" : mimeType === "image/webp" ? "webp" : "jpg";
   const buffer = Buffer.from(prediction.bytesBase64Encoded, "base64");
-  return { url: await uploadImage(buffer, `generated/${Date.now()}.${extension}`, mimeType), provider: "google-imagen", referenceAware: refs.length > 0 };
+  return {
+    url: await uploadImage(buffer, `generated/${Date.now()}.${extension}`, mimeType),
+    provider: "google-imagen",
+    referenceAware: refs.length > 0,
+  };
 }
 
 async function generateWithHuggingFace(options: GenerateImageOptions): Promise<GenerateImageResponse> {
@@ -217,7 +243,11 @@ async function generateWithDallE3(options: GenerateImageOptions): Promise<Genera
   const result = await response.json() as { data?: Array<{ b64_json?: string }> };
   const base64 = result.data?.[0]?.b64_json;
   if (!base64) throw new Error("DALL-E 3 returned no image");
-  return { url: await uploadImage(Buffer.from(base64, "base64"), `generated/${Date.now()}.png`, "image/png"), provider: "dalle3", referenceAware: false };
+  return {
+    url: await uploadImage(Buffer.from(base64, "base64"), `generated/${Date.now()}.png`, "image/png"),
+    provider: "dalle3",
+    referenceAware: false,
+  };
 }
 
 function requiresIdentityAwareProvider(options: GenerateImageOptions): boolean {
@@ -228,16 +258,83 @@ function requiresIdentityAwareProvider(options: GenerateImageOptions): boolean {
   );
 }
 
+function isMarkedSwappysPreview(options: GenerateImageOptions): boolean {
+  return /SWAPPYS\s+PREVIEW|virelle\.life/i.test(options.prompt) && /face\s*swap|likeness/i.test(options.prompt);
+}
+
+function cleanSwappysPrompt(prompt: string): string {
+  const clean = prompt
+    .replace(/Add a large semi-transparent diagonal watermark[^.]*\./gi, "")
+    .replace(/repeated across the image\.?/gi, "")
+    .trim();
+  return `${clean} Return a clean image with no generated text, logo or watermark; the server applies the disclosure mark after rendering.`;
+}
+
+async function generatedImageBuffer(url: string): Promise<Buffer> {
+  const dataMatch = /^data:image\/(?:png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)$/i.exec(url);
+  if (dataMatch) {
+    const buffer = Buffer.from(dataMatch[1], "base64");
+    if (!buffer.length || buffer.length > MAX_GENERATED_IMAGE_BYTES) throw new Error("Generated image is empty or too large to mark");
+    return buffer;
+  }
+
+  const parsed = new URL(url);
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password) throw new Error("Generated image URL is not safe to mark");
+  const response = await fetch(parsed, {
+    headers: { Accept: "image/jpeg,image/png,image/webp" },
+    redirect: "error",
+    signal: AbortSignal.timeout(REFERENCE_FETCH_TIMEOUT_MS),
+  });
+  if (!response.ok) throw new Error(`Generated image fetch failed (${response.status})`);
+  const length = Number(response.headers.get("content-length") || "0");
+  if (length > MAX_GENERATED_IMAGE_BYTES) throw new Error("Generated image is too large to mark");
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (!buffer.length || buffer.length > MAX_GENERATED_IMAGE_BYTES) throw new Error("Generated image is empty or too large to mark");
+  return buffer;
+}
+
+async function applySwappysPreviewWatermark(result: GenerateImageResponse): Promise<GenerateImageResponse> {
+  if (!result.url) throw new Error("Swappys provider returned no image");
+  const input = await generatedImageBuffer(result.url);
+  const metadata = await sharp(input, { failOn: "error", limitInputPixels: 40_000_000 }).metadata();
+  const width = metadata.width || 1024;
+  const height = metadata.height || 1024;
+  const fontSize = Math.max(22, Math.round(Math.min(width, height) * 0.035));
+  const rows = Math.max(3, Math.ceil(height / (fontSize * 3)));
+  const labels = Array.from({ length: rows }, (_, index) => {
+    const y = Math.round((index + 1) * (height / (rows + 1)));
+    return `<text x="${-Math.round(width * 0.15)}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="700" fill="#ffffff" fill-opacity="0.34" transform="rotate(-24 ${width / 2} ${height / 2})">SWAPPYS PREVIEW · AI ALTERED · virelle.life</text>`;
+  }).join("");
+  const barHeight = Math.max(46, Math.round(fontSize * 1.8));
+  const svg = Buffer.from(
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">` +
+    `${labels}<rect x="0" y="${height - barHeight}" width="${width}" height="${barHeight}" fill="#000000" fill-opacity="0.62"/>` +
+    `<text x="${width / 2}" y="${height - Math.max(16, Math.round(fontSize * 0.45))}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="${Math.max(16, Math.round(fontSize * 0.72))}" font-weight="700" fill="#ffffff">SWAPPYS PREVIEW · AI-ALTERED MEDIA · virelle.life</text></svg>`,
+  );
+  const output = await sharp(input, { failOn: "error", limitInputPixels: 40_000_000 })
+    .rotate()
+    .composite([{ input: svg, top: 0, left: 0 }])
+    .png({ compressionLevel: 9, adaptiveFiltering: true })
+    .toBuffer();
+  const url = await uploadImage(output, `swappys/previews/${Date.now()}.png`, "image/png");
+  return { ...result, url };
+}
+
 export async function generateImage(options: GenerateImageOptions): Promise<GenerateImageResponse> {
   const errors: string[] = [];
-  const identityRequired = requiresIdentityAwareProvider(options);
-  const referenceOptions = identityRequired ? { ...options, requireReferenceSupport: true } : options;
+  const swappysPreview = isMarkedSwappysPreview(options);
+  const providerOptions: GenerateImageOptions = swappysPreview
+    ? { ...options, prompt: cleanSwappysPrompt(options.prompt), quality: "high", requireReferenceSupport: true }
+    : options;
+  const identityRequired = requiresIdentityAwareProvider(providerOptions);
+  const referenceOptions = identityRequired ? { ...providerOptions, requireReferenceSupport: true } : providerOptions;
+  const finish = async (result: GenerateImageResponse) => swappysPreview ? applySwappysPreviewWatermark(result) : result;
 
   if (referenceOptions.userOpenAiKey || ENV.openaiApiKey) {
     try {
       const result = await generateWithOpenAI(referenceOptions);
       logger.info(`[ImageGen] Generated with ${result.provider}`);
-      return result;
+      return await finish(result);
     } catch (error: any) {
       logger.warn(`[ImageGen] OpenAI failed: ${error.message}`);
       errors.push(`OpenAI: ${error.message}`);
@@ -248,7 +345,7 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
     try {
       const result = await generateWithGoogle(referenceOptions);
       logger.info(`[ImageGen] Generated with ${result.provider}`);
-      return result;
+      return await finish(result);
     } catch (error: any) {
       logger.warn(`[ImageGen] Google failed: ${error.message}`);
       errors.push(`Google: ${error.message}`);
@@ -263,23 +360,23 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
 
   if (ENV.huggingFaceApiKey) {
     try {
-      return await generateWithHuggingFace(options);
+      return await finish(await generateWithHuggingFace(providerOptions));
     } catch (error: any) {
       errors.push(`HuggingFace: ${error.message}`);
     }
   }
 
-  if (options.userOpenAiKey || ENV.openaiApiKey) {
+  if (providerOptions.userOpenAiKey || ENV.openaiApiKey) {
     try {
-      return await generateWithDallE3(options);
+      return await finish(await generateWithDallE3(providerOptions));
     } catch (error: any) {
       errors.push(`DALL-E 3: ${error.message}`);
     }
   }
 
-  const encodedPrompt = encodeURIComponent((options.prompt || "cinematic scene").slice(0, 500));
+  const encodedPrompt = encodeURIComponent((providerOptions.prompt || "cinematic scene").slice(0, 500));
   const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&model=flux&nologo=true&enhance=true&seed=${Date.now()}`;
-  if (pollinationsUrl) return { url: pollinationsUrl, provider: "pollinations", referenceAware: false };
+  if (pollinationsUrl) return await finish({ url: pollinationsUrl, provider: "pollinations", referenceAware: false });
 
   throw new Error(`All image generation providers failed: ${errors.join(" | ")}`);
 }

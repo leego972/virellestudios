@@ -5,20 +5,48 @@ on:
     branches: [main]
     paths:
       - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
       - "desktop/**"
       - "apps/swappys-mobile/**"
       - "server/_core/imageGeneration.ts"
       - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
       - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
       - ".github/workflows/app-debug-pass.yml"
   pull_request:
     paths:
       - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
       - "desktop/**"
       - "apps/swappys-mobile/**"
       - "server/_core/imageGeneration.ts"
       - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
       - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
       - ".github/workflows/app-debug-pass.yml"
   workflow_dispatch:
 
@@ -40,6 +68,8 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm audit --audit-level moderate
+      - name: Validate Swappys connection checker syntax
+        run: node --check scripts/check-swappys-mobile-connection.mjs
 
   swappys-mobile:
     runs-on: ubuntu-latest
@@ -51,22 +81,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install standalone Swappys dependencies
-        shell: bash
-        run: |
-          set +e
-          npm install --no-audit --no-fund > npm-install.log 2>&1
-          status=$?
-          tail -n 160 npm-install.log
-          exit $status
-      - name: Upload standalone install log
-        if: always()
+      - name: Install mobile dependencies
+        id: mobile_install
+        continue-on-error: true
+        run: npm install --legacy-peer-deps --no-audit --no-fund > npm-install.log 2>&1
+      - name: Upload mobile install diagnostics
+        if: steps.mobile_install.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
-          name: standalone-swappys-install
+          name: swappys-mobile-install-log
           path: apps/swappys-mobile/npm-install.log
           if-no-files-found: error
           retention-days: 3
+      - name: Fail when mobile dependency installation failed
+        if: steps.mobile_install.outcome == 'failure'
+        run: exit 1
       - run: npm run typecheck
       - run: npm run doctor
 
@@ -84,3 +113,15 @@ jobs:
       - run: node --check main.js
       - run: node --check preload.js
       - run: npm run build:linux
+
+  render-container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Render startup scripts
+        run: |
+          sh -n start.sh
+          node --check gateway.mjs
+          node --check scripts/render-normalize-package.cjs
+      - name: Build the exact Render Docker image
+        run: docker build --tag virelle-render-parity:${{ github.sha }} .
