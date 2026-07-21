@@ -359,6 +359,8 @@ function Router() {
               <Route path="/movies">{() => <Movies />}</Route>
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
+              <Route path="/location-studio">{() => <LazyPage><LocationStudio /></LazyPage>}</Route>
+              <Route path="/accessibility-studio">{() => <LazyPage><AccessibilityStudio /></LazyPage>}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>

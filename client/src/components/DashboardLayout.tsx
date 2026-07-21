@@ -72,6 +72,8 @@ import {
   Package,
   Settings2,
   Sparkles,
+  MapPin,
+  Captions,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -101,7 +103,9 @@ const menuGroups = [
     items: [
       { icon: Megaphone, label: "Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
       { icon: Zap, label: "VFX & Sound", path: "/vfx-studio" },
-      { icon: Smartphone, label: "Swappys (Face Swap)", path: "/projects" }, // Swappys is integrated into the VFX Suite per-project
+      { icon: MapPin, label: "Location Studio", path: "/location-studio" },
+      { icon: Captions, label: "Accessibility Studio", path: "/accessibility-studio" },
+      { icon: Smartphone, label: "Swappys (Mobile App)", path: "/download" },
       { icon: PlaySquare, label: "Broadcast / Studio Render", path: "/virelle-broadcast-render" },
       { icon: Headphones, label: "Music Studio", path: "/music-studio" },
       { icon: Languages, label: "Dubbing Studio", path: "/dubbing-studio" },
