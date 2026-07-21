@@ -72,6 +72,7 @@ test("Render serves the final Virelle app, Swappys and Lamalo release", async ()
   });
   expect(healthResponse.ok).toBe(true);
   const health = await healthResponse.json() as any;
+  console.log("LIVE_HEALTH", JSON.stringify(health));
   expect(health?.status === "ok" || health?.success === true).toBe(true);
 
   const featuresResponse = await fetchWithTimeout(`/api/mobile/features?deployment_probe=${Date.now()}`, {
@@ -79,17 +80,19 @@ test("Render serves the final Virelle app, Swappys and Lamalo release", async ()
   });
   expect(featuresResponse.ok).toBe(true);
   const features = await featuresResponse.json() as any;
+  console.log("LIVE_FEATURES", JSON.stringify(features));
   expect(features?.ok).toBe(true);
-  expect(features?.flags?.swappysStudio).toBe(true);
-  expect(features?.flags?.creatorUpgrade).toBe(true);
-  expect(features?.flags?.watermarkControls).toBe(true);
-  expect(features?.flags?.byokVideoRequired).toBe(true);
+  expect(features?.flags?.swappysStudio, JSON.stringify(features)).toBe(true);
+  expect(features?.flags?.creatorUpgrade, JSON.stringify(features)).toBe(true);
+  expect(features?.flags?.watermarkControls, JSON.stringify(features)).toBe(true);
+  expect(features?.flags?.byokVideoRequired, JSON.stringify(features)).toBe(true);
 
   const downloadsResponse = await fetchWithTimeout(`/api/mobile/downloads?deployment_probe=${Date.now()}`, {
     headers: { Accept: "application/json" },
   });
   expect(downloadsResponse.ok).toBe(true);
   const downloads = await downloadsResponse.json() as any;
+  console.log("LIVE_DOWNLOADS", JSON.stringify(downloads));
   expect(typeof downloads?.ios?.available).toBe("boolean");
   expect(typeof downloads?.android?.available).toBe("boolean");
   expect(typeof downloads?.desktop?.available).toBe("boolean");
