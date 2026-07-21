@@ -93,6 +93,7 @@ export default function ProjectToolHub({ projectId }: { projectId: number | stri
       description: "Build the professional shoot package: budget, locations, wardrobe, props, documents and schedule.",
       tools: [
         { title: "Production Office", description: "Central operating room for the project.", href: `/projects/${projectId}/production-office`, icon: Briefcase },
+        { title: "Command Center", description: "Cross-department status, blockers and progress at a glance.", href: `/projects/${projectId}/command-center`, icon: SlidersHorizontal },
         { title: "Pre-Production Panel", description: "Director vision, vehicles, locations, atmosphere and visual rules.", href: `/projects/${projectId}/pre-production`, icon: Clapperboard },
         { title: "Schedule", description: "Strip board, shoot days and scene scheduling.", href: `/projects/${projectId}/schedule`, icon: Calendar },
         { title: "Day Out of Days", description: "Cast and resource schedule across the shoot.", href: `/projects/${projectId}/day-out-of-days`, icon: Calendar },

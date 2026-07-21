@@ -26,6 +26,7 @@ import { blogArticles } from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import type { Express, Request, Response } from "express";
 import { logger as log } from "./_core/logger";
+import { stripHtml } from "./_core/sanitize";
 const logger = log;
 
 
@@ -1034,7 +1035,7 @@ export async function optimizeBlogPostSeo(
   const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 238));
 
   // Generate excerpt (first 155 chars of content, cleaned — optimal for Google snippet)
-  const cleanContent = content.replace(/<[^>]+>/g, "").replace(/[#*_`]/g, "").trim();
+  const cleanContent = stripHtml(content).replace(/[#*_`]/g, "").trim();
   const excerpt =
     cleanContent.substring(0, 155).trim() + (cleanContent.length > 155 ? "..." : "");
 
