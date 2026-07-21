@@ -44,6 +44,18 @@ const starterSelection = {
   primaryImageUrl: wardrobeItems.primaryImageUrl,
 };
 
+type StarterOutfit = {
+  id: number;
+  name: string;
+  description: string | null;
+  category: string;
+  subcategory: string | null;
+  genderFit: string | null;
+  colors: unknown;
+  referencePrompt: string | null;
+  primaryImageUrl: string | null;
+};
+
 async function findLamaloProfileId(db: Awaited<ReturnType<typeof getDb>>): Promise<number | null> {
   if (!db) return null;
   const rows = await db
@@ -152,9 +164,11 @@ export const lamaloGiftsRouter = router({
       );
 
     const curatedByName = new Map(curated.map(item => [item.name, item]));
-    const ordered = STARTER_PICKS
-      .map(name => curatedByName.get(name))
-      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+    const ordered: StarterOutfit[] = [];
+    for (const name of STARTER_PICKS) {
+      const item = curatedByName.get(name);
+      if (item) ordered.push(item as StarterOutfit);
+    }
 
     if (ordered.length < STARTER_OPTION_COUNT) {
       const fallback = await db
@@ -171,7 +185,7 @@ export const lamaloGiftsRouter = router({
       const existingIds = new Set(ordered.map(item => item.id));
       for (const item of fallback) {
         if (!item.name || existingIds.has(item.id)) continue;
-        ordered.push(item);
+        ordered.push(item as StarterOutfit);
         existingIds.add(item.id);
         if (ordered.length === STARTER_OPTION_COUNT) break;
       }
