@@ -7,6 +7,7 @@ const CONTENT_ROOTS = [
   '[data-slot="popover-content"]',
   '[data-slot="dropdown-menu-content"]',
   '[data-slot="select-content"]',
+  '[data-slot="command"]',
 ].join(",");
 
 const TEXT_ELEMENTS = [
@@ -28,6 +29,10 @@ const TEXT_ELEMENTS = [
   "h4",
   "h5",
   "h6",
+  "input",
+  "textarea",
+  "select",
+  "option",
 ].join(",");
 
 type Rgba = { red: number; green: number; blue: number; alpha: number };
@@ -69,9 +74,15 @@ function parseOklch(value: string): Rgba | null {
   const s = sPrime * sPrime * sPrime;
 
   return {
-    red: linearToSrgb(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
-    green: linearToSrgb(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
-    blue: linearToSrgb(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
+    red: linearToSrgb(
+      4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    ),
+    green: linearToSrgb(
+      -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    ),
+    blue: linearToSrgb(
+      -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+    ),
     alpha,
   };
 }
@@ -134,13 +145,24 @@ function effectiveBackground(element: HTMLElement): Rgba {
 }
 
 function containsVisibleText(element: HTMLElement) {
-  if (element.matches("button, [role='button'], a, label")) return true;
+  if (
+    element.matches(
+      "button, [role='button'], a, label, input, textarea, select, option",
+    )
+  ) {
+    return true;
+  }
   return Boolean(element.textContent?.trim());
+}
+
+function clearCorrection(element: HTMLElement) {
+  element.removeAttribute("data-auto-dark-text");
+  element.removeAttribute("data-auto-light-text");
 }
 
 function updateElement(element: HTMLElement) {
   if (!containsVisibleText(element)) {
-    element.removeAttribute("data-auto-dark-text");
+    clearCorrection(element);
     return;
   }
 
@@ -150,25 +172,39 @@ function updateElement(element: HTMLElement) {
     style.visibility === "hidden" ||
     Number(style.opacity) === 0
   ) {
-    element.removeAttribute("data-auto-dark-text");
+    clearCorrection(element);
     return;
   }
 
   const foreground = parseColour(style.color);
-  if (!foreground) return;
+  if (!foreground) {
+    clearCorrection(element);
+    return;
+  }
+
   const background = effectiveBackground(element);
   const foregroundLuminance = luminance(foreground);
   const backgroundLuminance = luminance(background);
   const ratio = contrastRatio(foregroundLuminance, backgroundLuminance);
-
-  const isLightSurface = backgroundLuminance >= 0.72;
-  const isLightText = foregroundLuminance >= 0.52;
   const isUnreadable = ratio < 4.5;
 
-  if (isLightSurface && isLightText && isUnreadable) {
+  const needsDarkText =
+    backgroundLuminance >= 0.62 &&
+    foregroundLuminance >= 0.42 &&
+    isUnreadable;
+  const needsLightText =
+    backgroundLuminance <= 0.34 &&
+    foregroundLuminance <= 0.3 &&
+    isUnreadable;
+
+  if (needsDarkText) {
     element.setAttribute("data-auto-dark-text", "true");
-  } else {
+    element.removeAttribute("data-auto-light-text");
+  } else if (needsLightText) {
+    element.setAttribute("data-auto-light-text", "true");
     element.removeAttribute("data-auto-dark-text");
+  } else {
+    clearCorrection(element);
   }
 }
 
@@ -194,7 +230,7 @@ export default function AutomaticContrastGuard() {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["class", "style", "data-state", "hidden"],
+      attributeFilter: ["class", "style", "data-state", "hidden", "disabled"],
     });
 
     const themeObserver = new MutationObserver(scheduleScan);
@@ -205,6 +241,7 @@ export default function AutomaticContrastGuard() {
 
     window.addEventListener("resize", scheduleScan);
     window.addEventListener("orientationchange", scheduleScan);
+    window.addEventListener("pageshow", scheduleScan);
 
     return () => {
       cancelAnimationFrame(frame);
@@ -212,6 +249,7 @@ export default function AutomaticContrastGuard() {
       themeObserver.disconnect();
       window.removeEventListener("resize", scheduleScan);
       window.removeEventListener("orientationchange", scheduleScan);
+      window.removeEventListener("pageshow", scheduleScan);
     };
   }, []);
 
