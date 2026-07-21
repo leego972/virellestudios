@@ -8,10 +8,11 @@ import {
   designerProfiles,
   users,
 } from "../drizzle/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, asc, inArray, sql } from "drizzle-orm";
 import { runLamaloSeed } from "./lamalo-seed";
 
 const LAMALO_BRAND_NAME = "Lamalo Fashion";
+const LAMALO_BRAND_NAMES = [LAMALO_BRAND_NAME, "Lamalo Fashions", "Lamalo"] as const;
 const STARTER_OPTION_COUNT = 10;
 
 /**
@@ -65,7 +66,8 @@ async function findLamaloProfile(
   const rows = await db
     .select({ id: designerProfiles.id, userId: designerProfiles.userId })
     .from(designerProfiles)
-    .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
+    .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_NAMES]))
+    .orderBy(asc(designerProfiles.id))
     .limit(1);
   return rows[0] ?? null;
 }
@@ -153,6 +155,7 @@ export const lamaloGiftsRouter = router({
           eq(wardrobeLeases.userId, ctx.user.id),
           eq(wardrobeLeases.designerProfileId, lamalo.id),
           eq(wardrobeLeases.amountPaidAud, 0),
+            eq(wardrobeLeases.status, "active"),
         ),
       );
 
@@ -240,30 +243,37 @@ export const lamaloGiftsRouter = router({
         }),
     )
     .mutation(async ({ ctx, input }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable." });
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable." });
 
-      const designer = await db
-        .select({ id: designerProfiles.id })
-        .from(designerProfiles)
-        .where(eq(designerProfiles.userId, ctx.user.id))
-        .limit(1);
-      if (designer.length > 0) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Designer accounts are not eligible.",
-        });
-      }
+    const designer = await db
+      .select({ id: designerProfiles.id })
+      .from(designerProfiles)
+      .where(eq(designerProfiles.userId, ctx.user.id))
+      .limit(1);
+    if (designer.length > 0) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Designer accounts are not eligible.",
+      });
+    }
 
-      const lamaloId = await requireLamaloProfileId(db);
-      const existing = await db
-        .select({ id: wardrobeLeases.id })
+    const lamaloId = await requireLamaloProfileId(db);
+    const selectedIds = [input.itemId1, input.itemId2];
+
+    const result = await db.transaction(async tx => {
+      // Lock the member row so two browser requests cannot claim twice concurrently.
+      await tx.execute(sql`SELECT id FROM users WHERE id = ${ctx.user.id} FOR UPDATE`);
+
+      const existing = await tx
+        .select({ id: wardrobeLeases.id, wardrobeItemId: wardrobeLeases.wardrobeItemId })
         .from(wardrobeLeases)
         .where(
           and(
             eq(wardrobeLeases.userId, ctx.user.id),
             eq(wardrobeLeases.designerProfileId, lamaloId),
             eq(wardrobeLeases.amountPaidAud, 0),
+            eq(wardrobeLeases.status, "active"),
           ),
         );
       if (existing.length >= 2) {
@@ -273,8 +283,7 @@ export const lamaloGiftsRouter = router({
         });
       }
 
-      const selectedIds = [input.itemId1, input.itemId2];
-      const items = await db
+      const items = await tx
         .select({ id: wardrobeItems.id })
         .from(wardrobeItems)
         .where(
@@ -292,32 +301,46 @@ export const lamaloGiftsRouter = router({
         });
       }
 
-      await db.insert(wardrobeLeases).values([
-        {
-          userId: ctx.user.id,
-          designerProfileId: lamaloId,
-          wardrobeItemId: input.itemId1,
-          leaseType: "item",
-          amountPaidAud: 0,
-          designerAmountAud: 0,
-          platformFeeAud: 0,
-          status: "active",
-        },
-        {
-          userId: ctx.user.id,
-          designerProfileId: lamaloId,
-          wardrobeItemId: input.itemId2,
-          leaseType: "item",
-          amountPaidAud: 0,
-          designerAmountAud: 0,
-          platformFeeAud: 0,
-          status: "active",
-        },
-      ]);
+      const existingItemIds = new Set(
+        existing
+          .map(row => row.wardrobeItemId)
+          .filter((id): id is number => typeof id === "number"),
+      );
+      const remainingSlots = 2 - existing.length;
+      const itemIdsToInsert = selectedIds
+        .filter(id => !existingItemIds.has(id))
+        .slice(0, remainingSlots);
 
-      return {
-        success: true,
-        message: "Welcome outfits unlocked! They are available in your wardrobe inventory.",
-      };
-    }),
+      if (itemIdsToInsert.length !== remainingSlots) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Choose outfits that are not already in your welcome gift.",
+        });
+      }
+
+      if (itemIdsToInsert.length > 0) {
+        await tx.insert(wardrobeLeases).values(
+          itemIdsToInsert.map(wardrobeItemId => ({
+            userId: ctx.user.id,
+            designerProfileId: lamaloId,
+            wardrobeItemId,
+            leaseType: "item",
+            amountPaidAud: 0,
+            designerAmountAud: 0,
+            platformFeeAud: 0,
+            status: "active",
+          })),
+        );
+      }
+
+      return { added: itemIdsToInsert.length, total: existing.length + itemIdsToInsert.length };
+    });
+
+    return {
+      success: true,
+      added: result.added,
+      total: result.total,
+      message: "Welcome outfits unlocked! They are available in your wardrobe inventory.",
+    };
+  }),
 });
