@@ -1,0 +1,110 @@
+name: Repair Lamalo opener sequencing
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/lamalo-opener-race-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Apply guarded sequencing repair
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              return text.replace(old, new, 1)
+
+          picker = Path("client/src/components/WelcomeOutfitPicker.tsx")
+          text = picker.read_text()
+          text = replace_once(
+              text,
+              '''function isStudioOpenerActive(): boolean {
+            if (typeof window === "undefined" || typeof document === "undefined") return false;
+            if (new URLSearchParams(window.location.search).get("opener") === "1") return true;
+
+            return Array.from(document.body.children).some(node => {
+              if (!(node instanceof HTMLElement)) return false;
+              const style = window.getComputedStyle(node);
+              const zIndex = Number.parseInt(style.zIndex || "0", 10);
+              return style.position === "fixed" && zIndex >= 9000;
+            });
+          }
+          ''',
+              '''function isStudioOpenerActive(): boolean {
+            if (typeof window === "undefined" || typeof document === "undefined") return false;
+            if (new URLSearchParams(window.location.search).get("opener") === "1") return true;
+
+            return Array.from(document.body.children).some(node =>
+              node instanceof HTMLElement &&
+              node.classList.contains("fixed") &&
+              node.classList.contains("inset-0") &&
+              node.classList.contains("z-[9999]") &&
+              node.classList.contains("bg-black"),
+            );
+          }
+          ''',
+              "specific opener detector",
+          )
+          picker.write_text(text)
+
+          home = Path("client/src/pages/Home.tsx")
+          text = home.read_text()
+          text = replace_once(
+              text,
+              '    const [showOpener, setShowOpener] = useState(false);',
+              '''    const [showOpener, setShowOpener] = useState(() =>
+                typeof window !== "undefined" &&
+                new URLSearchParams(window.location.search).get("opener") === "1",
+              );''',
+              "synchronous opener state",
+          )
+          text = replace_once(
+              text,
+              '      if (params.get("opener") === "1") { setShowOpener(true); window.history.replaceState({}, "", "/"); }',
+              '      if (params.get("opener") === "1") { window.history.replaceState({}, "", "/"); }',
+              "opener URL cleanup",
+          )
+          home.write_text(text)
+          PY
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lamalo welcome contract
+        run: node scripts/check-lamalo-welcome-contract.mjs
+      - name: TypeScript check
+        run: pnpm check
+      - name: Wardrobe regression tests
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
+      - name: Render production build
+        run: pnpm build
+
+      - name: Commit verified sequencing repair
+        shell: bash
+        run: |
+          git config user.name "Virelle Repair Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add client/src/components/WelcomeOutfitPicker.tsx client/src/pages/Home.tsx
+          git commit -m "Guarantee opener before Lamalo welcome picker"
+          git push origin HEAD:${{ github.head_ref }}
