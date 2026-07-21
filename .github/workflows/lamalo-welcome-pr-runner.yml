@@ -18,13 +18,27 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+
+      - name: Detect existing hotfix
+        id: patch_state
+        shell: bash
+        run: |
+          if grep -q "function isStudioOpenerActive" client/src/components/WelcomeOutfitPicker.tsx; then
+            echo "applied=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "applied=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: pnpm/action-setup@v4
+        if: steps.patch_state.outputs.applied != 'true'
       - uses: actions/setup-node@v4
+        if: steps.patch_state.outputs.applied != 'true'
         with:
           node-version: 22
           cache: pnpm
 
       - name: Extract guarded patch
+        if: steps.patch_state.outputs.applied != 'true'
         shell: bash
         run: |
           python3 - <<'PY'
@@ -86,13 +100,14 @@ jobs:
           PY
 
       - name: Apply guarded patch
+        if: steps.patch_state.outputs.applied != 'true'
         id: apply_patch
         continue-on-error: true
         shell: bash
         run: python3 /tmp/apply_lamalo_hotfix.py 2>&1 | tee /tmp/lamalo-hotfix.log
 
       - name: Upload patch diagnostic
-        if: always()
+        if: always() && steps.patch_state.outputs.applied != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: lamalo-hotfix-diagnostic
@@ -100,26 +115,32 @@ jobs:
           retention-days: 1
 
       - name: Stop on patch failure
-        if: steps.apply_patch.outcome == 'failure'
+        if: steps.patch_state.outputs.applied != 'true' && steps.apply_patch.outcome == 'failure'
         run: exit 1
 
       - name: Install dependencies
+        if: steps.patch_state.outputs.applied != 'true'
         run: pnpm install --frozen-lockfile
       - name: Verify Lamalo welcome contract
+        if: steps.patch_state.outputs.applied != 'true'
         run: node scripts/check-lamalo-welcome-contract.mjs
       - name: TypeScript check
+        if: steps.patch_state.outputs.applied != 'true'
         run: pnpm check
       - name: Wardrobe regression tests
+        if: steps.patch_state.outputs.applied != 'true'
         run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
       - name: Production build used by Render
+        if: steps.patch_state.outputs.applied != 'true'
         run: pnpm build
 
       - name: Commit verified hotfix to PR branch
+        if: steps.patch_state.outputs.applied != 'true'
         shell: bash
         run: |
           git config user.name "Virelle Repair Bot"
           git config user.email "actions@users.noreply.github.com"
-          git rm .github/workflows/lamalo-welcome-pr-runner.yml
-          git add client/src/components/WelcomeOutfitPicker.tsx server/lamalo-gifts-router.ts server/lamalo-seed.ts scripts/check-lamalo-welcome-contract.mjs .github/workflows/lamalo-wardrobe-integrity.yml
+          git restore .github/workflows/lamalo-wardrobe-integrity.yml
+          git add client/src/components/WelcomeOutfitPicker.tsx server/lamalo-gifts-router.ts server/lamalo-seed.ts scripts/check-lamalo-welcome-contract.mjs
           git commit -m "Harden Lamalo welcome gift and catalogue contract"
           git push origin HEAD:${{ github.head_ref }}
