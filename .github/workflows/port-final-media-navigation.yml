@@ -1,0 +1,74 @@
+name: Port final media and navigation hardening
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  port-and-verify:
+    if: github.head_ref == 'fix/final-media-navigation-main-20260722'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Port only verified product files
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_branch='fix/final-media-and-navigation-hardening-20260722'
+          git fetch origin "$source_branch"
+          git checkout "origin/$source_branch" -- \
+            client/src/components/DashboardLayout.tsx \
+            client/src/components/ProjectToolHub.tsx \
+            client/src/index.css \
+            client/src/pages/Budget.tsx \
+            client/src/pages/Community.tsx \
+            server/_core/videoStitcher.ts \
+            server/routers.ts \
+            server/seo-engine.ts
+      - name: Install exact committed dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Unsuppressed dependency audit
+        run: pnpm audit
+      - name: TypeScript check
+        run: pnpm check
+      - name: Full regression tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: final-port-stub
+          VITE_SENTRY_DSN: ""
+      - name: Commit verified product files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            client/src/components/DashboardLayout.tsx \
+            client/src/components/ProjectToolHub.tsx \
+            client/src/index.css \
+            client/src/pages/Budget.tsx \
+            client/src/pages/Community.tsx \
+            server/_core/videoStitcher.ts \
+            server/routers.ts \
+            server/seo-engine.ts
+          if git diff --cached --quiet; then
+            echo "Verified product files already match."
+            exit 0
+          fi
+          git commit -m "Port verified media and navigation hardening to main"
+          git pull --rebase origin "${{ github.head_ref }}"
+          git push origin "HEAD:${{ github.head_ref }}"
