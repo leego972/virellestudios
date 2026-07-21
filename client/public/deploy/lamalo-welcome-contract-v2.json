@@ -1,0 +1,13 @@
+{
+  "service": "virelle-studios",
+  "deployment": "render",
+  "release": "lamalo-welcome-contract-v2",
+  "contract": {
+    "starterChoices": 10,
+    "freeClaims": 2,
+    "claimMode": "atomic",
+    "catalogueRepairScope": "lamalo-only"
+  },
+  "sourceMerge": "5e7cf2e000cb3b0ca7fc0e8e57ae18a8e02180c4",
+  "releasedAt": "2026-07-22T00:00:00+10:00"
+}
