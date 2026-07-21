@@ -5,36 +5,43 @@ import { Loader2 } from "lucide-react";
 interface SubscriptionGateProps {
   children: React.ReactNode;
   feature: string;
-  featureKey: string;
-  // Accepts all DB tier keys plus backward-compat aliases
+  /** Optional limits-object key. When omitted, requiredTier is enforced directly. */
+  featureKey?: string;
   requiredTier: "indie" | "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
 }
 
 /**
- * Wraps a page component and shows an upgrade prompt if the user's subscription
- * doesn't include the required feature.
+ * Wraps a page component and shows an upgrade prompt when the user's
+ * subscription does not meet the feature or tier requirement.
  */
 export function SubscriptionGate({ children, feature, featureKey, requiredTier }: SubscriptionGateProps) {
-  const { canUseFeature, tier, isLoading } = useSubscription();
+  const { canUseFeature, hasAccess, tier, isLoading } = useSubscription();
 
-  // Normalise backward-compat aliases to canonical DB keys.
-  // creator, studio, pro all resolve to independent (Industry).
+  // Normalise backward-compatible public aliases to canonical DB keys.
   const mappedTier = (requiredTier === "creator" || requiredTier === "studio" || requiredTier === "pro")
     ? "independent"
     : requiredTier;
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground text-amber-400" />
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     );
   }
 
-  if (!canUseFeature(featureKey)) {
+  const allowed = featureKey
+    ? canUseFeature(featureKey)
+    : hasAccess(mappedTier as "indie" | "amateur" | "independent" | "industry");
+
+  if (!allowed) {
     return (
       <div className="p-4 sm:p-6">
-        <UpgradePrompt feature={feature} requiredTier={mappedTier as "indie" | "amateur" | "independent" | "studio" | "industry"} currentTier={tier} />
+        <UpgradePrompt
+          feature={feature}
+          requiredTier={mappedTier as "indie" | "amateur" | "independent" | "studio" | "industry"}
+          currentTier={tier}
+        />
       </div>
     );
   }
