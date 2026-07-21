@@ -14,11 +14,16 @@ function safeEqual(left, right) {
 }
 
 function readLogTail() {
-  const stat = fs.statSync(LOG_FILE);
-  const length = Math.min(stat.size, MAX_LOG_BYTES);
-  const offset = Math.max(0, stat.size - length);
-  const fd = fs.openSync(LOG_FILE, "r");
+  const flags = fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0);
+  const fd = fs.openSync(LOG_FILE, flags);
   try {
+    const stat = fs.fstatSync(fd);
+    if (!stat.isFile()) throw new Error("Debug log path is not a regular file");
+    if (typeof process.getuid === "function" && stat.uid !== process.getuid()) {
+      throw new Error("Debug log file is not owned by this process user");
+    }
+    const length = Math.min(stat.size, MAX_LOG_BYTES);
+    const offset = Math.max(0, stat.size - length);
     const buffer = Buffer.alloc(length);
     fs.readSync(fd, buffer, 0, length, offset);
     return buffer.toString("utf8");
