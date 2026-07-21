@@ -22,6 +22,7 @@ export interface LamaloCollectionAudit {
   itemCount: number;
   readyItemCount: number;
   invalidItemIds: number[];
+  inaccessibleImageItemIds: number[];
   duplicateItemNames: string[];
   issues: string[];
 }
@@ -35,6 +36,8 @@ export interface LamaloCatalogAudit {
   itemCount: number;
   readyItemCount: number;
   invalidItemCount: number;
+  inaccessibleImageCount: number;
+  remoteImagesVerified: boolean;
   duplicateCollectionNames: string[];
   duplicateItemKeys: string[];
   emptyCollections: string[];
@@ -42,6 +45,13 @@ export interface LamaloCatalogAudit {
   collections: LamaloCollectionAudit[];
   issues: string[];
   auditedAt: string;
+}
+
+export interface LamaloAuditOptions {
+  /** Verify every public image over HTTP. Admin audits default to true. */
+  verifyRemoteImages?: boolean;
+  imageConcurrency?: number;
+  imageTimeoutMs?: number;
 }
 
 function usableImage(value: unknown): boolean {
@@ -62,6 +72,14 @@ function stableSeed(value: string): number {
 function pollinationsImageUrl(prompt: string, width: number, height: number): string {
   const encoded = encodeURIComponent(prompt.replace(/\s+/g, " ").trim().slice(0, 900));
   return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&enhance=true&model=flux&seed=${stableSeed(prompt)}`;
+}
+
+function deterministicImage(current: unknown, prompt: string, width: number, height: number): string {
+  const currentUrl = typeof current === "string" ? current.trim() : "";
+  if (usableImage(currentUrl) && (!/image\.pollinations\.ai/i.test(currentUrl) || /[?&]seed=\d+/i.test(currentUrl))) {
+    return currentUrl;
+  }
+  return pollinationsImageUrl(prompt, width, height);
 }
 
 function jsonList(value: unknown): string[] {
@@ -124,6 +142,54 @@ function itemIssues(item: any): string[] {
   return Array.from(new Set(issues));
 }
 
+async function remoteImageAccessible(url: string, timeoutMs: number): Promise<boolean> {
+  if (!usableImage(url)) return false;
+  try {
+    const head = await fetch(url, {
+      method: "HEAD",
+      redirect: "follow",
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: { Accept: "image/*" },
+    });
+    const type = head.headers.get("content-type") || "";
+    if (head.ok && (!type || /^image\//i.test(type))) return true;
+  } catch {
+    // Some image CDNs reject HEAD. Confirm with a small ranged GET below.
+  }
+  try {
+    const get = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: { Accept: "image/*", Range: "bytes=0-2047" },
+    });
+    const type = get.headers.get("content-type") || "";
+    await get.body?.cancel().catch(() => undefined);
+    return (get.ok || get.status === 206) && /^image\//i.test(type);
+  } catch {
+    return false;
+  }
+}
+
+async function verifyImageMap(
+  urls: string[],
+  concurrency: number,
+  timeoutMs: number,
+): Promise<Map<string, boolean>> {
+  const unique = Array.from(new Set(urls.filter(usableImage)));
+  const results = new Map<string, boolean>();
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < unique.length) {
+      const index = cursor++;
+      const url = unique[index];
+      results.set(url, await remoteImageAccessible(url, timeoutMs));
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(Math.max(1, concurrency), unique.length || 1) }, worker));
+  return results;
+}
+
 async function repairLamaloRows(profileId: number): Promise<void> {
   const dbConn = await getDb();
   if (!dbConn) throw new Error("Database is unavailable.");
@@ -131,10 +197,9 @@ async function repairLamaloRows(profileId: number): Promise<void> {
   const profileRows = await dbConn.select().from(designerProfiles).where(eq(designerProfiles.id, profileId)).limit(1);
   const profile = profileRows[0];
   if (!profile) throw new Error("Lamalo profile disappeared during repair.");
+  const logoPrompt = "Lamalo Fashion luxury black and gold fashion house logo, elegant letter L monogram, clean vector identity, no mockup";
   await dbConn.update(designerProfiles).set({
-    logoUrl: usableImage(profile.logoUrl)
-      ? profile.logoUrl
-      : pollinationsImageUrl("Lamalo Fashion luxury black and gold fashion house logo, elegant letter L monogram, clean vector identity, no mockup", 1024, 512),
+    logoUrl: deterministicImage(profile.logoUrl, logoPrompt, 1024, 512),
     verified: true,
     visibility: "public",
     membershipStatus: "active",
@@ -163,7 +228,7 @@ async function repairLamaloRows(profileId: number): Promise<void> {
   for (const collection of collections) {
     const coverPrompt = `Lamalo Fashion ${collection.name} complete fashion collection editorial campaign, coordinated outfits and accessories, luxury studio presentation, highly realistic textiles, cinematic soft light, clean background, no text, no watermark`;
     await dbConn.update(designerCollections).set({
-      coverImageUrl: usableImage(collection.coverImageUrl) ? collection.coverImageUrl : pollinationsImageUrl(coverPrompt, 1280, 720),
+      coverImageUrl: deterministicImage(collection.coverImageUrl, coverPrompt, 1280, 720),
       visibility: "public",
       published: true,
       publishedAt: collection.publishedAt || new Date(),
@@ -199,14 +264,12 @@ async function repairLamaloRows(profileId: number): Promise<void> {
     ));
     for (const item of items) {
       const referencePrompt = item.referencePrompt?.trim() || defaultItemPrompt(item);
-      const existingImages = jsonList(item.imageUrls).filter(usableImage);
-      const primaryImageUrl = usableImage(item.primaryImageUrl)
-        ? item.primaryImageUrl!
-        : existingImages[0] || pollinationsImageUrl(referencePrompt, 1024, 1024);
+      const primaryImageUrl = deterministicImage(item.primaryImageUrl, referencePrompt, 1024, 1024);
+      const existingImages = jsonList(item.imageUrls).filter(usableImage).filter((url) => url !== primaryImageUrl);
       await dbConn.update(wardrobeItems).set({
         referencePrompt,
         primaryImageUrl,
-        imageUrls: existingImages.length ? existingImages : [primaryImageUrl],
+        imageUrls: [primaryImageUrl, ...existingImages].slice(0, 4),
         retailPriceAud: Number(item.retailPriceAud) > 0 ? item.retailPriceAud : categoryPrice(item.category),
         designerProfileId: profileId,
         collectionId: collection.id,
@@ -221,9 +284,12 @@ async function repairLamaloRows(profileId: number): Promise<void> {
   }
 }
 
-export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
+export async function auditLamaloCatalog(options: LamaloAuditOptions = { verifyRemoteImages: true }): Promise<LamaloCatalogAudit> {
   const dbConn = await getDb();
   if (!dbConn) throw new Error("Database is unavailable.");
+  const verifyRemoteImages = options.verifyRemoteImages ?? true;
+  const imageConcurrency = Math.max(1, Math.min(48, options.imageConcurrency ?? 32));
+  const imageTimeoutMs = Math.max(1_500, Math.min(30_000, options.imageTimeoutMs ?? 8_000));
 
   const profiles = await dbConn.select().from(designerProfiles).where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME));
   const canonicalProfile = [...profiles].sort((a, b) => a.id - b.id)[0];
@@ -236,6 +302,8 @@ export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
       itemCount: 0,
       readyItemCount: 0,
       invalidItemCount: 0,
+      inaccessibleImageCount: 0,
+      remoteImagesVerified: verifyRemoteImages,
       duplicateCollectionNames: [],
       duplicateItemKeys: [],
       emptyCollections: [],
@@ -251,29 +319,55 @@ export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
   for (const collection of collections) collectionNameCounts.set(collection.name.trim().toLowerCase(), (collectionNameCounts.get(collection.name.trim().toLowerCase()) || 0) + 1);
   const duplicateCollectionNames = Array.from(collectionNameCounts.entries()).filter(([, count]) => count > 1).map(([name]) => name).sort();
 
+  const collectionItems = new Map<number, Array<typeof wardrobeItems.$inferSelect>>();
+  const allImageUrls: string[] = [canonicalProfile.logoUrl || ""];
+  for (const collection of collections) {
+    const items = await dbConn.select().from(wardrobeItems).where(and(eq(wardrobeItems.collectionId, collection.id), eq(wardrobeItems.designerProfileId, canonicalProfile.id)));
+    collectionItems.set(collection.id, items);
+    if (collection.coverImageUrl) allImageUrls.push(collection.coverImageUrl);
+    for (const item of items) {
+      if (item.primaryImageUrl) allImageUrls.push(item.primaryImageUrl);
+    }
+  }
+  const imageResults = verifyRemoteImages
+    ? await verifyImageMap(allImageUrls, imageConcurrency, imageTimeoutMs)
+    : new Map<string, boolean>();
+  const imageIsAccessible = (url: unknown) =>
+    usableImage(url) && (!verifyRemoteImages || imageResults.get(String(url).trim()) === true);
+
   const audits: LamaloCollectionAudit[] = [];
   const duplicateItemKeys: string[] = [];
   let itemCount = 0;
   let readyItemCount = 0;
+  let inaccessibleImageCount = 0;
   for (const collection of collections) {
-    const items = await dbConn.select().from(wardrobeItems).where(and(eq(wardrobeItems.collectionId, collection.id), eq(wardrobeItems.designerProfileId, canonicalProfile.id)));
+    const items = collectionItems.get(collection.id) || [];
     const itemNameCounts = new Map<string, number>();
     for (const item of items) itemNameCounts.set(item.name.trim().toLowerCase(), (itemNameCounts.get(item.name.trim().toLowerCase()) || 0) + 1);
     const duplicateItemNames = Array.from(itemNameCounts.entries()).filter(([, count]) => count > 1).map(([name]) => name).sort();
     duplicateItemKeys.push(...duplicateItemNames.map((name) => `${collection.name}::${name}`));
 
     const invalidItemIds: number[] = [];
+    const inaccessibleImageItemIds: number[] = [];
     for (const item of items) {
       itemCount++;
-      if (itemIssues(item).length === 0) readyItemCount++;
+      const structuralIssues = itemIssues(item);
+      const inaccessible = verifyRemoteImages && !imageIsAccessible(item.primaryImageUrl);
+      if (inaccessible) {
+        inaccessibleImageItemIds.push(item.id);
+        inaccessibleImageCount++;
+      }
+      if (structuralIssues.length === 0 && !inaccessible) readyItemCount++;
       else invalidItemIds.push(item.id);
     }
     const issues: string[] = [];
     if (items.length === 0) issues.push("Collection contains no generated items.");
     if (!collection.published || collection.visibility !== "public") issues.push("Collection is not published publicly.");
     if (!usableImage(collection.coverImageUrl)) issues.push("Collection cover image is missing or not production-ready.");
+    if (verifyRemoteImages && !imageIsAccessible(collection.coverImageUrl)) issues.push("Collection cover image is not reachable as an image over HTTP.");
     if (duplicateItemNames.length) issues.push(`Duplicate item names: ${duplicateItemNames.join(", ")}.`);
     if (invalidItemIds.length) issues.push(`${invalidItemIds.length} item(s) are not generation-ready.`);
+    if (inaccessibleImageItemIds.length) issues.push(`${inaccessibleImageItemIds.length} item image(s) failed the live HTTP image check.`);
     audits.push({
       id: collection.id,
       name: collection.name,
@@ -283,6 +377,7 @@ export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
       itemCount: items.length,
       readyItemCount: items.length - invalidItemIds.length,
       invalidItemIds,
+      inaccessibleImageItemIds,
       duplicateItemNames,
       issues,
     });
@@ -297,8 +392,9 @@ export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
   if (duplicateItemKeys.length) issues.push(`${duplicateItemKeys.length} duplicate wardrobe item name(s) were found.`);
   if (emptyCollections.length) issues.push(`Empty collections: ${emptyCollections.join(", ")}.`);
   if (unpublishedCollections.length) issues.push(`Unpublished collections: ${unpublishedCollections.join(", ")}.`);
-  if (readyItemCount !== itemCount) issues.push(`${itemCount - readyItemCount} wardrobe item(s) are missing a valid image, prompt, price, licence or active/public status.`);
+  if (readyItemCount !== itemCount) issues.push(`${itemCount - readyItemCount} wardrobe item(s) are missing a valid reachable image, prompt, price, licence or active/public status.`);
   if (!usableImage(canonicalProfile.logoUrl)) issues.push("Lamalo profile logo image is missing or not production-ready.");
+  if (verifyRemoteImages && !imageIsAccessible(canonicalProfile.logoUrl)) issues.push("Lamalo profile logo is not reachable as an image over HTTP.");
 
   return {
     healthy: issues.length === 0 && audits.every((collection) => collection.issues.length === 0),
@@ -309,6 +405,8 @@ export async function auditLamaloCatalog(): Promise<LamaloCatalogAudit> {
     itemCount,
     readyItemCount,
     invalidItemCount: itemCount - readyItemCount,
+    inaccessibleImageCount,
+    remoteImagesVerified: verifyRemoteImages,
     duplicateCollectionNames,
     duplicateItemKeys,
     emptyCollections,
@@ -325,12 +423,14 @@ export async function repairAndAuditLamaloCatalog(ownerUserId: number): Promise<
   const canonicalProfile = [...profiles].sort((a, b) => a.id - b.id)[0];
   if (!canonicalProfile) throw new Error("Lamalo seed completed without creating its designer profile.");
   await repairLamaloRows(canonicalProfile.id);
-  const audit = await auditLamaloCatalog();
+  const audit = await auditLamaloCatalog({ verifyRemoteImages: true });
   if (!audit.healthy) throw new Error(`Lamalo catalogue repair completed but integrity checks still fail: ${audit.issues.join(" ")}`);
   return audit;
 }
 
 export async function getLamaloCatalogSummary(): Promise<{ collectionCount: number; itemCount: number; invalidItemCount: number; healthy: boolean }> {
-  const audit = await auditLamaloCatalog();
+  // Public page summaries remain fast and structural. The administrator audit and
+  // repair paths perform the full live HTTP image sweep across every item.
+  const audit = await auditLamaloCatalog({ verifyRemoteImages: false });
   return { collectionCount: audit.collectionCount, itemCount: audit.itemCount, invalidItemCount: audit.invalidItemCount, healthy: audit.healthy };
 }

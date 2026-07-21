@@ -10,6 +10,7 @@ import {
   type WardrobeItemRecord,
   type WardrobeLeaseRecord,
 } from "./wardrobeContinuity";
+import { ensurePermanentWardrobeCopiesForUser } from "./wardrobePurchaseInventory";
 
 export interface InventoryItemView {
   inventoryKey: string;
@@ -25,58 +26,40 @@ export interface InventoryItemView {
 export async function buildUserWardrobeInventory(userId: number): Promise<InventoryItemView[]> {
   const leases = await db.getWardrobeLeasesByUser(userId);
   const activeLeases = leases.filter((lease: any) => lease.status === "active") as WardrobeLeaseRecord[];
+  const permanentCopies = await ensurePermanentWardrobeCopiesForUser(userId);
   const result = new Map<number, InventoryItemView>();
+  const collectionNames = new Map<number, string | null>();
 
-  for (const lease of activeLeases as any[]) {
-    if (lease.wardrobeItemId) {
-      const item = await db.getWardrobeItemById(lease.wardrobeItemId);
-      if (!item) continue;
-      const validationErrors = validateWardrobeAssignment({
-        userId,
-        projectId: 1,
-        characterId: 1,
-        wardrobeItemId: item.id,
-        fromSceneOrder: 0,
-        toSceneOrder: 0,
-      }, item as WardrobeItemRecord, activeLeases).filter((error) => !error.includes("Project ID") && !error.includes("Character ID"));
-      result.set(item.id, {
-        inventoryKey: `item:${item.id}`,
-        accessSource: "item_purchase",
-        leaseId: lease.id,
-        collectionId: item.collectionId,
-        item: item as any,
-        assignable: validationErrors.length === 0,
-        validationErrors,
-      });
-      continue;
-    }
+  for (const copy of permanentCopies) {
+    const item = copy.item as WardrobeItemRecord & Record<string, unknown>;
+    const validationErrors = validateWardrobeAssignment({
+      userId,
+      projectId: 1,
+      characterId: 1,
+      wardrobeItemId: item.id,
+      fromSceneOrder: 0,
+      toSceneOrder: 0,
+    }, item, activeLeases).filter((error) => !error.includes("Project ID") && !error.includes("Character ID"));
 
-    if (lease.collectionId) {
-      const [collection, items] = await Promise.all([
-        db.getDesignerCollectionById(lease.collectionId),
-        db.getWardrobeItemsByCollection(lease.collectionId),
-      ]);
-      for (const item of items) {
-        const validationErrors = validateWardrobeAssignment({
-          userId,
-          projectId: 1,
-          characterId: 1,
-          wardrobeItemId: item.id,
-          fromSceneOrder: 0,
-          toSceneOrder: 0,
-        }, item as WardrobeItemRecord, activeLeases).filter((error) => !error.includes("Project ID") && !error.includes("Character ID"));
-        result.set(item.id, {
-          inventoryKey: `collection:${lease.collectionId}:item:${item.id}`,
-          accessSource: "collection_purchase",
-          leaseId: lease.id,
-          collectionId: lease.collectionId,
-          collectionName: collection?.name ?? null,
-          item: item as any,
-          assignable: validationErrors.length === 0,
-          validationErrors,
-        });
+    let collectionName: string | null | undefined;
+    if (copy.collectionId) {
+      if (!collectionNames.has(copy.collectionId)) {
+        const collection = await db.getDesignerCollectionById(copy.collectionId);
+        collectionNames.set(copy.collectionId, collection?.name ?? null);
       }
+      collectionName = collectionNames.get(copy.collectionId);
     }
+
+    result.set(item.id, {
+      inventoryKey: `purchase:${copy.leaseId}:source:${copy.sourceWardrobeItemId}:item:${item.id}`,
+      accessSource: copy.leaseType === "collection" ? "collection_purchase" : "item_purchase",
+      leaseId: copy.leaseId,
+      collectionId: copy.collectionId,
+      collectionName,
+      item,
+      assignable: validationErrors.length === 0,
+      validationErrors,
+    });
   }
 
   const dbConn = await getDb();
