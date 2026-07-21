@@ -355,12 +355,15 @@ async function buildOpeningReferenceFrame(
   }
   if (!bindingsWithCostume.length && !referenceImages.length) return undefined;
 
+  // Exact identity/garment pairs must occupy the provider's highest-priority
+  // reference slots. The old scene frame follows them only when an outfit change
+  // needs spatial continuity without allowing the superseded clothing to win.
   const orderedReferences = uniqueUrls([
-    request.previousSceneLastFrameUrl,
     ...context.wardrobeBindings.flatMap((binding) => [
       binding.characterReferenceImageUrl,
       binding.wardrobeReferenceImageUrl,
     ]),
+    request.previousSceneLastFrameUrl,
     ...referenceImages,
   ]).slice(0, 4);
 
@@ -592,7 +595,8 @@ export async function generateExtendedScene(
     referenceImages,
   );
   const negativePrompt = request.negativePrompt || spec.negativePrompt || buildNegativePrompt(request.genre || "Drama");
-  const policy = request.qualityPolicy ?? "standard";
+  const hasBoundWardrobe = context.wardrobeBindings.some((binding) => Boolean(binding.promptAnchor));
+  const policy = request.qualityPolicy ?? (hasBoundWardrobe ? "strict" : "standard");
   const maxQualityRegenerations = Math.max(0, Math.min(3, request.maxQualityRegenerations ?? (policy === "strict" ? 2 : 1)));
   const requireAllClips = request.requireAllClips ?? true;
   const acceptedUrls: string[] = [];
