@@ -1,11 +1,13 @@
 # App Debug Pass — 22 July 2026
 
-Validation scope for the downloadable-client pass:
+Validation scope for the current production tree:
 
-- current web download page and release truth
-- desktop origin, protocol, redirect and deep-link restrictions
-- Swappys source capture, image validation, request throttling and result saving
-- identity-aware provider enforcement for face/likeness transformations
-- PWA, desktop Linux build and Swappys Expo checks
+- verified app download destinations and PWA behavior
+- hardened desktop origin, protocol, redirect and deep-link restrictions
+- Swappys capture, media validation, throttling, result saving and identity-aware generation
+- in-platform Open Adult Creative policy boundaries
+- exact Swappys-to-Studio-Render/Broadcast handoff
+- encrypted broadcast output credentials and HTTPS bridge submission
+- root TypeScript, tests, production build, dependency audit, desktop build and Expo checks
 
-The substantive fixes are present on `main`. This validation branch intentionally changes only this note so pull-request CI tests the exact current production tree.
+This branch intentionally changes only this note so pull-request CI tests the exact current `main` tree.
