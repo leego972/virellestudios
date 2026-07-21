@@ -27,6 +27,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import {
   BarChart3,
   Camera,
+  Clapperboard,
   ChevronDown,
   Coins,
   DollarSign,
@@ -53,6 +54,7 @@ import {
   Sun,
   TrendingUp,
   Users,
+  Users2,
   Wand2,
   Zap,
 } from "lucide-react";
@@ -137,6 +139,7 @@ const menuGroups: MenuGroup[] = [
     label: "Release",
     items: [
       { icon: Globe, label: "Film Showcase", path: "/showcase" },
+      { icon: Clapperboard, label: "Project Samples", path: "/samples" },
       { icon: DollarSign, label: "Funding", path: "/funding" },
       {
         icon: ShoppingBag,
@@ -145,6 +148,7 @@ const menuGroups: MenuGroup[] = [
         hollywoodKey: "asset_marketplace",
       },
       { icon: Wand2, label: "Campaigns", path: "/campaigns" },
+      { icon: Users2, label: "Community", path: "/community" },
     ],
   },
   {
