@@ -6,6 +6,11 @@ import superjson from "superjson";
 import type { TrpcContext } from "./context";
 import { checkRateLimitAsync } from "./rateLimitRedis";
 import { swappysRateLimitSubject, validateSwappysImageDataUrl } from "./swappysValidation";
+import {
+  assertSwappysCreativePolicy,
+  swappysCreativePromptDirective,
+  type SwappysContentMode,
+} from "./swappysPolicy";
 
 const EXPIRED_TESTER_ERR_MSG =
   "Your 48-hour trial has ended. Your projects and downloads are still available — upgrade to a paid plan to continue creating.";
@@ -48,11 +53,7 @@ const t = initTRPC.context<TrpcContext>().create({
 
 export const router = t.router;
 
-/**
- * Public Swappys requests are expensive and process biometric likeness media.
- * Keep the guard at the procedure layer so every client — current and future —
- * receives identical validation and distributed throttling before generation.
- */
+/** Public Swappys mobile guard: decoded media validation and distributed throttling. */
 const guardPublicSwappys = t.middleware(async (opts) => {
   if (opts.path !== "vfxSfx.swappysMobileSwap") return opts.next();
 
@@ -95,16 +96,74 @@ const requireUser = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
-  return next({
-    ctx: {
-      ...ctx,
-      user: ctx.user,
-    },
+  return next({ ctx: { ...ctx, user: ctx.user } });
+});
+
+/**
+ * Virelle Studio Swappys guard. The public schema deliberately remains backward
+ * compatible; contentMode/allSubjectsAdultsConfirmed are read before Zod strips
+ * unknown compatibility fields, then a provider-facing directive is inserted
+ * into the existing notes field that the VFX prompt already consumes.
+ */
+const guardStudioSwappys = t.middleware(async (opts) => {
+  const studioPath = opts.path === "vfxSfx.createStudioVfxJob" || opts.path === "vfxSfx.createSwappysDigitalDoubleJob";
+  if (!studioPath) return opts.next();
+  if (!opts.ctx.user) throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
+
+  const raw = await opts.getRawInput();
+  const input = ((raw as any)?.json ?? raw) as Record<string, any> | null;
+  if (!input) throw new TRPCError({ code: "BAD_REQUEST", message: "Swappys job input is missing." });
+
+  const operations = Array.isArray(input.operations) ? input.operations.map(String) : [];
+  const isSwappys = opts.path.endsWith("createSwappysDigitalDoubleJob") ||
+    input.transformGoal !== "appearance_reference" ||
+    operations.some((operation) => /swappys|face-replacement|actor-continuity|pickup-scene|stunt|age-transform|gender-transform|childhood-self/i.test(operation));
+  if (!isSwappys) return opts.next();
+
+  const contentMode: SwappysContentMode = input.contentMode === "open_adult" || operations.includes("open-adult-creative-mode")
+    ? "open_adult"
+    : "standard";
+  const allSubjectsAdultsConfirmed = input.allSubjectsAdultsConfirmed === true || operations.includes("all-subjects-adults-confirmed");
+
+  assertSwappysCreativePolicy({
+    user: opts.ctx.user,
+    contentMode,
+    consentConfirmed: input.consentConfirmed === true,
+    allSubjectsAdultsConfirmed,
+    transformGoal: input.transformGoal,
+    targetAge: typeof input.targetAge === "number" ? input.targetAge : null,
+    targetPresentation: input.targetPresentation,
+    directorNotes: input.directorNotes ?? input.instructions,
+    consentNotes: input.consentNotes,
+    broadcast: false,
   });
+
+  await checkRateLimitAsync(opts.ctx.user.id, "swappys-studio", 30, 60 * 60 * 1000);
+
+  const directive = swappysCreativePromptDirective(contentMode);
+  if (opts.path.endsWith("createSwappysDigitalDoubleJob")) {
+    input.instructions = `${directive}\n${String(input.instructions || "")}`.trim().slice(0, 4000);
+  } else {
+    input.directorNotes = `${directive}\n${String(input.directorNotes || "")}`.trim().slice(0, 4000);
+    if (contentMode === "open_adult") {
+      input.operations = Array.from(new Set([
+        ...operations,
+        "open-adult-creative-mode",
+        "all-subjects-adults-confirmed",
+      ])).slice(0, 32);
+    }
+  }
+
+  logger.info("[SwappysStudio] policy accepted", {
+    userId: opts.ctx.user.id,
+    contentMode,
+    transformGoal: input.transformGoal || "appearance_reference",
+  });
+  return opts.next();
 });
 
 /** Standard protected procedure — allows expired testers in read-only mode. */
-export const protectedProcedure = t.procedure.use(requireUser);
+export const protectedProcedure = t.procedure.use(requireUser).use(guardStudioSwappys);
 
 const blockExpiredTester = t.middleware(async opts => {
   const { ctx, next } = opts;
@@ -117,10 +176,6 @@ const blockExpiredTester = t.middleware(async opts => {
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
-/**
- * creationProcedure — use for any mutation that creates, generates, or modifies
- * content (projects, scenes, characters, AI generation, payments, etc.).
- */
 export const creationProcedure = t.procedure.use(blockExpiredTester);
 
 export const adminProcedure = t.procedure.use(
@@ -129,12 +184,7 @@ export const adminProcedure = t.procedure.use(
     if (!ctx.user || ctx.user.role !== "admin") {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
-    return next({
-      ctx: {
-        ...ctx,
-        user: ctx.user,
-      },
-    });
+    return next({ ctx: { ...ctx, user: ctx.user } });
   }),
 );
 
@@ -162,5 +212,4 @@ const requireDesigner = t.middleware(async opts => {
   });
 });
 
-/** Protected procedure that also requires an active designer profile. */
 export const designerProcedure = t.procedure.use(requireDesigner);
