@@ -5,20 +5,48 @@ on:
     branches: [main]
     paths:
       - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
       - "desktop/**"
       - "apps/swappys-mobile/**"
       - "server/_core/imageGeneration.ts"
       - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
       - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
       - ".github/workflows/app-debug-pass.yml"
   pull_request:
     paths:
       - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
       - "desktop/**"
       - "apps/swappys-mobile/**"
       - "server/_core/imageGeneration.ts"
       - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
       - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
       - ".github/workflows/app-debug-pass.yml"
   workflow_dispatch:
 
@@ -40,6 +68,8 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm audit --audit-level moderate
+      - name: Validate Swappys connection checker syntax
+        run: node --check scripts/check-swappys-mobile-connection.mjs
 
   swappys-mobile:
     runs-on: ubuntu-latest
@@ -69,3 +99,15 @@ jobs:
       - run: node --check main.js
       - run: node --check preload.js
       - run: npm run build:linux
+
+  render-container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Render startup scripts
+        run: |
+          sh -n start.sh
+          node --check gateway.mjs
+          node --check scripts/render-normalize-package.cjs
+      - name: Build the exact Render Docker image
+        run: docker build --tag virelle-render-parity:${{ github.sha }} .
