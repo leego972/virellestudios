@@ -10,4 +10,4 @@ Validation scope for the current production tree:
 - encrypted broadcast output credentials and HTTPS bridge submission
 - root TypeScript, tests, production build, dependency audit, desktop build and Expo checks
 
-This branch intentionally changes only this note so pull-request CI tests the exact current `main` tree.
+This validation run includes the Expo-compatible peer-resolution fix for the standalone Swappys package and tests the exact current `main` tree.
