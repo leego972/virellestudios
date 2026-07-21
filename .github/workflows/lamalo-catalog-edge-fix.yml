@@ -36,6 +36,15 @@ jobs:
                   raise SystemExit(f"{label}: expected one match, found {count}")
               return text.replace(old, new, 1)
 
+          def replace_between(text: str, start_marker: str, end_marker: str, replacement: str, label: str) -> str:
+              start = text.find(start_marker)
+              if start < 0:
+                  raise SystemExit(f"{label}: start marker not found")
+              end = text.find(end_marker, start)
+              if end < 0:
+                  raise SystemExit(f"{label}: end marker not found")
+              return text[:start] + replacement + text[end:]
+
           router = Path("server/lamalo-gifts-router.ts")
           text = router.read_text()
           text = replace_once(
@@ -44,61 +53,56 @@ jobs:
               'const LAMALO_BRAND_ALIASES = ["Lamalo Fashions", "Lamalo"] as const;',
               "brand alias declaration",
           )
-          text = replace_once(
+          text = replace_between(
               text,
-              '''  const rows = await db
-            .select({ id: designerProfiles.id, userId: designerProfiles.userId })
-            .from(designerProfiles)
-            .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_NAMES]))
-            .orderBy(asc(designerProfiles.id))
-            .limit(1);
-          return rows[0] ?? null;
-          ''',
-              '''  const exact = await db
-            .select({ id: designerProfiles.id, userId: designerProfiles.userId })
-            .from(designerProfiles)
-            .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
-            .orderBy(asc(designerProfiles.id))
-            .limit(1);
-          if (exact[0]) return exact[0];
+              "async function findLamaloProfile(",
+              "async function hasStarterInventory(",
+              '''async function findLamaloProfile(
+            db: Awaited<ReturnType<typeof getDb>>,
+          ): Promise<LamaloProfileRef | null> {
+            if (!db) return null;
+            const exact = await db
+              .select({ id: designerProfiles.id, userId: designerProfiles.userId })
+              .from(designerProfiles)
+              .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
+              .orderBy(asc(designerProfiles.id))
+              .limit(1);
+            if (exact[0]) return exact[0];
 
-          const aliases = await db
-            .select({ id: designerProfiles.id, userId: designerProfiles.userId })
-            .from(designerProfiles)
-            .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_ALIASES]))
-            .orderBy(asc(designerProfiles.id))
-            .limit(1);
-          return aliases[0] ?? null;
+            const aliases = await db
+              .select({ id: designerProfiles.id, userId: designerProfiles.userId })
+              .from(designerProfiles)
+              .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_ALIASES]))
+              .orderBy(asc(designerProfiles.id))
+              .limit(1);
+            return aliases[0] ?? null;
+          }
+
           ''',
               "canonical brand priority",
           )
-          text = replace_once(
+          text = replace_between(
               text,
-              '''  const rows = await db
-            .select({ id: wardrobeItems.id })
-            .from(wardrobeItems)
-            .where(
-              and(
-                eq(wardrobeItems.designerProfileId, profileId),
-                eq(wardrobeItems.visibility, "public"),
-                eq(wardrobeItems.status, "active"),
-              ),
-            )
-            .limit(STARTER_OPTION_COUNT);
-          return rows.length >= STARTER_OPTION_COUNT;
-          ''',
-              '''  const rows = await db
-            .select({ name: wardrobeItems.name })
-            .from(wardrobeItems)
-            .where(
-              and(
-                eq(wardrobeItems.designerProfileId, profileId),
-                eq(wardrobeItems.visibility, "public"),
-                eq(wardrobeItems.status, "active"),
-              ),
-            )
-            .limit(100);
-          return new Set(rows.map(row => row.name).filter(Boolean)).size >= STARTER_OPTION_COUNT;
+              "async function hasStarterInventory(",
+              "/**\n * Production should already have Lamalo seeded.",
+              '''async function hasStarterInventory(
+            db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+            profileId: number,
+          ): Promise<boolean> {
+            const rows = await db
+              .select({ name: wardrobeItems.name })
+              .from(wardrobeItems)
+              .where(
+                and(
+                  eq(wardrobeItems.designerProfileId, profileId),
+                  eq(wardrobeItems.visibility, "public"),
+                  eq(wardrobeItems.status, "active"),
+                ),
+              )
+              .limit(100);
+            return new Set(rows.map(row => row.name).filter(Boolean)).size >= STARTER_OPTION_COUNT;
+          }
+
           ''',
               "unique inventory count",
           )
@@ -138,7 +142,9 @@ jobs:
               text,
               'assert.ok(gifts.includes("db.transaction"), "welcome claim must be transactional");',
               '''assert.ok(gifts.includes("db.transaction"), "welcome claim must be transactional");
-          assert.ok(gifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRAND_NAME)") < gifts.indexOf("LAMALO_BRAND_ALIASES]"), "canonical Lamalo brand must be checked before legacy aliases");
+          const canonicalLookup = gifts.indexOf("eq(designerProfiles.brandName, LAMALO_BRAND_NAME)");
+          const aliasLookup = gifts.indexOf("[...LAMALO_BRAND_ALIASES]");
+          assert.ok(canonicalLookup >= 0 && aliasLookup > canonicalLookup, "canonical Lamalo brand must be checked before legacy aliases");
           assert.ok(gifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");''',
               "contract catalogue assertions",
           )
