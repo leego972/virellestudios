@@ -105,33 +105,22 @@ export function getSwappysWatermarkMode(input: {
   hideVisibleWatermark?: boolean;
   standalonePaid?: boolean;
 }): SwappysWatermarkMode {
-  if (input.product === "standalone") {
-    // Standalone Swappys is the low-cost acquisition product. It stays visibly marked.
-    return input.standalonePaid ? "small_required" : "visible_required";
-  }
+  if (input.product === "standalone") return input.standalonePaid ? "small_required" : "visible_required";
 
   const canUseStudioControls = input.user ? hasTier(input.user, "amateur") : false;
   if (input.hideVisibleWatermark && !canUseStudioControls) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Studio watermark controls require Virelle Creator membership or higher.",
-    });
+    throw new TRPCError({ code: "FORBIDDEN", message: "Studio watermark controls require Virelle Creator membership or higher." });
   }
   if (input.hideVisibleWatermark) return "studio_hidden_visible_mark";
   return canUseStudioControls ? "tiny_disclosure" : "visible_required";
 }
 
-export function getVfxCreditCost(input: {
-  jobKind: VfxJobKind;
-  quality: VfxQuality;
-  operationCount?: number;
-}): number {
-  if (input.jobKind === "digital_double" || input.jobKind === "stunt_face_replacement" || input.jobKind === "actor_continuity_match" || input.jobKind === "pickup_scene_match" || input.jobKind === "ai_stunt_insert") {
+export function getVfxCreditCost(input: { jobKind: VfxJobKind; quality: VfxQuality; operationCount?: number }): number {
+  if (["digital_double", "stunt_face_replacement", "actor_continuity_match", "pickup_scene_match", "ai_stunt_insert"].includes(input.jobKind)) {
     if (input.quality === "preview") return 12;
     if (input.quality === "final") return 24;
     return 40;
   }
-
   const count = Math.max(1, input.operationCount ?? 1);
   const base = count <= 2 ? 6 : count <= 5 ? 12 : 18;
   if (input.quality === "preview") return base;
@@ -139,18 +128,8 @@ export function getVfxCreditCost(input: {
   return Math.ceil(base * 3);
 }
 
-export function assertDigitalLikenessConsent(input: {
-  jobKind: VfxJobKind;
-  consentConfirmed?: boolean;
-}) {
-  const requiresConsent = [
-    "digital_double",
-    "stunt_face_replacement",
-    "actor_continuity_match",
-    "pickup_scene_match",
-    "ai_stunt_insert",
-  ].includes(input.jobKind);
-
+export function assertDigitalLikenessConsent(input: { jobKind: VfxJobKind; consentConfirmed?: boolean }) {
+  const requiresConsent = ["digital_double", "stunt_face_replacement", "actor_continuity_match", "pickup_scene_match", "ai_stunt_insert"].includes(input.jobKind);
   if (requiresConsent && !input.consentConfirmed) {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -180,14 +159,17 @@ export function buildVfxAuditMetadata(input: {
     sourcePlateUrl: input.sourcePlateUrl ?? null,
     actorReferenceUrl: input.actorReferenceUrl ?? null,
     visibleWatermarkMode: input.watermarkMode,
+    creativePolicy: {
+      mode: "director_controlled",
+      arbitraryGenreOrStyleRestrictions: false,
+      retainedSafeguards: ["likeness consent", "rights clearance", "minor safety", "fraud and impersonation prevention", "provider and legal requirements"],
+    },
     consent: {
       required: input.jobKind !== "general_vfx",
       confirmed: Boolean(input.consentConfirmed),
       notes: input.consentNotes ?? null,
     },
-    credits: {
-      estimated: input.estimatedCredits,
-    },
+    credits: { estimated: input.estimatedCredits },
     provenance: {
       platform: "Virelle Studios",
       disclosure: input.watermarkMode === "studio_hidden_visible_mark"
@@ -202,17 +184,23 @@ export function getSwappysFunnelPricing() {
   return {
     standalone: {
       name: "Swappys Standalone",
-      role: "entry product / traffic capture",
-      suggestedMonthlyPriceAud: 7,
+      role: "free marked preview / traffic capture",
+      suggestedMonthlyPriceAud: 0,
       watermark: "required visible Swappys mark",
-      limits: ["short clips", "basic appearance swap", "record/play/pause/delete", "limited export quality"],
+      limits: ["single-image previews", "basic likeness transfer", "limited export quality", "no production continuity"],
     },
     virelleCreator: {
       name: "Virelle Creator",
-      role: "serious film-production upgrade",
-      suggestedMonthlyPriceAud: 99,
-      watermark: "studio-controlled visible watermark toggle with internal audit/provenance retained",
-      limits: ["full VFX Suite", "digital-double controls", "advanced compositing", "higher render quality", "credits system"],
+      role: "professional film-production upgrade",
+      monthlyPriceAud: 490,
+      watermark: "studio-controlled visible watermark with internal audit/provenance retained",
+      benefits: [
+        "full VFX Suite",
+        "digital-double and multi-reference continuity controls",
+        "final and master render quality",
+        "project, scene, wardrobe and storyboard integration",
+        "authenticated broadcast and Studio Render handoff",
+      ],
     },
   };
 }
