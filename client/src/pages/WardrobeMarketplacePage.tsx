@@ -1006,6 +1006,13 @@ function MarketplaceGrid({
             >
               <Wand2 className="h-4 w-4 mr-2" /> Order Custom Item — A$4.99
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/wardrobe-inventory")}
+              className="border-amber-500/30 text-amber-300 hover:bg-amber-500/10 h-12 px-6 shrink-0 w-full sm:w-auto"
+            >
+              My Wardrobe Inventory
+            </Button>
           </div>
         </div>
       </section>

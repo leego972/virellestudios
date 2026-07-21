@@ -377,6 +377,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
                 <SelectTrigger className="h-8 w-20 text-xs bg-black/30 border-border/40"><SelectValue /></SelectTrigger>
                 <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent>
               </Select>
+              <Button size="sm" variant="ghost" onClick={() => navigate("/film-comps")} className="gap-1.5 h-8 text-xs text-muted-foreground">Film Comps</Button>
+              <Button size="sm" variant="ghost" onClick={() => navigate("/tax-incentives")} className="gap-1.5 h-8 text-xs text-muted-foreground">Tax Incentives</Button>
               <Button size="sm" variant="ghost" onClick={exportCSV} className="gap-1.5 h-8 text-xs text-muted-foreground"><Download className="h-3.5 w-3.5" />CSV</Button>
               <Button size="sm" variant="outline" onClick={printBudget} className="gap-1.5 h-8 text-xs border-border/40"><Printer className="h-3.5 w-3.5" />Print</Button>
               <Button size="sm" onClick={save} disabled={!dirty || upsertMut.isPending} className="gap-1.5 h-8 text-xs" style={{ background:"linear-gradient(135deg,#D4AF37,#b8960c)", color:"#000", opacity: dirty ? 1 : 0.5 }}>
