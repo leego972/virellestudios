@@ -20,6 +20,7 @@ on:
       - "server/_core/swappysValidation.ts"
       - "server/_core/trpc.ts"
       - ".github/workflows/app-debug-pass.yml"
+      - "docs/APP_DEBUG_VALIDATION_V2_2026-07-22.md"
   workflow_dispatch:
 
 permissions:
