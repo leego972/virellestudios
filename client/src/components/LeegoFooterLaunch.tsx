@@ -1,3 +1,5 @@
+import LeegoLogo from "@/components/LeegoLogo";
+
 const CONTACT_EMAILS = [
   { label: "Support", email: "studiosvirelle@gmail.com" },
   { label: "Billing", email: "studiosvirelle@gmail.com" },
@@ -113,11 +115,17 @@ export default function LeegoFooterLaunch() {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 border-t border-border/50 pt-4 text-[10px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} Virelle Studios. All rights reserved.
-            Operated by Leego972.
-          </p>
+        <div className="mt-5 flex flex-col gap-3 border-t border-border/50 pt-4 text-[10px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <LeegoLogo
+              alt="Leego972"
+              className="h-7 w-7 shrink-0 rounded-full object-contain"
+            />
+            <p>
+              © {new Date().getFullYear()} Virelle Studios. All rights reserved.
+              <span className="ml-1 whitespace-nowrap">Operated by Leego972.</span>
+            </p>
+          </div>
           <div className="flex flex-wrap items-center gap-2.5">
             <a href="/terms" className="hover:text-foreground">
               Terms
