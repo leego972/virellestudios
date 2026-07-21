@@ -99,6 +99,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Inventory every branch and PR connection
         env:
           GH_TOKEN: ${{ github.token }}
@@ -106,7 +108,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api --paginate "repos/$REPOSITORY/branches?per_page=100" --jq '.[].name' > branches.txt
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
+          git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin \
+            | grep -v '^HEAD$' \
+            | sort -u > branches.txt
           printf '# Branch hygiene inventory\n\n' > branch-inventory.md
           printf '| Branch | Ahead | Behind | PR connection | Classification |\n' >> branch-inventory.md
           printf '|---|---:|---:|---|---|\n' >> branch-inventory.md
@@ -116,17 +121,16 @@ jobs:
               printf '| `main` | 0 | 0 | default branch | canonical |\n' >> branch-inventory.md
               continue
             fi
-            encoded=$(jq -rn --arg value "$branch" '$value|@uri')
-            compare=$(gh api "repos/$REPOSITORY/compare/main...$encoded")
-            ahead=$(jq -r '.ahead_by' <<<"$compare")
-            behind=$(jq -r '.behind_by' <<<"$compare")
-            prs=$(gh api -X GET search/issues -f q="repo:$REPOSITORY is:pr head:$branch" -f per_page=100)
-            connection=$(jq -r '[.items[] | "#\(.number) \(.state)" + (if .pull_request.merged_at then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
+            counts=$(git rev-list --left-right --count "origin/main...origin/$branch")
+            behind=$(awk '{print $1}' <<<"$counts")
+            ahead=$(awk '{print $2}' <<<"$counts")
+            prs=$(gh pr list --repo "$REPOSITORY" --head "$branch" --state all --limit 100 --json number,state,mergedAt)
+            connection=$(jq -r '[.[] | "#\(.number) \(.state)" + (if .mergedAt then " merged" else "" end)] | if length == 0 then "none" else join(", ") end' <<<"$prs")
             if [ "$ahead" = "0" ]; then
               classification="fully contained in main"
-            elif jq -e '.items[]? | select(.state == "open")' <<<"$prs" >/dev/null; then
+            elif jq -e '.[]? | select(.state == "OPEN")' <<<"$prs" >/dev/null; then
               classification="connected to open PR"
-            elif [ "$(jq -r '.total_count' <<<"$prs")" = "0" ]; then
+            elif [ "$(jq 'length' <<<"$prs")" = "0" ]; then
               classification="floating: unique commits, no PR"
             else
               classification="unique commits only on closed PR branch"
@@ -137,6 +141,7 @@ jobs:
           done < branches.txt
           cat branch-inventory.md
       - name: Upload branch inventory
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: branch-hygiene-inventory
