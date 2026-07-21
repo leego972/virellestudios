@@ -1,0 +1,52 @@
+name: Final hardening anchor diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    if: github.head_ref == 'audit/quality-security-pass-20260721'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Inspect migration anchors
+        shell: bash
+        run: |
+          python <<'PY' > anchor-report.txt
+          from pathlib import Path
+          import re
+
+          def text(path): return Path(path).read_text()
+          def contains(path, value): print(path, repr(value[:70]), text(path).count(value))
+          v = text('server/_core/videoStitcher.ts')
+          print('video download regex', len(re.findall(r'async function downloadFile\(url: string, dest: string\): Promise<void> \{[\s\S]*?\n\}', v)))
+          print('video text regex', len(re.findall(r'function escapeSubtitleText\(text: string\): string \{[\s\S]*?\n\}', v)))
+          print('video title regex', len(re.findall(r'async function generateTitleCard\([\s\S]*?\n\}\n\n(?=// [^\n]*End Credits Generator)', v)))
+          print('video credits regex', len(re.findall(r'async function generateEndCredits\([\s\S]*?\n\}\n\n(?=// [^\n]*Per-Scene Audio Mixing)', v)))
+          print('video subtitles regex', len(re.findall(r'async function burnSubtitlesIntoScene\([\s\S]*?\n\}\n\n(?=// [^\n]*Scene Transition Handling)', v)))
+          contains('server/_core/scriptFormats.ts', 'return s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, \'"\').replace(/&apos;/g, "\'");')
+          contains('server/seo-engine.ts', 'const cleanContent = content.replace(/<[^>]+>/g, "").replace(/[#*_`]/g, "").trim();')
+          contains('server/routers.ts', 'import { sanitizeText } from "./_core/sanitize";')
+          contains('server/routers.ts', 'snippet: r.snippet?.replace(/<[^>]+>/g, "") ?? "",')
+          contains('client/src/pages/Community.tsx', 'if (!user || (!isPaid && user)) return <MembersOnlyWall />;')
+          contains('client/src/index.css', '  /* Smooth momentum scrolling on iOS */\n  * {\n    -webkit-overflow-scrolling: touch;\n  }')
+          contains('client/src/index.css', '  .glass-dark {\n    background: oklch(0.08 0.005 260 / 0.85);\n    backdrop-filter: blur(20px) saturate(1.4);\n    -webkit-backdrop-filter: blur(20px) saturate(1.4);\n    border: 1px solid oklch(0.78 0.18 85 / 0.1);\n  }')
+          contains('client/src/components/DashboardLayout.tsx', '  BarChart3,\n  Camera,\n  ChevronDown,')
+          contains('client/src/components/DashboardLayout.tsx', '  TrendingUp,\n  Users,\n  Wand2,')
+          contains('client/src/components/DashboardLayout.tsx', '      { icon: Globe, label: "Film Showcase", path: "/showcase" },\n      { icon: DollarSign, label: "Funding", path: "/funding" },')
+          contains('client/src/components/DashboardLayout.tsx', '      { icon: Wand2, label: "Campaigns", path: "/campaigns" },\n    ],')
+          contains('client/src/components/ProjectToolHub.tsx', '        { title: "Production Office", description: "Central operating room for the project.", href: `/projects/${projectId}/production-office`, icon: Briefcase },\n        { title: "Pre-Production Panel",')
+          contains('client/src/pages/Budget.tsx', '              <Button size="sm" variant="ghost" onClick={exportCSV} className="gap-1.5 h-8 text-xs text-muted-foreground"><Download className="h-3.5 w-3.5" />CSV</Button>')
+          PY
+          cat anchor-report.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final-hardening-anchor-report
+          path: anchor-report.txt
+          retention-days: 1
