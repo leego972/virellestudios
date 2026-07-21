@@ -24,7 +24,7 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Extract and apply guarded patch
+      - name: Extract guarded patch
         shell: bash
         run: |
           python3 - <<'PY'
@@ -38,7 +38,24 @@ jobs:
               body.append(line[10:] if line.startswith('          ') else line)
           Path('/tmp/apply_lamalo_hotfix.py').write_text('\n'.join(body) + '\n')
           PY
-          python3 /tmp/apply_lamalo_hotfix.py
+
+      - name: Apply guarded patch
+        id: apply_patch
+        continue-on-error: true
+        shell: bash
+        run: python3 /tmp/apply_lamalo_hotfix.py 2>&1 | tee /tmp/lamalo-hotfix.log
+
+      - name: Upload patch diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lamalo-hotfix-diagnostic
+          path: /tmp/lamalo-hotfix.log
+          retention-days: 1
+
+      - name: Stop on patch failure
+        if: steps.apply_patch.outcome == 'failure'
+        run: exit 1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
