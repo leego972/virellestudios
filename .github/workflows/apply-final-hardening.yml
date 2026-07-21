@@ -23,7 +23,17 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Apply deterministic migration
-        run: python scripts/apply-final-hardening.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/apply-final-hardening.py 2>&1 | tee final-migration.log
+      - name: Upload migration diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-hardening-migration-log
+          path: final-migration.log
+          retention-days: 1
       - name: Install exact committed dependencies
         run: pnpm install --frozen-lockfile
       - name: Unsuppressed dependency audit
