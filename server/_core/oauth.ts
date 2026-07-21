@@ -7,6 +7,7 @@ import { logger } from "./logger";
 import { ENV } from "./env";
 import crypto from "crypto";
 import { createSessionToken } from "./context";
+import { rateLimitPublicByIP } from "./rateLimit";
 import {
   findAuthUserByEmail,
   findSessionUserByOpenId,
@@ -23,10 +24,21 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 function getCallbackUrl(req: Request): string {
-  if (ENV.publicAppUrl) return `${ENV.publicAppUrl}/api/oauth/callback`;
-  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-  const host = req.headers["x-forwarded-host"] || req.headers.host;
-  return `${protocol}://${host}/api/oauth/callback`;
+  if (ENV.publicAppUrl) {
+    const base = new URL(ENV.publicAppUrl);
+    if (ENV.isProduction && base.protocol !== "https:") {
+      throw new Error("PUBLIC_APP_URL must use HTTPS in production");
+    }
+    if (base.username || base.password) throw new Error("PUBLIC_APP_URL must not contain credentials");
+    base.pathname = "/api/oauth/callback";
+    base.search = "";
+    base.hash = "";
+    return base.toString();
+  }
+  if (ENV.isProduction) throw new Error("PUBLIC_APP_URL must be configured for OAuth in production");
+  const host = req.headers.host;
+  if (!host) throw new Error("OAuth callback host is unavailable");
+  return new URL("/api/oauth/callback", `${req.protocol}://${host}`).toString();
 }
 
 function readCookie(req: Request, name: string): string | undefined {
@@ -120,29 +132,24 @@ async function completeLogin(
   res.redirect(302, "/?opener=1");
 }
 
-const passwordLoginAttempts = new Map<string, { count: number; resetAt: number }>();
-
-function passwordLoginKey(req: Request, email: string): string {
-  const forwarded = req.headers["x-forwarded-for"];
-  const ip = (Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0])?.trim()
-    || req.socket.remoteAddress
-    || "unknown";
-  return `${ip}:${email}`;
+function requestIp(req: Request): string {
+  return req.ip || req.socket.remoteAddress || "unknown";
 }
 
-function passwordLoginAllowed(key: string): boolean {
-  const now = Date.now();
-  const current = passwordLoginAttempts.get(key);
-  if (!current || current.resetAt <= now) {
-    passwordLoginAttempts.set(key, { count: 1, resetAt: now + 15 * 60 * 1000 });
+async function allowPublicRequest(
+  req: Request,
+  res: Response,
+  action: string,
+  maxRequests: number,
+  windowMs: number,
+): Promise<boolean> {
+  try {
+    await rateLimitPublicByIP(requestIp(req), action, maxRequests, windowMs);
     return true;
+  } catch {
+    res.status(429).json({ error: "Too many requests. Please try again later." });
+    return false;
   }
-  current.count += 1;
-  return current.count <= 12;
-}
-
-function clearPasswordLoginAttempts(key: string) {
-  passwordLoginAttempts.delete(key);
 }
 
 export function registerOAuthRoutes(app: Express) {
@@ -167,11 +174,9 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      const attemptKey = passwordLoginKey(req, email);
-      if (!passwordLoginAllowed(attemptKey)) {
-        res.status(429).json({ error: "Too many sign-in attempts. Try again in 15 minutes." });
-        return;
-      }
+      if (!(await allowPublicRequest(req, res, "password-login", 30, 15 * 60_000))) return;
+      const emailKey = crypto.createHash("sha256").update(email).digest("hex").slice(0, 20);
+      if (!(await allowPublicRequest(req, res, `password-login:${emailKey}`, 12, 15 * 60_000))) return;
 
       try {
         const user = await findAuthUserByEmail(email);
@@ -195,7 +200,6 @@ export function registerOAuthRoutes(app: Express) {
           maxAge: ONE_YEAR_MS,
         });
 
-        clearPasswordLoginAttempts(attemptKey);
         await markAuthLoginSuccessful(Number(user.id)).catch(error => {
           logger.warn("[Auth] Could not update lastSignedIn", { error: String(error) });
         });
@@ -216,7 +220,8 @@ export function registerOAuthRoutes(app: Express) {
     },
   );
 
-  app.get("/api/auth/google", (req: Request, res: Response) => {
+  app.get("/api/auth/google", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-google-start", 20, 15 * 60_000))) return;
     if (!ENV.googleOAuthClientId || !ENV.googleOAuthClientSecret) {
       logger.error("[OAuth] Google OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
@@ -237,7 +242,8 @@ export function registerOAuthRoutes(app: Express) {
     res.redirect(302, url.toString());
   });
 
-  app.get("/api/auth/github", (req: Request, res: Response) => {
+  app.get("/api/auth/github", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-github-start", 20, 15 * 60_000))) return;
     if (!ENV.githubOAuthClientId || !ENV.githubOAuthClientSecret) {
       logger.error("[OAuth] GitHub OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
@@ -257,6 +263,7 @@ export function registerOAuthRoutes(app: Express) {
   });
 
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-callback", 30, 15 * 60_000))) return;
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
     const expectedState = readCookie(req, STATE_COOKIE);
@@ -265,7 +272,7 @@ export function registerOAuthRoutes(app: Express) {
     clearShortLivedCookie(res, STATE_COOKIE);
     clearShortLivedCookie(res, PROVIDER_COOKIE);
 
-    if (!code || !state) {
+    if (!code || code.length > 2048 || !state || !/^[a-f0-9]{48}$/i.test(state)) {
       res.redirect(302, "/login?error=oauth_failed");
       return;
     }
@@ -293,6 +300,7 @@ export function registerOAuthRoutes(app: Express) {
             grant_type: "authorization_code",
             redirect_uri: redirectUri,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
 
         if (!tokenResponse.ok) {
@@ -313,6 +321,7 @@ export function registerOAuthRoutes(app: Express) {
 
         const userResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { Authorization: `Bearer ${tokenData.access_token}` },
+          signal: AbortSignal.timeout(10_000),
         });
 
         if (!userResponse.ok) {
@@ -357,6 +366,7 @@ export function registerOAuthRoutes(app: Express) {
           code,
           redirect_uri: redirectUri,
         }),
+        signal: AbortSignal.timeout(10_000),
       });
 
       if (!tokenResponse.ok) {
@@ -385,6 +395,7 @@ export function registerOAuthRoutes(app: Express) {
           Authorization: `Bearer ${tokenData.access_token}`,
           "User-Agent": "virelle-studios",
         },
+        signal: AbortSignal.timeout(10_000),
       });
 
       if (!userResponse.ok) {
@@ -402,25 +413,23 @@ export function registerOAuthRoutes(app: Express) {
         email?: string | null;
       };
 
-      let email: string | null = profile.email ?? null;
-      if (!email) {
-        const emailsResponse = await fetch("https://api.github.com/user/emails", {
-          headers: {
-            Authorization: `Bearer ${tokenData.access_token}`,
-            "User-Agent": "virelle-studios",
-          },
-        });
-        if (emailsResponse.ok) {
-          const emails = (await emailsResponse.json()) as Array<{
-            email: string;
-            primary: boolean;
-            verified: boolean;
-          }>;
-          const selected =
-            emails.find(candidate => candidate.primary && candidate.verified) ||
-            emails.find(candidate => candidate.verified);
-          email = selected?.email ?? null;
-        }
+      const emailsResponse = await fetch("https://api.github.com/user/emails", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "virelle-studios",
+        },
+        signal: AbortSignal.timeout(10_000),
+      });
+      let email: string | null = null;
+      if (emailsResponse.ok) {
+        const emails = (await emailsResponse.json()) as Array<{
+          email: string;
+          primary: boolean;
+          verified: boolean;
+        }>;
+        const selected = emails.find(candidate => candidate.primary && candidate.verified)
+          || emails.find(candidate => candidate.verified);
+        email = selected?.email ?? null;
       }
 
       if (!profile.id || !email) {

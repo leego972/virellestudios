@@ -1,6 +1,7 @@
 import { ENV } from "./env";
 import { AsyncLocalStorage } from "async_hooks";
 import { logger } from "./logger";
+import { hasExactHttpsHostname } from "./remoteUrlSecurity";
 
 /**
  * Request-scoped LLM key context. Lets a top-level handler (e.g. quickGenerate's
@@ -490,7 +491,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   if (!response.ok) {
     const errorText = await response.text();
     const isQuotaError = response.status === 429 || errorText.includes("insufficient_quota") || errorText.includes("quota");
-    const isOpenAI = provider.url.includes("openai.com");
+    const isOpenAI = hasExactHttpsHostname(provider.url, ["api.openai.com"]);
 
     // OpenAI failed â if it's a quota/rate error, skip to Forge immediately.
     // For other errors, try gpt-4.1-mini first, then Forge.
@@ -616,7 +617,7 @@ async function invokeLLMWithProvider(
   if (!response.ok) {
     const errorText = await response.text();
     const isQuotaError = response.status === 429 || errorText.includes("insufficient_quota") || errorText.includes("quota");
-    const isOpenAI = provider.url.includes("openai.com");
+    const isOpenAI = hasExactHttpsHostname(provider.url, ["api.openai.com"]);
     // If this fallback provider is OpenAI and it's also quota-exhausted, try Forge
     if (isOpenAI && isQuotaError && ENV.forgeApiKey) {
       const forgeUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0

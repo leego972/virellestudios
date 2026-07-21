@@ -27,6 +27,7 @@
  */
 import { ENV } from "./env";
 import { logger } from "./logger";
+import { downloadPublicFile, hasExactHttpsHostname } from "./remoteUrlSecurity";
 
 export type TranscribeOptions = {
   audioUrl: string; // URL to the audio file (e.g., S3 URL)
@@ -95,27 +96,14 @@ export async function transcribeAudio(
     let audioBuffer: Buffer;
     let mimeType: string;
     try {
-      const response = await fetch(options.audioUrl);
-      if (!response.ok) {
-        return {
-          error: "Failed to download audio file",
-          code: "INVALID_FORMAT",
-          details: `HTTP ${response.status}: ${response.statusText}`
-        };
-      }
-      
-      audioBuffer = Buffer.from(await response.arrayBuffer());
-      mimeType = response.headers.get('content-type') || 'audio/mpeg';
-      
-      // Check file size (16MB limit)
-      const sizeMB = audioBuffer.length / (1024 * 1024);
-      if (sizeMB > 16) {
-        return {
-          error: "Audio file exceeds maximum size limit",
-          code: "FILE_TOO_LARGE",
-          details: `File size is ${sizeMB.toFixed(2)}MB, maximum allowed is 16MB`
-        };
-      }
+      const downloaded = await downloadPublicFile(options.audioUrl, {
+        maxBytes: 16 * 1024 * 1024,
+        timeoutMs: 30_000,
+        maxRedirects: 3,
+        allowedContentTypePrefixes: ["audio/", "video/", "application/octet-stream"],
+      });
+      audioBuffer = downloaded.buffer;
+      mimeType = downloaded.contentType;
     } catch (error) {
       return {
         error: "Failed to fetch audio file",
@@ -177,7 +165,7 @@ export async function transcribeAudio(
     });
 
     // Fallback: if OpenAI fails and Forge is available, try Forge
-    if (!response.ok && transcriptionUrl.includes("openai.com") && ENV.forgeApiUrl && ENV.forgeApiKey) {
+    if (!response.ok && hasExactHttpsHostname(transcriptionUrl, ["api.openai.com"]) && ENV.forgeApiUrl && ENV.forgeApiKey) {
       logger.warn(`[Transcription] OpenAI failed (${response.status}), trying Forge fallback...`);
       const forgeBase = ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`;
       const forgeUrl = new URL("v1/audio/transcriptions", forgeBase).toString();
@@ -198,7 +186,7 @@ export async function transcribeAudio(
     }
 
     // Fallback: if Forge fails and OpenAI is available, try OpenAI
-    if (!response.ok && !transcriptionUrl.includes("openai.com") && ENV.openaiApiKey) {
+    if (!response.ok && !hasExactHttpsHostname(transcriptionUrl, ["api.openai.com"]) && ENV.openaiApiKey) {
       logger.warn(`[Transcription] Forge failed (${response.status}), trying OpenAI fallback...`);
       const oaiFormData = new FormData();
       const audioBlob3 = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
