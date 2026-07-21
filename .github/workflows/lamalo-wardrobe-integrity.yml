@@ -14,6 +14,7 @@ on:
       - "server/_core/lamaloCatalogIntegrity.ts"
       - "server/wardrobePurchaseFulfillment.test.ts"
       - "server/wardrobeContinuity.test.ts"
+      - "server/sceneWardrobeContinuity.test.ts"
       - ".github/workflows/lamalo-wardrobe-integrity.yml"
   push:
     branches: [main]
@@ -28,6 +29,7 @@ on:
       - "server/_core/lamaloCatalogIntegrity.ts"
       - "server/wardrobePurchaseFulfillment.test.ts"
       - "server/wardrobeContinuity.test.ts"
+      - "server/sceneWardrobeContinuity.test.ts"
       - ".github/workflows/lamalo-wardrobe-integrity.yml"
 
 permissions:
@@ -51,4 +53,4 @@ jobs:
       - name: TypeScript check
         run: pnpm check
       - name: Wardrobe regression tests
-        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts
+        run: pnpm vitest run server/wardrobePurchaseFulfillment.test.ts server/wardrobeContinuity.test.ts server/sceneWardrobeContinuity.test.ts
