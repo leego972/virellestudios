@@ -14,6 +14,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PUBLIC_APP_URL
+        value: https://virelle.life
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET
@@ -39,6 +41,8 @@ services:
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
       - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
         sync: false
       - key: RUNWAY_API_KEY
         sync: false
@@ -78,3 +82,29 @@ services:
         sync: false
       - key: SENTRY_ENVIRONMENT
         value: production
+
+      # Verified downloadable releases. Leave a URL unset until the public store
+      # listing or signed installer genuinely exists; the UI fails closed.
+      - key: IOS_DOWNLOAD_URL
+        sync: false
+      - key: ANDROID_DOWNLOAD_URL
+        sync: false
+      - key: DESKTOP_RELEASES_REPO
+        value: leego972/virellestudios
+      - key: DESKTOP_MAC_URL
+        sync: false
+      - key: DESKTOP_WIN_URL
+        sync: false
+      - key: DESKTOP_LINUX_URL
+        sync: false
+      - key: DESKTOP_VERSION
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+
+      # Live Swappys broadcast bridge. The bridge receives stream credentials
+      # ephemerally over authenticated HTTPS; Virelle stores masked keys only.
+      - key: BROADCAST_BRIDGE_URL
+        sync: false
+      - key: BROADCAST_BRIDGE_TOKEN
+        sync: false
