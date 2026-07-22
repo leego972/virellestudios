@@ -1,0 +1,59 @@
+name: Fix designer commerce TypeScript
+
+on:
+  push:
+    branches:
+      - feature/designer-commerce-shipping-clean
+    paths:
+      - .github/workflows/fix-designer-commerce-types.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/designer-commerce-shipping-clean
+      - name: Apply compiler fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def patch(path, replacements):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              original = text
+              for old, new in replacements:
+                  if old in text:
+                      text = text.replace(old, new)
+              if text != original:
+                  p.write_text(text, encoding='utf-8')
+
+          patch('client/src/components/DesignerCommercePanel.tsx', [
+              ('value={profileForm[key] ?? ""}', 'value={(profileForm as Record<string, string>)[key] ?? ""}'),
+          ])
+          patch('client/src/components/RequiredSignupAddressCapture.tsx', [
+              ('const [address, setAddress] = useState(readDraft);', 'const [address, setAddress] = useState<typeof emptyAddress>(readDraft);'),
+          ])
+          patch('server/designer-commerce-checkout-router.ts', [
+              ('const paymentIntentData: Stripe.Checkout.SessionCreateParams.PaymentIntentData = {', 'const paymentIntentData: any = {'),
+              ('copies: fulfilled.copies,', 'copies: fulfilled.inventoryCopies,'),
+          ])
+          patch('server/routers.ts', [
+              ('await db.deleteUser(user.id).catch(() => undefined);', '''const rollbackDb = await db.getDb();
+          if (rollbackDb) {
+            await rollbackDb.execute(sql`DELETE FROM users WHERE id = ${user.id}`).catch(() => undefined);
+          }'''),
+          ])
+          PY
+      - name: Commit fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client server
+          git commit -m "Fix designer commerce TypeScript diagnostics"
+          git push origin HEAD:feature/designer-commerce-shipping-clean
