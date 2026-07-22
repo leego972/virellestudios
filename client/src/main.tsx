@@ -2,6 +2,7 @@ import "@/lib/sentry";
 import "@/lib/analytics";
 import AutomaticContrastGuard from "@/components/AutomaticContrastGuard";
 import DesignerCommercePanel from "@/components/DesignerCommercePanel";
+import GlobalMediaPlayerControls from "@/components/GlobalMediaPlayerControls";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
@@ -221,6 +222,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <AutomaticContrastGuard />
       <GlobalSidebarLogoutConfirm />
+      <GlobalMediaPlayerControls />
       <LandingVerifiedAppsGuard />
       <PortalAccessBoundary />
       <PortalEntryLinks />
