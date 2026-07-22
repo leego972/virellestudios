@@ -4,10 +4,42 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+permissions:
+  contents: write
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  security-lockfile:
+    name: Generate Security Lockfile
+    if: github.event_name == 'pull_request' && github.head_ref == 'security/sharp-0.35.3'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Generate patched lockfile
+        run: pnpm install --lockfile-only
+      - name: Commit generated lockfile
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "Regenerate lockfile for sharp 0.35.3"
+          git push origin HEAD:${{ github.head_ref }}
+
   typecheck:
     name: TypeScript Check
     runs-on: ubuntu-latest
