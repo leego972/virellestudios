@@ -1,0 +1,8 @@
+/tmp/apply-broadcast-commerce-once.mjs:189
+        INSERT INTO virelle_video_transform_jobs
+               ^^^^
+
+SyntaxError: Unexpected identifier 'INTO'
+    at checkSyntax (node:internal/main/check_syntax:74:5)
+
+Node.js v22.23.1
