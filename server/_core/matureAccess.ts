@@ -301,6 +301,26 @@ export async function getMatureAccessStatus(
   dbConn: any,
   user: Pick<User, "id" | "role" | "subscriptionTier" | "subscriptionStatus">,
 ): Promise<MatureAccessStatus> {
+  if (user.role === "admin") {
+    await db.updateUser(user.id, { isAdultVerified: true } as any);
+    return {
+      paidMembership: true,
+      profileComplete: true,
+      adultAgeConfirmed: true,
+      adultAttestationAccepted: true,
+      phoneVerified: true,
+      identityVerified: true,
+      cardNameMatched: true,
+      responsibilityAccepted: true,
+      consentPolicyAccepted: true,
+      archiveRetentionAccepted: true,
+      accessGranted: true,
+      missing: [],
+      termsVersion: MATURE_ACCESS_TERMS_VERSION,
+      profile: null,
+    };
+  }
+
   const profile = await getMatureAccessProfile(dbConn, user.id);
   const paidMembership = isPaidMatureAccessUser(user as any);
   const profileComplete = Boolean(
