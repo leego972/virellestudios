@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out feature branch
+      - name: Check out clean feature branch
         uses: actions/checkout@v4
         with:
-          ref: feature/designer-commerce-shipping-v1
+          ref: feature/designer-commerce-shipping-clean
           fetch-depth: 0
       - name: Apply targeted CI fixes
         run: python3 scripts/fix-designer-commerce-ci.py
@@ -28,6 +28,6 @@ jobs:
           git add client server
           git rm -f scripts/fix-designer-commerce-ci.py
           git commit -m "Fix designer commerce TypeScript checks"
-          git push origin HEAD:feature/designer-commerce-shipping-v1
+          git push origin HEAD:feature/designer-commerce-shipping-clean
 
-# Trigger revision 2.
+# Clean branch trigger.
