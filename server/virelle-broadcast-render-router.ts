@@ -14,7 +14,6 @@ import { requireVfxStudioTier } from "./_core/vfxStudioMiddleware";
 import { encryptApiKey } from "./_core/securityEngine";
 import { stripe } from "./_core/subscription";
 import {
-  BROADCAST_MINUTE_PACKS,
   attachBroadcastReservationToJob,
   createBroadcastMinuteCheckout,
   getBroadcastMinuteWallet,
@@ -1311,7 +1310,8 @@ export const virelleBroadcastRenderRouter = router({
     }
     if (
       resolved.contentMode === "open_adult"
-      && (!resolved.consentConfirmed || !resolved.allSubjectsAdultsConfirmed)
+      && ((!resolved.consentConfirmed && !resolved.aiGeneratedCharactersOnly)
+        || !resolved.allSubjectsAdultsConfirmed)
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",

@@ -819,7 +819,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
     return true;
   };
 
-  const submitRender = async () => {  const submitRender = async () => {
+  const submitRender = async () => {
     if (!validateRequest(false)) return;
     try {
       const result = await createRender.mutateAsync(payload);
@@ -878,7 +878,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
     }
   };
 
-  const cancel = async (id: number) => {  const cancel = async (id: number) => {
+  const cancel = async (id: number) => {
     try {
       await cancelJob.mutateAsync({ id });
       toast.success("Job cancelled.");
@@ -1505,8 +1505,6 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
           </Card>
         </div>
 
-        <Card className={subtleCard}>          </Card>
-        </div>
 
         <Card className={subtleCard}>
           <CardHeader>
