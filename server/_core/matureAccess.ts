@@ -12,6 +12,8 @@ export const PAID_MATURE_ACCESS_TIERS = [
   "industry",
 ] as const;
 
+export const MATURE_ACCESS_TERMS_VERSION = "adult-workspace-2026-07";
+
 export type MatureAccessProfileInput = {
   fullName: string;
   email: string;
@@ -23,21 +25,26 @@ export type MatureAccessProfileInput = {
   postcode: string;
   country: string;
   dateOfBirth: string;
+  adultAttestationAccepted: boolean;
   responsibilityAccepted: boolean;
   consentPolicyAccepted: boolean;
+  archiveRetentionAccepted: boolean;
 };
 
 export type MatureAccessStatus = {
   paidMembership: boolean;
   profileComplete: boolean;
   adultAgeConfirmed: boolean;
+  adultAttestationAccepted: boolean;
   phoneVerified: boolean;
   identityVerified: boolean;
   cardNameMatched: boolean;
   responsibilityAccepted: boolean;
   consentPolicyAccepted: boolean;
+  archiveRetentionAccepted: boolean;
   accessGranted: boolean;
   missing: string[];
+  termsVersion: string;
   profile: null | {
     fullName: string;
     email: string;
@@ -85,18 +92,27 @@ export function legalNamesMatch(expected: string, supplied: string): boolean {
 }
 
 export function calculateAge(dateOfBirth: string | Date, now = new Date()): number {
-  const dob = dateOfBirth instanceof Date ? dateOfBirth : new Date(`${dateOfBirth}T00:00:00Z`);
+  const dob = dateOfBirth instanceof Date
+    ? dateOfBirth
+    : new Date(`${dateOfBirth}T00:00:00Z`);
   if (Number.isNaN(dob.getTime())) return -1;
   let age = now.getUTCFullYear() - dob.getUTCFullYear();
   const monthDifference = now.getUTCMonth() - dob.getUTCMonth();
-  if (monthDifference < 0 || (monthDifference === 0 && now.getUTCDate() < dob.getUTCDate())) age--;
+  if (
+    monthDifference < 0
+    || (monthDifference === 0 && now.getUTCDate() < dob.getUTCDate())
+  ) age--;
   return age;
 }
 
-export function isPaidMatureAccessUser(user: Pick<User, "role" | "subscriptionTier" | "subscriptionStatus">): boolean {
+export function isPaidMatureAccessUser(
+  user: Pick<User, "role" | "subscriptionTier" | "subscriptionStatus">,
+): boolean {
   if (user.role === "admin") return true;
-  const active = user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing";
-  return active && PAID_MATURE_ACCESS_TIERS.includes(String(user.subscriptionTier) as any);
+  const active = user.subscriptionStatus === "active"
+    || user.subscriptionStatus === "trialing";
+  return active
+    && PAID_MATURE_ACCESS_TIERS.includes(String(user.subscriptionTier) as any);
 }
 
 export async function ensureMatureAccessTable(dbConn: any): Promise<void> {
@@ -113,8 +129,11 @@ export async function ensureMatureAccessTable(dbConn: any): Promise<void> {
       postcode VARCHAR(32) NOT NULL,
       country VARCHAR(128) NOT NULL,
       dateOfBirth DATE NOT NULL,
+      adultAttestationAcceptedAt DATETIME NULL,
       responsibilityAcceptedAt DATETIME NULL,
       consentPolicyAcceptedAt DATETIME NULL,
+      archiveRetentionAcceptedAt DATETIME NULL,
+      termsVersion VARCHAR(64) NOT NULL DEFAULT 'adult-workspace-2026-07',
       phoneVerifiedAt DATETIME NULL,
       identityVerificationSessionId VARCHAR(255) NULL,
       identityVerifiedAt DATETIME NULL,
@@ -129,12 +148,23 @@ export async function ensureMatureAccessTable(dbConn: any): Promise<void> {
       INDEX idx_mature_access_phone (phone)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+  const alterations = [
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN adultAttestationAcceptedAt DATETIME NULL`,
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN archiveRetentionAcceptedAt DATETIME NULL`,
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN termsVersion VARCHAR(64) NOT NULL DEFAULT 'adult-workspace-2026-07'`,
+  ];
+  for (const alteration of alterations) {
+    try { await dbConn.execute(alteration); } catch { /* already applied */ }
+  }
 }
 
-export async function getMatureAccessProfile(dbConn: any, userId: number): Promise<any | null> {
+export async function getMatureAccessProfile(
+  dbConn: any,
+  userId: number,
+): Promise<any | null> {
   await ensureMatureAccessTable(dbConn);
   const result = await dbConn.execute(sql`
-    SELECT * FROM mature_access_profiles WHERE userId = ${userId} LIMIT 1
+    SELECT * FROM mature_access_profiles WHERE userId=${userId} LIMIT 1
   `);
   return rowsFromResult(result)[0] ?? null;
 }
@@ -149,75 +179,101 @@ export async function upsertMatureAccessProfile(
   await dbConn.execute(sql`
     INSERT INTO mature_access_profiles (
       userId, fullName, email, phone, addressLine1, addressLine2, city,
-      stateRegion, postcode, country, dateOfBirth, responsibilityAcceptedAt,
-      consentPolicyAcceptedAt, accessStatus, rejectionReason
+      stateRegion, postcode, country, dateOfBirth,
+      adultAttestationAcceptedAt, responsibilityAcceptedAt,
+      consentPolicyAcceptedAt, archiveRetentionAcceptedAt, termsVersion,
+      accessStatus, rejectionReason
     ) VALUES (
-      ${user.id}, ${input.fullName.trim()}, ${(user.email || input.email).trim().toLowerCase()},
-      ${input.phone.trim()}, ${input.addressLine1.trim()}, ${input.addressLine2?.trim() || null},
-      ${input.city.trim()}, ${input.stateRegion.trim()}, ${input.postcode.trim()},
+      ${user.id}, ${input.fullName.trim()},
+      ${(user.email || input.email).trim().toLowerCase()},
+      ${input.phone.trim()}, ${input.addressLine1.trim()},
+      ${input.addressLine2?.trim() || null}, ${input.city.trim()},
+      ${input.stateRegion.trim()}, ${input.postcode.trim()},
       ${input.country.trim()}, ${input.dateOfBirth},
+      ${input.adultAttestationAccepted ? acceptedAt : null},
       ${input.responsibilityAccepted ? acceptedAt : null},
-      ${input.consentPolicyAccepted ? acceptedAt : null}, 'pending', NULL
+      ${input.consentPolicyAccepted ? acceptedAt : null},
+      ${input.archiveRetentionAccepted ? acceptedAt : null},
+      ${MATURE_ACCESS_TERMS_VERSION}, 'pending', NULL
     )
     ON DUPLICATE KEY UPDATE
-      fullName = VALUES(fullName),
-      email = VALUES(email),
-      phone = VALUES(phone),
-      addressLine1 = VALUES(addressLine1),
-      addressLine2 = VALUES(addressLine2),
-      city = VALUES(city),
-      stateRegion = VALUES(stateRegion),
-      postcode = VALUES(postcode),
-      country = VALUES(country),
-      dateOfBirth = VALUES(dateOfBirth),
-      responsibilityAcceptedAt = VALUES(responsibilityAcceptedAt),
-      consentPolicyAcceptedAt = VALUES(consentPolicyAcceptedAt),
-      phoneVerifiedAt = NULL,
-      identityVerificationSessionId = NULL,
-      identityVerifiedAt = NULL,
-      cardVerificationSessionId = NULL,
-      cardholderName = NULL,
-      cardNameMatchedAt = NULL,
-      accessStatus = 'pending',
-      rejectionReason = NULL,
-      updatedAt = NOW()
+      fullName=VALUES(fullName),
+      email=VALUES(email),
+      phone=VALUES(phone),
+      addressLine1=VALUES(addressLine1),
+      addressLine2=VALUES(addressLine2),
+      city=VALUES(city),
+      stateRegion=VALUES(stateRegion),
+      postcode=VALUES(postcode),
+      country=VALUES(country),
+      dateOfBirth=VALUES(dateOfBirth),
+      adultAttestationAcceptedAt=VALUES(adultAttestationAcceptedAt),
+      responsibilityAcceptedAt=VALUES(responsibilityAcceptedAt),
+      consentPolicyAcceptedAt=VALUES(consentPolicyAcceptedAt),
+      archiveRetentionAcceptedAt=VALUES(archiveRetentionAcceptedAt),
+      termsVersion=VALUES(termsVersion),
+      phoneVerifiedAt=NULL,
+      identityVerificationSessionId=NULL,
+      identityVerifiedAt=NULL,
+      cardVerificationSessionId=NULL,
+      cardholderName=NULL,
+      cardNameMatchedAt=NULL,
+      accessStatus='pending',
+      rejectionReason=NULL,
+      updatedAt=NOW()
   `);
   await db.updateUser(user.id, { isAdultVerified: false } as any);
 }
 
-export async function recordPhoneVerified(dbConn: any, userId: number): Promise<void> {
-  await ensureMatureAccessTable(dbConn);
-  await dbConn.execute(sql`
-    UPDATE mature_access_profiles SET phoneVerifiedAt = NOW(), updatedAt = NOW()
-    WHERE userId = ${userId}
-  `);
-}
-
-export async function recordIdentitySession(dbConn: any, userId: number, sessionId: string): Promise<void> {
+export async function recordPhoneVerified(
+  dbConn: any,
+  userId: number,
+): Promise<void> {
   await ensureMatureAccessTable(dbConn);
   await dbConn.execute(sql`
     UPDATE mature_access_profiles
-    SET identityVerificationSessionId = ${sessionId}, identityVerifiedAt = NULL,
-        accessStatus = 'pending', updatedAt = NOW()
-    WHERE userId = ${userId}
+    SET phoneVerifiedAt=NOW(), updatedAt=NOW()
+    WHERE userId=${userId}
   `);
 }
 
-export async function recordIdentityVerified(dbConn: any, userId: number): Promise<void> {
-  await ensureMatureAccessTable(dbConn);
-  await dbConn.execute(sql`
-    UPDATE mature_access_profiles SET identityVerifiedAt = NOW(), updatedAt = NOW()
-    WHERE userId = ${userId}
-  `);
-}
-
-export async function recordCardSession(dbConn: any, userId: number, sessionId: string): Promise<void> {
+export async function recordIdentitySession(
+  dbConn: any,
+  userId: number,
+  sessionId: string,
+): Promise<void> {
   await ensureMatureAccessTable(dbConn);
   await dbConn.execute(sql`
     UPDATE mature_access_profiles
-    SET cardVerificationSessionId = ${sessionId}, cardholderName = NULL,
-        cardNameMatchedAt = NULL, accessStatus = 'pending', updatedAt = NOW()
-    WHERE userId = ${userId}
+    SET identityVerificationSessionId=${sessionId}, identityVerifiedAt=NULL,
+        accessStatus='pending', updatedAt=NOW()
+    WHERE userId=${userId}
+  `);
+}
+
+export async function recordIdentityVerified(
+  dbConn: any,
+  userId: number,
+): Promise<void> {
+  await ensureMatureAccessTable(dbConn);
+  await dbConn.execute(sql`
+    UPDATE mature_access_profiles
+    SET identityVerifiedAt=NOW(), updatedAt=NOW()
+    WHERE userId=${userId}
+  `);
+}
+
+export async function recordCardSession(
+  dbConn: any,
+  userId: number,
+  sessionId: string,
+): Promise<void> {
+  await ensureMatureAccessTable(dbConn);
+  await dbConn.execute(sql`
+    UPDATE mature_access_profiles
+    SET cardVerificationSessionId=${sessionId}, cardholderName=NULL,
+        cardNameMatchedAt=NULL, accessStatus='pending', updatedAt=NOW()
+    WHERE userId=${userId}
   `);
 }
 
@@ -230,12 +286,14 @@ export async function recordCardNameResult(
   await ensureMatureAccessTable(dbConn);
   await dbConn.execute(sql`
     UPDATE mature_access_profiles
-    SET cardholderName = ${cardholderName},
-        cardNameMatchedAt = ${matched ? new Date() : null},
-        rejectionReason = ${matched ? null : "Cardholder name did not match the registered legal name."},
-        accessStatus = ${matched ? "pending" : "rejected"},
-        updatedAt = NOW()
-    WHERE userId = ${userId}
+    SET cardholderName=${cardholderName},
+        cardNameMatchedAt=${matched ? new Date() : null},
+        rejectionReason=${matched
+          ? null
+          : "Cardholder name did not match the registered legal name."},
+        accessStatus=${matched ? "pending" : "rejected"},
+        updatedAt=NOW()
+    WHERE userId=${userId}
   `);
 }
 
@@ -245,7 +303,8 @@ export async function getMatureAccessStatus(
 ): Promise<MatureAccessStatus> {
   const profile = await getMatureAccessProfile(dbConn, user.id);
   const paidMembership = isPaidMatureAccessUser(user as any);
-  const profileComplete = Boolean(profile
+  const profileComplete = Boolean(
+    profile
     && profile.fullName
     && profile.email
     && profile.phone
@@ -254,38 +313,53 @@ export async function getMatureAccessStatus(
     && profile.stateRegion
     && profile.postcode
     && profile.country
-    && profile.dateOfBirth);
-  const adultAgeConfirmed = Boolean(profile?.dateOfBirth && calculateAge(String(profile.dateOfBirth).slice(0, 10)) >= 18);
+    && profile.dateOfBirth,
+  );
+  const adultAgeConfirmed = Boolean(
+    profile?.dateOfBirth
+    && calculateAge(String(profile.dateOfBirth).slice(0, 10)) >= 18,
+  );
+  const adultAttestationAccepted = Boolean(profile?.adultAttestationAcceptedAt);
   const phoneVerified = Boolean(profile?.phoneVerifiedAt);
   const identityVerified = Boolean(profile?.identityVerifiedAt);
   const cardNameMatched = Boolean(profile?.cardNameMatchedAt);
   const responsibilityAccepted = Boolean(profile?.responsibilityAcceptedAt);
   const consentPolicyAccepted = Boolean(profile?.consentPolicyAcceptedAt);
+  const archiveRetentionAccepted = Boolean(profile?.archiveRetentionAcceptedAt);
   const accessGranted = paidMembership
     && profileComplete
     && adultAgeConfirmed
+    && adultAttestationAccepted
     && phoneVerified
     && identityVerified
     && cardNameMatched
     && responsibilityAccepted
-    && consentPolicyAccepted;
+    && consentPolicyAccepted
+    && archiveRetentionAccepted
+    && profile?.accessStatus !== "revoked";
 
   const missing: string[] = [];
   if (!paidMembership) missing.push("active paid Virelle membership");
-  if (!profileComplete) missing.push("complete legal identity and address profile");
+  if (!profileComplete) missing.push("complete individual legal identity and address profile");
   if (!adultAgeConfirmed) missing.push("verified age of 18 or older");
+  if (!adultAttestationAccepted) missing.push("18+ personal attestation");
   if (!phoneVerified) missing.push("phone two-factor verification");
   if (!identityVerified) missing.push("government identity verification");
   if (!cardNameMatched) missing.push("matching cardholder name");
   if (!responsibilityAccepted) missing.push("account responsibility declaration");
   if (!consentPolicyAccepted) missing.push("likeness and consent policy acceptance");
+  if (!archiveRetentionAccepted) missing.push("90-day private archive acknowledgement");
 
   if (profile) {
     await dbConn.execute(sql`
       UPDATE mature_access_profiles
-      SET accessStatus = ${accessGranted ? "verified" : profile.accessStatus === "rejected" ? "rejected" : "pending"},
-          updatedAt = NOW()
-      WHERE userId = ${user.id}
+      SET accessStatus=${accessGranted
+        ? "verified"
+        : profile.accessStatus === "rejected" || profile.accessStatus === "revoked"
+          ? profile.accessStatus
+          : "pending"},
+          updatedAt=NOW()
+      WHERE userId=${user.id}
     `);
   }
   await db.updateUser(user.id, { isAdultVerified: accessGranted } as any);
@@ -294,13 +368,16 @@ export async function getMatureAccessStatus(
     paidMembership,
     profileComplete,
     adultAgeConfirmed,
+    adultAttestationAccepted,
     phoneVerified,
     identityVerified,
     cardNameMatched,
     responsibilityAccepted,
     consentPolicyAccepted,
+    archiveRetentionAccepted,
     accessGranted,
     missing,
+    termsVersion: String(profile?.termsVersion || MATURE_ACCESS_TERMS_VERSION),
     profile: profile ? {
       fullName: String(profile.fullName || ""),
       email: String(profile.email || ""),
@@ -313,7 +390,9 @@ export async function getMatureAccessStatus(
       country: String(profile.country || ""),
       dateOfBirth: String(profile.dateOfBirth || "").slice(0, 10),
       accessStatus: String(profile.accessStatus || "pending"),
-      rejectionReason: profile.rejectionReason ? String(profile.rejectionReason) : null,
+      rejectionReason: profile.rejectionReason
+        ? String(profile.rejectionReason)
+        : null,
     } : null,
   };
 }
