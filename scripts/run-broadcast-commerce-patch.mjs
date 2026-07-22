@@ -4,14 +4,39 @@ import { spawnSync } from "node:child_process";
 const sourcePath = "scripts/apply-broadcast-commerce-once.mjs";
 let source = fs.readFileSync(sourcePath, "utf8");
 
-// The patch generator contains nested TypeScript template literals. Normalize
-// doubled escapes before Node parses it, while preserving the escapes required
-// to emit those literals into the target source files.
+// Normalize doubled escapes used to represent nested TypeScript literals.
 source = source
   .replaceAll("\\\\`", "\\`")
   .replaceAll("\\\\${", "\\${")
   .replace("  BROADCAST_MINUTE_PACKS,\n", "")
   .replace('    const managed = input.serviceMode !== "direct";\n', "");
+
+function normalizeGeneratedTemplate(name) {
+  const declaration = `  const ${name} = String.raw`;
+  const start = source.indexOf(declaration);
+  if (start < 0) throw new Error(`Generated template not found: ${name}`);
+  const open = source.indexOf("`", start + declaration.length);
+  const nextPatch = source.indexOf("\n\n  content = replaceBetween(", open + 1);
+  if (open < 0 || nextPatch < 0) throw new Error(`Generated template boundary not found: ${name}`);
+  const close = source.lastIndexOf("`;", nextPatch);
+  if (close < open) throw new Error(`Generated template closing delimiter not found: ${name}`);
+
+  let body = source.slice(open + 1, close);
+  body = body
+    .replace(/(?<!\\)`/g, "\\`")
+    .replace(/(?<!\\)\$\{/g, "\\${");
+
+  source = source.slice(0, start)
+    + `  const ${name} = \``
+    + body
+    + "`;"
+    + source.slice(close + 2);
+}
+
+normalizeGeneratedTemplate("newBroadcastBlock");
+normalizeGeneratedTemplate("validationReplacement");
+normalizeGeneratedTemplate("submitReplacement");
+normalizeGeneratedTemplate("broadcastCard");
 
 const runnablePath = "/tmp/apply-broadcast-commerce-once.mjs";
 fs.writeFileSync(runnablePath, source);
