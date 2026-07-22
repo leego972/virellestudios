@@ -22,19 +22,48 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+          show-progress: false
+
+      - name: Stop on previously captured diagnostics
+        run: |
+          if [ -f patch-error.txt ]; then
+            cat patch-error.txt
+            exit 1
+          fi
 
       - name: Apply deterministic source patch
-        run: node scripts/run-broadcast-commerce-patch.mjs
+        id: patch
+        shell: bash
+        run: |
+          set +e
+          node scripts/run-broadcast-commerce-patch.mjs > patch-error.txt 2>&1
+          code=$?
+          cat patch-error.txt
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Persist diagnostics when patch failed
+        if: steps.patch.outputs.exit_code != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add patch-error.txt
+          git commit -m "Capture broadcast integration patch error"
+          git push origin HEAD:${{ github.head_ref }}
+          exit 1
 
       - name: Restore CI and remove one-time patch machinery
+        if: steps.patch.outputs.exit_code == '0'
         run: |
           git fetch origin main
           git checkout origin/main -- .github/workflows/ci.yml
           rm -f scripts/apply-broadcast-commerce-once.mjs
           rm -f scripts/run-broadcast-commerce-patch.mjs
           rm -f .github/workflows/apply-broadcast-commerce-once.yml
+          rm -f patch-error.txt
 
       - name: Commit integrated implementation
+        if: steps.patch.outputs.exit_code == '0'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
