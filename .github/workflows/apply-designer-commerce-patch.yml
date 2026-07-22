@@ -19,16 +19,16 @@ jobs:
         with:
           ref: feature/designer-commerce-shipping-v1
           fetch-depth: 0
-      - name: Apply deterministic patch
-        run: python3 scripts/apply-designer-commerce-patch.py
-      - name: Commit patched production files
+      - name: Finalize existing designer commerce infrastructure
+        run: python3 scripts/finalize-designer-commerce.py
+      - name: Commit integrated production files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add drizzle/schema.ts server client
+          git add -A drizzle/schema.ts server client
           if git diff --cached --quiet; then
-            echo "No patch changes to commit"
+            echo "No integration changes to commit"
           else
-            git commit -m "Integrate separate designer commerce and shipping"
+            git commit -m "Finalize separate designer commerce and shipping"
             git push origin HEAD:feature/designer-commerce-shipping-v1
           fi
