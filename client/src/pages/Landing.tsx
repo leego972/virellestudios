@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import SiteHead from "@/components/SiteHead";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import VSWatermark from "@/components/VSWatermark";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -93,14 +94,7 @@ export default function Landing() {
         }}
       />
 
-      <div className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center">
-        <img
-          src={LOGO_URL}
-          alt=""
-          className="h-[430px] w-[430px] object-contain opacity-[0.055] sm:h-[620px] sm:w-[620px]"
-          draggable={false}
-        />
-      </div>
+      <VSWatermark className="opacity-45" />
 
       <nav
         className={`fixed inset-x-0 top-0 z-50 border-b transition-all ${
@@ -176,6 +170,17 @@ export default function Landing() {
       <main className="relative z-10">
         <section className="flex min-h-[88vh] items-center px-4 pb-20 pt-32 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
+            <div className="mb-6 flex flex-col items-center justify-center">
+              <img
+                src={LOGO_URL}
+                alt="Virelle Studios official logo"
+                className="h-24 w-24 rounded-2xl object-contain drop-shadow-[0_0_35px_rgba(212,175,55,0.32)] sm:h-32 sm:w-32"
+                draggable={false}
+              />
+              <p className="mt-4 text-sm font-black uppercase tracking-[0.34em] text-amber-300 sm:text-base">
+                Virelle Studios
+              </p>
+            </div>
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">
               <Sparkles className="h-3.5 w-3.5" />
               Professional production orchestration
