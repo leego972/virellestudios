@@ -52,7 +52,7 @@ type CutScene = {
   trimOut: number;
   transitionType: string;
   transitionDuration: number;
-  directorNote?: string | null;
+  directorNote?: string;
   scene: {
     id: number;
     title?: string | null;
