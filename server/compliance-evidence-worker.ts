@@ -5,6 +5,10 @@ import {
   purgeExpiredArchive,
   scanVideoOutputs,
 } from "./_core/complianceEvidence";
+import {
+  assertComplianceArchiveConfiguration,
+  ensureEvidenceConfirmationTrigger,
+} from "./_core/complianceEvidenceGuards";
 
 const INTERVAL_MS = Math.max(
   60_000,
@@ -17,7 +21,9 @@ export async function runComplianceEvidenceCycle(): Promise<void> {
   if (running) return;
   running = true;
   try {
-    await ensureComplianceEvidenceTables();
+    const dbConn = await ensureComplianceEvidenceTables();
+    await ensureEvidenceConfirmationTrigger(dbConn);
+    assertComplianceArchiveConfiguration();
     const discovered = await scanVideoOutputs();
     const archived = await processArchiveQueue(
       Math.max(1, Number(process.env.COMPLIANCE_ARCHIVE_BATCH_SIZE || 3)),
