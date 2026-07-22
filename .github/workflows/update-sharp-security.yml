@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  update-main:
+  generate-security-branch:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -28,16 +28,17 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Update sharp and remove obsolete external types
+      - name: Generate patched manifest and lockfile only
         run: |
-          pnpm remove @types/sharp
-          pnpm add sharp@0.35.3
-      - name: Commit secured dependency baseline
+          pnpm remove @types/sharp --lockfile-only
+          pnpm add sharp@0.35.3 --lockfile-only
+      - name: Commit to dedicated security branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B security/sharp-0.35.3
           git add package.json pnpm-lock.yaml
           git commit -m "Update sharp to patched 0.35.3"
-          git push origin HEAD:main
+          git push --force origin HEAD:security/sharp-0.35.3
 
-# Trigger the secured main baseline before merging designer commerce.
+# Trigger isolated security branch generation.
