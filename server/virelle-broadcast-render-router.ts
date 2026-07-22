@@ -1423,14 +1423,17 @@ export const virelleBroadcastRenderRouter = router({
     const provider = aiAssisted
       ? await requireStrictByokProvider(ctx.user.id, resolved.requestedProvider)
       : "relay";
+    const billableMinutes = input.durationMinutes * normalizedChannels.length;
     const reservation = await reserveBroadcastMinutes(
       dbConn,
       ctx.user as any,
-      input.durationMinutes,
+      billableMinutes,
       {
         serviceMode: input.serviceMode,
         contentMode: resolved.contentMode,
+        sessionDurationMinutes: input.durationMinutes,
         outputCount: normalizedChannels.length,
+        billableMinutes,
       },
     );
     const encryptedChannels = encryptApiKey(JSON.stringify(normalizedChannels));
@@ -1444,6 +1447,8 @@ export const virelleBroadcastRenderRouter = router({
         : "managed_minutes_no_ai_provider_charge",
       mode: "broadcast",
       durationMinutes: input.durationMinutes,
+      outputCount: normalizedChannels.length,
+      billableMinutes,
       channels: redacted,
       sourceSwappysJobId: resolved.sourceSwappysJobId,
       contentMode: resolved.contentMode,
@@ -1525,7 +1530,7 @@ export const virelleBroadcastRenderRouter = router({
         complianceArchiveRetentionDays: 90,
         byokRequired: aiAssisted,
         orchestrationCredits: 0,
-        managedMinutesReserved: input.durationMinutes,
+        managedMinutesReserved: billableMinutes,
         remainingManagedMinutes: reservation.availableMinutes,
         sourceSwappysJobId: resolved.sourceSwappysJobId,
       };

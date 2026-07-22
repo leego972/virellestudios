@@ -293,14 +293,14 @@ export default function Pricing() {
             </div>
             <h2 className="mb-4 text-3xl font-bold">Broadcast charges depend on the route selected</h2>
             <p className="mx-auto max-w-3xl text-sm leading-relaxed text-white/50">
-              Direct OBS broadcasting is included with membership and does not use BYOK. Managed relay minutes cover Virelle routing, multi-output delivery, recording and compliance retention. AI-assisted broadcast additionally requires a funded provider key selected during setup.
+              Direct OBS broadcasting is included with membership and does not use BYOK. Managed relay is billed in output minutes: a 60-minute broadcast to three destinations uses 180 minutes. Those minutes cover Virelle routing, recording and compliance retention. AI-assisted broadcast additionally requires a funded provider key selected during setup.
             </p>
           </div>
 
           <div className="mb-6 grid gap-5 md:grid-cols-3">
             {[
               { icon: RadioTower, title: "Direct broadcast", price: "A$0/min", text: "OBS connects directly to the destination. No Virelle relay, no AI processing and no BYOK." },
-              { icon: Clapperboard, title: "Managed relay", price: "Uses minute wallet", text: "Virelle handles one or more outputs, recording and the retained compliance copy." },
+              { icon: Clapperboard, title: "Managed relay", price: "Per output minute", text: "Each destination consumes one wallet minute per live minute. Virelle handles routing, recording and the retained compliance copy." },
               { icon: Sparkles, title: "AI-assisted live", price: "Minutes + BYOK", text: "Swappys or another AI transformation is enabled. Provider usage is charged by the provider through the user's key." },
             ].map((item) => {
               const Icon = item.icon;
@@ -337,7 +337,7 @@ export default function Pricing() {
               </Card>
             ))}
           </div>
-          <p className="mt-5 text-center text-xs text-white/35">Managed minute balances do not expire. Admin accounts have unrestricted internal access.</p>
+          <p className="mt-5 text-center text-xs text-white/35">Managed output-minute balances do not expire. One 60-minute stream to two destinations consumes 120 minutes. Admin accounts have unrestricted internal access.</p>
         </section>
 
         <section id="credits" className="mb-20 scroll-mt-20">

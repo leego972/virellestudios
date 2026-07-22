@@ -684,6 +684,9 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
   const unlimitedMinutes = Boolean(minuteWallet.data?.unlimited);
   const minutePackages = minuteWallet.data?.packages || [];
   const needsByokForBroadcast = serviceMode === "ai_assisted";
+  const managedMinutesRequired = serviceMode === "direct"
+    ? 0
+    : durationMinutes * channels.length;
 
   const transformOptions: Array<[TransformGoal, string]> = isAdult
     ? [
@@ -811,9 +814,9 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
       broadcast
       && serviceMode !== "direct"
       && !unlimitedMinutes
-      && minuteBalance < durationMinutes
+      && minuteBalance < managedMinutesRequired
     ) {
-      toast.error(`This broadcast needs ${durationMinutes} managed minutes; ${minuteBalance} remain.`);
+      toast.error(`This setup needs ${managedMinutesRequired} managed output minutes; ${minuteBalance} remain.`);
       return false;
     }
     return true;
@@ -1421,6 +1424,10 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
                       {unlimitedMinutes ? "Unlimited" : minuteBalance.toLocaleString()}
                     </p>
                     <p className="text-[11px] text-white/35">Managed minutes do not expire.</p>
+                    <p className="mt-1 text-[11px] text-amber-200/70">
+                      This setup reserves {managedMinutesRequired.toLocaleString()} output minutes
+                      ({durationMinutes} minutes × {channels.length} output{channels.length === 1 ? "" : "s"}).
+                    </p>
                   </div>
                 </div>
               )}
@@ -1492,7 +1499,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
 
               <Button
                 className="w-full"
-                disabled={(needsByokForBroadcast && !hasAnyProvider) || createBroadcast.isPending || (serviceMode !== "direct" && !unlimitedMinutes && minuteBalance < durationMinutes)}
+                disabled={(needsByokForBroadcast && !hasAnyProvider) || createBroadcast.isPending || (serviceMode !== "direct" && !unlimitedMinutes && minuteBalance < managedMinutesRequired)}
                 onClick={submitBroadcast}
               >
                 {createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />}
