@@ -216,7 +216,7 @@ const blockExpiredTester = t.middleware(async opts => {
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
-export const creationProcedure = t.procedure.use(blockExpiredTester);
+export const creationProcedure = protectedProcedure.use(blockExpiredTester);
 
 export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
