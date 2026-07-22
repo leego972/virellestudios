@@ -9,7 +9,6 @@ import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
 import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
-import SceneVideoDeleteControl from "@/components/SceneVideoDeleteControl";
 import StoryboardShotWorkspaceOverlay from "@/components/StoryboardShotWorkspaceOverlay";
 import ThirdPartyDesignerMarketplaceOverlay from "@/components/ThirdPartyDesignerMarketplaceOverlay";
 import TimelineEditSuiteOverlay from "@/components/TimelineEditSuiteOverlay";
@@ -237,7 +236,6 @@ createRoot(document.getElementById("root")!).render(
       <App />
       <StoryboardShotWorkspaceOverlay />
       <TimelineEditSuiteOverlay />
-      <SceneVideoDeleteControl />
       <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
