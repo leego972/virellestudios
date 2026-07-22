@@ -62,4 +62,14 @@ describe("character generation and continuity wiring", () => {
     expect(generatorSource).toContain('const policy = request.qualityPolicy ?? (hasBoundWardrobe ? "strict" : "standard")');
     expect(generatorSource).toContain("previousFrame = await extractFrame");
   });
+
+  it("keeps the consecutive-scene integration regression in the final suite", () => {
+    const integrationSource = source("server/characterWardrobeSceneContinuity.integration.test.ts");
+
+    expect(integrationSource).toContain("keeps the same photo-derived identity and assigned costume through consecutive scenes");
+    expect(integrationSource).toContain("replaces the earlier costume at the intended scene without mixing garment references");
+    expect(integrationSource).toContain("characterReferenceImageUrl");
+    expect(integrationSource).toContain("wardrobeReferenceImageUrl");
+    expect(integrationSource).toContain("referenceImages).not.toContain");
+  });
 });
