@@ -1,10 +1,10 @@
 import { logger } from "./_core/logger";
+import { ensureComplianceEvidenceTables } from "./_core/complianceEvidence";
 import {
-  ensureComplianceEvidenceTables,
-  processArchiveQueue,
-  purgeExpiredArchive,
-  scanVideoOutputs,
-} from "./_core/complianceEvidence";
+  processSecureArchiveQueue,
+  purgeSecureExpiredArchive,
+  scanCompletedVideoOutputs,
+} from "./_core/complianceArchiveTransport";
 import {
   assertComplianceArchiveConfiguration,
   ensureEvidenceConfirmationTrigger,
@@ -24,14 +24,14 @@ export async function runComplianceEvidenceCycle(): Promise<void> {
     const dbConn = await ensureComplianceEvidenceTables();
     await ensureEvidenceConfirmationTrigger(dbConn);
     assertComplianceArchiveConfiguration();
-    const discovered = await scanVideoOutputs();
-    const archived = await processArchiveQueue(
+    const discovered = await scanCompletedVideoOutputs();
+    const archived = await processSecureArchiveQueue(
       Math.max(1, Number(process.env.COMPLIANCE_ARCHIVE_BATCH_SIZE || 3)),
     );
-    const expiredDeleted = await purgeExpiredArchive(100);
+    const expiredDeleted = await purgeSecureExpiredArchive(100);
     if (discovered || archived || expiredDeleted) {
       logger.info(
-        `[ComplianceArchive] discovered=${discovered}, archived=${archived}, expiredDeleted=${expiredDeleted}`,
+        `[ComplianceArchive] completedDiscovered=${discovered}, archived=${archived}, expiredDeleted=${expiredDeleted}`,
       );
     }
   } catch (error: any) {
@@ -51,7 +51,7 @@ export function startComplianceEvidenceWorker(): void {
     return;
   }
   logger.info(
-    `[ComplianceArchive] starting site-wide private archive; interval=${INTERVAL_MS}ms`,
+    `[ComplianceArchive] starting secure completed-output archive; interval=${INTERVAL_MS}ms`,
   );
   setTimeout(() => runComplianceEvidenceCycle().catch(() => undefined), 12_000);
   const timer = setInterval(
