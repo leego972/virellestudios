@@ -222,7 +222,6 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <AutomaticContrastGuard />
       <GlobalSidebarLogoutConfirm />
-      <GlobalMediaPlayerControls />
       <LandingVerifiedAppsGuard />
       <PortalAccessBoundary />
       <PortalEntryLinks />
@@ -230,6 +229,7 @@ createRoot(document.getElementById("root")!).render(
       <DesignerCommercePanel />
       <ThirdPartyDesignerMarketplaceOverlay />
       <App />
+      <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
 );
