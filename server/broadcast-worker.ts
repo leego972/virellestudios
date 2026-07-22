@@ -37,10 +37,14 @@ type BridgeResponse = {
   sessionId?: string;
   status?: string;
   outputUrl?: string;
+  recordingUrl?: string;
   previewUrl?: string;
 };
 
-const activeSessions = new Map<number, { startedAt: Date; channels: number; provider: string }>();
+const activeSessions = new Map<
+  number,
+  { startedAt: Date; channels: number; provider: string }
+>();
 
 function bridgeConfig(): { url: string; token: string } | null {
   const rawUrl = process.env.BROADCAST_BRIDGE_URL;
@@ -72,7 +76,9 @@ function decryptChannels(ciphertext: string | null | undefined): BridgeChannel[]
   const plaintext = decryptApiKey(ciphertext);
   if (!plaintext) throw new Error("Broadcast output credentials could not be decrypted.");
   let parsed: unknown;
-  try { parsed = JSON.parse(plaintext); } catch { throw new Error("Broadcast output credentials are corrupt."); }
+  try { parsed = JSON.parse(plaintext); } catch {
+    throw new Error("Broadcast output credentials are corrupt.");
+  }
   if (!Array.isArray(parsed) || parsed.length < 1 || parsed.length > 5) {
     throw new Error("Broadcast output channel configuration is invalid.");
   }
@@ -89,11 +95,15 @@ function decryptChannels(ciphertext: string | null | undefined): BridgeChannel[]
 }
 
 function parseJsonArray(value: unknown): string[] {
-  if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === "string");
+  if (Array.isArray(value)) {
+    return value.filter((entry): entry is string => typeof entry === "string");
+  }
   if (typeof value !== "string") return [];
   try {
     const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed.filter((entry): entry is string => typeof entry === "string") : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((entry): entry is string => typeof entry === "string")
+      : [];
   } catch {
     return [];
   }
@@ -102,14 +112,16 @@ function parseJsonArray(value: unknown): string[] {
 async function markWaitingForBridge(dbConn: any, jobId: number) {
   await dbConn.execute(sql`
     UPDATE virelle_video_transform_jobs
-    SET status='waiting_for_provider',
-        errorMessage=NULL,
-        updatedAt=NOW()
+    SET status='waiting_for_provider', errorMessage=NULL, updatedAt=NOW()
     WHERE id=${jobId}
   `);
 }
 
-async function submitBridgeSession(job: any, providerKey: string, channels: BridgeChannel[]): Promise<BridgeResponse> {
+async function submitBridgeSession(
+  job: any,
+  providerKey: string,
+  channels: BridgeChannel[],
+): Promise<BridgeResponse> {
   const config = bridgeConfig();
   if (!config) throw new Error("BROADCAST_BRIDGE_NOT_CONFIGURED");
 
@@ -118,7 +130,9 @@ async function submitBridgeSession(job: any, providerKey: string, channels: Brid
     userId: Number(job.userId),
     provider: String(job.provider),
     providerKey,
-    sourceSwappysJobId: job.sourceSwappysJobId ? Number(job.sourceSwappysJobId) : null,
+    sourceSwappysJobId: job.sourceSwappysJobId
+      ? Number(job.sourceSwappysJobId)
+      : null,
     projectId: job.projectId ? Number(job.projectId) : null,
     sceneId: job.sceneId ? Number(job.sceneId) : null,
     sourceVideoUrl: job.sourceVideoUrl || null,
@@ -132,6 +146,17 @@ async function submitBridgeSession(job: any, providerKey: string, channels: Brid
     directorNotes: job.directorNotes || null,
     visibleWatermarkMode: job.visibleWatermarkMode,
     outputs: channels,
+    recording: {
+      required: true,
+      userDownloadRequired: true,
+      complianceArchiveRequired: true,
+      format: "mp4",
+      retentionDays: Math.max(
+        90,
+        Number(process.env.COMPLIANCE_RETENTION_DAYS || 90),
+      ),
+      sessionStartedAt: job.createdAt || new Date().toISOString(),
+    },
   };
 
   const response = await fetch(config.url, {
@@ -140,14 +165,16 @@ async function submitBridgeSession(job: any, providerKey: string, channels: Brid
       Authorization: `Bearer ${config.token}`,
       "Content-Type": "application/json",
       Accept: "application/json",
-      "X-Virelle-Bridge-Version": "1",
+      "X-Virelle-Bridge-Version": "2",
     },
     body: JSON.stringify(payload),
     signal: AbortSignal.timeout(20_000),
   });
   if (!response.ok) {
     const detail = (await response.text().catch(() => "")).slice(0, 500);
-    throw new Error(`Broadcast bridge returned HTTP ${response.status}${detail ? `: ${detail}` : ""}`);
+    throw new Error(
+      `Broadcast bridge returned HTTP ${response.status}${detail ? `: ${detail}` : ""}`,
+    );
   }
   const result = await response.json() as BridgeResponse;
   if (!result.sessionId) throw new Error("Broadcast bridge returned no session ID.");
@@ -173,26 +200,33 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
     }
 
     const channels = decryptChannels(job.broadcastChannelsEncrypted);
-    const config = bridgeConfig();
-    if (!config) {
+    if (!bridgeConfig()) {
       await markWaitingForBridge(dbConn, jobId);
-      logger.warn(`[BroadcastWorker] Session ${jobId}: bridge configuration missing; output credentials remain encrypted at rest.`);
+      logger.warn(
+        `[BroadcastWorker] Session ${jobId}: bridge configuration missing; output credentials remain encrypted at rest.`,
+      );
       return;
     }
 
-    activeSessions.set(jobId, { startedAt: new Date(), channels: channels.length, provider: String(job.provider) });
+    activeSessions.set(jobId, {
+      startedAt: new Date(),
+      channels: channels.length,
+      provider: String(job.provider),
+    });
     const bridge = await submitBridgeSession(job, providerKey, channels);
+    const immediateRecording = bridge.recordingUrl || bridge.outputUrl || null;
     await dbConn.execute(sql`
       UPDATE virelle_video_transform_jobs
-      SET status='processing',
-          providerJobId=${bridge.sessionId},
-          outputVideoUrl=${bridge.outputUrl || null},
+      SET status='processing', providerJobId=${bridge.sessionId},
+          outputVideoUrl=${immediateRecording},
           previewImageUrl=${bridge.previewUrl || null},
-          errorMessage=NULL,
-          updatedAt=NOW()
+          recordingRequired=1, broadcastStartedAt=COALESCE(broadcastStartedAt, NOW()),
+          errorMessage=NULL, updatedAt=NOW()
       WHERE id=${jobId}
     `);
-    logger.info(`[BroadcastWorker] Session ${jobId} submitted to configured bridge; outputs=${channels.length} provider=${job.provider}`);
+    logger.info(
+      `[BroadcastWorker] Session ${jobId} submitted; outputs=${channels.length}, recording=${immediateRecording ? "available" : "pending"}`,
+    );
   } catch (error: any) {
     const message = String(error?.message ?? error).slice(0, 500);
     if (message === "BROADCAST_BRIDGE_NOT_CONFIGURED") {
@@ -202,7 +236,7 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
         UPDATE virelle_video_transform_jobs
         SET status='failed', errorMessage=${message}, updatedAt=NOW()
         WHERE id=${jobId}
-      `).catch(() => {});
+      `).catch(() => undefined);
       logger.error(`[BroadcastWorker] Session ${jobId} failed: ${message}`);
     }
     activeSessions.delete(jobId);
@@ -237,7 +271,10 @@ async function runBroadcastCycle(): Promise<void> {
       WHERE mode='broadcast'
         AND (
           status='broadcast_ready'
-          OR (status='waiting_for_provider' AND updatedAt < DATE_SUB(NOW(), INTERVAL ${BRIDGE_RETRY_MINUTES} MINUTE))
+          OR (
+            status='waiting_for_provider'
+            AND updatedAt < DATE_SUB(NOW(), INTERVAL ${BRIDGE_RETRY_MINUTES} MINUTE)
+          )
         )
       ORDER BY createdAt ASC LIMIT 10
     `);
@@ -249,7 +286,13 @@ async function runBroadcastCycle(): Promise<void> {
 }
 
 export function startBroadcastWorker(): void {
-  logger.info(`[BroadcastWorker] Starting — encrypted outputs, strict BYOK, bridge=${bridgeConfig() ? "configured" : "not configured"}`);
+  logger.info(
+    `[BroadcastWorker] Starting — encrypted outputs, mandatory recording, strict BYOK, bridge=${bridgeConfig() ? "configured" : "not configured"}`,
+  );
   setTimeout(() => runBroadcastCycle().catch(console.error), 8_000);
-  setInterval(() => runBroadcastCycle().catch(console.error), POLL_INTERVAL_MS);
+  const timer = setInterval(
+    () => runBroadcastCycle().catch(console.error),
+    POLL_INTERVAL_MS,
+  );
+  timer.unref?.();
 }
