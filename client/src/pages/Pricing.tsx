@@ -83,19 +83,19 @@ const MEMBERSHIPS = [
 ] as const;
 
 const CREDIT_PACKS = [
-  { id: "topup_10", label: "Starter", credits: 200, price: 19 },
-  { id: "topup_50", label: "Producer", credits: 600, price: 49 },
-  { id: "topup_100", label: "Director", credits: 1400, price: 99 },
+  { id: "topup_10", label: "Starter", credits: 200, price: 19, popular: false },
+  { id: "topup_50", label: "Producer", credits: 600, price: 49, popular: false },
+  { id: "topup_100", label: "Director", credits: 1400, price: 99, popular: false },
   { id: "topup_200", label: "Filmmaker", credits: 3500, price: 199, popular: true },
-  { id: "topup_500", label: "Blockbuster", credits: 9000, price: 399 },
-  { id: "topup_1000", label: "Mogul", credits: 22000, price: 799 },
+  { id: "topup_500", label: "Blockbuster", credits: 9000, price: 399, popular: false },
+  { id: "topup_1000", label: "Mogul", credits: 22000, price: 799, popular: false },
 ] as const;
 
 const BROADCAST_PACKS = [
-  { id: "relay_120", label: "Live Starter", minutes: 120, price: 9, rate: "A$4.50/hour" },
+  { id: "relay_120", label: "Live Starter", minutes: 120, price: 9, rate: "A$4.50/hour", popular: false },
   { id: "relay_600", label: "Live Creator", minutes: 600, price: 29, rate: "A$2.90/hour", popular: true },
-  { id: "relay_1500", label: "Live Producer", minutes: 1500, price: 59, rate: "A$2.36/hour" },
-  { id: "relay_3600", label: "Live Studio", minutes: 3600, price: 119, rate: "A$1.98/hour" },
+  { id: "relay_1500", label: "Live Producer", minutes: 1500, price: 59, rate: "A$2.36/hour", popular: false },
+  { id: "relay_3600", label: "Live Studio", minutes: 3600, price: 119, rate: "A$1.98/hour", popular: false },
 ] as const;
 
 const FILM_PACKAGES = [
