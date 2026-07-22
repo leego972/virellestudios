@@ -38,6 +38,7 @@ import { directorAssistantTitanRouter } from "../director-assistant-titan-router
 import { registerSeoV4Routes } from "../seo-engine-v4";
 import { seedAdminUsers } from "./admin-seed";
 import { fulfillWardrobePurchaseSession } from "./wardrobePurchaseFulfillment";
+import { creditBroadcastMinutePurchase } from "./broadcastMinutes";
 
 // Validate production environment on startup
 validateProductionEnv();
@@ -281,6 +282,23 @@ async function startServer() {
                 `signature_cast_unlock fulfillment (event ${event.id}, session ${session.id})`,
                 err.message).catch(() => {});
             }
+            break;
+          }
+
+          if (session.metadata?.type === "adult_broadcast_minutes" && userId) {
+            const dbConn = await db.getDb();
+            if (!dbConn) throw new Error("Database unavailable during broadcast-minute fulfilment.");
+            const fulfilled = await creditBroadcastMinutePurchase(
+              dbConn,
+              userId,
+              String(session.metadata.packId || ""),
+              String(session.id),
+            );
+            logger.info(
+              "[BroadcastMinutes] " + (fulfilled.credited ? "Credited" : "Already fulfilled")
+                + ": user=" + userId + " pack=" + fulfilled.pack.id
+                + " minutes=" + fulfilled.minutes + " session=" + session.id,
+            );
             break;
           }
 

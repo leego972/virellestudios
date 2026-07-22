@@ -28,11 +28,11 @@ const MEMBERSHIPS = [
     name: "Indie",
     monthly: 149,
     annual: 1490,
-    credits: 500,
+    credits: 700,
     badge: "Entry",
     description: "Solo filmmakers and creators developing smaller productions.",
     features: [
-      "500 credits added each month",
+      "700 credits added each month",
       "Up to 2 active projects",
       "Script, character and planning tools",
       "Director AI assistant",
@@ -47,11 +47,11 @@ const MEMBERSHIPS = [
     name: "Creator",
     monthly: 490,
     annual: 4900,
-    credits: 2000,
+    credits: 3000,
     badge: "Most popular",
     description: "Independent producers creating commercial-grade work.",
     features: [
-      "2,000 credits added each month",
+      "3,000 credits added each month",
       "Up to 10 active projects",
       "Video generation, voice and scoring",
       "Character DNA continuity",
@@ -66,11 +66,11 @@ const MEMBERSHIPS = [
     name: "Industry",
     monthly: 1490,
     annual: 14900,
-    credits: 6000,
+    credits: 9000,
     badge: "Commercial",
     description: "Studios, agencies and directors running repeat production pipelines.",
     features: [
-      "6,000 credits added each month",
+      "9,000 credits added each month",
       "Up to 25 active projects",
       "Full VFX and post-production suite",
       "Multi-shot sequencer and NLE export",
@@ -83,12 +83,12 @@ const MEMBERSHIPS = [
 ] as const;
 
 const CREDIT_PACKS = [
-  { id: "topup_10", label: "Starter", credits: 100, price: 19 },
-  { id: "topup_50", label: "Producer", credits: 300, price: 49 },
-  { id: "topup_100", label: "Director", credits: 750, price: 99 },
-  { id: "topup_200", label: "Filmmaker", credits: 2000, price: 199, popular: true },
-  { id: "topup_500", label: "Blockbuster", credits: 5000, price: 399 },
-  { id: "topup_1000", label: "Mogul", credits: 12000, price: 799 },
+  { id: "topup_10", label: "Starter", credits: 200, price: 19 },
+  { id: "topup_50", label: "Producer", credits: 600, price: 49 },
+  { id: "topup_100", label: "Director", credits: 1400, price: 99 },
+  { id: "topup_200", label: "Filmmaker", credits: 3500, price: 199, popular: true },
+  { id: "topup_500", label: "Blockbuster", credits: 9000, price: 399 },
+  { id: "topup_1000", label: "Mogul", credits: 22000, price: 799 },
 ] as const;
 
 const BROADCAST_PACKS = [

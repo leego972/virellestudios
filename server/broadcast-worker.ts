@@ -5,6 +5,10 @@ import { decryptApiKey } from "./_core/securityEngine";
 import { getMatureAccessStatus } from "./_core/matureAccess";
 import { screenContentRequest } from "./_core/contentCompliance";
 import { assertSwappysCreativePolicy } from "./_core/swappysPolicy";
+import {
+  consumeBroadcastMinuteReservation,
+  releaseBroadcastMinuteReservation,
+} from "./_core/broadcastMinutes";
 
 const POLL_INTERVAL_MS = 20_000;
 const BRIDGE_RETRY_MINUTES = 5;
@@ -160,7 +164,7 @@ async function markWaitingForBridge(dbConn: any, jobId: number) {
 
 async function submitBridgeSession(
   job: any,
-  providerKey: string,
+  providerKey: string | null,
   channels: BridgeChannel[],
 ): Promise<BridgeResponse> {
   const config = bridgeConfig();
@@ -172,6 +176,8 @@ async function submitBridgeSession(
     userId: Number(job.userId),
     provider: String(job.provider),
     providerKey,
+    serviceMode: metadata?.serviceMode || "ai_assisted",
+    aiAssisted: (metadata?.serviceMode || "ai_assisted") === "ai_assisted",
     sourceSwappysJobId: job.sourceSwappysJobId
       ? Number(job.sourceSwappysJobId)
       : null,
@@ -270,8 +276,12 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
       targetAge: job.targetAge == null ? null : Number(job.targetAge),
       publicFigureLikeness: Boolean(job.publicFigureLikeness),
     });
-    assertSwappysCreativePolicy({
-      user: workerUser,
+    const jobMetadata = safeJson(job.metadata);
+    const serviceMode = String(jobMetadata?.serviceMode || "ai_assisted");
+    const aiAssisted = serviceMode === "ai_assisted";
+    if (aiAssisted) {
+      assertSwappysCreativePolicy({
+        user: workerUser,
       contentMode: workspace === "adult" ? "open_adult" : "standard",
       consentConfirmed: Boolean(job.consentConfirmed),
       allSubjectsAdultsConfirmed: Boolean(job.allSubjectsAdultsConfirmed),
@@ -281,11 +291,19 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
       directorNotes: job.directorNotes,
       broadcast: true,
       publicFigureLikeness: Boolean(job.publicFigureLikeness),
-      aiGeneratedCharactersOnly: Boolean(job.aiGeneratedCharactersOnly),
-    });
+        aiGeneratedCharactersOnly: Boolean(job.aiGeneratedCharactersOnly),
+      });
+    }
 
-    const providerKey = await resolveByokKey(userId, String(job.provider));
-    if (!providerKey) {
+    const providerKey = aiAssisted
+      ? await resolveByokKey(userId, String(job.provider))
+      : null;
+    if (aiAssisted && !providerKey) {
+      await releaseBroadcastMinuteReservation(
+        dbConn,
+        jobMetadata?.reservationKey,
+        "AI-assisted broadcast could not start because its BYOK provider key was unavailable.",
+      ).catch(() => undefined);
       await dbConn.execute(sql`
         UPDATE virelle_video_transform_jobs
         SET status='failed',
@@ -314,6 +332,11 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
       provider: String(job.provider),
     });
     const bridge = await submitBridgeSession(job, providerKey, channels);
+    await consumeBroadcastMinuteReservation(
+      dbConn,
+      jobMetadata?.reservationKey,
+      "Managed broadcast accepted by the bridge.",
+    );
     const immediateRecording = bridge.recordingUrl || null;
     const completed = Boolean(
       immediateRecording
@@ -339,6 +362,12 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
     if (message === "BROADCAST_BRIDGE_NOT_CONFIGURED") {
       await markWaitingForBridge(dbConn, jobId);
     } else {
+      const failedMetadata = safeJson(job.metadata);
+      await releaseBroadcastMinuteReservation(
+        dbConn,
+        failedMetadata?.reservationKey,
+        `Broadcast failed before the bridge accepted the session: ${message}`,
+      ).catch(() => undefined);
       await dbConn.execute(sql`
         UPDATE virelle_video_transform_jobs
         SET status='failed', errorMessage=${message}, updatedAt=NOW()
@@ -399,7 +428,7 @@ async function runBroadcastCycle(): Promise<void> {
 
 export function startBroadcastWorker(): void {
   logger.info(
-    `[BroadcastWorker] Starting — encrypted outputs, mandatory recording, strict BYOK, bridge=${bridgeConfig() ? "configured" : "not configured"}`,
+    `[BroadcastWorker] Starting — encrypted outputs, mandatory managed recording, BYOK only for AI-assisted sessions, bridge=${bridgeConfig() ? "configured" : "not configured"}`,
   );
   setTimeout(() => runBroadcastCycle().catch(console.error), 8_000);
   const timer = setInterval(

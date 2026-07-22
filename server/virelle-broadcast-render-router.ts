@@ -14,6 +14,14 @@ import { requireVfxStudioTier } from "./_core/vfxStudioMiddleware";
 import { encryptApiKey } from "./_core/securityEngine";
 import { stripe } from "./_core/subscription";
 import {
+  BROADCAST_MINUTE_PACKS,
+  attachBroadcastReservationToJob,
+  createBroadcastMinuteCheckout,
+  getBroadcastMinuteWallet,
+  releaseBroadcastMinuteReservation,
+  reserveBroadcastMinutes,
+} from "./_core/broadcastMinutes";
+import {
   calculateAge,
   getMatureAccessProfile,
   getMatureAccessStatus,
@@ -552,6 +560,7 @@ async function validateResolvedJob(
   ctx: any,
   resolved: Awaited<ReturnType<typeof resolveJobInput>>,
   broadcast: boolean,
+  aiAssisted = true,
 ) {
   const workspace = resolved.contentMode === "open_adult" ? "adult" : "standard";
   const matureStatus = workspace === "adult"
@@ -575,8 +584,9 @@ async function validateResolvedJob(
     targetAge: resolved.targetAge,
     publicFigureLikeness: resolved.publicFigureLikeness,
   });
-  assertSwappysCreativePolicy({
-    user: policyUser,
+  if (!broadcast || aiAssisted) {
+    assertSwappysCreativePolicy({
+      user: policyUser,
     contentMode: resolved.contentMode,
     consentConfirmed: resolved.consentConfirmed,
     allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
@@ -586,8 +596,9 @@ async function validateResolvedJob(
     directorNotes: resolved.directorNotes,
     broadcast,
     publicFigureLikeness: resolved.publicFigureLikeness,
-    aiGeneratedCharactersOnly: resolved.aiGeneratedCharactersOnly,
-  });
+      aiGeneratedCharactersOnly: resolved.aiGeneratedCharactersOnly,
+    });
+  }
   return matureStatus;
 }
 
@@ -1011,27 +1022,64 @@ export const virelleBroadcastRenderRouter = router({
   getByokStatus: protectedProcedure.query(async ({ ctx }) => {
     requireVfxStudioTier(
       ctx.user as any,
-      "creator",
+      "indie",
       "Virelle Broadcast / Studio Render",
     );
     const keys = await db.getUserApiKeys(ctx.user.id);
     const status = maskedProviderStatus(keys);
     return {
       ok: true,
-      byokRequired: true,
+      byokRequired: false,
+      byokRequiredForStudioRender: true,
+      byokRequiredForAiAssistedBroadcast: true,
       bridgeConfigured: BRIDGE_CONFIGURED,
       recordingRequired: true,
       complianceRetentionDays: Math.max(
         90,
         Number(process.env.COMPLIANCE_RETENTION_DAYS || 90),
       ),
-      policy: "Virelle membership unlocks orchestration. Rendering and live transformation use the user's provider key.",
+      policy: "Plain direct or managed broadcasting does not require BYOK. Studio Render and AI-assisted live transformations use the user's funded provider key.",
       providers: status,
       hasAnyProvider: Object.values(status).some(Boolean),
       supportedProviders: STRICT_BYOK_PROVIDERS,
       supportedDestinations: BROADCAST_DESTINATIONS,
       contentModes: SWAPPYS_CONTENT_MODES,
     };
+  }),
+
+  getBroadcastMinuteWallet: protectedProcedure.query(async ({ ctx }) => {
+    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    const dbConn = await db.getDb();
+    if (!dbConn) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    return getBroadcastMinuteWallet(dbConn, ctx.user as any);
+  }),
+
+  createBroadcastMinuteCheckout: protectedProcedure.input(z.object({
+    packId: z.enum(["relay_120", "relay_600", "relay_1500", "relay_3600"]),
+    returnUrl: z.string().url().max(1000),
+  })).mutation(async ({ ctx, input }) => {
+    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    const statusDb = await db.getDb();
+    if (!statusDb) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    const matureStatus = await getMatureAccessStatus(statusDb, ctx.user as any);
+    if (!matureStatus.accessGranted) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Verified Adult Studio access is required to purchase managed broadcast minutes.",
+      });
+    }
+    const returnUrl = safeReturnUrl(input.returnUrl);
+    const separator = returnUrl.includes("?") ? "&" : "?";
+    return createBroadcastMinuteCheckout({
+      user: ctx.user as any,
+      packId: input.packId,
+      successUrl: returnUrl + separator + "broadcast_minutes=success&pack=" + input.packId,
+      cancelUrl: returnUrl + separator + "broadcast_minutes=cancelled",
+    });
   }),
 
   getSwappysHandoff: protectedProcedure.input(z.object({
@@ -1220,11 +1268,12 @@ export const virelleBroadcastRenderRouter = router({
     }),
 
   createBroadcastSession: protectedProcedure.input(createJobInput.extend({
+    serviceMode: z.enum(["direct", "managed", "ai_assisted"]).default("managed"),
     durationMinutes: z.union([
       z.literal(30),
       z.literal(60),
       z.literal(120),
-    ]).default(30),
+    ]).default(60),
     channels: z.array(z.object({
       destination: z.enum(BROADCAST_DESTINATIONS),
       ingestUrl: z.string().max(2000).optional().nullable(),
@@ -1233,7 +1282,7 @@ export const virelleBroadcastRenderRouter = router({
   })).mutation(async ({ ctx, input }) => {
     requireVfxStudioTier(
       ctx.user as any,
-      "creator",
+      "indie",
       "Virelle Broadcast Mode",
     );
     const dbConn = await db.getDb();
@@ -1245,87 +1294,160 @@ export const virelleBroadcastRenderRouter = router({
     }
     await ensureBroadcastRenderTables(dbConn);
     const resolved = await resolveJobInput(dbConn, ctx.user.id, input);
+    const aiAssisted = input.serviceMode === "ai_assisted";
     const matureStatus = await validateResolvedJob(
       dbConn,
       ctx,
       resolved,
       true,
+      aiAssisted,
     );
 
-    const minimumAvatarAge = resolved.contentMode === "open_adult" ? 18 : 16;
-    if (resolved.transformGoal === "adult_to_child") {
+    if (resolved.contentMode === "open_adult" && input.serviceMode === "direct") {
       throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Child-transform goals are not permitted in live Broadcast mode.",
-      });
-    }
-    if (resolved.targetAge != null && resolved.targetAge < minimumAvatarAge) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: `Broadcast avatar target age must be ${minimumAvatarAge} or older.`,
+        code: "FORBIDDEN",
+        message: "Adult Studio broadcasts must use managed relay so the required recording and compliance copy can be retained.",
       });
     }
     if (
-      resolved.transformGoal === "younger_self"
-      && resolved.targetAge == null
+      resolved.contentMode === "open_adult"
+      && (!resolved.consentConfirmed || !resolved.allSubjectsAdultsConfirmed)
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: `Younger-self broadcasts require an explicit target age of ${minimumAvatarAge} or older.`,
+        message: "Adult broadcasts require consent confirmation and confirmation that every depicted person is at least 18.",
+      });
+    }
+    if (aiAssisted && !resolved.sourceVideoUrl && resolved.sourceImageUrls.length === 0 && !resolved.sourceSwappysJobId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "AI-assisted Broadcast requires source media or a Swappys handoff.",
       });
     }
 
-    const normalizedChannels = normalizeChannels(
-      input.channels as BroadcastChannel[],
-    );
+    if (aiAssisted) {
+      const minimumAvatarAge = resolved.contentMode === "open_adult" ? 18 : 16;
+      if (resolved.transformGoal === "adult_to_child") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Child-transform goals are not permitted in live Broadcast mode.",
+        });
+      }
+      if (resolved.targetAge != null && resolved.targetAge < minimumAvatarAge) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Broadcast avatar target age must be ${minimumAvatarAge} or older.`,
+        });
+      }
+      if (resolved.transformGoal === "younger_self" && resolved.targetAge == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Younger-self broadcasts require an explicit target age of ${minimumAvatarAge} or older.`,
+        });
+      }
+    }
+
+    const normalizedChannels = normalizeChannels(input.channels as BroadcastChannel[]);
     if (
       resolved.contentMode !== "open_adult"
-      && normalizedChannels.some((channel) =>
-        ADULT_BROADCAST_DESTINATIONS.has(channel.destination),
-      )
+      && normalizedChannels.some((channel) => ADULT_BROADCAST_DESTINATIONS.has(channel.destination))
     ) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Adult-platform broadcast destinations are available only inside the verified Adult Studio.",
       });
     }
-    const provider = await requireStrictByokProvider(
-      ctx.user.id,
-      resolved.requestedProvider,
-    );
-    const orchestrationCredits = ({
-      30: 5,
-      60: 10,
-      120: 18,
-    } as Record<number, number>)[input.durationMinutes] ?? 5;
-    if ((ctx.user as any).role !== "admin") {
-      try {
-        await db.deductCredits(
-          ctx.user.id,
-          orchestrationCredits,
-          "virelle_broadcast_orchestration",
-          `BYOK Broadcast orchestration (${input.durationMinutes}min)`,
-        );
-      } catch (error: any) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: error?.message
-            || "Insufficient Virelle credits for broadcast orchestration.",
-        });
-      }
+
+    if (input.serviceMode === "direct") {
+      const redacted = redactChannels(normalizedChannels);
+      const metadata = {
+        byok: false,
+        serviceMode: "direct",
+        costPolicy: "direct_obs_no_virelle_media_charge",
+        durationMinutes: 0,
+        channels: redacted,
+        contentMode: resolved.contentMode,
+        recording: { required: false, managedByVirelle: false },
+        instructions: [
+          "Open OBS Settings, then Stream.",
+          "Choose Custom service and paste the destination ingest URL.",
+          "Paste the destination stream key directly into OBS.",
+          "Start Streaming. Virelle does not receive the stream or charge minutes.",
+        ],
+      };
+      const primary = normalizedChannels[0];
+      const result: any = await dbConn.execute(sql`
+        INSERT INTO virelle_video_transform_jobs
+          (userId, projectId, sceneId, sourceSwappysJobId, mode, status,
+           provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls,
+           referenceImageUrls, transformGoal, targetAge, targetPresentation,
+           contentMode, allSubjectsAdultsConfirmed, publicFigureLikeness,
+           aiGeneratedCharactersOnly, broadcastDestination, ingestUrl,
+           streamKeyMasked, broadcastChannelsEncrypted, recordingRequired,
+           directorNotes, consentConfirmed, consentAttestationVersion,
+           visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
+        VALUES
+          (${ctx.user.id}, ${resolved.projectId}, ${resolved.sceneId},
+           ${resolved.sourceSwappysJobId}, 'broadcast', 'direct_ready', 'direct_obs',
+           ${resolved.sourceVideoUrl}, ${resolved.referenceVideoUrl},
+           ${JSON.stringify(resolved.sourceImageUrls)},
+           ${JSON.stringify(resolved.referenceImageUrls)},
+           ${resolved.transformGoal}, ${resolved.targetAge},
+           ${resolved.targetPresentation}, ${resolved.contentMode},
+           ${resolved.allSubjectsAdultsConfirmed ? 1 : 0},
+           ${resolved.publicFigureLikeness ? 1 : 0},
+           ${resolved.aiGeneratedCharactersOnly ? 1 : 0},
+           ${primary.destination}, ${primary.ingestUrl},
+           ${maskStreamKey(primary.streamKey)}, NULL, 0,
+           ${resolved.directorNotes}, ${resolved.consentConfirmed ? 1 : 0},
+           ${CONSENT_ATTESTATION_VERSION}, 'none', 0, 0,
+           ${JSON.stringify(metadata)})
+      `);
+      const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
+      return {
+        ok: true,
+        sessionId,
+        status: "direct_ready",
+        mode: "broadcast",
+        serviceMode: "direct",
+        provider: "direct_obs",
+        channels: redacted,
+        bridgeConfigured: false,
+        recordingRequired: false,
+        byokRequired: false,
+        managedMinutesReserved: 0,
+        directInstructions: metadata.instructions,
+      };
     }
 
+    const provider = aiAssisted
+      ? await requireStrictByokProvider(ctx.user.id, resolved.requestedProvider)
+      : "relay";
+    const reservation = await reserveBroadcastMinutes(
+      dbConn,
+      ctx.user as any,
+      input.durationMinutes,
+      {
+        serviceMode: input.serviceMode,
+        contentMode: resolved.contentMode,
+        outputCount: normalizedChannels.length,
+      },
+    );
     const encryptedChannels = encryptApiKey(JSON.stringify(normalizedChannels));
     const redacted = redactChannels(normalizedChannels);
     const metadata = {
-      byok: true,
-      costPolicy: "provider_cost_paid_by_user_key",
+      byok: aiAssisted,
+      serviceMode: input.serviceMode,
+      reservationKey: reservation.reservationKey,
+      costPolicy: aiAssisted
+        ? "managed_minutes_plus_provider_cost_paid_by_user_key"
+        : "managed_minutes_no_ai_provider_charge",
       mode: "broadcast",
       durationMinutes: input.durationMinutes,
       channels: redacted,
       sourceSwappysJobId: resolved.sourceSwappysJobId,
       contentMode: resolved.contentMode,
-      transformGoal: resolved.transformGoal,
+      transformGoal: aiAssisted ? resolved.transformGoal : null,
       publicFigureLikeness: resolved.publicFigureLikeness,
       aiGeneratedCharactersOnly: resolved.aiGeneratedCharactersOnly,
       policyVersion: "adult-workspace-2026-07",
@@ -1352,63 +1474,69 @@ export const virelleBroadcastRenderRouter = router({
         matureAccessVerified: matureStatus?.accessGranted ?? false,
         sexualisedMinorContentAllowed: false,
         publicFigureAdultContentAllowed: false,
-        visibleMark: resolved.hideVisibleWatermark
-          ? "creator_internal_provenance"
-          : "visible_ai_mark_required",
-        broadcastMinAvatarAge: minimumAvatarAge,
-        ageFloorEnforced: true,
       },
     };
     const primary = normalizedChannels[0];
-    const result: any = await dbConn.execute(sql`
-      INSERT INTO virelle_video_transform_jobs
-        (userId, projectId, sceneId, sourceSwappysJobId, mode, status,
-         provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls,
-         referenceImageUrls, transformGoal, targetAge, targetPresentation,
-         contentMode, allSubjectsAdultsConfirmed, publicFigureLikeness,
-         aiGeneratedCharactersOnly, broadcastDestination, ingestUrl,
-         streamKeyMasked, broadcastChannelsEncrypted, recordingRequired,
-         directorNotes, consentConfirmed, consentAttestationVersion,
-         visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
-      VALUES
-        (${ctx.user.id}, ${resolved.projectId}, ${resolved.sceneId},
-         ${resolved.sourceSwappysJobId}, 'broadcast', 'broadcast_ready',
-         ${provider}, ${resolved.sourceVideoUrl}, ${resolved.referenceVideoUrl},
-         ${JSON.stringify(resolved.sourceImageUrls)},
-         ${JSON.stringify(resolved.referenceImageUrls)},
-         ${resolved.transformGoal}, ${resolved.targetAge},
-         ${resolved.targetPresentation}, ${resolved.contentMode},
-         ${resolved.allSubjectsAdultsConfirmed ? 1 : 0},
-         ${resolved.publicFigureLikeness ? 1 : 0},
-         ${resolved.aiGeneratedCharactersOnly ? 1 : 0},
-         ${primary.destination}, ${primary.ingestUrl},
-         ${maskStreamKey(primary.streamKey)}, ${encryptedChannels}, 1,
-         ${resolved.directorNotes}, ${resolved.consentConfirmed ? 1 : 0},
-         ${CONSENT_ATTESTATION_VERSION},
-         ${resolved.hideVisibleWatermark
-           ? "internal_provenance_only"
-           : "visible_ai_mark_required"},
-         1, ${orchestrationCredits}, ${JSON.stringify(metadata)})
-    `);
-    const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
-    logger.info(
-      `[VirelleBroadcast] configured session=${sessionId} user=${ctx.user.id} workspace=${resolved.contentMode} outputs=${normalizedChannels.length}`,
-    );
-    return {
-      ok: true,
-      sessionId,
-      status: "broadcast_ready",
-      mode: "broadcast",
-      provider,
-      channels: redacted,
-      bridgeConfigured: BRIDGE_CONFIGURED,
-      recordingRequired: true,
-      userDownloadAvailableWhenCompleted: true,
-      complianceArchiveRetentionDays: 90,
-      byokRequired: true,
-      orchestrationCredits,
-      sourceSwappysJobId: resolved.sourceSwappysJobId,
-    };
+    try {
+      const result: any = await dbConn.execute(sql`
+        INSERT INTO virelle_video_transform_jobs
+          (userId, projectId, sceneId, sourceSwappysJobId, mode, status,
+           provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls,
+           referenceImageUrls, transformGoal, targetAge, targetPresentation,
+           contentMode, allSubjectsAdultsConfirmed, publicFigureLikeness,
+           aiGeneratedCharactersOnly, broadcastDestination, ingestUrl,
+           streamKeyMasked, broadcastChannelsEncrypted, recordingRequired,
+           directorNotes, consentConfirmed, consentAttestationVersion,
+           visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
+        VALUES
+          (${ctx.user.id}, ${resolved.projectId}, ${resolved.sceneId},
+           ${resolved.sourceSwappysJobId}, 'broadcast', 'broadcast_ready', ${provider},
+           ${resolved.sourceVideoUrl}, ${resolved.referenceVideoUrl},
+           ${JSON.stringify(resolved.sourceImageUrls)},
+           ${JSON.stringify(resolved.referenceImageUrls)},
+           ${resolved.transformGoal}, ${resolved.targetAge},
+           ${resolved.targetPresentation}, ${resolved.contentMode},
+           ${resolved.allSubjectsAdultsConfirmed ? 1 : 0},
+           ${resolved.publicFigureLikeness ? 1 : 0},
+           ${resolved.aiGeneratedCharactersOnly ? 1 : 0},
+           ${primary.destination}, ${primary.ingestUrl},
+           ${maskStreamKey(primary.streamKey)}, ${encryptedChannels}, 1,
+           ${resolved.directorNotes}, ${resolved.consentConfirmed ? 1 : 0},
+           ${CONSENT_ATTESTATION_VERSION},
+           ${resolved.hideVisibleWatermark ? "internal_provenance_only" : "visible_ai_mark_required"},
+           ${aiAssisted ? 1 : 0}, 0, ${JSON.stringify(metadata)})
+      `);
+      const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
+      await attachBroadcastReservationToJob(dbConn, reservation.reservationKey, sessionId);
+      logger.info(
+        `[VirelleBroadcast] configured session=${sessionId} user=${ctx.user.id} serviceMode=${input.serviceMode} workspace=${resolved.contentMode} outputs=${normalizedChannels.length}`,
+      );
+      return {
+        ok: true,
+        sessionId,
+        status: "broadcast_ready",
+        mode: "broadcast",
+        serviceMode: input.serviceMode,
+        provider,
+        channels: redacted,
+        bridgeConfigured: BRIDGE_CONFIGURED,
+        recordingRequired: true,
+        userDownloadAvailableWhenCompleted: true,
+        complianceArchiveRetentionDays: 90,
+        byokRequired: aiAssisted,
+        orchestrationCredits: 0,
+        managedMinutesReserved: input.durationMinutes,
+        remainingManagedMinutes: reservation.availableMinutes,
+        sourceSwappysJobId: resolved.sourceSwappysJobId,
+      };
+    } catch (error) {
+      await releaseBroadcastMinuteReservation(
+        dbConn,
+        reservation.reservationKey,
+        "Broadcast configuration failed before the session was created.",
+      ).catch(() => undefined);
+      throw error;
+    }
   }),
 
   recordBroadcastCompletion: publicProcedure.input(z.object({
@@ -1488,7 +1616,7 @@ export const virelleBroadcastRenderRouter = router({
   })).query(async ({ ctx, input }) => {
     requireVfxStudioTier(
       ctx.user as any,
-      "creator",
+      "indie",
       "Virelle Broadcast / Studio Render",
     );
     const dbConn = await db.getDb();
@@ -1532,7 +1660,7 @@ export const virelleBroadcastRenderRouter = router({
   })).query(async ({ ctx, input }) => {
     requireVfxStudioTier(
       ctx.user as any,
-      "creator",
+      "indie",
       "Virelle Broadcast / Studio Render",
     );
     const dbConn = await db.getDb();
@@ -1577,7 +1705,7 @@ export const virelleBroadcastRenderRouter = router({
   })).mutation(async ({ ctx, input }) => {
     requireVfxStudioTier(
       ctx.user as any,
-      "creator",
+      "indie",
       "Virelle Broadcast / Studio Render",
     );
     const dbConn = await db.getDb();
@@ -1588,6 +1716,11 @@ export const virelleBroadcastRenderRouter = router({
       });
     }
     await ensureBroadcastRenderTables(dbConn);
+    const existing: any = await dbConn.execute(sql`
+      SELECT mode, metadata FROM virelle_video_transform_jobs
+      WHERE id=${input.id} AND userId=${ctx.user.id} LIMIT 1
+    `);
+    const existingRow = (Array.isArray(existing[0]) ? existing[0] : existing)?.[0];
     await dbConn.execute(sql`
       UPDATE virelle_video_transform_jobs
       SET status='cancelled', updatedAt=NOW()
@@ -1599,6 +1732,14 @@ export const virelleBroadcastRenderRouter = router({
           'broadcast_ready'
         )
     `);
+    if (existingRow?.mode === "broadcast") {
+      const existingMetadata = safeJson(existingRow.metadata);
+      await releaseBroadcastMinuteReservation(
+        dbConn,
+        existingMetadata?.reservationKey,
+        "Broadcast cancelled before managed minutes were consumed.",
+      ).catch(() => undefined);
+    }
     return { ok: true };
   }),
 });
