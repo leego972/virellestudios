@@ -304,6 +304,7 @@ export default function Register() {
 
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
+      try { sessionStorage.removeItem("virelle:signup-delivery-address"); } catch { /* ignored */ }
       utils.auth.me.invalidate();
       setShowWelcome(true);
     },

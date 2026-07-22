@@ -9,15 +9,13 @@ describe("designer commerce production contract", () => {
     expect(isStudioForbiddenDesignerPath("designerWardrobe.createWardrobeItem")).toBe(true);
     expect(isStudioForbiddenDesignerPath("wardrobeMarket.marketplace.getDesigner")).toBe(false);
   });
-
-  it("keeps every Lamalo alias outside third-party price recalculation", () => {
+  it("locks all Lamalo aliases out of third-party price recalculation", () => {
     expect(isLamaloBrandName("Lamalo Fashion")).toBe(true);
     expect(isLamaloBrandName("Lamalo Fashions")).toBe(true);
     expect(isLamaloBrandName("Lamalo")).toBe(true);
     expect(isLamaloBrandName("Independent Label")).toBe(false);
   });
-
-  it("calculates third-party virtual price at exactly three percent", () => {
+  it("calculates exactly three percent", () => {
     expect(Math.round(25_000 * 0.03)).toBe(750);
     expect(Math.round(1_667 * 0.03)).toBe(50);
   });

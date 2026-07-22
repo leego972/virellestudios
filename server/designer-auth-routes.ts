@@ -130,6 +130,11 @@ export function registerDesignerAuthRoutes(app: Express): void {
         const logoUrl = await storeLogo(user.id, logoInput);
         await setUserPortal(user.id, "designer");
         await saveDeliveryAddress(user.id, {
+          label: "Business address", recipientName: fullName, phone: phone || null,
+          addressLine1, addressLine2: addressLine2 || null, city, stateRegion,
+          postalCode, country, isDefault: true,
+        });
+        await saveDeliveryAddress(user.id, {
           label: "Business address",
           recipientName: fullName,
           phone: phone || null,
