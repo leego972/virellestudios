@@ -6,12 +6,14 @@ on:
       - fix/mandatory-character-costume-continuity
     paths:
       - ".github/scripts/apply_character_costume_continuity.py"
+      - ".github/scripts/fix_character_costume_patch_script.py"
       - ".github/workflows/character-costume-continuity-patch.yml"
   pull_request:
     branches:
       - main
     paths:
       - ".github/scripts/apply_character_costume_continuity.py"
+      - ".github/scripts/fix_character_costume_patch_script.py"
       - ".github/workflows/character-costume-continuity-patch.yml"
 
 permissions:
@@ -34,8 +36,14 @@ jobs:
         shell: bash
         run: |
           set +e
-          python .github/scripts/apply_character_costume_continuity.py > /tmp/patch-output.txt 2>&1
-          PATCH_STATUS=$?
+          python .github/scripts/fix_character_costume_patch_script.py > /tmp/patch-output.txt 2>&1
+          FIX_STATUS=$?
+          if [ "$FIX_STATUS" -eq 0 ]; then
+            python .github/scripts/apply_character_costume_continuity.py >> /tmp/patch-output.txt 2>&1
+            PATCH_STATUS=$?
+          else
+            PATCH_STATUS=$FIX_STATUS
+          fi
           if [ "$PATCH_STATUS" -ne 0 ]; then
             git reset --hard HEAD
             cp /tmp/patch-output.txt .github/character-costume-patch-error.txt
