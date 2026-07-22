@@ -12,7 +12,6 @@ The following files describe the current production system and take precedence o
 - [`../SECURITY.md`](../SECURITY.md) — security controls and vulnerability reporting
 - [`../ENVIRONMENT.md`](../ENVIRONMENT.md) — environment-variable reference
 - [`RENDER_MYSQL_RECOVERY_RUNBOOK.md`](./RENDER_MYSQL_RECOVERY_RUNBOOK.md) — database recovery procedures
-- [`SWAPPYS_BROADCAST_DEPLOYMENT.md`](./SWAPPYS_BROADCAST_DEPLOYMENT.md) — broadcast bridge deployment details
 
 ## Historical reports
 
