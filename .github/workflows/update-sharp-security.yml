@@ -39,3 +39,5 @@ jobs:
           git add package.json pnpm-lock.yaml
           git commit -m "Update sharp to patched 0.35.3"
           git push origin HEAD:feature/designer-commerce-shipping-final
+
+# Trigger update.
