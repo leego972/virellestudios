@@ -850,22 +850,22 @@ export default function DesignerWardrobePage() {
           {/* ─── Project Wardrobe ─── */}
           {inProjectMode ? (
             <TabsContent value="project" className="mt-4">
-              <Card className={`mb-4 border ${continuityGaps.length ? "border-rose-500/40 bg-rose-950/15" : "border-emerald-500/30 bg-emerald-950/10"}`}>
+              <Card className={`mb-4 border ${continuityGaps.length ? "border-amber-500/30 bg-amber-950/10" : "border-emerald-500/30 bg-emerald-950/10"}`}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <div className="font-medium">Character costume continuity</div>
-                      <div className="text-xs text-zinc-400 mt-1">Every on-screen character must have one assigned wardrobe or costume. It continues automatically until a replacement begins.</div>
+                      <div className="font-medium">Assigned costume continuity</div>
+                      <div className="text-xs text-zinc-400 mt-1">Assigned looks continue automatically until a replacement begins. Characters without a special assignment use their saved or neutral default wardrobe.</div>
                     </div>
-                    <Badge className={continuityGaps.length ? "bg-rose-500/15 text-rose-300" : "bg-emerald-500/15 text-emerald-300"}>
-                      {continuityGaps.length ? `${continuityGaps.length} missing` : "Ready"}
+                    <Badge className={continuityGaps.length ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}>
+                      {continuityGaps.length ? `${continuityGaps.length} using default` : "All assigned"}
                     </Badge>
                   </div>
                   {continuityGaps.length > 0 ? (
                     <div className="mt-3 grid gap-2 sm:grid-cols-2">
                       {continuityGaps.slice(0, 12).map(({ scene, characterId }: any) => {
                         const character = projectCharsQ.data?.find((entry: any) => entry.id === characterId);
-                        return <div key={`${scene.id}-${characterId}`} className="rounded border border-rose-500/20 bg-black/20 px-3 py-2 text-xs">Scene {(scene.orderIndex ?? 0) + 1}: <span className="text-rose-300">{character?.name ?? `Character #${characterId}`} needs a costume</span></div>;
+                        return <div key={`${scene.id}-${characterId}`} className="rounded border border-amber-500/20 bg-black/20 px-3 py-2 text-xs">Scene {(scene.orderIndex ?? 0) + 1}: <span className="text-amber-300">{character?.name ?? `Character #${characterId}`} uses saved/default wardrobe</span></div>;
                       })}
                     </div>
                   ) : null}
