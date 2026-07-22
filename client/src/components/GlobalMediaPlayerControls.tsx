@@ -32,12 +32,15 @@ const PLAYER_ROOT_ATTR = "data-virelle-player-root";
 const MINIMISED_ATTR = "data-virelle-minimised";
 
 function findPlayerRoot(): HTMLElement | null {
-  const closeButtons = Array.from(
-    document.querySelectorAll<HTMLButtonElement>('button[aria-label="Close player"]'),
+  return (
+    Array.from(document.querySelectorAll<HTMLElement>("div.fixed.inset-0")).find(
+      candidate =>
+        candidate.isConnected &&
+        !!candidate.querySelector<HTMLButtonElement>(
+          'button[aria-label="Close player"]',
+        ),
+    ) ?? null
   );
-  const closeButton = closeButtons.find(button => button.isConnected);
-  if (!closeButton) return null;
-  return closeButton.closest<HTMLElement>("div.fixed.inset-0") ?? closeButton.closest<HTMLElement>("div.fixed");
 }
 
 function normaliseUrl(value: string | null | undefined): string | null {
@@ -73,7 +76,8 @@ export default function GlobalMediaPlayerControls() {
 
   const isMovieLibrary =
     typeof window !== "undefined" &&
-    (window.location.pathname === "/movies" || window.location.pathname.startsWith("/movies/"));
+    (window.location.pathname === "/movies" ||
+      window.location.pathname.startsWith("/movies/"));
 
   const { data: movies = [] } = trpc.movie.list.useQuery(undefined, {
     enabled: !!playerRoot && isMovieLibrary,
@@ -97,10 +101,14 @@ export default function GlobalMediaPlayerControls() {
       ]);
       setDeleteConfirmOpen(false);
       toast.success("Video deleted");
-      const closeButton = playerRoot?.querySelector<HTMLButtonElement>('button[aria-label="Close player"]');
+      const closeButton =
+        playerRoot?.querySelector<HTMLButtonElement>(
+          'button[aria-label="Close player"]',
+        );
       closeButton?.click();
     },
-    onError: error => toast.error(error.message || "Video could not be deleted."),
+    onError: error =>
+      toast.error(error.message || "Video could not be deleted."),
   });
 
   useEffect(() => {
@@ -108,7 +116,8 @@ export default function GlobalMediaPlayerControls() {
       const nextRoot = findPlayerRoot();
       setPlayerRoot(previous => (previous === nextRoot ? previous : nextRoot));
       setVideo(previous => {
-        const nextVideo = nextRoot?.querySelector<HTMLVideoElement>("video") ?? null;
+        const nextVideo =
+          nextRoot?.querySelector<HTMLVideoElement>("video") ?? null;
         return previous === nextVideo ? previous : nextVideo;
       });
     };
@@ -175,20 +184,30 @@ export default function GlobalMediaPlayerControls() {
   }, [video]);
 
   useEffect(() => {
-    const onFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+    const onFullscreenChange = () =>
+      setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
   const closePlayer = useCallback(() => {
-    const closeButton = playerRoot?.querySelector<HTMLButtonElement>('button[aria-label="Close player"]');
-    if (closeButton) closeButton.click();
+    const closeButton =
+      playerRoot?.querySelector<HTMLButtonElement>(
+        'button[aria-label="Close player"]',
+      );
+    closeButton?.click();
   }, [playerRoot]);
 
   const togglePlay = useCallback(() => {
     if (!video) return;
-    if (video.paused) void video.play().catch(() => toast.error("Playback could not be started."));
-    else video.pause();
+    if (video.paused) {
+      void video
+        .play()
+        .catch(() => toast.error("Playback could not be started."));
+    } else {
+      video.pause();
+    }
   }, [video]);
 
   const stop = useCallback(() => {
@@ -198,21 +217,37 @@ export default function GlobalMediaPlayerControls() {
     setCurrentTime(0);
   }, [video]);
 
-  const seek = useCallback((delta: number) => {
-    if (!video) return;
-    const upper = Number.isFinite(video.duration) ? video.duration : Number.MAX_SAFE_INTEGER;
-    video.currentTime = Math.max(0, Math.min(upper, video.currentTime + delta));
-  }, [video]);
+  const seek = useCallback(
+    (delta: number) => {
+      if (!video) return;
+      const upper = Number.isFinite(video.duration)
+        ? video.duration
+        : Number.MAX_SAFE_INTEGER;
+      video.currentTime = Math.max(
+        0,
+        Math.min(upper, video.currentTime + delta),
+      );
+    },
+    [video],
+  );
 
-  const clickLegacyControl = useCallback((ariaLabel: string) => {
-    playerRoot?.querySelector<HTMLButtonElement>(`button[aria-label="${ariaLabel}"]`)?.click();
-  }, [playerRoot]);
+  const clickLegacyControl = useCallback(
+    (ariaLabel: string) => {
+      playerRoot
+        ?.querySelector<HTMLButtonElement>(`button[aria-label="${ariaLabel}"]`)
+        ?.click();
+    },
+    [playerRoot],
+  );
 
   const toggleFullscreen = useCallback(async () => {
     try {
       if (isMinimised) setIsMinimised(false);
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
     } catch {
       toast.error("Fullscreen is not available in this browser.");
     }
@@ -223,7 +258,7 @@ export default function GlobalMediaPlayerControls() {
       try {
         await document.exitFullscreen();
       } catch {
-        // Continue minimising even if the browser has already exited fullscreen.
+        // Continue minimising if the browser already exited fullscreen.
       }
     }
     setIsMinimised(true);
@@ -235,8 +270,14 @@ export default function GlobalMediaPlayerControls() {
     playerRoot.querySelector("h2")?.textContent?.trim() ||
     activeLibraryMovie?.title ||
     "Media";
-  const previousButton = playerRoot.querySelector<HTMLButtonElement>('button[aria-label="Previous video"]');
-  const nextButton = playerRoot.querySelector<HTMLButtonElement>('button[aria-label="Next video"]');
+  const previousButton =
+    playerRoot.querySelector<HTMLButtonElement>(
+      'button[aria-label="Previous video"]',
+    );
+  const nextButton =
+    playerRoot.querySelector<HTMLButtonElement>(
+      'button[aria-label="Next video"]',
+    );
   const canPrevious = !!previousButton && !previousButton.disabled;
   const canNext = !!nextButton && !nextButton.disabled;
 
@@ -261,44 +302,131 @@ export default function GlobalMediaPlayerControls() {
 
       {!isMinimised && (
         <>
-          <div className="fixed right-2 z-[80] flex items-center gap-0.5 rounded-bl-xl bg-black/70 pr-1 shadow-xl backdrop-blur-md" style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}>
+          <div
+            data-global-media-controls="window"
+            className="fixed right-2 z-[80] flex items-center gap-0.5 rounded-bl-xl bg-black/70 pr-1 shadow-xl backdrop-blur-md"
+            style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+          >
             {activeLibraryMovie && (
-              <Button size="icon" variant="ghost" className="h-11 w-11 text-white/70 hover:bg-red-500/15 hover:text-red-300" onClick={() => setDeleteConfirmOpen(true)} aria-label="Delete video" title="Delete video">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-11 w-11 text-white/70 hover:bg-red-500/15 hover:text-red-300"
+                onClick={() => setDeleteConfirmOpen(true)}
+                aria-label="Delete video"
+                title="Delete video"
+              >
                 <Trash2 className="h-5 w-5" />
               </Button>
             )}
-            <Button size="icon" variant="ghost" className="h-11 w-11 text-white/80 hover:text-white" onClick={() => void minimise()} aria-label="Minimise player" title="Minimise">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-11 w-11 text-white/80 hover:text-white"
+              onClick={() => void minimise()}
+              aria-label="Minimise player"
+              title="Minimise"
+            >
               <Minus className="h-5 w-5" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-11 w-11 text-white/80 hover:text-white" onClick={() => void toggleFullscreen()} aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
-              {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-11 w-11 text-white/80 hover:text-white"
+              onClick={() => void toggleFullscreen()}
+              aria-label={
+                isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
+              }
+              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+            >
+              {isFullscreen ? (
+                <Minimize className="h-5 w-5" />
+              ) : (
+                <Maximize className="h-5 w-5" />
+              )}
             </Button>
-            <Button size="icon" variant="ghost" className="h-11 w-11 text-white hover:bg-red-500/80" onClick={closePlayer} aria-label="Close player" title="Close">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-11 w-11 text-white hover:bg-red-500/80"
+              onClick={closePlayer}
+              aria-label="Close upgraded player"
+              title="Close"
+            >
               <X className="h-5 w-5" />
             </Button>
           </div>
 
           {video && (
-            <div className="fixed bottom-[84px] left-1/2 z-[75] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-white/10 bg-black/75 p-1 shadow-2xl backdrop-blur-md">
+            <div
+              data-global-media-controls="transport"
+              className="fixed bottom-[84px] left-1/2 z-[75] flex -translate-x-1/2 items-center gap-0.5 rounded-xl border border-white/10 bg-black/75 p-1 shadow-2xl backdrop-blur-md"
+            >
               {canPrevious && (
-                <Button size="icon" variant="ghost" className="h-10 w-10 text-white/75" onClick={() => clickLegacyControl("Previous video")} aria-label="Previous scene" title="Previous scene">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-10 w-10 text-white/75"
+                  onClick={() => clickLegacyControl("Previous video")}
+                  aria-label="Previous scene"
+                  title="Previous scene"
+                >
                   <SkipBack className="h-4 w-4" />
                 </Button>
               )}
-              <Button size="icon" variant="ghost" className="h-10 w-10 text-white/75" onClick={() => seek(-SEEK_SECONDS)} aria-label={`Rewind ${SEEK_SECONDS} seconds`} title={`Rewind ${SEEK_SECONDS} seconds`}>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-10 w-10 text-white/75"
+                onClick={() => seek(-SEEK_SECONDS)}
+                aria-label={`Rewind ${SEEK_SECONDS} seconds`}
+                title={`Rewind ${SEEK_SECONDS} seconds`}
+              >
                 <RotateCcw className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="ghost" className="h-11 w-11 text-white" onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"} title={isPlaying ? "Pause" : "Play"}>
-                {isPlaying ? <Pause className="h-5 w-5 fill-white" /> : <Play className="ml-0.5 h-5 w-5 fill-white" />}
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-11 w-11 text-white"
+                onClick={togglePlay}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                title={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? (
+                  <Pause className="h-5 w-5 fill-white" />
+                ) : (
+                  <Play className="ml-0.5 h-5 w-5 fill-white" />
+                )}
               </Button>
-              <Button size="icon" variant="ghost" className="h-10 w-10 text-white/75" onClick={stop} aria-label="Stop" title="Stop">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-10 w-10 text-white/75"
+                onClick={stop}
+                aria-label="Stop"
+                title="Stop"
+              >
                 <Square className="h-3.5 w-3.5 fill-current" />
               </Button>
-              <Button size="icon" variant="ghost" className="h-10 w-10 text-white/75" onClick={() => seek(SEEK_SECONDS)} aria-label={`Fast forward ${SEEK_SECONDS} seconds`} title={`Fast forward ${SEEK_SECONDS} seconds`}>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-10 w-10 text-white/75"
+                onClick={() => seek(SEEK_SECONDS)}
+                aria-label={`Fast forward ${SEEK_SECONDS} seconds`}
+                title={`Fast forward ${SEEK_SECONDS} seconds`}
+              >
                 <RotateCw className="h-4 w-4" />
               </Button>
               {canNext && (
-                <Button size="icon" variant="ghost" className="h-10 w-10 text-white/75" onClick={() => clickLegacyControl("Next video")} aria-label="Next scene" title="Next scene">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-10 w-10 text-white/75"
+                  onClick={() => clickLegacyControl("Next video")}
+                  aria-label="Next scene"
+                  title="Next scene"
+                >
                   <SkipForward className="h-4 w-4" />
                 </Button>
               )}
@@ -308,36 +436,109 @@ export default function GlobalMediaPlayerControls() {
       )}
 
       {isMinimised && (
-        <div className="fixed bottom-0 left-0 right-0 z-[90] flex min-h-[68px] items-center gap-2 border-t border-white/10 bg-black/95 px-3 shadow-2xl" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div
+          data-global-media-controls="minimised"
+          className="fixed bottom-0 left-0 right-0 z-[90] flex min-h-[68px] items-center gap-2 border-t border-white/10 bg-black/95 px-3 shadow-2xl"
+          style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        >
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-medium text-white">{title}</p>
-            <p className="font-mono text-[10px] text-white/45">{formatTime(currentTime)} / {formatTime(duration)}</p>
+            <p className="font-mono text-[10px] text-white/45">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </p>
           </div>
-          {canPrevious && <Button size="icon" variant="ghost" className="h-9 w-9 text-white/70" onClick={() => clickLegacyControl("Previous video")} aria-label="Previous scene"><SkipBack className="h-4 w-4" /></Button>}
-          <Button size="icon" variant="ghost" className="h-9 w-9 text-white" onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>{isPlaying ? <Pause className="h-4 w-4 fill-white" /> : <Play className="ml-0.5 h-4 w-4 fill-white" />}</Button>
-          <Button size="icon" variant="ghost" className="hidden h-9 w-9 text-white/70 sm:flex" onClick={stop} aria-label="Stop"><Square className="h-3.5 w-3.5 fill-current" /></Button>
-          {canNext && <Button size="icon" variant="ghost" className="h-9 w-9 text-white/70" onClick={() => clickLegacyControl("Next video")} aria-label="Next scene"><SkipForward className="h-4 w-4" /></Button>}
-          <Button size="icon" variant="ghost" className="h-9 w-9 text-white/70" onClick={() => setIsMinimised(false)} aria-label="Restore player" title="Restore"><Maximize className="h-4 w-4" /></Button>
-          <Button size="icon" variant="ghost" className="h-9 w-9 text-white/80 hover:bg-red-500/80" onClick={closePlayer} aria-label="Close player" title="Close"><X className="h-4 w-4" /></Button>
+          {canPrevious && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-9 w-9 text-white/70"
+              onClick={() => clickLegacyControl("Previous video")}
+              aria-label="Previous scene"
+            >
+              <SkipBack className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-9 w-9 text-white"
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <Pause className="h-4 w-4 fill-white" />
+            ) : (
+              <Play className="ml-0.5 h-4 w-4 fill-white" />
+            )}
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="hidden h-9 w-9 text-white/70 sm:flex"
+            onClick={stop}
+            aria-label="Stop"
+          >
+            <Square className="h-3.5 w-3.5 fill-current" />
+          </Button>
+          {canNext && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-9 w-9 text-white/70"
+              onClick={() => clickLegacyControl("Next video")}
+              aria-label="Next scene"
+            >
+              <SkipForward className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-9 w-9 text-white/70"
+            onClick={() => setIsMinimised(false)}
+            aria-label="Restore player"
+            title="Restore"
+          >
+            <Maximize className="h-4 w-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-9 w-9 text-white/80 hover:bg-red-500/80"
+            onClick={closePlayer}
+            aria-label="Close upgraded player"
+            title="Close"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
       )}
 
-      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+      <AlertDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this video?</AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes “{activeLibraryMovie?.title || title}” from your movie library. Closing or minimising the player never deletes media.
+              This permanently removes “{activeLibraryMovie?.title || title}”
+              from your movie library. Closing or minimising the player never
+              deletes media.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={!activeLibraryMovie || deleteMutation.isPending}
               onClick={event => {
                 event.preventDefault();
-                if (activeLibraryMovie) deleteMutation.mutate({ id: activeLibraryMovie.id });
+                if (activeLibraryMovie) {
+                  deleteMutation.mutate({ id: activeLibraryMovie.id });
+                }
               }}
             >
               {deleteMutation.isPending ? "Deleting…" : "Delete video"}
