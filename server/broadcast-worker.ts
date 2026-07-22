@@ -2,6 +2,7 @@ import * as db from "./db";
 import { sql } from "drizzle-orm";
 import { logger } from "./_core/logger";
 import { decryptApiKey } from "./_core/securityEngine";
+import { assertComplianceArchiveConfiguration } from "./_core/complianceEvidenceGuards";
 
 const POLL_INTERVAL_MS = 20_000;
 const BRIDGE_RETRY_MINUTES = 5;
@@ -191,6 +192,8 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
   if (activeSessions.has(jobId)) return;
 
   try {
+    assertComplianceArchiveConfiguration();
+
     const providerKey = await resolveByokKey(Number(job.userId), String(job.provider));
     if (!providerKey) {
       await dbConn.execute(sql`
