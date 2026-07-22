@@ -243,6 +243,7 @@ export async function loadSceneGenerationContext(
   }
   const canonicalCharacters: CanonicalSceneCharacter[] = [];
   const characterDescriptions: string[] = [];
+  const missingCharacterWardrobe: string[] = [];
 
   for (const character of activeCharacters as any[]) {
     const inline = inlineEntries.find((entry) => entry.characterId === character.id);
@@ -250,6 +251,15 @@ export async function loadSceneGenerationContext(
     const selected = selectCharacterWardrobeRow(rows as any[], character.id, sceneId, sceneOrder, inlineOutfitChange);
     const selectedRow = selected.row;
     const selectedItem = selectedRow?.item as WardrobeItemRecord | undefined;
+    const hasStructuredWardrobeHistory = (rows as any[]).some((row) =>
+      row.assignment?.characterId === character.id
+      && row.assignment?.sceneId == null
+      && (row.assignment?.fromSceneOrder ?? 0) <= sceneOrder,
+    );
+    const validInlineReplacement = inlineOutfitChange && hasStructuredWardrobeHistory;
+    if (!selectedItem && !validInlineReplacement) {
+      missingCharacterWardrobe.push(`${character.name} (scene ${sceneOrder + 1})`);
+    }
     let wardrobeAnchor: string | undefined;
     let wardrobeReferenceImageUrl: string | undefined;
 
@@ -318,6 +328,10 @@ export async function loadSceneGenerationContext(
       referenceImageUrl: identityImageUrl,
       wardrobeReferenceImageUrl,
     });
+  }
+
+  if (missingCharacterWardrobe.length) {
+    throw new Error(`Wardrobe assignment required before generation. Assign a costume to every on-screen character in Project Wardrobe. Missing: ${missingCharacterWardrobe.join(", ")}.`);
   }
 
   for (const row of applicableRows.filter((entry) => !entry.assignment?.characterId)) {
