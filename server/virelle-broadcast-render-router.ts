@@ -6,6 +6,18 @@ import * as db from "./db";
 import { logger } from "./_core/logger";
 import { requireVfxStudioTier } from "./_core/vfxStudioMiddleware";
 import { encryptApiKey } from "./_core/securityEngine";
+import { stripe } from "./_core/subscription";
+import {
+  getMatureAccessProfile,
+  getMatureAccessStatus,
+  legalNamesMatch,
+  recordCardNameResult,
+  recordCardSession,
+  recordIdentitySession,
+  recordIdentityVerified,
+  recordPhoneVerified,
+  upsertMatureAccessProfile,
+} from "./_core/matureAccess";
 import {
   assertSwappysCreativePolicy,
   SWAPPYS_CONTENT_MODES,
@@ -28,6 +40,7 @@ const TRANSFORM_GOALS = [
 type TransformGoal = typeof TRANSFORM_GOALS[number];
 
 const BROADCAST_DESTINATIONS = ["rtmp", "rtmp_onlyfans", "rtmp_fansly", "rtmp_chaturbate", "webrtc", "obs", "custom"] as const;
+const ADULT_BROADCAST_DESTINATIONS = new Set(["rtmp_onlyfans", "rtmp_fansly", "rtmp_chaturbate"]);
 type BroadcastDestination = typeof BROADCAST_DESTINATIONS[number];
 
 type BroadcastChannel = {
@@ -51,6 +64,11 @@ type SwappysHandoff = {
 };
 
 const BRIDGE_CONFIGURED = Boolean(process.env.BROADCAST_BRIDGE_URL && process.env.BROADCAST_BRIDGE_TOKEN);
+const PHONE_VERIFY_CONFIGURED = Boolean(
+  process.env.TWILIO_ACCOUNT_SID
+  && process.env.TWILIO_AUTH_TOKEN
+  && process.env.TWILIO_VERIFY_SERVICE_SID,
+);
 
 function providerFromUserKeys(keys: any, requestedProvider?: string | null): StrictByokVideoProvider | null {
   const available: StrictByokVideoProvider[] = [];
@@ -227,6 +245,45 @@ function redactChannels(channels: BroadcastChannel[]) {
   }));
 }
 
+function safeReturnUrl(raw: string): string {
+  const value = new URL(raw);
+  const productionHosts = new Set(["virelle.life", "www.virelle.life"]);
+  if (process.env.NODE_ENV === "production" && (value.protocol !== "https:" || !productionHosts.has(value.hostname))) {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Return URL must use the Virelle Studios domain." });
+  }
+  if (!["https:", "http:"].includes(value.protocol)) {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Return URL is invalid." });
+  }
+  value.searchParams.set("adult", "1");
+  return value.toString();
+}
+
+async function twilioVerify(path: string, values: Record<string, string>): Promise<any> {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID || "";
+  const authToken = process.env.TWILIO_AUTH_TOKEN || "";
+  const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID || "";
+  if (!accountSid || !authToken || !serviceSid) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "PHONE_2FA_NOT_CONFIGURED: Twilio Verify must be configured before mature access can be granted.",
+    });
+  }
+  const response = await fetch(`https://verify.twilio.com/v2/Services/${encodeURIComponent(serviceSid)}${path}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString("base64")}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams(values),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    logger.warn("[MatureAccess] Twilio Verify request failed", { status: response.status, code: result?.code });
+    throw new TRPCError({ code: "BAD_REQUEST", message: result?.message || "Phone verification failed." });
+  }
+  return result;
+}
+
 async function loadSwappysHandoff(dbConn: any, userId: number, input: { swappysJobId?: number | null; sceneId?: number | null }): Promise<SwappysHandoff | null> {
   if (!input.swappysJobId && !input.sceneId) return null;
   const rows: any = input.swappysJobId
@@ -285,6 +342,21 @@ const createJobInput = z.object({
 });
 type CreateJobInput = z.infer<typeof createJobInput>;
 
+const matureProfileInput = z.object({
+  fullName: z.string().trim().min(2).max(255),
+  email: z.string().trim().email().max(320),
+  phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, "Use international E.164 format, for example +61412345678."),
+  addressLine1: z.string().trim().min(3).max(255),
+  addressLine2: z.string().trim().max(255).optional().nullable(),
+  city: z.string().trim().min(2).max(128),
+  stateRegion: z.string().trim().min(2).max(128),
+  postcode: z.string().trim().min(2).max(32),
+  country: z.string().trim().min(2).max(128),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  responsibilityAccepted: z.literal(true),
+  consentPolicyAccepted: z.literal(true),
+});
+
 async function resolveJobInput(dbConn: any, userId: number, input: CreateJobInput) {
   const handoff = await loadSwappysHandoff(dbConn, userId, { swappysJobId: input.sourceSwappysJobId, sceneId: input.sourceSwappysJobId ? null : input.sceneId });
   const sourceImages = input.sourceImageUrls.length
@@ -309,6 +381,172 @@ async function resolveJobInput(dbConn: any, userId: number, input: CreateJobInpu
 }
 
 export const virelleBroadcastRenderRouter = router({
+  getMatureAccessStatus: protectedProcedure.query(async ({ ctx }) => {
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    return {
+      ...status,
+      phoneProviderConfigured: PHONE_VERIFY_CONFIGURED,
+      stripeConfigured: Boolean(stripe),
+      identityVerificationConfigured: Boolean(stripe),
+      policy: {
+        explicitSexActsAllowed: false,
+        genitalFocusedContentAllowed: false,
+        minorDepictionsAllowed: false,
+        realPersonConsentRequired: true,
+        ageRegressionBelow18Allowed: false,
+      },
+    };
+  }),
+
+  saveMatureAccessProfile: protectedProcedure.input(matureProfileInput).mutation(async ({ ctx, input }) => {
+    const accountEmail = String(ctx.user.email || "").trim().toLowerCase();
+    if (!accountEmail || accountEmail !== input.email.toLowerCase()) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "The mature-access email must match the signed-in Virelle account." });
+    }
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    await upsertMatureAccessProfile(dbConn, ctx.user as any, input);
+    return getMatureAccessStatus(dbConn, ctx.user as any);
+  }),
+
+  sendMaturePhoneCode: protectedProcedure.mutation(async ({ ctx }) => {
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    if (!status.paidMembership) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "PAID_MEMBERSHIP_REQUIRED: An active paid Virelle membership is required." });
+    }
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile?.phone) throw new TRPCError({ code: "BAD_REQUEST", message: "Save your legal profile and phone number first." });
+    await twilioVerify("/Verifications", { To: String(profile.phone), Channel: "sms" });
+    return { ok: true };
+  }),
+
+  verifyMaturePhoneCode: protectedProcedure.input(z.object({ code: z.string().regex(/^\d{4,10}$/) })).mutation(async ({ ctx, input }) => {
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile?.phone) throw new TRPCError({ code: "BAD_REQUEST", message: "Save your phone number first." });
+    const result = await twilioVerify("/VerificationCheck", { To: String(profile.phone), Code: input.code });
+    if (result?.status !== "approved") {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "The phone verification code was not approved." });
+    }
+    await recordPhoneVerified(dbConn, ctx.user.id);
+    return getMatureAccessStatus(dbConn, ctx.user as any);
+  }),
+
+  createMatureIdentitySession: protectedProcedure.input(z.object({ returnUrl: z.string().url().max(1000) })).mutation(async ({ ctx, input }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe Identity is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    if (!status.paidMembership || !status.profileComplete || !status.adultAgeConfirmed) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Complete a paid membership and valid 18+ legal profile before identity verification." });
+    }
+    const returnUrl = safeReturnUrl(input.returnUrl);
+    const session: any = await stripe.identity.verificationSessions.create({
+      type: "document",
+      options: { document: { require_matching_selfie: true } },
+      metadata: { userId: String(ctx.user.id), type: "mature_access" },
+      return_url: returnUrl,
+    } as any);
+    await recordIdentitySession(dbConn, ctx.user.id, session.id);
+    return { url: session.url, sessionId: session.id };
+  }),
+
+  refreshMatureIdentityStatus: protectedProcedure.mutation(async ({ ctx }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe Identity is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile?.identityVerificationSessionId) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "No identity verification session exists." });
+    }
+    const session: any = await stripe.identity.verificationSessions.retrieve(String(profile.identityVerificationSessionId));
+    if (session?.metadata?.userId && Number(session.metadata.userId) !== ctx.user.id) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Identity verification ownership mismatch." });
+    }
+    if (session.status === "verified") await recordIdentityVerified(dbConn, ctx.user.id);
+    return { verificationStatus: session.status, ...(await getMatureAccessStatus(dbConn, ctx.user as any)) };
+  }),
+
+  createMatureCardVerification: protectedProcedure.input(z.object({ returnUrl: z.string().url().max(1000) })).mutation(async ({ ctx, input }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    if (!status.paidMembership || !status.profileComplete) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Complete a paid membership and legal profile before card-name verification." });
+    }
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    let customerId = String((ctx.user as any).stripeCustomerId || "");
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: String(ctx.user.email || profile.email),
+        name: String(profile.fullName),
+        phone: String(profile.phone),
+        address: {
+          line1: String(profile.addressLine1),
+          line2: profile.addressLine2 ? String(profile.addressLine2) : undefined,
+          city: String(profile.city),
+          state: String(profile.stateRegion),
+          postal_code: String(profile.postcode),
+          country: String(profile.country).length === 2 ? String(profile.country).toUpperCase() : undefined,
+        },
+        metadata: { userId: String(ctx.user.id) },
+      });
+      customerId = customer.id;
+      await db.updateUser(ctx.user.id, { stripeCustomerId: customerId } as any);
+    }
+    const returnUrl = safeReturnUrl(input.returnUrl);
+    const separator = returnUrl.includes("?") ? "&" : "?";
+    const session: any = await stripe.checkout.sessions.create({
+      mode: "setup",
+      customer: customerId,
+      payment_method_types: ["card"],
+      billing_address_collection: "required",
+      customer_update: { address: "auto", name: "auto" },
+      success_url: `${returnUrl}${separator}adult_card_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnUrl}${separator}adult_card_cancelled=1`,
+      metadata: { userId: String(ctx.user.id), type: "mature_access_card_name" },
+    } as any);
+    await recordCardSession(dbConn, ctx.user.id, session.id);
+    return { url: session.url, sessionId: session.id };
+  }),
+
+  verifyMatureCardSession: protectedProcedure.input(z.object({ sessionId: z.string().min(8).max(255) })).mutation(async ({ ctx, input }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile || String(profile.cardVerificationSessionId || "") !== input.sessionId) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Card verification session does not belong to this account." });
+    }
+    const session: any = await stripe.checkout.sessions.retrieve(input.sessionId, {
+      expand: ["setup_intent.payment_method"],
+    } as any);
+    if (session?.metadata?.userId && Number(session.metadata.userId) !== ctx.user.id) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Card verification ownership mismatch." });
+    }
+    if (session.status !== "complete") {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Card verification checkout is not complete." });
+    }
+    const setupIntent = session.setup_intent as any;
+    const paymentMethod = setupIntent?.payment_method as any;
+    const cardholderName = String(paymentMethod?.billing_details?.name || session.customer_details?.name || "").trim();
+    if (!cardholderName) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Stripe did not return a cardholder name. Repeat verification and enter the legal cardholder name." });
+    }
+    const matched = legalNamesMatch(String(profile.fullName), cardholderName);
+    await recordCardNameResult(dbConn, ctx.user.id, cardholderName, matched);
+    if (!matched) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Cardholder name does not match the registered legal name." });
+    }
+    return getMatureAccessStatus(dbConn, ctx.user as any);
+  }),
+
   getByokStatus: protectedProcedure.query(async ({ ctx }) => {
     requireVfxStudioTier(ctx.user as any, "creator", "Virelle Broadcast / Studio Render");
     const keys = await db.getUserApiKeys(ctx.user.id);
@@ -343,8 +581,11 @@ export const virelleBroadcastRenderRouter = router({
     if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
     await ensureBroadcastRenderTables(dbConn);
     const resolved = await resolveJobInput(dbConn, ctx.user.id, input);
+    const matureStatus = resolved.contentMode === "open_adult"
+      ? await getMatureAccessStatus(dbConn, ctx.user as any)
+      : null;
     assertSwappysCreativePolicy({
-      user: ctx.user,
+      user: { ...ctx.user, isAdultVerified: matureStatus?.accessGranted ?? (ctx.user as any).isAdultVerified },
       contentMode: resolved.contentMode,
       consentConfirmed: resolved.consentConfirmed,
       allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
@@ -385,6 +626,11 @@ export const virelleBroadcastRenderRouter = router({
         sourceImageUrls: resolved.sourceImageUrls,
         referenceImageUrls: resolved.referenceImageUrls,
       },
+      safety: {
+        matureAccessVerified: matureStatus?.accessGranted ?? false,
+        explicitSexActsAllowed: false,
+        minorDepictionsAllowed: false,
+      },
       nextWorkerStep: "submit_to_user_byok_provider_then_poll_status",
     };
     const result: any = await dbConn.execute(sql`
@@ -407,15 +653,15 @@ export const virelleBroadcastRenderRouter = router({
     })).min(1).max(5),
   })).mutation(async ({ ctx, input }) => {
     requireVfxStudioTier(ctx.user as any, "creator", "Virelle Broadcast Mode");
-    if (!(ctx.user as any).isAdultVerified) {
-      throw new TRPCError({ code: "FORBIDDEN", message: "AGE_VERIFICATION_REQUIRED: Verify that you are 18+ before using Virelle Broadcast." });
-    }
     const dbConn = await db.getDb();
     if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
     await ensureBroadcastRenderTables(dbConn);
     const resolved = await resolveJobInput(dbConn, ctx.user.id, input);
+    const matureStatus = resolved.contentMode === "open_adult"
+      ? await getMatureAccessStatus(dbConn, ctx.user as any)
+      : null;
     assertSwappysCreativePolicy({
-      user: ctx.user,
+      user: { ...ctx.user, isAdultVerified: matureStatus?.accessGranted ?? (ctx.user as any).isAdultVerified },
       contentMode: resolved.contentMode,
       consentConfirmed: resolved.consentConfirmed,
       allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
@@ -438,6 +684,9 @@ export const virelleBroadcastRenderRouter = router({
     }
 
     const normalizedChannels = normalizeChannels(input.channels as BroadcastChannel[]);
+    if (resolved.contentMode !== "open_adult" && normalizedChannels.some((channel) => ADULT_BROADCAST_DESTINATIONS.has(channel.destination))) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Adult-platform broadcast destinations are available only inside the verified 18+ Studio." });
+    }
     const provider = await requireStrictByokProvider(ctx.user.id, resolved.requestedProvider);
     const orchestrationCredits = ({ 30: 5, 60: 10, 120: 18 } as Record<number, number>)[input.durationMinutes] ?? 5;
     if ((ctx.user as any).role !== "admin") {
@@ -463,6 +712,9 @@ export const virelleBroadcastRenderRouter = router({
       safety: {
         consentConfirmed: resolved.consentConfirmed,
         allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
+        matureAccessVerified: matureStatus?.accessGranted ?? false,
+        explicitSexActsAllowed: false,
+        minorDepictionsAllowed: false,
         visibleMark: resolved.hideVisibleWatermark ? "creator_internal_provenance" : "visible_ai_mark_required",
         broadcastMinAvatarAge: minimumAvatarAge,
         ageFloorEnforced: true,

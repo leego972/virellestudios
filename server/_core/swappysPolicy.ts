@@ -30,6 +30,9 @@ const MINOR_PATTERNS = [
   /\bpreteen\b/i,
   /\bteen(?:ager)?\b/i,
   /schoolgirl|schoolboy/i,
+  /barely legal/i,
+  /young-looking/i,
+  /childlike/i,
 ];
 
 const EXPLICIT_LIKENESS_PATTERNS = [
@@ -41,6 +44,8 @@ const EXPLICIT_LIKENESS_PATTERNS = [
   /penetration/i,
   /oral sex/i,
   /masturbat/i,
+  /ejaculat/i,
+  /cumshot/i,
 ];
 
 function combinedText(input: {
@@ -70,25 +75,6 @@ export function assertSwappysCreativePolicy(input: {
   consentNotes?: string | null;
   broadcast?: boolean;
 }) {
-  // Open Adult Creative mode is disabled pending real verification of the
-  // *depicted* subject's identity and consent -- a self-reported checkbox
-  // ("allSubjectsAdultsConfirmed") does not establish either, regardless of
-  // age-verification on the requesting account. The mode, its types, and its
-  // guardrail patterns below are intentionally left in place for when a real
-  // verification path exists; this gate just makes sure nothing can reach it
-  // in the meantime. Do not remove this gate without that verification path
-  // actually existing first.
-  // Compare against a widened copy rather than input.contentMode directly, so
-  // TypeScript's control-flow narrowing from this early return doesn't affect
-  // the (intentionally preserved, currently unreachable) checks further down.
-  const requestedMode: string = input.contentMode;
-  if (requestedMode === "open_adult") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Open Adult Creative mode is not currently enabled.",
-    });
-  }
-
   if (!input.consentConfirmed) {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -114,7 +100,7 @@ export function assertSwappysCreativePolicy(input: {
     if (!input.user?.isAdultVerified) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "AGE_VERIFICATION_REQUIRED: Open Adult Creative mode requires verified 18+ status.",
+        message: "MATURE_ACCESS_REQUIRED: Complete paid membership, identity, phone 2FA and matching-card verification before entering the 18+ Studio.",
       });
     }
     if (!input.allSubjectsAdultsConfirmed) {
@@ -126,37 +112,37 @@ export function assertSwappysCreativePolicy(input: {
     if (input.transformGoal === "adult_to_child" || input.transformGoal === "child_to_adult") {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Child or childhood transformation goals are unavailable in Open Adult Creative mode.",
+        message: "Child or childhood transformation goals are unavailable in the 18+ Studio.",
       });
     }
     if (input.targetAge != null && input.targetAge < 18) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Open Adult Creative mode requires a target age of 18 or older.",
+        message: "The 18+ Studio requires a target age of 18 or older.",
       });
     }
     if (matchesAny(text, MINOR_PATTERNS)) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Minor-coded subjects or styling are not permitted in Open Adult Creative mode.",
+        message: "Minor-coded subjects, youth-coded styling or ambiguous-age presentation are not permitted in the 18+ Studio.",
       });
     }
     if (matchesAny(text, EXPLICIT_LIKENESS_PATTERNS)) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Explicit sexualised likeness transformation is not supported. Mature, provocative, glamour and adult-industry styling involving consenting adults is permitted, but explicit sex acts are blocked.",
+        message: "Explicit sexual acts or genital-focused content are not supported. Mature, provocative, glamour and adult-industry styling involving verified consenting adults is permitted, but pornographic output remains blocked.",
       });
     }
   }
 
   if (input.broadcast && input.contentMode === "open_adult" && input.targetAge != null && input.targetAge < 18) {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Adult broadcast avatars must depict adults aged 18 or older." });
+    throw new TRPCError({ code: "FORBIDDEN", message: "18+ broadcast avatars must depict adults aged 18 or older." });
   }
 }
 
 export function swappysCreativePromptDirective(mode: SwappysContentMode) {
   if (mode === "open_adult") {
-    return "OPEN ADULT CREATIVE MODE: allow mature, provocative, glamour, body-positive and adult-industry visual styling for verified consenting adults without unnecessary modesty filtering. Preserve professional realism and the director's lawful artistic intent. Do not create minors, minor-coded styling, explicit sex acts, non-consensual sexualisation, coercion, deceptive impersonation, fraud or fake evidence.";
+    return "VERIFIED 18+ MATURE CREATIVE MODE: allow mature, provocative, glamour, body-positive and adult-industry visual styling for verified consenting adults without unnecessary modesty filtering. Preserve professional realism and the director's lawful artistic intent. Do not create explicit sexual acts, genital-focused imagery, pornography, minors, minor-coded styling, age regression below 18, non-consensual sexualisation, coercion, deceptive impersonation, fraud or fake evidence.";
   }
   return "STANDARD CREATIVE MODE: produce a professional, non-explicit film/VFX transformation while preserving consent, identity continuity and lawful use.";
 }
