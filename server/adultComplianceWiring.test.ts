@@ -58,8 +58,9 @@ describe("verified 18+ workspace and compliance archive wiring", () => {
     expect(archive).toContain("A non-explicit, age-appropriate teenage romance scene");
     expect(archive).toContain("suspected_csam_request");
     expect(archive).toContain("suspected_minor_sexualisation");
-    expect(policy).toContain("MINOR_CONTENT_PROHIBITED");
-    expect(policy).toContain("targetAge < 18");
+    expect(policy).toContain("Age-appropriate, non-sexual teenage film scenes");
+    expect(policy).toContain("Sexualised or explicit depictions involving minors");
+    expect(policy).toContain("input.targetAge < 18");
   });
 
   it("requires a downloadable recording before a broadcast can start", () => {
@@ -67,7 +68,7 @@ describe("verified 18+ workspace and compliance archive wiring", () => {
     const router = source("server/virelle-broadcast-render-router.ts");
 
     expect(worker).toContain("BROADCAST_RECORDING_URL_REQUIRED");
-    expect(worker).toContain("recordingUrl || result.outputUrl");
+    expect(worker).toContain("bridge.recordingUrl || bridge.outputUrl");
     expect(worker).toContain("userDownloadRequired: true");
     expect(worker).toContain("complianceArchiveRequired: true");
     expect(router).toContain("completeBroadcastSession");
