@@ -1,0 +1,41 @@
+name: Update sharp security dependency
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/update-sharp-security.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update-final-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out final designer commerce branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/designer-commerce-shipping-final
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Update sharp and remove deprecated external types
+        run: |
+          pnpm remove @types/sharp
+          pnpm add sharp@0.35.3
+      - name: Commit dependency update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git commit -m "Update sharp to patched 0.35.3"
+          git push origin HEAD:feature/designer-commerce-shipping-final
