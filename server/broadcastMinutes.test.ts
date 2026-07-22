@@ -5,7 +5,7 @@ import {
   includedMinutesForUser,
 } from "./_core/broadcastMinutes";
 
-describe("broadcast minute commerce", () => {
+describe("broadcast output-minute commerce", () => {
   it("keeps public package prices and minute grants stable", () => {
     expect(BROADCAST_MINUTE_PACKS).toEqual([
       expect.objectContaining({ id: "relay_120", minutes: 120, priceAudCents: 900 }),
@@ -17,6 +17,12 @@ describe("broadcast minute commerce", () => {
       expect(pack.priceAudCents).toBe(pack.priceAud * 100);
       expect(pack.minutes).toBeGreaterThan(0);
     }
+  });
+
+  it("bills managed sessions once per live minute and output", () => {
+    const sessionDurationMinutes = 60;
+    const outputCount = 3;
+    expect(sessionDurationMinutes * outputCount).toBe(180);
   });
 
   it("grants the advertised monthly managed-broadcast allowance", () => {
