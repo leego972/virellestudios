@@ -1869,6 +1869,15 @@ export const designerProfiles = mysqlTable("designerProfiles", {
   membershipSubscriptionId: varchar("membershipSubscriptionId", { length: 255 }),
   membershipCurrentPeriodEnd: timestamp("membershipCurrentPeriodEnd"),
   brandingImages: json("brandingImages"),
+  username: varchar("username", { length: 80 }),
+  abn: varchar("abn", { length: 32 }),
+  businessAddressLine1: varchar("businessAddressLine1", { length: 255 }),
+  businessAddressLine2: varchar("businessAddressLine2", { length: 255 }),
+  businessCity: varchar("businessCity", { length: 128 }),
+  businessStateRegion: varchar("businessStateRegion", { length: 128 }),
+  businessPostalCode: varchar("businessPostalCode", { length: 32 }),
+  businessCountry: varchar("businessCountry", { length: 128 }),
+  registrationCompleted: boolean("registrationCompleted").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1944,6 +1953,11 @@ export const wardrobeItems = mysqlTable("wardrobeItems", {
   // ─── Marketplace pricing v7.0 ─────────────────────────────────────────────
   retailPriceAud: int("retailPriceAud"),
   leasePriceAud: int("leasePriceAud"),
+  // retailPriceAud remains the established virtual licence price. Lamalo rows are never recalculated.
+  physicalRetailPriceAud: int("physicalRetailPriceAud"),
+  isVirtualOnly: boolean("isVirtualOnly").default(true).notNull(),
+  virtualPriceRule: varchar("virtualPriceRule", { length: 32 }),
+  virtualBadgeText: varchar("virtualBadgeText", { length: 64 }).default("Virtual item"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1993,6 +2007,9 @@ export const wardrobeLeases = mysqlTable("wardrobeLeases", {
   amountPaidAud: int("amountPaidAud").notNull(),
   designerAmountAud: int("designerAmountAud").notNull(),
   platformFeeAud: int("platformFeeAud").notNull(),
+  purchaseMode: varchar("purchaseMode", { length: 16 }).default("virtual").notNull(),
+  shippingAddressId: int("shippingAddressId"),
+  shippingAddressSnapshot: json("shippingAddressSnapshot"),
   // pending | active | refunded
   status: varchar("status", { length: 32 }).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

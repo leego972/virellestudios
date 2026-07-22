@@ -11,6 +11,11 @@ import {
   swappysCreativePromptDirective,
   type SwappysContentMode,
 } from "./swappysPolicy";
+import {
+  getUserPortal,
+  isDesignerAllowedProtectedPath,
+  isStudioForbiddenDesignerPath,
+} from "./portalAccess";
 
 const EXPIRED_TESTER_ERR_MSG =
   "Your 48-hour trial has ended. Your projects and downloads are still available — upgrade to a paid plan to continue creating.";
@@ -52,6 +57,7 @@ const t = initTRPC.context<TrpcContext>().create({
 });
 
 export const router = t.router;
+export const mergeRouters = t.mergeRouters;
 
 /** Public Swappys mobile guard: decoded media validation and distributed throttling. */
 const guardPublicSwappys = t.middleware(async (opts) => {
@@ -96,6 +102,21 @@ const requireUser = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
+
+  const portal = await getUserPortal(ctx.user.id, ctx.user.role);
+  if (portal === "designer" && !isDesignerAllowedProtectedPath(opts.path)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "This designer account can access the designer portal only.",
+    });
+  }
+  if (portal === "studio" && isStudioForbiddenDesignerPath(opts.path)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Designer portal access requires a separate designer account.",
+    });
+  }
+
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
@@ -195,7 +216,7 @@ const blockExpiredTester = t.middleware(async opts => {
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
-export const creationProcedure = t.procedure.use(blockExpiredTester);
+export const creationProcedure = protectedProcedure.use(blockExpiredTester);
 
 export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
@@ -212,12 +233,19 @@ const requireDesigner = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
+  const portal = await getUserPortal(ctx.user.id, ctx.user.role);
+  if (portal !== "designer" && portal !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "A separate Designer Portal account is required.",
+    });
+  }
   const { getDb } = await import("../db");
   const dbConn = await getDb();
   if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
   const { sql } = await import("drizzle-orm");
   const rows: any = await dbConn.execute(
-    sql`SELECT id, userId FROM designerProfiles WHERE userId = ${ctx.user.id} AND status = 'active' LIMIT 1`,
+    sql`SELECT id, userId FROM designerProfiles WHERE userId = ${ctx.user.id} LIMIT 1`,
   );
   const profile = (Array.isArray(rows[0]) ? rows[0] : rows)[0] ?? null;
   if (!profile) {

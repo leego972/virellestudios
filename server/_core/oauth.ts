@@ -8,6 +8,8 @@ import { ENV } from "./env";
 import crypto from "crypto";
 import { createSessionToken } from "./context";
 import { rateLimitPublicByIP } from "./rateLimit";
+import { registerDesignerAuthRoutes } from "../designer-auth-routes";
+import { getUserPortal } from "./portalAccess";
 import {
   findAuthUserByEmail,
   findSessionUserByOpenId,
@@ -112,6 +114,12 @@ async function completeLogin(
     throw new Error("OAuth account could not be loaded after sign-in");
   }
 
+  const portal = await getUserPortal(Number(account.id), account.role);
+  if (portal === "designer") {
+    res.redirect(302, "/login?designer=1&error=use_designer_login");
+    return;
+  }
+
   // OAuth and email/password now issue the same local numeric-user-id JWT.
   // The previous OAuth path issued a legacy openId token and depended on the
   // obsolete broker fallback during session restoration.
@@ -153,6 +161,7 @@ async function allowPublicRequest(
 }
 
 export function registerOAuthRoutes(app: Express) {
+  registerDesignerAuthRoutes(app);
   /**
    * Stable email/password login endpoint.
    *
@@ -183,6 +192,12 @@ export function registerOAuthRoutes(app: Express) {
         if (!user || !user.passwordHash) {
           await new Promise(resolve => setTimeout(resolve, 250));
           res.status(401).json({ error: "Invalid email or password." });
+          return;
+        }
+
+        const portal = await getUserPortal(Number(user.id), user.role);
+        if (portal === "designer") {
+          res.status(403).json({ error: "This is a designer account. Use the separate Designer Sign In." });
           return;
         }
 

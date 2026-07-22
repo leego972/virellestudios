@@ -13,7 +13,7 @@
 
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "./db";
-import { designerProfiles, designerCollections, wardrobeItems } from "../drizzle/schema";
+import { designerProfiles, designerCollections, wardrobeItems, wardrobeLeases } from "../drizzle/schema";
 import { logger } from "./_core/logger";
 
 const log = logger.child({ module: "lamalo-seed" });
@@ -44,7 +44,7 @@ function itemPrice(category: string): number {
   return CAT_PRICE[category.toLowerCase()] ?? 100;
 }
 
-/** 15 % off when buying the whole collection */
+/** 10 % off when buying the whole collection */
 function cp(items: SeedItem[]): number {
   return Math.floor(items.reduce((sum, i) => sum + i.retailPriceAud, 0) * 0.90);
 }
@@ -645,7 +645,7 @@ export async function runLamaloSeed(
   const db = (await getDb())!;
 
     // ── Ensure all marketplace columns exist before inserting (idempotent) ──
-    // This guards against Railway deployments where autoMigrate ALTER TABLE may
+    // This guards against Render deployments where autoMigrate ALTER TABLE may
     // not have run yet, or ran on an older schema version.
     {
       const wiCols: Array<[string, string]> = [
@@ -722,7 +722,9 @@ export async function runLamaloSeed(
         WHEN 'sleepwear'   THEN 100
         ELSE 100
       END
-      WHERE collectionId IS NOT NULL
+      WHERE designerProfileId IN (
+        SELECT id FROM designerProfiles WHERE brandName = 'Lamalo Fashion'
+      )
         AND (retailPriceAud IS NULL OR retailPriceAud < 100)
     `);
   
@@ -745,6 +747,9 @@ export async function runLamaloSeed(
     await db.update(wardrobeItems)
       .set({ designerProfileId: canonicalId })
       .where(inArray(wardrobeItems.designerProfileId, dupeIds));
+    await db.update(wardrobeLeases)
+      .set({ designerProfileId: canonicalId })
+      .where(inArray(wardrobeLeases.designerProfileId, dupeIds));
     // Delete the empty duplicate shells
     await db.delete(designerProfiles)
       .where(inArray(designerProfiles.id, dupeIds));
@@ -828,14 +833,60 @@ export async function runLamaloSeed(
     newCollections++;
     } // end else (new collection)
     for (const item of col.items) {
-      // Use raw SQL to avoid Drizzle double-encoding JSON columns
-      // Use Pollinations URL — /lamalo/ paths 404 in production
-        const imgUrl = (item.primaryImageUrl && !item.primaryImageUrl.startsWith('/lamalo/'))
-          ? item.primaryImageUrl
-          : pollinationsUrl(item.referencePrompt ?? `${item.name} ${item.category} fashion item`);
-        const imgUrlsJson = JSON.stringify([imgUrl]);
+      // A collection/name pair is the stable catalogue identity. INSERT IGNORE
+      // was not idempotent because production has no matching UNIQUE key.
+      const existingItem = await db
+        .select({ id: wardrobeItems.id })
+        .from(wardrobeItems)
+        .where(
+          and(
+            eq(wardrobeItems.collectionId, collectionId),
+            eq(wardrobeItems.name, item.name),
+          ),
+        )
+        .orderBy(asc(wardrobeItems.id))
+        .limit(1);
+
+      const imgUrl = (item.primaryImageUrl && !item.primaryImageUrl.startsWith('/lamalo/'))
+        ? item.primaryImageUrl
+        : pollinationsUrl(item.referencePrompt ?? `${item.name} ${item.category} fashion item`);
+      const imgUrlsJson = JSON.stringify([imgUrl]);
+      const colorsJson = item.colors ? JSON.stringify(item.colors) : null;
+      const materialsJson = item.materials ? JSON.stringify(item.materials) : null;
+      const styleTagsJson = item.styleTags ? JSON.stringify(item.styleTags) : null;
+
+      if (existingItem.length > 0) {
         await db.execute(sql`
-          INSERT IGNORE INTO wardrobeItems
+          UPDATE wardrobeItems
+          SET userId = ${userId},
+              designerProfileId = ${designerProfileId},
+              description = ${item.description},
+              category = ${item.category},
+              subcategory = ${item.subcategory ?? null},
+              wardrobeType = ${"fashion"},
+              genderFit = ${item.genderFit ?? null},
+              sizeRange = ${item.sizeRange ?? "XS-XXL"},
+              era = ${"Contemporary 2026"},
+              colors = ${colorsJson},
+              materials = ${materialsJson},
+              styleTags = ${styleTagsJson},
+              primaryImageUrl = ${imgUrl},
+              imageUrls = ${imgUrlsJson},
+              referencePrompt = ${item.referencePrompt ?? null},
+              shopfrontPlacementAllowed = ${1},
+              characterWardrobeAllowed = ${1},
+              costumeUseAllowed = ${1},
+              commercialUseAllowed = ${1},
+              licenseType = ${"full_license"},
+              visibility = ${"public"},
+              status = ${"active"},
+              retailPriceAud = ${item.retailPriceAud ?? null},
+              leasePriceAud = ${null}
+          WHERE id = ${existingItem[0].id}
+        `);
+      } else {
+        await db.execute(sql`
+          INSERT INTO wardrobeItems
             (collectionId, userId, designerProfileId, name, description, category,
              subcategory, wardrobeType, genderFit, sizeRange, era,
              colors, materials, styleTags, primaryImageUrl, imageUrls, referencePrompt,
@@ -847,15 +898,14 @@ export async function runLamaloSeed(
              ${item.name}, ${item.description}, ${item.category},
              ${item.subcategory ?? null}, ${"fashion"}, ${item.genderFit ?? null},
              ${item.sizeRange ?? "XS-XXL"}, ${"Contemporary 2026"},
-             ${item.colors ? JSON.stringify(item.colors) : null},
-             ${item.materials ? JSON.stringify(item.materials) : null},
-             ${item.styleTags ? JSON.stringify(item.styleTags) : null},
+             ${colorsJson}, ${materialsJson}, ${styleTagsJson},
              ${imgUrl}, ${imgUrlsJson}, ${item.referencePrompt ?? null},
              ${0}, ${1}, ${1}, ${1}, ${1},
              ${"full_license"}, ${"public"}, ${"active"},
              ${item.retailPriceAud ?? null}, ${null})
         `);
-        totalItems++;
+      }
+      totalItems++;
     }
 
     log.info(`Seeded collection "${col.name}" with ${col.items.length} items (collection bundle = ${(col.collectionPriceAud / 100).toFixed(2)} AUD)`);
@@ -882,7 +932,7 @@ export async function runLamaloSeed(
             ' ','%20'),',','%2C'),'/','%2F'),'(','%28'),')','%29'),'&','%26'),
             '%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux'
           ))
-        WHERE collectionId IS NOT NULL
+        WHERE designerProfileId = ${designerProfileId}
           AND (
             primaryImageUrl IS NULL
             OR primaryImageUrl = ''
@@ -912,7 +962,7 @@ export async function runLamaloSeed(
           WHEN 'sleepwear'   THEN 100
           ELSE 100
         END
-        WHERE collectionId IS NOT NULL AND retailPriceAud IS NULL
+        WHERE designerProfileId = ${designerProfileId} AND retailPriceAud IS NULL
       `);
       log.info('Backfilled retailPriceAud for existing items');
     } catch (e) {

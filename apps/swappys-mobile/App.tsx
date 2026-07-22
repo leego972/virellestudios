@@ -82,13 +82,16 @@ export default function App() {
         });
         if (featuresResponse.ok) {
           const featuresJson = await featuresResponse.json();
-          const flags = featuresJson?.flags ?? {};
+          // Virelle's original manifest uses `features`; mobile v1.1 also
+          // accepts the compact `flags` alias so rolling deployments and older
+          // servers remain compatible.
+          const capabilities = featuresJson?.flags ?? featuresJson?.features ?? {};
           featuresOk = Boolean(
             featuresJson?.ok !== false &&
-              flags?.creatorUpgrade &&
-              flags?.swappysStudio &&
-              flags?.watermarkControls &&
-              flags?.byokVideoRequired,
+              capabilities?.creatorUpgrade &&
+              capabilities?.swappysStudio &&
+              capabilities?.watermarkControls &&
+              capabilities?.byokVideoRequired,
           );
         }
       } catch {
@@ -178,9 +181,10 @@ export default function App() {
   }, [checkVirelleConnection, openUrl, saveResult]);
 
   const allowNavigation = useCallback((request: WebViewNavigation) => {
-    if (request.url === "about:blank" || request.url.startsWith("data:text/html")) return true;
-    return isAllowedVirelleUrl(request.url);
-  }, []);
+    if (request.url === "about:blank") return true;
+    void openUrl(request.url);
+    return false;
+  }, [openUrl]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -188,20 +192,17 @@ export default function App() {
       <View style={styles.container}>
         <WebView
           ref={webRef}
+          originWhitelist={["about:blank"]}
           source={{ html: SWAPPYS_HTML, baseUrl: VIRELLE_BASE_URL }}
-          originWhitelist={["about:blank", "https://virelle.life", "https://www.virelle.life"]}
+          onMessage={onMessage}
           onShouldStartLoadWithRequest={allowNavigation}
           javaScriptEnabled
           domStorageEnabled={false}
-          sharedCookiesEnabled={false}
-          thirdPartyCookiesEnabled={false}
-          allowsInlineMediaPlayback
-          mediaPlaybackRequiresUserAction={false}
-          mediaCapturePermissionGrantType="grantIfSameHostElsePrompt"
-          onMessage={onMessage}
-          onError={(event) => Alert.alert("Swappys failed to load", event.nativeEvent.description || "Unknown WebView error")}
-          onHttpError={(event) => Alert.alert("Swappys network error", `HTTP ${event.nativeEvent.statusCode}`)}
-          style={styles.webview}
+          allowFileAccess={false}
+          allowUniversalAccessFromFileURLs={false}
+          mixedContentMode="never"
+          setSupportMultipleWindows={false}
+          style={styles.webView}
         />
       </View>
     </SafeAreaView>
@@ -209,7 +210,16 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#070B16" },
-  container: { flex: 1, backgroundColor: "#070B16" },
-  webview: { flex: 1, backgroundColor: "#070B16" },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#050507",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#050507",
+  },
+  webView: {
+    flex: 1,
+    backgroundColor: "#050507",
+  },
 });

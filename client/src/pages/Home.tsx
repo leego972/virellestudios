@@ -490,14 +490,17 @@ import { useAuth } from "@/_core/hooks/useAuth";
   export default function Home() {
     const { user } = useAuth();
     const [, setLocation] = useLocation();
-    const [showOpener, setShowOpener] = useState(false);
+    const [showOpener, setShowOpener] = useState(() =>
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("opener") === "1",
+    );
     const [forceOnboarding, setForceOnboarding] = useState(false);
     const [showNeedsProjectAlert, setShowNeedsProjectAlert] = useState(false);
     const [activePipelineProjectId, setActivePipelineProjectId] = useState<number | null>(null);
 
     useEffect(() => {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("opener") === "1") { setShowOpener(true); window.history.replaceState({}, "", "/"); }
+      if (params.get("opener") === "1") { window.history.replaceState({}, "", "/"); }
       if (params.get("subscription") === "success") { toast.success("🎬 Welcome to Virelle Studios! Your membership is now active."); window.history.replaceState({}, "", "/"); }
     }, []);
 

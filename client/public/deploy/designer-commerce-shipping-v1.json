@@ -1,0 +1,12 @@
+{
+  "deployment": "render",
+  "release": "designer-commerce-shipping-v1",
+  "portalSeparation": true,
+  "standardSignupAddressRequired": true,
+  "designerSignupSeparate": true,
+  "designerPayouts": "stripe-connect-95-5",
+  "thirdPartyVirtualPricePercent": 3,
+  "lamaloPricingLocked": true,
+  "physicalPurchaseAddsVirtualInventoryCopy": true,
+  "savedDeliveryAddressCrud": true
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// Final combined release validation trigger: web, Render, desktop, Swappys mobile, and downloads.
 const baseUrl = (process.argv[2] || process.env.VIRELLE_BASE_URL || "https://virelle.life").replace(/\/$/, "");
 
 async function requestJson(path, init = {}) {
@@ -33,11 +34,11 @@ try {
   console.log(`features: ${features.status} ${features.elapsedMs}ms`);
   assert(features.ok, `/api/mobile/features failed with HTTP ${features.status}`);
   assert(features.json?.ok === true, "/api/mobile/features missing ok:true");
-  const flags = features.json?.flags || {};
-  assert(flags.creatorUpgrade === true, "creatorUpgrade flag missing");
-  assert(flags.swappysStudio === true, "swappysStudio flag missing");
-  assert(flags.watermarkControls === true, "watermarkControls flag missing");
-  assert(flags.byokVideoRequired === true, "byokVideoRequired flag missing");
+  const capabilities = features.json?.flags ?? features.json?.features ?? {};
+  assert(capabilities.creatorUpgrade === true, "creatorUpgrade capability missing");
+  assert(capabilities.swappysStudio === true, "swappysStudio capability missing");
+  assert(capabilities.watermarkControls === true, "watermarkControls capability missing");
+  assert(capabilities.byokVideoRequired === true, "byokVideoRequired capability missing");
 
   const downloads = await requestJson("/api/mobile/downloads");
   console.log(`downloads: ${downloads.status} ${downloads.elapsedMs}ms`);
@@ -58,7 +59,7 @@ try {
   assert(route.status !== 404, "Swappys tRPC route is not mounted");
   assert(route.json || route.text, "Swappys route returned an empty validation response");
 
-  console.log("PASS: health, mobile flags, downloads, and the Swappys transformation route are reachable.");
+  console.log("PASS: health, mobile capabilities, downloads, and the Swappys transformation route are reachable.");
   process.exit(0);
 } catch (error) {
   console.error("FAIL:", error?.message || error);

@@ -1,51 +1,21 @@
-/**
- * Character Consistency & Scene Continuity Engine
- * 
- * Solves the two biggest problems in AI film generation:
- * 
- * 1. CHARACTER CONSISTENCY â Same character looks different in every scene
- *    Solution: Build a "character DNA" prompt that is injected into every
- *    scene prompt. Uses reference images + detailed physical descriptions
- *    to anchor the AI model's output.
- * 
- * 2. SCENE-TO-SCENE CONTINUITY â Jarring visual jumps between scenes
- *    Solution: Extract the last frame of each scene and use it as the
- *    reference image (img2vid) for the first shot of the next scene.
- *    Also maintains a "visual state" that tracks what the camera last saw.
- * 
- * This module provides:
- * - Character DNA prompt builder
- * - Scene continuity chain manager
- * - Visual state tracker
- * - Reference image management
- */
-
+import { execFile } from "child_process";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
+import { promisify } from "util";
 import { storagePut } from "../storage";
 import { logger } from "./logger";
-import { execFile } from "child_process";
-import { promisify } from "util";
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
 
 const execFileAsync = promisify(execFile);
-
-// âââ Types âââ
 
 export interface CharacterDNA {
   characterId: number;
   name: string;
-  /** Detailed physical description â the core consistency anchor */
   physicalDescription: string;
-  /** Reference image URL (uploaded photo or AI-generated reference) */
   referenceImageUrl?: string;
-  /** true = non-human: creature/animal/robot. No human actor. */
   isNonHuman?: boolean;
-  /** animal | creature | robot | monster | puppet | mutant | alien | supernatural | fantasy */
   costumeType?: string;
-  /** Hard-lock: AI must match referenceImageUrl exactly every frame */
   referenceImageLocked?: boolean;
-  /** Specific attributes for prompt injection */
   attributes: {
     gender: string;
     age: string;
@@ -61,26 +31,18 @@ export interface CharacterDNA {
     distinguishingFeatures: string[];
     clothing?: string;
   };
-  /** Compact prompt string (generated from attributes) */
   promptAnchor: string;
 }
 
 export interface SceneContinuityState {
   sceneId: number;
   orderIndex: number;
-  /** Last frame URL from this scene */
   lastFrameUrl?: string;
-  /** Visual description of what the camera last saw */
   lastVisualState: string;
-  /** Location/setting of this scene */
   location: string;
-  /** Time of day */
   timeOfDay: string;
-  /** Weather conditions */
   weather: string;
-  /** Characters present in this scene */
   characterIds: number[];
-  /** Lighting setup */
   lighting: string;
 }
 
@@ -90,17 +52,12 @@ export interface ContinuityChain {
   characters: CharacterDNA[];
 }
 
-// âââ Character DNA Builder âââ
-
-/**
- * Build a character DNA from database character record.
- * This creates a compact, highly specific prompt string that can be
- * injected into every scene prompt to maintain character appearance.
- */
-export function buildCharacterDNA(character: {
+type CharacterRecord = {
   id: number;
   name: string;
   description?: string | null;
+  photoUrl?: string | null;
+  attributes?: unknown;
   gender?: string | null;
   ageRange?: string | null;
   ethnicity?: string | null;
@@ -116,187 +73,418 @@ export function buildCharacterDNA(character: {
   hairLength?: string | null;
   eyeColor?: string | null;
   faceShape?: string | null;
-  distinguishingFeatures?: string | null;
+  distinguishingFeatures?: string | string[] | null;
   clothing?: string | null;
   referenceImageUrl?: string | null;
   thumbnailUrl?: string | null;
+  referenceImageLocked?: boolean | null;
+  referenceGenerationPrompt?: string | null;
   isNonHuman?: boolean | null;
   costumeType?: string | null;
-  referenceImageLocked?: boolean | null;
-  // Deep profile fields
   faceDnaPrompt?: string | null;
   bodyDnaPrompt?: string | null;
   consistencyNotes?: string | null;
-  deepProfile?: string | null; // JSON string with CharacterAttributesExtended
-}, sceneWardrobeOverride?: {
+  deepProfile?: unknown;
+  role?: string | null;
+  storyImportance?: string | null;
+  screenTime?: string | null;
+  countryOfOrigin?: string | null;
+  cityOfOrigin?: string | null;
+  dateOfBirth?: string | null;
+  occupation?: string | null;
+  educationLevel?: string | null;
+  socialClass?: string | null;
+  religion?: string | null;
+  languages?: unknown;
+  personality?: unknown;
+  arcType?: string | null;
+  moralAlignment?: string | null;
+  emotionalRange?: unknown;
+  backstory?: string | null;
+  motivations?: string | null;
+  fears?: string | null;
+  secrets?: string | null;
+  strengths?: unknown;
+  weaknesses?: unknown;
+  speechPattern?: string | null;
+  accent?: string | null;
+  catchphrase?: string | null;
+  voiceType?: string | null;
+  voiceDescription?: string | null;
+  voiceLanguage?: string | null;
+  relationships?: unknown;
+  environmentPreference?: string | null;
+  preferredWeather?: string | null;
+  preferredSeason?: string | null;
+  preferredTimeOfDay?: string | null;
+  physicalAbilities?: unknown;
+  mentalAbilities?: unknown;
+  specialSkills?: unknown;
+  wardrobe?: unknown;
+  performanceStyle?: string | null;
+  castingNotes?: string | null;
+  signatureMannerisms?: string | null;
+};
+
+type SceneWardrobeOverride = {
   wardrobeDescription?: string;
   wardrobeCategory?: string;
   makeupNotes?: string;
   hairNotes?: string;
   accessories?: string;
-}): CharacterDNA {
-  // Parse deep profile if available
-  let deepProfile: any = null;
-  if (character.deepProfile) {
-    try { deepProfile = JSON.parse(character.deepProfile); } catch { /* ignore */ }
-  }
+};
 
-  const attrs = {
-    gender: character.gender || "unspecified",
-    age: character.ageRange || "adult",
-    ethnicity: character.ethnicity || deepProfile?.ethnicity || "unspecified",
-    nationality: character.nationality || deepProfile?.nationality || undefined,
-    skinTone: character.skinTone || "medium",
-    build: character.build || "average",
-    height: character.height || undefined,
-    weight: character.weight || deepProfile?.weight || undefined,
-    fitnessLevel: character.fitnessLevel || deepProfile?.fitnessLevel || undefined,
-    posture: character.posture || deepProfile?.posture || undefined,
-    hairColor: character.hairColor || "dark",
-    hairStyle: character.hairStyle || "natural",
-    hairLength: character.hairLength || "medium",
-    eyeColor: character.eyeColor || "brown",
-    faceShape: character.faceShape || "oval",
-    distinguishingFeatures: character.distinguishingFeatures
-      ? character.distinguishingFeatures.split(",").map(s => s.trim()).filter(Boolean)
-      : [],
-    clothing: sceneWardrobeOverride?.wardrobeDescription || character.clothing || undefined,
+function parseObject(value: unknown): Record<string, any> {
+  if (!value) return {};
+  if (typeof value === "object" && !Array.isArray(value)) return value as Record<string, any>;
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed as Record<string, any>
+        : {};
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+function text(value: unknown): string | undefined {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return undefined;
+}
+
+function firstText(...values: unknown[]): string | undefined {
+  for (const value of values) {
+    const normalized = text(value);
+    if (normalized) return normalized;
+  }
+  return undefined;
+}
+
+function list(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.flatMap(item => {
+      const normalized = text(item);
+      if (normalized) return [normalized];
+      if (item && typeof item === "object") {
+        const formatted = formatValue(item);
+        return formatted ? [formatted] : [];
+      }
+      return [];
+    });
+  }
+  const normalized = text(value);
+  if (!normalized) return [];
+  return normalized.split(/[,;|]/).map(item => item.trim()).filter(Boolean);
+}
+
+function humanizeKey(key: string): string {
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/^./, char => char.toUpperCase());
+}
+
+function formatValue(value: unknown): string {
+  const direct = text(value);
+  if (direct) return direct;
+  if (Array.isArray(value)) return value.map(formatValue).filter(Boolean).join(", ");
+  if (value && typeof value === "object") {
+    const object = value as Record<string, unknown>;
+    const preferred = [
+      "signature",
+      "default",
+      "description",
+      "traits",
+      "temperament",
+      "formal",
+      "casual",
+      "action",
+    ];
+    const orderedKeys = [
+      ...preferred.filter(key => key in object),
+      ...Object.keys(object).filter(key => !preferred.includes(key)),
+    ];
+    return orderedKeys
+      .map(key => {
+        const formatted = formatValue(object[key]);
+        return formatted ? `${humanizeKey(key)}: ${formatted}` : "";
+      })
+      .filter(Boolean)
+      .join("; ");
+  }
+  return "";
+}
+
+function compact(value: unknown, max = 2400): string | undefined {
+  const formatted = formatValue(value).replace(/\s+/g, " ").trim();
+  if (!formatted) return undefined;
+  return formatted.length <= max ? formatted : `${formatted.slice(0, max - 1)}…`;
+}
+
+function addSection(sections: string[], label: string, values: unknown[]) {
+  const normalized = values
+    .map(value => compact(value))
+    .filter((value): value is string => Boolean(value));
+  if (normalized.length) sections.push(`${label}: ${normalized.join(" | ")}`);
+}
+
+/**
+ * Build the authoritative character prompt anchor consumed by every scene.
+ *
+ * Character generation stores visual analysis in the JSON `attributes` column,
+ * while manually entered acting and story direction is stored in dedicated
+ * columns. This function deliberately merges both sources. Photo-derived DNA
+ * and a supplied reference portrait take precedence over generic defaults.
+ */
+export function buildCharacterDNA(
+  character: CharacterRecord,
+  sceneWardrobeOverride?: SceneWardrobeOverride,
+): CharacterDNA {
+  const attributes = parseObject(character.attributes);
+  const deepProfile = {
+    ...parseObject(character.deepProfile),
+    ...parseObject(attributes.deepProfile),
   };
 
-  // Build the prompt anchor â a structured, cinematographer-grade descriptor
-  // Priority: faceDnaPrompt (from photo analysis) > manual description > auto-built
-  // The anchor is structured in sections so the AI model can parse and weight each category.
-  const sections: string[] = [];
+  const age = firstText(
+    character.ageRange,
+    attributes.ageRange,
+    attributes.estimatedAge,
+    attributes.age,
+    character.dateOfBirth,
+    deepProfile.ageRange,
+  );
+  const gender = firstText(character.gender, attributes.gender, deepProfile.gender);
+  const ethnicity = firstText(character.ethnicity, attributes.ethnicity, deepProfile.ethnicity);
+  const nationality = firstText(character.nationality, attributes.nationality, deepProfile.nationality);
+  const skinTone = firstText(character.skinTone, attributes.skinTone, deepProfile.skinTone);
+  const build = firstText(character.build, attributes.build, deepProfile.build);
+  const height = firstText(character.height, attributes.height, deepProfile.height);
+  const weight = firstText(character.weight, attributes.weight, deepProfile.weight);
+  const fitnessLevel = firstText(character.fitnessLevel, attributes.fitnessLevel, deepProfile.fitnessLevel);
+  const posture = firstText(character.posture, attributes.posture, deepProfile.posture);
+  const hairColor = firstText(character.hairColor, attributes.hairColor, deepProfile.hairColor);
+  const hairStyle = firstText(character.hairStyle, attributes.hairStyle, deepProfile.hairStyle);
+  const hairLength = firstText(character.hairLength, attributes.hairLength, deepProfile.hairLength);
+  const eyeColor = firstText(character.eyeColor, attributes.eyeColor, deepProfile.eyeColor);
+  const faceShape = firstText(character.faceShape, attributes.faceShape, deepProfile.faceShape);
+  const facialFeatures = firstText(attributes.facialFeatures, attributes.detailedDescription);
+  const facialHair = firstText(attributes.facialHair, deepProfile.facialHair);
+  const expression = firstText(attributes.expression, attributes.restingExpression);
+  const distinguishingFeatures = Array.from(new Set([
+    ...list(character.distinguishingFeatures),
+    ...list(attributes.distinguishingFeatures),
+    ...list(attributes.distinguishingMarks),
+    ...list(attributes.skinImperfections),
+    ...list(deepProfile.distinguishingFeatures),
+  ]));
 
-  // ââ Core identity ââ
-  const identityParts = [`${attrs.age} ${attrs.gender}`];
-  if (attrs.ethnicity !== "unspecified") identityParts.push(attrs.ethnicity);
-  if (attrs.nationality) identityParts.push(`${attrs.nationality} nationality`);
-  sections.push(identityParts.join(", "));
-
-  // ââ Face DNA (from photo analysis â highest fidelity) ââ
-  if (character.faceDnaPrompt) {
-    // The faceDnaPrompt is already structured with | separators from the photo analysis
-    sections.push(character.faceDnaPrompt);
-  } else {
-    // Auto-build from structured fields
-    const faceSection: string[] = [];
-    faceSection.push(`${attrs.faceShape} face`);
-    faceSection.push(`${attrs.skinTone} skin`);
-    faceSection.push(`${attrs.eyeColor} eyes`);
-    faceSection.push(`${attrs.hairLength} ${attrs.hairColor} ${attrs.hairStyle} hair`.trim());
-    if (attrs.distinguishingFeatures.length > 0) {
-      faceSection.push(`DISTINGUISHING: ${attrs.distinguishingFeatures.join(", ")}`);
-    }
-    sections.push(faceSection.join(" | "));
-    // ââ Photorealism enforcement ââ
-    sections.push("photorealistic human face with authentic natural skin texture, visible pores, micro-wrinkles, and subsurface scattering. NOT CGI, NOT plastic skin.");
-  }
-
-  // ââ Body DNA ââ
-  if (character.bodyDnaPrompt) {
-    sections.push(character.bodyDnaPrompt);
-  } else {
-    const bodySection: string[] = [];
-    bodySection.push(`${attrs.build} build`);
-    if (attrs.height) bodySection.push(attrs.height);
-    if (attrs.weight) bodySection.push(attrs.weight);
-    if (attrs.fitnessLevel) bodySection.push(`${attrs.fitnessLevel} fitness`);
-    if (attrs.posture) bodySection.push(`${attrs.posture} posture`);
-    if (bodySection.length > 1) sections.push(bodySection.join(", "));
-  }
-
-  // ââ Wardrobe â scene-specific override takes priority over character default ââ
-  if (sceneWardrobeOverride?.wardrobeDescription) {
-    const wardrobeParts = [`wearing ${sceneWardrobeOverride.wardrobeDescription}`];
-    if (sceneWardrobeOverride.makeupNotes) wardrobeParts.push(`makeup: ${sceneWardrobeOverride.makeupNotes}`);
-    if (sceneWardrobeOverride.hairNotes) wardrobeParts.push(`hair: ${sceneWardrobeOverride.hairNotes}`);
-    if (sceneWardrobeOverride.accessories) wardrobeParts.push(`accessories: ${sceneWardrobeOverride.accessories}`);
-    sections.push(wardrobeParts.join(", "));
-  } else if (attrs.clothing) {
-    sections.push(`wearing ${attrs.clothing}`);
-  } else {
-    // ââ Default wardrobe: plain black until clothing is purchased & assigned ââ
-    sections.push(
-      "wearing a plain all-black outfit â solid black top, black trousers or skirt, " +
-      "black shoes; no visible branding, no pattern, no colour accent; " +
-      "wardrobe not yet assigned â dress in a clean, understated neutral outfit appropriate to the scene setting; " +
-      "avoid bold patterns or colours; maintain photorealistic costume quality");
-  }
-
-  // ââ Director consistency notes ââ
-  if (character.consistencyNotes) {
-    sections.push(`PHYSICAL HARD-LOCK DIRECTIVE: ${character.consistencyNotes}`);
-  }
-
-  // ââ Photorealism enforcement â always injected, character-specific where possible ââ
-  sections.push(
-    "photorealistic human face with authentic natural imperfections â " +
-    "skin with visible pores, micro-wrinkles, subsurface scattering, fine peach fuzz â " +
-    "eyes with detailed iris fiber structure, limbal ring, corneal reflections, subtle waterline moisture â " +
-    "individual hair strand detail with natural flyaways â " +
-    "NOT CGI, NOT AI-generated look, NOT plastic skin"
+  const faceDnaPrompt = firstText(character.faceDnaPrompt, attributes.faceDnaPrompt, deepProfile.faceDnaPrompt);
+  const bodyDnaPrompt = firstText(character.bodyDnaPrompt, attributes.bodyDnaPrompt, deepProfile.bodyDnaPrompt);
+  const directorRequirements = firstText(
+    attributes.additionalNotes,
+    attributes.directorNotes,
+    character.consistencyNotes,
   );
 
-  // Non-human/creature/animal: Mystique=mutant, Babe=pig, T-800=robot.
-  // No human actor needed. Reference image IS their identity.
-  let promptAnchor: string;
+  const wardrobe = firstText(
+    sceneWardrobeOverride?.wardrobeDescription,
+    character.clothing,
+    attributes.clothingStyle,
+    attributes.clothing,
+    compact(character.wardrobe),
+    compact(deepProfile.wardrobe),
+  );
+
+  const referenceImageUrl = firstText(
+    character.photoUrl,
+    attributes.generatedPortraitUrl,
+    character.referenceImageUrl,
+    attributes.referencePhotoUrl,
+    character.thumbnailUrl,
+  );
+  const generatedFromPhoto = Boolean(attributes.generatedFromPhoto);
+  const aiGenerated = Boolean(attributes.aiGenerated);
+  const referenceImageLocked = Boolean(
+    referenceImageUrl && (
+      character.referenceImageLocked
+      || generatedFromPhoto
+      || aiGenerated
+      || attributes.referenceImageLocked
+    ),
+  );
+
+  const normalizedAttributes = {
+    gender: gender || "unspecified",
+    age: age || "adult",
+    ethnicity: ethnicity || "unspecified",
+    skinTone: skinTone || "unspecified",
+    build: build || "unspecified",
+    height,
+    hairColor: hairColor || "unspecified",
+    hairStyle: hairStyle || "unspecified",
+    hairLength: hairLength || "unspecified",
+    eyeColor: eyeColor || "unspecified",
+    faceShape: faceShape || "unspecified",
+    distinguishingFeatures,
+    clothing: wardrobe,
+  };
+
   if (character.isNonHuman) {
     const typeLabel = character.costumeType
       ? character.costumeType.charAt(0).toUpperCase() + character.costumeType.slice(1)
-      : 'Creature';
-    const baseDesc = character.description || sections.join(' || ') || 'unique appearance';
-    const lockNote = character.referenceImageLocked
-      ? ' APPEARANCE HARD-LOCKED â match reference image EXACTLY every frame. Zero deviation.'
-      : ' Maintain this creature/animal/robot appearance consistently across all scenes.';
-    promptAnchor = `[${typeLabel.toUpperCase()} "${character.name}": ${baseDesc}.${lockNote}]`;
-  } else {
-    promptAnchor = `[CHARACTER ${character.name}: ${sections.join(' || ')}]`;
+      : "Creature";
+    const nonHumanSections: string[] = [];
+    addSection(nonHumanSections, "APPEARANCE", [character.description, faceDnaPrompt, bodyDnaPrompt]);
+    addSection(nonHumanSections, "DIRECTOR REQUIREMENTS", [directorRequirements, character.castingNotes]);
+    addSection(nonHumanSections, "BEHAVIOUR", [character.signatureMannerisms, character.performanceStyle]);
+    if (wardrobe) addSection(nonHumanSections, "COSTUME", [wardrobe]);
+    if (referenceImageLocked) {
+      nonHumanSections.unshift("REFERENCE IMAGE HARD-LOCK: match the supplied identity reference exactly in every frame; zero species, silhouette, material, marking, or colour drift");
+    }
+    const promptAnchor = `[${typeLabel.toUpperCase()} "${character.name}": ${nonHumanSections.join(" || ") || "unique appearance"}]`;
+    return {
+      characterId: character.id,
+      name: character.name,
+      physicalDescription: character.description || faceDnaPrompt || promptAnchor,
+      referenceImageUrl,
+      isNonHuman: true,
+      costumeType: character.costumeType || undefined,
+      referenceImageLocked,
+      attributes: normalizedAttributes,
+      promptAnchor,
+    };
   }
 
+  const sections: string[] = [];
+  if (referenceImageLocked) {
+    sections.push(
+      "IDENTITY REFERENCE HARD-LOCK: use the supplied character portrait as the authoritative face and body identity in every frame; preserve facial geometry, age, hairline, marks, skin tone, and recognisable asymmetry",
+    );
+  }
+
+  addSection(sections, "CORE IDENTITY", [age, gender, ethnicity, nationality && `${nationality} nationality`]);
+  addSection(sections, "DIRECT DESCRIPTION", [character.description]);
+
+  if (faceDnaPrompt) {
+    addSection(sections, "FACE DNA", [faceDnaPrompt]);
+  } else {
+    addSection(sections, "FACE", [
+      faceShape && `${faceShape} face`,
+      skinTone && `${skinTone} skin`,
+      eyeColor && `${eyeColor} eyes`,
+      [hairLength, hairColor, hairStyle].filter(Boolean).join(" ") || undefined,
+      facialFeatures,
+      facialHair && `facial hair: ${facialHair}`,
+      expression && `expression: ${expression}`,
+      distinguishingFeatures.length ? `DISTINGUISHING: ${distinguishingFeatures.join(", ")}` : undefined,
+    ]);
+  }
+
+  if (bodyDnaPrompt) {
+    addSection(sections, "BODY DNA", [bodyDnaPrompt]);
+  } else {
+    addSection(sections, "BODY", [build, height, weight, fitnessLevel && `${fitnessLevel} fitness`, posture && `${posture} posture`]);
+  }
+
+  addSection(sections, "DIRECTOR REQUIREMENTS", [directorRequirements]);
+  addSection(sections, "ROLE AND PERFORMANCE", [
+    character.role,
+    character.storyImportance && `${character.storyImportance} importance`,
+    character.screenTime && `${character.screenTime} screen time`,
+    character.arcType && `${character.arcType} arc`,
+    character.moralAlignment && `${character.moralAlignment} moral alignment`,
+    character.performanceStyle && `performance style: ${character.performanceStyle}`,
+    character.castingNotes && `casting direction: ${character.castingNotes}`,
+    character.signatureMannerisms && `signature mannerisms: ${character.signatureMannerisms}`,
+    character.personality && `personality: ${compact(character.personality)}`,
+    character.emotionalRange && `emotional range: ${compact(character.emotionalRange)}`,
+  ]);
+  addSection(sections, "STORY BEHAVIOUR", [
+    character.backstory && `backstory: ${character.backstory}`,
+    character.motivations && `motivations: ${character.motivations}`,
+    character.fears && `fears: ${character.fears}`,
+    character.secrets && `secrets: ${character.secrets}`,
+    character.strengths && `strengths: ${compact(character.strengths)}`,
+    character.weaknesses && `weaknesses: ${compact(character.weaknesses)}`,
+    character.relationships && `relationships: ${compact(character.relationships)}`,
+  ]);
+  addSection(sections, "VOICE AND SPEECH", [
+    character.voiceDescription,
+    character.voiceType,
+    character.accent,
+    character.speechPattern,
+    character.catchphrase && `catchphrase: ${character.catchphrase}`,
+    character.voiceLanguage && `voice language: ${character.voiceLanguage}`,
+    character.languages && `languages: ${compact(character.languages)}`,
+  ]);
+  addSection(sections, "ABILITIES", [
+    character.physicalAbilities && `physical: ${compact(character.physicalAbilities)}`,
+    character.mentalAbilities && `mental: ${compact(character.mentalAbilities)}`,
+    character.specialSkills && `skills: ${compact(character.specialSkills)}`,
+  ]);
+  addSection(sections, "BACKGROUND CONTEXT", [
+    character.occupation && `occupation: ${character.occupation}`,
+    character.countryOfOrigin && `origin country: ${character.countryOfOrigin}`,
+    character.cityOfOrigin && `origin city: ${character.cityOfOrigin}`,
+    character.educationLevel && `education: ${character.educationLevel}`,
+    character.socialClass && `social class: ${character.socialClass}`,
+    character.religion && `religion: ${character.religion}`,
+    character.environmentPreference && `environment preference: ${character.environmentPreference}`,
+    character.preferredWeather && `preferred weather: ${character.preferredWeather}`,
+    character.preferredSeason && `preferred season: ${character.preferredSeason}`,
+    character.preferredTimeOfDay && `preferred time: ${character.preferredTimeOfDay}`,
+  ]);
+
+  if (sceneWardrobeOverride?.wardrobeDescription) {
+    addSection(sections, "SCENE WARDROBE HARD-LOCK", [
+      sceneWardrobeOverride.wardrobeDescription,
+      sceneWardrobeOverride.makeupNotes && `makeup: ${sceneWardrobeOverride.makeupNotes}`,
+      sceneWardrobeOverride.hairNotes && `hair: ${sceneWardrobeOverride.hairNotes}`,
+      sceneWardrobeOverride.accessories && `accessories: ${sceneWardrobeOverride.accessories}`,
+    ]);
+  } else if (wardrobe) {
+    addSection(sections, "WARDROBE", [wardrobe]);
+  } else {
+    sections.push("WARDROBE: clean, understated, scene-appropriate neutral clothing until an explicit costume is assigned; no visible branding or bold pattern");
+  }
+
+  sections.push(
+    "REALISM: photorealistic human identity with authentic skin pores, micro-wrinkles, natural asymmetry, detailed living eyes, individual hair strands, and consistent age; not CGI, not plastic skin, not a generic substitute",
+  );
+
+  const promptAnchor = `[CHARACTER ${character.name}: ${sections.join(" || ")}]`;
   return {
     characterId: character.id,
     name: character.name,
-    physicalDescription: character.description || promptAnchor,
-    referenceImageUrl: character.referenceImageUrl || character.thumbnailUrl || undefined,
-    isNonHuman: character.isNonHuman ?? false,
-    costumeType: character.costumeType ?? undefined,
-    referenceImageLocked: character.referenceImageLocked ?? false,
-    attributes: attrs,
+    physicalDescription: character.description || faceDnaPrompt || promptAnchor,
+    referenceImageUrl,
+    isNonHuman: false,
+    costumeType: character.costumeType || undefined,
+    referenceImageLocked,
+    attributes: normalizedAttributes,
     promptAnchor,
   };
 }
 
-/**
- * Inject character DNA into a scene prompt.
- * Places character descriptions at the beginning of the prompt
- * to give them maximum weight in the generation.
- */
 export function injectCharacterDNA(
   scenePrompt: string,
   characters: CharacterDNA[],
-  characterIdsInScene: number[]
+  characterIdsInScene: number[],
 ): string {
   if (characterIdsInScene.length === 0) return scenePrompt;
-
-  const relevantChars = characters.filter(c => characterIdsInScene.includes(c.characterId));
-  if (relevantChars.length === 0) return scenePrompt;
-
-  // Build character block
-  const charBlock = relevantChars
-    .map(c => c.promptAnchor)
-    .join(" ");
-
-  // Inject at the beginning for maximum weight
-  return `${charBlock} â ${scenePrompt}`;
+  const relevantCharacters = characters.filter(character => characterIdsInScene.includes(character.characterId));
+  if (relevantCharacters.length === 0) return scenePrompt;
+  return `${relevantCharacters.map(character => character.promptAnchor).join(" ")} — ${scenePrompt}`;
 }
 
-// âââ Scene Continuity Manager âââ
-
-/**
- * Build a continuity-aware prompt for a scene based on the previous scene's state.
- * This ensures visual coherence between consecutive scenes.
- */
 export function buildContinuityPrompt(
   scenePrompt: string,
   previousState?: SceneContinuityState,
@@ -305,153 +493,83 @@ export function buildContinuityPrompt(
     timeOfDay?: string;
     weather?: string;
     lighting?: string;
-  }
+  },
 ): string {
   if (!previousState) return scenePrompt;
-
   const continuityHints: string[] = [];
-
-  // Same location? Maintain visual consistency
-  if (currentScene?.location && previousState.location &&
-      currentScene.location.toLowerCase() === previousState.location.toLowerCase()) {
+  if (
+    currentScene?.location
+    && previousState.location
+    && currentScene.location.toLowerCase() === previousState.location.toLowerCase()
+  ) {
     continuityHints.push(`same location as previous shot: ${previousState.location}`);
   }
-
-  // Time continuity
-  if (currentScene?.timeOfDay && previousState.timeOfDay &&
-      currentScene.timeOfDay === previousState.timeOfDay) {
+  if (currentScene?.timeOfDay && previousState.timeOfDay && currentScene.timeOfDay === previousState.timeOfDay) {
     continuityHints.push(`consistent ${currentScene.timeOfDay} lighting`);
   }
-
-  // Weather continuity
-  if (currentScene?.weather && previousState.weather &&
-      currentScene.weather === previousState.weather) {
+  if (currentScene?.weather && previousState.weather && currentScene.weather === previousState.weather) {
     continuityHints.push(`same ${currentScene.weather} weather conditions`);
   }
-
-  if (continuityHints.length > 0) {
-    return `[Continuity: ${continuityHints.join(", ")}] ${scenePrompt}`;
-  }
-
-  return scenePrompt;
+  return continuityHints.length
+    ? `[Continuity: ${continuityHints.join(", ")}] ${scenePrompt}`
+    : scenePrompt;
 }
 
-// âââ Frame Extraction for Continuity âââ
-
-/**
- * Extract the last frame from a video URL and return it as a reference image.
- * This frame becomes the starting point for the next scene's generation.
- */
 export async function extractContinuityFrame(
   videoUrl: string,
   projectId: number,
   sceneId: number,
-  position: "first" | "last" = "last"
+  position: "first" | "last" = "last",
 ): Promise<string | undefined> {
   const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-continuity-"));
-
   try {
-    // Download video
     const videoPath = path.join(tmpDir, "video.mp4");
-    const resp = await fetch(videoUrl, { signal: AbortSignal.timeout(30000) });
-    if (!resp.ok) return undefined;
-    const buffer = Buffer.from(await resp.arrayBuffer());
-    await fs.promises.writeFile(videoPath, buffer);
-
+    const response = await fetch(videoUrl, { signal: AbortSignal.timeout(30_000) });
+    if (!response.ok) return undefined;
+    await fs.promises.writeFile(videoPath, Buffer.from(await response.arrayBuffer()));
     const framePath = path.join(tmpDir, `${position}_frame.jpg`);
 
     if (position === "last") {
-      // Get duration first
-      const { stdout: probeOut } = await execFileAsync("ffprobe", [
+      const { stdout } = await execFileAsync("ffprobe", [
         "-v", "quiet",
         "-print_format", "json",
         "-show_format",
         videoPath,
-      ], { timeout: 15000 });
-      const info = JSON.parse(probeOut);
-      const duration = parseFloat(info.format?.duration || "0");
+      ], { timeout: 15_000 });
+      const duration = Number.parseFloat(JSON.parse(stdout).format?.duration || "0");
       if (duration <= 0) return undefined;
-
-      const seekTime = Math.max(0, duration - 0.1);
       await execFileAsync("ffmpeg", [
-        "-ss", String(seekTime),
+        "-ss", String(Math.max(0, duration - 0.1)),
         "-i", videoPath,
         "-vframes", "1",
         "-q:v", "2",
         "-y",
         framePath,
-      ], { timeout: 15000 });
+      ], { timeout: 15_000 });
     } else {
-      // First frame
       await execFileAsync("ffmpeg", [
         "-i", videoPath,
         "-vframes", "1",
         "-q:v", "2",
         "-y",
         framePath,
-      ], { timeout: 15000 });
+      ], { timeout: 15_000 });
     }
 
-    // Check if frame was created
-    try {
-      await fs.promises.access(framePath);
-    } catch {
-      return undefined;
-    }
-
-    // Upload to S3
+    await fs.promises.access(framePath);
     const frameBuffer = await fs.promises.readFile(framePath);
     const key = `continuity/${projectId}/scene-${sceneId}-${position}-${Date.now()}.jpg`;
-    const { url } = await storagePut(key, frameBuffer, "image/jpeg");
-    return url;
-  } catch (err) {
-    logger.warn(`[Continuity] Failed to extract ${position} frame: ${String(err)}`);
+    return (await storagePut(key, frameBuffer, "image/jpeg")).url;
+  } catch (error) {
+    logger.warn(`[Continuity] Failed to extract ${position} frame: ${String(error)}`);
     return undefined;
   } finally {
-    try {
-      await fs.promises.rm(tmpDir, { recursive: true, force: true });
-    } catch { /* ignore */ }
+    await fs.promises.rm(tmpDir, { recursive: true, force: true }).catch(() => undefined);
   }
 }
 
-// âââ Continuity Chain Builder âââ
-
-/**
- * Build a full continuity chain for a project.
- * This is called before film generation to plan the visual flow.
- */
 export function buildContinuityChain(
-  characters: Array<{
-    id: number;
-    name: string;
-    description?: string | null;
-    gender?: string | null;
-    ageRange?: string | null;
-    ethnicity?: string | null;
-    skinTone?: string | null;
-    build?: string | null;
-    height?: string | null;
-    hairColor?: string | null;
-    hairStyle?: string | null;
-    hairLength?: string | null;
-    eyeColor?: string | null;
-    faceShape?: string | null;
-    distinguishingFeatures?: string | null;
-    clothing?: string | null;
-    referenceImageUrl?: string | null;
-    thumbnailUrl?: string | null;
-    faceDnaPrompt?: string | null;
-    bodyDnaPrompt?: string | null;
-    consistencyNotes?: string | null;
-    deepProfile?: string | null;
-    nationality?: string | null;
-    weight?: string | null;
-    fitnessLevel?: string | null;
-    posture?: string | null;
-    isNonHuman?: boolean | null;
-    costumeType?: string | null;
-    referenceImageLocked?: boolean | null;
-  }>,
+  characters: CharacterRecord[],
   scenes: Array<{
     id: number;
     orderIndex: number;
@@ -462,120 +580,147 @@ export function buildContinuityChain(
     lighting?: string | null;
     characterIds?: number[];
   }>,
-  projectId: number
+  projectId: number,
 ): ContinuityChain {
-  const characterDNAs = characters.map(c => buildCharacterDNA(c));
-
-  const sceneStates: SceneContinuityState[] = scenes
-    .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
-    .map(s => ({
-      sceneId: s.id,
-      orderIndex: s.orderIndex || 0,
-      lastVisualState: s.description || "",
-      location: s.locationType || "unknown",
-      timeOfDay: s.timeOfDay || "day",
-      weather: s.weather || "clear",
-      characterIds: s.characterIds || [],
-      lighting: s.lighting || "natural",
-    }));
-
   return {
     projectId,
-    scenes: sceneStates,
-    characters: characterDNAs,
+    characters: characters.map(character => buildCharacterDNA(character)),
+    scenes: [...scenes]
+      .sort((first, second) => (first.orderIndex || 0) - (second.orderIndex || 0))
+      .map(scene => ({
+        sceneId: scene.id,
+        orderIndex: scene.orderIndex || 0,
+        lastVisualState: scene.description || "",
+        location: scene.locationType || "unknown",
+        timeOfDay: scene.timeOfDay || "day",
+        weather: scene.weather || "clear",
+        characterIds: scene.characterIds || [],
+        lighting: scene.lighting || "natural",
+      })),
   };
 }
 
-/**
- * Generate a consistency-enhanced prompt for a specific scene.
- * Combines character DNA + scene continuity + cinematic prompt.
- */
+export interface SceneCoherenceContext {
+  background?: {
+    name: string;
+    backgroundType?: string | null;
+    description?: string | null;
+    styleNotes?: string | null;
+    vehicleMake?: string | null;
+    vehicleModel?: string | null;
+    vehicleYear?: number | null;
+    vehicleColor?: string | null;
+    vehicleInterior?: string | null;
+    vehicleCondition?: string | null;
+    locationTags?: any[] | null;
+  } | null;
+  props?: Array<{
+    name: string;
+    description?: string | null;
+    category?: string | null;
+    colors?: any[] | null;
+    characterId?: number | null;
+    usageNotes?: string | null;
+  }> | null;
+  characterStates?: Array<{
+    characterId: number;
+    label: string;
+    stateType: string;
+    description: string;
+    promptOverride?: string | null;
+  }> | null;
+  wardrobeByCharacter?: Record<number, string> | null;
+  visualDNA?: {
+    genreProfile?: string | null;
+    lensProfile?: string | null;
+    lightingStyle?: string | null;
+    colorPalette?: string | null;
+    filmStock?: string | null;
+    globalColorGrade?: string | null;
+    globalColorGradeLocked?: boolean | null;
+    cinematographer?: string | null;
+  } | null;
+}
 
-  // âââ Scene Coherence Context (v6.32+) âââââââââââââââââââââââââââââââââââââââââ
-  // Injected into every scene prompt so backgrounds, vehicles, props, animals,
-  // creatures and character states remain locked across both quick-generate
-  // and manual scene-by-scene generation.
-  export interface SceneCoherenceContext {
-    background?: {
-      name: string;
-      backgroundType?: string | null; // 'location'|'vehicle'|'vessel'|'aircraft'
-      description?: string | null;
-      styleNotes?: string | null;
-      vehicleMake?: string | null;
-      vehicleModel?: string | null;
-      vehicleYear?: number | null;
-      vehicleColor?: string | null;
-      vehicleInterior?: string | null;
-      vehicleCondition?: string | null;
-      locationTags?: any[] | null;
-    } | null;
-    props?: Array<{
-      name: string; description?: string | null; category?: string | null;
-      colors?: any[] | null; characterId?: number | null; usageNotes?: string | null;
-    }> | null;
-    characterStates?: Array<{
-      characterId: number; label: string; stateType: string;
-      description: string; promptOverride?: string | null;
-    }> | null;
-    wardrobeByCharacter?: Record<number, string> | null;
-    visualDNA?: {
-      genreProfile?: string | null; lensProfile?: string | null;
-      lightingStyle?: string | null; colorPalette?: string | null;
-      filmStock?: string | null; globalColorGrade?: string | null;
-      globalColorGradeLocked?: boolean | null; cinematographer?: string | null;
-    } | null;
+function buildBackgroundSection(background: SceneCoherenceContext["background"]): string {
+  if (!background) return "";
+  const type = (background.backgroundType || "location").toLowerCase();
+  if (type === "vehicle") {
+    const tag = [
+      background.vehicleYear ? String(background.vehicleYear) : "",
+      background.vehicleColor || "",
+      `${background.vehicleMake || ""} ${background.vehicleModel || ""}`.trim(),
+    ].filter(Boolean).join(" ");
+    const interior = background.vehicleInterior ? `, ${background.vehicleInterior} interior` : "";
+    const condition = background.vehicleCondition ? `, ${background.vehicleCondition} condition` : "";
+    return `[VEHICLE LOCK — "${background.name}": ${tag}${interior}${condition}. Character operates this specific vehicle. Never substitute another make, model, or colour.]`;
   }
+  if (type === "vessel") {
+    return `[VESSEL LOCK — "${background.name}"${background.description ? ` — ${background.description}` : ""}. Maintain exact hull, rigging, and deck condition in all shots.]`;
+  }
+  if (type === "aircraft") {
+    return `[AIRCRAFT LOCK — "${background.name}"${background.description ? ` — ${background.description}` : ""}. Maintain livery, registration, and interior consistently.]`;
+  }
+  const parts: string[] = [];
+  if (background.description) parts.push(background.description);
+  if (background.styleNotes) parts.push(`Style: ${background.styleNotes}`);
+  if (Array.isArray(background.locationTags) && background.locationTags.length) {
+    parts.push(`Tags: ${background.locationTags.join(", ")}`);
+  }
+  return `[LOCATION LOCK — "${background.name}": ${parts.join(". ")}. Visual consistency required across all scenes set here.]`;
+}
 
-  function buildBackgroundSection(bg: SceneCoherenceContext['background']): string {
-    if (!bg) return '';
-    const t = (bg.backgroundType || 'location').toLowerCase();
-    if (t === 'vehicle') {
-      const tag = [bg.vehicleYear?String(bg.vehicleYear):'', bg.vehicleColor||'',
-        `${bg.vehicleMake||''} ${bg.vehicleModel||''}`.trim()].filter(Boolean).join(' ');
-      const interior  = bg.vehicleInterior  ? `, ${bg.vehicleInterior} interior`  : '';
-      const condition = bg.vehicleCondition ? `, ${bg.vehicleCondition} condition` : '';
-      return `[VEHICLE LOCK â "${bg.name}": ${tag}${interior}${condition}. Character operates THIS specific vehicle. NEVER substitute another make, model or colour.]`;
-    }
-    if (t === 'vessel') return `[VESSEL LOCK â "${bg.name}"${bg.description?' â '+bg.description:''}. Maintain exact hull, rigging and deck condition in all shots.]`;
-    if (t === 'aircraft') return `[AIRCRAFT LOCK â "${bg.name}"${bg.description?' â '+bg.description:''}. Maintain livery, registration and interior consistently.]`;
-    const parts:string[]=[];
-    if(bg.description)parts.push(bg.description);if(bg.styleNotes)parts.push(`Style: ${bg.styleNotes}`);
-    if(Array.isArray(bg.locationTags)&&bg.locationTags.length)parts.push(`Tags: ${bg.locationTags.join(', ')}`);
-    return `[LOCATION LOCK â "${bg.name}": ${parts.join('. ')}. Visual consistency required across all scenes set here.]`;
-  }
-  function buildPropsSection(props:SceneCoherenceContext['props']):string{
-    if(!props?.length)return'';
-    return `[LOCKED PROPS â maintain exact visual identity: ${props.map(p=>[p.name,p.category?`(${p.category})`:'',p.description?`â ${p.description}`:'',Array.isArray(p.colors)&&p.colors.length?`color:${p.colors.join('/')}`:'',p.usageNotes?`[${p.usageNotes}]`:''].filter(Boolean).join(' ')).join(' | ')}]`;
-  }
-  function buildCharacterStateSection(states:SceneCoherenceContext['characterStates'],charIds:number[]):string{
-    if(!states?.length)return'';
-    const rel=states.filter(s=>charIds.includes(s.characterId));
-    if(!rel.length)return'';
-    return `[CHARACTER STATES THIS SCENE: ${rel.map(s=>s.promptOverride||(`${s.label}: ${s.description}`)).join(' | ')}]`;
-  }
-  function buildWardrobeSection(map:Record<number,string>|null|undefined,charIds:number[]):string{
-    if(!map)return'';
-    const e=charIds.filter(id=>map[id]).map(id=>map[id]);
-    return e.length?`[COSTUME LOCK: ${e.join(' | ')}]`:'';
-  }
-  function buildVisualDNASection(dna:SceneCoherenceContext['visualDNA']):string{
-    if(!dna)return'';
-    const p:string[]=[];
-    if(dna.genreProfile)p.push(`Genre: ${dna.genreProfile}`);
-    if(dna.cinematographer)p.push(`Cinematography after: ${dna.cinematographer}`);
-    if(dna.lensProfile)p.push(`Lens: ${dna.lensProfile}`);
-    if(dna.lightingStyle)p.push(`Lighting: ${dna.lightingStyle}`);
-    if(dna.colorPalette)p.push(`Palette: ${dna.colorPalette}`);
-    if(dna.filmStock)p.push(`Film stock: ${dna.filmStock}`);
-    if(dna.globalColorGrade&&dna.globalColorGradeLocked)p.push(`Color grade LOCKED: ${dna.globalColorGrade}`);
-    return p.length?`[VISUAL DNA LOCK â apply every frame: ${p.join(' | ')}]`:'';
-  }
+function buildPropsSection(props: SceneCoherenceContext["props"]): string {
+  if (!props?.length) return "";
+  return `[LOCKED PROPS — maintain exact visual identity: ${props.map(prop => [
+    prop.name,
+    prop.category ? `(${prop.category})` : "",
+    prop.description ? `— ${prop.description}` : "",
+    Array.isArray(prop.colors) && prop.colors.length ? `colour: ${prop.colors.join("/")}` : "",
+    prop.usageNotes ? `[${prop.usageNotes}]` : "",
+  ].filter(Boolean).join(" ")).join(" | ")}]`;
+}
 
-  export function generateConsistentScenePrompt(
+function buildCharacterStateSection(
+  states: SceneCoherenceContext["characterStates"],
+  characterIds: number[],
+): string {
+  if (!states?.length) return "";
+  const relevant = states.filter(state => characterIds.includes(state.characterId));
+  return relevant.length
+    ? `[CHARACTER STATES THIS SCENE: ${relevant.map(state => state.promptOverride || `${state.label}: ${state.description}`).join(" | ")}]`
+    : "";
+}
+
+function buildWardrobeSection(
+  wardrobeByCharacter: Record<number, string> | null | undefined,
+  characterIds: number[],
+): string {
+  if (!wardrobeByCharacter) return "";
+  const entries = characterIds.filter(id => wardrobeByCharacter[id]).map(id => wardrobeByCharacter[id]);
+  return entries.length ? `[COSTUME LOCK: ${entries.join(" | ")}]` : "";
+}
+
+function buildVisualDNASection(visualDNA: SceneCoherenceContext["visualDNA"]): string {
+  if (!visualDNA) return "";
+  const parts: string[] = [];
+  if (visualDNA.genreProfile) parts.push(`Genre: ${visualDNA.genreProfile}`);
+  if (visualDNA.cinematographer) parts.push(`Cinematography after: ${visualDNA.cinematographer}`);
+  if (visualDNA.lensProfile) parts.push(`Lens: ${visualDNA.lensProfile}`);
+  if (visualDNA.lightingStyle) parts.push(`Lighting: ${visualDNA.lightingStyle}`);
+  if (visualDNA.colorPalette) parts.push(`Palette: ${visualDNA.colorPalette}`);
+  if (visualDNA.filmStock) parts.push(`Film stock: ${visualDNA.filmStock}`);
+  if (visualDNA.globalColorGrade && visualDNA.globalColorGradeLocked) {
+    parts.push(`Colour grade locked: ${visualDNA.globalColorGrade}`);
+  }
+  return parts.length ? `[VISUAL DNA LOCK — apply every frame: ${parts.join(" | ")}]` : "";
+}
+
+export function generateConsistentScenePrompt(
   chain: ContinuityChain,
   sceneIndex: number,
   basePrompt: string,
-  coherenceCtx?: SceneCoherenceContext
+  coherenceContext?: SceneCoherenceContext,
 ): {
   enhancedPrompt: string;
   referenceImageUrl?: string;
@@ -585,11 +730,7 @@ export function buildContinuityChain(
   if (!scene) return { enhancedPrompt: basePrompt, characterPromptAnchors: [] };
 
   const previousScene = sceneIndex > 0 ? chain.scenes[sceneIndex - 1] : undefined;
-
-  // 1. Inject character DNA
   const withCharacters = injectCharacterDNA(basePrompt, chain.characters, scene.characterIds);
-
-  // 2. Add continuity hints from previous scene
   const withContinuity = buildContinuityPrompt(withCharacters, previousScene, {
     location: scene.location,
     timeOfDay: scene.timeOfDay,
@@ -597,46 +738,42 @@ export function buildContinuityChain(
     lighting: scene.lighting,
   });
 
-  // 3. Inject coherence context (both quick-generate & manual scenes)
-  //    Covers: location/vehicle locks, props, creatures/animals, character
-  //    states, Visual DNA, wardrobe assignments.
-  const coherenceSections: string[] = [withContinuity];
-  if (coherenceCtx) {
-    for (const s of [
-      buildBackgroundSection(coherenceCtx.background),
-      buildPropsSection(coherenceCtx.props),
-      buildCharacterStateSection(coherenceCtx.characterStates, scene.characterIds),
-      buildWardrobeSection(coherenceCtx.wardrobeByCharacter, scene.characterIds),
-      buildVisualDNASection(coherenceCtx.visualDNA),
-    ]) { if (s) coherenceSections.push(s); }
+  const sections = [withContinuity];
+  if (coherenceContext) {
+    for (const section of [
+      buildBackgroundSection(coherenceContext.background),
+      buildPropsSection(coherenceContext.props),
+      buildCharacterStateSection(coherenceContext.characterStates, scene.characterIds),
+      buildWardrobeSection(coherenceContext.wardrobeByCharacter, scene.characterIds),
+      buildVisualDNASection(coherenceContext.visualDNA),
+    ]) {
+      if (section) sections.push(section);
+    }
   }
-  const enhancedPrompt = coherenceSections.filter(Boolean).join('\n\n');
 
-  // 4. Reference image: creature/animal hard-lock takes priority over last frame
-  //    (Babe stays a pig, not a warthog)
-  const nonHumanRef = chain.characters
-    .filter(c => scene.characterIds.includes(c.characterId)
-      && (c as any).referenceImageLocked && c.referenceImageUrl)
-    .map(c => c.referenceImageUrl)[0];
-  const referenceImageUrl = nonHumanRef || previousScene?.lastFrameUrl;
+  const lockedCharacterReference = chain.characters
+    .find(character => (
+      scene.characterIds.includes(character.characterId)
+      && character.referenceImageLocked
+      && character.referenceImageUrl
+    ))?.referenceImageUrl;
 
-  // 5. Character prompt anchors
   const characterPromptAnchors = chain.characters
-    .filter(c => scene.characterIds.includes(c.characterId))
-    .map(c => c.promptAnchor);
+    .filter(character => scene.characterIds.includes(character.characterId))
+    .map(character => character.promptAnchor);
 
-  return { enhancedPrompt, referenceImageUrl, characterPromptAnchors };
+  return {
+    enhancedPrompt: sections.filter(Boolean).join("\n\n"),
+    referenceImageUrl: lockedCharacterReference || previousScene?.lastFrameUrl,
+    characterPromptAnchors,
+  };
 }
 
-/**
- * Update the continuity chain after a scene has been generated.
- * Records the last frame URL and visual state for the next scene.
- */
 export function updateContinuityChainAfterGeneration(
   chain: ContinuityChain,
   sceneIndex: number,
   lastFrameUrl?: string,
-  lastVisualState?: string
+  lastVisualState?: string,
 ): ContinuityChain {
   const updated = { ...chain, scenes: [...chain.scenes] };
   if (updated.scenes[sceneIndex]) {

@@ -56,7 +56,7 @@ async function detectedMimeType(buffer: Buffer, fallback?: string): Promise<stri
   const metadata = await sharp(buffer, { failOn: "error", limitInputPixels: 40_000_000 }).metadata();
   if (metadata.format === "png") return "image/png";
   if (metadata.format === "webp") return "image/webp";
-  if (metadata.format === "jpeg" || metadata.format === "jpg") return "image/jpeg";
+  if (metadata.format === "jpeg") return "image/jpeg";
   return normalizedMimeType(fallback);
 }
 

@@ -2638,6 +2638,14 @@ export async function runAutoMigration(): Promise<void> {
     { table: "wardrobeItems", column: "status", definition: "VARCHAR(32) NOT NULL DEFAULT 'active'" },
     { table: "wardrobeItems", column: "retailPriceAud", definition: "INT NULL" },
     { table: "wardrobeItems", column: "leasePriceAud", definition: "INT NULL" },
+    // Third-party physical and virtual item commerce. Existing Lamalo values are not updated.
+    { table: "wardrobeItems", column: "physicalRetailPriceAud", definition: "INT NULL" },
+    { table: "wardrobeItems", column: "isVirtualOnly", definition: "TINYINT(1) NOT NULL DEFAULT 1" },
+    { table: "wardrobeItems", column: "virtualPriceRule", definition: "VARCHAR(32) NULL" },
+    { table: "wardrobeItems", column: "virtualBadgeText", definition: "VARCHAR(64) NULL DEFAULT 'Virtual item'" },
+    { table: "wardrobeLeases", column: "purchaseMode", definition: "VARCHAR(16) NOT NULL DEFAULT 'virtual'" },
+    { table: "wardrobeLeases", column: "shippingAddressId", definition: "INT NULL" },
+    { table: "wardrobeLeases", column: "shippingAddressSnapshot", definition: "JSON NULL" },
     // ââ designerProfiles marketplace columns (v7.0) ââ
     { table: "designerProfiles", column: "stripeAccountId", definition: "VARCHAR(255) NULL" },
     { table: "designerProfiles", column: "stripeAccountStatus", definition: "VARCHAR(32) NULL DEFAULT 'none'" },
@@ -2645,6 +2653,16 @@ export async function runAutoMigration(): Promise<void> {
     { table: "designerProfiles", column: "membershipSubscriptionId", definition: "VARCHAR(255) NULL" },
     { table: "designerProfiles", column: "membershipCurrentPeriodEnd", definition: "TIMESTAMP NULL" },
     { table: "designerProfiles", column: "brandingImages", definition: "JSON NULL" },
+    // Designer commerce identity and registered business details
+    { table: "designerProfiles", column: "username", definition: "VARCHAR(80) NULL" },
+    { table: "designerProfiles", column: "abn", definition: "VARCHAR(32) NULL" },
+    { table: "designerProfiles", column: "businessAddressLine1", definition: "VARCHAR(255) NULL" },
+    { table: "designerProfiles", column: "businessAddressLine2", definition: "VARCHAR(255) NULL" },
+    { table: "designerProfiles", column: "businessCity", definition: "VARCHAR(128) NULL" },
+    { table: "designerProfiles", column: "businessStateRegion", definition: "VARCHAR(128) NULL" },
+    { table: "designerProfiles", column: "businessPostalCode", definition: "VARCHAR(32) NULL" },
+    { table: "designerProfiles", column: "businessCountry", definition: "VARCHAR(128) NULL" },
+    { table: "designerProfiles", column: "registrationCompleted", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
     // ââ designerCollections marketplace columns (v7.0) ââ
     { table: "designerCollections", column: "collectionPriceAud", definition: "INT NULL" },
     { table: "designerCollections", column: "published", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
