@@ -1,150 +1,195 @@
-# Virelle Studios — Deployment Guide
+# Virelle Studios Deployment Guide
 
-  ## Stack
+This document describes the current production deployment. Render is the active application host. The application is MySQL-native and must not be connected to a PostgreSQL database.
 
-  | Layer | Technology |
-  |---|---|
-  | Frontend | React + Vite |
-  | Backend | Express 5 + tRPC + Node.js |
-  | Database | PostgreSQL (Drizzle ORM) |
-  | Cache / Rate limiting | Redis (ioredis) |
-  | Payments | Stripe |
-  | Error tracking | Sentry |
-  | Deployment | Railway |
+## Production architecture
 
-  ---
+| Layer | Production implementation |
+|---|---|
+| Web service | Render Docker service |
+| Frontend | React + Vite static bundle served by Express |
+| Backend | Express 5 + tRPC on Node.js 24 |
+| Database | External managed MySQL 8-compatible service |
+| Cache and rate limiting | Redis |
+| Storage | S3-compatible object storage |
+| Payments | Stripe |
+| Error tracking | Sentry when configured |
+| Domain | `https://virelle.life` |
 
-  ## Local Development
+The canonical infrastructure files are `render.yaml`, `Dockerfile` and `start.sh`.
 
-  ```bash
-  # 1. Install dependencies
-  npm install
+## Local development
 
-  # 2. Set up environment
-  cp .env.example .env
-  # Fill in DATABASE_URL, JWT_SECRET, STRIPE_* at minimum
+```bash
+cp .env.example .env
+pnpm install
+pnpm dev
+```
 
-  # 3. Push database schema
-  npm run db:push
+Use a non-production MySQL database. Do not paste connection strings or credentials into documentation, issues, pull requests or source files.
 
-  # 4. Start dev server (Vite + Express on the same port)
-  npm run dev
-  ```
+Run the verification gate before pushing:
 
-  The dev server runs on `http://localhost:3000` by default.
+```bash
+pnpm verify
+```
 
-  ---
+## Render service setup
 
-  ## Production Build
+Create or update the service from `render.yaml`.
 
-  ```bash
-  npm run build
-  # → Builds client with Vite into dist/public
-  # → Bundles server with esbuild into dist/index.js
+The service uses:
 
-  npm run start
-  # → Runs dist/index.js (production Node.js server)
-  ```
+- Docker runtime
+- `Dockerfile` at the repository root
+- `/api/healthz` as the health-check path
+- `start.sh` as the container command
+- the `main` branch as the production source
 
-  ---
+`start.sh` performs the following sequence:
 
-  ## Railway Deployment
+1. Runs `run-migrations.mjs` with bounded retries.
+2. Refuses to start when migrations cannot complete.
+3. Starts Express on an internal port.
+4. Starts the public gateway on Render's assigned `PORT`.
+5. Handles termination signals and shuts down both processes cleanly.
 
-  ### 1. Required Environment Variables
+Do not attach a Render PostgreSQL database. Set `DATABASE_URL` to an external MySQL 8-compatible service.
 
-  Set all of these in the Railway project → Variables panel:
+## Required environment groups
 
-  | Variable | Description |
-  |---|---|
-  | `DATABASE_URL` | PostgreSQL connection string (Railway provides this automatically when you add the Postgres plugin) |
-  | `REDIS_URL` | Redis connection string (Railway provides this automatically when you add the Redis plugin) |
-  | `JWT_SECRET` | Random 32+ character secret for session signing |
-  | `STRIPE_SECRET_KEY` | Stripe secret key (sk_live_... in production) |
-  | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (pk_live_... in production) |
-  | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (whsec_...) |
-  | `OPENAI_API_KEY` | OpenAI API key (platform fallback) |
-  | `GMAIL_USER` | Gmail address for transactional email |
-  | `GMAIL_APP_PASSWORD` | Gmail app password |
+Set secrets in Render's environment-variable panel. Do not commit real values.
 
-  See `.env.example` for the full list of optional variables.
+### Core runtime
 
-  ### 2. Build & Start Commands
+- `NODE_ENV=production`
+- `PUBLIC_APP_URL=https://virelle.life`
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `SESSION_SECRET`
+- `REDIS_URL`
 
-  In Railway → Settings → Deploy:
+### Email
 
-  - **Build command:** `npm run build`
-  - **Start command:** `npm run start`
+Configure at least one supported transactional email path:
 
-  ### 3. Health Check
+- `GMAIL_USER`
+- `GMAIL_APP_PASSWORD`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
 
-  Railway's health check is configured via `railway.toml`. The platform pings:
+### Stripe
 
-  ```
-  GET /api/health
-  ```
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- the membership and pack price IDs used by the active Stripe catalogue
+- Stripe Connect return and refresh URLs when marketplace payouts are enabled
 
-  Expected response:
-  ```json
-  {
-    "success": true,
-    "status": "ok",
-    "service": "virelle-studios",
-    "timestamp": "2026-06-16T00:00:00.000Z",
-    "environment": "production",
-    "uptime": 42,
-    "database": "configured"
-  }
-  ```
+### Storage and compliance archive
 
-  ### 4. Database Migrations
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_BUCKET`
+- `AWS_S3_ENDPOINT`
+- `AWS_REGION`
+- `COMPLIANCE_ARCHIVE_BUCKET`
+- compliance retention and signed-URL settings from `.env.example`
 
-  After each schema change, run migrations in production via Railway's shell:
+The compliance archive bucket must be private and encrypted with no public-read policy.
 
-  ```bash
-  npm run db:push
-  ```
+### Authentication and administration
 
-  **Never run db:push against production without testing on a staging instance first.**
+- `OAUTH_SERVER_URL` or the configured direct OAuth provider credentials
+- `VITE_APP_ID`
+- `ADMIN_EMAIL`
 
-  ---
+Administrator authority is database-role based. Do not restore automatic admin promotion through environment variables.
 
-  ## Stripe Webhook Setup
+### AI providers
 
-  1. In the Stripe Dashboard → Webhooks → Add endpoint:
-     - URL: `https://virelle.life/api/stripe/webhook`
-     - Events to listen for:
-       - `checkout.session.completed`
-       - `customer.subscription.updated`
-       - `customer.subscription.deleted`
-       - `invoice.payment_failed`
+Provider keys are optional unless a particular platform-managed integration is enabled. Virelle supports user BYOK for generation and AI-assisted broadcast processing. Configure only the platform integrations that are intentionally operated.
 
-  2. Copy the Webhook Signing Secret and set it as `STRIPE_WEBHOOK_SECRET` in Railway.
+### Broadcast
 
-  3. The webhook route is pre-registered and verifies the signature using `stripe.webhooks.constructEvent()`.
+Managed and AI-assisted broadcasting require:
 
-  ---
+- `BROADCAST_BRIDGE_URL`
+- `BROADCAST_BRIDGE_TOKEN`
 
-  ## Troubleshooting
+Adult Studio broadcasting must use the managed path because recording and compliance retention are mandatory.
 
-  | Problem | Fix |
-  |---|---|
-  | Blank page after deploy | Check Railway build logs. Ensure `npm run build` completes. Check that `NODE_ENV=production` is set. |
-  | 500 on all routes | Check `DATABASE_URL` is set. Run `npm run db:push`. |
-  | Stripe checkout fails | Verify `STRIPE_SECRET_KEY` and all price IDs are set in Railway. |
-  | Emails not sending | Verify `GMAIL_USER` and `GMAIL_APP_PASSWORD` (must be an App Password, not your Gmail login password). |
-  | Redis errors at startup | Add Railway Redis plugin and copy the `REDIS_URL` to Variables. |
-  | Login not persisting | Ensure `JWT_SECRET` is set and not changed between deploys. |
+## Database migrations
 
-  ---
+Production migrations run automatically during container startup through `run-migrations.mjs`.
 
-  ## Optional Services
+For schema changes:
 
-  These are not required for core functionality:
+1. Test the migration against a disposable or staging MySQL database.
+2. Confirm rollback or forward-repair steps.
+3. Merge only after CI, Security CI and parity checks pass.
+4. Allow the Render deployment to run the migration.
+5. Verify `/api/healthz` and the affected workflow.
 
-  - **Social publishing** — TikTok, Instagram, YouTube, etc. (set relevant API tokens)
-  - **AI generation** — Runway, fal.ai, Google AI, Groq (users supply BYOK keys; platform keys are optional fallbacks)
-  - **Google Search Console indexing** — Set `GOOGLE_INDEXING_SA_KEY`
-  - **Sentry error tracking** — Set `SENTRY_DSN` if you want production error reports
+Do not run an unreviewed schema push against production.
 
-  Missing optional keys log a warning at startup but do not crash the server.
-  
+## Stripe webhook
+
+Configure this endpoint in Stripe:
+
+```text
+https://virelle.life/api/stripe/webhook
+```
+
+At minimum, subscribe to the events used by the application, including checkout completion, subscription lifecycle, invoice payment and payment-failure events. Copy the endpoint signing secret into `STRIPE_WEBHOOK_SECRET`.
+
+After deployment, send a Stripe test event and verify a 2xx response. Replaying the same event must not duplicate credits, purchases or subscription effects.
+
+## Health verification
+
+Render checks:
+
+```text
+GET /api/healthz
+```
+
+Operators may also use:
+
+```text
+GET /api/health
+```
+
+A healthy response reports `status: "ok"` and `database: "ok"`. A database error should return a degraded status and must block release sign-off.
+
+## Release procedure
+
+1. Open a focused pull request against `main`.
+2. Require green CI, Security CI and App Debug/Parity checks.
+3. Squash-merge the pull request.
+4. Confirm Render deploys the merged commit.
+5. Verify both health endpoints.
+6. Run the smoke checklist in `RUNBOOK.md`.
+7. Check Stripe webhook deliveries, application logs and Sentry.
+
+## Rollback
+
+For a code-only regression, redeploy the previous known-good Render deployment or revert the offending merge commit and redeploy `main`.
+
+For a migration-related incident:
+
+1. Stop or restrict writes when data integrity is at risk.
+2. Preserve a forensic snapshot before restoring anything.
+3. Restore or forward-repair using the documented migration plan.
+4. Redeploy a compatible application revision.
+5. Run health, authentication, billing and generation smoke tests.
+
+## Credential incidents
+
+Deleting a secret from the current branch does not remove it from Git history. When any password, token, private key or connection string is committed:
+
+1. Revoke or rotate it immediately at the provider.
+2. Update the Render environment variable.
+3. Redeploy and verify connectivity.
+4. Search the repository for additional copies.
+5. Consider history rewriting only as an additional containment step, never as a substitute for rotation.

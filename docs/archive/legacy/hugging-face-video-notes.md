@@ -8,7 +8,7 @@
 
 ## What actually works for FREE video generation:
 1. **fal.ai** via HF router — still requires payment
-2. **Replicate** via HF router — still requires payment  
+2. **Replicate** via HF router — still requires payment
 3. Direct HF Inference API with LTX-Video — may work but very slow and unreliable
 
 ## Best approach for Virelle Studios:
