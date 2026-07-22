@@ -1,0 +1,85 @@
+/*
+ * Verified 18+ Studio visual treatment.
+ * Deliberately restrained: graphite surfaces, Virelle gold accents,
+ * formal verification hierarchy and no adult-site visual language.
+ */
+
+body:has(#mature-access) #mature-access {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(212, 175, 55, 0.28) !important;
+  background:
+    linear-gradient(145deg, rgba(19, 19, 22, 0.98), rgba(10, 10, 12, 0.98)) !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+body:has(#mature-access) #mature-access::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.82),
+    transparent
+  );
+  pointer-events: none;
+}
+
+body:has(#mature-access) #mature-access .text-fuchsia-400,
+body:has(#mature-access) #mature-access .text-fuchsia-300,
+body:has(#mature-access) #mature-access .text-fuchsia-200 {
+  color: rgb(231 199 104) !important;
+}
+
+body:has(#mature-access) #mature-access .border-fuchsia-500\/30 {
+  border-color: rgba(212, 175, 55, 0.28) !important;
+}
+
+body:has(#mature-access) #mature-access .bg-fuchsia-500\/5,
+body:has(#mature-access) #mature-access .bg-fuchsia-500\/\[0\.04\] {
+  background-color: rgba(212, 175, 55, 0.045) !important;
+}
+
+body:has(#mature-access) #mature-access input,
+body:has(#mature-access) #mature-access textarea,
+body:has(#mature-access) #mature-access select {
+  background-color: rgba(7, 7, 9, 0.72);
+  border-color: rgba(255, 255, 255, 0.11);
+}
+
+body:has(#mature-access) #mature-access input:focus,
+body:has(#mature-access) #mature-access textarea:focus,
+body:has(#mature-access) #mature-access select:focus {
+  border-color: rgba(212, 175, 55, 0.58);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.22);
+}
+
+body:has(#mature-access) #mature-access button:not([data-variant="destructive"]) {
+  letter-spacing: 0.01em;
+}
+
+body:has(#mature-access) .border-fuchsia-500\/30,
+body:has(#mature-access) .border-fuchsia-500\/25 {
+  border-color: rgba(212, 175, 55, 0.26) !important;
+}
+
+body:has(#mature-access) .bg-fuchsia-500\/5,
+body:has(#mature-access) .bg-fuchsia-500\/10 {
+  background-color: rgba(212, 175, 55, 0.05) !important;
+}
+
+body:has(#mature-access) .text-fuchsia-200,
+body:has(#mature-access) .text-fuchsia-300,
+body:has(#mature-access) .text-fuchsia-400 {
+  color: rgb(231 199 104) !important;
+}
+
+@media (max-width: 640px) {
+  body:has(#mature-access) #mature-access {
+    border-radius: 0.9rem;
+  }
+}
