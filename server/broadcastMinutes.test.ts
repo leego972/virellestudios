@@ -13,6 +13,10 @@ describe("broadcast minute commerce", () => {
       expect.objectContaining({ id: "relay_1500", minutes: 1500, priceAudCents: 5900 }),
       expect.objectContaining({ id: "relay_3600", minutes: 3600, priceAudCents: 11900 }),
     ]);
+    for (const pack of BROADCAST_MINUTE_PACKS) {
+      expect(pack.priceAudCents).toBe(pack.priceAud * 100);
+      expect(pack.minutes).toBeGreaterThan(0);
+    }
   });
 
   it("grants the advertised monthly managed-broadcast allowance", () => {
