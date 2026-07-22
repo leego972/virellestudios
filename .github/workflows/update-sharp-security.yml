@@ -32,13 +32,7 @@ jobs:
         run: |
           pnpm remove @types/sharp
           pnpm add sharp@0.35.3
-      - name: Validate dependency update
-        run: |
-          pnpm check
-          pnpm test
-          pnpm build
-          pnpm audit --audit-level moderate
-      - name: Commit dependency update
+      - name: Commit dependency update for normal PR validation
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -46,4 +40,4 @@ jobs:
           git commit -m "Update sharp to patched 0.35.3"
           git push origin HEAD:feature/designer-commerce-shipping-final
 
-# Trigger update after the final branch exists.
+# Trigger lockfile generation; CI validates the resulting branch.
