@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import sharp from "sharp";
+import sharp, { type Metadata } from "sharp";
 import { TRPCError } from "@trpc/server";
 
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -42,7 +42,7 @@ export async function validateSwappysImageDataUrl(
     invalid(`${label === "source" ? "Source" : "Target"} image must be smaller than 8 MB.`);
   }
 
-  let metadata: sharp.Metadata;
+  let metadata: Metadata;
   try {
     metadata = await sharp(decoded, { failOn: "error", limitInputPixels: MAX_PIXELS }).metadata();
   } catch {
