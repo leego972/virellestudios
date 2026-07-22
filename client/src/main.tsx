@@ -6,7 +6,6 @@ import GlobalMediaPlayerControls from "@/components/GlobalMediaPlayerControls";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
 import LandingStrategicPositioningGuard from "@/components/LandingStrategicPositioningGuard";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
-import PitchDeckExportOverlay from "@/components/PitchDeckExportOverlay";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
 import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
@@ -237,7 +236,6 @@ createRoot(document.getElementById("root")!).render(
       <App />
       <StoryboardShotWorkspaceOverlay />
       <TimelineEditSuiteOverlay />
-      <PitchDeckExportOverlay />
       <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
