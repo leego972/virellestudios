@@ -1,8 +1,13 @@
 import "@/lib/sentry";
 import "@/lib/analytics";
 import AutomaticContrastGuard from "@/components/AutomaticContrastGuard";
+import DesignerCommercePanel from "@/components/DesignerCommercePanel";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
+import PortalAccessBoundary from "@/components/PortalAccessBoundary";
+import PortalEntryLinks from "@/components/PortalEntryLinks";
+import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
+import ThirdPartyDesignerMarketplaceOverlay from "@/components/ThirdPartyDesignerMarketplaceOverlay";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -125,6 +130,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   const publicPaths = [
     "/login",
     "/register",
+    "/designer-register",
     "/pricing",
     "/subscription",
     "/welcome",
@@ -138,6 +144,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
     "/share",
     "/terms",
     "/privacy",
+    "/wardrobe-marketplace",
   ];
   if (
     publicPaths.some(
@@ -215,6 +222,11 @@ createRoot(document.getElementById("root")!).render(
       <AutomaticContrastGuard />
       <GlobalSidebarLogoutConfirm />
       <LandingVerifiedAppsGuard />
+      <PortalAccessBoundary />
+      <PortalEntryLinks />
+      <RequiredSignupAddressCapture />
+      <DesignerCommercePanel />
+      <ThirdPartyDesignerMarketplaceOverlay />
       <App />
     </QueryClientProvider>
   </trpc.Provider>,
