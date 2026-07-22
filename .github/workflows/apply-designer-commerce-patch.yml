@@ -20,7 +20,7 @@ jobs:
           ref: feature/designer-commerce-shipping-v1
           fetch-depth: 0
       - name: Finalize existing designer commerce infrastructure
-        run: python3 scripts/finalize-designer-commerce.py
+        run: python3 scripts/finalize-designer-commerce-safe.py
       - name: Commit integrated production files
         run: |
           git config user.name "github-actions[bot]"
