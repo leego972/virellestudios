@@ -10,6 +10,7 @@ import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
 import StoryboardShotWorkspaceOverlay from "@/components/StoryboardShotWorkspaceOverlay";
 import ThirdPartyDesignerMarketplaceOverlay from "@/components/ThirdPartyDesignerMarketplaceOverlay";
+import TimelineEditSuiteOverlay from "@/components/TimelineEditSuiteOverlay";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -231,6 +232,7 @@ createRoot(document.getElementById("root")!).render(
       <ThirdPartyDesignerMarketplaceOverlay />
       <App />
       <StoryboardShotWorkspaceOverlay />
+      <TimelineEditSuiteOverlay />
       <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
