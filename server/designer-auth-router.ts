@@ -8,7 +8,7 @@ import { findAuthUserByEmail, markAuthLoginSuccessful } from "./_core/authDb";
 import { createSessionToken } from "./_core/context";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { logger } from "./_core/logger";
-import { ensurePortalCommerceSchema, getUserPortal, setUserPortal } from "./_core/portalAccess";
+import { ensurePortalCommerceSchema, getUserPortal, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
 import { checkRegistrationFraud, logAuditEvent } from "./_core/securityEngine";
 import { publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
@@ -96,6 +96,18 @@ export const designerAuthRouter = router({
 
       const logoUrl = await storeLogo(user.id, input.logoDataUrl);
       await setUserPortal(user.id, "designer");
+      await saveDeliveryAddress(user.id, {
+        label: "Business address",
+        recipientName: input.fullName,
+        phone: input.phone || null,
+        addressLine1: input.businessAddressLine1,
+        addressLine2: input.businessAddressLine2 || null,
+        city: input.businessCity,
+        stateRegion: input.businessStateRegion,
+        postalCode: input.businessPostalCode,
+        country: input.businessCountry,
+        isDefault: true,
+      });
       await dbConn.execute(sql`
         INSERT INTO designerProfiles
           (userId, brandName, displayName, username, abn, profileType, bio, website, instagram, contactEmail, logoUrl,

@@ -362,6 +362,18 @@ export default function Register() {
   // ─── Submit ───
 
   const handleSubmit = () => {
+    let shippingAddress: any = null;
+    try {
+      const rawAddress = sessionStorage.getItem("virelle:signup-delivery-address");
+      shippingAddress = rawAddress ? JSON.parse(rawAddress) : null;
+    } catch {
+      shippingAddress = null;
+    }
+    if (!shippingAddress?.recipientName || !shippingAddress?.addressLine1 || !shippingAddress?.city || !shippingAddress?.stateRegion || !shippingAddress?.postalCode || !shippingAddress?.country) {
+      toast.error("A complete delivery address is required before account creation.");
+      return;
+    }
+
     registerMutation.mutate({
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -381,6 +393,7 @@ export default function Register() {
       portfolioUrl: portfolioUrl.trim() || undefined,
       howDidYouHear: howDidYouHear || undefined,
       marketingOptIn,
+      shippingAddress,
     });
   };
 

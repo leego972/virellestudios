@@ -233,12 +233,19 @@ const requireDesigner = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
+  const portal = await getUserPortal(ctx.user.id, ctx.user.role);
+  if (portal !== "designer" && portal !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "A separate Designer Portal account is required.",
+    });
+  }
   const { getDb } = await import("../db");
   const dbConn = await getDb();
   if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
   const { sql } = await import("drizzle-orm");
   const rows: any = await dbConn.execute(
-    sql`SELECT id, userId FROM designerProfiles WHERE userId = ${ctx.user.id} AND status = 'active' LIMIT 1`,
+    sql`SELECT id, userId FROM designerProfiles WHERE userId = ${ctx.user.id} LIMIT 1`,
   );
   const profile = (Array.isArray(rows[0]) ? rows[0] : rows)[0] ?? null;
   if (!profile) {

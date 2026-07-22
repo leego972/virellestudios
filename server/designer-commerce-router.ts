@@ -54,7 +54,7 @@ const listingSchema = z.object({
   subcategory: z.string().trim().max(128).optional().nullable(),
   primaryImageUrl: z.string().min(1).max(10 * 1024 * 1024),
   referencePrompt: z.string().trim().max(4000).optional().nullable(),
-  retailPriceAudCents: z.number().int().min(100).max(100_000_000),
+  retailPriceAudCents: z.number().int().min(1667, "Physical retail price must be at least A$16.67 so 3% is Stripe-chargeable.").max(100_000_000),
   virtualOnly: z.boolean().default(false),
   collectionId: z.number().int().positive().optional().nullable(),
   publish: z.boolean().default(true),
@@ -286,7 +286,7 @@ export const designerCommerceRouter = router({
         const dbConn = await connection();
         const collectionId = await ensureDesignerCollection(ctx.user.id, profile, input.collectionId);
         const imageUrl = await uploadImage(ctx.user.id, "item", input.primaryImageUrl);
-        const virtualPrice = Math.max(1, Math.round(input.retailPriceAudCents * 0.03));
+        const virtualPrice = Math.round(input.retailPriceAudCents * 0.03);
         const prompt = input.referencePrompt?.trim() || `${input.name}. ${input.description}`;
         const visibility = input.publish ? "public" : "private";
         const result = await dbConn.execute(sql`
@@ -325,7 +325,7 @@ export const designerCommerceRouter = router({
         }
         const collectionId = await ensureDesignerCollection(ctx.user.id, profile, input.collectionId);
         const imageUrl = await uploadImage(ctx.user.id, "item", input.primaryImageUrl);
-        const virtualPrice = Math.max(1, Math.round(input.retailPriceAudCents * 0.03));
+        const virtualPrice = Math.round(input.retailPriceAudCents * 0.03);
         const prompt = input.referencePrompt?.trim() || `${input.name}. ${input.description}`;
         await dbConn.execute(sql`
           UPDATE wardrobeItems SET

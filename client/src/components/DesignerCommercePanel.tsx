@@ -63,7 +63,7 @@ export default function DesignerCommercePanel() {
   const [publish, setPublish] = useState(true);
 
   const physicalCents = Math.max(0, Math.round(Number(retailDollars || 0) * 100));
-  const virtualCents = physicalCents > 0 ? Math.max(1, Math.round(physicalCents * 0.03)) : 0;
+  const virtualCents = physicalCents > 0 ? Math.round(physicalCents * 0.03) : 0;
 
   const createItem = trpc.wardrobeMarket.commerce.designer.createItem.useMutation({
     onSuccess: (result) => {
@@ -122,8 +122,8 @@ export default function DesignerCommercePanel() {
   if (!routeEligible || portal.data?.portal !== "designer") return null;
 
   const submitItem = () => {
-    if (!name.trim() || description.trim().length < 10 || physicalCents < 100 || !imageDataUrl) {
-      toast.error("Item name, description, image and a retail price of at least A$1.00 are required.");
+    if (!name.trim() || description.trim().length < 10 || physicalCents < 1667 || !imageDataUrl) {
+      toast.error("Item name, description, image and a retail price of at least A$16.67 are required.");
       return;
     }
     createItem.mutate({
@@ -210,7 +210,7 @@ export default function DesignerCommercePanel() {
                   </div>
                   <div className="space-y-1.5"><Label>Description</Label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-white/5 border-amber-500/20 min-h-28" /></div>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5"><Label>Physical retail price (AUD)</Label><Input type="number" min="1" step="0.01" value={retailDollars} onChange={(e) => setRetailDollars(e.target.value)} className="bg-white/5 border-amber-500/20" /></div>
+                    <div className="space-y-1.5"><Label>Physical retail price (AUD)</Label><Input type="number" min="16.67" step="0.01" value={retailDollars} onChange={(e) => setRetailDollars(e.target.value)} className="bg-white/5 border-amber-500/20" /></div>
                     <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3"><p className="text-[10px] uppercase tracking-wider text-white/40">Automatic virtual price</p><p className="text-xl font-black text-amber-400 mt-1">{money(virtualCents)}</p><p className="text-[10px] text-white/30">3% of {money(physicalCents)}</p></div>
                   </div>
                   <div className="flex items-center justify-between rounded-xl border border-amber-500/20 bg-white/[0.02] p-4"><div><p className="text-sm font-bold">Virtual-only item</p><p className="text-xs text-white/40">No physical shipping option will be offered.</p></div><Switch checked={virtualOnly} onCheckedChange={setVirtualOnly} /></div>

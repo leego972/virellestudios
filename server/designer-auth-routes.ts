@@ -10,7 +10,7 @@ import { findAuthUserByEmail, markAuthLoginSuccessful } from "./_core/authDb";
 import { logger } from "./_core/logger";
 import { rateLimitPublicByIP } from "./_core/rateLimit";
 import { checkRegistrationFraud, logAuditEvent } from "./_core/securityEngine";
-import { ensurePortalCommerceSchema, getUserPortal, setUserPortal } from "./_core/portalAccess";
+import { ensurePortalCommerceSchema, getUserPortal, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
 import { getDb } from "./db";
 import { storagePut } from "./storage";
 
@@ -129,6 +129,18 @@ export function registerDesignerAuthRoutes(app: Express): void {
 
         const logoUrl = await storeLogo(user.id, logoInput);
         await setUserPortal(user.id, "designer");
+        await saveDeliveryAddress(user.id, {
+          label: "Business address",
+          recipientName: fullName,
+          phone: phone || null,
+          addressLine1,
+          addressLine2: addressLine2 || null,
+          city,
+          stateRegion,
+          postalCode,
+          country,
+          isDefault: true,
+        });
         await dbConn.execute(sql`
           INSERT INTO designerProfiles
             (userId, brandName, displayName, username, abn, profileType, bio, website, instagram, contactEmail, logoUrl,

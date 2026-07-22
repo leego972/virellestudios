@@ -76,6 +76,7 @@ import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 import { runLamaloSeed } from "./lamalo-seed";
+import { getUserPortal, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
 
 // v6.77 ÃÂ¢ÃÂÃÂ Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
@@ -439,6 +440,17 @@ export const appRouter = router({
         portfolioUrl: z.string().max(512).optional(),
         howDidYouHear: z.string().max(128).optional(),
         marketingOptIn: z.boolean().optional(),
+        shippingAddress: z.object({
+          label: z.string().max(80).optional(),
+          recipientName: z.string().min(2).max(255),
+          phone: z.string().max(64).optional(),
+          addressLine1: z.string().min(3).max(255),
+          addressLine2: z.string().max(255).optional(),
+          city: z.string().min(2).max(128),
+          stateRegion: z.string().min(2).max(128),
+          postalCode: z.string().min(2).max(32),
+          country: z.string().min(2).max(128),
+        }),
       }))
       .mutation(async ({ ctx, input }) => {
         // Security: Fraud detection on registration
@@ -475,6 +487,18 @@ export const appRouter = router({
           marketingOptIn: input.marketingOptIn,
         });
         if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create account" });
+
+        await setUserPortal(user.id, "studio");
+        try {
+          await saveDeliveryAddress(user.id, {
+            ...input.shippingAddress,
+            phone: input.shippingAddress.phone || input.phone || null,
+            isDefault: true,
+          });
+        } catch (addressError) {
+          await db.deleteUser(user.id).catch(() => undefined);
+          throw addressError;
+        }
 
         // Process referral code if provided
         if (input.referralCode) {
@@ -568,6 +592,14 @@ export const appRouter = router({
         if (!user || !user.passwordHash) {
           logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
+        }
+
+        const portal = await getUserPortal(user.id, user.role);
+        if (portal === "designer" && user.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "This is a designer account. Use the separate Designer Sign In.",
+          });
         }
 
         // Admin accounts bypass brute-force lockout
