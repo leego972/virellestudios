@@ -4,6 +4,7 @@ import AutomaticContrastGuard from "@/components/AutomaticContrastGuard";
 import DesignerCommercePanel from "@/components/DesignerCommercePanel";
 import GlobalMediaPlayerControls from "@/components/GlobalMediaPlayerControls";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
+import LandingStrategicPositioningGuard from "@/components/LandingStrategicPositioningGuard";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
 import PitchDeckExportOverlay from "@/components/PitchDeckExportOverlay";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
@@ -149,6 +150,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
     "/terms",
     "/privacy",
     "/wardrobe-marketplace",
+    "/sora-migration",
   ];
   if (
     publicPaths.some(
@@ -226,6 +228,7 @@ createRoot(document.getElementById("root")!).render(
       <AutomaticContrastGuard />
       <GlobalSidebarLogoutConfirm />
       <LandingVerifiedAppsGuard />
+      <LandingStrategicPositioningGuard />
       <PortalAccessBoundary />
       <PortalEntryLinks />
       <RequiredSignupAddressCapture />
