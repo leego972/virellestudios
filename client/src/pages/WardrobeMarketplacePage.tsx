@@ -470,7 +470,13 @@ function ItemCard({
       <div className="p-3 flex flex-col gap-2 flex-1">
         <div>
           <p className="text-xs font-bold text-white leading-tight line-clamp-1">{baseName}</p>
-          {color && <p className="text-[10px] text-amber-400/70 mt-0.5">{color}</p>}
+          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+            {color && <p className="text-[10px] text-amber-400/70">{color}</p>}
+            <Badge className="bg-purple-500/15 text-purple-200 border border-purple-400/30 text-[9px] px-1.5 py-0">Virtual item</Badge>
+            {!Boolean(item.isVirtualOnly) && Number(item.physicalRetailPriceAud ?? 0) > 0 && (
+              <Badge className="bg-emerald-500/15 text-emerald-200 border border-emerald-400/30 text-[9px] px-1.5 py-0">Physical available</Badge>
+            )}
+          </div>
         </div>
         <div className="flex items-center justify-between mt-auto pt-1">
           <div className="flex items-center gap-1 text-amber-400">
