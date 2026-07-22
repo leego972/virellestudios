@@ -8,8 +8,8 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
-  AlertTriangle,
   ArrowLeft,
   BadgeCheck,
   Camera,
@@ -21,6 +21,7 @@ import {
   Film,
   Layers,
   Loader2,
+  LockKeyhole,
   Maximize2,
   Palette,
   RadioTower,
@@ -124,7 +125,7 @@ const VFX_ICONS: Record<string, ReactNode> = {
 };
 
 const VFX_CATEGORIES: Record<string, string[]> = {
-  "Swappys Transform Studio": [
+  "Special Effects — Swappys (Standard)": [
     "swappys-digital-double",
     "gender-transform",
     "age-transform",
@@ -137,11 +138,56 @@ const VFX_CATEGORIES: Record<string, string[]> = {
     "multi-anchor-character-lock",
     "temporal-consistency-pass",
   ],
-  "Compositing & Plates": ["roto-person-isolation", "green-screen-keying", "background-replacement", "foreground-composite", "sky-replacement", "set-extension", "crowd-multiplication", "camera-matchmove-solve"],
-  "Cleanup & Safety": ["object-removal-inpaint", "wire-rig-removal", "safety-gear-removal", "reflection-cleanup", "screen-replacement", "neural-matte-edge-refine"],
-  "Action & Atmosphere": ["muzzle-flash-practical", "debris-dust-impact", "weather-rain-snow", "fire-smoke-atmosphere", "motion-blur-add", "lens-flare-add"],
-  "Image Quality & Restoration": ["scene-extension-outpaint", "upscale-4k", "upscale-8k", "denoising-grain-removal", "face-enhancement", "beauty-retouch-film", "de-age-subtle", "film-damage-restore", "deflicker-exposure"],
-  "Finishing, QC & Handoff": ["color-match", "style-transfer", "film-grain-add", "depth-of-field-post", "vignette-add", "stabilization", "lens-distortion-repair", "chromatic-repair", "final-qc-pass", "render-pass-provenance", "edit-handoff-package"],
+  "Compositing & Plates": [
+    "roto-person-isolation",
+    "green-screen-keying",
+    "background-replacement",
+    "foreground-composite",
+    "sky-replacement",
+    "set-extension",
+    "crowd-multiplication",
+    "camera-matchmove-solve",
+  ],
+  "Cleanup & Safety": [
+    "object-removal-inpaint",
+    "wire-rig-removal",
+    "safety-gear-removal",
+    "reflection-cleanup",
+    "screen-replacement",
+    "neural-matte-edge-refine",
+  ],
+  "Action & Atmosphere": [
+    "muzzle-flash-practical",
+    "debris-dust-impact",
+    "weather-rain-snow",
+    "fire-smoke-atmosphere",
+    "motion-blur-add",
+    "lens-flare-add",
+  ],
+  "Image Quality & Restoration": [
+    "scene-extension-outpaint",
+    "upscale-4k",
+    "upscale-8k",
+    "denoising-grain-removal",
+    "face-enhancement",
+    "beauty-retouch-film",
+    "de-age-subtle",
+    "film-damage-restore",
+    "deflicker-exposure",
+  ],
+  "Finishing, QC & Handoff": [
+    "color-match",
+    "style-transfer",
+    "film-grain-add",
+    "depth-of-field-post",
+    "vignette-add",
+    "stabilization",
+    "lens-distortion-repair",
+    "chromatic-repair",
+    "final-qc-pass",
+    "render-pass-provenance",
+    "edit-handoff-package",
+  ],
 };
 
 const SWAPPYS_OPS = new Set([
@@ -158,10 +204,16 @@ const SWAPPYS_OPS = new Set([
   "temporal-consistency-pass",
 ]);
 
-type UploadKind = "sourceImage" | "referenceImage" | "sourceVideo" | "referenceVideo";
-type TransformGoal = "appearance_reference" | "boy_to_girl" | "girl_to_boy" | "younger_self" | "older_self" | "adult_to_child" | "child_to_adult" | "custom_prompt";
-type ContentMode = "standard" | "open_adult";
-
+type TransformGoal =
+  | "appearance_reference"
+  | "boy_to_girl"
+  | "girl_to_boy"
+  | "younger_self"
+  | "older_self"
+  | "adult_to_child"
+  | "child_to_adult"
+  | "custom_prompt";
+type Rating = "G" | "PG" | "PG-13" | "R";
 type LastJob = {
   creditCost?: number;
   watermarkMode?: string;
@@ -175,28 +227,24 @@ function VFXSuiteInner() {
   const projectId = Number.parseInt(params.projectId || "0", 10);
   const sceneId = Number.parseInt(params.sceneId || "0", 10);
   const { isCreator, isIndustry } = useSubscription();
-  const user = (trpc as any).auth.me.useQuery();
   const createStudioVfxJob = (trpc as any).vfxSfx.createStudioVfxJob.useMutation();
-  const uploadRefImageMutation = trpc.upload.referenceImage.useMutation();
+  const uploadRefImageMutation = (trpc as any).upload.referenceImage.useMutation();
 
   const sourceImageRef = useRef<HTMLInputElement>(null);
   const referenceImageRef = useRef<HTMLInputElement>(null);
-  const sourceVideoRef = useRef<HTMLInputElement>(null);
-  const referenceVideoRef = useRef<HTMLInputElement>(null);
-
   const [selectedOps, setSelectedOps] = useState<string[]>([]);
   const [intensity, setIntensity] = useState(75);
   const [directorNotes, setDirectorNotes] = useState("");
+  const [rating, setRating] = useState<Rating>("PG-13");
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
   const [sourceImageUrls, setSourceImageUrls] = useState<string[]>([]);
   const [referenceImageUrls, setReferenceImageUrls] = useState<string[]>([]);
-  const [sourceVideoUrl, setSourceVideoUrl] = useState<string | null>(null);
-  const [referenceVideoUrl, setReferenceVideoUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<UploadKind | null>(null);
+  const [sourceVideoUrl, setSourceVideoUrl] = useState("");
+  const [referenceVideoUrl, setReferenceVideoUrl] = useState("");
+  const [uploading, setUploading] = useState<"source" | "reference" | null>(null);
   const [consentConfirmed, setConsentConfirmed] = useState(false);
-  const [allSubjectsAdultsConfirmed, setAllSubjectsAdultsConfirmed] = useState(false);
-  const [contentMode, setContentMode] = useState<ContentMode>("standard");
+  const [aiGeneratedCharactersOnly, setAiGeneratedCharactersOnly] = useState(false);
   const [hideVisibleWatermark, setHideVisibleWatermark] = useState(false);
   const [exportQuality, setExportQuality] = useState<"preview" | "final" | "master">("preview");
   const [transformGoal, setTransformGoal] = useState<TransformGoal>("appearance_reference");
@@ -204,14 +252,19 @@ function VFXSuiteInner() {
   const [targetPresentation, setTargetPresentation] = useState("");
   const [lastJob, setLastJob] = useState<LastJob | null>(null);
 
-  const selectedSwappys = contentMode === "open_adult" || selectedOps.some((operation) => SWAPPYS_OPS.has(operation)) || transformGoal !== "appearance_reference";
-  const mediaCount = sourceImageUrls.length + referenceImageUrls.length + (sourceVideoUrl ? 1 : 0) + (referenceVideoUrl ? 1 : 0);
+  const selectedSwappys = selectedOps.some((operation) => SWAPPYS_OPS.has(operation))
+    || transformGoal !== "appearance_reference";
+  const mediaCount = sourceImageUrls.length
+    + referenceImageUrls.length
+    + (sourceVideoUrl ? 1 : 0)
+    + (referenceVideoUrl ? 1 : 0);
   const estimatedCredits = selectedSwappys
-    ? exportQuality === "preview" ? 12 + Math.ceil(mediaCount / 3) : exportQuality === "final" ? 24 + Math.ceil(mediaCount / 2) : 40 + mediaCount
+    ? exportQuality === "preview" ? 12 + Math.ceil(mediaCount / 3)
+      : exportQuality === "final" ? 24 + Math.ceil(mediaCount / 2)
+        : 40 + mediaCount
     : selectedOps.length <= 2 ? 6 : selectedOps.length <= 5 ? 12 : 18;
-  const isAdultVerified = Boolean(user.data?.isAdultVerified);
 
-  const uploadMedia = async (files: FileList | null, kind: UploadKind) => {
+  const uploadImages = async (files: FileList | null, kind: "source" | "reference") => {
     if (!files?.length) return;
     if (!sceneId) return toast.error("Open the VFX Suite from a specific scene.");
     setUploading(kind);
@@ -232,39 +285,39 @@ function VFXSuiteInner() {
         });
         urls.push(result.url);
       }
-      if (kind === "sourceImage") setSourceImageUrls((previous) => [...previous, ...urls]);
-      if (kind === "referenceImage") setReferenceImageUrls((previous) => [...previous, ...urls]);
-      if (kind === "sourceVideo") setSourceVideoUrl(urls[0] || null);
-      if (kind === "referenceVideo") setReferenceVideoUrl(urls[0] || null);
-      toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded`);
+      if (kind === "source") setSourceImageUrls((previous) => [...previous, ...urls]);
+      else setReferenceImageUrls((previous) => [...previous, ...urls]);
+      toast.success(`${urls.length} image${urls.length === 1 ? "" : "s"} uploaded`);
     } catch (error: any) {
-      toast.error(error?.message || "Upload failed. Paste a secure media URL if this file type is unsupported.");
+      toast.error(error?.message || "Image upload failed.");
     } finally {
       setUploading(null);
-      [sourceImageRef, referenceImageRef, sourceVideoRef, referenceVideoRef].forEach((reference) => {
-        if (reference.current) reference.current.value = "";
-      });
     }
   };
 
   const toggleOp = (operation: string) => {
     setProcessComplete(false);
-    setSelectedOps((previous) => previous.includes(operation) ? previous.filter((item) => item !== operation) : [...previous, operation]);
+    setSelectedOps((previous) => previous.includes(operation)
+      ? previous.filter((item) => item !== operation)
+      : [...previous, operation]);
   };
 
   const handleProcess = async () => {
-    if (selectedOps.length === 0 && transformGoal === "appearance_reference" && contentMode === "standard") return toast.error("Select a VFX or Swappys transform operation.");
+    if (selectedOps.length === 0 && transformGoal === "appearance_reference") {
+      return toast.error("Select a VFX or Swappys operation.");
+    }
     if (!projectId || !sceneId) return toast.error("Open the VFX Suite from a specific scene.");
-    if (selectedSwappys && !consentConfirmed) return toast.error("Confirm likeness and media consent before using Swappys Studio.");
-    if (contentMode === "open_adult" && !isAdultVerified) return toast.error("Open Adult Creative mode requires verified 18+ status.");
-    if (contentMode === "open_adult" && !allSubjectsAdultsConfirmed) return toast.error("Confirm that every depicted or referenced person is 18 or older.");
-    if (contentMode === "open_adult" && ["adult_to_child", "child_to_adult"].includes(transformGoal)) return toast.error("Child/age-crossing transforms are unavailable in Open Adult Creative mode.");
-    if (contentMode === "open_adult" && targetAge.trim() && Number(targetAge) < 18) return toast.error("Open Adult Creative mode requires a target age of 18 or older.");
-    if (hideVisibleWatermark && !isCreator) return toast.error("Watermark controls require Virelle Creator membership or higher.");
+    if (selectedSwappys && !consentConfirmed && !aiGeneratedCharactersOnly) {
+      return toast.error("Confirm likeness consent or confirm that all characters are original AI-generated characters.");
+    }
+    if (hideVisibleWatermark && !isCreator) {
+      return toast.error("Watermark controls require Virelle Creator membership or higher.");
+    }
 
     const operations = [...selectedOps];
-    if (selectedSwappys && !operations.some((operation) => SWAPPYS_OPS.has(operation))) operations.unshift("swappys-digital-double");
-    if (contentMode === "open_adult") operations.push("open-adult-creative-mode", "all-subjects-adults-confirmed");
+    if (selectedSwappys && !operations.some((operation) => SWAPPYS_OPS.has(operation))) {
+      operations.unshift("swappys-digital-double");
+    }
 
     setIsProcessing(true);
     setProcessComplete(false);
@@ -278,18 +331,22 @@ function VFXSuiteInner() {
         actorReferenceUrl: referenceImageUrls[0] || null,
         sourceImageUrls,
         referenceImageUrls,
-        sourceVideoUrl,
-        referenceVideoUrl,
+        sourceVideoUrl: sourceVideoUrl.trim() || null,
+        referenceVideoUrl: referenceVideoUrl.trim() || null,
         transformGoal,
         targetAge: targetAge.trim() ? Number(targetAge) : null,
         targetPresentation: targetPresentation.trim() || null,
-        consentConfirmed: selectedSwappys ? consentConfirmed : false,
-        consentNotes: selectedSwappys ? directorNotes : null,
-        contentMode,
-        allSubjectsAdultsConfirmed,
+        consentConfirmed: selectedSwappys ? (consentConfirmed || aiGeneratedCharactersOnly) : false,
+        consentNotes: selectedSwappys
+          ? `Film rating: ${rating}. ${directorNotes}`
+          : null,
+        contentMode: "standard",
+        allSubjectsAdultsConfirmed: false,
+        publicFigureLikeness: false,
+        aiGeneratedCharactersOnly,
         hideVisibleWatermark: selectedSwappys ? hideVisibleWatermark : false,
         exportQuality,
-        directorNotes,
+        directorNotes: `STANDARD RATING ${rating}: non-explicit film treatment. ${directorNotes}`,
         runImagePass: true,
       });
       setLastJob({
@@ -308,14 +365,18 @@ function VFXSuiteInner() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <div className="sticky top-0 z-20 border-b px-4 py-3" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
+    <div className="min-h-screen bg-gradient-to-br from-[#07070e] via-[#0c0b18] to-[#07070a]">
+      <div className="sticky top-0 z-20 border-b border-white/10 bg-[#07070e]/95 px-4 py-3 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="h-4 w-4" /></Button>
-            <div><h1 className="flex items-center gap-2 text-lg font-semibold text-gold-shimmer"><Wand2 className="h-5 w-5 text-amber-400" />VFX Suite<Badge className="border border-amber-500/30 bg-amber-500/15 text-amber-300">Studio</Badge></h1><p className="text-xs text-muted-foreground">Swappys, digital doubles, compositing, restoration, finishing and broadcast handoff.</p></div>
+            <div>
+              <h1 className="flex items-center gap-2 text-lg font-semibold text-gold-shimmer"><Wand2 className="h-5 w-5 text-amber-400" />VFX & Special Effects<Badge className="border border-amber-500/30 bg-amber-500/15 text-amber-300">Standard</Badge></h1>
+              <p className="text-xs text-muted-foreground">Rating-controlled Swappys, digital doubles, compositing, restoration and finishing.</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => { window.location.href = "/virelle-broadcast-render?workspace=adult"; }}><LockKeyhole className="mr-1 h-4 w-4" />Adult 18+</Button>
             {selectedOps.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setSelectedOps([]); setProcessComplete(false); }}>Clear</Button>}
             <Button size="sm" className="bg-amber-500 text-black hover:bg-amber-600" onClick={handleProcess} disabled={isProcessing}>{isProcessing ? <><Loader2 className="mr-1 h-4 w-4 animate-spin" />Processing</> : processComplete ? <><CheckCircle2 className="mr-1 h-4 w-4" />Created</> : <><Wand2 className="mr-1 h-4 w-4" />Create Job</>}</Button>
           </div>
@@ -324,66 +385,134 @@ function VFXSuiteInner() {
 
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 p-3 md:p-4 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
-          <Card className="border-amber-500/20 glass-card">
+          <Card className="border-amber-500/20 bg-black/20">
             <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm text-amber-300"><Sparkles className="h-4 w-4" />Transform Goal & Media</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
                 <div><Label className="text-xs text-muted-foreground">Transform Goal</Label><select value={transformGoal} onChange={(event) => setTransformGoal(event.target.value as TransformGoal)} className="mt-1 w-full rounded-md border border-border bg-black/30 px-3 py-2 text-sm"><option value="appearance_reference">Appearance reference</option><option value="boy_to_girl">Feminine presentation</option><option value="girl_to_boy">Masculine presentation</option><option value="younger_self">Younger self</option><option value="older_self">Older self</option><option value="adult_to_child">Childhood self</option><option value="child_to_adult">Child to adult progression</option><option value="custom_prompt">Custom prompt</option></select></div>
-                <div><Label className="text-xs text-muted-foreground">Target Age</Label><input value={targetAge} onChange={(event) => setTargetAge(event.target.value.replace(/[^0-9]/g, ""))} placeholder="optional" className="mt-1 w-full rounded-md border border-border bg-black/30 px-3 py-2 text-sm" /></div>
-                <div><Label className="text-xs text-muted-foreground">Presentation / Style</Label><input value={targetPresentation} onChange={(event) => setTargetPresentation(event.target.value)} placeholder="cinematic, glamour, masculine…" className="mt-1 w-full rounded-md border border-border bg-black/30 px-3 py-2 text-sm" /></div>
+                <div><Label className="text-xs text-muted-foreground">Target Age</Label><Input value={targetAge} onChange={(event) => setTargetAge(event.target.value.replace(/[^0-9]/g, ""))} placeholder="optional" className="mt-1" /></div>
+                <div><Label className="text-xs text-muted-foreground">Film Rating</Label><select value={rating} onChange={(event) => setRating(event.target.value as Rating)} className="mt-1 w-full rounded-md border border-border bg-black/30 px-3 py-2 text-sm"><option value="G">G</option><option value="PG">PG</option><option value="PG-13">PG-13</option><option value="R">R — non-explicit</option></select></div>
+                <div><Label className="text-xs text-muted-foreground">Presentation / Style</Label><Input value={targetPresentation} onChange={(event) => setTargetPresentation(event.target.value)} className="mt-1" /></div>
               </div>
+
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {([
-                  ["Source Person Media", "Who is being transformed.", sourceImageRef, sourceVideoRef, "sourceImage", "sourceVideo", sourceImageUrls.length, Boolean(sourceVideoUrl)],
-                  ["Target / Reference Media", "What the result should look like.", referenceImageRef, referenceVideoRef, "referenceImage", "referenceVideo", referenceImageUrls.length, Boolean(referenceVideoUrl)],
-                ] as const).map(([title, description, imageRef, videoRef, imageKind, videoKind, imageCount, hasVideo]) => (
-                  <div key={title} className="rounded-lg border border-border/40 bg-black/20 p-3">
-                    <Label className="text-xs text-amber-200">{title}</Label><p className="mt-1 text-[11px] text-muted-foreground">{description}</p>
-                    <div className="mt-2 flex gap-2"><Button size="sm" variant="outline" onClick={() => imageRef.current?.click()} disabled={uploading === imageKind}><Upload className="mr-1 h-3 w-3" />Images</Button><Button size="sm" variant="outline" onClick={() => videoRef.current?.click()} disabled={uploading === videoKind}><Film className="mr-1 h-3 w-3" />Video</Button></div>
-                    <div className="mt-2 text-[11px] text-muted-foreground">{imageCount} image(s) · {hasVideo ? "video set" : "no video"}</div>
-                  </div>
-                ))}
+                <MediaBox title="Source Person Media" description="Who or what is being transformed." imageCount={sourceImageUrls.length} imageRef={sourceImageRef} uploading={uploading === "source"} onUpload={(files) => uploadImages(files, "source")} videoUrl={sourceVideoUrl} setVideoUrl={setSourceVideoUrl} />
+                <MediaBox title="Target / Reference Media" description="What the result should match." imageCount={referenceImageUrls.length} imageRef={referenceImageRef} uploading={uploading === "reference"} onUpload={(files) => uploadImages(files, "reference")} videoUrl={referenceVideoUrl} setVideoUrl={setReferenceVideoUrl} />
               </div>
-              <input ref={sourceImageRef} className="hidden" type="file" accept="image/*" multiple onChange={(event) => uploadMedia(event.target.files, "sourceImage")} />
-              <input ref={referenceImageRef} className="hidden" type="file" accept="image/*" multiple onChange={(event) => uploadMedia(event.target.files, "referenceImage")} />
-              <input ref={sourceVideoRef} className="hidden" type="file" accept="video/*" onChange={(event) => uploadMedia(event.target.files, "sourceVideo")} />
-              <input ref={referenceVideoRef} className="hidden" type="file" accept="video/*" onChange={(event) => uploadMedia(event.target.files, "referenceVideo")} />
+
               <div className="grid grid-cols-1 gap-2 text-[11px] text-muted-foreground md:grid-cols-2">
-                {sourceImageUrls.map((url, index) => <div key={`${url}-${index}`} className="flex items-center gap-2 truncate rounded border border-border/40 p-2"><span className="text-amber-300">Source {index + 1}</span><span className="truncate">{url}</span><button onClick={() => setSourceImageUrls((previous) => previous.filter((_, itemIndex) => itemIndex !== index))}><X className="h-3 w-3" /></button></div>)}
-                {referenceImageUrls.map((url, index) => <div key={`${url}-${index}`} className="flex items-center gap-2 truncate rounded border border-border/40 p-2"><span className="text-amber-300">Ref {index + 1}</span><span className="truncate">{url}</span><button onClick={() => setReferenceImageUrls((previous) => previous.filter((_, itemIndex) => itemIndex !== index))}><X className="h-3 w-3" /></button></div>)}
+                {sourceImageUrls.map((url, index) => <MediaChip key={`${url}-${index}`} label={`Source ${index + 1}`} url={url} remove={() => setSourceImageUrls((previous) => previous.filter((_, itemIndex) => itemIndex !== index))} />)}
+                {referenceImageUrls.map((url, index) => <MediaChip key={`${url}-${index}`} label={`Ref ${index + 1}`} url={url} remove={() => setReferenceImageUrls((previous) => previous.filter((_, itemIndex) => itemIndex !== index))} />)}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm text-amber-300"><Sparkles className="h-4 w-4" />Professional VFX Operations</CardTitle></CardHeader><CardContent className="space-y-5">{Object.entries(VFX_CATEGORIES).map(([category, operations]) => <div key={category}><h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">{category}</h3><div className="grid grid-cols-1 gap-2 md:grid-cols-2">{operations.map((operation) => { const selected = selectedOps.includes(operation); return <button key={operation} onClick={() => toggleOp(operation)} className={`flex items-center gap-2 rounded-lg border p-3 text-left transition-all ${selected ? "border-amber-500 bg-amber-500/10" : "border-border/40 bg-black/20 hover:border-amber-500/40"}`}><span className={selected ? "text-amber-400" : "text-muted-foreground"}>{VFX_ICONS[operation] || <Layers className="h-4 w-4" />}</span><span className="text-xs">{VFX_LABELS[operation]}</span>{selected && <CheckCircle2 className="ml-auto h-3 w-3 shrink-0 text-amber-400" />}</button>; })}</div></div>)}</CardContent></Card>
+          <Card className="border-amber-500/20 bg-black/20">
+            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm text-amber-300"><Sparkles className="h-4 w-4" />Professional VFX Operations</CardTitle></CardHeader>
+            <CardContent className="space-y-5">
+              {Object.entries(VFX_CATEGORIES).map(([category, operations]) => (
+                <div key={category}>
+                  <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">{category}</h3>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    {operations.map((operation) => {
+                      const selected = selectedOps.includes(operation);
+                      return (
+                        <button key={operation} onClick={() => toggleOp(operation)} className={`flex items-center gap-2 rounded-lg border p-3 text-left transition-all ${selected ? "border-amber-500 bg-amber-500/10" : "border-border/40 bg-black/20 hover:border-amber-500/40"}`}>
+                          <span className={selected ? "text-amber-400" : "text-muted-foreground"}>{VFX_ICONS[operation] || <Layers className="h-4 w-4" />}</span>
+                          <span className="text-xs">{VFX_LABELS[operation]}</span>
+                          {selected && <CheckCircle2 className="ml-auto h-3 w-3 shrink-0 text-amber-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-4">
-          <Card className="border-fuchsia-500/25 bg-fuchsia-500/5">
-            <CardHeader className="pb-2"><CardTitle className="text-sm text-fuchsia-200">Swappys Creative Mode</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-2"><button onClick={() => setContentMode("standard")} className={`rounded-md border px-2 py-2 text-xs ${contentMode === "standard" ? "border-amber-500 bg-amber-500/10 text-amber-200" : "border-border/40"}`}>Standard</button><button onClick={() => setContentMode("open_adult")} className={`rounded-md border px-2 py-2 text-xs ${contentMode === "open_adult" ? "border-fuchsia-500 bg-fuchsia-500/10 text-fuchsia-200" : "border-border/40"}`}>Open Adult Creative</button></div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground">Open Adult Creative reduces unnecessary modesty filtering for lawful mature, provocative, glamour and adult-industry styling involving verified consenting adults. It does not permit minors, explicit sexualised likeness, coercion, fraud or non-consensual use.</p>
-              {contentMode === "open_adult" && <div className="space-y-2 rounded-lg border border-fuchsia-500/20 bg-black/20 p-3"><div className="flex items-start gap-2"><Checkbox checked={allSubjectsAdultsConfirmed} onCheckedChange={(value) => setAllSubjectsAdultsConfirmed(Boolean(value))} /><Label className="text-xs">Every depicted and referenced person is 18 or older.</Label></div>{!isAdultVerified && <div className="flex gap-2 text-[11px] text-red-300"><AlertTriangle className="mt-0.5 h-3 w-3" />Verify 18+ status in Settings before using this mode.</div>}</div>}
+          <Card className="border-blue-500/25 bg-blue-500/5">
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-blue-200">Standard Swappys Policy</CardTitle></CardHeader>
+            <CardContent className="space-y-3 text-[11px] leading-relaxed text-muted-foreground">
+              <p>Swappys appears here for ordinary film and VFX work. Output follows the selected film rating and remains non-explicit.</p>
+              <p>Age-appropriate, non-sexual teenage story scenes may be created. Sexualised or explicit depictions involving minors are prohibited under every rating.</p>
+              <Button className="w-full" variant="outline" onClick={() => { window.location.href = "/virelle-broadcast-render?workspace=adult"; }}><LockKeyhole className="mr-2 h-4 w-4" />Open Separate Adult Workspace</Button>
             </CardContent>
           </Card>
 
-          <Card className="border-amber-500/20 glass-card gold-glow"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader><CardContent className="space-y-4">
-            <div><div className="mb-1 flex justify-between"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div><Slider value={[intensity]} onValueChange={([value]) => setIntensity(value)} min={10} max={100} step={5} /></div>
-            <Separator />
-            <div className="space-y-2"><Label className="text-xs text-muted-foreground">Export Quality</Label><div className="grid grid-cols-3 gap-2">{(["preview", "final", "master"] as const).map((quality) => <button key={quality} onClick={() => setExportQuality(quality)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === quality ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{quality}</button>)}</div><p className="text-[11px] text-muted-foreground">Estimated: {estimatedCredits} credits · {mediaCount} media input(s)</p></div>
-            {selectedSwappys && <div className="space-y-3 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3"><div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(value) => setConsentConfirmed(Boolean(value))} /><div><Label className="text-xs text-amber-200">I confirm likeness, media and distribution rights.</Label><p className="mt-1 text-[11px] text-muted-foreground">Required for digital-double, age, presentation, stunt, pickup, render and broadcast usage.</p></div></div><div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Internal provenance remains.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div></div>}
-            <Separator />
-            <div><Label className="mb-1 block text-xs text-muted-foreground">Director / VFX Notes</Label><Textarea value={directorNotes} onChange={(event) => setDirectorNotes(event.target.value)} placeholder="Describe the exact lawful transformation, continuity target and broadcast intent." className="min-h-[130px] resize-none text-xs" /></div>
-          </CardContent></Card>
+          <Card className="border-amber-500/20 bg-black/20">
+            <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div><div className="mb-1 flex justify-between"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div><Slider value={[intensity]} onValueChange={([value]) => setIntensity(value)} min={10} max={100} step={5} /></div>
+              <Separator />
+              <div className="space-y-2"><Label className="text-xs text-muted-foreground">Export Quality</Label><div className="grid grid-cols-3 gap-2">{(["preview", "final", "master"] as const).map((quality) => <button key={quality} onClick={() => setExportQuality(quality)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === quality ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{quality}</button>)}</div><p className="text-[11px] text-muted-foreground">Estimated: {estimatedCredits} credits · {mediaCount} media input(s)</p></div>
+              {selectedSwappys && <div className="space-y-3 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3"><div className="flex items-start gap-2"><Checkbox checked={aiGeneratedCharactersOnly} onCheckedChange={(value) => setAiGeneratedCharactersOnly(Boolean(value))} /><div><Label className="text-xs text-amber-200">Original AI-generated characters only</Label><p className="mt-1 text-[11px] text-muted-foreground">No real person's likeness is used.</p></div></div>{!aiGeneratedCharactersOnly && <div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(value) => setConsentConfirmed(Boolean(value))} /><div><Label className="text-xs text-amber-200">I confirm likeness, media and distribution rights.</Label><p className="mt-1 text-[11px] text-muted-foreground">Required for digital doubles, age transforms, stunts, pickups, renders and broadcasts.</p></div></div>}<div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Internal provenance remains.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div></div>}
+              <Separator />
+              <div><Label className="mb-1 block text-xs text-muted-foreground">Director / VFX Notes</Label><Textarea value={directorNotes} onChange={(event) => setDirectorNotes(event.target.value)} placeholder="Describe the lawful transformation and continuity target." className="min-h-[130px] resize-none text-xs" /></div>
+            </CardContent>
+          </Card>
 
-          <Card className="border-amber-500/20 glass-card"><CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Output & Handoff</CardTitle></CardHeader><CardContent className="space-y-3">{lastJob ? <><div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Job #{lastJob.swappysJobId || "VFX"} · {lastJob.creditCost} credits · {lastJob.watermarkMode || "default"}</div>{lastJob.enhancedImageUrl && <img src={lastJob.enhancedImageUrl} alt="Swappys output" className="w-full rounded-lg border border-border/50" />}<Button className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={!lastJob.swappysJobId} onClick={() => navigate(`/virelle-broadcast-render?swappysJobId=${lastJob.swappysJobId}`)}><RadioTower className="mr-2 h-4 w-4" />Send Exact Job to Broadcast</Button></> : <p className="text-xs text-muted-foreground">Create a Swappys job to unlock exact Studio Render and Broadcast handoff.</p>}{isIndustry && <Badge className="bg-purple-500/15 text-purple-200 border border-purple-400/30">Industry access active</Badge>}</CardContent></Card>
+          <Card className="border-amber-500/20 bg-black/20">
+            <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Output & Handoff</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {lastJob ? <>
+                <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Job #{lastJob.swappysJobId || "VFX"} · {lastJob.creditCost} credits · {lastJob.watermarkMode || "default"}</div>
+                {lastJob.enhancedImageUrl && <img src={lastJob.enhancedImageUrl} alt="Swappys output" className="w-full rounded-lg border border-border/50" />}
+                <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={!lastJob.swappysJobId} onClick={() => navigate(`/virelle-broadcast-render?workspace=standard&swappysJobId=${lastJob.swappysJobId}`)}><RadioTower className="mr-2 h-4 w-4" />Send Exact Job to Standard Broadcast</Button>
+              </> : <p className="text-xs text-muted-foreground">Create a Swappys job to unlock exact Studio Render and Broadcast handoff.</p>}
+              {isIndustry && <Badge className="border border-purple-400/30 bg-purple-500/15 text-purple-200">Industry access active</Badge>}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
   );
 }
 
+function MediaBox({
+  title,
+  description,
+  imageCount,
+  imageRef,
+  uploading,
+  onUpload,
+  videoUrl,
+  setVideoUrl,
+}: {
+  title: string;
+  description: string;
+  imageCount: number;
+  imageRef: React.RefObject<HTMLInputElement | null>;
+  uploading: boolean;
+  onUpload: (files: FileList | null) => void;
+  videoUrl: string;
+  setVideoUrl: (value: string) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-border/40 bg-black/20 p-3">
+      <Label className="text-xs text-amber-200">{title}</Label>
+      <p className="mt-1 text-[11px] text-muted-foreground">{description}</p>
+      <Button size="sm" variant="outline" className="mt-2" onClick={() => imageRef.current?.click()} disabled={uploading}>{uploading ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Upload className="mr-1 h-3 w-3" />}Images</Button>
+      <input ref={imageRef} className="hidden" type="file" accept="image/*" multiple onChange={(event) => onUpload(event.target.files)} />
+      <Input className="mt-2" placeholder="Optional secure video URL" value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} />
+      <div className="mt-2 text-[11px] text-muted-foreground">{imageCount} image(s) · {videoUrl ? "video set" : "no video"}</div>
+    </div>
+  );
+}
+
+function MediaChip({ label, url, remove }: { label: string; url: string; remove: () => void }) {
+  return (
+    <div className="flex items-center gap-2 truncate rounded border border-border/40 p-2">
+      <span className="text-amber-300">{label}</span><span className="truncate">{url}</span><button onClick={remove}><X className="h-3 w-3" /></button>
+    </div>
+  );
+}
+
 export default function VFXSuite() {
-  return <SubscriptionGate feature="Visual Effects Suite" featureKey="canUseVisualEffects" requiredTier="amateur"><VFXSuiteInner /></SubscriptionGate>;
+  return (
+    <SubscriptionGate feature="Visual Effects Suite" featureKey="canUseVisualEffects" requiredTier="amateur">
+      <VFXSuiteInner />
+    </SubscriptionGate>
+  );
 }
