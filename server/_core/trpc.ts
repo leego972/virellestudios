@@ -12,6 +12,10 @@ import {
   type SwappysContentMode,
 } from "./swappysPolicy";
 import {
+  assertAdultWorkspaceAccess,
+  screenContentRequest,
+} from "./complianceArchive";
+import {
   getUserPortal,
   isDesignerAllowedProtectedPath,
   isStudioForbiddenDesignerPath,
@@ -102,6 +106,12 @@ const requireUser = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
+  if ((ctx.user as any).isFrozen) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: (ctx.user as any).frozenReason || "This account has been deactivated.",
+    });
+  }
 
   const portal = await getUserPortal(ctx.user.id, ctx.user.role);
   if (portal === "designer" && !isDesignerAllowedProtectedPath(opts.path)) {
@@ -133,10 +143,9 @@ function hasUsableBroadcastBridge(): boolean {
 }
 
 /**
- * Virelle Studio Swappys guard. The public schema deliberately remains backward
- * compatible; contentMode/allSubjectsAdultsConfirmed are read before Zod strips
- * unknown compatibility fields, then a provider-facing directive is inserted
- * into the existing notes field that the VFX prompt already consumes.
+ * Virelle Studio Swappys guard. Adult access is a separate approved workspace,
+ * while standard age-appropriate non-sexual film scenes remain available.
+ * A blocked request creates a review incident; it does not deactivate the user.
  */
 const guardStudioSwappys = t.middleware(async (opts) => {
   if (opts.path === "virelleBroadcastRender.createBroadcastSession" && !hasUsableBroadcastBridge()) {
@@ -146,7 +155,8 @@ const guardStudioSwappys = t.middleware(async (opts) => {
     });
   }
 
-  const studioPath = opts.path === "vfxSfx.createStudioVfxJob" || opts.path === "vfxSfx.createSwappysDigitalDoubleJob";
+  const studioPath = opts.path === "vfxSfx.createStudioVfxJob"
+    || opts.path === "vfxSfx.createSwappysDigitalDoubleJob";
   if (!studioPath) return opts.next();
   if (!opts.ctx.user) throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
 
@@ -155,15 +165,38 @@ const guardStudioSwappys = t.middleware(async (opts) => {
   if (!input) throw new TRPCError({ code: "BAD_REQUEST", message: "Swappys job input is missing." });
 
   const operations = Array.isArray(input.operations) ? input.operations.map(String) : [];
-  const isSwappys = opts.path.endsWith("createSwappysDigitalDoubleJob") ||
-    input.transformGoal !== "appearance_reference" ||
-    operations.some((operation) => /swappys|face-replacement|actor-continuity|pickup-scene|stunt|age-transform|gender-transform|childhood-self/i.test(operation));
+  const isSwappys = opts.path.endsWith("createSwappysDigitalDoubleJob")
+    || input.transformGoal !== "appearance_reference"
+    || operations.some((operation) =>
+      /swappys|face-replacement|actor-continuity|pickup-scene|stunt|age-transform|gender-transform|childhood-self/i.test(operation),
+    );
   if (!isSwappys) return opts.next();
 
-  const contentMode: SwappysContentMode = input.contentMode === "open_adult" || operations.includes("open-adult-creative-mode")
+  const contentMode: SwappysContentMode = input.contentMode === "open_adult"
+    || operations.includes("open-adult-creative-mode")
     ? "open_adult"
     : "standard";
-  const allSubjectsAdultsConfirmed = input.allSubjectsAdultsConfirmed === true || operations.includes("all-subjects-adults-confirmed");
+  const allSubjectsAdultsConfirmed = input.allSubjectsAdultsConfirmed === true
+    || operations.includes("all-subjects-adults-confirmed");
+
+  if (contentMode === "open_adult") {
+    await assertAdultWorkspaceAccess(opts.ctx.user.id);
+  }
+
+  await screenContentRequest({
+    userId: opts.ctx.user.id,
+    workspace: contentMode === "open_adult" ? "adult" : "standard",
+    sourceType: opts.path,
+    sourceId: input.sceneId || input.projectId || null,
+    text: [input.targetPresentation, input.directorNotes, input.instructions, input.consentNotes]
+      .filter(Boolean)
+      .join("\n"),
+    targetAge: typeof input.targetAge === "number" ? input.targetAge : null,
+    allSubjectsAdultsConfirmed,
+    consentConfirmed: input.consentConfirmed === true,
+    publicFigureLikeness: input.publicFigureLikeness === true,
+    aiGeneratedCharactersOnly: input.aiGeneratedCharactersOnly === true,
+  });
 
   assertSwappysCreativePolicy({
     user: opts.ctx.user,
@@ -233,6 +266,9 @@ const requireDesigner = t.middleware(async opts => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
+  if ((ctx.user as any).isFrozen) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "This account has been deactivated." });
+  }
   const portal = await getUserPortal(ctx.user.id, ctx.user.role);
   if (portal !== "designer" && portal !== "admin") {
     throw new TRPCError({
@@ -255,7 +291,11 @@ const requireDesigner = t.middleware(async opts => {
     });
   }
   return next({
-    ctx: { ...ctx, user: ctx.user, designerProfile: { id: profile.id as number, userId: profile.userId as number } },
+    ctx: {
+      ...ctx,
+      user: ctx.user,
+      designerProfile: { id: profile.id as number, userId: profile.userId as number },
+    },
   });
 });
 
