@@ -1,23 +1,26 @@
 name: Update sharp security dependency
 
 on:
-  push:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
     branches: [main]
-    paths:
-      - ".github/workflows/update-sharp-security.yml"
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  generate-security-branch:
+  update-security-pr:
+    if: github.event.pull_request.head.ref == 'security/sharp-0.35.3'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out main
+      - name: Check out security branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -28,17 +31,23 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Generate patched manifest and lockfile only
+      - name: Generate patched lockfile
+        run: pnpm install --lockfile-only
+      - name: Validate secured dependency set
         run: |
-          pnpm remove @types/sharp --lockfile-only
-          pnpm add sharp@0.35.3 --lockfile-only
-      - name: Commit to dedicated security branch
+          pnpm install --frozen-lockfile
+          pnpm check
+          pnpm test
+          pnpm build
+          pnpm audit --audit-level moderate
+      - name: Commit generated lockfile
         run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile already current"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B security/sharp-0.35.3
-          git add package.json pnpm-lock.yaml
-          git commit -m "Update sharp to patched 0.35.3"
-          git push --force origin HEAD:security/sharp-0.35.3
-
-# Trigger isolated security branch generation.
+          git add pnpm-lock.yaml
+          git commit -m "Regenerate lockfile for sharp 0.35.3"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
