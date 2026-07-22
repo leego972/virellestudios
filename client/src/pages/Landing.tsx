@@ -2,7 +2,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import SiteHead from "@/components/SiteHead";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
-import VSWatermark from "@/components/VSWatermark";
+import GoldWatermark from "@/components/GoldWatermark";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -94,7 +94,7 @@ export default function Landing() {
         }}
       />
 
-      <VSWatermark className="opacity-45" />
+      <GoldWatermark />
 
       <nav
         className={`fixed inset-x-0 top-0 z-50 border-b transition-all ${
