@@ -7,6 +7,12 @@ on:
     paths:
       - ".github/scripts/apply_character_costume_continuity.py"
       - ".github/workflows/character-costume-continuity-patch.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/scripts/apply_character_costume_continuity.py"
+      - ".github/workflows/character-costume-continuity-patch.yml"
 
 permissions:
   contents: write
