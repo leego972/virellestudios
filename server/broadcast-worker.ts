@@ -178,6 +178,11 @@ async function submitBridgeSession(
   }
   const result = await response.json() as BridgeResponse;
   if (!result.sessionId) throw new Error("Broadcast bridge returned no session ID.");
+  if (!result.recordingUrl && !result.outputUrl) {
+    throw new Error(
+      "BROADCAST_RECORDING_URL_REQUIRED: The bridge must return recordingUrl or outputUrl before Virelle will start the broadcast.",
+    );
+  }
   return result;
 }
 
@@ -214,18 +219,18 @@ async function initiateBroadcastSession(dbConn: any, job: any): Promise<void> {
       provider: String(job.provider),
     });
     const bridge = await submitBridgeSession(job, providerKey, channels);
-    const immediateRecording = bridge.recordingUrl || bridge.outputUrl || null;
+    const recordingUrl = bridge.recordingUrl || bridge.outputUrl!;
     await dbConn.execute(sql`
       UPDATE virelle_video_transform_jobs
       SET status='processing', providerJobId=${bridge.sessionId},
-          outputVideoUrl=${immediateRecording},
+          outputVideoUrl=${recordingUrl},
           previewImageUrl=${bridge.previewUrl || null},
           recordingRequired=1, broadcastStartedAt=COALESCE(broadcastStartedAt, NOW()),
           errorMessage=NULL, updatedAt=NOW()
       WHERE id=${jobId}
     `);
     logger.info(
-      `[BroadcastWorker] Session ${jobId} submitted; outputs=${channels.length}, recording=${immediateRecording ? "available" : "pending"}`,
+      `[BroadcastWorker] Session ${jobId} submitted; outputs=${channels.length}, recording URL secured`,
     );
   } catch (error: any) {
     const message = String(error?.message ?? error).slice(0, 500);
