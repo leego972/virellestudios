@@ -76,7 +76,7 @@ import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 import { runLamaloSeed } from "./lamalo-seed";
-import { getUserPortal, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
+import { getUserPortal, rollbackNewUserRegistration, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
 
 // v6.77 ÃÂ¢ÃÂÃÂ Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
@@ -496,7 +496,7 @@ export const appRouter = router({
             isDefault: true,
           });
         } catch (addressError) {
-          await db.deleteUser(user.id).catch(() => undefined);
+          await rollbackNewUserRegistration(user.id).catch(() => undefined);
           throw addressError;
         }
 

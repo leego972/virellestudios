@@ -302,6 +302,16 @@ export async function createPhysicalOrderFromSession(session: any, leaseId: numb
   `);
 }
 
+export async function rollbackNewUserRegistration(userId: number): Promise<void> {
+  await ensurePortalCommerceSchema();
+  const dbConn = await getDb();
+  if (!dbConn) return;
+  await dbConn.execute(sql`DELETE FROM savedDeliveryAddresses WHERE userId = ${userId}`).catch(() => undefined);
+  await dbConn.execute(sql`DELETE FROM userPortalAccounts WHERE userId = ${userId}`).catch(() => undefined);
+  await dbConn.execute(sql`DELETE FROM designerProfiles WHERE userId = ${userId}`).catch(() => undefined);
+  await dbConn.execute(sql`DELETE FROM users WHERE id = ${userId}`).catch(() => undefined);
+}
+
 export function isLamaloBrandName(name: unknown): boolean {
   const normalized = String(name ?? "").trim().toLowerCase();
   return normalized === "lamalo fashion" || normalized === "lamalo fashions" || normalized === "lamalo";

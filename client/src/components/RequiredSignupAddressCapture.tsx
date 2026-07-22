@@ -44,7 +44,7 @@ export default function RequiredSignupAddressCapture() {
     refetchOnWindowFocus: false,
   });
   const utils = trpc.useUtils();
-  const [address, setAddress] = useState(readDraft);
+  const [address, setAddress] = useState<typeof emptyAddress>(readDraft);
   const [capturedForSignup, setCapturedForSignup] = useState(() => {
     try { return Boolean(sessionStorage.getItem(STORAGE_KEY)); } catch { return false; }
   });
