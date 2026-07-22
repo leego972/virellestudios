@@ -7,6 +7,12 @@ on:
     paths:
       - ".github/scripts/finalize_costume_occlusion.py"
       - ".github/workflows/finalize-costume-occlusion.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/scripts/finalize_costume_occlusion.py"
+      - ".github/workflows/finalize-costume-occlusion.yml"
 
 permissions:
   contents: write
