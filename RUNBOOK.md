@@ -1,341 +1,166 @@
 # Virelle Studios Production Runbook
 
-Practical playbooks for everyday operation, incident response, and
-launch readiness. For *deployment* (Railway setup, env vars, Stripe
-wiring) see [`DEPLOYMENT.md`](./DEPLOYMENT.md). For the security model
-see [`SECURITY.md`](./SECURITY.md). Older general procedures (log
-rotation, DR RTO/RPO targets) remain in
-[`OPERATIONAL_RUNBOOK.md`](./OPERATIONAL_RUNBOOK.md) for reference.
+Operational procedures for `https://virelle.life`. Deployment configuration is documented in [`DEPLOYMENT.md`](./DEPLOYMENT.md); security reporting and controls are documented in [`SECURITY.md`](./SECURITY.md).
 
----
+## Ownership
 
-## Emergency contacts / ownership
+- Repository: `leego972/virellestudios`
+- Production branch: `main`
+- Application host: Render
+- Database: external managed MySQL 8-compatible service
+- Public health endpoint: `https://virelle.life/api/healthz`
 
-- **Repository owner:** `leego972` (GitHub).
-- **Security contact:** see [`SECURITY.md`](./SECURITY.md) §"Reporting
-  a vulnerability" — `leego972@gmail.com` with subject
-  `Virelle Security — <short summary>`.
-- **Deploy target:** Railway service for `https://virelle.life`.
-- **DB:** Railway MySQL plugin attached to the same project.
-- **Status page:** *not yet set up* — see "Known launch risks" below.
+## Post-deployment smoke test
 
----
+Run after every production deployment or rollback.
 
-## Standard production verification
-
-Run after every deploy. Each item must pass before declaring the
-service healthy.
-
-- `/api/health` returns `ok`
-- Login works
-- Signup works
-- Create project works
-- Generate a small test asset works
-- Credits deduct correctly
-- Upload test works
-- Download/access test works
-- Normal user cannot access `/api/admin/grant-credits`
-- Admin user can access an allowed admin route (or gets `503` if
-  `ENABLE_MAINTENANCE_ROUTES` is intentionally off — that's still a pass)
-- Stripe test webhook succeeds
-
----
-
-## Smoke test checklist
-
-Run this **exact** checklist after every production deploy and after
-every rollback. Tick off each box. If any item fails, halt the deploy
-verification and consult the [Incident playbooks](#incident-playbooks).
-
-```
-[ ] Security CI passed
-[ ] Railway deploy succeeded
-[ ] /api/health returns ok
-[ ] Login works
-[ ] Signup works
-[ ] Create project works
-[ ] Small generation test works
-[ ] Credit deduction works
-[ ] Upload test works
-[ ] Download/access test works
-[ ] Normal user blocked from /api/admin/grant-credits
-[ ] Admin user can access /api/admin/grant-credits
-[ ] Stripe test webhook succeeds
-[ ] Sentry/logs checked
-[ ] Maintenance routes disabled
+```text
+[ ] CI, Security CI and App Debug/Parity passed for the deployed commit
+[ ] Render deployment is live and uses the expected commit
+[ ] /api/healthz reports status=ok and database=ok
+[ ] /api/health reports status=ok and database=ok
+[ ] Login succeeds
+[ ] New-user registration/onboarding succeeds
+[ ] Dashboard loads without client errors
+[ ] Project creation succeeds
+[ ] A low-cost test generation completes
+[ ] Credits or entitlements change by the documented amount
+[ ] Upload and download paths work
+[ ] Normal users cannot access administrator procedures
+[ ] Stripe test webhook returns 2xx without duplicate fulfilment
+[ ] Managed broadcast configuration validates the bridge
+[ ] Compliance archive worker is healthy when enabled
+[ ] Logs and Sentry contain no new release-blocking errors
 ```
 
-### How to verify each line
+Do not declare the release healthy when the database reports `error` or when billing fulfilment is not idempotent.
 
-| Check | Command / where |
-|---|---|
-| Security CI | GitHub → Actions → Security CI for the deployed SHA → green. |
-| Railway deploy | Railway → service → Deployments → top entry status `Active`. |
-| `/api/health` | `curl -fsS https://virelle.life/api/health` returns `{"ok":true,…}`. |
-| Login | `https://virelle.life/login`, complete OAuth, land on `/dashboard`. Cookie has `Secure; HttpOnly; SameSite=Lax`. |
-| Signup | Fresh email through OAuth signup → onboarding. Verify `users` row with `role='user'`. |
-| Create project | Dashboard → New project → row appears in `projects`. |
-| Small generation | Lowest-credit-cost generation completes and asset URL is reachable. |
-| Credit deduction | Before/after `SELECT credits FROM users WHERE id=?` differ by exactly the documented cost. |
-| Upload test | UI → upload ~100 KB PNG → object exists in S3 and URL is fetchable. |
-| Download test | Re-download the asset → bytes match. |
-| Normal user blocked | `curl -i -b "<normal-cookie>" https://virelle.life/api/admin/grant-credits` → **403**. |
-| Admin user allowed | Same call with admin cookie → **200** (or **503** if maintenance routes are off — also acceptable). |
-| Stripe test webhook | Stripe Dashboard → Webhooks → endpoint → **Send test event** → `invoice.paid` → 2xx response, idempotent claim recorded. |
-| Sentry/logs | Sentry top issues empty or unchanged; Railway logs show no new ERROR. |
-| Maintenance routes disabled | Railway → Variables → `ENABLE_MAINTENANCE_ROUTES` is **unset** (not just empty). |
+## Monitoring
 
----
+Review these signals during and after deployment:
 
-## Monitoring checklist
-
-Confirm each of the following monitors is wired up. Re-check quarterly
-or after any infrastructure change.
-
-- **Railway deploy logs** — green on every push to `main`; red runs
-  page someone immediately.
-- **Railway runtime logs** — continuous tail; no gaps > 5 min during
-  business hours; ERROR-level lines tagged for review.
-- **Sentry errors** — server (`SENTRY_DSN`) and client
-  (`VITE_SENTRY_DSN`) projects both receiving events; alert on any new
-  issue or error rate > 10 events/min.
-- **Stripe failed webhook alerts** — Stripe Dashboard → Webhooks →
-  endpoint → Failures; page on any 5xx or ≥3 consecutive non-2xx.
-- **Database connection errors** — Railway logs filtered for
-  `ECONNREFUSED` / `PROTOCOL_CONNECTION_LOST`; alert on burst.
-- **Storage errors** — S3 4xx/5xx returned to upload routes; alert on
-  burst.
-- **Provider API failures** — Pollinations / OpenRouter / ElevenLabs /
-  Vast.ai 4xx-5xx counted in Sentry breadcrumb tag `provider`; alert
-  on ≥10 failures in 5 min for any single provider.
-- **Upload volume / disk usage** — Railway service disk > 80%; S3
-  bucket size growth > 2× weekly baseline.
-- **Unusual admin audit events** — Railway logs filtered for
-  `[security]` and `[admin]`; weekly review for blocked maintenance
-  attempts and admin-route access patterns.
-- **Payment failure spikes** — Stripe Dashboard → Failed payments;
-  alert on > 3× hourly baseline.
-
----
+- Render deployment and runtime logs
+- `/api/healthz` availability and database status
+- Sentry server and client errors
+- Stripe webhook failures and payment failures
+- Redis connection or rate-limit errors
+- MySQL connection, migration and deadlock errors
+- S3 upload/download failures
+- AI provider error rates and timeouts
+- Broadcast bridge authentication, recording and completion callbacks
+- Compliance archive ingestion failures or retention exceptions
+- Unusual administrator or security audit events
 
 ## Rollback procedure
 
-A staged playbook. Steps 1–8 are typical; step 9 is conditional on
-suspected data corruption.
+1. Identify the last known-good commit and Render deployment.
+2. Determine whether the incident is code-only, configuration-related or data-related.
+3. For a code-only regression, redeploy the previous Render deployment or revert the offending merge commit.
+4. For configuration drift, restore the previous Render environment values and redeploy.
+5. For suspected data corruption, restrict writes before restoring data and preserve a forensic snapshot.
+6. Verify both health endpoints.
+7. Run the complete smoke test above.
+8. Check Stripe, logs, Sentry, broadcast and compliance processing before reopening normal traffic.
 
-1. **Identify last known good commit** —
-   `git log --oneline -10 origin/main`, or Railway → Deployments → find
-   the last green deploy. Confirm the SHA precedes the suspected bad
-   change.
-2. **Redeploy previous commit in Railway** (Deployments → ⋯ →
-   Redeploy on the prior green deploy) **OR** revert and push:
-   `git revert <bad-sha> && git push origin main`.
-3. **Confirm env vars were not changed accidentally** — Railway →
-   service → Variables. Cross-check against the lists in
-   [`DEPLOYMENT.md`](./DEPLOYMENT.md). If any variable was changed by
-   the bad deploy, restore the previous value.
-4. **Ensure `ENABLE_MAINTENANCE_ROUTES` is unset** — Railway →
-   Variables → delete the variable if present. Wait for the rolling
-   restart.
-5. **Run health check** —
-   `curl -fsS https://virelle.life/api/health` returns
-   `{"ok":true,…}`.
-6. **Run smoke tests** — full
-   [smoke-test checklist](#smoke-test-checklist) (15 items).
-7. **Check Stripe webhooks** — Stripe Dashboard → Webhooks → endpoint
-   → recent deliveries; replay any failures.
-8. **Check logs / Sentry** — Sentry for new server/client errors;
-   Railway logs for `ERROR`, `[security]`, `[admin]`.
-9. **If data corruption is suspected, stop writes before restoring
-   backup.** Railway → service → Settings → Stop. Take a forensic
-   snapshot of the current (possibly-corrupt) DB before any restore
-   (Railway → MySQL → Backups → Take snapshot, label
-   `forensic-<UTC-timestamp>`). Then restore the most recent
-   pre-corruption snapshot. After restore, run integrity probes:
-   ```sql
-   SELECT s.id FROM subscriptions s
-   LEFT JOIN users u ON u.id = s.userId
-   WHERE u.id IS NULL;
-
-   SELECT stripeEventId, COUNT(*) FROM stripe_webhook_events
-   GROUP BY stripeEventId HAVING COUNT(*) > 1;
-   ```
-   Escalate before restarting if either query returns rows.
-
----
+Never roll back application code across an incompatible database migration without a reviewed database recovery plan.
 
 ## Incident playbooks
 
-### If login breaks
+### Authentication failure
 
-**Symptoms:** users get 401/500 on `/login`, OAuth callback errors,
-existing sessions evicted.
+Check, in order:
 
-1. **Check `JWT_SECRET`** — Railway → Variables; must be set and
-   non-empty. If missing, the app exits at boot.
-2. **Check `DATABASE_URL`** — Railway → MySQL service status; verify
-   the `users` table is reachable.
-3. **Check cookie / domain config** — under HTTPS the auth cookie must
-   be `Secure; HttpOnly; SameSite=Lax`. If `Secure` is missing the
-   browser silently rejects it; usually means `NODE_ENV` is not
-   `production`.
-4. **Check `users` table** for the affected user. If the row is missing
-   or has `role='disabled'`, that's the issue.
-5. **Check recent auth/admin commits** — `git log -p --since=24h --
-   server/_core/context.ts server/_core/auth/`. A bad change to JWT
-   handling, cookie middleware, or admin-role checks usually shows up
-   here.
-6. **Roll back if needed** — see [Rollback procedure](#rollback-procedure).
+1. `JWT_SECRET` and `SESSION_SECRET` are present and unchanged.
+2. OAuth provider configuration and callback URLs match `https://virelle.life`.
+3. `DATABASE_URL` is reachable and the user record exists.
+4. Secure cookie settings are active under HTTPS.
+5. Recent authentication or context changes did not alter role/session handling.
 
-### If Stripe webhook breaks
+Administrator access is granted by the database role. Do not add environment-driven automatic promotion as a recovery shortcut.
 
-**Symptoms:** Stripe Dashboard → Webhooks → endpoint shows red /
-"Failures". Users complete checkout but credits are not granted.
+### Database or migration failure
 
-1. **Confirm webhook route order was not changed** —
-   `server/_core/index.ts` must register
-   `app.post("/api/stripe/webhook", express.raw(...))` *before*
-   `app.use(express.json(...))`. If reordered, signature verification
-   breaks silently. Revert the reorder.
-2. **Confirm `STRIPE_WEBHOOK_SECRET`** — Stripe Dashboard → Webhooks
-   → endpoint → Signing secret matches Railway → Variables. Update
-   and redeploy if rotated.
-3. **Confirm Stripe endpoint URL** —
-   `https://virelle.life/api/stripe/webhook` (no trailing slash, no
-   typo). 404s in deliveries indicate URL drift.
-4. **Replay one test event from Stripe dashboard** — Webhooks →
-   endpoint → Send test event → `invoice.paid`. Verify Railway logs
-   show signature OK + idempotent claim + (for new event id) credit
-   grant.
-5. **Check duplicate / idempotency behavior** — replay a previously
-   delivered event id. Expected behavior: 2xx response, log line
-   "duplicate webhook event ignored", no credit grant. If credits are
-   re-granted, that's a regression in the idempotency layers (see
-   SECURITY.md §10) — escalate.
+1. Inspect Render startup logs for the exact migration error.
+2. Confirm the external MySQL service is reachable from Render.
+3. Confirm `DATABASE_URL` uses the correct MySQL database and credentials.
+4. Compare the migration ledger with files in `drizzle/`.
+5. Test any corrective migration against a copy or staging database.
+6. Redeploy only after the migration path is understood.
 
-### If AI providers fail
+When credentials may be exposed, rotate them rather than merely editing documentation or source files.
 
-**Symptoms:** generations return 401/403, "invalid API key" in logs,
-or all generations time out.
+### Stripe webhook or fulfilment failure
 
-1. **Check provider env vars** — Railway → Variables for the affected
-   provider (`POLLINATIONS_API_KEY`, `OPENROUTER_API_KEY`,
-   `ELEVENLABS_API_KEY`, `VAST_API_KEY`, `OPENAI_API_KEY`,
-   `GOOGLE_API_KEY`, `FAL_KEY`, `RUNWAYML_API_SECRET`,
-   `HUGGING_FACE_API_KEY`, `VENICE_API_KEY`, `TITAN_API_KEY`).
-2. **Check provider status pages manually** — most providers have a
-   `status.<provider>.com` page. If down, post a status update; we
-   cannot self-mitigate.
-3. **Confirm BYOK fallback behavior** — when the platform key is
-   missing or rejected, the app should attempt the user's BYOK key (if
-   they have one) and surface a clear error otherwise. Verify in
-   logs.
-4. **Confirm credit deduction did not occur on failed generation** —
-   for any user who reported a failed generation, query
-   `SELECT * FROM billing_actions WHERE userId=? ORDER BY createdAt DESC
-   LIMIT 5`. There should be **no** debit row tied to the failed
-   generation. If there is, refund manually via the maintenance route
-   (see DEPLOYMENT §"Maintenance route procedure").
+1. Confirm the webhook URL is `https://virelle.life/api/stripe/webhook`.
+2. Confirm `STRIPE_WEBHOOK_SECRET` matches the active endpoint.
+3. Confirm the raw-body webhook route is registered before JSON parsing.
+4. Replay one failed event from Stripe.
+5. Verify the event/session/invoice is recorded once and fulfilment is idempotent.
+6. Confirm credits, subscriptions, wardrobe purchases and broadcast-minute purchases were not duplicated.
 
-#### Rotate exposed Pollinations keys
+### Generation provider failure
 
-The repository contains hardcoded fallback keys in
-`server/_core/byokVideoEngine.ts:59-60`:
+1. Identify whether the request used a platform integration or user BYOK.
+2. Check the provider response status and current provider availability.
+3. Confirm the selected key is present and valid without logging it.
+4. Confirm failed work did not consume credits permanently.
+5. Confirm any reservation was released or refunded according to the workflow.
+6. Disable only the affected provider path when a narrower mitigation is available.
 
-```ts
-const POLLINATIONS_KEY_POOL: string[] = [
-  ENV.pollinationsApiKey || "sk_<KEY-A>",
-  "sk_<KEY-B>",
-].filter(k => k && k.length > 0);
-```
+### Broadcast failure
 
-These keys are **publicly exposed via git history** (committed as
-plain text in v6.83 and earlier). Treat them as burned.
+1. Determine the selected service mode: direct, managed or AI-assisted.
+2. Direct standard broadcasting should not require BYOK or managed minutes.
+3. Managed broadcasting requires bridge connectivity and sufficient output minutes, but not BYOK.
+4. AI-assisted broadcasting requires bridge connectivity, output minutes and a funded user BYOK provider.
+5. Adult Studio broadcasts must remain managed and recorded.
+6. Verify minute reservations are released when the bridge rejects a session before acceptance.
+7. Verify accepted sessions consume the correct duration multiplied by destination count.
 
-**Rotation steps:**
+### Compliance archive failure
 
-1. Log in to [enter.pollinations.ai](https://enter.pollinations.ai).
-2. Revoke both `KEY-A` and `KEY-B` (look for the "petite-primate" key
-   and any sibling keys created at the same time).
-3. Generate a new secret key, set it in Railway as
-   `POLLINATIONS_API_KEY`.
-4. (Optional second key for the rotation pool) generate a second key
-   and set it as `POLLINATIONS_API_KEY_BACKUP`. Then in a future
-   commit, replace the hardcoded second entry of `POLLINATIONS_KEY_POOL`
-   with `process.env.POLLINATIONS_API_KEY_BACKUP`.
+1. Confirm `COMPLIANCE_ARCHIVE_ENABLED` is intentionally enabled.
+2. Confirm the private archive bucket and storage credentials are valid.
+3. Check archive-worker logs and pending items.
+4. Confirm retained objects are private and signed URLs are short-lived.
+5. Do not delete evidence under legal hold.
+6. Escalate before bypassing retention or recording requirements.
 
-### If all admin access is lost
+### Storage failure
 
-**Symptoms:** no user has `role='admin'` in the `users` table; admin
-UI returns 403 for everyone; no one can run maintenance routes.
+1. Confirm S3 endpoint, region, bucket and credentials.
+2. Test a small upload and download without exposing signed URLs in logs.
+3. Check object permissions; production assets and compliance evidence have different privacy requirements.
+4. Confirm failed uploads do not leave completed jobs pointing at unavailable objects.
 
-1. **Do not re-add automatic owner/email bootstrap.** The
-   `OWNER_OPEN_ID` env var was deprecated in v6.80 specifically because
-   automatic admin promotion is a privilege-escalation foothold. Re-adding
-   it would undo that work.
-2. **Restore one admin by deliberate direct DB recovery.** From a
-   trusted operator machine with database credentials:
-   ```sql
-   -- Replace with the exact userId of the chosen admin.
-   UPDATE users SET role = 'admin' WHERE id = '<userId>';
-   ```
-   Use the Railway MySQL console or a one-off `mysql` shell. Do **not**
-   embed a script in the codebase that does this.
-3. **Record the recovery in deployment notes.** Add a dated entry to
-   the maintenance log including: who ran the SQL, which userId was
-   promoted, why all admin access was lost, and how the situation will
-   be prevented (e.g. always have ≥ 2 admin accounts).
-4. **Rotate credentials if compromise is suspected** — JWT_SECRET,
-   SESSION_SECRET, all Stripe keys, all provider API keys. See the
-   "If login breaks" rollback for forced re-login expectations.
+## Credential exposure response
 
----
+When a secret enters Git, logs, screenshots, issues or documentation:
+
+1. Revoke or rotate the credential immediately.
+2. Update the Render environment variable.
+3. Redeploy and confirm the affected service works.
+4. Search the current repository for duplicates.
+5. Review access logs where available.
+6. Record the incident without reproducing the secret.
+
+Removing the current file is necessary repository hygiene but does not invalidate a credential preserved in Git history.
 
 ## Routine maintenance
 
-| Task | Frequency | Procedure |
-|---|---|---|
-| Verify last DB backup is < 24 h old | daily | Railway → MySQL → Backups |
-| Review Sentry top issues | daily | Sentry dashboard |
-| Review Stripe failed webhooks | daily | Stripe → Webhooks → endpoint |
-| Run `pnpm verify` (or `pnpm audit --audit-level high`) | weekly | locally + on every PR via Security CI |
-| Review `[security]` log lines | weekly | Railway logs → search `[security]` |
-| Rotate `JWT_SECRET` and `SESSION_SECRET` | quarterly | See "If login breaks" — expect forced re-login. |
-| Rotate AI provider keys | quarterly | See "If AI providers fail". |
-| Verify off-site backup restore works | quarterly | Restore the latest `.sql.gz` to a scratch MySQL instance and run integrity probes. |
+Monthly:
 
----
+- Review dependency audit results.
+- Remove closed, merged and superseded branches from GitHub.
+- Review stale environment aliases and provider integrations.
+- Confirm backup and restore procedures.
+- Confirm Stripe webhook health and catalogue consistency.
+- Confirm compliance retention jobs are completing.
+- Review repository root files and move historical reports to `docs/archive/`.
 
-## Known launch risks
+Quarterly:
 
-Honest list of items that should be fixed but are out of scope for the
-v6.86 / v6.88 production-readiness gate:
-
-1. **Burned Pollinations keys in `byokVideoEngine.ts`.** Two real
-   secret keys are hardcoded as the fallback rotation pool and are
-   publicly visible via git history (v6.83 and earlier). The
-   `byokVideoEngine.ts` file is excluded from the secret-scan to keep
-   CI green while this is tracked. **Mitigation:** rotate per
-   [Rotate exposed Pollinations keys](#rotate-exposed-pollinations-keys)
-   before any public launch announcement.
-2. **In-memory voice temp-upload store.** Voice clips uploaded to
-   `/api/voice/temp/:id` live in process memory only. If Railway scales
-   beyond a single web replica, voice uploads break (the GET would land
-   on a different instance). **Mitigation:** stay single-instance until
-   this is moved to Redis or signed-URL S3 hand-off.
-3. **tRPC upload routes have no MIME allowlist.** Schemas validate
-   size only; any `contentType` string is accepted. The standalone
-   `/api/voice/temp` endpoint *does* enforce an 11-entry audio
-   allowlist (see SECURITY.md §11). **Mitigation:** add a tRPC-level
-   allowlist if upload categories diversify.
-4. **Existing S3 objects remain public-read.** The `{ public: false }`
-   opt-in added in v6.86 only affects future uploads. Migrating any
-   currently-private content categories to private ACLs is a separate
-   task.
-5. **`OPERATIONAL_RUNBOOK.md` references generic CLI tools** (`mysql`,
-   `redis-cli`) that are not part of the Railway runtime. Use the
-   playbooks in this `RUNBOOK.md` for production troubleshooting; treat
-   the older doc as a reference for self-hosted deployments.
-6. **No formal status page yet.** User-facing incident communication is
-   ad-hoc. Set up a status page (e.g. Statuspage, Instatus, Better
-   Uptime) and link it from the marketing site before public launch.
+- Exercise a Render rollback.
+- Exercise a MySQL restore in a non-production environment.
+- Rotate high-value operational secrets according to provider policy.
+- Review administrator accounts and audit logs.
