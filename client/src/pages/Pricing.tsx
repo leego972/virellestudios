@@ -1,698 +1,425 @@
 import SiteHead from "@/components/SiteHead";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera, PhoneCall, CalendarDays, Shield } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { toast } from "sonner";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
-import { HollywoodBadge } from "@/components/HollywoodIcon";
-import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
+import {
+  ArrowRight,
+  Check,
+  Clapperboard,
+  Coins,
+  Film,
+  KeyRound,
+  Loader2,
+  LockKeyhole,
+  RadioTower,
+  Shield,
+  Sparkles,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import { toast } from "sonner";
 
-// ─── Tier Definitions ────────────────────────────────────────────────────────
-// All prices in AUD. Three public tiers: Indie, Creator, Industry — all self-serve.
-// Legacy DB keys independent/creator/studio all resolve to Industry.
-
-const SELF_SERVE_TIERS = [
+const MEMBERSHIPS = [
   {
     id: "indie",
-    displayName: "Indie",
-    icon: Camera,
-    color: "border-emerald-500 ring-2 ring-emerald-500/20",
-    buttonColor: "bg-emerald-600 hover:bg-emerald-500",
-    accentColor: "text-emerald-400",
+    name: "Indie",
     monthly: 149,
     annual: 1490,
     credits: 500,
-    badge: "Entry Tier",
-    badgeColor: "bg-emerald-700",
-    audience: "Solo filmmakers and creators exploring AI-assisted production.",
-    description: "Core tools for screenplay development, character design, and cinematic planning.",
-    highlights: [
-      "500 credits/month (~50 video scenes)",
-      "AI Script Writer & Screenplay Tools",
-      "Character Creator & DNA Lock",
-      "Director's AI Assistant (Virelle Chat)",
-      "Location Scout & Mood Board",
-      "Shot List Generator",
-      "Up to 2 projects",
+    badge: "Entry",
+    description: "Solo filmmakers and creators developing smaller productions.",
+    features: [
+      "500 credits added each month",
+      "Up to 2 active projects",
+      "Script, character and planning tools",
+      "Director AI assistant",
       "720p export",
-      "BYOK support (Runway, ElevenLabs, Suno)",
-      "Signature Cast: Standard tier access (browse & cast Standard actors)",
+      "BYOK provider support",
+      "Adult Studio access after verification",
+      "60 managed broadcast minutes/month",
     ],
-    primaryCTA: "Start Creating",
-    secondaryCTA: "View Feature Breakdown",
-    selfServe: true,
   },
   {
     id: "amateur",
-    displayName: "Creator",
-    icon: Film,
-    color: "border-amber-500 ring-2 ring-amber-500/20",
-    buttonColor: "bg-amber-600 hover:bg-amber-500",
-    accentColor: "text-amber-400",
+    name: "Creator",
     monthly: 490,
     annual: 4900,
     credits: 2000,
-    badge: "Most Popular",
-    badgeColor: "bg-amber-700",
-    audience: "Independent producers and creators building commercial-grade projects.",
-    description: "Integrated production pipeline including video generation, voice acting, and scoring.",
-    highlights: [
-      "2,000 credits/month (~200 video scenes)",
-      "Everything in Indie, plus:",
-      "Video Generation (Runway, Sora, Kling, Veo)",
-      "AI Voice Acting (35 emotions, 3,000+ voices)",
-      "AI Film Score (Suno v4)",
-      "Character DNA Lock across all scenes",
-      "Up to 10 projects, 90 min per film",
+    badge: "Most popular",
+    description: "Independent producers creating commercial-grade work.",
+    features: [
+      "2,000 credits added each month",
+      "Up to 10 active projects",
+      "Video generation, voice and scoring",
+      "Character DNA continuity",
       "1080p export",
-      "Signature Cast: Premium tier access (Standard + Premium actors)",
+      "Premium Signature Cast access",
+      "Adult Studio access after verification",
+      "180 managed broadcast minutes/month",
     ],
-    primaryCTA: "Start Producing",
-    secondaryCTA: "See Workflow Features",
-    selfServe: true,
   },
   {
     id: "independent",
-    displayName: "Industry",
-    icon: Clapperboard,
-    color: "border-violet-500 ring-2 ring-violet-500/20",
-    buttonColor: "bg-violet-600 hover:bg-violet-500",
-    accentColor: "text-violet-400",
+    name: "Industry",
     monthly: 1490,
     annual: 14900,
     credits: 6000,
     badge: "Commercial",
-    badgeColor: "bg-violet-700",
-    audience: "Boutique studios, agencies, and commercial directors with repeat pipelines.",
-    description: "Full commercial production workflow. Post-production, 4K export, VFX, multi-shot sequencer, and team collaboration.",
-    highlights: [
-      "6,000 credits/month (~600 video scenes)",
-      "Everything in Creator, plus:",
-      "Film Post-Production (ADR, Foley, Score, Mix)",
-      "Subtitles in 130+ languages",
-      "VFX Suite & Bulk Generation",
-      "Multi-Shot Sequencer & NLE Export",
-      "Up to 25 projects, 90 min per film",
-      "4K + ProRes export",
+    description: "Studios, agencies and directors running repeat production pipelines.",
+    features: [
+      "6,000 credits added each month",
+      "Up to 25 active projects",
+      "Full VFX and post-production suite",
+      "Multi-shot sequencer and NLE export",
+      "4K and ProRes export",
       "5 team members",
-      "Signature Cast: Flagship access (full cast including Flagship Stars)",
-      "Commercial license for all Signature Cast use",
+      "Full Signature Cast commercial access",
+      "600 managed broadcast minutes/month",
     ],
-    primaryCTA: "Scale Production",
-    secondaryCTA: "See Workflow Features",
-    selfServe: true,
   },
-];
-
-// Enterprise / custom-pricing tier (contact sales — not shown in main grid)
-const ENTERPRISE_TIERS = [
-  {
-    id: "industry",
-    displayName: "Industry (Enterprise)",
-    icon: Crown,
-    color: "border-yellow-500 ring-2 ring-yellow-500/30 bg-yellow-500/5",
-    buttonColor: "bg-yellow-600 hover:bg-yellow-500",
-    accentColor: "text-yellow-400",
-    priceDisplay: "Custom Pricing",
-    priceNote: "",
-    credits: 50500,
-    badge: "Enterprise",
-    badgeColor: "bg-yellow-700",
-    audience: "Major studios, broadcasters, enterprise brands, and agencies.",
-    description: "Contract-led deployment for major studios and broadcasters. Custom model tuning and bespoke commercial terms.",
-    highlights: [
-      "Credits tailored to deployment scope",
-      "Everything in Industry, plus:",
-      "Unlimited projects, 180 min per film",
-      "Live Action Plate Compositing",
-      "Custom AI Model Fine-Tuning",
-      "Dedicated Account Manager",
-      "Unlimited team members",
-      "Bespoke commercial terms",
-    ],
-    primaryCTA: "Discuss Enterprise Workflow",
-    secondaryCTA: "Contact Sales",
-    selfServe: false,
-  },
-];
-
-const ALL_TIERS = [...SELF_SERVE_TIERS, ...ENTERPRISE_TIERS];
+] as const;
 
 const CREDIT_PACKS = [
-  { id: "topup_10",   credits: 100,   price: 19,    perCredit: 0.19, label: "Starter Pack",     saving: "" },
-  { id: "topup_50",   credits: 300,   price: 49,    perCredit: 0.16, label: "Producer Pack",    saving: "Save 16%" },
-  { id: "topup_100",  credits: 750,   price: 99,    perCredit: 0.13, label: "Director Pack",    saving: "Save 32%" },
-  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Filmmaker Pack",      saving: "Save 47%", popular: true },
-  { id: "topup_500",  credits: 5000,  price: 399,   perCredit: 0.08, label: "Blockbuster Pack", saving: "Save 58%" },
-  { id: "topup_1000", credits: 12000, price: 799,   perCredit: 0.07, label: "Mogul Pack",       saving: "Save 63%" },
-];
+  { id: "topup_10", label: "Starter", credits: 100, price: 19 },
+  { id: "topup_50", label: "Producer", credits: 300, price: 49 },
+  { id: "topup_100", label: "Director", credits: 750, price: 99 },
+  { id: "topup_200", label: "Filmmaker", credits: 2000, price: 199, popular: true },
+  { id: "topup_500", label: "Blockbuster", credits: 5000, price: 399 },
+  { id: "topup_1000", label: "Mogul", credits: 12000, price: 799 },
+] as const;
 
-const CREDIT_COSTS = [
-  { action: "Create New Project", cost: 0, icon: "📁" },
-  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "🎬" },
-  { action: "Generate Scene Video (≤45s)", cost: 10, icon: "🎥" },
-  { action: "Regenerate Scene Video", cost: 8, icon: "🔄" },
-  { action: "Generate Preview Image", cost: 3, icon: "🖼️" },
-  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "📸" },
-  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "📹" },
-  { action: "Virelle AI Chat (per message)", cost: 2, icon: "💬" },
-  { action: "AI Script Writer", cost: 8, icon: "📝" },
-  { action: "AI Storyboard Generation", cost: 8, icon: "🎨" },
-  { action: "AI Dialogue Polish", cost: 5, icon: "🗣️" },
-  { action: "AI Continuity Check", cost: 5, icon: "🔍" },
-  { action: "AI Shot List Generation", cost: 5, icon: "📋" },
-  { action: "Trailer Generation", cost: 20, icon: "🎞️" },
-  { action: "Ad/Poster Generation", cost: 5, icon: "🖼️" },
-  { action: "Subtitle Generation", cost: 8, icon: "💬" },
-  { action: "Export Final Film", cost: 8, icon: "💾" },
-  { action: "Budget Estimator", cost: 5, icon: "💰" },
-  { action: "Location Scout", cost: 3, icon: "📍" },
-  { action: "Mood Board", cost: 3, icon: "🎨" },
-  { action: "Color Grading Plan", cost: 4, icon: "🌈" },
-  { action: "Sound Effects (AI)", cost: 5, icon: "🔊" },
-  { action: "ADR Suggestions", cost: 5, icon: "🎙️" },
-  { action: "Foley Suggestions", cost: 5, icon: "🎵" },
-  { action: "Score Cues", cost: 8, icon: "🎼" },
-  { action: "Mix Summary Export", cost: 2, icon: "🎚️" },
-  { action: "Funding Application", cost: 10, icon: "💼" },
-];
+const BROADCAST_PACKS = [
+  { id: "relay_120", label: "Live Starter", minutes: 120, price: 9, rate: "A$4.50/hour" },
+  { id: "relay_600", label: "Live Creator", minutes: 600, price: 29, rate: "A$2.90/hour", popular: true },
+  { id: "relay_1500", label: "Live Producer", minutes: 1500, price: 59, rate: "A$2.36/hour" },
+  { id: "relay_3600", label: "Live Studio", minutes: 3600, price: 119, rate: "A$1.98/hour" },
+] as const;
 
-const FAQ = [
-  {
-    q: "What is Virelle Studios?",
-    a: "Virelle Studios is a premium AI-powered film production platform that lets you create professional-quality films using AI-assisted tools for scripting, character generation, scene production, and post-processing.",
-  },
-  {
-    q: "How do credits work?",
-    a: "Credits are consumed each time you use a generative feature — such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
-  },
-  {
-    q: "Can I cancel my subscription?",
-    a: "Yes. You can cancel at any time from your billing settings. Your subscription remains active until the end of the current billing period, after which it will not renew.",
-  },
-  {
-    q: "What is the Founding Director offer?",
-    a: "The Founding Director offer gives early members 50% off their first year on any annual Creator or Industry plan. This is a limited offer available to the first 150 members.",
-  },
-  {
-    q: "Do unused credits roll over?",
-    a: "Yes — all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
-  },
-  {
-    q: "What payment methods are accepted?",
-    a: "We accept all major credit and debit cards via Stripe. Monthly billing also supports ACH bank transfers for Australian and US customers.",
-  },
-  {
-    q: "Does Virelle support team collaboration?",
-    a: "Yes. The Industry plan includes up to 5 team seats per project. Collaborators can add script pages, manage shot lists, and review storyboards simultaneously.",
-  },
-  {
-    q: "Can I use my own AI API keys?",
-    a: "Yes — Virelle's BYOK system lets you connect your own keys for Runway, ElevenLabs, OpenAI, fal.ai, and other supported providers. BYOK lets you control generation costs beyond the plan's included credits.",
-  },
-  {
-    q: "Is there a free trial?",
-    a: "Yes. All new accounts include a 7-day free trial with access to core features — no credit card required. After the trial you can choose a paid plan or continue with the limited free tier.",
-    },
-    {
-      q: "Can I upgrade or downgrade my plan?",
-      a: "Yes. You can upgrade at any time and your higher-tier features activate immediately — you are only charged the prorated difference for the remainder of the billing period. Downgrades take effect at the start of your next billing period. Your credit balance is always preserved in full.",
-    },
-    {
-      q: "Who owns the content I create? Can I use it commercially?",
-      a: "You own 100% of everything you create on Virelle Studios. All content — scripts, images, videos, storyboards, and exports — is yours to use commercially, publish, distribute, and monetise without restriction or royalties. The Industry plan additionally includes an explicit commercial licence for Signature Cast actor likenesses used in your generated content.",
-    },
-  ];
+const FILM_PACKAGES = [
+  { name: "Short Film Package", duration: "Up to 30 minutes", launch: 400, standard: 800 },
+  { name: "Feature Film Package", duration: "Up to 90 minutes", launch: 1000, standard: 2000 },
+] as const;
+
+const OTHER_PRICING = [
+  { name: "Designer marketplace membership", price: "A$299/year", note: "Founding price may be A$150 for the first year while available." },
+  { name: "Lamalo virtual wardrobe", price: "From A$0.30/item", note: "Each colour variant is a separate production asset." },
+  { name: "Signature Cast", price: "Actor and licence dependent", note: "The final price is shown before checkout." },
+  { name: "Direct OBS broadcast", price: "A$0/minute", note: "No Virelle relay, no BYOK and no AI generation." },
+] as const;
+
+function formatAUD(value: number) {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 export default function Pricing() {
-  // Read URL params — source=mobile means the user came from the mobile app
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlSource = urlParams.get("source") ?? "";
-  const urlTier = urlParams.get("tier") ?? "";
-  const urlPack = urlParams.get("pack") ?? "";
-  const urlBilling = (urlParams.get("billing") ?? "annual") as "monthly" | "annual";
-  const isMobileSource = urlSource === "mobile";
+  const params = new URLSearchParams(window.location.search);
+  const isMobileSource = params.get("source") === "mobile";
+  const selectedTier = params.get("tier") || "";
+  const selectedPack = params.get("pack") || "";
+  const initialBilling = params.get("billing") === "monthly" ? "monthly" : "annual";
 
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(urlBilling);
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(initialBilling);
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [loadingPack, setLoadingPack] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { data: user } = trpc.auth.me.useQuery();
-  const isLoggedIn = !!user;
-  const currentTier = user?.subscriptionTier || "free";
-  const isActiveMember = user?.subscriptionStatus === "active" || user?.subscriptionStatus === "trialing";
-
   const createCheckout = trpc.subscription.createCheckout.useMutation();
   const createTopUpCheckout = trpc.subscription.createTopUpCheckout.useMutation();
 
-  // Auto-trigger checkout when source=mobile and tier is pre-selected in URL
-  useEffect(() => {
-    if (isMobileSource && urlTier && isLoggedIn) {
-      handleSubscribe(urlTier);
-    }
-  }, [isLoggedIn, isMobileSource, urlTier]);
-  // Auto-trigger top-up checkout when source=mobile and pack is pre-selected in URL
-  useEffect(() => {
-    if (isMobileSource && urlPack && isLoggedIn) {
-      handleTopUp(urlPack);
-    }
-  }, [isLoggedIn, isMobileSource, urlPack]);
+  const isLoggedIn = Boolean(user);
+  const currentTier = user?.subscriptionTier || "free";
+  const activeMembership = user?.subscriptionStatus === "active" || user?.subscriptionStatus === "trialing";
 
-  const formatAUD = (amount: number) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-  const formatUSD = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const handleSubscribe = async (tierId: string) => {
+  const subscribe = async (tierId: string) => {
     if (!isLoggedIn) {
-      const redirect = isMobileSource
-        ? `/register?redirect=/pricing?tier=${tierId}&billing=${billingCycle}&source=mobile`
-        : `/register?redirect=/pricing`;
-      setLocation(redirect);
+      const redirect = encodeURIComponent(`/pricing?tier=${tierId}&billing=${billingCycle}${isMobileSource ? "&source=mobile" : ""}`);
+      setLocation(`/register?redirect=${redirect}`);
       return;
     }
-    // If already on this tier, open billing portal
-    if (currentTier === tierId && isActiveMember) {
+    if (currentTier === tierId && activeMembership) {
       setLocation("/settings?tab=billing");
       return;
     }
     setLoadingTier(tierId);
     try {
-      // When source=mobile, append source param so BillingSuccess can redirect back to the app
       const sourceParam = isMobileSource ? "&source=mobile" : "";
-      const successUrl = `${window.location.origin}/billing/success?tier=${tierId}${sourceParam}`;
-      const cancelUrl = isMobileSource
-        ? `virelle://billing/cancel?subscription=canceled`
-        : `${window.location.origin}/pricing`;
       const result = await createCheckout.mutateAsync({
         tier: tierId as any,
         billing: billingCycle,
-        successUrl,
-        cancelUrl,
+        successUrl: `${window.location.origin}/billing/success?tier=${tierId}${sourceParam}`,
+        cancelUrl: isMobileSource
+          ? "virelle://billing/cancel?subscription=canceled"
+          : `${window.location.origin}/pricing`,
       });
-      if (result.url) {
-        window.location.href = result.url;
-      } else {
-        toast.error("We couldn't open Stripe checkout. Please try again, or contact support if this keeps happening.");
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't start your subscription right now. Please try again in a moment.");
+      if (!result.url) throw new Error("Stripe checkout did not return a URL.");
+      window.location.href = result.url;
+    } catch (error: any) {
+      toast.error(error?.message || "Could not open subscription checkout.");
     } finally {
       setLoadingTier(null);
     }
   };
 
-  const handleTopUp = async (packId: string) => {
+  const purchaseCredits = async (packId: string) => {
     if (!isLoggedIn) {
-      setLocation("/register?redirect=/pricing");
+      setLocation("/register?redirect=/pricing#credits");
       return;
     }
     setLoadingPack(packId);
     try {
       const sourceParam = isMobileSource ? "&source=mobile" : "";
-      const successUrl = `${window.location.origin}/billing/success?type=topup&pack=${packId}${sourceParam}`;
-      const cancelUrl = isMobileSource
-        ? `virelle://billing/cancel?subscription=canceled`
-        : `${window.location.origin}/pricing#credits`;
       const result = await createTopUpCheckout.mutateAsync({
         packId: packId as any,
-        successUrl,
-        cancelUrl,
+        successUrl: `${window.location.origin}/billing/success?type=topup&pack=${packId}${sourceParam}`,
+        cancelUrl: isMobileSource
+          ? "virelle://billing/cancel?subscription=canceled"
+          : `${window.location.origin}/pricing#credits`,
       });
-      if (result.url) {
-        window.location.href = result.url;
-      } else {
-        toast.error("We couldn't open Stripe checkout for this credit pack. Please try again.");
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't start your top-up right now. Please try again in a moment.");
+      if (!result.url) throw new Error("Stripe checkout did not return a URL.");
+      window.location.href = result.url;
+    } catch (error: any) {
+      toast.error(error?.message || "Could not open credit checkout.");
     } finally {
       setLoadingPack(null);
     }
   };
 
-  const handleEnterpriseContact = (type: string) => {
-    setLocation(`/contact?type=${type}`);
-  };
+  useEffect(() => {
+    if (isLoggedIn && isMobileSource && selectedTier) subscribe(selectedTier);
+    // URL-driven mobile checkout should run only after authentication resolves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, isMobileSource, selectedTier]);
+
+  useEffect(() => {
+    if (isLoggedIn && isMobileSource && selectedPack) purchaseCredits(selectedPack);
+    // URL-driven mobile checkout should run only after authentication resolves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, isMobileSource, selectedPack]);
 
   return (
-    <div className="min-h-screen text-white selection:bg-amber-500/30" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios — from Free to Studio. AI film production from $0 to enterprise scale." />
-
-          {/* ── Founding Director urgency banner ── */}
-          <div className="sticky top-0 z-40 bg-amber-500 text-black py-2 px-4 text-center text-xs font-bold tracking-wide">
-            <span className="mr-2">🎬</span>
-            Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
-            <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
-          </div>
+    <div
+      className="min-h-screen text-white selection:bg-amber-500/30"
+      style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}
+    >
+      <SiteHead
+        title="Plans & Pricing"
+        description="Current Virelle Studios membership, credits, film package, Adult Studio and broadcast pricing in Australian dollars."
+      />
       <GoldWatermarkLaunch />
-      
-      <div className="container mx-auto px-4 py-20">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 border-amber-500/50 text-amber-400 px-4 py-1">
-            Virelle Studios Membership
-          </Badge>
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 text-gold-shimmer">
-            Professional AI <span className="text-amber-400">Film Production</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From screenplay to final mix. Choose the membership that fits your production volume.
-          </p>
 
-          
-            {/* Trust badges */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 mb-2">
-              {[
-                { icon: "✓", label: "Cancel anytime" },
-                { icon: "✓", label: "Credits never expire" },
-                { icon: "✓", label: "100% commercial ownership" },
-                { icon: "✓", label: "BYOK support" },
-              { icon: "🛡", label: "14-day money-back guarantee" },
-              ].map(({ icon, label }) => (
-                <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <span className="text-emerald-400 font-bold">{icon}</span>
-                  {label}
-                </span>
-              ))}
-            </div>
-
-          {/* Billing Toggle */}
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <span className={`text-sm ${billingCycle === "monthly" ? "text-white" : "text-muted-foreground"}`}>Monthly</span>
-            <button
-              onClick={() => setBillingCycle(billingCycle === "monthly" ? "annual" : "monthly")}
-              className="relative w-14 h-7 bg-zinc-800 rounded-full p-1 transition-colors hover:bg-amber-500/10"
-            >
-              <div className={`w-5 h-5 bg-amber-500 rounded-full transition-transform ${billingCycle === "annual" ? "translate-x-7" : "translate-x-0"}`} />
-            </button>
-            <span className={`text-sm ${billingCycle === "annual" ? "text-white" : "text-muted-foreground"}`}>
-              Annual <span className="text-amber-400 font-semibold ml-1">(Save ~17%)</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto mb-20">
-          {SELF_SERVE_TIERS.map((tier) => {
-            const price = billingCycle === "annual" ? tier.annual : tier.monthly;
-            const isCurrentTier = currentTier === tier.id;
-            const Icon = tier.icon;
-
-            return (
-              <Card key={tier.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm transition-all hover:border-amber-500/20 ${tier.color}`}>
-                {tier.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    {PRICING_TIER_BADGE[tier.id] && (
-                      <HollywoodBadge
-                        tier={PRICING_TIER_BADGE[tier.id] as TierBadgeKey}
-                        size={36}
-                        className="shrink-0"
-                      />
-                    )}
-                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">{tier.displayName}</CardTitle>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded px-2 py-0.5">Best for</span>
-                  </div>
-                  <CardDescription className="text-sm text-zinc-300 leading-relaxed min-h-[3rem]">{tier.audience}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold gradient-text-gold">{formatAUD(price)}</span>
-                    <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-1">≈ {formatUSD(Math.round(price * 0.65))} USD · 7-day free trial included</p>
-                  <div className="mt-2 flex items-center gap-2 text-sm font-medium text-amber-400">
-                    <Coins className="w-4 h-4" />
-                    {tier.credits.toLocaleString()} credits/mo included
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                  <ul className="space-y-3">
-                    {tier.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
-                        <Check className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter className="flex flex-col gap-2 pt-4">
-                  <Button
-                    className={`w-full text-white ${tier.buttonColor}`}
-                    onClick={() => handleSubscribe(tier.id)}
-                    disabled={loadingTier !== null || loadingPack !== null}
-                  >
-                    {loadingTier === tier.id
-                      ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Opening Stripe…</>
-                      : tier.primaryCTA}
-                  </Button>
-                  <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 w-full">
-                    <Shield className="w-3 h-3 text-zinc-500" />
-                    Secured by Stripe · Cancel anytime
-                  </p>
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </div>
-
-
-        {/* What happens after payment */}
-        <div className="max-w-3xl mx-auto mb-20 px-4">
-          <h2 className="text-2xl font-bold text-center mb-2 text-white">What happens after you subscribe</h2>
-          <p className="text-center text-sm text-zinc-500 mb-8">From checkout to first generation in under 60 seconds.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              { step: "1", icon: "🔒", title: "Secure checkout", desc: "You are redirected to Stripe's encrypted checkout. Virelle never sees your card details." },
-              { step: "2", icon: "📧", title: "Instant confirmation", desc: "Stripe sends a receipt to your email. Your account is upgraded within seconds of payment." },
-              { step: "3", icon: "🎬", title: "Start creating", desc: "Credits are added to your balance immediately. Open any project and begin generating." },
-            ].map(({ step, icon, title, desc }) => (
-              <div key={step} className="rounded-xl border border-amber-500/20 bg-zinc-900/40 p-6 text-center">
-                <div className="text-3xl mb-3">{icon}</div>
-                <p className="text-xs font-bold uppercase tracking-widest text-amber-500/60 mb-1">Step {step}</p>
-                <h3 className="font-semibold text-white mb-2">{title}</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Enterprise Tiers */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-20">
-          {ENTERPRISE_TIERS.map((tier) => {
-            const Icon = tier.icon;
-            return (
-              <Card key={tier.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm ${tier.color}`}>
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
-                </div>
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    {PRICING_TIER_BADGE[tier.id] && (
-                      <HollywoodBadge
-                        tier={PRICING_TIER_BADGE[tier.id] as TierBadgeKey}
-                        size={36}
-                        className="shrink-0"
-                      />
-                    )}
-                    <CardTitle className="text-2xl gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.displayName}</CardTitle>
-                  </div>
-                  <CardDescription className="min-h-[3rem] glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{tier.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold gradient-text-gold">{tier.priceDisplay}</span>
-                    <span className="text-muted-foreground ml-1">{tier.priceNote}</span>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                  <ul className="space-y-3">
-                    {tier.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-zinc-400">
-                        <Check className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    variant="outline"
-                    className="w-full border-amber-500/20 hover:bg-amber-500/10"
-                    onClick={() => handleEnterpriseContact(tier.id)}
-                  >
-                    {tier.primaryCTA}
-                  </Button>
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Feature Comparison Table */}
-        <div id="comparison" className="max-w-7xl mx-auto mb-20 scroll-mt-20">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gold-shimmer">Feature Comparison</h2>
-          <div className="overflow-x-auto rounded-xl border border-amber-500/20 bg-zinc-900/30">
-            <table className="w-full text-sm text-left">
-              <thead>
-                <tr className="border-b border-amber-500/20 bg-zinc-900/50">
-                  <th className="py-4 px-6 font-semibold border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Feature</th>
-                  <th className="py-4 px-6 text-center font-semibold text-blue-400 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
-                    <div className="flex flex-col items-center gap-1">
-                      <HollywoodBadge tier="indie" size={24} />
-                      <span>Indie</span>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 text-center font-semibold text-emerald-400 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
-                    <div className="flex flex-col items-center gap-1">
-                      <HollywoodBadge tier="creator" size={24} />
-                      <span>Creator</span>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 text-center font-semibold text-amber-400">
-                    <div className="flex flex-col items-center gap-1">
-                      <HollywoodBadge tier="industry" size={24} />
-                      <span>Industry</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800">
-                {[
-                  { name: "Monthly Credits", indie: "500", creator: "2,000", industry: "6,000" },
-                  { name: "Max Projects", indie: "2", creator: "10", industry: "25" },
-                  { name: "AI Script Writer", indie: true, creator: true, industry: true },
-                  { name: "Character DNA Lock", indie: true, creator: true, industry: true },
-                  { name: "Video Generation", indie: false, creator: true, industry: true },
-                  { name: "AI Voice Acting", indie: false, creator: true, industry: true },
-                  { name: "AI Film Score", indie: false, creator: true, industry: true },
-                  { name: "4K Export", indie: false, creator: false, industry: true },
-                  { name: "VFX Suite", indie: false, creator: false, industry: true },
-                  { name: "Multi-Shot Sequencer", indie: false, creator: false, industry: true },
-                  { name: "NLE Export", indie: false, creator: false, industry: true },
-                  { name: "Team Members", indie: "1", creator: "1", industry: "5" },
-                ].map((row, i) => (
-                  <tr key={i} className="hover:bg-amber-500/10/30 transition-colors">
-                    <td className="py-4 px-6 font-medium text-zinc-400">{row.name}</td>
-                    {[row.indie, row.creator, row.industry].map((val, j) => (
-                      <td key={j} className="py-4 px-6 text-center">
-                        {typeof val === "boolean" ? (
-                          val ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-zinc-600 mx-auto" />
-                        ) : (
-                          <span className="text-zinc-400">{val}</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Credit Explainer */}
-        <div className="max-w-3xl mx-auto mb-10 px-4">
-          <div className="rounded-xl border border-amber-500/10 bg-zinc-900/50 p-6">
-            <div className="flex gap-4 items-start">
-              <Coins className="w-6 h-6 text-amber-400 mt-0.5 shrink-0" />
-              <div>
-                <h3 className="font-semibold text-white mb-1">How credits work</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed">
-                  Credits are consumed each time you use a generative feature — for example, generating a scene video costs 10 credits, the AI script writer costs 8 credits, and a storyboard costs 8 credits.
-                  Your subscription automatically tops up your balance each billing period.
-                  <span className="text-zinc-300 font-medium"> Credits never expire</span> — your balance carries forward indefinitely.
-                  You can purchase a one-time top-up pack below at any time if you need more mid-production.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Credit Packs */}
-        <div className="max-w-5xl mx-auto mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Credit Top-ups</h2>
-            <p className="text-muted-foreground">Need more credits mid-production? Purchase a one-time pack.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {CREDIT_PACKS.map((pack) => (
-              <Card key={pack.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/20 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
-                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{pack.label}</CardTitle>
-                    {pack.popular && <Badge className="bg-amber-600">Best Value</Badge>}
-                  </div>
-                  <div className="text-2xl font-bold mt-2 gradient-text-gold">{formatAUD(pack.price)}</div>
-                  <CardDescription>{pack.credits.toLocaleString()} credits</CardDescription>
-                </CardHeader>
-                <CardFooter className="flex flex-col gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    className="w-full border-amber-500/20 hover:bg-amber-500/10"
-                    onClick={() => handleTopUp(pack.id)}
-                    disabled={loadingTier !== null || loadingPack !== null}
-                  >
-                    {loadingPack === pack.id
-                      ? <><Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" />Opening Stripe…</>
-                      : isLoggedIn ? "Purchase" : "Sign in to Purchase"}
-                  </Button>
-                  <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 w-full">
-                    <Shield className="w-3 h-3 text-zinc-500" />
-                    One-time purchase · Secured by Stripe
-                  </p>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Value framing */}
-        <div className="max-w-3xl mx-auto mb-20 px-4">
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-8 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">Why Virelle</p>
-            <h3 className="text-xl font-bold text-white mb-4 leading-snug">
-              One platform for the entire pre-production pipeline
-            </h3>
-            <p className="text-white/50 text-sm leading-relaxed max-w-2xl mx-auto">
-              Traditional early-stage film packaging requires separate costs for concept art, script development, pitch deck design, poster creation, trailer mockups, voice demos, and production planning — each from a different vendor. Virelle brings every step into one AI-assisted workflow so you can go from idea to pitch-ready package without the fragmentation.
-            </p>
-            <p className="text-white/30 text-xs mt-6 italic">
-              Virelle is not here to replace filmmakers, designers, or producers — it gives creative professionals a faster AI-assisted production pipeline and a new way to package, pitch, and develop projects.
-            </p>
-          </div>
-        </div>
-
-        {/* FAQ */}
-        <div className="max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gold-shimmer">Frequently Asked Questions</h2>
-          <div className="space-y-8">
-            {FAQ.map((item, i) => (
-              <div key={i}>
-                <h3 className="text-lg font-semibold mb-2 text-amber-400">{item.q}</h3>
-                <p className="text-zinc-400 leading-relaxed">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="border-b border-amber-500/20 bg-amber-500 px-4 py-2 text-center text-xs font-bold text-black">
+        Founding Director offer: 50% off the first year of eligible annual Creator and Industry memberships while available.
       </div>
+
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <header className="mx-auto mb-14 max-w-4xl text-center">
+          <Badge variant="outline" className="mb-4 border-amber-500/40 text-amber-300">All prices in AUD</Badge>
+          <h1 className="mb-5 text-4xl font-black tracking-tight sm:text-6xl">One clear production price list.</h1>
+          <p className="text-lg leading-relaxed text-white/55">
+            Membership unlocks the platform. Credits pay for Virelle generative and orchestration actions. BYOK provider charges are paid directly to the selected AI provider. Plain broadcasting does not require BYOK.
+          </p>
+        </header>
+
+        <section className="mb-20">
+          <div className="mb-9 flex flex-col items-center justify-between gap-5 sm:flex-row">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-400/70">Membership</p>
+              <h2 className="mt-2 text-3xl font-bold">Choose your production tier</h2>
+            </div>
+            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/25 p-1">
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${billingCycle === "monthly" ? "bg-white text-black" : "text-white/50"}`}
+                onClick={() => setBillingCycle("monthly")}
+              >Monthly</button>
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${billingCycle === "annual" ? "bg-amber-500 text-black" : "text-white/50"}`}
+                onClick={() => setBillingCycle("annual")}
+              >Annual · save about 17%</button>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {MEMBERSHIPS.map((tier) => {
+              const price = billingCycle === "monthly" ? tier.monthly : tier.annual;
+              return (
+                <Card key={tier.id} className="relative flex flex-col border-amber-500/20 bg-black/25 text-white backdrop-blur-sm">
+                  <Badge className="absolute -top-3 left-6 bg-amber-600 text-white">{tier.badge}</Badge>
+                  <CardHeader className="pt-8">
+                    <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                    <p className="min-h-12 text-sm leading-relaxed text-white/50">{tier.description}</p>
+                    <div className="pt-3">
+                      <span className="text-4xl font-black text-amber-300">{formatAUD(price)}</span>
+                      <span className="ml-1 text-sm text-white/40">/{billingCycle === "monthly" ? "month" : "year"}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-amber-400">{tier.credits.toLocaleString()} credits/month</p>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <ul className="space-y-3">
+                      {tier.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2 text-sm text-white/65">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex-col gap-2">
+                    <Button
+                      className="w-full bg-amber-500 font-bold text-black hover:bg-amber-400"
+                      disabled={loadingTier !== null || loadingPack !== null}
+                      onClick={() => subscribe(tier.id)}
+                    >
+                      {loadingTier === tier.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Film className="mr-2 h-4 w-4" />}
+                      {currentTier === tier.id && activeMembership ? "Manage membership" : `Choose ${tier.name}`}
+                    </Button>
+                    <p className="flex items-center gap-1 text-xs text-white/30"><Shield className="h-3 w-3" /> Stripe checkout · cancel anytime</p>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        <section id="broadcast" className="mb-20 scroll-mt-20">
+          <div className="mb-9 text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-red-200">
+              <LockKeyhole className="h-3.5 w-3.5" /> Adult Studio and broadcast
+            </div>
+            <h2 className="mb-4 text-3xl font-bold">Broadcast charges depend on the route selected</h2>
+            <p className="mx-auto max-w-3xl text-sm leading-relaxed text-white/50">
+              Direct OBS broadcasting is included with membership and does not use BYOK. Managed relay minutes cover Virelle routing, multi-output delivery, recording and compliance retention. AI-assisted broadcast additionally requires a funded provider key selected during setup.
+            </p>
+          </div>
+
+          <div className="mb-6 grid gap-5 md:grid-cols-3">
+            {[
+              { icon: RadioTower, title: "Direct broadcast", price: "A$0/min", text: "OBS connects directly to the destination. No Virelle relay, no AI processing and no BYOK." },
+              { icon: Clapperboard, title: "Managed relay", price: "Uses minute wallet", text: "Virelle handles one or more outputs, recording and the retained compliance copy." },
+              { icon: Sparkles, title: "AI-assisted live", price: "Minutes + BYOK", text: "Swappys or another AI transformation is enabled. Provider usage is charged by the provider through the user's key." },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <Card key={item.title} className="border-white/10 bg-white/[0.025] text-white">
+                  <CardContent className="p-6">
+                    <Icon className="mb-4 h-6 w-6 text-amber-400" />
+                    <h3 className="font-bold">{item.title}</h3>
+                    <p className="mt-1 text-lg font-black text-amber-300">{item.price}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-white/50">{item.text}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {BROADCAST_PACKS.map((pack) => (
+              <Card key={pack.id} className={`border-amber-500/20 bg-black/25 text-white ${pack.popular ? "ring-1 ring-amber-400/60" : ""}`}>
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg">{pack.label}</CardTitle>
+                    {pack.popular && <Badge className="bg-amber-600">Best value</Badge>}
+                  </div>
+                  <p className="text-3xl font-black text-amber-300">{formatAUD(pack.price)}</p>
+                  <p className="text-sm text-white/55">{pack.minutes.toLocaleString()} managed minutes</p>
+                  <p className="text-xs text-white/35">{pack.rate}</p>
+                </CardHeader>
+                <CardFooter>
+                  <Button className="w-full" variant="outline" onClick={() => setLocation(`/virelle-broadcast-render?adult=1&pack=${pack.id}`)}>
+                    Buy in Adult Studio <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-xs text-white/35">Managed minute balances do not expire. Admin accounts have unrestricted internal access.</p>
+        </section>
+
+        <section id="credits" className="mb-20 scroll-mt-20">
+          <div className="mb-9 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-400/70">One-time top-ups</p>
+            <h2 className="mt-2 text-3xl font-bold">Virelle production credits</h2>
+            <p className="mt-3 text-sm text-white/50">Credits never expire. BYOK provider charges remain separate and are paid directly to the provider.</p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {CREDIT_PACKS.map((pack) => (
+              <Card key={pack.id} className={`border-amber-500/20 bg-black/25 text-white ${pack.popular ? "ring-1 ring-amber-400/60" : ""}`}>
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg">{pack.label}</CardTitle>
+                    {pack.popular && <Badge className="bg-amber-600">Best value</Badge>}
+                  </div>
+                  <p className="text-3xl font-black text-amber-300">{formatAUD(pack.price)}</p>
+                  <p className="flex items-center gap-2 text-sm text-white/55"><Coins className="h-4 w-4" /> {pack.credits.toLocaleString()} credits</p>
+                </CardHeader>
+                <CardFooter>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    disabled={loadingTier !== null || loadingPack !== null}
+                    onClick={() => purchaseCredits(pack.id)}
+                  >
+                    {loadingPack === pack.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Coins className="mr-2 h-4 w-4" />}
+                    Purchase
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-20">
+          <div className="mb-9 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-400/70">Production packages</p>
+            <h2 className="mt-2 text-3xl font-bold">Per-film package pricing</h2>
+          </div>
+          <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+            {FILM_PACKAGES.map((pack) => (
+              <Card key={pack.name} className="border-amber-500/20 bg-black/25 text-white">
+                <CardContent className="p-7">
+                  <Clapperboard className="mb-4 h-6 w-6 text-amber-400" />
+                  <h3 className="text-xl font-bold">{pack.name}</h3>
+                  <p className="mt-1 text-sm text-white/45">{pack.duration}</p>
+                  <div className="mt-5 flex items-end gap-3">
+                    <span className="text-3xl font-black text-amber-300">{formatAUD(pack.launch)}</span>
+                    <span className="pb-1 text-sm text-white/30 line-through">{formatAUD(pack.standard)}</span>
+                  </div>
+                  <p className="mt-2 text-xs text-white/35">Launch package price while available.</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-20">
+          <div className="mb-9 text-center">
+            <h2 className="text-3xl font-bold">Other current platform prices</h2>
+          </div>
+          <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+            {OTHER_PRICING.map((item, index) => (
+              <div key={item.name} className={`grid gap-2 p-5 sm:grid-cols-[1.2fr_0.6fr_1.5fr] sm:items-center ${index ? "border-t border-white/10" : ""}`}>
+                <p className="font-semibold">{item.name}</p>
+                <p className="font-bold text-amber-300">{item.price}</p>
+                <p className="text-sm text-white/45">{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-amber-500/20 bg-amber-500/[0.05] p-8 text-center sm:p-12">
+          <KeyRound className="mx-auto mb-4 h-7 w-7 text-amber-400" />
+          <h2 className="mb-4 text-3xl font-bold">The BYOK rule is function-specific.</h2>
+          <p className="mx-auto mb-7 max-w-3xl text-sm leading-relaxed text-white/55">
+            A provider key is required for video generation, Studio Render and any AI-assisted broadcast transformation. A normal direct broadcast does not generate video and therefore does not require BYOK. Managed relay can operate without AI, using only the member's broadcast-minute balance.
+          </p>
+          <Button className="bg-amber-500 font-bold text-black hover:bg-amber-400" onClick={() => setLocation("/virelle-broadcast-render")}>Open Broadcast setup <ArrowRight className="ml-2 h-4 w-4" /></Button>
+        </section>
+      </main>
 
       <LeegoFooterLaunch />
     </div>
