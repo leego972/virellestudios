@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Bell, Check, CheckCheck, ExternalLink, ShieldCheck, Trash2, X } from "lucide-react";
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  ExternalLink,
+  ShieldCheck,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const TYPE_ICONS: Record<string, string> = {
@@ -25,13 +33,22 @@ export default function NotificationBell() {
     { enabled: open },
   );
 
-  const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => refetch() });
-  const markAllRead = trpc.notifications.markAllRead.useMutation({ onSuccess: () => refetch() });
-  const deleteNotif = trpc.notifications.delete.useMutation({ onSuccess: () => refetch() });
+  const markRead = trpc.notifications.markRead.useMutation({
+    onSuccess: () => refetch(),
+  });
+  const markAllRead = trpc.notifications.markAllRead.useMutation({
+    onSuccess: () => refetch(),
+  });
+  const deleteNotif = trpc.notifications.delete.useMutation({
+    onSuccess: () => refetch(),
+  });
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+      if (
+        panelRef.current
+        && !panelRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -52,18 +69,21 @@ export default function NotificationBell() {
     if (diffHr < 24) return `${diffHr}h ago`;
     const diffDay = Math.floor(diffHr / 24);
     if (diffDay < 7) return `${diffDay}d ago`;
-    return value.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return value.toLocaleDateString("en-AU", {
+      month: "short",
+      day: "numeric",
+    });
   };
 
   return (
-    <div className="relative flex items-center gap-0.5" ref={panelRef}>
+    <div className="relative flex items-center gap-1" ref={panelRef}>
       <a
         href="/virelle-broadcast-render?adult=1"
-        className="flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-fuchsia-300 transition-colors hover:bg-fuchsia-500/10 hover:text-fuchsia-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400"
-        title="Verified 18+ Mature Studio"
-        aria-label="Open verified 18+ Mature Studio"
+        className="flex h-9 items-center gap-1.5 rounded-md border border-amber-300/20 bg-white/[0.035] px-2.5 text-xs font-medium tracking-wide text-white/75 transition-colors hover:border-amber-300/35 hover:bg-white/[0.07] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+        title="Verified Adult Studio"
+        aria-label="Open verified Adult Studio"
       >
-        <ShieldCheck className="h-4 w-4" />
+        <ShieldCheck className="h-4 w-4 text-amber-300/80" />
         <span className="hidden xl:inline">18+ Studio</span>
       </a>
 
@@ -71,7 +91,9 @@ export default function NotificationBell() {
         onClick={() => setOpen(!open)}
         className="relative rounded-lg p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
         title="Notifications"
-        aria-label={count > 0 ? `Notifications, ${count} unread` : "Notifications"}
+        aria-label={count > 0
+          ? `Notifications, ${count} unread`
+          : "Notifications"}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -86,7 +108,9 @@ export default function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-full z-[100] mt-2 flex max-h-[480px] w-80 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0c0b18] shadow-2xl sm:w-96">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <h3 className="gradient-text-gold text-sm font-semibold">Notifications</h3>
+            <h3 className="gradient-text-gold text-sm font-semibold">
+              Notifications
+            </h3>
             <div className="flex items-center gap-1">
               {count > 0 && (
                 <Button
@@ -99,7 +123,11 @@ export default function NotificationBell() {
                   Mark all read
                 </Button>
               )}
-              <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white" aria-label="Close notifications">
+              <button
+                onClick={() => setOpen(false)}
+                className="p-1 text-white/40 hover:text-white"
+                aria-label="Close notifications"
+              >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
@@ -125,20 +153,34 @@ export default function NotificationBell() {
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
-                      <p className={`text-sm leading-tight ${!notification.isRead ? "font-medium text-white" : "text-white/70"}`}>
+                      <p className={`text-sm leading-tight ${
+                        !notification.isRead
+                          ? "font-medium text-white"
+                          : "text-white/70"
+                      }`}>
                         {notification.title}
                       </p>
-                      {!notification.isRead && <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-amber-500" />}
+                      {!notification.isRead && (
+                        <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-amber-500" />
+                      )}
                     </div>
-                    {notification.message && <p className="mt-0.5 line-clamp-2 text-xs text-white/40">{notification.message}</p>}
+                    {notification.message && (
+                      <p className="mt-0.5 line-clamp-2 text-xs text-white/40">
+                        {notification.message}
+                      </p>
+                    )}
                     <div className="mt-1.5 flex items-center gap-2">
-                      <span className="text-[10px] text-white/30">{formatTime(notification.createdAt)}</span>
+                      <span className="text-[10px] text-white/30">
+                        {formatTime(notification.createdAt)}
+                      </span>
                       {notification.link && (
                         <a
                           href={notification.link}
                           className="flex items-center gap-0.5 text-[10px] text-amber-400 hover:text-amber-300"
                           onClick={() => {
-                            if (!notification.isRead) markRead.mutate({ id: notification.id });
+                            if (!notification.isRead) {
+                              markRead.mutate({ id: notification.id });
+                            }
                             setOpen(false);
                           }}
                         >
