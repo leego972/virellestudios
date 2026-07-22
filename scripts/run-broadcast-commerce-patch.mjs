@@ -26,4 +26,6 @@ const executed = spawnSync(process.execPath, [runnablePath], {
   stdio: "inherit",
   cwd: process.cwd(),
 });
-process.exit(executed.status ?? 1);
+if (executed.status !== 0) process.exit(executed.status ?? 1);
+
+console.log("One-time source integration completed.");
