@@ -10,14 +10,14 @@ permissions:
   contents: write
 
 jobs:
-  update-final-branch:
+  update-main:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out final designer commerce branch
+      - name: Check out main
         uses: actions/checkout@v4
         with:
-          ref: feature/designer-commerce-shipping-final
+          ref: main
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -28,16 +28,16 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Update sharp and remove deprecated external types
+      - name: Update sharp and remove obsolete external types
         run: |
           pnpm remove @types/sharp
           pnpm add sharp@0.35.3
-      - name: Commit dependency update for normal PR validation
+      - name: Commit secured dependency baseline
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json pnpm-lock.yaml
           git commit -m "Update sharp to patched 0.35.3"
-          git push origin HEAD:feature/designer-commerce-shipping-final
+          git push origin HEAD:main
 
-# Trigger lockfile generation; CI validates the resulting branch.
+# Trigger the secured main baseline before merging designer commerce.
