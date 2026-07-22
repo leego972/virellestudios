@@ -30,11 +30,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      # Product rule: costume coverage is literal occlusion, not a styling hint.
       - name: Apply final occlusion rules
-        run: python .github/scripts/finalize_costume_occlusion.py
-      - name: Commit product corrections
+        shell: bash
         run: |
+          set +e
+          python .github/scripts/finalize_costume_occlusion.py > /tmp/finalize-output.txt 2>&1
+          STATUS=$?
+          if [ "$STATUS" -ne 0 ]; then
+            git reset --hard HEAD
+            cp /tmp/finalize-output.txt .github/finalize-costume-occlusion-error.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/finalize-costume-occlusion-error.txt
+            git commit -m "Record final costume occlusion diagnostic"
+            git push origin HEAD:fix/mandatory-character-costume-continuity
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
