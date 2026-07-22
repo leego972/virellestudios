@@ -181,7 +181,7 @@ export default function DesignerCommercePanel() {
                     ].map(([key, label]) => (
                       <div key={key} className="space-y-1.5">
                         <Label className="text-white/60">{label}</Label>
-                        <Input value={profileForm[key] ?? ""} onChange={(e) => setProfileField(key, e.target.value)} className="bg-white/5 border-amber-500/20" />
+                        <Input value={(profileForm as Record<string, string>)[key] ?? ""} onChange={(e) => setProfileField(key, e.target.value)} className="bg-white/5 border-amber-500/20" />
                       </div>
                     ))}
                   </div>
