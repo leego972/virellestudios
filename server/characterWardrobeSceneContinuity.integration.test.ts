@@ -25,7 +25,7 @@ const character = {
   attributes: {
     generatedFromPhoto: true,
     referencePhotoUrl: "https://assets.test/mara-reference.jpg",
-    faceDnaPrompt: "FACE: elongated oval | EYES: grey-green | DISTINGUISHING: small scar through left eyebrow",
+    faceDnaPrompt: "FACE: elongated oval | EYES: grey-green | HAIR: dark brown | style: chin-length blunt bob | DISTINGUISHING: small scar through left eyebrow",
     bodyDnaPrompt: "lean athletic build | upright military posture",
     estimatedAge: "mid-30s",
     gender: "woman",
