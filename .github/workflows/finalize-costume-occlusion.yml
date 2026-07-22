@@ -24,6 +24,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # Product rule: costume coverage is literal occlusion, not a styling hint.
       - name: Apply final occlusion rules
         run: python .github/scripts/finalize_costume_occlusion.py
       - name: Commit product corrections
