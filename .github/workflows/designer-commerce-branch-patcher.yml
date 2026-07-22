@@ -19,18 +19,18 @@ jobs:
         with:
           ref: feature/designer-commerce-shipping-v1
           fetch-depth: 0
-      - name: Apply guarded integration
-        run: python3 scripts/apply-designer-commerce-patch.py
-      - name: Commit feature branch integration
+      - name: Apply final portal and migration hardening
+        run: python3 scripts/harden-designer-commerce.py
+      - name: Commit feature branch hardening
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add drizzle/schema.ts server client
+          git add server client
           if git diff --cached --quiet; then
-            echo "No patch changes to commit"
+            echo "No hardening changes to commit"
           else
-            git commit -m "Integrate separate designer commerce and shipping"
+            git commit -m "Harden designer portal migration and access"
             git push origin HEAD:feature/designer-commerce-shipping-v1
           fi
 
-# Trigger revision 2: workflow already exists on the default branch.
+# Trigger revision 3: final hardening only.
