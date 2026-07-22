@@ -4,6 +4,38 @@ import { spawnSync } from "node:child_process";
 const sourcePath = "scripts/apply-broadcast-commerce-once.mjs";
 let source = fs.readFileSync(sourcePath, "utf8");
 
+// Replace nested output templates that must not interpolate while this
+// generator itself is executing.
+{
+  const endpointMarker = "return createBroadcastMinuteCheckout({";
+  const marker = source.indexOf(endpointMarker);
+  const start = source.indexOf("      successUrl:", marker);
+  const end = source.indexOf("\\n    });", start);
+  if (marker < 0 || start < 0 || end < 0) {
+    throw new Error("Broadcast checkout URL patch boundary was not found.");
+  }
+  source = source.slice(0, start)
+    + '      successUrl: returnUrl + separator + "broadcast_minutes=success&pack=" + input.packId,\\n'
+    + '      cancelUrl: returnUrl + separator + "broadcast_minutes=cancelled",'
+    + source.slice(end);
+}
+
+{
+  const logMarker = source.indexOf("[BroadcastMinutes]");
+  const start = source.lastIndexOf("            logger.info(", logMarker);
+  const end = source.indexOf("\\n            );", logMarker);
+  if (logMarker < 0 || start < 0 || end < 0) {
+    throw new Error("Broadcast fulfilment log patch boundary was not found.");
+  }
+  source = source.slice(0, start)
+    + '            logger.info(\\n'
+    + '              "[BroadcastMinutes] " + (fulfilled.credited ? "Credited" : "Already fulfilled")\\n'
+    + '                + ": user=" + userId + " pack=" + fulfilled.pack.id\\n'
+    + '                + " minutes=" + fulfilled.minutes + " session=" + session.id,\\n'
+    + '            );'
+    + source.slice(end + "\\n            );".length);
+}
+
 // Normalize doubled escapes used to represent nested TypeScript literals.
 source = source
   .replaceAll("\\\\`", "\\`")
