@@ -105,14 +105,30 @@ describe("scene wardrobe continuity", () => {
       projectId: 99,
       name: "Mara",
       description: "A precise intelligence officer",
-      photoUrl: "https://assets.example.test/mara.jpg",
+      photoUrl: "https://assets.example.test/mara-generated-portrait.jpg",
+      role: "Lead investigator",
+      performanceStyle: "method-naturalistic",
+      castingNotes: "Emotion stays in the eyes rather than broad gestures.",
+      signatureMannerisms: "Touches the edge of her watch before deciding.",
       clothing: null,
-      attributes: {},
+      attributes: {
+        generatedFromPhoto: true,
+        referencePhotoUrl: "https://assets.example.test/mara-reference-photo.jpg",
+        faceDnaPrompt: "FACE: elongated oval | EYES: grey-green | DISTINGUISHING: small scar through left eyebrow",
+        bodyDnaPrompt: "lean athletic build | upright military posture",
+        estimatedAge: "mid-30s",
+        gender: "woman",
+        skinTone: "light olive",
+        hairColor: "dark brown",
+        hairStyle: "chin-length blunt bob",
+        eyeColor: "grey-green",
+        additionalNotes: "Preserve the left eyebrow scar and blunt bob exactly.",
+      },
     }]);
     dbMocks.getWardrobeLeasesByUser.mockResolvedValue([]);
   });
 
-  it("carries the last assigned costume after its range until a replacement is specified", async () => {
+  it("carries photo-locked identity and the last assigned costume together across scenes", async () => {
     const coat = wardrobeItem(501, "Lamalo Obsidian Coat");
     mockDbRows([{ assignment: assignment(91, 501, 1, 2), item: coat }]);
     dbMocks.getSceneById.mockResolvedValue({
@@ -134,11 +150,22 @@ describe("scene wardrobe continuity", () => {
     expect(context.wardrobeBindings[0]).toEqual(expect.objectContaining({
       characterId: 11,
       wardrobeItemId: 501,
+      characterReferenceImageUrl: "https://assets.example.test/mara-generated-portrait.jpg",
+      wardrobeReferenceImageUrl: "https://assets.example.test/501.jpg",
       carriedForward: true,
       explicitChange: false,
     }));
+
     expect(context.wardrobeContext).toContain("CONTINUITY CARRY-FORWARD");
+    expect(context.canonicalPrompt).toContain("IDENTITY REFERENCE HARD-LOCK");
+    expect(context.canonicalPrompt).toContain("small scar through left eyebrow");
+    expect(context.canonicalPrompt).toContain("upright military posture");
+    expect(context.canonicalPrompt).toContain("method-naturalistic");
+    expect(context.canonicalPrompt).toContain("Touches the edge of her watch");
     expect(context.canonicalPrompt).toContain("Mara MUST WEAR ONLY");
+    expect(context.canonicalPrompt).toContain("Exact Lamalo Obsidian Coat");
+
+    expect(context.referenceImages).toContain("https://assets.example.test/mara-generated-portrait.jpg");
     expect(context.referenceImages).toContain("https://assets.example.test/501.jpg");
   });
 
