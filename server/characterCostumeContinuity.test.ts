@@ -27,14 +27,11 @@ describe("character costume continuity", () => {
     dbMocks.getWardrobeLeasesByUser.mockResolvedValue([]);
   });
 
-  it("keeps generation available when no special costume is assigned", async () => {
-    dbMocks.getSceneById.mockResolvedValue({ id: 1, projectId: 99, orderIndex: 0, title: "Arrival", description: "Mara arrives.", characterIds: [11], wardrobe: [], duration: 8, aspectRatio: "16:9", frameRate: "24" });
-    dbMocks.getProjectCharacters.mockResolvedValue([{ id: 11, userId: 7, projectId: 99, name: "Mara", photoUrl: "https://assets.test/mara.jpg", wardrobe: { signature: "navy field jacket" }, attributes: {} }]);
+  it("blocks generation when an on-screen character has no structured costume, even if the scene contains only an inline clothing note", async () => {
+    dbMocks.getSceneById.mockResolvedValue({ id: 1, projectId: 99, orderIndex: 0, title: "Arrival", description: "Mara arrives.", characterIds: [11], wardrobe: [{ characterId: 11, wardrobeDescription: "temporary grey coat" }], duration: 8, aspectRatio: "16:9", frameRate: "24" });
+    dbMocks.getProjectCharacters.mockResolvedValue([{ id: 11, userId: 7, projectId: 99, name: "Mara", photoUrl: "https://assets.test/mara.jpg", attributes: {} }]);
     mockDatabase([]);
-    const context = await loadSceneGenerationContext(1, 99);
-    expect(context.wardrobeBindings[0].wardrobeItemId).toBeUndefined();
-    expect(context.referenceImages).toContain("https://assets.test/mara.jpg");
-    expect(context.canonicalPrompt).toContain("navy field jacket");
+    await expect(loadSceneGenerationContext(1, 99)).rejects.toThrow(/Wardrobe assignment required/);
   });
 
   it("suppresses the actor face reference for a full-face costume even when a stale assignment requests the face", async () => {
