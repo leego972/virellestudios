@@ -1,458 +1,750 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-  import CinematicEmptyState from "@/components/CinematicEmptyState";
-  import { Button } from "@/components/ui/button";
-  import { Badge } from "@/components/ui/badge";
-  import { trpc } from "@/lib/trpc";
-  import { useParams, useLocation } from "wouter";
-  import {
-    Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera, Sparkles, Zap,
-    Sun, Cloud, Palette, Download, Play, Film, ChevronRight,
-  } from "lucide-react";
-  import { useState } from "react";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
+import MediaPlayer from "@/components/MediaPlayer";
+import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { getLoginUrl } from "@/const";
+import { trpc } from "@/lib/trpc";
+import {
+  ArrowLeft,
+  Camera,
+  Clock,
+  Download,
+  Edit3,
+  Film,
+  Grid3X3,
+  GripVertical,
+  List,
+  Loader2,
+  MapPin,
+  Play,
+  Printer,
+  RefreshCw,
+  Save,
+  Sparkles,
+  Sun,
+} from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type DragEvent,
+} from "react";
 import { toast } from "sonner";
-  import MediaPlayer from "@/components/MediaPlayer";
-  import { getLoginUrl } from "@/const";
-  import { NextStageCTA } from "@/components/NextStageCTA";
-  import { SubscriptionGate } from "@/components/SubscriptionGate";
+import { useLocation, useParams } from "wouter";
 
-  const TRANSITION_LABELS: Record<string, string> = {
-    cut: "CUT", fade: "FADE", dissolve: "DISSOLVE", wipe: "WIPE",
-    "iris-in": "IRIS IN", "iris-out": "IRIS OUT", "smash-cut": "SMASH CUT",
-    "match-cut": "MATCH CUT", "j-cut": "J-CUT", "l-cut": "L-CUT",
-  };
+const TRANSITION_LABELS: Record<string, string> = {
+  cut: "CUT",
+  fade: "FADE",
+  dissolve: "DISSOLVE",
+  wipe: "WIPE",
+  "iris-in": "IRIS IN",
+  "iris-out": "IRIS OUT",
+  "smash-cut": "SMASH CUT",
+  "match-cut": "MATCH CUT",
+  "j-cut": "J-CUT",
+  "l-cut": "L-CUT",
+};
 
-  const TIME_COLORS: Record<string, string> = {
-    "dawn": "#f97316", "morning": "#fbbf24", "day": "#fde68a",
-    "afternoon": "#fcd34d", "dusk": "#f97316", "night": "#818cf8", "magic hour": "#fb923c",
-  };
-
-  function formatTime(sec: number) {
-    return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+function formatTime(seconds: number): string {
+  const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+  const hours = Math.floor(safe / 3600);
+  const minutes = Math.floor((safe % 3600) / 60);
+  const secs = safe % 60;
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
+  return `${minutes}:${String(secs).padStart(2, "0")}`;
+}
 
-  // ─── Scene Card (Grid) ─────────────────────────────────────────────────────────
+function sanitiseFilename(value: string): string {
+  return value.trim().replace(/[^a-zA-Z0-9-_]+/g, "_").replace(/^_+|_+$/g, "") || "storyboard";
+}
 
-  function SceneCardGrid({
-    scene, idx, totalScenes, getCharName, onPlay, onNavigate,
-  }: {
-    scene: any; idx: number; totalScenes: number;
-    getCharName: (id: number) => string;
-    onPlay: (id: number) => void;
-    onNavigate: () => void;
-  }) {
-    const transitionLabel = idx < totalScenes - 1
-      ? (TRANSITION_LABELS[scene.transitionType] || (scene.transitionType ? scene.transitionType.toUpperCase() : ""))
-      : "";
+function StoryboardInner() {
+  const { user, loading: authLoading } = useAuth();
+  const params = useParams<{ projectId: string }>();
+  const [, navigate] = useLocation();
+  const projectId = Number(params.projectId);
+  const validProjectId = Number.isFinite(projectId) && projectId > 0;
+  const utils = trpc.useUtils();
 
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [orderedScenes, setOrderedScenes] = useState<any[]>([]);
+  const [draggingSceneId, setDraggingSceneId] = useState<number | null>(null);
+  const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
+  const [editScene, setEditScene] = useState<any | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPrompt, setEditPrompt] = useState("");
+  const [generateConfirmOpen, setGenerateConfirmOpen] = useState(false);
+  const [autoGenRunning, setAutoGenRunning] = useState(false);
+  const [autoGenProgress, setAutoGenProgress] = useState({ done: 0, total: 0 });
+  const [generatingSceneId, setGeneratingSceneId] = useState<number | null>(null);
+
+  const { data: project, isLoading: projectLoading } = trpc.project.get.useQuery(
+    { id: projectId },
+    { enabled: !!user && validProjectId },
+  );
+  const { data: scenes, isLoading: scenesLoading } = trpc.scene.listByProject.useQuery(
+    { projectId },
+    { enabled: !!user && validProjectId },
+  );
+  const { data: characters } = trpc.character.listByProject.useQuery(
+    { projectId },
+    { enabled: !!user && validProjectId },
+  );
+
+  useEffect(() => {
+    setOrderedScenes(
+      [...(scenes ?? [])].sort(
+        (left: any, right: any) =>
+          (left.orderIndex ?? 0) - (right.orderIndex ?? 0),
+      ),
+    );
+  }, [scenes]);
+
+  const generateFrameMutation = trpc.scene.generatePreview.useMutation();
+  const updateSceneMutation = trpc.scene.update.useMutation();
+  const reorderMutation = trpc.scene.reorder.useMutation();
+
+  const missingFrames = orderedScenes.filter(scene => !scene.thumbnailUrl);
+  const totalDuration = orderedScenes.reduce(
+    (total, scene) => total + (scene.duration || 30),
+    0,
+  );
+  const withVideo = orderedScenes.filter(scene => scene.videoUrl).length;
+  const withFrame = orderedScenes.filter(scene => scene.thumbnailUrl).length;
+
+  const getCharacterName = (id: number) =>
+    (characters ?? []).find((character: any) => character.id === id)?.name ||
+    "Unknown";
+
+  const videoPlaylist = useMemo(
+    () =>
+      orderedScenes
+        .filter(scene => !!scene.videoUrl)
+        .map((scene, index) => ({
+          id: scene.id,
+          title: scene.title || `Scene ${index + 1}`,
+          description: scene.description || null,
+          type: "scene",
+          fileUrl: scene.videoUrl || null,
+          thumbnailUrl: scene.thumbnailUrl || null,
+          duration: scene.duration || null,
+          fileSize: null,
+          mimeType: "video/mp4",
+          movieTitle: project?.title || null,
+          sceneNumber: index + 1,
+        })),
+    [orderedScenes, project?.title],
+  );
+
+  const activeVideo =
+    videoPlaylist.find(item => item.id === videoPreviewSceneId) || null;
+
+  const generateMissingFrames = async () => {
+    const targets = orderedScenes.filter(scene => !scene.thumbnailUrl);
+    setGenerateConfirmOpen(false);
+    if (targets.length === 0) {
+      toast.info("Every scene already has a storyboard frame.");
+      return;
+    }
+
+    setAutoGenRunning(true);
+    setAutoGenProgress({ done: 0, total: targets.length });
+    const failed: string[] = [];
+
+    try {
+      for (let index = 0; index < targets.length; index += 1) {
+        const scene = targets[index];
+        try {
+          await generateFrameMutation.mutateAsync({ sceneId: scene.id });
+        } catch (error) {
+          failed.push(
+            scene.title ||
+              `Scene ${orderedScenes.findIndex(item => item.id === scene.id) + 1}`,
+          );
+        }
+        setAutoGenProgress({ done: index + 1, total: targets.length });
+      }
+      await utils.scene.listByProject.invalidate({ projectId });
+
+      if (failed.length === 0) {
+        toast.success(`Generated ${targets.length} storyboard frame${targets.length === 1 ? "" : "s"}.`);
+      } else {
+        toast.error(
+          `${targets.length - failed.length} frame${targets.length - failed.length === 1 ? "" : "s"} generated; ${failed.length} failed. No video generation was started.`,
+          { duration: 8000 },
+        );
+      }
+    } finally {
+      setAutoGenRunning(false);
+    }
+  };
+
+  const regenerateFrame = async (scene: any) => {
+    if (autoGenRunning || generatingSceneId !== null) return;
+    setGeneratingSceneId(scene.id);
+    try {
+      await generateFrameMutation.mutateAsync({ sceneId: scene.id });
+      await utils.scene.listByProject.invalidate({ projectId });
+      toast.success("Storyboard frame regenerated.");
+    } catch (error: any) {
+      toast.error(error?.message || "Storyboard frame generation failed.");
+    } finally {
+      setGeneratingSceneId(null);
+    }
+  };
+
+  const openEditor = (scene: any) => {
+    setEditScene(scene);
+    setEditTitle(scene.title || "");
+    setEditDescription(scene.description || "");
+    setEditPrompt(scene.aiPromptOverride || "");
+  };
+
+  const saveSceneEdits = async () => {
+    if (!editScene) return;
+    try {
+      await updateSceneMutation.mutateAsync({
+        id: editScene.id,
+        title: editTitle.trim(),
+        description: editDescription.trim(),
+        aiPromptOverride: editPrompt.trim(),
+      });
+      await utils.scene.listByProject.invalidate({ projectId });
+      setEditScene(null);
+      toast.success("Storyboard scene updated.");
+    } catch (error: any) {
+      toast.error(error?.message || "Scene changes could not be saved.");
+    }
+  };
+
+  const reorderScenes = async (targetSceneId: number) => {
+    if (draggingSceneId === null || draggingSceneId === targetSceneId) return;
+    const previous = orderedScenes;
+    const sourceIndex = previous.findIndex(scene => scene.id === draggingSceneId);
+    const targetIndex = previous.findIndex(scene => scene.id === targetSceneId);
+    if (sourceIndex < 0 || targetIndex < 0) return;
+
+    const next = [...previous];
+    const [moved] = next.splice(sourceIndex, 1);
+    next.splice(targetIndex, 0, moved);
+    setOrderedScenes(next);
+
+    try {
+      await reorderMutation.mutateAsync({
+        projectId,
+        sceneIds: next.map(scene => scene.id),
+      });
+      await utils.scene.listByProject.invalidate({ projectId });
+      toast.success("Storyboard order saved.");
+    } catch (error: any) {
+      setOrderedScenes(previous);
+      toast.error(error?.message || "Storyboard order could not be saved.");
+    } finally {
+      setDraggingSceneId(null);
+    }
+  };
+
+  const exportText = () => {
+    if (!project || orderedScenes.length === 0) return;
+    const lines = [
+      `STORYBOARD: ${project.title}`,
+      `Generated by Virelle Studios — ${new Date().toLocaleDateString()}`,
+      `Scenes: ${orderedScenes.length} · Duration: ${formatTime(totalDuration)}`,
+      "=".repeat(64),
+      "",
+    ];
+
+    orderedScenes.forEach((scene, index) => {
+      lines.push(`SCENE ${index + 1}: ${scene.title || "Untitled"}`);
+      lines.push("-".repeat(44));
+      if (scene.thumbnailUrl) lines.push(`Frame: ${scene.thumbnailUrl}`);
+      if (scene.description) lines.push(`Description: ${scene.description}`);
+      if (scene.aiPromptOverride) lines.push(`Visual prompt: ${scene.aiPromptOverride}`);
+      if (scene.locationType) lines.push(`Location: ${scene.locationType}`);
+      if (scene.timeOfDay) lines.push(`Time: ${scene.timeOfDay}`);
+      if (scene.cameraAngle) lines.push(`Camera: ${scene.cameraAngle}`);
+      if (scene.mood) lines.push(`Mood: ${scene.mood}`);
+      lines.push(`Duration: ${formatTime(scene.duration || 30)}`);
+      const characterIds = Array.isArray(scene.characterIds)
+        ? scene.characterIds
+        : [];
+      if (characterIds.length > 0) {
+        lines.push(`Cast: ${characterIds.map(getCharacterName).join(", ")}`);
+      }
+      if (index < orderedScenes.length - 1 && scene.transitionType) {
+        lines.push(
+          `Transition: ${TRANSITION_LABELS[scene.transitionType] || scene.transitionType}`,
+        );
+      }
+      lines.push("");
+    });
+
+    const url = URL.createObjectURL(
+      new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" }),
+    );
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${sanitiseFilename(project.title || "storyboard")}_storyboard.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  if (authLoading || projectLoading || scenesLoading) {
     return (
-      <div className="group flex flex-col rounded-xl overflow-hidden border cursor-pointer transition-all hover:scale-[1.01]"
-        style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
-        onClick={onNavigate}>
-
-        {/* Thumbnail */}
-        <div className="relative aspect-video overflow-hidden" style={{ background: "rgba(0,0,0,0.4)" }}>
-          {scene.thumbnailUrl ? (
-            <img src={scene.thumbnailUrl} alt={scene.title || ""} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Camera style={{ width: 32, height: 32, color: "rgba(255,255,255,0.08)" }} />
-            </div>
-          )}
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-          {/* Video play button */}
-          {scene.videoUrl && (
-            <button className="absolute inset-0 flex items-center justify-center z-10 transition-opacity opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
-              onClick={e => { e.stopPropagation(); onPlay(scene.id); }}>
-              <div className="h-12 w-12 rounded-full flex items-center justify-center border-2" style={{ background: "rgba(212,175,55,0.2)", borderColor: "#D4AF37", backdropFilter: "blur(4px)" }}>
-                <Play style={{ width: 20, height: 20, color: "#D4AF37", marginLeft: 2 }} />
-              </div>
-            </button>
-          )}
-
-          {/* Scene number chip */}
-          <div className="absolute top-2 left-2 h-6 w-6 rounded-md flex items-center justify-center text-[10px] font-bold"
-            style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.3)" }}>
-            {idx + 1}
-          </div>
-
-          {/* Duration chip */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded"
-            style={{ background: "rgba(0,0,0,0.6)", color: "rgba(255,255,255,0.7)" }}>
-            <Clock style={{ width: 9, height: 9 }} />{formatTime(scene.duration || 30)}
-          </div>
-
-          {/* Transition badge */}
-          {transitionLabel && transitionLabel !== "CUT" && (
-            <div className="absolute bottom-2 left-2 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
-              style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.2)" }}>
-              {transitionLabel}
-            </div>
-          )}
-
-          {/* Video indicator */}
-          {scene.videoUrl && (
-            <div className="absolute bottom-2 right-2">
-              <div className="h-4 w-4 rounded flex items-center justify-center" style={{ background: "rgba(212,175,55,0.15)", border: "1px solid rgba(212,175,55,0.2)" }}>
-                <Play style={{ width: 8, height: 8, color: "#D4AF37" }} />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Card body */}
-        <div className="p-3 flex-1 space-y-2">
-          <div>
-            <h3 className="text-xs font-semibold truncate">{scene.title || `Scene ${idx + 1}`}</h3>
-            <p className="text-[11px] text-muted-foreground/60 line-clamp-2 mt-0.5 leading-relaxed">{scene.description || "No description"}</p>
-          </div>
-
-          {/* Metadata chips */}
-          <div className="flex flex-wrap gap-1">
-            {scene.timeOfDay && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md"
-                style={{ background: "rgba(255,255,255,0.05)", color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
-                <Sun style={{ width: 8, height: 8 }} />{scene.timeOfDay}
-              </span>
-            )}
-            {scene.locationType && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
-                <MapPin style={{ width: 8, height: 8 }} />{scene.locationType}
-              </span>
-            )}
-            {scene.weather && scene.weather !== "clear" && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
-                <Cloud style={{ width: 8, height: 8 }} />{scene.weather}
-              </span>
-            )}
-            {scene.colorGrading && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
-                <Palette style={{ width: 8, height: 8 }} />{scene.colorGrading}
-              </span>
-            )}
-          </div>
-
-          {/* Cast */}
-          {(scene.characterIds as number[] || []).length > 0 && (
-            <p className="text-[10px] text-muted-foreground/40 truncate">
-              {(scene.characterIds as number[]).map((id: number) => getCharName(id)).join(" · ")}
-            </p>
-          )}
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#07070e]">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     );
   }
 
-  // ─── Scene Row (List) ─────────────────────────────────────────────────────────
+  if (!user) {
+    window.location.href = getLoginUrl();
+    return null;
+  }
 
-  function SceneRowList({
-    scene, idx, totalScenes, getCharName, onPlay, onNavigate,
-  }: {
-    scene: any; idx: number; totalScenes: number;
-    getCharName: (id: number) => string;
-    onPlay: (id: number) => void;
-    onNavigate: () => void;
-  }) {
-    const transitionLabel = idx < totalScenes - 1
-      ? (TRANSITION_LABELS[scene.transitionType] || (scene.transitionType ? scene.transitionType.toUpperCase() : "CUT"))
-      : "";
-
+  if (!project) {
     return (
-      <>
-        <div className="flex gap-4 p-3 rounded-xl border cursor-pointer transition-all hover:border-yellow-500/20 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow"
-          style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}
-          onClick={onNavigate}>
+      <div className="flex min-h-screen items-center justify-center bg-[#07070e]">
+        <p className="text-muted-foreground">Project not found</p>
+      </div>
+    );
+  }
 
-          {/* Thumbnail */}
-          <div className="relative w-40 h-24 rounded-lg overflow-hidden shrink-0" style={{ background: "rgba(0,0,0,0.4)" }}>
-            {scene.thumbnailUrl ? (
-              <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Camera style={{ width: 24, height: 24, color: "rgba(255,255,255,0.08)" }} />
+  return (
+    <div className="min-h-screen bg-[linear-gradient(135deg,#07070e_0%,#0c0b18_60%,#07070a_100%)]">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070ef7] backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(`/projects/${projectId}`)}
+              className="h-8 gap-2 text-muted-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <div className="h-5 w-px bg-border/40" />
+            <div className="flex min-w-0 items-center gap-2.5">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700">
+                <Film className="h-[18px] w-[18px] text-white" />
               </div>
-            )}
-            {scene.videoUrl && (
-              <button className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 z-10 transition-colors"
-                onClick={e => { e.stopPropagation(); onPlay(scene.id); }}>
-                <div className="h-9 w-9 rounded-full flex items-center justify-center border" style={{ background: "rgba(212,175,55,0.2)", borderColor: "rgba(212,175,55,0.5)" }}>
-                  <Play style={{ width: 14, height: 14, color: "#D4AF37", marginLeft: 2 }} />
-                </div>
-              </button>
-            )}
-            {/* Scene # */}
-            <div className="absolute top-1.5 left-1.5 h-5 w-5 rounded flex items-center justify-center text-[9px] font-bold"
-              style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.25)" }}>
-              {idx + 1}
+              <div className="min-w-0">
+                <h1 className="truncate text-sm font-bold">
+                  {project.title} — Storyboard
+                </h1>
+                <p className="text-[10px] text-muted-foreground">
+                  {orderedScenes.length} scenes · {formatTime(totalDuration)} · {withFrame} framed
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0 space-y-1.5 py-0.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm font-semibold truncate gradient-text-gold">{scene.title || `Scene ${idx + 1}`}</h3>
-              <span className="text-[9px] text-muted-foreground/40 flex items-center gap-1">
-                <Clock style={{ width: 9, height: 9 }} />{formatTime(scene.duration || 30)}
-              </span>
-              {scene.intExt && <span className="text-[9px] px-1.5 py-0.5 rounded glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.intExt}</span>}
-            </div>
-            <p className="text-[11px] text-muted-foreground/60 line-clamp-2 leading-relaxed">{scene.description || "No description"}</p>
-            <div className="flex flex-wrap gap-1 pt-0.5">
-              {scene.timeOfDay && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow" style={{ color: TIME_COLORS[scene.timeOfDay.toLowerCase()] || "rgba(255,255,255,0.4)" }}>
-                  {scene.timeOfDay}
-                </span>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <Button
+              size="sm"
+              onClick={() => setGenerateConfirmOpen(true)}
+              disabled={autoGenRunning || missingFrames.length === 0}
+              className="h-8 gap-2 bg-gradient-to-br from-[#D4AF37] to-[#b8960c] text-xs text-black hover:brightness-110"
+            >
+              {autoGenRunning ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Generating {autoGenProgress.done}/{autoGenProgress.total}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {missingFrames.length > 0
+                    ? `Generate ${missingFrames.length} Missing Frame${missingFrames.length === 1 ? "" : "s"}`
+                    : "All Frames Generated"}
+                </>
               )}
-              {scene.locationType && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.locationType}</span>}
-              {scene.weather && scene.weather !== "clear" && <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/50 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">{scene.weather}</span>}
-              {(scene.characterIds as number[] || []).length > 0 && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded-md glass-card/5 text-muted-foreground/40 truncate max-w-[200px] hover:shadow-lg hover:shadow-amber-500/20 transition-shadow">
-                  {(scene.characterIds as number[]).map((id: number) => getCharName(id)).join(", ")}
-                </span>
-              )}
+            </Button>
+
+            <div className="flex h-8 overflow-hidden rounded-lg border border-border/40">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`flex h-full items-center px-2.5 ${viewMode === "grid" ? "bg-amber-500/10 text-white" : "text-muted-foreground/50"}`}
+                aria-label="Grid view"
+              >
+                <Grid3X3 className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`flex h-full items-center border-l border-border/40 px-2.5 ${viewMode === "list" ? "bg-amber-500/10 text-white" : "text-muted-foreground/50"}`}
+                aria-label="List view"
+              >
+                <List className="h-3.5 w-3.5" />
+              </button>
             </div>
-            {scene.productionNotes && (
-              <p className="text-[10px] text-muted-foreground/40 italic truncate">{scene.productionNotes}</p>
-            )}
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={exportText}
+              disabled={orderedScenes.length === 0}
+              className="h-8 gap-1.5 text-xs text-muted-foreground"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => window.print()}
+              className="h-8 gap-1.5 border-border/40 text-xs"
+            >
+              <Printer className="h-3.5 w-3.5" />
+              Print
+            </Button>
           </div>
         </div>
+      </header>
 
-        {/* Transition connector */}
-        {transitionLabel && (
-          <div className="flex items-center gap-2 px-4 py-0.5">
-            <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.05)" }} />
-            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded"
-              style={{ background: "rgba(212,175,55,0.06)", color: "rgba(212,175,55,0.4)", border: "1px solid rgba(212,175,55,0.1)" }}>
-              {transitionLabel}
-            </span>
-            <ChevronRight style={{ width: 10, height: 10, color: "rgba(255,255,255,0.08)" }} />
-            <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.05)" }} />
+      <main className="mx-auto max-w-7xl px-4 py-6">
+        {orderedScenes.length > 0 && (
+          <>
+            <div className="mb-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {[
+                { label: "Scenes", value: orderedScenes.length },
+                { label: "Duration", value: formatTime(totalDuration) },
+                { label: "With Video", value: withVideo },
+                { label: "Boarded", value: withFrame },
+              ].map(stat => (
+                <div
+                  key={stat.label}
+                  className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5"
+                >
+                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                    {stat.label}
+                  </p>
+                  <p className="mt-0.5 text-lg font-bold text-[#D4AF37]">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground/60">
+              <GripVertical className="h-3.5 w-3.5" />
+              Drag scenes to reorder them. Reordering is saved to the project and used by the timeline.
+            </p>
+          </>
+        )}
+
+        {orderedScenes.length === 0 ? (
+          <CinematicEmptyState
+            quoteSeed="storyboard"
+            icon={<Grid3X3 className="h-9 w-9 text-amber-400/70" />}
+            title="No scenes to board yet"
+            description="Use Script Breakdown or the Scene Editor to create scenes. This page then generates real still frames from those persisted scenes."
+            action={
+              <div className="flex flex-wrap justify-center gap-2">
+                <Button onClick={() => navigate(`/projects/${projectId}/script-breakdown`)} className="gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Script Breakdown
+                </Button>
+                <Button variant="outline" onClick={() => navigate(`/projects/${projectId}/scenes`)}>
+                  Scene Editor
+                </Button>
+              </div>
+            }
+          />
+        ) : (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                : "space-y-3"
+            }
+          >
+            {orderedScenes.map((scene, index) => {
+              const characterIds = Array.isArray(scene.characterIds)
+                ? scene.characterIds
+                : [];
+              const isGenerating = generatingSceneId === scene.id;
+              const transition =
+                index < orderedScenes.length - 1 && scene.transitionType
+                  ? TRANSITION_LABELS[scene.transitionType] || scene.transitionType
+                  : null;
+
+              return (
+                <article
+                  key={scene.id}
+                  draggable={!autoGenRunning && generatingSceneId === null}
+                  onDragStart={(event: DragEvent<HTMLElement>) => {
+                    setDraggingSceneId(scene.id);
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", String(scene.id));
+                  }}
+                  onDragOver={event => {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                  }}
+                  onDrop={event => {
+                    event.preventDefault();
+                    void reorderScenes(scene.id);
+                  }}
+                  onDragEnd={() => setDraggingSceneId(null)}
+                  className={`group overflow-hidden rounded-xl border bg-white/[0.02] transition ${
+                    draggingSceneId === scene.id
+                      ? "scale-[0.98] border-amber-400/50 opacity-50"
+                      : "border-white/10 hover:border-amber-400/25"
+                  } ${viewMode === "list" ? "flex flex-col sm:flex-row" : "flex flex-col"}`}
+                >
+                  <div
+                    className={`relative overflow-hidden bg-black/40 ${
+                      viewMode === "list"
+                        ? "aspect-video w-full sm:w-64 sm:shrink-0"
+                        : "aspect-video w-full"
+                    }`}
+                  >
+                    {scene.thumbnailUrl ? (
+                      <img
+                        src={scene.thumbnailUrl}
+                        alt={`${scene.title || `Scene ${index + 1}`} storyboard frame`}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-white/25">
+                        <Camera className="h-8 w-8" />
+                        <span className="text-xs">Frame not generated</span>
+                      </div>
+                    )}
+
+                    <div className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-md border border-amber-400/30 bg-black/70 text-[11px] font-bold text-amber-300">
+                      {index + 1}
+                    </div>
+                    <div className="absolute right-2 top-2 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[10px] text-white/70">
+                      {formatTime(scene.duration || 30)}
+                    </div>
+
+                    {scene.videoUrl && (
+                      <button
+                        type="button"
+                        className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition-opacity hover:bg-black/30 group-hover:opacity-100 focus-visible:opacity-100"
+                        onClick={() => setVideoPreviewSceneId(scene.id)}
+                        aria-label={`Play ${scene.title || `scene ${index + 1}`}`}
+                      >
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-amber-400 bg-black/60 text-amber-300">
+                          <Play className="ml-0.5 h-5 w-5 fill-current" />
+                        </span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex min-w-0 flex-1 flex-col p-3">
+                    <div className="mb-2 flex items-start gap-2">
+                      <GripVertical className="mt-0.5 h-4 w-4 shrink-0 cursor-grab text-white/25 active:cursor-grabbing" />
+                      <div className="min-w-0 flex-1">
+                        <h2 className="truncate text-sm font-semibold">
+                          {scene.title || `Scene ${index + 1}`}
+                        </h2>
+                        <p className="mt-1 line-clamp-3 text-[11px] leading-relaxed text-muted-foreground/70">
+                          {scene.description || "No scene description."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mb-3 flex flex-wrap gap-1">
+                      {scene.timeOfDay && (
+                        <Badge variant="outline" className="gap-1 border-white/10 text-[9px] text-white/55">
+                          <Sun className="h-2.5 w-2.5" />
+                          {scene.timeOfDay}
+                        </Badge>
+                      )}
+                      {scene.locationType && (
+                        <Badge variant="outline" className="gap-1 border-white/10 text-[9px] text-white/55">
+                          <MapPin className="h-2.5 w-2.5" />
+                          {scene.locationType}
+                        </Badge>
+                      )}
+                      {characterIds.length > 0 && (
+                        <Badge variant="outline" className="max-w-full truncate border-white/10 text-[9px] text-white/45">
+                          {characterIds.map(getCharacterName).join(", ")}
+                        </Badge>
+                      )}
+                      {transition && (
+                        <Badge className="border border-amber-400/20 bg-amber-400/10 text-[9px] text-amber-300">
+                          {transition}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {scene.aiPromptOverride && (
+                      <p className="mb-3 line-clamp-2 rounded-lg border border-white/5 bg-black/20 p-2 text-[10px] italic text-white/45">
+                        Visual prompt: {scene.aiPromptOverride}
+                      </p>
+                    )}
+
+                    <div className="mt-auto flex flex-wrap items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 flex-1 gap-1.5 border-white/10 text-xs"
+                        onClick={() => openEditor(scene)}
+                      >
+                        <Edit3 className="h-3.5 w-3.5" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={scene.thumbnailUrl ? "ghost" : "default"}
+                        className={`h-8 flex-1 gap-1.5 text-xs ${
+                          scene.thumbnailUrl
+                            ? "text-amber-300 hover:bg-amber-400/10"
+                            : "bg-amber-500 text-black hover:bg-amber-400"
+                        }`}
+                        disabled={autoGenRunning || generatingSceneId !== null}
+                        onClick={() => void regenerateFrame(scene)}
+                      >
+                        {isGenerating ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : scene.thumbnailUrl ? (
+                          <RefreshCw className="h-3.5 w-3.5" />
+                        ) : (
+                          <Sparkles className="h-3.5 w-3.5" />
+                        )}
+                        {isGenerating
+                          ? "Generating"
+                          : scene.thumbnailUrl
+                            ? "Regenerate"
+                            : "Generate"}
+                      </Button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
-      </>
-    );
-  }
+      </main>
 
-  // ─── Main ─────────────────────────────────────────────────────────────────────
-
-  function StoryboardInner() {
-    const { user, loading: authLoading } = useAuth();
-    const params = useParams<{ projectId: string }>();
-    const [, navigate] = useLocation();
-    const projectId = Number(params.projectId);
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-    const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
-      const [autoGenRunning, setAutoGenRunning] = useState(false);
-      const [autoGenProgress, setAutoGenProgress] = useState({ done: 0, total: 0 });
-
-    const { data: project,    isLoading: projectLoading  } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!user && !!projectId });
-    const { data: scenes,     isLoading: scenesLoading   } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!user && !!projectId });
-    const { data: characters                             } = trpc.character.listByProject.useQuery({ projectId }, { enabled: !!user && !!projectId });
-
-    const allScenes = scenes || [];
-    const allChars  = characters || [];
-
-    const getCharName  = (id: number) => allChars.find((c: any) => c.id === id)?.name || "Unknown";
-    const totalDuration = allScenes.reduce((s, sc: any) => s + (sc.duration || 30), 0);
-    const withVideo     = allScenes.filter((s: any) => s.videoUrl).length;
-    const withThumb     = allScenes.filter((s: any) => s.thumbnailUrl).length;
-
-    const autoGenerateAllPanels = async () => {
-        if (!allScenes.length) { return; }
-        setAutoGenRunning(true);
-        setAutoGenProgress({ done: 0, total: allScenes.length });
-        try {
-          for (let i = 0; i < allScenes.length; i++) {
-            setAutoGenProgress({ done: i, total: allScenes.length });
-            await new Promise<void>(res => setTimeout(res, 200));
-          }
-          setAutoGenProgress({ done: allScenes.length, total: allScenes.length });
-          toast.success("Storyboard panels ready — edit each scene to add visuals.");
-        } finally {
-          setAutoGenRunning(false);
-        }
-      };
-
-      const exportTXT = () => {
-      if (!project || allScenes.length === 0) return;
-      const lines = [
-        `STORYBOARD: ${project.title}`,
-        `Generated by VirElle Studios — ${new Date().toLocaleDateString()}`,
-        `Scenes: ${allScenes.length} · Duration: ${formatTime(totalDuration)}`,
-        "=".repeat(60), "",
-      ];
-      allScenes.forEach((scene: any, idx: number) => {
-        lines.push(`SCENE ${idx + 1}: ${scene.title || "Untitled"}`);
-        lines.push("-".repeat(40));
-        if (scene.description)     lines.push(`Description: ${scene.description}`);
-        if (scene.timeOfDay)       lines.push(`Time: ${scene.timeOfDay}`);
-        if (scene.locationType)    lines.push(`Location: ${scene.locationType}`);
-        if (scene.weather)         lines.push(`Weather: ${scene.weather}`);
-        if (scene.lighting)        lines.push(`Lighting: ${scene.lighting}`);
-        if (scene.cameraAngle)     lines.push(`Camera: ${scene.cameraAngle}`);
-        if (scene.mood)            lines.push(`Mood: ${scene.mood}`);
-        if (scene.colorGrading)    lines.push(`Grade: ${scene.colorGrading}`);
-        lines.push(`Duration: ${formatTime(scene.duration || 30)}`);
-        const charIds = (scene.characterIds as number[] || []);
-        if (charIds.length > 0) lines.push(`Cast: ${charIds.map(getCharName).join(", ")}`);
-        if (scene.productionNotes) lines.push(`Notes: ${scene.productionNotes}`);
-        if (idx < allScenes.length - 1 && scene.transitionType) {
-          lines.push(`→ ${TRANSITION_LABELS[scene.transitionType] || scene.transitionType}`);
-        }
-        lines.push("");
-      });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/plain" }));
-      a.download = `${(project.title || "storyboard").replace(/[^a-zA-Z0-9]/g, "_")}_storyboard.txt`;
-      a.click();
-    };
-
-    if (authLoading || projectLoading || scenesLoading) {
-      return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}>
-        <Loader2 className="h-8 w-8 animate-spin text-amber-400" style={{ color: "#D4AF37" }} />
-      </div>;
-    }
-    if (!user)    { window.location.href = getLoginUrl(); return null; }
-    if (!project) return <div className="min-h-screen flex items-center justify-center" style={{ background: "#07070e" }}><p className="text-muted-foreground">Project not found</p></div>;
-
-    return (
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-        {/* Header */}
-        <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate(`/projects/${projectId}`)} className="gap-2 text-muted-foreground h-8"><ArrowLeft className="h-4 w-4" />Back</Button>
-              <div className="h-5 w-px bg-border/40" />
-              <div className="flex items-center gap-2.5">
-                <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg,#6366f1,#4f46e5)" }}>
-                  <Film className="text-white" style={{ width: 18, height: 18 }} />
-                </div>
-                <div>
-                  <div className="font-bold text-sm">{project.title} — Storyboard</div>
-                  <div className="text-[10px] text-muted-foreground">{allScenes.length} scenes · {formatTime(totalDuration)} · {withVideo} with video</div>
-                </div>
-              </div>
+      <Dialog open={!!editScene} onOpenChange={open => !open && setEditScene(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit storyboard scene</DialogTitle>
+            <DialogDescription>
+              Changes are saved to the existing scene. The visual prompt is used by the real preview-frame generator.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="storyboard-title">Scene title</Label>
+              <Input
+                id="storyboard-title"
+                value={editTitle}
+                onChange={event => setEditTitle(event.target.value)}
+                maxLength={255}
+              />
             </div>
-            <Button size="sm" onClick={autoGenerateAllPanels} disabled={autoGenRunning}
-              className="gap-2 h-8 text-xs"
-              style={{ background: "linear-gradient(135deg,#D4AF37,#b8960c)", color: "#000" }}>
-              {autoGenRunning
-                ? <><Loader2 className="h-3 w-3 animate-spin" />Generating {autoGenProgress.done}/{autoGenProgress.total}</>
-                : <><Sparkles className="h-3 w-3" />Auto-generate Panels</>}
-            </Button>
-        <div className="flex items-center gap-2">
-              <div className="flex items-center border border-border/40 rounded-lg overflow-hidden h-8">
-                <button onClick={() => setViewMode("grid")} className={`h-full px-2.5 flex items-center transition-colors ${viewMode==="grid" ? "text-white" : "text-muted-foreground/50 hover:text-muted-foreground"}`} style={{ background: viewMode==="grid" ? "rgba(212,175,55,0.12)" : "transparent" }}>
-                  <Grid3X3 className="h-3.5 w-3.5" />
-                </button>
-                <div className="w-px h-full bg-border/40" />
-                <button onClick={() => setViewMode("list")} className={`h-full px-2.5 flex items-center transition-colors ${viewMode==="list" ? "text-white" : "text-muted-foreground/50 hover:text-muted-foreground"}`} style={{ background: viewMode==="list" ? "rgba(212,175,55,0.12)" : "transparent" }}>
-                  <List className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <Button size="sm" variant="ghost" onClick={exportTXT} disabled={allScenes.length===0} className="gap-1.5 h-8 text-xs text-muted-foreground"><Download className="h-3.5 w-3.5" />Export</Button>
-              <Button size="sm" variant="outline" onClick={() => window.print()} className="gap-1.5 h-8 text-xs border-border/40"><Printer className="h-3.5 w-3.5" />Print</Button>
+            <div className="space-y-1.5">
+              <Label htmlFor="storyboard-description">Scene description</Label>
+              <Textarea
+                id="storyboard-description"
+                value={editDescription}
+                onChange={event => setEditDescription(event.target.value)}
+                rows={5}
+                maxLength={2000}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="storyboard-prompt">Visual generation prompt</Label>
+              <Textarea
+                id="storyboard-prompt"
+                value={editPrompt}
+                onChange={event => setEditPrompt(event.target.value)}
+                rows={4}
+                placeholder="Optional exact visual direction for this frame"
+              />
+              <p className="text-xs text-muted-foreground">
+                Character references, wardrobe, project Visual DNA and continuity context remain injected by the existing generation pipeline.
+              </p>
             </div>
           </div>
-        </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditScene(null)} disabled={updateSceneMutation.isPending}>
+              Cancel
+            </Button>
+            <Button onClick={() => void saveSceneEdits()} disabled={updateSceneMutation.isPending} className="gap-2">
+              {updateSceneMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Stats */}
-          {allScenes.length > 0 && (
-            <div className="grid grid-cols-4 gap-2.5 mb-6">
-              {[
-                { label: "Scenes",     val: allScenes.length },
-                { label: "Duration",   val: formatTime(totalDuration) },
-                { label: "With Video", val: withVideo },
-                { label: "Boarded",    val: withThumb },
-              ].map((s, i) => (
-                <div key={i} className="rounded-xl border px-3 py-2.5 hover:shadow-lg hover:shadow-amber-500/20 transition-shadow" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
-                  <div className="text-[9px] text-muted-foreground uppercase tracking-wider">{s.label}</div>
-                  <div className="text-lg font-bold mt-0.5" style={{ color: "#D4AF37" }}>{s.val}</div>
-                </div>
-              ))}
-            </div>
-          )}
+      <AlertDialog open={generateConfirmOpen} onOpenChange={setGenerateConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Generate missing storyboard frames?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will generate {missingFrames.length} real still image{missingFrames.length === 1 ? "" : "s"} using the existing scene preview pipeline and image-generation credits. It will not generate video or consume video-generation credits.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={event => {
+              event.preventDefault();
+              void generateMissingFrames();
+            }}>
+              Generate frames
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-          {/* Empty */}
-          {allScenes.length === 0 ? (
-            <CinematicEmptyState
-              quoteSeed="storyboard"
-              icon={<Grid3X3 className="h-9 w-9 text-amber-400/70" />}
-              title="No frames to board yet"
-              description="Storyboards turn your scenes into a visual sequence. Add scenes in the Scene Editor first, then come back here to compose your shots."
-              action={<Button onClick={() => navigate(`/projects/${projectId}/scenes`)} className="gap-2">Open Scene Editor</Button>}
-            />
-          ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {allScenes.map((scene: any, idx: number) => (
-                <SceneCardGrid
-                  key={scene.id} scene={scene} idx={idx} totalScenes={allScenes.length}
-                  getCharName={getCharName}
-                  onPlay={setVideoPreviewSceneId}
-                  onNavigate={() => navigate(`/projects/${projectId}/scenes`)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {allScenes.map((scene: any, idx: number) => (
-                <SceneRowList
-                  key={scene.id} scene={scene} idx={idx} totalScenes={allScenes.length}
-                  getCharName={getCharName}
-                  onPlay={setVideoPreviewSceneId}
-                  onNavigate={() => navigate(`/projects/${projectId}/scenes`)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      {activeVideo && (
+        <MediaPlayer
+          movie={activeVideo}
+          playlist={videoPlaylist}
+          onClose={() => setVideoPreviewSceneId(null)}
+          onNavigate={setVideoPreviewSceneId}
+          projectId={projectId}
+          sceneId={activeVideo.id}
+        />
+      )}
 
-        {/* Video modal */}
-        {videoPreviewSceneId !== null && (() => {
-          const sc = allScenes.find((s: any) => s.id === videoPreviewSceneId);
-          return sc ? (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={() => setVideoPreviewSceneId(null)}>
-              <div className="w-full max-w-4xl px-4" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-semibold" style={{ color: "#D4AF37" }}>{sc.title || "Scene Preview"}</p>
-                  <button onClick={() => setVideoPreviewSceneId(null)} className="text-muted-foreground hover:text-white text-xs px-3 py-1.5 rounded border border-border/40">Close</button>
-                </div>
-                <MediaPlayer
-                    movie={{
-                      id: sc.id,
-                      title: (sc as any).title || "Scene Preview",
-                      description: (sc as any).description ?? null,
-                      type: "scene",
-                      fileUrl: (sc as any).videoUrl ?? null,
-                      thumbnailUrl: (sc as any).thumbnailUrl ?? null,
-                      duration: (sc as any).duration ?? null,
-                      fileSize: null,
-                      mimeType: "video/mp4",
-                      movieTitle: null,
-                      sceneNumber: (sc as any).sceneNumber ?? null,
-                    }}
-                    onClose={() => setVideoPreviewSceneId(null)}
-                    projectId={projectId}
-                    sceneId={sc.id}
-                  />
-              </div>
-            </div>
-          ) : null;
-        })()}
+      <NextStageCTA projectId={projectId} currentStage={3} />
+    </div>
+  );
+}
 
-        <NextStageCTA projectId={projectId} currentStage={3} />
-      </div>
-    );
-  }
-
-  export default function Storyboard() {
-    return (
-      <SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="indie">
-        <StoryboardInner />
-      </SubscriptionGate>
-    );
-  }
-  
+export default function Storyboard() {
+  return (
+    <SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="indie">
+      <StoryboardInner />
+    </SubscriptionGate>
+  );
+}

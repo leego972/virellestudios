@@ -2,12 +2,16 @@ import "@/lib/sentry";
 import "@/lib/analytics";
 import AutomaticContrastGuard from "@/components/AutomaticContrastGuard";
 import DesignerCommercePanel from "@/components/DesignerCommercePanel";
+import GlobalMediaPlayerControls from "@/components/GlobalMediaPlayerControls";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
+import LandingStrategicPositioningGuard from "@/components/LandingStrategicPositioningGuard";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
 import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
+import StoryboardShotWorkspaceOverlay from "@/components/StoryboardShotWorkspaceOverlay";
 import ThirdPartyDesignerMarketplaceOverlay from "@/components/ThirdPartyDesignerMarketplaceOverlay";
+import TimelineEditSuiteOverlay from "@/components/TimelineEditSuiteOverlay";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -145,6 +149,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
     "/terms",
     "/privacy",
     "/wardrobe-marketplace",
+    "/sora-migration",
   ];
   if (
     publicPaths.some(
@@ -222,12 +227,16 @@ createRoot(document.getElementById("root")!).render(
       <AutomaticContrastGuard />
       <GlobalSidebarLogoutConfirm />
       <LandingVerifiedAppsGuard />
+      <LandingStrategicPositioningGuard />
       <PortalAccessBoundary />
       <PortalEntryLinks />
       <RequiredSignupAddressCapture />
       <DesignerCommercePanel />
       <ThirdPartyDesignerMarketplaceOverlay />
       <App />
+      <StoryboardShotWorkspaceOverlay />
+      <TimelineEditSuiteOverlay />
+      <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
 );
