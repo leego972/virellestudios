@@ -5,6 +5,7 @@ import DesignerCommercePanel from "@/components/DesignerCommercePanel";
 import GlobalMediaPlayerControls from "@/components/GlobalMediaPlayerControls";
 import GlobalSidebarLogoutConfirm from "@/components/GlobalSidebarLogoutConfirm";
 import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
+import PitchDeckExportOverlay from "@/components/PitchDeckExportOverlay";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
 import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
@@ -233,6 +234,7 @@ createRoot(document.getElementById("root")!).render(
       <App />
       <StoryboardShotWorkspaceOverlay />
       <TimelineEditSuiteOverlay />
+      <PitchDeckExportOverlay />
       <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
