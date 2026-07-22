@@ -55,3 +55,11 @@ export function startComplianceArchiveWorker(): void {
   );
   timer.unref?.();
 }
+
+// This module is loaded by the broadcast/render router during normal server
+// startup. Autostart here guarantees the site-wide archive scanner is active
+// in production without coupling it to a particular render or broadcast job.
+// Tests remain deterministic and can invoke runComplianceArchiveCycle directly.
+if (process.env.NODE_ENV !== "test") {
+  startComplianceArchiveWorker();
+}

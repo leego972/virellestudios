@@ -18,6 +18,7 @@ import ComplianceAdminVault from "@/components/ComplianceAdminVault";
 import {
   AlertTriangle,
   CheckCircle2,
+  Clock3,
   Copy,
   CreditCard,
   Download,
@@ -31,6 +32,7 @@ import {
   RadioTower,
   RefreshCcw,
   ShieldCheck,
+  ShoppingCart,
   Upload,
   UserCheck,
   Video,
@@ -74,6 +76,7 @@ type BroadcastChannel = {
 };
 
 type Workspace = "standard" | "adult";
+type BroadcastServiceMode = "direct" | "managed" | "ai_assisted";
 
 const PROVIDERS: Provider[] = [
   "runway",
@@ -587,6 +590,11 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
     undefined,
     { enabled: accessReady, retry: false },
   );
+  const minuteWallet = (trpc as any).virelleBroadcastRender.getBroadcastMinuteWallet.useQuery(
+    undefined,
+    { enabled: accessReady, retry: false },
+  );
+  const createMinuteCheckout = (trpc as any).virelleBroadcastRender.createBroadcastMinuteCheckout.useMutation();
   const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery(
     { workspace, limit: 25 },
     { enabled: accessReady, retry: false, refetchInterval: 10_000 },
@@ -635,6 +643,8 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
   const [allSubjectsAdultsConfirmed, setAllSubjectsAdultsConfirmed] = useState(false);
   const [noPublicFigureConfirmed, setNoPublicFigureConfirmed] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [serviceMode, setServiceMode] = useState<BroadcastServiceMode>("managed");
+  const [durationMinutes, setDurationMinutes] = useState<30 | 60 | 120>(60);
   const [channels, setChannels] = useState<BroadcastChannel[]>([
     { destination: "rtmp", ingestUrl: "", streamKey: "" },
   ]);
@@ -670,6 +680,13 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
   const hasAnyProvider = Boolean(byokStatus.data?.hasAnyProvider);
   const bridgeConfigured = Boolean(byokStatus.data?.bridgeConfigured);
   const destinations = isAdult ? ADULT_DESTINATIONS : STANDARD_DESTINATIONS;
+  const minuteBalance = Number(minuteWallet.data?.availableMinutes || 0);
+  const unlimitedMinutes = Boolean(minuteWallet.data?.unlimited);
+  const minutePackages = minuteWallet.data?.packages || [];
+  const needsByokForBroadcast = serviceMode === "ai_assisted";
+  const managedMinutesRequired = serviceMode === "direct"
+    ? 0
+    : durationMinutes * channels.length;
 
   const transformOptions: Array<[TransformGoal, string]> = isAdult
     ? [
@@ -732,17 +749,29 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
   ]);
 
   const validateRequest = (broadcast: boolean): boolean => {
-    if (!aiGeneratedCharactersOnly && !consentConfirmed) {
+    const aiBroadcast = broadcast && serviceMode === "ai_assisted";
+    const requiresCreativeMedia = !broadcast || aiBroadcast;
+
+    if (requiresCreativeMedia && !aiGeneratedCharactersOnly && !consentConfirmed) {
       toast.error(
         "Confirm valid likeness, media, distribution and broadcast consent for every real person used.",
       );
       return false;
     }
-    if (!sourceVideoUrl.trim() && parseUrls(sourceImageUrls).length === 0 && !sourceSwappysJobId) {
+    if (
+      requiresCreativeMedia
+      && !sourceVideoUrl.trim()
+      && parseUrls(sourceImageUrls).length === 0
+      && !sourceSwappysJobId
+    ) {
       toast.error("Add source media or load a Swappys job first.");
       return false;
     }
     if (isAdult) {
+      if (!consentConfirmed && !aiGeneratedCharactersOnly) {
+        toast.error("Confirm valid consent for every real person appearing in the adult broadcast.");
+        return false;
+      }
       if (!allSubjectsAdultsConfirmed) {
         toast.error("Confirm that every depicted and referenced person is 18 or older.");
         return false;
@@ -751,16 +780,20 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
         toast.error("Confirm that no celebrity, politician or other public-figure likeness is used.");
         return false;
       }
-      if (!targetAge.trim() || Number(targetAge) < 18) {
-        toast.error("Adult Studio target age must be 18 or older.");
+      if (aiBroadcast && (!targetAge.trim() || Number(targetAge) < 18)) {
+        toast.error("Adult Studio AI target age must be 18 or older.");
         return false;
       }
-      if (["adult_to_child", "child_to_adult"].includes(transformGoal)) {
+      if (aiBroadcast && ["adult_to_child", "child_to_adult"].includes(transformGoal)) {
         toast.error("Child and age-crossing transforms are unavailable in the Adult Studio.");
         return false;
       }
     }
-    if (broadcast) {
+    if (aiBroadcast) {
+      if (!hasAnyProvider) {
+        toast.error("Add and fund a supported BYOK provider before using AI-assisted Broadcast.");
+        return false;
+      }
       const minimumAge = isAdult ? 18 : 16;
       if (transformGoal === "adult_to_child") {
         toast.error("Child-transform avatars are not permitted in live Broadcast.");
@@ -776,6 +809,15 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
         );
         return false;
       }
+    }
+    if (
+      broadcast
+      && serviceMode !== "direct"
+      && !unlimitedMinutes
+      && minuteBalance < managedMinutesRequired
+    ) {
+      toast.error(`This setup needs ${managedMinutesRequired} managed output minutes; ${minuteBalance} remain.`);
+      return false;
     }
     return true;
   };
@@ -798,7 +840,8 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
     try {
       const result = await createBroadcast.mutateAsync({
         ...payload,
-        durationMinutes: 30,
+        serviceMode,
+        durationMinutes,
         channels: channels.map((channel) => ({
           destination: channel.destination,
           ingestUrl: channel.ingestUrl.trim() || null,
@@ -809,14 +852,32 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
         ...channel,
         streamKey: "",
       })));
-      toast.success(
-        result.bridgeConfigured
-          ? `Broadcast session #${result.sessionId} submitted with mandatory recording.`
-          : `Broadcast session #${result.sessionId} saved. The broadcast bridge still requires configuration.`,
-      );
+      if (result.serviceMode === "direct") {
+        toast.success("Direct OBS configuration saved. No Virelle minutes or BYOK were used.");
+      } else {
+        toast.success(
+          result.bridgeConfigured
+            ? `Broadcast session #${result.sessionId} submitted; ${result.managedMinutesReserved} managed minutes reserved.`
+            : `Broadcast session #${result.sessionId} saved. The managed bridge still requires platform configuration.`,
+        );
+      }
       jobs.refetch();
+      minuteWallet.refetch();
     } catch (error: any) {
       toast.error(error?.message || "Could not create the broadcast session.");
+      minuteWallet.refetch();
+    }
+  };
+
+  const purchaseMinutePack = async (packId: string) => {
+    try {
+      const result = await createMinuteCheckout.mutateAsync({
+        packId,
+        returnUrl: window.location.href,
+      });
+      window.location.assign(result.url);
+    } catch (error: any) {
+      toast.error(error?.message || "Could not open broadcast-minute checkout.");
     }
   };
 
@@ -1019,7 +1080,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
             {!hasAnyProvider && (
               <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.05] p-3 text-sm">
                 <p className={isAdult ? "text-white/60" : "text-muted-foreground"}>
-                  Add your own video-provider key before creating a render or broadcast session.
+                  Add your own funded video-provider key before Studio Render or AI-assisted Broadcast. Plain broadcasting does not need one.
                 </p>
                 <Button
                   className="mt-3"
@@ -1321,28 +1382,97 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Radio className="h-4 w-4 text-amber-400" />
-                Recorded broadcast outputs
+                Broadcast setup
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {channels.map((channel, index) => (
-                <div
-                  key={`${channel.destination}-${index}`}
-                  className="space-y-2 rounded-lg border border-white/10 bg-black/10 p-3"
+            <CardContent className="space-y-4">
+              <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.05] p-4">
+                <Label>Broadcast route</Label>
+                <select
+                  className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                  value={serviceMode}
+                  onChange={(event) => setServiceMode(event.target.value as BroadcastServiceMode)}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium">
-                      Output {index + 1}
-                    </span>
-                    {channels.length > 1 && (
-                      <button
-                        type="button"
-                        className="text-xs text-red-400"
-                        onClick={() => setChannels((previous) =>
-                          previous.filter((_, itemIndex) => itemIndex !== index))}
+                  {!isAdult && <option value="direct">Direct OBS — free, no BYOK</option>}
+                  <option value="managed">Managed relay — broadcast minutes, no BYOK</option>
+                  <option value="ai_assisted">AI-assisted relay — broadcast minutes + BYOK</option>
+                </select>
+                <div className="mt-3 space-y-1 text-xs leading-relaxed text-white/50">
+                  {serviceMode === "direct" && <p>OBS sends directly to the destination. Virelle does not receive, record or charge for the stream.</p>}
+                  {serviceMode === "managed" && <p>Virelle relays and records the broadcast. No video generation occurs and no provider key is required.</p>}
+                  {serviceMode === "ai_assisted" && <p>Virelle relays and records the broadcast while Swappys or another selected AI transformation runs through your funded provider key.</p>}
+                </div>
+              </div>
+
+              {serviceMode !== "direct" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Reserved duration</Label>
+                    <select
+                      className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                      value={durationMinutes}
+                      onChange={(event) => setDurationMinutes(Number(event.target.value) as 30 | 60 | 120)}
+                    >
+                      <option value={30}>30 minutes</option>
+                      <option value={60}>60 minutes</option>
+                      <option value={120}>120 minutes</option>
+                    </select>
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-black/10 p-3">
+                    <div className="flex items-center gap-2 text-xs text-white/45"><Clock3 className="h-4 w-4" /> Minute balance</div>
+                    <p className="mt-2 text-xl font-bold text-amber-300">
+                      {unlimitedMinutes ? "Unlimited" : minuteBalance.toLocaleString()}
+                    </p>
+                    <p className="text-[11px] text-white/35">Managed minutes do not expire.</p>
+                    <p className="mt-1 text-[11px] text-amber-200/70">
+                      This setup reserves {managedMinutesRequired.toLocaleString()} output minutes
+                      ({durationMinutes} minutes × {channels.length} output{channels.length === 1 ? "" : "s"}).
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {isAdult && serviceMode !== "direct" && (
+                <div className="rounded-lg border border-white/10 bg-black/10 p-3">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold">Buy broadcast minutes</p>
+                      <p className="text-xs text-white/40">One-time prepaid packs added immediately after Stripe confirms payment.</p>
+                    </div>
+                    <ShoppingCart className="h-4 w-4 text-amber-400" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {minutePackages.map((pack: any) => (
+                      <Button
+                        key={pack.id}
+                        size="sm"
+                        variant="outline"
+                        disabled={createMinuteCheckout.isPending}
+                        onClick={() => purchaseMinutePack(pack.id)}
                       >
-                        Remove
-                      </button>
+                        {pack.minutes.toLocaleString()} min · A${pack.priceAud}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="rounded-lg border border-white/10 bg-black/10 p-3 text-xs leading-relaxed text-white/50">
+                <p className="mb-2 font-semibold text-white/70">How to connect</p>
+                <ol className="list-decimal space-y-1 pl-4">
+                  <li>Open the destination's live or creator dashboard and copy its ingest URL and stream key.</li>
+                  <li>Select the route above. Choose AI-assisted only when live Swappys or another transformation is required.</li>
+                  <li>Add the output below, choose the planned duration and configure the session.</li>
+                  <li>For direct mode, paste the same URL and key into OBS. Managed modes are recorded automatically.</li>
+                </ol>
+              </div>
+
+              {channels.map((channel, index) => (
+                <div key={`${channel.destination}-${index}`} className="space-y-2 rounded-lg border border-white/10 bg-black/10 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">Output {index + 1}</span>
+                    {channels.length > 1 && (
+                      <button type="button" className="text-xs text-red-400" onClick={() => setChannels((previous) => previous.filter((_, itemIndex) => itemIndex !== index))}>Remove</button>
                     )}
                   </div>
                   <div>
@@ -1352,80 +1482,36 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
                       value={channel.destination}
                       onChange={(event) => {
                         const destination = event.target.value as BroadcastDestination;
-                        setChannels((previous) => previous.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? {
-                                ...item,
-                                destination,
-                                ingestUrl: destinationDefaultUrl(destination),
-                              }
-                            : item));
+                        setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, destination, ingestUrl: destinationDefaultUrl(destination) } : item));
                       }}
                     >
-                      {destinations.map((destination) => (
-                        <option key={destination} value={destination}>
-                          {destinationLabel(destination)}
-                        </option>
-                      ))}
+                      {destinations.map((destination) => <option key={destination} value={destination}>{destinationLabel(destination)}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <Label>Ingest URL</Label>
-                    <Input
-                      value={channel.ingestUrl}
-                      onChange={(event) => setChannels((previous) =>
-                        previous.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? { ...item, ingestUrl: event.target.value }
-                            : item))}
-                    />
-                  </div>
-                  <div>
-                    <Label>Stream key</Label>
-                    <Input
-                      type="password"
-                      autoComplete="off"
-                      value={channel.streamKey}
-                      onChange={(event) => setChannels((previous) =>
-                        previous.map((item, itemIndex) =>
-                          itemIndex === index
-                            ? { ...item, streamKey: event.target.value }
-                            : item))}
-                    />
-                  </div>
+                  <div><Label>Ingest URL</Label><Input value={channel.ingestUrl} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, ingestUrl: event.target.value } : item))} /></div>
+                  <div><Label>Stream key</Label><Input type="password" autoComplete="off" value={channel.streamKey} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, streamKey: event.target.value } : item))} /></div>
                 </div>
               ))}
 
               {channels.length < 5 && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setChannels((previous) => [
-                    ...previous,
-                    { destination: "rtmp", ingestUrl: "", streamKey: "" },
-                  ])}
-                >
-                  Add output
-                </Button>
+                <Button size="sm" variant="outline" className="w-full" onClick={() => setChannels((previous) => [...previous, { destination: "rtmp", ingestUrl: "", streamKey: "" }])}>Add output</Button>
               )}
 
               <Button
                 className="w-full"
-                disabled={!hasAnyProvider || createBroadcast.isPending}
+                disabled={(needsByokForBroadcast && !hasAnyProvider) || createBroadcast.isPending || (serviceMode !== "direct" && !unlimitedMinutes && minuteBalance < managedMinutesRequired)}
                 onClick={submitBroadcast}
               >
-                {createBroadcast.isPending
-                  ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  : <Radio className="mr-2 h-4 w-4" />}
-                Configure recorded broadcast
+                {createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />}
+                {serviceMode === "direct" ? "Save direct OBS setup" : `Configure ${durationMinutes}-minute broadcast`}
               </Button>
               <p className={isAdult ? "text-xs leading-relaxed text-white/45" : "text-xs leading-relaxed text-muted-foreground"}>
-                The broadcast bridge must record the session. After completion, the recording becomes downloadable in Recent Jobs and is separately queued for private retention.
+                Adult Studio always uses the managed recording route. Standard direct OBS broadcasts bypass Virelle media infrastructure and do not consume minutes.
               </p>
             </CardContent>
           </Card>
         </div>
+
 
         <Card className={subtleCard}>
           <CardHeader>
@@ -1563,8 +1649,7 @@ export default function VirelleBroadcastRender() {
   return (
     <SubscriptionGate
       feature="Virelle Broadcast & Studio Render"
-      featureKey="canUseVisualEffects"
-      requiredTier="amateur"
+      requiredTier="indie"
     >
       <StudioPage />
     </SubscriptionGate>
