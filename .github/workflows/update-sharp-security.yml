@@ -32,6 +32,12 @@ jobs:
         run: |
           pnpm remove @types/sharp
           pnpm add sharp@0.35.3
+      - name: Validate dependency update
+        run: |
+          pnpm check
+          pnpm test
+          pnpm build
+          pnpm audit --audit-level moderate
       - name: Commit dependency update
         run: |
           git config user.name "github-actions[bot]"
@@ -40,4 +46,4 @@ jobs:
           git commit -m "Update sharp to patched 0.35.3"
           git push origin HEAD:feature/designer-commerce-shipping-final
 
-# Trigger update.
+# Trigger update after the final branch exists.
