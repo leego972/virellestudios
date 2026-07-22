@@ -8,6 +8,7 @@ import LandingVerifiedAppsGuard from "@/components/LandingVerifiedAppsGuard";
 import PortalAccessBoundary from "@/components/PortalAccessBoundary";
 import PortalEntryLinks from "@/components/PortalEntryLinks";
 import RequiredSignupAddressCapture from "@/components/RequiredSignupAddressCapture";
+import StoryboardShotWorkspaceOverlay from "@/components/StoryboardShotWorkspaceOverlay";
 import ThirdPartyDesignerMarketplaceOverlay from "@/components/ThirdPartyDesignerMarketplaceOverlay";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from "@shared/const";
@@ -229,6 +230,7 @@ createRoot(document.getElementById("root")!).render(
       <DesignerCommercePanel />
       <ThirdPartyDesignerMarketplaceOverlay />
       <App />
+      <StoryboardShotWorkspaceOverlay />
       <GlobalMediaPlayerControls />
     </QueryClientProvider>
   </trpc.Provider>,
