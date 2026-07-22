@@ -1,0 +1,54 @@
+name: Temporary Production Gap Diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Capture typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm check > typecheck.log 2>&1
+          echo $? > typecheck.exit
+          exit 0
+      - name: Capture build
+        shell: bash
+        run: |
+          set +e
+          pnpm build > build.log 2>&1
+          echo $? > build.exit
+          exit 0
+      - name: Capture Docker build
+        shell: bash
+        run: |
+          set +e
+          docker build --progress=plain -t virelle-diagnostics . > docker-build.log 2>&1
+          echo $? > docker-build.exit
+          exit 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-gap-diagnostics
+          path: |
+            typecheck.log
+            typecheck.exit
+            build.log
+            build.exit
+            docker-build.log
+            docker-build.exit
+          retention-days: 1
