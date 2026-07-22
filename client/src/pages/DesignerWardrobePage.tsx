@@ -335,7 +335,6 @@ export default function DesignerWardrobePage() {
   const [attachAssignType, setAttachAssignType] = useState<string>("character_wardrobe");
   const [attachNotes, setAttachNotes] = useState<string>("");
   const [attachFromSceneOrder, setAttachFromSceneOrder] = useState<string>("");
-  const [attachToSceneOrder, setAttachToSceneOrder] = useState<string>("until_changed");
   const [attachIdentityMode, setAttachIdentityMode] = useState<"auto" | "use_character_face" | "conceal_character_face">("auto");
 
   /* ─── Derived ─── */
@@ -472,7 +471,6 @@ export default function DesignerWardrobePage() {
     setAttachAssignType("character_wardrobe");
     setAttachNotes("");
     setAttachFromSceneOrder("");
-    setAttachToSceneOrder("until_changed");
     setAttachIdentityMode(item.faceCoverage === "full" ? "conceal_character_face" : "auto");
     setAttachOpen(true);
   };
@@ -491,7 +489,7 @@ export default function DesignerWardrobePage() {
         placementNotes: attachNotes.trim() || undefined,
         promptWeight: 100,
         fromSceneOrder: Number(attachFromSceneOrder),
-        toSceneOrder: attachToSceneOrder === "until_changed" ? undefined : Number(attachToSceneOrder),
+        toSceneOrder: undefined,
         identityMode: attachIdentityMode,
       });
     } else {
@@ -1474,6 +1472,19 @@ export default function DesignerWardrobePage() {
 
             {attachKind === "character" ? (
               <>
+                <div>
+                  <Label className="text-zinc-400">Character *</Label>
+                  <Select value={attachCharId} onValueChange={setAttachCharId}>
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
+                      <SelectValue placeholder="Pick a character" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
+                      {(projectCharsQ.data ?? []).map((character: any) => (
+                        <SelectItem key={character.id} value={String(character.id)}>{character.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="text-zinc-400">Costume begins in scene *</Label>
@@ -1485,14 +1496,10 @@ export default function DesignerWardrobePage() {
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-zinc-400">Costume ends</Label>
-                    <Select value={attachToSceneOrder} onValueChange={setAttachToSceneOrder}>
-                      <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20 max-h-72">
-                        <SelectItem value="until_changed">Until another costume is assigned</SelectItem>
-                        {sortedProjectScenes.filter((scene: any) => attachFromSceneOrder === "" || (scene.orderIndex ?? 0) >= Number(attachFromSceneOrder)).map((scene: any) => <SelectItem key={scene.id} value={String(scene.orderIndex ?? 0)}>End after scene {(scene.orderIndex ?? 0) + 1}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-zinc-400">Continuity rule</Label>
+                    <div className="mt-1 min-h-10 rounded-md border border-emerald-500/20 bg-emerald-950/15 px-3 py-2 text-xs text-emerald-200">
+                      Continues automatically through every following scene until another costume is assigned to this character.
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -1500,11 +1507,13 @@ export default function DesignerWardrobePage() {
                   <Select value={attachIdentityMode} onValueChange={(value) => setAttachIdentityMode(value as typeof attachIdentityMode)}>
                     <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
                     <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
-                      <SelectItem value="auto">Automatic from costume face coverage</SelectItem>
-                      <SelectItem value="use_character_face">Use original character face</SelectItem>
-                      <SelectItem value="conceal_character_face">Full costume — suppress original face</SelectItem>
+                      <SelectItem value="auto">Automatic from costume coverage</SelectItem>
+                      <SelectItem value="conceal_character_face">Conceal original face</SelectItem>
                     </SelectContent>
                   </Select>
+                  {attachItem?.faceCoverage === "full" ? (
+                    <div className="mt-1 text-xs text-violet-300">Full-face costume detected: the actor portrait is automatically excluded while this costume is active.</div>
+                  ) : null}
                 </div>
                 <div>
                   <Label className="text-zinc-400">Type</Label>

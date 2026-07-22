@@ -121,6 +121,7 @@ export function buildWardrobePromptAnchor(item: WardrobeItemRecord, notes?: stri
     colors && `exact colours: ${colors}`,
     materials && `exact materials: ${materials}`,
     item.referencePrompt && `visual reference: ${item.referencePrompt.trim()}`,
+    "COVERAGE HARD-LOCK: every garment physically replaces and occludes the body region it covers. Gloves cover hands and fingers; hats, hoods and helmets cover the hair they enclose; clothing and armour cover the torso and limbs beneath them; masks and cowls cover the face area shown in the reference. Never render covered skin, hair or anatomy through the costume.",
     item.faceCoverage === "full" && "FULL FACE COVERAGE: the costume mask/cowl/helmet completely replaces the visible actor face; no facial skin, hairline, eyes, mouth or uncovered identity may appear",
     item.faceCoverage === "partial" && "PARTIAL FACE COVERAGE: preserve the exact mask/helmet coverage shown in the costume reference",
     item.primaryImageUrl && `reference image: ${item.primaryImageUrl}`,

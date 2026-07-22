@@ -251,7 +251,7 @@ export async function loadSceneGenerationContext(
     const selected = selectCharacterWardrobeRow(rows as any[], character.id, sceneId, sceneOrder, inlineOutfitChange);
     const selectedRow = selected.row;
     const selectedItem = selectedRow?.item as WardrobeItemRecord | undefined;
-    if (!selectedItem && !inlineOutfitChange) {
+    if (!selectedItem) {
       missingCharacterWardrobe.push(`${character.name} (scene ${sceneOrder + 1})`);
     }
     let wardrobeAnchor: string | undefined;
@@ -289,7 +289,7 @@ export async function loadSceneGenerationContext(
       ? selectedItem.faceCoverage
       : "none";
     const identityMode = (selectedRow?.assignment?.identityMode || "auto") as "auto" | "use_character_face" | "conceal_character_face";
-    const suppressCharacterFaceReference = identityMode === "conceal_character_face" || (identityMode === "auto" && faceCoverage === "full");
+    const suppressCharacterFaceReference = faceCoverage === "full" || identityMode === "conceal_character_face";
     const identityImageUrl = suppressCharacterFaceReference ? undefined : characterImage(character);
     const explicitChange = inlineOutfitChange || Boolean(selectedRow && (selectedRow.assignment.fromSceneOrder ?? 0) === sceneOrder);
     wardrobeBindings.push({

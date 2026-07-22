@@ -34,11 +34,11 @@ describe("mandatory character costume continuity", () => {
     await expect(loadSceneGenerationContext(1, 99)).rejects.toThrow(/Wardrobe assignment required/);
   });
 
-  it("suppresses the actor face reference for a full-face costume", async () => {
+  it("suppresses the actor face reference for a full-face costume even when a stale assignment requests the face", async () => {
     dbMocks.getSceneById.mockResolvedValue({ id: 2, projectId: 99, orderIndex: 2, title: "Rooftop", description: "The masked vigilante watches the street.", characterIds: [11], wardrobe: [], duration: 8, aspectRatio: "16:9", frameRate: "24" });
     dbMocks.getProjectCharacters.mockResolvedValue([{ id: 11, userId: 7, projectId: 99, name: "Mara", photoUrl: "https://assets.test/mara-face.jpg", attributes: { ageRange: "30s", build: "athletic" } }]);
     mockDatabase([{
-      assignment: { id: 9, userId: 7, projectId: 99, wardrobeItemId: 50, characterId: 11, sceneId: null, fromSceneOrder: 2, toSceneOrder: null, identityMode: "conceal_character_face", placementNotes: null, locked: true },
+      assignment: { id: 9, userId: 7, projectId: 99, wardrobeItemId: 50, characterId: 11, sceneId: null, fromSceneOrder: 2, toSceneOrder: null, identityMode: "use_character_face", placementNotes: null, locked: true },
       item: { id: 50, collectionId: null, userId: 7, name: "Obsidian Vigilante Suit", category: "costume", primaryImageUrl: "https://assets.test/full-mask.jpg", imageUrls: ["https://assets.test/full-mask.jpg"], referencePrompt: "complete black armored suit with sealed cowl and opaque eye lenses", faceCoverage: "full", status: "active", characterWardrobeAllowed: true },
     }]);
     const context = await loadSceneGenerationContext(2, 99);
@@ -48,5 +48,6 @@ describe("mandatory character costume continuity", () => {
     expect(context.referenceImages).toContain("https://assets.test/full-mask.jpg");
     expect(context.canonicalPrompt).toContain("original actor face and face portrait are intentionally suppressed");
     expect(context.canonicalPrompt).toContain("zero exposed facial skin");
+    expect(context.canonicalPrompt).toContain("Gloves cover hands and fingers");
   });
 });

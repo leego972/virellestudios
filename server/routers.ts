@@ -2527,7 +2527,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           .sort((a, b) => a - b)[0];
         const requestedEnd = input.toSceneOrder ?? Number.MAX_SAFE_INTEGER;
         const effectiveEnd = nextStart === undefined ? requestedEnd : Math.min(requestedEnd, nextStart - 1);
-        const derivedIdentityMode = input.identityMode === "auto" && item.faceCoverage === "full"
+        // Full face coverage is absolute. A stale client or manual API call
+        // cannot force the uncovered actor portrait back through a sealed mask.
+        const derivedIdentityMode = item.faceCoverage === "full"
           ? "conceal_character_face"
           : input.identityMode;
 
