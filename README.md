@@ -1,81 +1,78 @@
 # Virelle Studios
 
-AI-native film studio in the browser. Generate scripts, voices, footage,
-soundtracks, and final-cut assemblies via a unified pipeline backed by
-Pollinations, OpenRouter, ElevenLabs, Vast.ai (GPU rendering), and a
-Stripe-billed credit system.
+Virelle Studios is a production web application for AI-assisted film development, character and wardrobe continuity, VFX, post-production, broadcast, commercial packaging, marketplace workflows and verified Adult Studio operations.
 
-This repository is the production deployment for `https://virelle.life`,
-hosted on Railway.
+Production is served at `https://virelle.life` from the `main` branch using Render's Docker runtime.
 
----
+## Development
 
-## Local development
+Requirements:
+
+- Node.js 24
+- pnpm 10.4.1
+- MySQL 8-compatible database
+- Redis for distributed rate limiting and production queues
 
 ```bash
+cp .env.example .env
 pnpm install
 pnpm dev
 ```
 
-The dev server reads from `.env.example` (copy it to `.env` and fill in
-real values for any provider you want to exercise locally).
+Do not place real credentials, connection strings or API keys in Markdown files. Store local values in `.env` and production values in Render environment variables.
 
 ## Verification
 
-Before pushing or opening a PR:
-
-```bash
-pnpm check
-pnpm build
-pnpm audit --audit-level high
-```
-
-Or as one command:
+Run the complete local gate before opening a pull request:
 
 ```bash
 pnpm verify
 ```
 
-These same three commands run in **Security CI**
-(`.github/workflows/security-ci.yml`) on every push and pull request to
-`main`, plus a tracked-file secret-pattern scan.
+This runs TypeScript checking, unit and integration tests, a production build and the dependency audit. GitHub Actions also runs the normal CI, Security CI and application parity gates for pull requests targeting `main`.
 
-## Production deployment
+## Deployment
 
-`main` is auto-deployed to Railway on every push. The deploy fails
-fast if any required environment variable is missing
-(`server/_core/env.ts`).
+The canonical production configuration is:
 
-For the full deployment procedure — required environment variables,
-Stripe webhook setup, custom-domain DNS, maintenance-route protocol —
-see **[`DEPLOYMENT.md`](./DEPLOYMENT.md)**.
+- `render.yaml` — Render service and environment-variable declaration
+- `Dockerfile` — reproducible build and runtime image
+- `start.sh` — migrations, application startup and gateway lifecycle
+- `run-migrations.mjs` — production migration runner
 
-For incident response, smoke tests, monitoring, rollback, and
-provider-outage playbooks, see **[`RUNBOOK.md`](./RUNBOOK.md)**.
+Health endpoints:
 
-For the security model and how to report a vulnerability, see
-**[`SECURITY.md`](./SECURITY.md)**.
+- `/api/healthz` — Render health check
+- `/api/health` — operational health response
 
----
+See [`DEPLOYMENT.md`](./DEPLOYMENT.md) for setup and release procedures and [`RUNBOOK.md`](./RUNBOOK.md) for verification, rollback and incident handling.
 
-## Project layout
+## Repository layout
 
+```text
+apps/swappys-mobile/  Swappys mobile client
+desktop/              Desktop packaging client
+client/               React and Vite web application
+server/_core/          Server entrypoint, auth, billing and shared runtime services
+server/                tRPC routers, workers and business logic
+shared/                Shared types and constants
+drizzle/               MySQL migrations
+scripts/               Verification, synchronization and deployment utilities
+docs/                  Current technical documentation and archived reports
+.github/workflows/      CI, security and parity automation
 ```
-server/_core/   Express + tRPC server entrypoint, env, context, auth
-server/         tRPC routers, business logic, Drizzle schema
-client/         React + Vite single-page application
-shared/         Types and constants shared between client and server
-scripts/        One-shot scripts (mobile-constants sync, etc.)
-.github/        CI workflows (CI, Security CI, desktop release, …)
-```
 
-## Tech stack
+## Core stack
 
-- **Frontend:** React + Vite
-- **Backend:** Express + tRPC
-- **Database:** MySQL via Drizzle ORM
+- **Frontend:** React 19, Vite and Tailwind CSS
+- **Backend:** Express 5 and tRPC
+- **Database:** MySQL 8 via Drizzle ORM
+- **Cache/queues:** Redis
 - **Storage:** S3-compatible object storage
-- **Auth:** JWT with Manus OAuth
-- **Billing:** Stripe (subscriptions + credit packs)
-- **AI:** Pollinations · OpenRouter · ElevenLabs · Vast.ai
+- **Billing:** Stripe subscriptions, credit packs, Connect and broadcast-minute purchases
+- **Deployment:** Render Docker service
+- **AI providers:** User BYOK and configured platform integrations
 
+## Security
+
+Report vulnerabilities using the process in [`SECURITY.md`](./SECURITY.md). Never commit secrets. Any credential accidentally committed must be revoked or rotated because deleting the file does not remove it from Git history.
