@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Bell, Check, CheckCheck, ExternalLink, ShieldCheck, Trash2, X } from "lucide-react";
+import { Bell, Check, CheckCheck, ExternalLink, LockKeyhole, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import "@/styles/mature-studio.css";
 
 const TYPE_ICONS: Record<string, string> = {
   welcome: "🎬",
@@ -59,12 +60,12 @@ export default function NotificationBell() {
     <div className="relative flex items-center gap-0.5" ref={panelRef}>
       <a
         href="/virelle-broadcast-render?adult=1"
-        className="flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-fuchsia-300 transition-colors hover:bg-fuchsia-500/10 hover:text-fuchsia-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400"
-        title="Verified 18+ Mature Studio"
-        aria-label="Open verified 18+ Mature Studio"
+        className="flex h-9 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.035] px-2.5 text-xs font-medium text-amber-200/90 transition-colors hover:border-amber-400/30 hover:bg-amber-400/[0.06] hover:text-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
+        title="Verified 18+ Studio"
+        aria-label="Open verified 18+ Studio"
       >
-        <ShieldCheck className="h-4 w-4" />
-        <span className="hidden xl:inline">18+ Studio</span>
+        <LockKeyhole className="h-3.5 w-3.5" />
+        <span className="hidden xl:inline">Verified 18+</span>
       </a>
 
       <button
