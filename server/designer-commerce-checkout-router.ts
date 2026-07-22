@@ -119,7 +119,7 @@ export const designerCommerceCheckoutRouter = router({
         ...(input.shippingAddressId ? { shippingAddressId: String(input.shippingAddressId) } : {}),
       };
 
-      const paymentIntentData: Stripe.Checkout.SessionCreateParams.PaymentIntentData = {
+      const paymentIntentData: any = {
         metadata,
         ...(!isLamalo
           ? {
@@ -178,7 +178,7 @@ export const designerCommerceCheckoutRouter = router({
       await createPhysicalOrderFromSession(session, fulfilled.lease.id, ctx.user.id);
       return {
         lease: fulfilled.lease,
-        copies: fulfilled.copies,
+        copies: fulfilled.inventoryCopies,
         purchaseMode: session.metadata?.purchaseMode ?? "virtual",
       };
     }),

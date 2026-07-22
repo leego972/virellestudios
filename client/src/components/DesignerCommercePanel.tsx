@@ -85,7 +85,7 @@ export default function DesignerCommercePanel() {
 
   const profile = profileQ.data as any;
   const [profileDraft, setProfileDraft] = useState<Record<string, string> | null>(null);
-  const profileForm = profileDraft ?? {
+  const profileForm: Record<string, string> = profileDraft ?? {
     brandName: profile?.brandName ?? "",
     username: profile?.username ?? "",
     abn: profile?.abn ?? "",
