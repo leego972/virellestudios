@@ -221,6 +221,8 @@ async function visualReview(
       "Judge only whether the generated frames comply with the scene contract and exact reference images below.",
       "Be strict about character identity, which named character wears which exact garment, garment colour/material/cut/fit/accessories, number of characters, props, location, blocking, action progression, camera requirements, continuity, anatomy, duplicate limbs/faces, warped objects, text, watermarks and unexplained visual resets.",
       "A garment appearing on the wrong character is an automatic wardrobe failure. Any unexplained clothing change between generated frames or from the continuity frame is an automatic continuity failure.",
+      "Costume coverage is literal occlusion: gloves must cover assigned hands, hats/hoods/helmets must cover enclosed hair, garments/armour must cover the assigned body regions, and masks must cover the specified face area. Covered anatomy showing through is an automatic wardrobe failure.",
+      "When the contract requires FULL FACE COVERAGE or concealed character identity, any visible original actor face, facial skin, hairline, eyes or mouth is an automatic identity and wardrobe failure.",
       `Clip position: ${(input.clipIndex ?? 0) + 1}/${input.totalClips ?? 1}.`,
       `Scene contract ${input.canonicalSpec.fingerprint}:`,
       input.canonicalSpec.lockedRequirements.join("\n"),

@@ -1159,6 +1159,7 @@ export async function runAutoMigration(): Promise<void> {
           imageUrls JSON NULL,
           primaryImageUrl TEXT NULL,
           referencePrompt TEXT NULL,
+          faceCoverage VARCHAR(16) NOT NULL DEFAULT 'none',
           brandPlacementAllowed BOOLEAN NOT NULL DEFAULT FALSE,
           shopfrontPlacementAllowed BOOLEAN NOT NULL DEFAULT TRUE,
           characterWardrobeAllowed BOOLEAN NOT NULL DEFAULT TRUE,
@@ -1188,6 +1189,9 @@ export async function runAutoMigration(): Promise<void> {
           assignmentType VARCHAR(64) NOT NULL,
           characterId INT NULL,
           sceneId INT NULL,
+          fromSceneOrder INT NULL,
+          toSceneOrder INT NULL,
+          identityMode VARCHAR(32) NOT NULL DEFAULT 'auto',
           usageMode VARCHAR(64) NOT NULL DEFAULT 'reference',
           placementNotes TEXT NULL,
           promptWeight INT NOT NULL DEFAULT 50,
@@ -1418,6 +1422,11 @@ export async function runAutoMigration(): Promise<void> {
 
   // âââ Columns that may be missing from existing tables âââ
   const missingColumns: ColumnCheck[] = [
+    // Character/costume continuity contract
+    { table: "wardrobeItems", column: "faceCoverage", definition: "VARCHAR(16) NOT NULL DEFAULT 'none'" },
+    { table: "wardrobeAssignments", column: "fromSceneOrder", definition: "INT NULL" },
+    { table: "wardrobeAssignments", column: "toSceneOrder", definition: "INT NULL" },
+    { table: "wardrobeAssignments", column: "identityMode", definition: "VARCHAR(32) NOT NULL DEFAULT 'auto'" },
     // Projects table â EPK generator needs slug + releaseDate
       { table: "projects", column: "slug", definition: "VARCHAR(255) NULL" },
       { table: "projects", column: "releaseDate", definition: "DATE NULL" },

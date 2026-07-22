@@ -29,6 +29,9 @@ export interface WardrobeCharacterBinding {
   promptAnchor?: string;
   characterReferenceImageUrl?: string;
   wardrobeReferenceImageUrl?: string;
+  faceCoverage: "none" | "partial" | "full";
+  identityMode: "auto" | "use_character_face" | "conceal_character_face";
+  suppressCharacterFaceReference: boolean;
   explicitChange: boolean;
   carriedForward: boolean;
 }
@@ -278,7 +281,12 @@ export async function loadSceneGenerationContext(
       }
     }
 
-    const identityImageUrl = characterImage(character);
+    const faceCoverage = (selectedItem?.faceCoverage === "full" || selectedItem?.faceCoverage === "partial")
+      ? selectedItem.faceCoverage
+      : "none";
+    const identityMode = (selectedRow?.assignment?.identityMode || "auto") as "auto" | "use_character_face" | "conceal_character_face";
+    const suppressCharacterFaceReference = faceCoverage === "full" || identityMode === "conceal_character_face";
+    const identityImageUrl = suppressCharacterFaceReference ? undefined : characterImage(character);
     const explicitChange = inlineOutfitChange || Boolean(selectedRow && (selectedRow.assignment.fromSceneOrder ?? 0) === sceneOrder);
     wardrobeBindings.push({
       characterId: character.id,
@@ -288,16 +296,22 @@ export async function loadSceneGenerationContext(
       promptAnchor: wardrobeAnchor,
       characterReferenceImageUrl: identityImageUrl,
       wardrobeReferenceImageUrl,
+      faceCoverage,
+      identityMode,
+      suppressCharacterFaceReference,
       explicitChange,
       carriedForward: selected.carriedForward,
     });
 
     const dna = buildCharacterDNA(character, wardrobeAnchor ? { wardrobeDescription: wardrobeAnchor } : undefined);
-    characterDescriptions.push(dna.promptAnchor);
+    const visualAnchor = suppressCharacterFaceReference
+      ? `[CHARACTER ${character.name}: FULL-COSTUME IDENTITY HARD-LOCK — the assigned costume is the visible identity. The original actor face and face portrait are intentionally suppressed. Render the exact full mask/cowl/helmet from the costume reference with zero exposed facial skin, hairline, eyes, mouth or recognisable uncovered face. Preserve body build and movement continuity: ${dna.attributes.age}, ${dna.attributes.build}${dna.attributes.height ? `, ${dna.attributes.height}` : ""}. ${wardrobeAnchor || "Maintain the assigned full-face costume exactly."}]`
+      : dna.promptAnchor;
+    characterDescriptions.push(visualAnchor);
     canonicalCharacters.push({
       id: character.id,
       name: character.name,
-      visualAnchor: dna.promptAnchor,
+      visualAnchor,
       wardrobe: character.clothing || undefined,
       wardrobeAnchor,
       blocking: (scene as any).characterBlocking || undefined,
