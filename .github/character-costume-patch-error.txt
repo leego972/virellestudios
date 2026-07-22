@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/runner/work/virellestudios/virellestudios/.github/scripts/apply_character_costume_continuity.py", line 188, in <module>
+    replace_once(
+  File "/home/runner/work/virellestudios/virellestudios/.github/scripts/apply_character_costume_continuity.py", line 21, in replace_once
+    raise RuntimeError(f"{path}: expected exactly one match, found {count}: {old[:120]!r}")
+RuntimeError: client/src/pages/DesignerWardrobePage.tsx: expected exactly one match, found 2: '        placementNotes: attachNotes.trim() || undefined,\n        promptWeight: 60,\n      });'
