@@ -12,7 +12,7 @@ concurrency:
 jobs:
   security-lockfile:
     name: Generate Security Lockfile
-    if: github.event_name == 'pull_request' && github.head_ref == 'security/sharp-0.35.3'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'security/sharp-0.35.3')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,18 +24,32 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Generate patched lockfile
-        run: pnpm install --lockfile-only
-      - name: Commit generated lockfile
+      - name: Apply Sharp 0.35 compatibility and lockfile
         run: |
-          if git diff --quiet -- pnpm-lock.yaml; then
-            echo "Lockfile already current"
+          python3 - <<'PY'
+          from pathlib import Path
+          image = Path('server/_core/imageGeneration.ts')
+          text = image.read_text(encoding='utf-8')
+          text = text.replace('metadata.format === "jpeg" || metadata.format === "jpg"', 'metadata.format === "jpeg"')
+          image.write_text(text, encoding='utf-8')
+
+          swappys = Path('server/_core/swappysValidation.ts')
+          text = swappys.read_text(encoding='utf-8')
+          text = text.replace('import sharp from "sharp";', 'import sharp, { type Metadata } from "sharp";')
+          text = text.replace('let metadata: sharp.Metadata;', 'let metadata: Metadata;')
+          swappys.write_text(text, encoding='utf-8')
+          PY
+          pnpm install --lockfile-only
+      - name: Commit security compatibility files
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml server/_core/imageGeneration.ts server/_core/swappysValidation.ts; then
+            echo "Security files already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "Regenerate lockfile for sharp 0.35.3"
+          git add pnpm-lock.yaml server/_core/imageGeneration.ts server/_core/swappysValidation.ts
+          git commit -m "Adapt image validation to sharp 0.35"
           git push origin HEAD:${{ github.head_ref }}
 
   typecheck:
