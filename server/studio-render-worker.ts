@@ -10,6 +10,10 @@ import { decryptApiKey } from "./_core/securityEngine";
 import { generateVideoStrict } from "./_core/byokVideoEngine";
 import type { VideoProvider } from "./_core/byokVideoEngine";
 import { startComplianceEvidenceWorker } from "./compliance-evidence-worker";
+import { assertComplianceArchiveConfiguration } from "./_core/complianceEvidenceGuards";
+import { screenContentForReview } from "./_core/complianceEvidence";
+import { getMatureAccessStatus } from "./_core/matureAccess";
+import { assertSwappysCreativePolicy } from "./_core/swappysPolicy";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -24,6 +28,12 @@ const KEY_FIELD_MAP: Record<string, string> = {
   veo3: "googleAiKey",
 };
 
+function safeJson(value: unknown): Record<string, any> {
+  if (!value) return {};
+  if (typeof value === "object") return value as Record<string, any>;
+  try { return JSON.parse(String(value)); } catch { return {}; }
+}
+
 async function resolveByokKey(userId: number, provider: string): Promise<string | null> {
   const keys: any = await db.getUserApiKeys(userId);
   if (!keys) return null;
@@ -34,11 +44,75 @@ async function resolveByokKey(userId: number, provider: string): Promise<string 
   try { return decryptApiKey(encrypted); } catch { return null; }
 }
 
+async function loadProcessingUser(dbConn: any, userId: number): Promise<any> {
+  const rows: any = await dbConn.execute(sql`
+    SELECT id, role, subscriptionTier, subscriptionStatus, isAdultVerified,
+           isFrozen, frozenReason
+    FROM users WHERE id=${userId} LIMIT 1
+  `);
+  return (Array.isArray(rows?.[0]) ? rows[0] : rows)?.[0] || null;
+}
+
+async function revalidateJob(dbConn: any, job: any): Promise<void> {
+  assertComplianceArchiveConfiguration();
+  const user = await loadProcessingUser(dbConn, Number(job.userId));
+  if (!user) throw new Error("Render account no longer exists.");
+  if (user.isFrozen) {
+    throw new Error(user.frozenReason || "This account has been deactivated.");
+  }
+
+  const metadata = safeJson(job.metadata);
+  const contentMode = job.contentMode === "open_adult"
+    ? "open_adult"
+    : "standard";
+  const workspace = contentMode === "open_adult" ? "adult" : "standard";
+  const matureStatus = contentMode === "open_adult"
+    ? await getMatureAccessStatus(dbConn, user)
+    : null;
+
+  await screenContentForReview({
+    userId: Number(job.userId),
+    workspace,
+    sourceType: "studio_render_worker",
+    sourceId: Number(job.id),
+    text: [job.targetPresentation, job.directorNotes]
+      .filter(Boolean)
+      .join("\n"),
+    targetAge: job.targetAge == null ? null : Number(job.targetAge),
+    allSubjectsAdultsConfirmed: Boolean(job.allSubjectsAdultsConfirmed),
+    consentConfirmed: Boolean(job.consentConfirmed),
+    aiGeneratedCharactersOnly: Boolean(
+      job.aiGeneratedCharactersOnly || metadata.aiGeneratedCharactersOnly,
+    ),
+    publicFigureLikeness: Boolean(
+      job.publicFigureLikeness || metadata.publicFigureLikeness,
+    ),
+  });
+
+  assertSwappysCreativePolicy({
+    user: {
+      ...user,
+      isAdultVerified: matureStatus?.accessGranted
+        ?? Boolean(user.isAdultVerified),
+    },
+    contentMode,
+    consentConfirmed: Boolean(job.consentConfirmed),
+    allSubjectsAdultsConfirmed: Boolean(job.allSubjectsAdultsConfirmed),
+    transformGoal: job.transformGoal,
+    targetAge: job.targetAge == null ? null : Number(job.targetAge),
+    targetPresentation: job.targetPresentation,
+    directorNotes: job.directorNotes,
+    broadcast: false,
+  });
+}
+
 async function processStudioRenderJob(dbConn: any, job: any): Promise<void> {
   const jobId = Number(job.id);
   logger.info(`[StudioRenderWorker] Processing job ${jobId} — provider: ${job.provider}`);
 
   try {
+    await revalidateJob(dbConn, job);
+
     const apiKey = await resolveByokKey(Number(job.userId), String(job.provider));
     if (!apiKey) {
       await dbConn.execute(sql`
@@ -92,7 +166,7 @@ async function processStudioRenderJob(dbConn: any, job: any): Promise<void> {
     `);
     logger.info(`[StudioRenderWorker] Job ${jobId} completed: ${result.videoUrl}`);
   } catch (error: any) {
-    const message = String(error?.message ?? error).slice(0, 500);
+    const message = String(error?.message ?? error).slice(0, 1000);
     await dbConn.execute(sql`
       UPDATE virelle_video_transform_jobs
       SET status='failed', errorMessage=${message}, updatedAt=NOW()
