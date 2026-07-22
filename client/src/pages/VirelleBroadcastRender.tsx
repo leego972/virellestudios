@@ -1,13 +1,20 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { trpc } from "@/lib/trpc";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
+import ComplianceAdminVault from "@/components/ComplianceAdminVault";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -15,6 +22,7 @@ import {
   CreditCard,
   Download,
   ExternalLink,
+  Fingerprint,
   KeyRound,
   Loader2,
   LockKeyhole,
@@ -22,7 +30,6 @@ import {
   Radio,
   RadioTower,
   RefreshCcw,
-  ShieldAlert,
   ShieldCheck,
   Upload,
   UserCheck,
@@ -40,119 +47,199 @@ type TransformGoal =
   | "adult_to_child"
   | "child_to_adult"
   | "custom_prompt";
-type Provider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "seedance" | "veo3";
-type ContentMode = "standard" | "open_adult";
-type BroadcastDestination = "rtmp" | "rtmp_onlyfans" | "rtmp_fansly" | "rtmp_chaturbate" | "webrtc" | "obs" | "custom";
-type BroadcastChannel = { destination: BroadcastDestination; ingestUrl: string; streamKey: string };
 
-type MatureProfileForm = {
-  fullName: string;
-  email: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  stateRegion: string;
-  postcode: string;
-  country: string;
-  dateOfBirth: string;
-  responsibilityAccepted: boolean;
-  consentPolicyAccepted: boolean;
+type Provider =
+  | "runway"
+  | "openai"
+  | "replicate"
+  | "fal"
+  | "luma"
+  | "huggingface"
+  | "seedance"
+  | "veo3";
+
+type BroadcastDestination =
+  | "rtmp"
+  | "rtmp_onlyfans"
+  | "rtmp_fansly"
+  | "rtmp_chaturbate"
+  | "webrtc"
+  | "obs"
+  | "custom";
+
+type BroadcastChannel = {
+  destination: BroadcastDestination;
+  ingestUrl: string;
+  streamKey: string;
 };
 
-const PROVIDERS: Provider[] = ["runway", "openai", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"];
-const STANDARD_DESTINATIONS: BroadcastDestination[] = ["rtmp", "webrtc", "obs", "custom"];
-const MATURE_DESTINATIONS: BroadcastDestination[] = ["rtmp", "rtmp_onlyfans", "rtmp_fansly", "rtmp_chaturbate", "webrtc", "obs", "custom"];
-const API_KEY_SETTINGS_URL = "/settings?tab=api-keys&source=virelle-broadcast-render";
+type Workspace = "standard" | "adult";
 
-function parseUrls(value: string) {
-  return value.split(/\n|,/).map((item) => item.trim()).filter(Boolean);
+const PROVIDERS: Provider[] = [
+  "runway",
+  "openai",
+  "replicate",
+  "fal",
+  "luma",
+  "huggingface",
+  "seedance",
+  "veo3",
+];
+
+const STANDARD_DESTINATIONS: BroadcastDestination[] = [
+  "rtmp",
+  "webrtc",
+  "obs",
+  "custom",
+];
+
+const ADULT_DESTINATIONS: BroadcastDestination[] = [
+  "rtmp",
+  "rtmp_onlyfans",
+  "rtmp_fansly",
+  "rtmp_chaturbate",
+  "webrtc",
+  "obs",
+  "custom",
+];
+
+const API_KEY_SETTINGS_URL =
+  "/settings?tab=api-keys&source=virelle-broadcast-render";
+
+function formatDate(value: unknown): string {
+  if (!value) return "—";
+  const date = new Date(String(value));
+  return Number.isNaN(date.getTime())
+    ? String(value)
+    : date.toLocaleString("en-AU");
 }
 
-function copyText(value: string, label = "Copied") {
-  navigator.clipboard?.writeText(value).then(() => toast.success(label)).catch(() => toast.error("Could not copy"));
+function parseUrls(value: string): string[] {
+  return value
+    .split(/\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
-function statusVariant(status: string) {
-  if (status === "failed" || status === "cancelled") return "destructive" as const;
-  if (status === "completed" || status === "broadcast_ready") return "default" as const;
+function copyText(value: string, message = "Copied") {
+  navigator.clipboard?.writeText(value)
+    .then(() => toast.success(message))
+    .catch(() => toast.error("Could not copy to clipboard."));
+}
+
+function jobBadgeVariant(status: string) {
+  if (["failed", "cancelled"].includes(status)) return "destructive" as const;
+  if (["completed", "broadcast_ready"].includes(status)) return "default" as const;
   return "outline" as const;
 }
 
-function jobInstructions(job: any) {
-  if (job.mode === "broadcast") {
-    if (job.status === "waiting_for_provider") return "Outputs are securely stored and waiting for the Virelle broadcast bridge or BYOK provider worker.";
-    if (job.status === "processing") return "The configured bridge accepted this session and is processing the Swappys avatar feed.";
-    if (job.status === "broadcast_ready") return "Output channels are configured and encrypted; the worker will submit them to the bridge.";
-    if (job.status === "completed") return "Broadcast session completed.";
-  }
-  if (job.status === "completed") return "Studio render completed. Preview, download, or copy the output URL.";
-  if (job.status === "failed") return "The job failed. Review the error and provider configuration.";
-  return "The job is queued or waiting for its BYOK provider worker.";
-}
-
-function destinationDefaultUrl(destination: BroadcastDestination) {
-  if (destination === "rtmp_onlyfans") return "rtmps://live.onlyfans.com/app/";
-  if (destination === "rtmp_fansly") return "rtmps://live.fansly.com/live/";
-  if (destination === "rtmp_chaturbate") return "rtmp://broadcast.chaturbate.com/live/";
-  return "";
-}
-
-function destinationLabel(destination: BroadcastDestination) {
+function destinationLabel(destination: BroadcastDestination): string {
   const labels: Record<BroadcastDestination, string> = {
-    rtmp: "RTMP custom",
-    rtmp_onlyfans: "OnlyFans",
-    rtmp_fansly: "Fansly",
-    rtmp_chaturbate: "Chaturbate",
+    rtmp: "Custom RTMP",
+    rtmp_onlyfans: "OnlyFans Live",
+    rtmp_fansly: "Fansly Live",
+    rtmp_chaturbate: "Chaturbate Live",
     webrtc: "WebRTC",
     obs: "OBS bridge",
-    custom: "Custom engine",
+    custom: "Custom broadcast engine",
   };
   return labels[destination];
 }
 
-function verificationItem(ok: boolean, label: string) {
+function destinationDefaultUrl(destination: BroadcastDestination): string {
+  if (destination === "rtmp_onlyfans") return "rtmps://live.onlyfans.com/app/";
+  if (destination === "rtmp_fansly") return "rtmps://live.fansly.com/live/";
+  if (destination === "rtmp_chaturbate") {
+    return "rtmp://broadcast.chaturbate.com/live/";
+  }
+  return "";
+}
+
+function Attestation({
+  checked,
+  onChange,
+  children,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  children: ReactNode;
+}) {
   return (
-    <div className="flex items-center gap-2 text-xs">
-      {ok ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <XCircle className="h-4 w-4 text-muted-foreground" />}
-      <span className={ok ? "text-foreground" : "text-muted-foreground"}>{label}</span>
+    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-white/10 bg-black/10 p-3 text-sm leading-relaxed text-white/65 transition-colors hover:border-white/15">
+      <Checkbox
+        checked={checked}
+        onCheckedChange={(value) => onChange(Boolean(value))}
+        className="mt-0.5"
+      />
+      <span>{children}</span>
+    </label>
+  );
+}
+
+function VerificationItem({
+  complete,
+  label,
+}: {
+  complete: boolean;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/15 px-3 py-2 text-sm">
+      {complete
+        ? <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+        : <AlertTriangle className="h-4 w-4 text-amber-300" />}
+      <span className={complete ? "text-white/75" : "text-white/55"}>
+        {label}
+      </span>
     </div>
   );
 }
 
-function MatureAccessPanel({ user, statusQuery }: { user: any; statusQuery: any }) {
+function MatureAccessPanel({
+  user,
+  statusQuery,
+}: {
+  user: any;
+  statusQuery: any;
+}) {
   const status = statusQuery.data;
-  const saveProfile = (trpc as any).virelleBroadcastRender.saveMatureAccessProfile.useMutation();
-  const sendPhoneCode = (trpc as any).virelleBroadcastRender.sendMaturePhoneCode.useMutation();
-  const verifyPhoneCode = (trpc as any).virelleBroadcastRender.verifyMaturePhoneCode.useMutation();
-  const createIdentitySession = (trpc as any).virelleBroadcastRender.createMatureIdentitySession.useMutation();
-  const refreshIdentity = (trpc as any).virelleBroadcastRender.refreshMatureIdentityStatus.useMutation();
-  const createCardVerification = (trpc as any).virelleBroadcastRender.createMatureCardVerification.useMutation();
-  const verifyCardSession = (trpc as any).virelleBroadcastRender.verifyMatureCardSession.useMutation();
-  const [phoneCode, setPhoneCode] = useState("");
-  const cardReturnHandled = useRef(false);
-  const identityReturnHandled = useRef(false);
-  const [form, setForm] = useState<MatureProfileForm>({
-    fullName: "",
-    email: user?.email || "",
-    phone: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    stateRegion: "",
-    postcode: "",
-    country: "AU",
-    dateOfBirth: "",
-    responsibilityAccepted: false,
-    consentPolicyAccepted: false,
+  const profile = status?.profile;
+  const [form, setForm] = useState({
+    fullName: profile?.fullName || user?.name || "",
+    email: profile?.email || user?.email || "",
+    phone: profile?.phone || "",
+    addressLine1: profile?.addressLine1 || "",
+    addressLine2: profile?.addressLine2 || "",
+    city: profile?.city || "",
+    stateRegion: profile?.stateRegion || "",
+    postcode: profile?.postcode || "",
+    country: profile?.country || "Australia",
+    dateOfBirth: profile?.dateOfBirth || "",
   });
+  const [adultAttestationAccepted, setAdultAttestationAccepted] = useState(
+    Boolean(status?.adultAttestationAccepted),
+  );
+  const [responsibilityAccepted, setResponsibilityAccepted] = useState(
+    Boolean(status?.responsibilityAccepted),
+  );
+  const [consentPolicyAccepted, setConsentPolicyAccepted] = useState(
+    Boolean(status?.consentPolicyAccepted),
+  );
+  const [archiveRetentionAccepted, setArchiveRetentionAccepted] = useState(
+    Boolean(status?.archiveRetentionAccepted),
+  );
+  const [phoneCode, setPhoneCode] = useState("");
+
+  const saveProfile = (trpc as any).virelleBroadcastRender.saveMatureAccessProfile.useMutation();
+  const sendCode = (trpc as any).virelleBroadcastRender.sendMaturePhoneCode.useMutation();
+  const verifyCode = (trpc as any).virelleBroadcastRender.verifyMaturePhoneCode.useMutation();
+  const createIdentity = (trpc as any).virelleBroadcastRender.createMatureIdentitySession.useMutation();
+  const refreshIdentity = (trpc as any).virelleBroadcastRender.refreshMatureIdentityStatus.useMutation();
+  const createCard = (trpc as any).virelleBroadcastRender.createMatureCardVerification.useMutation();
+  const verifyCard = (trpc as any).virelleBroadcastRender.verifyMatureCardSession.useMutation();
 
   useEffect(() => {
-    if (!status?.profile) {
-      setForm((previous) => ({ ...previous, email: user?.email || previous.email }));
-      return;
-    }
-    const profile = status.profile;
+    if (!profile) return;
     setForm({
       fullName: profile.fullName || "",
       email: profile.email || user?.email || "",
@@ -162,207 +249,364 @@ function MatureAccessPanel({ user, statusQuery }: { user: any; statusQuery: any 
       city: profile.city || "",
       stateRegion: profile.stateRegion || "",
       postcode: profile.postcode || "",
-      country: profile.country || "AU",
+      country: profile.country || "Australia",
       dateOfBirth: profile.dateOfBirth || "",
-      responsibilityAccepted: Boolean(status.responsibilityAccepted),
-      consentPolicyAccepted: Boolean(status.consentPolicyAccepted),
     });
-  }, [status?.profile, status?.responsibilityAccepted, status?.consentPolicyAccepted, user?.email]);
+  }, [profile, user?.email]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("adult_card_session");
-    if (!sessionId || cardReturnHandled.current) return;
-    cardReturnHandled.current = true;
-    verifyCardSession.mutateAsync({ sessionId })
+    const cardSession = params.get("adult_card_session");
+    if (!cardSession || verifyCard.isPending) return;
+    verifyCard.mutateAsync({ sessionId: cardSession })
       .then(() => {
         toast.success("Cardholder name verified.");
-        statusQuery.refetch();
         params.delete("adult_card_session");
-        window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
-      })
-      .catch((error: any) => toast.error(error?.message || "Card verification failed."));
-  }, [statusQuery, verifyCardSession]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("adult") !== "1" || params.get("adult_card_session") || identityReturnHandled.current) return;
-    if (!status?.profileComplete || status?.identityVerified) return;
-    identityReturnHandled.current = true;
-    refreshIdentity.mutateAsync()
-      .then((result: any) => {
-        if (result?.verificationStatus === "verified") toast.success("Government identity verified.");
+        params.delete("adult_card_cancelled");
+        window.history.replaceState(
+          {},
+          "",
+          `${window.location.pathname}?${params.toString()}`,
+        );
         statusQuery.refetch();
       })
-      .catch(() => undefined);
-  }, [refreshIdentity, status?.identityVerified, status?.profileComplete, statusQuery]);
+      .catch((error: any) => {
+        toast.error(error?.message || "Cardholder verification failed.");
+      });
+  // Run only when a returned Stripe session appears in the URL.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const patch = <K extends keyof MatureProfileForm>(key: K, value: MatureProfileForm[K]) => {
+  const updateForm = (key: keyof typeof form, value: string) => {
     setForm((previous) => ({ ...previous, [key]: value }));
   };
 
-  const save = async () => {
+  const submitProfile = async () => {
     try {
-      await saveProfile.mutateAsync({ ...form, addressLine2: form.addressLine2 || null });
-      toast.success("Legal profile saved. Verification resets whenever identity details change.");
-      await statusQuery.refetch();
+      await saveProfile.mutateAsync({
+        ...form,
+        addressLine2: form.addressLine2 || null,
+        adultAttestationAccepted,
+        responsibilityAccepted,
+        consentPolicyAccepted,
+        archiveRetentionAccepted,
+      });
+      toast.success("Individual verification profile saved.");
+      statusQuery.refetch();
     } catch (error: any) {
-      toast.error(error?.message || "Could not save mature-access profile.");
+      toast.error(error?.message || "Could not save the verification profile.");
     }
   };
 
-  const sendCode = async () => {
+  const sendPhoneCode = async () => {
     try {
-      await sendPhoneCode.mutateAsync();
-      toast.success("Verification code sent to the registered phone.");
+      await sendCode.mutateAsync();
+      toast.success("Verification code sent.");
     } catch (error: any) {
-      toast.error(error?.message || "Could not send phone verification code.");
+      toast.error(error?.message || "Could not send the phone code.");
     }
   };
 
-  const verifyCode = async () => {
+  const verifyPhoneCode = async () => {
     try {
-      await verifyPhoneCode.mutateAsync({ code: phoneCode });
+      await verifyCode.mutateAsync({ code: phoneCode });
       setPhoneCode("");
-      toast.success("Phone two-factor verification completed.");
-      await statusQuery.refetch();
+      toast.success("Phone number verified.");
+      statusQuery.refetch();
     } catch (error: any) {
       toast.error(error?.message || "Phone verification failed.");
     }
   };
 
-  const startIdentity = async () => {
+  const beginIdentityCheck = async () => {
     try {
-      const result = await createIdentitySession.mutateAsync({ returnUrl: window.location.href });
-      window.location.href = result.url;
+      const result = await createIdentity.mutateAsync({
+        returnUrl: window.location.href,
+      });
+      window.location.assign(result.url);
     } catch (error: any) {
       toast.error(error?.message || "Could not start identity verification.");
     }
   };
 
-  const startCard = async () => {
+  const refreshIdentityCheck = async () => {
     try {
-      const result = await createCardVerification.mutateAsync({ returnUrl: window.location.href });
-      window.location.href = result.url;
+      const result = await refreshIdentity.mutateAsync();
+      if (result.verificationStatus === "verified") {
+        toast.success("Government identity verified.");
+      } else {
+        toast.info(`Identity status: ${result.verificationStatus}`);
+      }
+      statusQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Could not refresh identity verification.");
+    }
+  };
+
+  const beginCardCheck = async () => {
+    try {
+      const result = await createCard.mutateAsync({
+        returnUrl: window.location.href,
+      });
+      window.location.assign(result.url);
     } catch (error: any) {
       toast.error(error?.message || "Could not start cardholder verification.");
     }
   };
 
+  const declarationsAccepted = adultAttestationAccepted
+    && responsibilityAccepted
+    && consentPolicyAccepted
+    && archiveRetentionAccepted;
+
+  if (statusQuery.isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-300" />
+      </div>
+    );
+  }
+
   return (
-    <Card id="mature-access" className="border-fuchsia-500/30 bg-fuchsia-500/[0.04]">
-      <CardHeader>
-        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <LockKeyhole className="h-5 w-5 text-fuchsia-400" />
-              Verified 18+ Mature Studio
-            </CardTitle>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              Separate paid access for mature, provocative and adult-industry styling, Swappys transformation and adult-platform broadcast. Pornographic acts, genital-focused output, minors, youth-coded subjects and age regression below 18 remain prohibited.
+    <div className="space-y-5">
+      <Card className="border-white/10 bg-white/[0.025] text-white shadow-xl shadow-black/15">
+        <CardHeader>
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-amber-300/70">
+                Individual verification
+              </div>
+              <CardTitle className="text-xl">Adult Studio Access</CardTitle>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/55">
+                This workspace is attached to the individual operating the account, not a company. Access requires a paid membership, 18+ declaration, phone verification, government ID, matching cardholder name and acceptance of the consent and retention terms.
+              </p>
+            </div>
+            <Badge variant={status?.accessGranted ? "default" : "outline"}>
+              {status?.accessGranted ? "Verified" : "Verification required"}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+            <VerificationItem complete={Boolean(status?.paidMembership)} label="Active paid membership" />
+            <VerificationItem complete={Boolean(status?.profileComplete)} label="Individual legal profile" />
+            <VerificationItem complete={Boolean(status?.adultAgeConfirmed && status?.adultAttestationAccepted)} label="18+ age and declaration" />
+            <VerificationItem complete={Boolean(status?.phoneVerified)} label="Phone two-factor verification" />
+            <VerificationItem complete={Boolean(status?.identityVerified)} label="Government ID and selfie" />
+            <VerificationItem complete={Boolean(status?.cardNameMatched)} label="Matching cardholder name" />
+            <VerificationItem complete={Boolean(status?.responsibilityAccepted)} label="Account responsibility" />
+            <VerificationItem complete={Boolean(status?.consentPolicyAccepted)} label="Likeness and consent policy" />
+            <VerificationItem complete={Boolean(status?.archiveRetentionAccepted)} label="Private retention acknowledgement" />
+          </div>
+          {status?.missing?.length > 0 && (
+            <p className="mt-4 rounded-lg border border-amber-300/15 bg-amber-300/[0.035] p-3 text-sm text-white/60">
+              Remaining: {status.missing.join(", ")}.
             </p>
-          </div>
-          <Badge variant={status?.accessGranted ? "default" : "outline"} className="w-fit">
-            {status?.accessGranted ? "Access verified" : "Verification required"}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid gap-3 rounded-xl border border-border/60 bg-background/40 p-4 sm:grid-cols-2 lg:grid-cols-4">
-          {verificationItem(Boolean(status?.paidMembership), "Active paid membership")}
-          {verificationItem(Boolean(status?.adultAgeConfirmed), "18+ legal date of birth")}
-          {verificationItem(Boolean(status?.phoneVerified), "Phone 2FA verified")}
-          {verificationItem(Boolean(status?.identityVerified), "Government ID verified")}
-          {verificationItem(Boolean(status?.cardNameMatched), "Cardholder name matched")}
-          {verificationItem(Boolean(status?.responsibilityAccepted), "Account responsibility accepted")}
-          {verificationItem(Boolean(status?.consentPolicyAccepted), "Consent policy accepted")}
-          {verificationItem(Boolean(status?.accessGranted), "Mature Studio unlocked")}
-        </div>
+          )}
+        </CardContent>
+      </Card>
 
-        {!status?.paidMembership && (
-          <div className="flex flex-col gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm md:flex-row md:items-center md:justify-between">
-            <span>An active paid Virelle membership is required. Free and beta access do not unlock the mature section.</span>
-            <Button variant="outline" onClick={() => { window.location.href = "/pricing"; }}>View memberships</Button>
-          </div>
-        )}
+      <div className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
+        <Card className="border-white/10 bg-white/[0.025] text-white">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <UserCheck className="h-5 w-5 text-amber-300/80" />
+              Personal legal profile
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Full legal name</Label>
+                <Input value={form.fullName} onChange={(event) => updateForm("fullName", event.target.value)} />
+              </div>
+              <div>
+                <Label>Account email</Label>
+                <Input value={form.email} readOnly className="opacity-70" />
+              </div>
+              <div>
+                <Label>Personal phone in international format</Label>
+                <Input placeholder="+61412345678" value={form.phone} onChange={(event) => updateForm("phone", event.target.value)} />
+              </div>
+              <div>
+                <Label>Date of birth</Label>
+                <Input type="date" value={form.dateOfBirth} onChange={(event) => updateForm("dateOfBirth", event.target.value)} />
+              </div>
+              <div className="md:col-span-2">
+                <Label>Residential address</Label>
+                <Input value={form.addressLine1} onChange={(event) => updateForm("addressLine1", event.target.value)} />
+              </div>
+              <div className="md:col-span-2">
+                <Label>Address line 2</Label>
+                <Input value={form.addressLine2} onChange={(event) => updateForm("addressLine2", event.target.value)} />
+              </div>
+              <div>
+                <Label>City</Label>
+                <Input value={form.city} onChange={(event) => updateForm("city", event.target.value)} />
+              </div>
+              <div>
+                <Label>State / region</Label>
+                <Input value={form.stateRegion} onChange={(event) => updateForm("stateRegion", event.target.value)} />
+              </div>
+              <div>
+                <Label>Postcode</Label>
+                <Input value={form.postcode} onChange={(event) => updateForm("postcode", event.target.value)} />
+              </div>
+              <div>
+                <Label>Country</Label>
+                <Input value={form.country} onChange={(event) => updateForm("country", event.target.value)} />
+              </div>
+            </div>
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="space-y-3 rounded-xl border p-4">
-            <div className="flex items-center gap-2 font-medium"><UserCheck className="h-4 w-4 text-fuchsia-400" />1. Legal identity and address</div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="sm:col-span-2"><Label>Full legal name</Label><Input value={form.fullName} onChange={(event) => patch("fullName", event.target.value)} autoComplete="name" /></div>
-              <div className="sm:col-span-2"><Label>Account email</Label><Input value={form.email} disabled autoComplete="email" /></div>
-              <div><Label>Phone in international format</Label><Input value={form.phone} onChange={(event) => patch("phone", event.target.value)} placeholder="+61412345678" autoComplete="tel" /></div>
-              <div><Label>Date of birth</Label><Input type="date" value={form.dateOfBirth} onChange={(event) => patch("dateOfBirth", event.target.value)} /></div>
-              <div className="sm:col-span-2"><Label>Street address</Label><Input value={form.addressLine1} onChange={(event) => patch("addressLine1", event.target.value)} autoComplete="address-line1" /></div>
-              <div className="sm:col-span-2"><Label>Address line 2</Label><Input value={form.addressLine2} onChange={(event) => patch("addressLine2", event.target.value)} autoComplete="address-line2" /></div>
-              <div><Label>City</Label><Input value={form.city} onChange={(event) => patch("city", event.target.value)} autoComplete="address-level2" /></div>
-              <div><Label>State / region</Label><Input value={form.stateRegion} onChange={(event) => patch("stateRegion", event.target.value)} autoComplete="address-level1" /></div>
-              <div><Label>Postcode</Label><Input value={form.postcode} onChange={(event) => patch("postcode", event.target.value)} autoComplete="postal-code" /></div>
-              <div><Label>Country code</Label><Input value={form.country} onChange={(event) => patch("country", event.target.value.toUpperCase())} placeholder="AU" autoComplete="country" /></div>
+            <div className="space-y-2">
+              <Attestation checked={adultAttestationAccepted} onChange={setAdultAttestationAccepted}>
+                I confirm that I am at least 18 years old and that the individual details above are accurate.
+              </Attestation>
+              <Attestation checked={responsibilityAccepted} onChange={setResponsibilityAccepted}>
+                I accept sole responsibility for media and broadcasts generated, transformed or transmitted from this account.
+              </Attestation>
+              <Attestation checked={consentPolicyAccepted} onChange={setConsentPolicyAccepted}>
+                I will use real-person media only when every depicted person is an adult and has provided valid likeness, media, distribution and broadcast consent. I will not use a public-figure likeness for adult content.
+              </Attestation>
+              <Attestation checked={archiveRetentionAccepted} onChange={setArchiveRetentionAccepted}>
+                I understand that Virelle keeps a separate private compliance copy of generated videos and completed broadcast recordings for at least 90 days, or longer when preservation is legally required. Ordinary users cannot access or delete that private copy.
+              </Attestation>
             </div>
-            <div className="flex items-start gap-2 rounded-lg border p-3">
-              <Checkbox checked={form.responsibilityAccepted} onCheckedChange={(value) => patch("responsibilityAccepted", Boolean(value))} />
-              <p className="text-xs text-muted-foreground">I am solely responsible for content created, transmitted or broadcast through my account and for compliance with applicable law and platform rules.</p>
-            </div>
-            <div className="flex items-start gap-2 rounded-lg border p-3">
-              <Checkbox checked={form.consentPolicyAccepted} onCheckedChange={(value) => patch("consentPolicyAccepted", Boolean(value))} />
-              <p className="text-xs text-muted-foreground">I confirm that I have obtained valid consent and lawful likeness/media rights for every real adult person I upload, reference, transform or broadcast.</p>
-            </div>
-            <Button className="w-full" onClick={save} disabled={saveProfile.isPending || !status?.paidMembership}>
-              {saveProfile.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserCheck className="mr-2 h-4 w-4" />}
-              Save legal profile
+
+            <Button
+              className="w-full bg-amber-300 text-black hover:bg-amber-200"
+              disabled={!declarationsAccepted || saveProfile.isPending}
+              onClick={submitProfile}
+            >
+              {saveProfile.isPending
+                ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                : <ShieldCheck className="mr-2 h-4 w-4" />}
+              Save verification profile
             </Button>
-            <p className="text-[11px] text-muted-foreground">Changing legal name, phone, address or date of birth resets identity, phone and card verification.</p>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-3 rounded-xl border p-4">
-            <div className="flex items-center gap-2 font-medium"><ShieldCheck className="h-4 w-4 text-fuchsia-400" />2. Complete independent checks</div>
-            <div className="space-y-3 rounded-lg border p-3">
-              <div className="flex items-start gap-3"><Phone className="mt-0.5 h-5 w-5 text-fuchsia-400" /><div className="flex-1"><div className="text-sm font-medium">Phone two-factor check</div><p className="text-xs text-muted-foreground">A one-time SMS code is sent to the registered phone. Codes and phone verification are handled through Twilio Verify.</p></div></div>
-              <div className="flex gap-2"><Button variant="outline" onClick={sendCode} disabled={sendPhoneCode.isPending || !status?.profileComplete || status?.phoneVerified}>{sendPhoneCode.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send code"}</Button><Input className="max-w-40" inputMode="numeric" value={phoneCode} onChange={(event) => setPhoneCode(event.target.value.replace(/\D/g, ""))} placeholder="Code" /><Button onClick={verifyCode} disabled={verifyPhoneCode.isPending || phoneCode.length < 4 || status?.phoneVerified}>{verifyPhoneCode.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify"}</Button></div>
-              {!status?.phoneProviderConfigured && <p className="text-xs text-amber-300">Twilio Verify environment variables must be configured before phone 2FA can complete.</p>}
-            </div>
+        <div className="space-y-5">
+          <Card className="border-white/10 bg-white/[0.025] text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Phone className="h-5 w-5 text-amber-300/80" />
+                Phone verification
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full border-white/15 bg-white/[0.03]"
+                disabled={!status?.profileComplete || sendCode.isPending || status?.phoneVerified}
+                onClick={sendPhoneCode}
+              >
+                {status?.phoneVerified ? "Phone verified" : "Send verification code"}
+              </Button>
+              {!status?.phoneVerified && (
+                <div className="flex gap-2">
+                  <Input
+                    inputMode="numeric"
+                    placeholder="SMS code"
+                    value={phoneCode}
+                    onChange={(event) => setPhoneCode(event.target.value.replace(/[^0-9]/g, ""))}
+                  />
+                  <Button
+                    disabled={phoneCode.length < 4 || verifyCode.isPending}
+                    onClick={verifyPhoneCode}
+                  >
+                    Verify
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-            <div className="space-y-3 rounded-lg border p-3">
-              <div className="flex items-start gap-3"><UserCheck className="mt-0.5 h-5 w-5 text-fuchsia-400" /><div className="flex-1"><div className="text-sm font-medium">Government identity and selfie check</div><p className="text-xs text-muted-foreground">Stripe Identity verifies an official identity document and matching selfie. Virelle stores only verification status and session reference.</p></div></div>
-              <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={startIdentity} disabled={createIdentitySession.isPending || !status?.profileComplete || status?.identityVerified}>{createIdentitySession.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4" />}Start identity check</Button><Button variant="ghost" onClick={async () => { try { await refreshIdentity.mutateAsync(); await statusQuery.refetch(); toast.success("Identity status refreshed."); } catch (error: any) { toast.error(error?.message || "Could not refresh identity status."); } }} disabled={refreshIdentity.isPending}>{refreshIdentity.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCcw className="mr-2 h-4 w-4" />}Refresh</Button></div>
-            </div>
+          <Card className="border-white/10 bg-white/[0.025] text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Fingerprint className="h-5 w-5 text-amber-300/80" />
+                Government identity
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full border-white/15 bg-white/[0.03]"
+                disabled={!status?.profileComplete || createIdentity.isPending || status?.identityVerified}
+                onClick={beginIdentityCheck}
+              >
+                {status?.identityVerified ? "Identity verified" : "Start ID and selfie check"}
+              </Button>
+              {!status?.identityVerified && (
+                <Button
+                  variant="ghost"
+                  className="w-full text-white/60"
+                  disabled={refreshIdentity.isPending}
+                  onClick={refreshIdentityCheck}
+                >
+                  Refresh identity status
+                </Button>
+              )}
+            </CardContent>
+          </Card>
 
-            <div className="space-y-3 rounded-lg border p-3">
-              <div className="flex items-start gap-3"><CreditCard className="mt-0.5 h-5 w-5 text-fuchsia-400" /><div className="flex-1"><div className="text-sm font-medium">Matching cardholder name</div><p className="text-xs text-muted-foreground">Stripe collects the card and billing details. Virelle never receives or stores the card number, expiry date or CVC; only the verified cardholder name match is recorded.</p></div></div>
-              <Button variant="outline" onClick={startCard} disabled={createCardVerification.isPending || !status?.profileComplete || status?.cardNameMatched}>{createCardVerification.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}Verify payment card name</Button>
-            </div>
-
-            {status?.profile?.rejectionReason && <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-200">{status.profile.rejectionReason}</div>}
-            {status?.missing?.length > 0 && <div className="rounded-lg border border-border/60 p-3"><p className="mb-2 text-xs font-medium">Still required</p><ul className="space-y-1 text-xs text-muted-foreground">{status.missing.map((item: string) => <li key={item}>• {item}</li>)}</ul></div>}
-          </div>
+          <Card className="border-white/10 bg-white/[0.025] text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <CreditCard className="h-5 w-5 text-amber-300/80" />
+                Cardholder-name match
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="outline"
+                className="w-full border-white/15 bg-white/[0.03]"
+                disabled={!status?.profileComplete || createCard.isPending || status?.cardNameMatched}
+                onClick={beginCardCheck}
+              >
+                {status?.cardNameMatched ? "Cardholder name matched" : "Verify cardholder name"}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
-
-        <div className="rounded-xl border border-red-500/30 bg-red-500/[0.06] p-4">
-          <div className="flex items-start gap-3"><ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-400" /><div><div className="font-medium text-red-200">Absolute content restrictions</div><p className="mt-1 text-xs leading-relaxed text-muted-foreground">No minor, underage, teen, childlike or ambiguous-age depictions; no age regression below 18; no CSAM; no coercion, revenge content or non-consensual use; no pornographic sex acts or genital-focused output. These restrictions apply to real, uploaded, generated and fully synthetic subjects without exception.</p></div></div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
-function Inner() {
-  const user = (trpc as any).auth.me.useQuery();
-  const byokStatus = (trpc as any).virelleBroadcastRender.getByokStatus.useQuery(undefined, { retry: false });
-  const matureStatus = (trpc as any).virelleBroadcastRender.getMatureAccessStatus.useQuery(undefined, { retry: false });
-  const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery({ limit: 25 }, { retry: false, refetchInterval: 10_000 });
+function StudioWorkspace({ workspace }: { workspace: Workspace }) {
+  const isAdult = workspace === "adult";
+  const auth = (trpc as any).auth.me.useQuery();
+  const matureStatus = (trpc as any).virelleBroadcastRender.getMatureAccessStatus.useQuery(
+    undefined,
+    { enabled: isAdult, retry: false },
+  );
+  const accessReady = !isAdult || Boolean(matureStatus.data?.accessGranted);
+  const byokStatus = (trpc as any).virelleBroadcastRender.getByokStatus.useQuery(
+    undefined,
+    { enabled: accessReady, retry: false },
+  );
+  const jobs = (trpc as any).virelleBroadcastRender.listJobs.useQuery(
+    { workspace, limit: 25 },
+    { enabled: accessReady, retry: false, refetchInterval: 10_000 },
+  );
   const createRender = (trpc as any).virelleBroadcastRender.createStudioRenderJob.useMutation();
   const createBroadcast = (trpc as any).virelleBroadcastRender.createBroadcastSession.useMutation();
   const cancelJob = (trpc as any).virelleBroadcastRender.cancelJob.useMutation();
-  const uploadRefImageMutation = (trpc as any).upload.referenceImage.useMutation();
+  const uploadMediaMutation = (trpc as any).upload.referenceImage.useMutation();
 
   const queryParams = new URLSearchParams(window.location.search);
-  const adultRequested = queryParams.get("adult") === "1";
   const initialSwappysJobId = Number(queryParams.get("swappysJobId") || "0") || null;
+  const initialSceneId = Number(queryParams.get("sceneId") || "0") || null;
   const handoff = (trpc as any).virelleBroadcastRender.getSwappysHandoff.useQuery(
-    initialSwappysJobId ? { swappysJobId: initialSwappysJobId } : { sceneId: Number(queryParams.get("sceneId") || "0") || undefined },
-    { enabled: Boolean(initialSwappysJobId || queryParams.get("sceneId")), retry: false },
+    initialSwappysJobId
+      ? { swappysJobId: initialSwappysJobId }
+      : { sceneId: initialSceneId || undefined },
+    {
+      enabled: accessReady && Boolean(initialSwappysJobId || initialSceneId),
+      retry: false,
+    },
   );
 
   const sourceImageRef = useRef<HTMLInputElement>(null);
@@ -370,67 +614,84 @@ function Inner() {
   const sourceVideoRef = useRef<HTMLInputElement>(null);
   const referenceVideoRef = useRef<HTMLInputElement>(null);
 
-  const [sourceSwappysJobId, setSourceSwappysJobId] = useState<number | null>(initialSwappysJobId);
+  const [sourceSwappysJobId, setSourceSwappysJobId] = useState<number | null>(
+    initialSwappysJobId,
+  );
   const [projectId, setProjectId] = useState("");
   const [sceneId, setSceneId] = useState("");
   const [sourceVideoUrl, setSourceVideoUrl] = useState("");
   const [referenceVideoUrl, setReferenceVideoUrl] = useState("");
   const [sourceImageUrls, setSourceImageUrls] = useState("");
   const [referenceImageUrls, setReferenceImageUrls] = useState("");
-  const [transformGoal, setTransformGoal] = useState<TransformGoal>("appearance_reference");
-  const [targetAge, setTargetAge] = useState("");
+  const [transformGoal, setTransformGoal] = useState<TransformGoal>(
+    "appearance_reference",
+  );
+  const [targetAge, setTargetAge] = useState(isAdult ? "21" : "");
   const [targetPresentation, setTargetPresentation] = useState("");
   const [requestedProvider, setRequestedProvider] = useState<Provider | "">("");
   const [directorNotes, setDirectorNotes] = useState("");
   const [consentConfirmed, setConsentConfirmed] = useState(false);
-  const [contentMode, setContentMode] = useState<ContentMode>("standard");
+  const [aiGeneratedCharactersOnly, setAiGeneratedCharactersOnly] = useState(false);
   const [allSubjectsAdultsConfirmed, setAllSubjectsAdultsConfirmed] = useState(false);
+  const [noPublicFigureConfirmed, setNoPublicFigureConfirmed] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const [channels, setChannels] = useState<BroadcastChannel[]>([{ destination: "rtmp", ingestUrl: "", streamKey: "" }]);
+  const [channels, setChannels] = useState<BroadcastChannel[]>([
+    { destination: "rtmp", ingestUrl: "", streamKey: "" },
+  ]);
 
   useEffect(() => {
     const data = handoff.data;
     if (!data) return;
+    const handoffWorkspace: Workspace = data.contentMode === "open_adult"
+      ? "adult"
+      : "standard";
+    if (handoffWorkspace !== workspace) {
+      toast.error(
+        `This Swappys job belongs to the ${handoffWorkspace === "adult" ? "Adult" : "Standard"} Studio.`,
+      );
+      return;
+    }
     setSourceSwappysJobId(Number(data.id));
     setProjectId(String(data.projectId || ""));
     setSceneId(String(data.sceneId || ""));
     if (data.sourcePlateUrl) setSourceImageUrls(String(data.sourcePlateUrl));
-    const references = [data.enhancedImageUrl, data.actorReferenceUrl].filter(Boolean);
+    const references = [data.enhancedImageUrl, data.actorReferenceUrl]
+      .filter(Boolean);
     if (references.length) setReferenceImageUrls(references.join("\n"));
     setTransformGoal(data.transformGoal || "appearance_reference");
-    setTargetAge(data.targetAge ? String(data.targetAge) : "");
+    setTargetAge(data.targetAge ? String(data.targetAge) : isAdult ? "21" : "");
     setTargetPresentation(data.targetPresentation || "");
-    if (data.contentMode === "open_adult" && matureStatus.data?.accessGranted) setContentMode("open_adult");
     setConsentConfirmed(Boolean(data.consentConfirmed));
-    setAllSubjectsAdultsConfirmed(data.contentMode === "open_adult");
-    toast.success(`Swappys job #${data.id} loaded into Broadcast & Studio Render.`);
-  }, [handoff.data, matureStatus.data?.accessGranted]);
-
-  useEffect(() => {
-    if (adultRequested && matureStatus.data?.accessGranted) {
-      setContentMode("open_adult");
-      setAllSubjectsAdultsConfirmed(true);
-    }
-  }, [adultRequested, matureStatus.data?.accessGranted]);
-
-  useEffect(() => {
-    if (contentMode === "standard") {
-      setAllSubjectsAdultsConfirmed(false);
-      setChannels((previous) => previous.map((channel) => (
-        MATURE_DESTINATIONS.includes(channel.destination) && !STANDARD_DESTINATIONS.includes(channel.destination)
-          ? { destination: "rtmp", ingestUrl: "", streamKey: "" }
-          : channel
-      )));
-    }
-  }, [contentMode]);
+    if (isAdult) setAllSubjectsAdultsConfirmed(true);
+    toast.success(`Swappys job #${data.id} loaded into this workspace.`);
+  }, [handoff.data, isAdult, workspace]);
 
   const providerStatus = byokStatus.data?.providers || {};
   const hasAnyProvider = Boolean(byokStatus.data?.hasAnyProvider);
   const bridgeConfigured = Boolean(byokStatus.data?.bridgeConfigured);
-  const matureAccessGranted = Boolean(matureStatus.data?.accessGranted);
-  const availableDestinations = contentMode === "open_adult" ? MATURE_DESTINATIONS : STANDARD_DESTINATIONS;
+  const destinations = isAdult ? ADULT_DESTINATIONS : STANDARD_DESTINATIONS;
 
-  const basePayload = {
+  const transformOptions: Array<[TransformGoal, string]> = isAdult
+    ? [
+        ["appearance_reference", "Appearance reference"],
+        ["boy_to_girl", "Feminine presentation"],
+        ["girl_to_boy", "Masculine presentation"],
+        ["younger_self", "Younger adult self — 18+ only"],
+        ["older_self", "Older self"],
+        ["custom_prompt", "Custom adult production direction"],
+      ]
+    : [
+        ["appearance_reference", "Appearance reference"],
+        ["boy_to_girl", "Feminine presentation"],
+        ["girl_to_boy", "Masculine presentation"],
+        ["younger_self", "Younger self"],
+        ["older_self", "Older self"],
+        ["adult_to_child", "Childhood self"],
+        ["child_to_adult", "Child-to-adult progression"],
+        ["custom_prompt", "Custom film direction"],
+      ];
+
+  const payload = useMemo(() => ({
     projectId: projectId.trim() ? Number(projectId) : null,
     sceneId: sceneId.trim() ? Number(sceneId) : null,
     sourceSwappysJobId,
@@ -444,117 +705,147 @@ function Inner() {
     requestedProvider: requestedProvider || null,
     directorNotes: directorNotes.trim() || null,
     consentConfirmed,
-    contentMode,
-    allSubjectsAdultsConfirmed,
+    contentMode: isAdult ? "open_adult" : "standard",
+    allSubjectsAdultsConfirmed: isAdult
+      ? allSubjectsAdultsConfirmed
+      : false,
+    publicFigureLikeness: false,
+    aiGeneratedCharactersOnly,
     hideVisibleWatermark: true,
-  };
+  }), [
+    projectId,
+    sceneId,
+    sourceSwappysJobId,
+    sourceVideoUrl,
+    referenceVideoUrl,
+    sourceImageUrls,
+    referenceImageUrls,
+    transformGoal,
+    targetAge,
+    targetPresentation,
+    requestedProvider,
+    directorNotes,
+    consentConfirmed,
+    isAdult,
+    allSubjectsAdultsConfirmed,
+    aiGeneratedCharactersOnly,
+  ]);
 
-  const chooseMatureMode = () => {
-    if (!matureAccessGranted) {
-      toast.error("Complete the paid 18+ verification process before entering the Mature Studio.");
-      document.getElementById("mature-access")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
-    }
-    setContentMode("open_adult");
-    setAllSubjectsAdultsConfirmed(true);
-  };
-
-  const validatePolicy = (broadcast: boolean) => {
-    if (!consentConfirmed) {
-      toast.error("Confirm likeness, media and distribution rights before continuing.");
+  const validateRequest = (broadcast: boolean): boolean => {
+    if (!aiGeneratedCharactersOnly && !consentConfirmed) {
+      toast.error(
+        "Confirm valid likeness, media, distribution and broadcast consent for every real person used.",
+      );
       return false;
     }
-    if (contentMode === "open_adult") {
-      if (!matureAccessGranted) {
-        toast.error("Verified Mature Studio access is required.");
+    if (!sourceVideoUrl.trim() && parseUrls(sourceImageUrls).length === 0 && !sourceSwappysJobId) {
+      toast.error("Add source media or load a Swappys job first.");
+      return false;
+    }
+    if (isAdult) {
+      if (!allSubjectsAdultsConfirmed) {
+        toast.error("Confirm that every depicted and referenced person is 18 or older.");
         return false;
       }
-      if (!allSubjectsAdultsConfirmed) {
-        toast.error("Confirm that every depicted or referenced person is 18 or older.");
+      if (!noPublicFigureConfirmed) {
+        toast.error("Confirm that no celebrity, politician or other public-figure likeness is used.");
+        return false;
+      }
+      if (!targetAge.trim() || Number(targetAge) < 18) {
+        toast.error("Adult Studio target age must be 18 or older.");
         return false;
       }
       if (["adult_to_child", "child_to_adult"].includes(transformGoal)) {
-        toast.error("Child or childhood transforms are unavailable in the Mature Studio.");
-        return false;
-      }
-      if (targetAge.trim() && Number(targetAge) < 18) {
-        toast.error("The Mature Studio requires a target age of 18 or older.");
+        toast.error("Child and age-crossing transforms are unavailable in the Adult Studio.");
         return false;
       }
     }
     if (broadcast) {
-      const minimum = contentMode === "open_adult" ? 18 : 16;
+      const minimumAge = isAdult ? 18 : 16;
       if (transformGoal === "adult_to_child") {
         toast.error("Child-transform avatars are not permitted in live Broadcast.");
         return false;
       }
-      if (targetAge.trim() && Number(targetAge) < minimum) {
-        toast.error(`Broadcast avatar target age must be ${minimum} or older.`);
+      if (targetAge.trim() && Number(targetAge) < minimumAge) {
+        toast.error(`Broadcast avatar target age must be ${minimumAge} or older.`);
         return false;
       }
       if (transformGoal === "younger_self" && !targetAge.trim()) {
-        toast.error(`Younger-self broadcasts require an explicit target age of ${minimum} or older.`);
+        toast.error(
+          `Younger-self broadcasts require an explicit target age of ${minimumAge} or older.`,
+        );
         return false;
       }
     }
     return true;
   };
 
-  const submitStudioRender = async () => {
-    if (!validatePolicy(false)) return;
+  const submitRender = async () => {
+    if (!validateRequest(false)) return;
     try {
-      const result = await createRender.mutateAsync(basePayload);
-      toast.success(`Studio render queued with ${result.provider}. Job #${result.jobId}`);
+      const result = await createRender.mutateAsync(payload);
+      toast.success(
+        `Video job #${result.jobId} queued with ${result.provider}.`,
+      );
       jobs.refetch();
     } catch (error: any) {
-      toast.error(error?.message || "Could not create Studio Render job");
+      toast.error(error?.message || "Could not create the video job.");
     }
   };
 
   const submitBroadcast = async () => {
-    if (!validatePolicy(true)) return;
+    if (!validateRequest(true)) return;
     try {
       const result = await createBroadcast.mutateAsync({
-        ...basePayload,
+        ...payload,
+        durationMinutes: 30,
         channels: channels.map((channel) => ({
           destination: channel.destination,
           ingestUrl: channel.ingestUrl.trim() || null,
           streamKey: channel.streamKey.trim() || null,
         })),
       });
-      setChannels((previous) => previous.map((channel) => ({ ...channel, streamKey: "" })));
-      toast.success(result.bridgeConfigured
-        ? `Broadcast session #${result.sessionId} submitted to the configured bridge.`
-        : `Broadcast outputs saved securely for session #${result.sessionId}; bridge configuration is still required.`);
+      setChannels((previous) => previous.map((channel) => ({
+        ...channel,
+        streamKey: "",
+      })));
+      toast.success(
+        result.bridgeConfigured
+          ? `Broadcast session #${result.sessionId} submitted with mandatory recording.`
+          : `Broadcast session #${result.sessionId} saved. The broadcast bridge still requires configuration.`,
+      );
       jobs.refetch();
     } catch (error: any) {
-      toast.error(error?.message || "Could not create Broadcast session");
+      toast.error(error?.message || "Could not create the broadcast session.");
     }
   };
 
   const cancel = async (id: number) => {
     try {
       await cancelJob.mutateAsync({ id });
-      toast.success("Job cancelled");
+      toast.success("Job cancelled.");
       jobs.refetch();
     } catch (error: any) {
-      toast.error(error?.message || "Could not cancel job");
+      toast.error(error?.message || "Could not cancel the job.");
     }
   };
 
-  const uploadMedia = async (files: FileList | null, kind: "sourceImage" | "referenceImage" | "sourceVideo" | "referenceVideo") => {
+  const uploadMedia = async (
+    files: FileList | null,
+    kind: "sourceImage" | "referenceImage" | "sourceVideo" | "referenceVideo",
+  ) => {
     if (!files?.length) return;
     setUploading(kind);
     try {
       const urls: string[] = [];
       for (const file of Array.from(files)) {
-        const reader = new FileReader();
         const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
           reader.onload = () => resolve(String(reader.result).split(",")[1]);
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
-        const result = await uploadRefImageMutation.mutateAsync({
+        const result = await uploadMediaMutation.mutateAsync({
           base64,
           filename: file.name,
           contentType: file.type as any,
@@ -562,77 +853,720 @@ function Inner() {
         });
         urls.push(result.url);
       }
-      if (kind === "sourceImage") setSourceImageUrls((previous) => previous ? `${previous}\n${urls.join("\n")}` : urls.join("\n"));
-      if (kind === "referenceImage") setReferenceImageUrls((previous) => previous ? `${previous}\n${urls.join("\n")}` : urls.join("\n"));
+      if (kind === "sourceImage") {
+        setSourceImageUrls((previous) => previous
+          ? `${previous}\n${urls.join("\n")}`
+          : urls.join("\n"));
+      }
+      if (kind === "referenceImage") {
+        setReferenceImageUrls((previous) => previous
+          ? `${previous}\n${urls.join("\n")}`
+          : urls.join("\n"));
+      }
       if (kind === "sourceVideo") setSourceVideoUrl(urls[0] || "");
       if (kind === "referenceVideo") setReferenceVideoUrl(urls[0] || "");
-      toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded`);
+      toast.success(`${urls.length} file${urls.length === 1 ? "" : "s"} uploaded.`);
     } catch (error: any) {
-      toast.error(error?.message || "Upload failed. Paste a secure media URL if video upload is unavailable.");
+      toast.error(
+        error?.message
+        || "Upload failed. Paste a secure media URL if direct video upload is unavailable.",
+      );
     } finally {
       setUploading(null);
     }
   };
 
-  const pageModeLabel = contentMode === "open_adult" ? "Verified Mature Studio" : "Standard Studio";
-  const refreshAll = () => {
-    byokStatus.refetch();
-    matureStatus.refetch();
-    jobs.refetch();
-    handoff.refetch();
-  };
+  if (isAdult && !matureStatus.data?.accessGranted) {
+    return (
+      <div className="min-h-screen bg-[#090a0d] p-4 text-white md:p-8">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <header className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.055] to-white/[0.018] p-6 shadow-2xl shadow-black/20 md:p-8">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div>
+                <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-amber-300/70">
+                  <LockKeyhole className="h-4 w-4" />
+                  Compliance-managed workspace
+                </div>
+                <h1 className="text-3xl font-semibold tracking-tight">
+                  Virelle Adult Studio
+                </h1>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/55">
+                  A separate professional production environment for verified adults. Adult tools, assets, jobs and broadcast destinations remain isolated from the Standard Studio.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="border-white/15 bg-white/[0.03]"
+                onClick={() => { window.location.href = "/virelle-broadcast-render"; }}
+              >
+                Return to Standard Studio
+              </Button>
+            </div>
+          </header>
+          <MatureAccessPanel user={auth.data} statusQuery={matureStatus} />
+        </div>
+      </div>
+    );
+  }
+
+  const pageBackground = isAdult ? "bg-[#090a0d] text-white" : "bg-background";
+  const subtleCard = isAdult
+    ? "border-white/10 bg-white/[0.025] text-white"
+    : "border-border/60";
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className={`min-h-screen p-4 md:p-6 ${pageBackground}`}>
       <div className="mx-auto max-w-6xl space-y-5">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 text-2xl font-semibold"><RadioTower className="h-6 w-6 text-amber-400" />Virelle Broadcast & Studio Render</h1>
-            <p className="text-sm text-muted-foreground">Standard production remains available normally. Mature tools are isolated behind paid identity, phone and cardholder verification.</p>
+        <header className={isAdult
+          ? "rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.055] to-white/[0.018] p-6 shadow-2xl shadow-black/20"
+          : "rounded-2xl border border-border/60 bg-card/50 p-6"}
+        >
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className={`mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] ${
+                isAdult ? "text-amber-300/70" : "text-amber-600 dark:text-amber-400"
+              }`}>
+                {isAdult
+                  ? <LockKeyhole className="h-4 w-4" />
+                  : <RadioTower className="h-4 w-4" />}
+                {isAdult ? "Verified adult production" : "Standard film production"}
+              </div>
+              <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+                {isAdult
+                  ? "Virelle Adult Studio"
+                  : "Virelle Broadcast & Studio Render"}
+              </h1>
+              <p className={`mt-2 max-w-3xl text-sm leading-relaxed ${
+                isAdult ? "text-white/55" : "text-muted-foreground"
+              }`}>
+                {isAdult
+                  ? "Adult-only video generation, Swappys transformations and recorded broadcasting for verified consenting adults. Minors, minor-looking characters, public-figure sexualisation and non-consensual use are prohibited."
+                  : "Professional non-explicit video rendering, Swappys special effects and recorded broadcasting. Age-appropriate non-sexual teen film scenes remain available; sexualised minor content is never permitted."}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                className={isAdult ? "border-white/15 bg-white/[0.03]" : ""}
+                onClick={() => {
+                  window.location.href = isAdult
+                    ? "/virelle-broadcast-render"
+                    : "/virelle-broadcast-render?adult=1";
+                }}
+              >
+                {isAdult ? "Standard Studio" : "Verified 18+ Studio"}
+              </Button>
+              <Button
+                variant="outline"
+                className={isAdult ? "border-white/15 bg-white/[0.03]" : ""}
+                onClick={() => {
+                  byokStatus.refetch();
+                  jobs.refetch();
+                  handoff.refetch();
+                  if (isAdult) matureStatus.refetch();
+                }}
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2"><Badge variant="outline">{pageModeLabel}</Badge><Button variant="outline" onClick={refreshAll}><RefreshCcw className="mr-2 h-4 w-4" />Refresh</Button></div>
+        </header>
+
+        {sourceSwappysJobId && (
+          <Card className={subtleCard}>
+            <CardContent className="flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="font-medium">
+                  Swappys job #{sourceSwappysJobId} connected
+                </div>
+                <p className={isAdult ? "text-xs text-white/45" : "text-xs text-muted-foreground"}>
+                  Project, scene, reference media and transform settings were loaded through server-side ownership checks.
+                </p>
+              </div>
+              <Badge variant="outline">
+                {isAdult ? "Adult workspace" : "Standard workspace"}
+              </Badge>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className={subtleCard}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <KeyRound className="h-4 w-4 text-amber-400" />
+              Provider, recording and retention status
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {PROVIDERS.map((provider) => (
+                <Badge
+                  key={provider}
+                  variant={providerStatus[provider] ? "default" : "outline"}
+                >
+                  {provider}: {providerStatus[provider] ? "ready" : "missing"}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant={bridgeConfigured ? "default" : "destructive"}>
+                Broadcast bridge: {bridgeConfigured ? "configured" : "not configured"}
+              </Badge>
+              <Badge variant="outline">Recording required</Badge>
+              <Badge variant="outline">Private archive: minimum 90 days</Badge>
+            </div>
+            {!hasAnyProvider && (
+              <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.05] p-3 text-sm">
+                <p className={isAdult ? "text-white/60" : "text-muted-foreground"}>
+                  Add your own video-provider key before creating a render or broadcast session.
+                </p>
+                <Button
+                  className="mt-3"
+                  size="sm"
+                  onClick={() => { window.location.href = API_KEY_SETTINGS_URL; }}
+                >
+                  <KeyRound className="mr-2 h-4 w-4" />
+                  Add provider key
+                </Button>
+              </div>
+            )}
+            <p className={isAdult ? "text-xs leading-relaxed text-white/45" : "text-xs leading-relaxed text-muted-foreground"}>
+              Completed outputs remain downloadable by the account owner. Virelle separately maintains a private compliance copy that ordinary users cannot access or delete during the retention period.
+            </p>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Card className={subtleCard}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Video className="h-4 w-4 text-amber-400" />
+                Source and reference media
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Project ID</Label>
+                  <Input
+                    value={projectId}
+                    onChange={(event) => setProjectId(
+                      event.target.value.replace(/[^0-9]/g, ""),
+                    )}
+                  />
+                </div>
+                <div>
+                  <Label>Scene ID</Label>
+                  <Input
+                    value={sceneId}
+                    onChange={(event) => setSceneId(
+                      event.target.value.replace(/[^0-9]/g, ""),
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Source video URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    className="flex-1"
+                    placeholder="https://..."
+                    value={sourceVideoUrl}
+                    onChange={(event) => setSourceVideoUrl(event.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={uploading === "sourceVideo"}
+                    onClick={() => sourceVideoRef.current?.click()}
+                  >
+                    {uploading === "sourceVideo"
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <Upload className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label>Reference video URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    className="flex-1"
+                    placeholder="https://..."
+                    value={referenceVideoUrl}
+                    onChange={(event) => setReferenceVideoUrl(event.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={uploading === "referenceVideo"}
+                    onClick={() => referenceVideoRef.current?.click()}
+                  >
+                    {uploading === "referenceVideo"
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <Upload className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between">
+                  <Label>Source image URLs</Label>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs"
+                    onClick={() => sourceImageRef.current?.click()}
+                  >
+                    <Upload className="mr-1 h-3 w-3" />
+                    Upload
+                  </Button>
+                </div>
+                <Textarea
+                  className="min-h-20 text-xs"
+                  value={sourceImageUrls}
+                  onChange={(event) => setSourceImageUrls(event.target.value)}
+                />
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between">
+                  <Label>Reference / output image URLs</Label>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs"
+                    onClick={() => referenceImageRef.current?.click()}
+                  >
+                    <Upload className="mr-1 h-3 w-3" />
+                    Upload
+                  </Button>
+                </div>
+                <Textarea
+                  className="min-h-20 text-xs"
+                  value={referenceImageUrls}
+                  onChange={(event) => setReferenceImageUrls(event.target.value)}
+                />
+              </div>
+
+              <input
+                ref={sourceImageRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(event) => uploadMedia(event.target.files, "sourceImage")}
+              />
+              <input
+                ref={referenceImageRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(event) => uploadMedia(event.target.files, "referenceImage")}
+              />
+              <input
+                ref={sourceVideoRef}
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(event) => uploadMedia(event.target.files, "sourceVideo")}
+              />
+              <input
+                ref={referenceVideoRef}
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(event) => uploadMedia(event.target.files, "referenceVideo")}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className={subtleCard}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldCheck className="h-4 w-4 text-amber-400" />
+                Transform and consent controls
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label>Transform goal</Label>
+                <select
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                  value={transformGoal}
+                  onChange={(event) => setTransformGoal(
+                    event.target.value as TransformGoal,
+                  )}
+                >
+                  {transformOptions.map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Target age</Label>
+                  <Input
+                    inputMode="numeric"
+                    min={isAdult ? 18 : 1}
+                    value={targetAge}
+                    onChange={(event) => setTargetAge(
+                      event.target.value.replace(/[^0-9]/g, ""),
+                    )}
+                  />
+                </div>
+                <div>
+                  <Label>BYOK provider</Label>
+                  <select
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                    value={requestedProvider}
+                    onChange={(event) => setRequestedProvider(
+                      event.target.value as Provider | "",
+                    )}
+                  >
+                    <option value="">Auto-select</option>
+                    {PROVIDERS.map((provider) => (
+                      <option key={provider} value={provider}>{provider}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <Label>Target presentation / style</Label>
+                <Input
+                  value={targetPresentation}
+                  onChange={(event) => setTargetPresentation(event.target.value)}
+                />
+              </div>
+
+              <div>
+                <Label>Director notes</Label>
+                <Textarea
+                  className="min-h-28"
+                  value={directorNotes}
+                  onChange={(event) => setDirectorNotes(event.target.value)}
+                  placeholder="Describe the exact lawful transformation and production intent."
+                />
+              </div>
+
+              <Attestation
+                checked={aiGeneratedCharactersOnly}
+                onChange={setAiGeneratedCharactersOnly}
+              >
+                Every depicted person is an original AI-generated character and is not based on a real person's likeness.
+              </Attestation>
+
+              {!aiGeneratedCharactersOnly && (
+                <Attestation
+                  checked={consentConfirmed}
+                  onChange={setConsentConfirmed}
+                >
+                  I have valid likeness, media, distribution and broadcast consent from every real person shown in the uploaded or generated media.
+                </Attestation>
+              )}
+
+              {isAdult && (
+                <>
+                  <Attestation
+                    checked={allSubjectsAdultsConfirmed}
+                    onChange={setAllSubjectsAdultsConfirmed}
+                  >
+                    Every depicted and referenced person is at least 18 years old. No minor, teenage or minor-looking character is included.
+                  </Attestation>
+                  <Attestation
+                    checked={noPublicFigureConfirmed}
+                    onChange={setNoPublicFigureConfirmed}
+                  >
+                    No celebrity, politician or other public-figure likeness is being used for adult content.
+                  </Attestation>
+                </>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-        {(adultRequested || !matureAccessGranted) && <MatureAccessPanel user={user.data} statusQuery={matureStatus} />}
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Card className={subtleCard}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Video className="h-4 w-4 text-amber-400" />
+                {isAdult ? "Adult video generation" : "Studio video render"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className={isAdult ? "text-sm leading-relaxed text-white/55" : "text-sm leading-relaxed text-muted-foreground"}>
+                Generate a downloadable video using your selected provider. A separate private compliance copy is registered automatically after completion.
+              </p>
+              <Button
+                className="w-full bg-amber-300 text-black hover:bg-amber-200"
+                disabled={!hasAnyProvider || createRender.isPending}
+                onClick={submitRender}
+              >
+                {createRender.isPending
+                  ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  : <Video className="mr-2 h-4 w-4" />}
+                Generate video
+              </Button>
+            </CardContent>
+          </Card>
 
-        {sourceSwappysJobId && <Card className="border-fuchsia-500/30 bg-fuchsia-500/5"><CardContent className="flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between"><div><div className="font-medium text-fuchsia-200">Swappys job #{sourceSwappysJobId} loaded</div><p className="text-xs text-muted-foreground">Project, scene, avatar output, reference media, transform goal and creative mode are connected by server-side ownership checks.</p></div><Badge variant="outline">{contentMode === "open_adult" ? "Verified Mature" : "Standard"}</Badge></CardContent></Card>}
+          <Card className={subtleCard}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Radio className="h-4 w-4 text-amber-400" />
+                Recorded broadcast outputs
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {channels.map((channel, index) => (
+                <div
+                  key={`${channel.destination}-${index}`}
+                  className="space-y-2 rounded-lg border border-white/10 bg-black/10 p-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">
+                      Output {index + 1}
+                    </span>
+                    {channels.length > 1 && (
+                      <button
+                        type="button"
+                        className="text-xs text-red-400"
+                        onClick={() => setChannels((previous) =>
+                          previous.filter((_, itemIndex) => itemIndex !== index))}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    <Label>Destination</Label>
+                    <select
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                      value={channel.destination}
+                      onChange={(event) => {
+                        const destination = event.target.value as BroadcastDestination;
+                        setChannels((previous) => previous.map((item, itemIndex) =>
+                          itemIndex === index
+                            ? {
+                                ...item,
+                                destination,
+                                ingestUrl: destinationDefaultUrl(destination),
+                              }
+                            : item));
+                      }}
+                    >
+                      {destinations.map((destination) => (
+                        <option key={destination} value={destination}>
+                          {destinationLabel(destination)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Ingest URL</Label>
+                    <Input
+                      value={channel.ingestUrl}
+                      onChange={(event) => setChannels((previous) =>
+                        previous.map((item, itemIndex) =>
+                          itemIndex === index
+                            ? { ...item, ingestUrl: event.target.value }
+                            : item))}
+                    />
+                  </div>
+                  <div>
+                    <Label>Stream key</Label>
+                    <Input
+                      type="password"
+                      autoComplete="off"
+                      value={channel.streamKey}
+                      onChange={(event) => setChannels((previous) =>
+                        previous.map((item, itemIndex) =>
+                          itemIndex === index
+                            ? { ...item, streamKey: event.target.value }
+                            : item))}
+                    />
+                  </div>
+                </div>
+              ))}
 
-        <Card className="border-amber-500/20"><CardHeader><CardTitle className="flex items-center gap-2 text-base"><KeyRound className="h-4 w-4 text-amber-400" />Provider & Bridge Status</CardTitle></CardHeader><CardContent className="space-y-3"><div className="flex flex-wrap gap-2">{PROVIDERS.map((provider) => <Badge key={provider} variant={providerStatus[provider] ? "default" : "outline"}>{provider}: {providerStatus[provider] ? "ready" : "missing"}</Badge>)}</div><Badge variant={bridgeConfigured ? "default" : "destructive"}>Broadcast bridge: {bridgeConfigured ? "configured" : "not configured"}</Badge>{!hasAnyProvider && <div className="flex flex-col gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100"><span>BYOK required. Add your own video provider key before creating a render or broadcast session.</span><Button size="sm" className="w-fit" onClick={() => { window.location.href = API_KEY_SETTINGS_URL; }}><KeyRound className="mr-2 h-4 w-4" />Add Provider Key</Button></div>}{!bridgeConfigured && <p className="text-xs text-amber-200">Sessions can be configured and credentials encrypted now, but live submission remains in “waiting for provider” until `BROADCAST_BRIDGE_URL` and `BROADCAST_BRIDGE_TOKEN` are configured.</p>}</CardContent></Card>
+              {channels.length < 5 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setChannels((previous) => [
+                    ...previous,
+                    { destination: "rtmp", ingestUrl: "", streamKey: "" },
+                  ])}
+                >
+                  Add output
+                </Button>
+              )}
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Video className="h-4 w-4 text-amber-400" />Source & Reference Media</CardTitle></CardHeader><CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3"><div><Label>Project ID</Label><Input value={projectId} onChange={(event) => setProjectId(event.target.value.replace(/[^0-9]/g, ""))} /></div><div><Label>Scene ID</Label><Input value={sceneId} onChange={(event) => setSceneId(event.target.value.replace(/[^0-9]/g, ""))} /></div></div>
-            {([["Source video URL", sourceVideoUrl, setSourceVideoUrl, sourceVideoRef, "sourceVideo"], ["Reference video URL", referenceVideoUrl, setReferenceVideoUrl, referenceVideoRef, "referenceVideo"]] as const).map(([label, value, setter, reference, kind]) => <div key={label}><Label>{label}</Label><div className="flex gap-2"><Input className="flex-1" placeholder="https://..." value={value} onChange={(event) => setter(event.target.value)} /><Button type="button" size="sm" variant="outline" disabled={uploading === kind} onClick={() => reference.current?.click()}>{uploading === kind ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}</Button></div></div>)}
-            <div><div className="mb-1 flex items-center justify-between"><Label>Source image URLs</Label><Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => sourceImageRef.current?.click()}><Upload className="mr-1 h-3 w-3" />Upload</Button></div><Textarea className="min-h-20 text-xs" value={sourceImageUrls} onChange={(event) => setSourceImageUrls(event.target.value)} /></div>
-            <div><div className="mb-1 flex items-center justify-between"><Label>Reference/output image URLs</Label><Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => referenceImageRef.current?.click()}><Upload className="mr-1 h-3 w-3" />Upload</Button></div><Textarea className="min-h-20 text-xs" value={referenceImageUrls} onChange={(event) => setReferenceImageUrls(event.target.value)} /></div>
-            <input ref={sourceImageRef} type="file" accept="image/*" multiple className="hidden" onChange={(event) => uploadMedia(event.target.files, "sourceImage")} /><input ref={referenceImageRef} type="file" accept="image/*" multiple className="hidden" onChange={(event) => uploadMedia(event.target.files, "referenceImage")} /><input ref={sourceVideoRef} type="file" accept="video/*" className="hidden" onChange={(event) => uploadMedia(event.target.files, "sourceVideo")} /><input ref={referenceVideoRef} type="file" accept="video/*" className="hidden" onChange={(event) => uploadMedia(event.target.files, "referenceVideo")} />
-          </CardContent></Card>
-
-          <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><ShieldCheck className="h-4 w-4 text-amber-400" />Transform & Creative Controls</CardTitle></CardHeader><CardContent className="space-y-3">
-            <div><Label>Transform goal</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={transformGoal} onChange={(event) => setTransformGoal(event.target.value as TransformGoal)}><option value="appearance_reference">Appearance reference</option><option value="boy_to_girl">Feminine presentation</option><option value="girl_to_boy">Masculine presentation</option><option value="younger_self">Younger self</option><option value="older_self">Older self</option>{contentMode === "standard" && <><option value="adult_to_child">Childhood self</option><option value="child_to_adult">Child to adult</option></>}<option value="custom_prompt">Custom prompt</option></select></div>
-            <div className="grid grid-cols-2 gap-3"><div><Label>Target age</Label><Input value={targetAge} onChange={(event) => setTargetAge(event.target.value.replace(/[^0-9]/g, ""))} /></div><div><Label>BYOK provider</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={requestedProvider} onChange={(event) => setRequestedProvider(event.target.value as Provider | "")}><option value="">Auto</option>{PROVIDERS.map((provider) => <option key={provider} value={provider}>{provider}</option>)}</select></div></div>
-            <div><Label>Target presentation/style</Label><Input value={targetPresentation} onChange={(event) => setTargetPresentation(event.target.value)} /></div>
-            <div><Label>Creative section</Label><div className="mt-1 grid grid-cols-2 gap-2"><button onClick={() => setContentMode("standard")} className={`rounded-md border px-2 py-3 text-xs ${contentMode === "standard" ? "border-amber-500 bg-amber-500/10" : ""}`}>Standard film/VFX</button><button onClick={chooseMatureMode} className={`rounded-md border px-2 py-3 text-xs ${contentMode === "open_adult" ? "border-fuchsia-500 bg-fuchsia-500/10" : ""}`}>Verified 18+ Mature</button></div></div>
-            <div><Label>Director / VFX notes</Label><Textarea className="min-h-28 text-xs" value={directorNotes} onChange={(event) => setDirectorNotes(event.target.value)} /></div>
-            <div className="flex items-start gap-2 rounded-lg border p-3"><Checkbox checked={consentConfirmed} onCheckedChange={(value) => setConsentConfirmed(Boolean(value))} /><p className="text-xs text-muted-foreground">I confirm that I am solely responsible for this account’s output and possess all required likeness, media, distribution and broadcast rights.</p></div>
-            {contentMode === "open_adult" && <div className="space-y-2 rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/5 p-3"><div className="flex items-start gap-2"><Checkbox checked={allSubjectsAdultsConfirmed} onCheckedChange={(value) => setAllSubjectsAdultsConfirmed(Boolean(value))} /><p className="text-xs text-muted-foreground">Every depicted and referenced person is an adult aged 18 or older. No minor, youth-coded or ambiguous-age person appears anywhere in the media or request.</p></div><p className="text-[11px] text-fuchsia-200">Mature glamour and provocative styling are supported. Explicit sex acts, genital-focused imagery, pornography, CSAM and non-consensual sexualisation remain blocked.</p></div>}
-          </CardContent></Card>
+              <Button
+                className="w-full"
+                disabled={!hasAnyProvider || createBroadcast.isPending}
+                onClick={submitBroadcast}
+              >
+                {createBroadcast.isPending
+                  ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  : <Radio className="mr-2 h-4 w-4" />}
+                Configure recorded broadcast
+              </Button>
+              <p className={isAdult ? "text-xs leading-relaxed text-white/45" : "text-xs leading-relaxed text-muted-foreground"}>
+                The broadcast bridge must record the session. After completion, the recording becomes downloadable in Recent Jobs and is separately queued for private retention.
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <Card className="border-blue-500/20"><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Radio className="h-4 w-4 text-blue-400" />Broadcast Outputs</CardTitle></CardHeader><CardContent className="space-y-3">{channels.map((channel, index) => <div key={index} className="space-y-2 rounded-md border p-3"><div className="flex items-center justify-between"><span className="text-xs font-medium text-muted-foreground">Output {index + 1}</span>{channels.length > 1 && <button className="text-xs text-muted-foreground hover:text-red-400" onClick={() => setChannels((previous) => previous.filter((_, itemIndex) => itemIndex !== index))}>Remove</button>}</div><div><Label>Destination</Label><select className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={channel.destination} onChange={(event) => { const destination = event.target.value as BroadcastDestination; setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, destination, ingestUrl: destinationDefaultUrl(destination) } : item)); }}>{availableDestinations.map((destination) => <option key={destination} value={destination}>{destinationLabel(destination)}</option>)}</select></div><div><Label>Ingest URL</Label><Input value={channel.ingestUrl} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, ingestUrl: event.target.value } : item))} /></div><div><Label>Stream key</Label><Input type="password" autoComplete="off" value={channel.streamKey} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, streamKey: event.target.value } : item))} /></div></div>)}{channels.length < 5 && <Button size="sm" variant="outline" className="w-full" onClick={() => setChannels((previous) => [...previous, { destination: "rtmp", ingestUrl: "", streamKey: "" }])}>+ Add Output</Button>}<Button className="w-full" onClick={submitBroadcast} disabled={createBroadcast.isPending || !hasAnyProvider}>{createBroadcast.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radio className="mr-2 h-4 w-4" />}Configure {contentMode === "open_adult" ? "Mature" : "Standard"} Broadcast</Button><p className="text-xs text-muted-foreground">Keys are encrypted before storage, never returned by the API, and cleared from this form after submission.</p></CardContent></Card>
+        <Card className={subtleCard}>
+          <CardHeader>
+            <CardTitle className="text-base">
+              Recent {isAdult ? "Adult Studio" : "Standard Studio"} jobs
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {jobs.isLoading && (
+              <p className={isAdult ? "text-sm text-white/45" : "text-sm text-muted-foreground"}>
+                Loading jobs…
+              </p>
+            )}
+            {(jobs.data || []).map((job: any) => (
+              <article
+                key={job.id}
+                className="rounded-xl border border-white/10 bg-black/10 p-4"
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <h3 className="font-medium">
+                      #{job.id} · {String(job.mode).replaceAll("_", " ")} · {String(job.transformGoal).replaceAll("_", " ")}
+                    </h3>
+                    <p className={isAdult ? "mt-1 text-xs text-white/45" : "mt-1 text-xs text-muted-foreground"}>
+                      Provider: {job.provider} · commenced {formatDate(job.broadcastStartedAt || job.createdAt)}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant={jobBadgeVariant(job.status)}>
+                      {String(job.status).replaceAll("_", " ")}
+                    </Badge>
+                    {job.mode === "broadcast" && (
+                      <Badge variant="outline">
+                        {job.broadcastCompletedAt
+                          ? "Recording completed"
+                          : "Recording pending"}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
 
-          <Card className="border-amber-500/20"><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Video className="h-4 w-4 text-amber-400" />Studio Render</CardTitle></CardHeader><CardContent className="space-y-3"><p className="text-sm text-muted-foreground">Create a high-quality BYOK video render from the exact Swappys avatar and scene media before broadcasting or editorial export. The same continuity-aware media handoff is used in both standard and verified mature modes.</p><Button className="w-full bg-amber-500 text-black hover:bg-amber-600" onClick={submitStudioRender} disabled={createRender.isPending || !hasAnyProvider}>{createRender.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Video className="mr-2 h-4 w-4" />}Create {contentMode === "open_adult" ? "Mature" : "Standard"} Studio Render</Button></CardContent></Card>
-        </div>
+                {job.errorMessage && (
+                  <div className="mt-3 flex gap-2 rounded-lg border border-red-500/20 bg-red-500/[0.05] p-3 text-xs text-red-200">
+                    <XCircle className="h-4 w-4 shrink-0" />
+                    <span>{job.errorMessage}</span>
+                  </div>
+                )}
 
-        <Card><CardHeader><CardTitle className="text-base">Recent Broadcast / Render Jobs</CardTitle></CardHeader><CardContent className="space-y-3">{jobs.isLoading && <p className="text-sm text-muted-foreground">Loading jobs…</p>}{(jobs.data || []).map((job: any) => <div key={job.id} className="space-y-3 rounded-lg border p-3 text-sm"><div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between"><div><div className="font-medium">#{job.id} · {job.mode} · {job.transformGoal}</div><div className="text-xs text-muted-foreground">Provider: {job.provider} · Swappys: {job.sourceSwappysJobId || "none"} · Mode: {job.contentMode || "standard"} · Watermark: {job.visibleWatermarkMode || "default"}</div></div><Badge variant={statusVariant(job.status)}>{job.status}</Badge></div><p className="text-xs text-muted-foreground">{jobInstructions(job)}</p>{job.errorMessage && <div className="flex gap-2 rounded-md border border-red-500/30 bg-red-500/10 p-2 text-xs text-red-200"><XCircle className="h-4 w-4 shrink-0" /><span>{job.errorMessage}</span></div>}{job.outputVideoUrl && <div className="space-y-2"><video src={job.outputVideoUrl} controls className="w-full rounded-lg border" /><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => copyText(job.outputVideoUrl, "Output URL copied")}><Copy className="mr-1 h-3 w-3" />Copy URL</Button><Button size="sm" variant="outline" asChild><a href={job.outputVideoUrl} target="_blank" rel="noreferrer"><ExternalLink className="mr-1 h-3 w-3" />Open</a></Button><Button size="sm" variant="outline" asChild><a href={job.outputVideoUrl} download><Download className="mr-1 h-3 w-3" />Download</a></Button></div></div>}{["queued", "waiting_for_provider", "processing", "broadcast_ready"].includes(job.status) && <Button size="sm" variant="destructive" onClick={() => cancel(job.id)}>Cancel</Button>}</div>)}{!jobs.isLoading && !(jobs.data || []).length && <p className="text-sm text-muted-foreground">No jobs yet.</p>}</CardContent></Card>
+                {job.outputVideoUrl && (
+                  <div className="mt-4 space-y-3">
+                    <video
+                      src={job.outputVideoUrl}
+                      controls
+                      className="w-full rounded-xl border border-white/10 bg-black"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => copyText(
+                          job.outputVideoUrl,
+                          "Output URL copied.",
+                        )}
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy URL
+                      </Button>
+                      <Button size="sm" variant="outline" asChild>
+                        <a
+                          href={job.outputVideoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Open
+                        </a>
+                      </Button>
+                      <Button size="sm" variant="outline" asChild>
+                        <a href={job.outputVideoUrl} download>
+                          <Download className="mr-2 h-4 w-4" />
+                          Download
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
-        <div className="flex items-start gap-3 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] p-4 text-xs text-muted-foreground"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" /><p>Standard R/MA-rated film tools remain in the main VFX workflow subject to project rating and non-explicit presentation. The verified Mature Studio is a separate access layer and does not weaken Virelle’s absolute minor, consent, exploitation or explicit-sex safeguards.</p></div>
+                {job.mode === "broadcast"
+                  && job.status === "processing"
+                  && !job.outputVideoUrl && (
+                    <div className="mt-3 rounded-lg border border-amber-300/15 bg-amber-300/[0.035] p-3 text-sm text-white/55">
+                      Broadcast active. The recording will appear automatically after the bridge sends the verified completion callback.
+                    </div>
+                  )}
+
+                {["queued", "waiting_for_provider", "processing", "broadcast_ready"]
+                  .includes(job.status) && (
+                  <Button
+                    className="mt-4"
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => cancel(Number(job.id))}
+                  >
+                    Cancel job
+                  </Button>
+                )}
+              </article>
+            ))}
+            {!jobs.isLoading && !(jobs.data || []).length && (
+              <div className="rounded-xl border border-dashed border-white/10 p-10 text-center text-sm text-muted-foreground">
+                No jobs have been created in this workspace.
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
 
+function StudioPage() {
+  const params = new URLSearchParams(window.location.search);
+  const workspace: Workspace = params.get("adult") === "1"
+    ? "adult"
+    : "standard";
+  return <StudioWorkspace workspace={workspace} />;
+}
+
 export default function VirelleBroadcastRender() {
-  return <SubscriptionGate feature="Virelle Broadcast & Studio Render" requiredTier="creator"><Inner /></SubscriptionGate>;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("adminVault") === "1") {
+    return <ComplianceAdminVault />;
+  }
+
+  return (
+    <SubscriptionGate
+      feature="Virelle Broadcast & Studio Render"
+      featureKey="canUseVisualEffects"
+      requiredTier="amateur"
+    >
+      <StudioPage />
+    </SubscriptionGate>
+  );
 }

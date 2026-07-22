@@ -7,6 +7,7 @@ import {
   normalizeLegalName,
 } from "./_core/matureAccess";
 import { assertSwappysCreativePolicy } from "./_core/swappysPolicy";
+import { classifyContentRequest } from "./_core/contentCompliance";
 
 describe("verified mature access", () => {
   it("normalizes and matches legal cardholder names without accepting unrelated names", () => {
@@ -23,33 +24,89 @@ describe("verified mature access", () => {
   });
 
   it("requires an active paid membership and excludes beta/free access", () => {
-    expect(isPaidMatureAccessUser({ role: "user", subscriptionTier: "indie", subscriptionStatus: "active" } as any)).toBe(true);
-    expect(isPaidMatureAccessUser({ role: "user", subscriptionTier: "beta", subscriptionStatus: "active" } as any)).toBe(false);
-    expect(isPaidMatureAccessUser({ role: "user", subscriptionTier: "free", subscriptionStatus: "active" } as any)).toBe(false);
-    expect(isPaidMatureAccessUser({ role: "admin", subscriptionTier: "free", subscriptionStatus: "none" } as any)).toBe(true);
+    expect(isPaidMatureAccessUser({
+      role: "user",
+      subscriptionTier: "indie",
+      subscriptionStatus: "active",
+    } as any)).toBe(true);
+    expect(isPaidMatureAccessUser({
+      role: "user",
+      subscriptionTier: "beta",
+      subscriptionStatus: "active",
+    } as any)).toBe(false);
+    expect(isPaidMatureAccessUser({
+      role: "user",
+      subscriptionTier: "free",
+      subscriptionStatus: "active",
+    } as any)).toBe(false);
+    expect(isPaidMatureAccessUser({
+      role: "admin",
+      subscriptionTier: "free",
+      subscriptionStatus: "none",
+    } as any)).toBe(true);
   });
 
-  it("allows verified mature non-explicit styling but keeps explicit sexual acts blocked", () => {
+  it("allows explicit adult content only in the verified Adult Studio", () => {
     expect(() => assertSwappysCreativePolicy({
       user: { isAdultVerified: true },
       contentMode: "open_adult",
       consentConfirmed: true,
       allSubjectsAdultsConfirmed: true,
       targetAge: 30,
-      targetPresentation: "mature glamour editorial styling between consenting adults",
+      targetPresentation: "cinematic explicit sex scene between two consenting 30-year-old adults",
+      publicFigureLikeness: false,
     })).not.toThrow();
 
     expect(() => assertSwappysCreativePolicy({
       user: { isAdultVerified: true },
-      contentMode: "open_adult",
+      contentMode: "standard",
       consentConfirmed: true,
-      allSubjectsAdultsConfirmed: true,
       targetAge: 30,
-      targetPresentation: "graphic explicit sex act",
+      targetPresentation: "cinematic explicit sex scene between consenting adults",
     })).toThrow(TRPCError);
   });
 
-  it("blocks all minor-coded and age-regression requests in mature mode", () => {
+  it("allows an age-appropriate non-sexual teenage romance scene in Standard Studio", () => {
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: false },
+      contentMode: "standard",
+      consentConfirmed: true,
+      targetAge: 16,
+      targetPresentation: "tasteful romantic movie scene where two sixteen-year-old characters share a brief kiss",
+    })).not.toThrow();
+
+    expect(classifyContentRequest({
+      workspace: "standard",
+      targetAge: 16,
+      text: "tasteful romantic movie scene where two sixteen-year-old characters share a brief kiss",
+    })).toBeNull();
+  });
+
+  it("blocks explicit or sexualised content involving minors", () => {
+    const classification = classifyContentRequest({
+      workspace: "standard",
+      targetAge: 16,
+      text: "graphic explicit sex act involving a sixteen-year-old character",
+    });
+    expect(classification?.category).toBe("suspected_csam_request");
+    expect(classification?.severity).toBe("critical");
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: false },
+      contentMode: "standard",
+      consentConfirmed: true,
+      targetAge: 16,
+      targetPresentation: "graphic explicit sex act involving a sixteen-year-old character",
+    })).toThrow(TRPCError);
+  });
+
+  it("blocks every minor, teenage and ambiguous age-regression request in Adult Studio", () => {
+    expect(classifyContentRequest({
+      workspace: "adult",
+      targetAge: 17,
+      text: "non-sexual teenage character",
+    })?.category).toBe("adult_workspace_minor_reference");
+
     expect(() => assertSwappysCreativePolicy({
       user: { isAdultVerified: true },
       contentMode: "open_adult",
@@ -57,7 +114,64 @@ describe("verified mature access", () => {
       allSubjectsAdultsConfirmed: true,
       transformGoal: "adult_to_child",
       targetAge: 16,
-      targetPresentation: "younger schoolgirl styling",
+      targetPresentation: "younger character styling",
     })).toThrow(TRPCError);
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: true,
+      allSubjectsAdultsConfirmed: true,
+      transformGoal: "younger_self",
+      targetAge: null,
+      targetPresentation: "younger adult version",
+    })).toThrow(TRPCError);
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: true,
+      allSubjectsAdultsConfirmed: true,
+      transformGoal: "younger_self",
+      targetAge: 21,
+      targetPresentation: "21-year-old adult version",
+    })).not.toThrow();
+  });
+
+  it("blocks non-consensual adult content and public-figure adult likenesses", () => {
+    expect(classifyContentRequest({
+      workspace: "adult",
+      targetAge: 30,
+      text: "secretly record them without their knowledge",
+    })?.category).toBe("non_consensual_sexual_content");
+
+    expect(classifyContentRequest({
+      workspace: "adult",
+      targetAge: 30,
+      text: "adult studio scene",
+      publicFigureLikeness: true,
+    })?.category).toBe("adult_public_figure_likeness");
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: true,
+      allSubjectsAdultsConfirmed: true,
+      targetAge: 30,
+      targetPresentation: "adult studio scene",
+      publicFigureLikeness: true,
+    })).toThrow(TRPCError);
+  });
+
+  it("permits fully synthetic adult characters without a real-person consent claim", () => {
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: false,
+      aiGeneratedCharactersOnly: true,
+      allSubjectsAdultsConfirmed: true,
+      targetAge: 25,
+      targetPresentation: "explicit scene using original fictional AI characters aged 25",
+    })).not.toThrow();
   });
 });
