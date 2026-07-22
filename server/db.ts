@@ -3579,6 +3579,16 @@ export async function createWardrobeAssignment(data: InsertWardrobeAssignment): 
   return (await db.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.id, id)))[0];
 }
 
+export async function updateWardrobeAssignment(
+  id: number,
+  data: Partial<InsertWardrobeAssignment>,
+): Promise<WardrobeAssignment | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(wardrobeAssignments).set(data).where(eq(wardrobeAssignments.id, id));
+  return (await db.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.id, id)))[0];
+}
+
 export async function deleteWardrobeAssignment(id: number): Promise<void> {
   const db = await getDb();
   if (!db) return;

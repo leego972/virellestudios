@@ -2318,6 +2318,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         imageUrls: z.array(z.string().max(2048)).max(12).optional(),
         primaryImageUrl: z.string().max(2048).optional(),
         referencePrompt: z.string().max(2000).optional(),
+        faceCoverage: z.enum(["none", "partial", "full"]).default("none"),
         brandPlacementAllowed: z.boolean().default(false),
         shopfrontPlacementAllowed: z.boolean().default(true),
         characterWardrobeAllowed: z.boolean().default(true),
@@ -2367,6 +2368,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           imageUrls: input.imageUrls ?? null,
           primaryImageUrl: input.primaryImageUrl?.trim() || (input.imageUrls?.[0] ?? null),
           referencePrompt: input.referencePrompt?.trim() || null,
+          faceCoverage: input.faceCoverage,
           brandPlacementAllowed: input.brandPlacementAllowed,
           shopfrontPlacementAllowed: input.shopfrontPlacementAllowed,
           characterWardrobeAllowed: input.characterWardrobeAllowed,
@@ -2424,6 +2426,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         description: z.string().max(4000).nullish(),
         primaryImageUrl: z.string().max(2048).nullish(),
         referencePrompt: z.string().max(2000).nullish(),
+        faceCoverage: z.enum(["none", "partial", "full"]).optional(),
         visibility: z.enum(["public", "private", "project_only", "unlisted"]).optional(),
         status: z.enum(["active", "hidden", "retired"]).optional(),
         licenseNotes: z.string().max(4000).nullish(),
@@ -2436,7 +2439,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         }
         const patch: any = {};
         for (const k of [
-          "name", "description", "primaryImageUrl", "referencePrompt",
+          "name", "description", "primaryImageUrl", "referencePrompt", "faceCoverage",
           "visibility", "status", "licenseNotes",
         ] as const) {
           if ((input as any)[k] !== undefined) patch[k] = (input as any)[k];
@@ -2470,7 +2473,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           "costume_accurate", "period_accurate",
         ]).default("reference"),
         placementNotes: z.string().max(2000).optional(),
-        promptWeight: z.number().int().min(0).max(100).default(50),
+        promptWeight: z.number().int().min(0).max(100).default(100),
+        fromSceneOrder: z.number().int().min(0),
+        toSceneOrder: z.number().int().min(0).optional(),
+        identityMode: z.enum(["auto", "use_character_face", "conceal_character_face"]).default("auto"),
+      }).superRefine((value, ctx) => {
+        if (value.toSceneOrder !== undefined && value.toSceneOrder < value.fromSceneOrder) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["toSceneOrder"], message: "End scene must be after the start scene." });
+        }
       }))
       .mutation(async ({ ctx, input }) => {
         await assertCanAccessProject(input.projectId, ctx.user.id);
@@ -2494,7 +2504,33 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           throw new TRPCError({ code: "FORBIDDEN", message: "Item not accessible to this project." });
         }
         const character = await db.getCharacterById(input.characterId);
-        if (!character) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+        if (!character || character.projectId !== input.projectId) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Character not found in this project" });
+        }
+
+        // A new costume begins at the selected scene and automatically closes the
+        // previous look. It remains active until the next assigned costume.
+        const timeline = (await db.getWardrobeAssignmentsByCharacter(input.characterId))
+          .filter((assignment) => assignment.projectId === input.projectId && assignment.characterId === input.characterId);
+        for (const assignment of timeline) {
+          const start = assignment.fromSceneOrder ?? 0;
+          const end = assignment.toSceneOrder ?? Number.MAX_SAFE_INTEGER;
+          if (start === input.fromSceneOrder) {
+            await db.deleteWardrobeAssignment(assignment.id);
+          } else if (start < input.fromSceneOrder && end >= input.fromSceneOrder) {
+            await db.updateWardrobeAssignment(assignment.id, { toSceneOrder: input.fromSceneOrder - 1 } as any);
+          }
+        }
+        const nextStart = timeline
+          .map((assignment) => assignment.fromSceneOrder ?? 0)
+          .filter((start) => start > input.fromSceneOrder)
+          .sort((a, b) => a - b)[0];
+        const requestedEnd = input.toSceneOrder ?? Number.MAX_SAFE_INTEGER;
+        const effectiveEnd = nextStart === undefined ? requestedEnd : Math.min(requestedEnd, nextStart - 1);
+        const derivedIdentityMode = input.identityMode === "auto" && item.faceCoverage === "full"
+          ? "conceal_character_face"
+          : input.identityMode;
+
         return db.createWardrobeAssignment({
           userId: ctx.user.id,
           projectId: input.projectId,
@@ -2502,10 +2538,13 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           assignmentType: input.assignmentType,
           characterId: input.characterId,
           sceneId: null,
+          fromSceneOrder: input.fromSceneOrder,
+          toSceneOrder: Number.isFinite(effectiveEnd) ? effectiveEnd : null,
+          identityMode: derivedIdentityMode,
           usageMode: input.usageMode,
           placementNotes: input.placementNotes?.trim() || null,
           promptWeight: input.promptWeight,
-          locked: false,
+          locked: true,
         } as any);
       }),
 

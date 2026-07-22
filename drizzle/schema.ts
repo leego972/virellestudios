@@ -1939,6 +1939,8 @@ export const wardrobeItems = mysqlTable("wardrobeItems", {
   imageUrls: json("imageUrls"),
   primaryImageUrl: text("primaryImageUrl"),
   referencePrompt: text("referencePrompt"),
+  // none | partial | full. Full coverage suppresses the actor face reference while assigned.
+  faceCoverage: varchar("faceCoverage", { length: 16 }).default("none").notNull(),
   brandPlacementAllowed: boolean("brandPlacementAllowed").default(false).notNull(),
   shopfrontPlacementAllowed: boolean("shopfrontPlacementAllowed").default(true).notNull(),
   characterWardrobeAllowed: boolean("characterWardrobeAllowed").default(true).notNull(),
@@ -1978,6 +1980,8 @@ export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
   // ─── v6.31 scene-range assignment ───
   fromSceneOrder: int("fromSceneOrder"),  // NULL = all scenes
   toSceneOrder: int("toSceneOrder"),      // NULL = open-ended
+  // auto | use_character_face | conceal_character_face
+  identityMode: varchar("identityMode", { length: 32 }).default("auto").notNull(),
   // reference | must_match | inspired_by | background_only | brand_visible |
   // costume_accurate | period_accurate
   usageMode: varchar("usageMode", { length: 64 }).default("reference").notNull(),

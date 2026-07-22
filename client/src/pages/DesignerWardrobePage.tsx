@@ -153,6 +153,7 @@ interface ItemForm {
   styleTags: string;    // comma-separated
   primaryImageUrl: string;
   referencePrompt: string;
+  faceCoverage: "none" | "partial" | "full";
   characterWardrobeAllowed: boolean;
   costumeUseAllowed: boolean;
   shopfrontPlacementAllowed: boolean;
@@ -168,7 +169,7 @@ const emptyItem: ItemForm = {
   name: "", description: "", wardrobeType: "wardrobe",
   subcategory: "", era: "",
   colors: "", materials: "", styleTags: "",
-  primaryImageUrl: "", referencePrompt: "",
+  primaryImageUrl: "", referencePrompt: "", faceCoverage: "none",
   characterWardrobeAllowed: true, costumeUseAllowed: true,
   shopfrontPlacementAllowed: true, brandPlacementAllowed: false,
   commercialUseAllowed: false,
@@ -333,12 +334,28 @@ export default function DesignerWardrobePage() {
   const [attachUsage, setAttachUsage] = useState<string>("reference");
   const [attachAssignType, setAttachAssignType] = useState<string>("character_wardrobe");
   const [attachNotes, setAttachNotes] = useState<string>("");
+  const [attachFromSceneOrder, setAttachFromSceneOrder] = useState<string>("");
+  const [attachToSceneOrder, setAttachToSceneOrder] = useState<string>("until_changed");
+  const [attachIdentityMode, setAttachIdentityMode] = useState<"auto" | "use_character_face" | "conceal_character_face">("auto");
 
   /* ─── Derived ─── */
   const myItems = myItemsQ.data ?? [];
   const publicItems = publicItemsQ.data ?? [];
   const collections = collectionsQ.data ?? [];
   const profile = profileQ.data ?? null;
+  const sortedProjectScenes = useMemo(
+    () => [...(projectScenesQ.data ?? [])].sort((a: any, b: any) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)),
+    [projectScenesQ.data],
+  );
+  const activeAssignmentFor = (characterId: number, sceneOrder: number) =>
+    (projectAssignmentsQ.data ?? [])
+      .filter((assignment: any) => assignment.characterId === characterId)
+      .filter((assignment: any) => (assignment.fromSceneOrder ?? 0) <= sceneOrder && (assignment.toSceneOrder ?? Number.MAX_SAFE_INTEGER) >= sceneOrder)
+      .sort((a: any, b: any) => Number(Boolean(b.locked)) - Number(Boolean(a.locked)) || (b.fromSceneOrder ?? 0) - (a.fromSceneOrder ?? 0))[0];
+  const continuityGaps = useMemo(() => sortedProjectScenes.flatMap((scene: any) => {
+    const ids = Array.isArray(scene.characterIds) ? scene.characterIds : [];
+    return ids.flatMap((characterId: number) => activeAssignmentFor(characterId, scene.orderIndex ?? 0) ? [] : [{ scene, characterId }]);
+  }), [sortedProjectScenes, projectAssignmentsQ.data]);
 
   const browseItems = useMemo(() => {
     const list = publicItems;
@@ -425,6 +442,7 @@ export default function DesignerWardrobePage() {
       primaryImageUrl: itemForm.primaryImageUrl.trim() || undefined,
       imageUrls: itemForm.primaryImageUrl.trim() ? [itemForm.primaryImageUrl.trim()] : undefined,
       referencePrompt: itemForm.referencePrompt.trim() || undefined,
+      faceCoverage: itemForm.faceCoverage,
       characterWardrobeAllowed: itemForm.characterWardrobeAllowed,
       costumeUseAllowed: itemForm.costumeUseAllowed,
       shopfrontPlacementAllowed: itemForm.shopfrontPlacementAllowed,
@@ -453,6 +471,9 @@ export default function DesignerWardrobePage() {
     setAttachUsage("reference");
     setAttachAssignType("character_wardrobe");
     setAttachNotes("");
+    setAttachFromSceneOrder("");
+    setAttachToSceneOrder("until_changed");
+    setAttachIdentityMode(item.faceCoverage === "full" ? "conceal_character_face" : "auto");
     setAttachOpen(true);
   };
 
@@ -460,6 +481,7 @@ export default function DesignerWardrobePage() {
     if (!attachItem || !inProjectMode) return;
     if (attachKind === "character") {
       if (!attachCharId) { toast.error("Pick a character"); return; }
+      if (attachFromSceneOrder === "") { toast.error("Choose the scene where this costume begins"); return; }
       attachToCharacter.mutate({
         projectId: projectId!,
         characterId: Number(attachCharId),
@@ -467,7 +489,10 @@ export default function DesignerWardrobePage() {
         assignmentType: attachAssignType as any,
         usageMode: attachUsage as any,
         placementNotes: attachNotes.trim() || undefined,
-        promptWeight: 60,
+        promptWeight: 100,
+        fromSceneOrder: Number(attachFromSceneOrder),
+        toSceneOrder: attachToSceneOrder === "until_changed" ? undefined : Number(attachToSceneOrder),
+        identityMode: attachIdentityMode,
       });
     } else {
       if (!attachSceneId) { toast.error("Pick a scene"); return; }
@@ -827,6 +852,27 @@ export default function DesignerWardrobePage() {
           {/* ─── Project Wardrobe ─── */}
           {inProjectMode ? (
             <TabsContent value="project" className="mt-4">
+              <Card className={`mb-4 border ${continuityGaps.length ? "border-rose-500/40 bg-rose-950/15" : "border-emerald-500/30 bg-emerald-950/10"}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="font-medium">Character costume continuity</div>
+                      <div className="text-xs text-zinc-400 mt-1">Every on-screen character must have one assigned wardrobe or costume. It continues automatically until a replacement begins.</div>
+                    </div>
+                    <Badge className={continuityGaps.length ? "bg-rose-500/15 text-rose-300" : "bg-emerald-500/15 text-emerald-300"}>
+                      {continuityGaps.length ? `${continuityGaps.length} missing` : "Ready"}
+                    </Badge>
+                  </div>
+                  {continuityGaps.length > 0 ? (
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {continuityGaps.slice(0, 12).map(({ scene, characterId }: any) => {
+                        const character = projectCharsQ.data?.find((entry: any) => entry.id === characterId);
+                        return <div key={`${scene.id}-${characterId}`} className="rounded border border-rose-500/20 bg-black/20 px-3 py-2 text-xs">Scene {(scene.orderIndex ?? 0) + 1}: <span className="text-rose-300">{character?.name ?? `Character #${characterId}`} needs a costume</span></div>;
+                      })}
+                    </div>
+                  ) : null}
+                </CardContent>
+              </Card>
               <div className="mb-2 text-sm text-zinc-400">
                 Wardrobe attached to this project — every attachment is fed to the
                 AI when it generates the matching scene or character.
@@ -880,8 +926,12 @@ export default function DesignerWardrobePage() {
                             </div>
                             <div className="text-xs text-zinc-500 mt-0.5">
                               {charName ? `Character: ${charName}` : null}
+                              {charName ? ` · Scenes ${(a.fromSceneOrder ?? 0) + 1}–${a.toSceneOrder == null ? "until changed" : a.toSceneOrder + 1}` : null}
                               {sceneRef ? `Scene #${sceneRef.sceneNumber ?? sceneRef.id}${sceneRef.title ? ` — ${sceneRef.title}` : ""}` : null}
                             </div>
+                            {a.identityMode === "conceal_character_face" || item?.faceCoverage === "full" ? (
+                              <Badge className="mt-1 bg-violet-500/15 text-violet-300">Full face covered · actor face suppressed</Badge>
+                            ) : null}
                             {a.placementNotes ? (
                               <div className="text-xs text-zinc-400 mt-1 line-clamp-1">{a.placementNotes}</div>
                             ) : null}
@@ -1276,6 +1326,20 @@ export default function DesignerWardrobePage() {
                 className="bg-zinc-950 border-amber-500/20 mt-1"
               />
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label className="text-zinc-400">Face coverage</Label>
+                <Select value={itemForm.faceCoverage} onValueChange={(v) => setItemForm((f) => ({ ...f, faceCoverage: v as ItemForm["faceCoverage"] }))}>
+                  <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
+                    <SelectItem value="none">Face visible</SelectItem>
+                    <SelectItem value="partial">Partial mask / helmet</SelectItem>
+                    <SelectItem value="full">Full face covering — suppress actor face</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="text-xs text-zinc-500 self-end pb-2">Full coverage is for costumes such as Spider-Man-style masks, Batman-style cowls, sealed helmets or creature heads. The costume image replaces the actor face reference while active.</div>
+            </div>
             <div>
               <Label className="text-zinc-400">Reference prompt for the AI</Label>
               <Textarea
@@ -1410,16 +1474,35 @@ export default function DesignerWardrobePage() {
 
             {attachKind === "character" ? (
               <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-zinc-400">Costume begins in scene *</Label>
+                    <Select value={attachFromSceneOrder} onValueChange={setAttachFromSceneOrder}>
+                      <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue placeholder="Choose scene" /></SelectTrigger>
+                      <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20 max-h-72">
+                        {sortedProjectScenes.map((scene: any) => <SelectItem key={scene.id} value={String(scene.orderIndex ?? 0)}>Scene {(scene.orderIndex ?? 0) + 1}{scene.title ? ` — ${scene.title}` : ""}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-zinc-400">Costume ends</Label>
+                    <Select value={attachToSceneOrder} onValueChange={setAttachToSceneOrder}>
+                      <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20 max-h-72">
+                        <SelectItem value="until_changed">Until another costume is assigned</SelectItem>
+                        {sortedProjectScenes.filter((scene: any) => attachFromSceneOrder === "" || (scene.orderIndex ?? 0) >= Number(attachFromSceneOrder)).map((scene: any) => <SelectItem key={scene.id} value={String(scene.orderIndex ?? 0)}>End after scene {(scene.orderIndex ?? 0) + 1}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
                 <div>
-                  <Label className="text-zinc-400">Character</Label>
-                  <Select value={attachCharId} onValueChange={setAttachCharId}>
-                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1">
-                      <SelectValue placeholder="Pick a character" />
-                    </SelectTrigger>
+                  <Label className="text-zinc-400">Face identity while costume is active</Label>
+                  <Select value={attachIdentityMode} onValueChange={(value) => setAttachIdentityMode(value as typeof attachIdentityMode)}>
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
                     <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
-                      {(projectCharsQ.data ?? []).map((c: any) => (
-                        <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
-                      ))}
+                      <SelectItem value="auto">Automatic from costume face coverage</SelectItem>
+                      <SelectItem value="use_character_face">Use original character face</SelectItem>
+                      <SelectItem value="conceal_character_face">Full costume — suppress original face</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

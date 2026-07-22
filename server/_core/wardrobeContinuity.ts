@@ -6,6 +6,7 @@ export interface WardrobeItemRecord {
   primaryImageUrl?: string | null;
   imageUrls?: unknown;
   referencePrompt?: string | null;
+  faceCoverage?: string | null;
   colors?: unknown;
   materials?: unknown;
   category?: string | null;
@@ -120,6 +121,8 @@ export function buildWardrobePromptAnchor(item: WardrobeItemRecord, notes?: stri
     colors && `exact colours: ${colors}`,
     materials && `exact materials: ${materials}`,
     item.referencePrompt && `visual reference: ${item.referencePrompt.trim()}`,
+    item.faceCoverage === "full" && "FULL FACE COVERAGE: the costume mask/cowl/helmet completely replaces the visible actor face; no facial skin, hairline, eyes, mouth or uncovered identity may appear",
+    item.faceCoverage === "partial" && "PARTIAL FACE COVERAGE: preserve the exact mask/helmet coverage shown in the costume reference",
     item.primaryImageUrl && `reference image: ${item.primaryImageUrl}`,
     notes?.trim() && `placement and fit notes: ${notes.trim()}`,
     "LOCK: preserve the same garment design, cut, colour, material, fit, logos, damage and accessories in every assigned scene until the assignment range ends.",

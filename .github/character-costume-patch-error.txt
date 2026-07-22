@@ -1,4 +1,0 @@
-  File "/home/runner/work/virellestudios/virellestudios/.github/scripts/fix_character_costume_patch_script.py", line 26
-    '''                <div>\n                  <Label className="text-zinc-400">Type</Label>\n                  <Select value={attachAssignType} onValueChange={setAttachAssignType}>''',
-                                                                                                                                                                             ^
-SyntaxError: unexpected character after line continuation character
