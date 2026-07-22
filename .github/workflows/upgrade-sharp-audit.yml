@@ -1,0 +1,41 @@
+name: Upgrade sharp security dependency
+
+on:
+  push:
+    branches:
+      - feature/designer-commerce-shipping-production
+    paths:
+      - .github/workflows/upgrade-sharp-audit.yml
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/designer-commerce-shipping-production
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Upgrade patched sharp and remove obsolete external types
+        run: |
+          pnpm remove @types/sharp
+          pnpm add sharp@^0.35.3
+          pnpm check
+          pnpm test
+          pnpm build
+          pnpm audit --audit-level moderate
+      - name: Commit dependency security fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git commit -m "Upgrade sharp to patched 0.35 line"
+          git push origin HEAD:feature/designer-commerce-shipping-production
