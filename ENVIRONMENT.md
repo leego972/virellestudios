@@ -1,113 +1,163 @@
-# Virelle Studios — Environment Variables Reference
+# Virelle Studios Environment Reference
 
-  See `.env.example` for a template. This document explains each variable.
+Use [`.env.example`](./.env.example) as the copyable template and [`DEPLOYMENT.md`](./DEPLOYMENT.md) for production setup. Production secrets belong in Render environment variables, never in source files or Markdown notes.
 
-  ---
+## Core runtime
 
-  ## Required — Core
+| Variable | Purpose |
+|---|---|
+| `NODE_ENV` | `development`, `test` or `production` |
+| `PORT` | Public gateway port; Render supplies this automatically |
+| `PUBLIC_APP_URL` | Canonical application origin, normally `https://virelle.life` |
+| `DATABASE_URL` | MySQL 8-compatible connection string |
+| `REDIS_URL` | Redis connection used by distributed rate limiting and queues |
+| `JWT_SECRET` | Signs authentication/session tokens; use a random value of at least 32 characters |
+| `SESSION_SECRET` | Independent session secret; do not reuse `JWT_SECRET` |
 
-  | Variable | Description |
-  |---|---|
-  | `NODE_ENV` | `development` or `production` |
-  | `PORT` | Server port. Railway sets this automatically. Default: `3000` |
-  | `DATABASE_URL` | PostgreSQL connection string. **Required.** App will not start without this. |
-  | `REDIS_URL` | Redis connection string. Required for rate limiting and job queues in production. |
-  | `JWT_SECRET` | Secret used to sign session tokens. Use a random 32+ character string. Changing this invalidates all active sessions. |
+Changing either session secret invalidates active sessions and requires a deployment.
 
-  ---
+## Application identity and OAuth
 
-  ## Required — Stripe (Payments)
+| Variable | Purpose |
+|---|---|
+| `VITE_APP_ID` | Public application identifier |
+| `VITE_APP_TITLE` | Public application title |
+| `VITE_APP_LOGO` | Public logo path |
+| `OAUTH_SERVER_URL` | Configured OAuth broker when used |
+| `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET` | Direct Google OAuth |
+| `GITHUB_OAUTH_CLIENT_ID` / `GITHUB_OAUTH_CLIENT_SECRET` | Direct GitHub OAuth |
+| `ADMIN_EMAIL` | Administrative contact/reference email |
 
-  | Variable | Description |
-  |---|---|
-  | `STRIPE_SECRET_KEY` | Stripe secret key. Server-side only. Never expose to client. Use `sk_test_` in dev, `sk_live_` in production. |
-  | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. Safe to expose to client. |
-  | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (`whsec_...`). Used to verify webhook authenticity. |
-  | `STRIPE_INDIE_MONTHLY_PRICE_ID` | Stripe price ID for Indie monthly plan (AUD) |
-  | `STRIPE_INDIE_ANNUAL_PRICE_ID` | Stripe price ID for Indie annual plan (AUD) |
-  | `STRIPE_CREATOR_MONTHLY_PRICE_ID` | Stripe price ID for Creator monthly plan (AUD) |
-  | `STRIPE_CREATOR_ANNUAL_PRICE_ID` | Stripe price ID for Creator annual plan (AUD) |
-  | `STRIPE_STUDIO_MONTHLY_PRICE_ID` | Stripe price ID for Studio monthly plan (AUD) |
-  | `STRIPE_STUDIO_ANNUAL_PRICE_ID` | Stripe price ID for Studio annual plan (AUD) |
-  | `STRIPE_TOPUP_10_PRICE_ID` | Credit top-up pack price ID (500 credits) |
-  | `STRIPE_TOPUP_30_PRICE_ID` | Credit top-up pack price ID (1,500 credits) |
-  | `STRIPE_TOPUP_100_PRICE_ID` | Credit top-up pack price ID (3,000 credits) |
+Administrator authority is controlled by the user's database role. Environment variables must not automatically promote users to administrator.
 
-  > Create price objects in the Stripe Dashboard → Products before deploying to production.
+## Stripe
 
-  ---
+Core Stripe variables:
 
-  ## Required — Email
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
 
-  | Variable | Description |
-  |---|---|
-  | `GMAIL_USER` | Gmail address used for transactional email |
-  | `GMAIL_APP_PASSWORD` | Gmail App Password (not your login password — generate in Google Account Security) |
-  | `EMAIL_FROM` | From address shown to recipients. Defaults to `studiosvirelle@gmail.com` |
+Membership catalogue variables:
 
-  ---
+- `STRIPE_INDIE_MONTHLY_PRICE_ID`
+- `STRIPE_INDIE_ANNUAL_PRICE_ID`
+- `STRIPE_CREATOR_MONTHLY_PRICE_ID`
+- `STRIPE_CREATOR_ANNUAL_PRICE_ID`
+- `STRIPE_STUDIO_MONTHLY_PRICE_ID`
+- `STRIPE_STUDIO_ANNUAL_PRICE_ID`
 
-  ## Optional — AI Generation Providers
+Credit-pack variables:
 
-  These are platform-level fallback keys. Users can supply their own keys via Settings (BYOK).
+- `STRIPE_TOPUP_10_PRICE_ID`
+- `STRIPE_TOPUP_30_PRICE_ID`
+- `STRIPE_TOPUP_100_PRICE_ID`
+- `STRIPE_TOPUP_200_PRICE_ID`
+- `STRIPE_TOPUP_500_PRICE_ID`
+- `STRIPE_TOPUP_1000_PRICE_ID`
 
-  | Variable | Description |
-  |---|---|
-  | `OPENAI_API_KEY` | OpenAI API key (Director AI, script generation, LLM) |
-  | `RUNWAY_API_KEY` | Runway ML API key (video generation) |
-  | `FAL_KEY` | fal.ai API key (image and video generation) |
-  | `GOOGLE_API_KEY` | Google AI API key (Veo 3, Gemini Imagen) |
-  | `HUGGING_FACE_API_KEY` | Hugging Face key (FLUX.1-dev image fallback) |
-  | `GROQ_API_KEY` | Groq API key (fast LLM — Llama 3.3 70B) |
+Marketplace variables include `STRIPE_DESIGNER_YEARLY_PRICE_ID`, `STRIPE_CONNECT_RETURN_URL` and `STRIPE_CONNECT_REFRESH_URL`.
 
-  Missing optional AI keys disable platform-level generation for that provider. Users can still use their own keys.
+Use the active application constants and Stripe catalogue as the source of truth for quantities and pricing. Do not copy quantities from historical implementation reports.
 
-  ---
+## Email
 
-  ## Optional — Storage
+Supported transactional email variables include:
 
-  | Variable | Description |
-  |---|---|
-  | `AWS_REGION` | AWS region for S3 bucket |
-  | `AWS_ACCESS_KEY_ID` | AWS access key |
-  | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
-  | `AWS_S3_BUCKET` | S3 bucket name for user media uploads |
+- `GMAIL_USER`
+- `GMAIL_APP_PASSWORD`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
 
-  ---
+Configure at least one intentional delivery path in production.
 
-  ## Optional — Social Publishing
+## Storage
 
-  Only required if using autonomous social media publishing features.
+Application storage:
 
-  `YOUTUBE_API_KEY`, `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `META_ACCESS_TOKEN`, `X_API_KEY`, `X_API_SECRET`, `INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, `DISCORD_BOT_TOKEN`, `TELEGRAM_BOT_TOKEN`, `LINKEDIN_ACCESS_TOKEN`, `SNAPCHAT_CLIENT_ID`, `SNAPCHAT_CLIENT_SECRET`
+- `AWS_REGION`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_BUCKET`
+- `AWS_S3_ENDPOINT`
+- `AWS_S3_PUBLIC_URL`
 
-  ---
+Compliance archive:
 
-  ## Security Rules
+- `COMPLIANCE_ARCHIVE_BUCKET`
+- `COMPLIANCE_RETENTION_DAYS`
+- `COMPLIANCE_ARCHIVE_ENABLED`
+- `COMPLIANCE_ARCHIVE_SCAN_INTERVAL_MS`
+- `COMPLIANCE_ARCHIVE_BATCH_SIZE`
+- `COMPLIANCE_ARCHIVE_MAX_BYTES`
+- `COMPLIANCE_SIGNED_URL_SECONDS`
 
-  - **Never commit `.env` to version control.** Only `.env.example` should be committed.
-  - `STRIPE_SECRET_KEY`, `JWT_SECRET`, `GMAIL_APP_PASSWORD` are server-side only. They must never appear in client-side code or be exposed in API responses.
-  - `STRIPE_PUBLISHABLE_KEY` is the only Stripe key safe to send to the client.
-  - Rotating `JWT_SECRET` invalidates all active user sessions immediately.
-  - Use Railway's Variables panel to manage secrets in production — never hardcode them.
+The compliance archive must use private storage. Do not apply a public-read policy to that bucket.
 
-  ---
+## Broadcast bridge
 
-  ## Local Development Setup
+Managed and AI-assisted broadcasting use:
 
-  ```bash
-  cp .env.example .env
-  # Edit .env with your values
+- `BROADCAST_BRIDGE_URL`
+- `BROADCAST_BRIDGE_TOKEN`
 
-  npm install
-  npm run db:push   # Initialize database schema
-  npm run dev       # Start dev server on http://localhost:3000
-  ```
+Direct standard broadcasting does not require the bridge. Adult Studio broadcasting remains managed because recording and compliance retention are mandatory.
 
-  Minimum variables needed to run locally:
-  - `DATABASE_URL`
-  - `JWT_SECRET`
-  - `STRIPE_SECRET_KEY` + `STRIPE_PUBLISHABLE_KEY` + at least one price ID (for payments to work)
+## AI providers
 
-  The app will start without most optional keys — missing AI keys just disable those generation providers.
-  
+Platform-level provider keys are optional unless that managed integration is intentionally enabled. Users may supply BYOK credentials through the application.
+
+Common variables include:
+
+- `OPENAI_API_KEY`
+- `RUNWAY_API_KEY` or legacy `RUNWAYML_API_SECRET`
+- `FAL_KEY`
+- `GOOGLE_API_KEY`
+- `HUGGING_FACE_API_KEY`
+- `GROQ_API_KEY`
+- `POLLINATIONS_API_KEY`
+- `VENICE_API_KEY`
+- `TITAN_API_URL`
+- `TITAN_API_KEY`
+
+Never log provider keys or return them through client APIs.
+
+## Verification, monitoring and releases
+
+- `SENTRY_DSN`
+- `VITE_SENTRY_DSN`
+- `SENTRY_ENVIRONMENT`
+- `IOS_DOWNLOAD_URL`
+- `ANDROID_DOWNLOAD_URL`
+- `DESKTOP_RELEASES_REPO`
+- `DESKTOP_MAC_URL`
+- `DESKTOP_WIN_URL`
+- `DESKTOP_LINUX_URL`
+- `DESKTOP_VERSION`
+- `GITHUB_TOKEN`
+
+Download URLs should remain unset until a verified public release exists.
+
+## Local setup
+
+```bash
+cp .env.example .env
+pnpm install
+pnpm dev
+```
+
+Run the full verification gate before pushing:
+
+```bash
+pnpm verify
+```
+
+## Security rules
+
+- Never commit `.env` or real credentials.
+- Never store a live connection string in a note or report.
+- Only publish explicitly client-safe variables such as publishable Stripe keys.
+- Rotate any credential that enters Git history; deleting the current file is not sufficient.
+- Use separate secrets for JWT and session signing.
+- Review Render environment changes as production changes.
