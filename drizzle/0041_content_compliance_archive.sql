@@ -1,17 +1,8 @@
-ALTER TABLE `mature_access_profiles`
-  ADD COLUMN `adultAttestationAcceptedAt` datetime DEFAULT NULL AFTER `dateOfBirth`,
-  ADD COLUMN `archiveRetentionAcceptedAt` datetime DEFAULT NULL AFTER `consentPolicyAcceptedAt`,
-  ADD COLUMN `termsVersion` varchar(64) NOT NULL DEFAULT 'adult-workspace-2026-07' AFTER `archiveRetentionAcceptedAt`;
-
-ALTER TABLE `virelle_video_transform_jobs`
-  ADD COLUMN `publicFigureLikeness` tinyint(1) NOT NULL DEFAULT 0 AFTER `allSubjectsAdultsConfirmed`,
-  ADD COLUMN `aiGeneratedCharactersOnly` tinyint(1) NOT NULL DEFAULT 0 AFTER `publicFigureLikeness`,
-  ADD COLUMN `recordingRequired` tinyint(1) NOT NULL DEFAULT 1 AFTER `broadcastChannelsEncrypted`,
-  ADD COLUMN `broadcastStartedAt` datetime DEFAULT NULL AFTER `recordingRequired`,
-  ADD COLUMN `broadcastCompletedAt` datetime DEFAULT NULL AFTER `broadcastStartedAt`,
-  ADD COLUMN `consentAttestationVersion` varchar(64) NOT NULL DEFAULT 'likeness-consent-2026-07' AFTER `consentConfirmed`,
-  ADD KEY `idx_vvtj_workspace` (`contentMode`),
-  ADD KEY `idx_vvtj_broadcast_started` (`broadcastStartedAt`);
+-- Additive compliance tables only.
+-- Mature-access and video-job columns are provisioned defensively by
+-- ensureMatureAccessTable() and ensureBroadcastRenderTables(). Keeping ALTER
+-- statements out of this migration avoids deployment-order failures because
+-- virelle_video_transform_jobs is a runtime-provisioned table on older installs.
 
 CREATE TABLE IF NOT EXISTS `compliance_media_archive` (
   `id` bigint NOT NULL AUTO_INCREMENT,
