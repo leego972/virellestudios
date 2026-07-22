@@ -40,7 +40,7 @@ describe("pitchDeckFileExport", () => {
     expect(slides).toHaveLength(9);
     expect(slides[0].title).toBe("Test Feature");
     expect(slides.some(slide => slide.title === "Budget and funding ask")).toBe(true);
-    expect(slides.at(-1)?.subtitle).toBe("AUD 750,000");
+    expect(slides[slides.length - 1]?.subtitle).toBe("AUD 750,000");
   });
 
   it("creates a structurally valid PDF download", async () => {
