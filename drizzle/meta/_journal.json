@@ -2,292 +2,48 @@
   "version": "7",
   "dialect": "mysql",
   "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1771853865460,
-      "tag": "0000_green_kang",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1771854141335,
-      "tag": "0001_cool_baron_zemo",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1771855304255,
-      "tag": "0002_classy_slapstick",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1771859883364,
-      "tag": "0003_true_typhoid_mary",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1771861010367,
-      "tag": "0004_dear_doorman",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1771863267206,
-      "tag": "0005_talented_gateway",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1771866413288,
-      "tag": "0006_lonely_young_avengers",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1771866450961,
-      "tag": "0007_tricky_ted_forrester",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1771868647578,
-      "tag": "0008_lean_jack_murdock",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1771872461261,
-      "tag": "0009_bouncy_iron_lad",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "5",
-      "when": 1771882492800,
-      "tag": "0010_wakeful_jackpot",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "5",
-      "when": 1771886184671,
-      "tag": "0011_medical_skin",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "5",
-      "when": 1771886951953,
-      "tag": "0012_concerned_rocket_racer",
-      "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "5",
-      "when": 1771907618138,
-      "tag": "0013_worthless_aqueduct",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "5",
-      "when": 1771909464202,
-      "tag": "0014_past_skaar",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "5",
-      "when": 1771854765460,
-      "tag": "0015_deep_character_scene",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "5",
-      "when": 1775009867908,
-      "tag": "0015_lethal_harry_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 17,
-      "version": "5",
-      "when": 1771854885460,
-      "tag": "0016_content_moderation",
-      "breakpoints": true
-    },
-    {
-      "idx": 18,
-      "version": "5",
-      "when": 1776019459556,
-      "tag": "0016_quiet_gambit",
-      "breakpoints": true
-    },
-    {
-      "idx": 19,
-      "version": "5",
-      "when": 1771855005460,
-      "tag": "0017_project_samples",
-      "breakpoints": true
-    },
-    {
-      "idx": 20,
-      "version": "5",
-      "when": 1771855065460,
-      "tag": "0018_amateur_tier",
-      "breakpoints": true
-    },
-    {
-      "idx": 21,
-      "version": "5",
-      "when": 1771855125460,
-      "tag": "0019_venice_key",
-      "breakpoints": true
-    },
-    {
-      "idx": 22,
-      "version": "5",
-      "when": 1771855185460,
-      "tag": "0020_render_queue_v662",
-      "breakpoints": true
-    },
-    {
-      "idx": 23,
-      "version": "5",
-      "when": 1771855245460,
-      "tag": "0021_production_spine_v663",
-      "breakpoints": true
-    },
-    {
-      "idx": 24,
-      "version": "5",
-      "when": 1771855305460,
-      "tag": "0022_signed_approvals_v664",
-      "breakpoints": true
-    },
-    {
-      "idx": 25,
-      "version": "5",
-      "when": 1771855365460,
-      "tag": "0023_auto_recap_v666",
-      "breakpoints": true
-    },
-    {
-      "idx": 26,
-      "version": "5",
-      "when": 1771855425460,
-      "tag": "0024_recap_attach_v667",
-      "breakpoints": true
-    },
-    {
-      "idx": 27,
-      "version": "5",
-      "when": 1771855485460,
-      "tag": "0025_credit_reservations_v668",
-      "breakpoints": true
-    },
-    {
-      "idx": 28,
-      "version": "5",
-      "when": 1771855545460,
-      "tag": "0026_byok_fallback_mode_v669",
-      "breakpoints": true
-    },
-    {
-      "idx": 29,
-      "version": "5",
-      "when": 1771855605460,
-      "tag": "0027_recap_render_v671",
-      "breakpoints": true
-    },
-    {
-      "idx": 30,
-      "version": "5",
-      "when": 1771855665460,
-      "tag": "0028_designer_wardrobe_v677",
-      "breakpoints": true
-    },
-    {
-      "idx": 31,
-      "version": "5",
-      "when": 1771855725460,
-      "tag": "0029_global_funding_sources_v678",
-      "breakpoints": true
-    },
-    {
-      "idx": 32,
-      "version": "5",
-      "when": 1771855785460,
-      "tag": "0030_native_crowdfunding",
-      "breakpoints": true
-    },
-    {
-      "idx": 33,
-      "version": "5",
-      "when": 1771855845460,
-      "tag": "0031_wardrobe_scene_range",
-      "breakpoints": true
-    },
-    {
-      "idx": 34,
-      "version": "5",
-      "when": 1771855905460,
-      "tag": "0032_project_backgrounds",
-      "breakpoints": true
-    },
-    {
-      "idx": 35,
-      "version": "5",
-      "when": 1771855965460,
-      "tag": "0033_props_library",
-      "breakpoints": true
-    },
-    {
-      "idx": 36,
-      "version": "5",
-      "when": 1771856025460,
-      "tag": "0034_narrative_structure",
-      "breakpoints": true
-    },
-    {
-      "idx": 37,
-      "version": "5",
-      "when": 1771856085460,
-      "tag": "0035_character_states",
-      "breakpoints": true
-    },
-    {
-      "idx": 38,
-      "version": "5",
-      "when": 1771856145460,
-      "tag": "0036_visual_dna_color_lock",
-      "breakpoints": true
-    },
-    {
-      "idx": 39,
-      "version": "5",
-      "when": 1771856205460,
-      "tag": "0037_vehicle_vessel_aircraft_locks",
-      "breakpoints": true
-    },
-    {
-      "idx": 40,
-      "version": "5",
-      "when": 1771856265460,
-      "tag": "0038_nonhuman_character_reference",
-      "breakpoints": true
-    }
+    { "idx": 0, "version": "5", "when": 1771853865460, "tag": "0000_green_kang", "breakpoints": true },
+    { "idx": 1, "version": "5", "when": 1771854141335, "tag": "0001_cool_baron_zemo", "breakpoints": true },
+    { "idx": 2, "version": "5", "when": 1771855304255, "tag": "0002_classy_slapstick", "breakpoints": true },
+    { "idx": 3, "version": "5", "when": 1771859883364, "tag": "0003_true_typhoid_mary", "breakpoints": true },
+    { "idx": 4, "version": "5", "when": 1771861010367, "tag": "0004_dear_doorman", "breakpoints": true },
+    { "idx": 5, "version": "5", "when": 1771863267206, "tag": "0005_talented_gateway", "breakpoints": true },
+    { "idx": 6, "version": "5", "when": 1771866413288, "tag": "0006_lonely_young_avengers", "breakpoints": true },
+    { "idx": 7, "version": "5", "when": 1771866450961, "tag": "0007_tricky_ted_forrester", "breakpoints": true },
+    { "idx": 8, "version": "5", "when": 1771868647578, "tag": "0008_lean_jack_murdock", "breakpoints": true },
+    { "idx": 9, "version": "5", "when": 1771872461261, "tag": "0009_bouncy_iron_lad", "breakpoints": true },
+    { "idx": 10, "version": "5", "when": 1771882492800, "tag": "0010_wakeful_jackpot", "breakpoints": true },
+    { "idx": 11, "version": "5", "when": 1771886184671, "tag": "0011_medical_skin", "breakpoints": true },
+    { "idx": 12, "version": "5", "when": 1771886951953, "tag": "0012_concerned_rocket_racer", "breakpoints": true },
+    { "idx": 13, "version": "5", "when": 1771907618138, "tag": "0013_worthless_aqueduct", "breakpoints": true },
+    { "idx": 14, "version": "5", "when": 1771909464202, "tag": "0014_past_skaar", "breakpoints": true },
+    { "idx": 15, "version": "5", "when": 1771854765460, "tag": "0015_deep_character_scene", "breakpoints": true },
+    { "idx": 16, "version": "5", "when": 1775009867908, "tag": "0015_lethal_harry_osborn", "breakpoints": true },
+    { "idx": 17, "version": "5", "when": 1771854885460, "tag": "0016_content_moderation", "breakpoints": true },
+    { "idx": 18, "version": "5", "when": 1776019459556, "tag": "0016_quiet_gambit", "breakpoints": true },
+    { "idx": 19, "version": "5", "when": 1771855005460, "tag": "0017_project_samples", "breakpoints": true },
+    { "idx": 20, "version": "5", "when": 1771855065460, "tag": "0018_amateur_tier", "breakpoints": true },
+    { "idx": 21, "version": "5", "when": 1771855125460, "tag": "0019_venice_key", "breakpoints": true },
+    { "idx": 22, "version": "5", "when": 1771855185460, "tag": "0020_render_queue_v662", "breakpoints": true },
+    { "idx": 23, "version": "5", "when": 1771855245460, "tag": "0021_production_spine_v663", "breakpoints": true },
+    { "idx": 24, "version": "5", "when": 1771855305460, "tag": "0022_signed_approvals_v664", "breakpoints": true },
+    { "idx": 25, "version": "5", "when": 1771855365460, "tag": "0023_auto_recap_v666", "breakpoints": true },
+    { "idx": 26, "version": "5", "when": 1771855425460, "tag": "0024_recap_attach_v667", "breakpoints": true },
+    { "idx": 27, "version": "5", "when": 1771855485460, "tag": "0025_credit_reservations_v668", "breakpoints": true },
+    { "idx": 28, "version": "5", "when": 1771855545460, "tag": "0026_byok_fallback_mode_v669", "breakpoints": true },
+    { "idx": 29, "version": "5", "when": 1771855605460, "tag": "0027_recap_render_v671", "breakpoints": true },
+    { "idx": 30, "version": "5", "when": 1771855665460, "tag": "0028_designer_wardrobe_v677", "breakpoints": true },
+    { "idx": 31, "version": "5", "when": 1771855725460, "tag": "0029_global_funding_sources_v678", "breakpoints": true },
+    { "idx": 32, "version": "5", "when": 1771855785460, "tag": "0030_native_crowdfunding", "breakpoints": true },
+    { "idx": 33, "version": "5", "when": 1771855845460, "tag": "0031_wardrobe_scene_range", "breakpoints": true },
+    { "idx": 34, "version": "5", "when": 1771855905460, "tag": "0032_project_backgrounds", "breakpoints": true },
+    { "idx": 35, "version": "5", "when": 1771855965460, "tag": "0033_props_library", "breakpoints": true },
+    { "idx": 36, "version": "5", "when": 1771856025460, "tag": "0034_narrative_structure", "breakpoints": true },
+    { "idx": 37, "version": "5", "when": 1771856085460, "tag": "0035_character_states", "breakpoints": true },
+    { "idx": 38, "version": "5", "when": 1771856145460, "tag": "0036_visual_dna_color_lock", "breakpoints": true },
+    { "idx": 39, "version": "5", "when": 1771856205460, "tag": "0037_vehicle_vessel_aircraft_locks", "breakpoints": true },
+    { "idx": 40, "version": "5", "when": 1771856265460, "tag": "0038_nonhuman_character_reference", "breakpoints": true },
+    { "idx": 41, "version": "5", "when": 1784554200000, "tag": "0039_auth_user_schema_repair", "breakpoints": true },
+    { "idx": 42, "version": "5", "when": 1784557800000, "tag": "0040_complete_auth_user_schema", "breakpoints": true }
   ]
 }

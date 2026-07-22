@@ -1,0 +1,284 @@
+/* Mobile Safari and cross-theme visibility safeguards.
+   Loaded after index.css so these rules correct legacy hard-coded colours and
+   fixed-position controls without changing individual feature behaviour. */
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+
+main,
+section,
+article,
+[data-slot="sidebar-inset"],
+[data-slot="card"],
+[data-slot="card-content"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Day mode in this project is represented by .dark (light/cream surfaces).
+   Gold, amber and pastel utility colours need darker equivalents on cream. */
+.dark .text-amber-400,
+.dark .text-amber-500,
+.dark .text-yellow-400,
+.dark .text-yellow-500 {
+  color: #8a5700 !important;
+}
+
+.dark .text-orange-400,
+.dark .text-orange-500 {
+  color: #a34100 !important;
+}
+
+.dark .text-blue-400,
+.dark .text-blue-500 {
+  color: #1d4ed8 !important;
+}
+
+.dark .text-green-400,
+.dark .text-green-500,
+.dark .text-emerald-400,
+.dark .text-emerald-500 {
+  color: #147a38 !important;
+}
+
+.dark .text-red-400,
+.dark .text-red-500 {
+  color: #c62828 !important;
+}
+
+.dark .text-purple-400,
+.dark .text-purple-500 {
+  color: #6d28d9 !important;
+}
+
+.dark .text-teal-400,
+.dark .text-teal-500 {
+  color: #0f766e !important;
+}
+
+.dark .text-muted-foreground {
+  color: #454545 !important;
+}
+
+.dark .gradient-text-gold,
+.dark .text-gold-shimmer {
+  background: none !important;
+  color: #825300 !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  animation: none !important;
+}
+
+.dark [data-slot="card"],
+.dark [data-slot="card-content"],
+.dark [data-slot="card-header"],
+.dark [data-slot="card-title"] {
+  color: var(--card-foreground);
+}
+
+.dark [class*="bg-blue-600/"][class*="text-blue-400"],
+.dark [class*="bg-amber-500/"][class*="text-amber-400"] {
+  font-weight: 700;
+}
+
+/* Dialogs, sheets and floating menus are rendered through portals. They must
+   receive explicit theme colours because inherited page text can be lost when
+   the portal uses a contrasting glass/background surface. */
+:root:not(.dark) [data-slot="dialog-content"],
+:root:not(.dark) [data-slot="alert-dialog-content"],
+:root:not(.dark) [data-slot="sheet-content"],
+:root:not(.dark) [data-slot="popover-content"],
+:root:not(.dark) [data-slot="dropdown-menu-content"],
+:root:not(.dark) [data-slot="select-content"],
+:root:not(.dark) [data-slot="command"] {
+  color: #f8e7a5 !important;
+}
+
+:root:not(.dark) [data-slot="dialog-description"],
+:root:not(.dark) [data-slot="alert-dialog-description"],
+:root:not(.dark) [data-slot="dialog-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="alert-dialog-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="sheet-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="popover-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="dropdown-menu-content"] .text-muted-foreground,
+:root:not(.dark) [data-slot="select-content"] .text-muted-foreground {
+  color: #eadcae !important;
+}
+
+.dark [data-slot="dialog-content"],
+.dark [data-slot="alert-dialog-content"],
+.dark [data-slot="sheet-content"],
+.dark [data-slot="popover-content"],
+.dark [data-slot="dropdown-menu-content"],
+.dark [data-slot="select-content"],
+.dark [data-slot="command"] {
+  color: #18181b !important;
+}
+
+.dark [data-slot="dialog-description"],
+.dark [data-slot="alert-dialog-description"],
+.dark [data-slot="dialog-content"] .text-muted-foreground,
+.dark [data-slot="alert-dialog-content"] .text-muted-foreground,
+.dark [data-slot="sheet-content"] .text-muted-foreground,
+.dark [data-slot="popover-content"] .text-muted-foreground,
+.dark [data-slot="dropdown-menu-content"] .text-muted-foreground,
+.dark [data-slot="select-content"] .text-muted-foreground {
+  color: #454545 !important;
+}
+
+/* Night mode: protect body copy from hard-coded dark text on black surfaces. */
+:root:not(.dark) .text-stone-400,
+:root:not(.dark) .text-stone-500,
+:root:not(.dark) .text-stone-600,
+:root:not(.dark) .text-stone-700,
+:root:not(.dark) .text-stone-800,
+:root:not(.dark) .text-stone-900 {
+  color: oklch(0.76 0.12 85) !important;
+}
+
+:root:not(.dark) [data-slot="card"],
+:root:not(.dark) [data-slot="card-content"],
+:root:not(.dark) [data-slot="card-header"],
+:root:not(.dark) [data-slot="card-title"] {
+  color: var(--card-foreground);
+}
+
+/* Inputs must remain at least 16px on iPhone Safari to prevent focus zoom. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100vw;
+    padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8rem) !important;
+  }
+
+  [data-mobile-header] {
+    padding-left: max(0.5rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.5rem, env(safe-area-inset-right)) !important;
+  }
+
+  /* Ensure the hamburger sheet is visible, scrollable and not wider than the
+     iPhone viewport, including landscape safe areas. */
+  [data-mobile="true"][data-slot="sidebar"] {
+    width: min(88vw, 20rem) !important;
+    max-width: calc(
+      100vw - env(safe-area-inset-left) - env(safe-area-inset-right)
+    ) !important;
+    height: 100svh !important;
+    height: 100dvh !important;
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+    overflow: hidden !important;
+    z-index: 90 !important;
+  }
+
+  [data-slot="sheet-overlay"] {
+    z-index: 85 !important;
+  }
+
+  [data-mobile="true"][data-slot="sidebar"] [data-slot="sidebar-content"] {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  h1 {
+    font-size: clamp(1.55rem, 7vw, 2.15rem);
+    line-height: 1.15;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 5.5vw, 1.75rem);
+    line-height: 1.2;
+  }
+
+  [data-slot="card"] {
+    border-radius: 1rem;
+  }
+
+  [data-slot="card-content"] {
+    overflow-wrap: anywhere;
+  }
+
+  table {
+    min-width: 100%;
+  }
+
+  /* Director's Assistant trigger: stay above Safari's bottom toolbar and stop
+     obscuring cards. This matches both the full and minimized trigger pills. */
+  button.fixed.bottom-6.right-6.z-50 {
+    right: max(0.75rem, env(safe-area-inset-right)) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem) !important;
+    max-width: calc(
+      100vw - 1.5rem - env(safe-area-inset-left) -
+        env(safe-area-inset-right)
+    );
+    padding: 0.65rem 0.9rem !important;
+  }
+
+  footer {
+    margin-bottom: 0;
+  }
+}
+
+/* WebKit-specific viewport and compositing corrections. */
+@supports (-webkit-touch-callout: none) {
+  html,
+  body,
+  #root {
+    min-height: -webkit-fill-available;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  [data-mobile-header] {
+    position: -webkit-sticky;
+    position: sticky;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+
+  .fixed {
+    -webkit-transform: translateZ(0);
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 767px) {
+  main {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6rem) !important;
+  }
+
+  button.fixed.bottom-6.right-6.z-50 {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem) !important;
+  }
+}

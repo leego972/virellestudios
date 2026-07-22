@@ -4,8 +4,8 @@ import type { Request, Response, NextFunction } from "express";
 import type { User } from "../../drizzle/schema";
 import { COOKIE_NAME } from "@shared/const";
 import { SignJWT, jwtVerify } from "jose";
-import * as db from "../db";
 import { registerAdminForRateLimit } from "./rateLimit";
+import { findSessionUserById, findSessionUserByOpenId } from "./authDb";
 
 import { ENV } from "./env";
 
@@ -13,15 +13,12 @@ let JWT_SECRET_KEY = ENV.cookieSecret;
 
 if (!JWT_SECRET_KEY) {
   if (process.env.NODE_ENV === "production") {
-    // Hard fail — the fallback key is visible in the public source repo,
-    // so any attacker could forge valid JWT tokens for any user.
     throw new Error(
       "[virelle] FATAL: JWT_SECRET env var is not set. " +
-      "Add JWT_SECRET to Railway environment variables and redeploy."
+      "Add JWT_SECRET to Render environment variables and redeploy."
     );
   }
-  // Development only: ephemeral key so the server starts without full config.
-  JWT_SECRET_KEY = "dev-secret-change-me-set-JWT_SECRET-in-railway";
+  JWT_SECRET_KEY = "dev-secret-change-me-set-JWT_SECRET-in-render";
   logger.warn("[virelle] JWT_SECRET not set — using insecure dev fallback. Sessions will be invalidated on restart.");
 }
 
@@ -38,12 +35,14 @@ export type TrpcContext = {
   isExpiredTester: boolean;
 };
 
-// Try Manus SDK auth first (for dev environment), then fall back to standalone JWT
+function asUser(row: Awaited<ReturnType<typeof findSessionUserById>>): User | null {
+  return row ? (row as unknown as User) : null;
+}
+
 async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): Promise<User | null> {
   const cookieHeader = req.headers.cookie;
   if (!cookieHeader) return null;
 
-  // Parse cookies manually
   const cookies = new Map<string, string>();
   cookieHeader.split(";").forEach(pair => {
     const [key, ...vals] = pair.trim().split("=");
@@ -53,75 +52,64 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
   const sessionCookie = cookies.get(COOKIE_NAME);
   if (!sessionCookie) return null;
 
-  // Try standalone JWT verification
+  // Current standalone JWT format.
   try {
     const { payload } = await jwtVerify(sessionCookie, secretKey, {
       algorithms: ["HS256"],
       issuer: JWT_ISSUER,
     });
-    const userId = payload.userId as number;
-    if (userId) {
-      const user = await db.getUserById(userId);
+
+    const userId = Number(payload.userId);
+    if (Number.isInteger(userId) && userId > 0) {
+      const user = asUser(await findSessionUserById(userId));
       if (!user) return null;
-      // Zombie-session guard: if the user changed their password after this token
-      // was issued, the old session is no longer valid.  payload.iat is seconds
-      // since epoch (set by setIssuedAt() above); passwordChangedAt is a Date.
       if (payload.iat && (user as any).passwordChangedAt) {
-        if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) {
-          return null;
-        }
+        if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) return null;
       }
       return user;
     }
-    // Fallback: check if it's a Manus-style JWT with openId
-    const openId = payload.openId as string;
+
+    const openId = typeof payload.openId === "string" ? payload.openId : "";
     if (openId) {
-      const user = await db.getUserByOpenId(openId);
-      return user ?? null;
+      const user = await findSessionUserByOpenId(openId);
+      return user ? (user as unknown as User) : null;
     }
   } catch {
-    // New JWT format failed — try legacy tokens without issuer check
+    // Legacy locally-signed JWT without issuer.
     try {
       const { payload } = await jwtVerify(sessionCookie, secretKey, {
         algorithms: ["HS256"],
       });
-      const userId = payload.userId as number;
-      if (userId) {
-        const user = await db.getUserById(userId);
+      const userId = Number(payload.userId);
+      if (Number.isInteger(userId) && userId > 0) {
+        const user = asUser(await findSessionUserById(userId));
         if (!user) return null;
         if (payload.iat && (user as any).passwordChangedAt) {
-          if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) {
-            return null;
-          }
+          if (payload.iat * 1000 < new Date((user as any).passwordChangedAt).getTime()) return null;
         }
         return user;
       }
     } catch {
-      // JWT verification failed entirely
+      // Continue to the historical Manus-token fallback below.
     }
   }
 
-  // Try Manus SDK as fallback (for dev environment)
   try {
     const { sdk } = await import("./sdk");
     const user = await sdk.authenticateRequest(req);
     return user;
   } catch {
-    // Manus SDK not available or auth failed
+    return null;
   }
-
-  return null;
 }
 
-// Create a standalone JWT session token
 export async function createSessionToken(userId: number, name: string): Promise<string> {
-  const token = await new SignJWT({ userId, name })
+  return new SignJWT({ userId, name })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setIssuer(JWT_ISSUER)
     .setIssuedAt()
     .setExpirationTime("30d")
     .sign(secretKey);
-  return token;
 }
 
 export async function createContext(
@@ -132,13 +120,10 @@ export async function createContext(
   try {
     user = await authenticateFromCookie(opts.req);
   } catch (error) {
-    // Authentication is optional for public procedures.
+    logger.errorWithStack("[Auth] Session authentication failed", error);
     user = null;
   }
 
-  // Enforce temporary account expiry (e.g. tester accounts)
-  // Expired testers keep their user object so they can read/download,
-  // but isExpiredTester=true lets individual procedures block creation.
   let isExpiredTester = false;
   if (user && (user as any).accountExpiresAt) {
     const expiry = new Date((user as any).accountExpiresAt);
@@ -148,7 +133,6 @@ export async function createContext(
     }
   }
 
-  // Register admin users for rate limit bypass
   if (user && user.role === "admin") {
     registerAdminForRateLimit(user.id);
   }
@@ -161,25 +145,7 @@ export async function createContext(
   };
 }
 
-/**
- * Express middleware that gates direct (non-tRPC) admin routes.
- *
- * Mounted in front of any `/api/admin/*` handler in `index.ts` so that
- * unauthenticated callers — and authenticated non-admin users — are
- * rejected with HTTP 403 *before* the handler runs. This is the
- * non-tRPC counterpart to the `adminProcedure` guard used inside the
- * tRPC routers.
- *
- * Behaviour:
- *   - Builds a regular request context via `createContext` (cookie →
- *     JWT → user lookup), so it shares the exact same auth path as
- *     every other route in the app.
- *   - 403 if there is no user, or `user.role !== "admin"`. Logs a
- *     warning with the request path + IP for audit visibility.
- *   - 500 if the auth path itself throws (e.g. database outage).
- *   - On success, attaches the resolved user to `req.user` so the
- *     downstream handler can read it without re-running auth.
- */
+/** Express middleware for direct non-tRPC admin routes. */
 export const requireAdminExpress = async (
   req: Request,
   res: Response,
@@ -195,6 +161,7 @@ export const requireAdminExpress = async (
     (req as any).user = ctx.user;
     next();
   } catch (err) {
+    logger.errorWithStack("[Admin] Authentication check failed", err);
     res.status(500).json({ error: "Internal server error during admin check" });
   }
 };

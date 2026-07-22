@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Typecheck, build, audit, and secret scan
+    name: Typecheck, test, build, audit, and secret scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,20 +29,27 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
         run: pnpm check
 
+      - name: Unit and integration tests
+        run: pnpm test
+
       - name: Build
         run: pnpm build
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: security-ci-stub
+          VITE_SENTRY_DSN: ""
 
       - name: Dependency audit
         id: audit
         shell: bash
         run: |
           set +e
-          pnpm audit --audit-level high 2>&1 | tee dependency-audit.txt
+          pnpm audit --audit-level moderate 2>&1 | tee dependency-audit.txt
           code=${PIPESTATUS[0]}
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
@@ -59,13 +66,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Scanning tracked files for obvious committed secrets..."
-          if git grep -nE '(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,})' -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!.github/workflows/security-ci.yml' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md' ':!server/_core/byokVideoEngine.ts'; then
+          pattern='(sk-[A-Za-z0-9_-]{20,}|sk_[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{25,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|whsec_[A-Za-z0-9]{20,}|rk_(live|test)_[A-Za-z0-9]{20,}|sk_(live|test)_[A-Za-z0-9]{20,})'
+          if git grep -nEI "$pattern" -- ':!pnpm-lock.yaml' ':!SECURITY.md' ':!.github/workflows/security-ci.yml' ':!SECURITY_AUDIT.md' ':!RUNBOOK.md'; then
             echo "Potential secret detected. Remove it from source and rotate it before merging."
             exit 1
           fi
           echo "No obvious secret patterns found."
 
-      - name: Fail when dependency audit found high-severity vulnerabilities
+      - name: Fail when dependency audit found moderate-or-higher vulnerabilities
         if: steps.audit.outputs.exit_code != '0'
         run: exit 1

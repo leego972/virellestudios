@@ -256,7 +256,7 @@ import { useState, useEffect } from "react";
       onSuccess: () => { utils.communityForum.listPosts.invalidate(); utils.communityForum.myLikes.invalidate(); },
     });
 
-    if (!user || (!isPaid && user)) return <MembersOnlyWall />;
+    if (!user || !isPaid) return <MembersOnlyWall />;
 
     const posts = postsData?.posts ?? [];
     const likedPostIds = new Set<number>(likesData?.likedPostIds ?? []);

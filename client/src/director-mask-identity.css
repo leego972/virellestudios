@@ -1,0 +1,59 @@
+/* Director Assistant identity must use the established Virelle porcelain mask,
+   not generic chat or sparkle glyphs. Scoped to the floating Director panel so
+   normal sparkle action icons elsewhere remain unchanged. */
+
+/* Main empty-state identity shown above “Virelle is ready”. */
+.fixed.z-50 div:has(> svg.lucide-message-square) {
+  width: 6rem !important;
+  height: 6rem !important;
+  flex: 0 0 6rem !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(245, 158, 11, 0.42) !important;
+  border-radius: 9999px !important;
+  background-color: #07070e !important;
+  background-image: url('/virelle-face.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 88% auto !important;
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.24) !important;
+}
+
+.fixed.z-50 div:has(> svg.lucide-message-square) > svg {
+  display: none !important;
+}
+
+/* Director panel header avatar. */
+.fixed.z-50 div.size-8.rounded-full:has(> svg.lucide-sparkles.text-black) {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  background-color: #07070e !important;
+  background-image: url('/virelle-face.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 88% auto !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.24) !important;
+}
+
+.fixed.z-50 div.size-8.rounded-full:has(> svg.lucide-sparkles.text-black) > svg {
+  display: none !important;
+}
+
+/* Small assistant avatars beside loading and completed replies. */
+.fixed.z-50 div.size-7.rounded-full:has(> svg.lucide-sparkles) {
+  overflow: hidden !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  background-color: #07070e !important;
+  background-image: url('/virelle-face.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 90% auto !important;
+}
+
+.fixed.z-50 div.size-7.rounded-full:has(> svg.lucide-sparkles) > svg {
+  display: none !important;
+}
+
+/* Fallback for browsers that do not support :has(). The current iOS Safari
+   supports it; the generic icon remains functional on older engines. */

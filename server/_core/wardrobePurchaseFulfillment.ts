@@ -1,8 +1,13 @@
 import type Stripe from "stripe";
 import * as db from "../db";
+import {
+  ensurePermanentWardrobeCopiesForLease,
+  type PermanentWardrobeCopy,
+} from "./wardrobePurchaseInventory";
 
 export interface WardrobePurchaseFulfillmentResult {
   lease: Awaited<ReturnType<typeof db.createWardrobeLease>>;
+  inventoryCopies: PermanentWardrobeCopy[];
   alreadyFulfilled: boolean;
 }
 
@@ -20,8 +25,9 @@ function nonNegativeInteger(value: unknown, label: string): number {
 
 /**
  * Idempotently turns a paid Stripe Checkout Session into permanent wardrobe
- * inventory access. It is safe to call from both the webhook and the browser
- * return route because the payment-intent ID is the fulfilment key.
+ * inventory. The financial lease row remains the purchase receipt, while every
+ * purchased garment is copied into a private buyer-owned wardrobe row so later
+ * marketplace edits cannot change an existing production's costume reference.
  */
 export async function fulfillWardrobePurchaseSession(
   session: Stripe.Checkout.Session,
@@ -59,7 +65,10 @@ export async function fulfillWardrobePurchaseSession(
   if (!paymentIntentId) throw new Error("Wardrobe purchase has no payment-intent ID for idempotent fulfilment.");
 
   const existing = await db.getWardrobeLeaseByPaymentIntent(paymentIntentId);
-  if (existing) return { lease: existing, alreadyFulfilled: true };
+  if (existing) {
+    const inventoryCopies = await ensurePermanentWardrobeCopiesForLease(existing as any);
+    return { lease: existing, inventoryCopies, alreadyFulfilled: true };
+  }
 
   if (leaseType === "item") {
     const item = await db.getWardrobeItemById(itemOrCollectionId);
@@ -67,14 +76,22 @@ export async function fulfillWardrobePurchaseSession(
     if (item.designerProfileId !== designerProfileId) throw new Error("Wardrobe item designer metadata does not match the paid session.");
     if (item.status !== "active" || item.visibility !== "public") throw new Error("Purchased wardrobe item is not active and public.");
     if (!item.retailPriceAud || item.retailPriceAud <= 0) throw new Error("Purchased wardrobe item has no valid retail price.");
+    if (!item.primaryImageUrl && !(Array.isArray(item.imageUrls) && item.imageUrls.length)) throw new Error("Purchased wardrobe item has no reference image.");
+    if (!item.referencePrompt?.trim()) throw new Error("Purchased wardrobe item has no generation prompt.");
   } else {
     const collection = await db.getDesignerCollectionById(itemOrCollectionId);
     if (!collection) throw new Error("Purchased wardrobe collection no longer exists.");
     if (collection.designerProfileId !== designerProfileId) throw new Error("Wardrobe collection designer metadata does not match the paid session.");
     if (!collection.published || collection.visibility !== "public") throw new Error("Purchased wardrobe collection is not published publicly.");
     const items = await db.getWardrobeItemsByCollection(itemOrCollectionId);
-    const purchasableItems = items.filter((item) => item.status === "active" && item.visibility === "public" && Number(item.retailPriceAud) > 0);
-    if (purchasableItems.length === 0) throw new Error("Purchased wardrobe collection contains no active purchasable items.");
+    const purchasableItems = items.filter((item) =>
+      item.status === "active"
+      && item.visibility === "public"
+      && Number(item.retailPriceAud) > 0
+      && Boolean(item.primaryImageUrl || (Array.isArray(item.imageUrls) && item.imageUrls.length))
+      && Boolean(item.referencePrompt?.trim()),
+    );
+    if (purchasableItems.length === 0) throw new Error("Purchased wardrobe collection contains no active generation-ready items.");
   }
 
   const lease = await db.createWardrobeLease({
@@ -90,5 +107,9 @@ export async function fulfillWardrobePurchaseSession(
     platformFeeAud,
     status: "active",
   } as any);
-  return { lease, alreadyFulfilled: false };
+
+  // The purchase is not considered fulfilled until the buyer-owned snapshots
+  // exist. A retry is safe: markers make the copy operation idempotent.
+  const inventoryCopies = await ensurePermanentWardrobeCopiesForLease(lease as any);
+  return { lease, inventoryCopies, alreadyFulfilled: false };
 }

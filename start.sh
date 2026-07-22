@@ -1,13 +1,22 @@
 #!/bin/sh
-GW_PORT="${PORT:-3000}"
-APP_PORT="$((GW_PORT + 1))"
-echo "[start] Gateway=:$GW_PORT  App=:$APP_PORT"
+set -u
 
-# Apply database migrations before anything else starts. On a brand-new
-# database there are no tables at all yet -- the app's own runtime
-# auto-migration only ALTERs tables it assumes already exist, so this is
-# the actual bootstrap step. Retries in case the DB isn't reachable yet
-# at cold start (matters for freshly-provisioned managed databases).
+# Render exposes deployment metadata under RENDER_* variables. A few older
+# application paths still read the previous host's variable names, so provide
+# runtime-only compatibility aliases until those call sites are fully retired.
+# No secret values are copied or logged.
+if [ "${RENDER:-}" = "true" ]; then
+  export RAILWAY_GIT_COMMIT_SHA="${RAILWAY_GIT_COMMIT_SHA:-${RENDER_GIT_COMMIT:-}}"
+  export RAILWAY_PUBLIC_DOMAIN="${RAILWAY_PUBLIC_DOMAIN:-${RENDER_EXTERNAL_HOSTNAME:-}}"
+fi
+
+GW_PORT="${PORT:-3000}"
+case "$GW_PORT" in
+  ''|*[!0-9]*) echo "[start] FATAL: PORT must be numeric"; exit 1 ;;
+esac
+APP_PORT="$((GW_PORT + 1))"
+echo "[start] Gateway=:$GW_PORT  App=:$APP_PORT  Host=${RENDER_EXTERNAL_HOSTNAME:-local}"
+
 echo "[start] Applying database migrations..."
 MIGRATE_OK=0
 for i in $(seq 1 12); do
@@ -23,16 +32,10 @@ if [ "$MIGRATE_OK" != "1" ]; then
   exit 1
 fi
 
-# Start Express on APP_PORT in background, capture logs
 PORT="$APP_PORT" node dist/index.js > /tmp/app.log 2>&1 &
 APP_PID=$!
 echo "[start] Express started on :$APP_PORT (pid $APP_PID)"
 
-# Bootstrap admin accounts in the background, retrying -- the app's own
-# auto-migration (for newer supplementary tables/columns not yet folded
-# into a formal migration) runs asynchronously after it starts listening,
-# so give it a little time even though core tables now exist from the
-# migration step above.
 (
   echo "[start] Bootstrapping admin accounts (will retry until DB is ready)..."
   for i in $(seq 1 24); do
@@ -50,16 +53,16 @@ echo "[start] Gateway started on :$GW_PORT (pid $GW_PID)"
 
 cleanup() {
   echo "[start] Shutting down..."
-  kill "$GW_PID" 2>/dev/null
-  kill "$APP_PID" 2>/dev/null
-  wait "$GW_PID" 2>/dev/null
-  wait "$APP_PID" 2>/dev/null
+  kill "$GW_PID" 2>/dev/null || true
+  kill "$APP_PID" 2>/dev/null || true
+  wait "$GW_PID" 2>/dev/null || true
+  wait "$APP_PID" 2>/dev/null || true
   exit 0
 }
 trap cleanup TERM INT
 
-wait "$GW_PID"
-EXIT_CODE=$?
+EXIT_CODE=0
+wait "$GW_PID" || EXIT_CODE=$?
 echo "[start] Gateway exited ($EXIT_CODE)"
-kill "$APP_PID" 2>/dev/null
+kill "$APP_PID" 2>/dev/null || true
 exit "$EXIT_CODE"

@@ -1,0 +1,133 @@
+name: App Debug and Parity Gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "client/src/main.tsx"
+      - "client/src/components/LandingVerifiedAppsGuard.tsx"
+      - "client/src/pages/Landing.tsx"
+      - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
+      - "desktop/**"
+      - "apps/swappys-mobile/**"
+      - "server/_core/imageGeneration.ts"
+      - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
+      - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
+      - ".github/workflows/app-debug-pass.yml"
+  pull_request:
+    paths:
+      - "client/src/main.tsx"
+      - "client/src/components/LandingVerifiedAppsGuard.tsx"
+      - "client/src/pages/Landing.tsx"
+      - "client/src/pages/DownloadApp.tsx"
+      - "client/src/pages/VFXSuite.tsx"
+      - "client/src/pages/VirelleBroadcastRender.tsx"
+      - "desktop/**"
+      - "apps/swappys-mobile/**"
+      - "server/_core/imageGeneration.ts"
+      - "server/_core/swappysValidation.ts"
+      - "server/_core/swappysPolicy.ts"
+      - "server/_core/vfxStudioMiddleware.ts"
+      - "server/_core/trpc.ts"
+      - "server/vfx-sfx-router.ts"
+      - "server/virelle-broadcast-render-router.ts"
+      - "server/broadcast-worker.ts"
+      - "server/studio-render-worker.ts"
+      - "scripts/check-swappys-mobile-connection.mjs"
+      - "scripts/render-normalize-package.cjs"
+      - "Dockerfile"
+      - "render.yaml"
+      - "start.sh"
+      - "gateway.mjs"
+      - ".github/workflows/app-debug-pass.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-and-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm audit --audit-level moderate
+      - name: Validate Swappys connection checker syntax
+        run: node --check scripts/check-swappys-mobile-connection.mjs
+
+  swappys-mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/swappys-mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install mobile dependencies
+        id: mobile_install
+        continue-on-error: true
+        run: npm install --legacy-peer-deps --no-audit --no-fund > npm-install.log 2>&1
+      - name: Upload mobile install diagnostics
+        if: steps.mobile_install.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: swappys-mobile-install-log
+          path: apps/swappys-mobile/npm-install.log
+          if-no-files-found: error
+          retention-days: 3
+      - name: Fail when mobile dependency installation failed
+        if: steps.mobile_install.outcome == 'failure'
+        run: exit 1
+      - run: npm run typecheck
+      - run: npm run doctor
+
+  desktop-linux-smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: node --check main.js
+      - run: node --check preload.js
+      - run: npm run build:linux
+
+  render-container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Render startup scripts
+        run: |
+          sh -n start.sh
+          node --check gateway.mjs
+          node --check scripts/render-normalize-package.cjs
+      - name: Build the exact Render Docker image
+        run: docker build --tag virelle-render-parity:${{ github.sha }} .

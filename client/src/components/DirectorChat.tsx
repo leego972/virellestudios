@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { createPortal } from "react-dom";
 import { VirelleFace } from "./VirelleFace";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -322,16 +321,6 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatPanelRef = useRef<HTMLDivElement>(null);
-
-  // ─── Viewport size (drives mobile vs desktop layout) ───
-  const [isDesktop, setIsDesktop] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 640 : false
-  );
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 640);
-    window.addEventListener("resize", check, { passive: true });
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   // ─── Floating window state ───
   // isMinimized: collapses to a pill but stays active in background
@@ -1529,7 +1518,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         "Show me my projects",
       ];
 
-  return createPortal(
+  return (
     <>
       {/* ─── Floating trigger pill — only visible when chat is fully closed ─── */}
       {!isOpen && (
@@ -1585,24 +1574,19 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       {!hideVoiceOverlay && voiceModeActive && (
         <div
           className="fixed inset-0 z-[60] flex flex-col items-center justify-center select-none"
-          style={{
-            background: 'linear-gradient(180deg,#030305 0%,#070810 50%,#030305 100%)',
-            paddingTop: 'env(safe-area-inset-top, 0px)',
-            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-          }}
+          style={{ background: 'linear-gradient(180deg,#030305 0%,#070810 50%,#030305 100%)' }}
         >
-          {/* Close — safe-area-aware so it clears the notch on iPhone */}
+          {/* Close */}
           <button
             onClick={closeVoiceMode}
-            className="absolute right-5 size-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-[rgba(255,255,255,0.06)]/10 transition-all"
-            style={{ top: 'calc(env(safe-area-inset-top, 0px) + 12px)', touchAction: 'manipulation' }}
+            className="absolute top-5 right-5 size-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-[rgba(255,255,255,0.06)]/10 transition-all"
+            style={{ touchAction: 'manipulation' }}
             aria-label="Close voice mode"
           >
             <X className="size-5" />
           </button>
 
-          <p className="absolute left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.25em] uppercase text-white/25"
-             style={{ top: 'calc(env(safe-area-inset-top, 0px) + 20px)' }}>
+          <p className="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.25em] uppercase text-white/25">
             Virelle
           </p>
 
@@ -1675,16 +1659,14 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
             : "opacity-0 translate-y-4 scale-95 pointer-events-none"
         )}
         style={{
-          paddingTop: "env(safe-area-inset-top, 0px)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
           WebkitOverflowScrolling: "touch" as any,
           overscrollBehavior: "contain",
-          // Desktop only: floating window position + fixed height
-          // On mobile, CSS classes (inset-x-0 top-0 bottom-0) handle full-screen layout
-          ...(isDesktop && (dragPos
+          // Desktop: use drag position if set, otherwise default bottom-right
+          ...(dragPos
             ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
             : { bottom: 24, right: 24, height: 580 }
-          )),
+          ),
         }}
       >
         {/* Header — draggable on desktop */}
@@ -2395,7 +2377,6 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           </div>
         </div>
       </div>
-    </>,
-    document.body
+    </>
   );
 }

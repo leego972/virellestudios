@@ -21,6 +21,18 @@ import {
   type WardrobeLeaseRecord,
 } from "./wardrobeContinuity";
 
+export interface WardrobeCharacterBinding {
+  characterId: number;
+  characterName: string;
+  wardrobeItemId?: number;
+  assignmentId?: number;
+  promptAnchor?: string;
+  characterReferenceImageUrl?: string;
+  wardrobeReferenceImageUrl?: string;
+  explicitChange: boolean;
+  carriedForward: boolean;
+}
+
 export interface SceneGenerationContext {
   scene: any;
   projectOwnerUserId: number;
@@ -28,6 +40,7 @@ export interface SceneGenerationContext {
   canonicalSpec: CanonicalSceneSpec;
   canonicalPrompt: string;
   wardrobeContext?: string;
+  wardrobeBindings: WardrobeCharacterBinding[];
   referenceImages: string[];
   characterDescriptions: string[];
   warnings: string[];
@@ -59,6 +72,11 @@ function imageFromItem(item: any): string | undefined {
     if (typeof first === "string") return first.trim();
   }
   return undefined;
+}
+
+function characterImage(character: any): string | undefined {
+  const value = character?.photoUrl || character?.referenceImageUrl || character?.thumbnailUrl;
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function normalizeInlineWardrobe(value: unknown): InlineWardrobeEntry[] {
@@ -120,7 +138,36 @@ function assignmentAppliesToScene(assignment: any, sceneId: number, sceneOrder: 
   return from <= sceneOrder && to >= sceneOrder;
 }
 
-function uniqueUrls(values: Array<string | null | undefined>, max = 8): string[] {
+function selectCharacterWardrobeRow(
+  rows: any[],
+  characterId: number,
+  sceneId: number,
+  sceneOrder: number,
+  hasExplicitInlineOutfit: boolean,
+): { row?: any; carriedForward: boolean } {
+  const characterRows = rows.filter((row) => row.assignment?.characterId === characterId);
+  const exact = characterRows
+    .filter((row) => assignmentAppliesToScene(row.assignment, sceneId, sceneOrder))
+    .sort((a, b) =>
+      Number(Boolean(b.assignment.locked)) - Number(Boolean(a.assignment.locked))
+      || (b.assignment.fromSceneOrder ?? 0) - (a.assignment.fromSceneOrder ?? 0),
+    )[0];
+  if (exact) return { row: exact, carriedForward: false };
+
+  // Character costumes are sticky. When a range ends without a replacement,
+  // the latest assigned costume remains in force until the director specifies a
+  // new item (structured assignment or explicit inline outfit direction).
+  if (hasExplicitInlineOutfit) return { carriedForward: false };
+  const previous = characterRows
+    .filter((row) => row.assignment?.sceneId == null && (row.assignment?.fromSceneOrder ?? 0) <= sceneOrder)
+    .sort((a, b) =>
+      (b.assignment.fromSceneOrder ?? 0) - (a.assignment.fromSceneOrder ?? 0)
+      || Number(Boolean(b.assignment.locked)) - Number(Boolean(a.assignment.locked)),
+    )[0];
+  return { row: previous, carriedForward: Boolean(previous) };
+}
+
+function uniqueUrls(values: Array<string | null | undefined>, max = 12): string[] {
   return Array.from(new Set(values.filter((value): value is string => typeof value === "string" && /^https?:\/\//i.test(value.trim())).map((value) => value.trim()))).slice(0, max);
 }
 
@@ -157,13 +204,12 @@ export async function loadSceneGenerationContext(
     .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
     .where(eq(wardrobeAssignments.projectId, projectId));
 
-  const applicableRows = (rows as any[]).filter((row) => assignmentAppliesToScene(row.assignment, sceneId, sceneOrder));
-  const foreignAssignments = applicableRows.filter((row) => row.assignment?.userId !== projectOwnerUserId);
+  const foreignAssignments = (rows as any[]).filter((row) => row.assignment?.userId !== projectOwnerUserId);
   if (foreignAssignments.length) {
     throw new Error(`Project ${projectId} contains wardrobe assignments that do not belong to its owner. Remove or repair assignments ${foreignAssignments.map((row) => row.assignment.id).join(", ")}.`);
   }
 
-  const assignmentRecords: WardrobeAssignmentRecord[] = applicableRows
+  const allAssignmentRecords: WardrobeAssignmentRecord[] = (rows as any[])
     .filter((row) => row.assignment?.characterId)
     .map((row) => ({
       id: row.assignment.id,
@@ -177,16 +223,18 @@ export async function loadSceneGenerationContext(
       locked: row.assignment.locked,
     }));
 
-  const overlaps = findOverlappingWardrobeAssignments(assignmentRecords).filter(({ first, second }) => first.locked || second.locked);
+  const overlaps = findOverlappingWardrobeAssignments(allAssignmentRecords).filter(({ first, second }) => first.locked || second.locked);
   if (overlaps.length) {
     const first = overlaps[0];
-    throw new Error(`Conflicting locked wardrobe assignments for character ${first.characterId}: items ${first.first.wardrobeItemId} and ${first.second.wardrobeItemId} overlap scene ${sceneOrder}.`);
+    throw new Error(`Conflicting locked wardrobe assignments for character ${first.characterId}: items ${first.first.wardrobeItemId} and ${first.second.wardrobeItemId} overlap.`);
   }
 
+  const applicableRows = (rows as any[]).filter((row) => assignmentAppliesToScene(row.assignment, sceneId, sceneOrder));
   const inlineEntries = normalizeInlineWardrobe((scene as any).wardrobe ?? (scene as any).wardrobeOverrides);
   const wardrobeLines: string[] = [];
   const wardrobeImages: string[] = [];
   const warnings: string[] = [];
+  const wardrobeBindings: WardrobeCharacterBinding[] = [];
   if (!resolvedCharacters.explicitIds.length && projectCharacters.length > 0 && activeCharacters.length === 0) {
     warnings.push("No project character was explicitly assigned to this scene or resolved from its dialogue and narrative. The generator will not invent cast members.");
   }
@@ -194,10 +242,10 @@ export async function loadSceneGenerationContext(
   const characterDescriptions: string[] = [];
 
   for (const character of activeCharacters as any[]) {
-    const candidateRows = applicableRows
-      .filter((row) => row.assignment?.characterId === character.id)
-      .sort((a, b) => Number(Boolean(b.assignment.locked)) - Number(Boolean(a.assignment.locked)) || (b.assignment.fromSceneOrder ?? 0) - (a.assignment.fromSceneOrder ?? 0));
-    const selectedRow = candidateRows[0];
+    const inline = inlineEntries.find((entry) => entry.characterId === character.id);
+    const inlineOutfitChange = Boolean(inline?.wardrobeDescription?.trim());
+    const selected = selectCharacterWardrobeRow(rows as any[], character.id, sceneId, sceneOrder, inlineOutfitChange);
+    const selectedRow = selected.row;
     const selectedItem = selectedRow?.item as WardrobeItemRecord | undefined;
     let wardrobeAnchor: string | undefined;
     let wardrobeReferenceImageUrl: string | undefined;
@@ -205,28 +253,44 @@ export async function loadSceneGenerationContext(
     if (selectedItem) {
       const itemErrors = validateWardrobeItemForInventory(selectedItem);
       if (!hasWardrobeAccess(projectOwnerUserId, selectedItem, activeLeases)) {
-        itemErrors.push("The project owner no longer owns or has an active purchase for this wardrobe item.");
+        itemErrors.push("The project owner no longer owns this wardrobe inventory item.");
       }
       if (itemErrors.length) throw new Error(`Assigned wardrobe item ${selectedItem.id} (${selectedItem.name}) is not generation-ready: ${itemErrors.join(" ")}`);
       wardrobeAnchor = buildWardrobePromptAnchor(selectedItem, selectedRow.assignment.placementNotes);
+      if (selected.carriedForward) {
+        wardrobeAnchor += "; CONTINUITY CARRY-FORWARD: no replacement outfit was specified, therefore this exact costume remains mandatory in this scene.";
+      }
       wardrobeReferenceImageUrl = imageFromItem(selectedItem);
-      wardrobeLines.push(`${character.name}: ${wardrobeAnchor}`);
+      wardrobeLines.push(`CHARACTER ${character.id} — ${character.name} MUST WEAR ONLY: ${wardrobeAnchor}`);
       if (wardrobeReferenceImageUrl) wardrobeImages.push(wardrobeReferenceImageUrl);
     }
 
-    const inline = inlineEntries.find((entry) => entry.characterId === character.id);
     if (inline) {
       const supplement = [
-        inline.wardrobeDescription && `scene-specific wardrobe direction: ${inline.wardrobeDescription.trim()}`,
+        inline.wardrobeDescription && `explicit scene wardrobe direction: ${inline.wardrobeDescription.trim()}`,
         inline.hairNotes && `hair: ${inline.hairNotes.trim()}`,
         inline.makeupNotes && `makeup: ${inline.makeupNotes.trim()}`,
         inline.accessories && `accessories: ${inline.accessories.trim()}`,
       ].filter(Boolean).join("; ");
       if (supplement) {
         wardrobeAnchor = wardrobeAnchor ? `${wardrobeAnchor}; SCENE-SPECIFIC SUPPLEMENT: ${supplement}` : supplement;
-        wardrobeLines.push(`${character.name} scene supplement: ${supplement}`);
+        wardrobeLines.push(`CHARACTER ${character.id} — ${character.name} SCENE CHANGE: ${supplement}`);
       }
     }
+
+    const identityImageUrl = characterImage(character);
+    const explicitChange = inlineOutfitChange || Boolean(selectedRow && (selectedRow.assignment.fromSceneOrder ?? 0) === sceneOrder);
+    wardrobeBindings.push({
+      characterId: character.id,
+      characterName: character.name,
+      wardrobeItemId: selectedItem?.id,
+      assignmentId: selectedRow?.assignment?.id,
+      promptAnchor: wardrobeAnchor,
+      characterReferenceImageUrl: identityImageUrl,
+      wardrobeReferenceImageUrl,
+      explicitChange,
+      carriedForward: selected.carriedForward,
+    });
 
     const dna = buildCharacterDNA(character, wardrobeAnchor ? { wardrobeDescription: wardrobeAnchor } : undefined);
     characterDescriptions.push(dna.promptAnchor);
@@ -237,7 +301,7 @@ export async function loadSceneGenerationContext(
       wardrobe: character.clothing || undefined,
       wardrobeAnchor,
       blocking: (scene as any).characterBlocking || undefined,
-      referenceImageUrl: character.photoUrl || character.referenceImageUrl || character.thumbnailUrl || undefined,
+      referenceImageUrl: identityImageUrl,
       wardrobeReferenceImageUrl,
     });
   }
@@ -246,7 +310,7 @@ export async function loadSceneGenerationContext(
     const item = row.item as WardrobeItemRecord;
     const itemErrors = validateWardrobeItemForInventory(item);
     if (!hasWardrobeAccess(projectOwnerUserId, item, activeLeases)) {
-      itemErrors.push("The project owner no longer owns or has an active purchase for this wardrobe item.");
+      itemErrors.push("The project owner no longer owns this wardrobe inventory item.");
     }
     if (itemErrors.length) {
       throw new Error(`Scene wardrobe reference ${item.id} (${item.name}) is not generation-ready: ${itemErrors.join(" ")}`);
@@ -270,11 +334,14 @@ export async function loadSceneGenerationContext(
     referenceImages: parseJsonValue<unknown[]>((scene as any).referenceImages, []),
   };
   let canonicalSpec = compileCanonicalSceneSpec(mergedScene, canonicalCharacters);
-  if (wardrobeLines.length) canonicalSpec.lockedRequirements.push(`WARDROBE AND COSTUME LOCKS: ${wardrobeLines.join(" | ")}`);
+  if (wardrobeLines.length) {
+    canonicalSpec.lockedRequirements.push(
+      `WARDROBE CHARACTER BINDINGS — garments must never transfer between characters: ${wardrobeLines.join(" | ")}`,
+    );
+  }
   canonicalSpec.referenceImages = uniqueUrls([
     ...canonicalSpec.referenceImages,
-    ...canonicalCharacters.map((character) => character.referenceImageUrl),
-    ...canonicalCharacters.map((character) => character.wardrobeReferenceImageUrl),
+    ...wardrobeBindings.flatMap((binding) => [binding.characterReferenceImageUrl, binding.wardrobeReferenceImageUrl]),
     ...wardrobeImages,
   ]);
   canonicalSpec.validationWarnings.push(...warnings);
@@ -288,6 +355,7 @@ export async function loadSceneGenerationContext(
     canonicalSpec,
     canonicalPrompt: renderCanonicalScenePrompt(canonicalSpec),
     wardrobeContext: wardrobeLines.length ? wardrobeLines.join("\n") : undefined,
+    wardrobeBindings,
     referenceImages: canonicalSpec.referenceImages,
     characterDescriptions,
     warnings: canonicalSpec.validationWarnings,

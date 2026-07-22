@@ -68,10 +68,7 @@ function rateLimit(windowMs: number, max: number) {
     }
   }, 10 * 60 * 1000).unref();
   return (req: Request, res: Response, next: NextFunction) => {
-    const ip =
-      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-      req.socket.remoteAddress ||
-      "unknown";
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
     const now = Date.now();
     const entry = store.get(ip);
     if (!entry || now > entry.resetAt) {

@@ -2,18 +2,19 @@
 
 const baseUrl = (process.argv[2] || process.env.VIRELLE_BASE_URL || "https://virelle.life").replace(/\/$/, "");
 
-async function getJson(path) {
+async function requestJson(path, init = {}) {
   const url = `${baseUrl}${path}`;
   const started = Date.now();
-  const response = await fetch(url, { headers: { Accept: "application/json" } });
+  const response = await fetch(url, {
+    ...init,
+    headers: { Accept: "application/json", ...(init.headers || {}) },
+    signal: AbortSignal.timeout(15_000),
+  });
   const elapsedMs = Date.now() - started;
+  const text = await response.text();
   let json = null;
-  try {
-    json = await response.json();
-  } catch {
-    // non-JSON response handled below
-  }
-  return { url, status: response.status, ok: response.ok, elapsedMs, json };
+  try { json = text ? JSON.parse(text) : null; } catch {}
+  return { url, status: response.status, ok: response.ok, elapsedMs, json, text };
 }
 
 function assert(condition, message) {
@@ -23,27 +24,41 @@ function assert(condition, message) {
 try {
   console.log(`Checking Swappys Mobile -> Virelle connection at ${baseUrl}`);
 
-  const health = await getJson("/api/health");
+  const health = await requestJson("/api/health");
   console.log(`health: ${health.status} ${health.elapsedMs}ms`);
   assert(health.ok, `/api/health failed with HTTP ${health.status}`);
-  assert(health.json && (health.json.status === "ok" || health.json.success === true), "/api/health did not return an ok/success health payload");
+  assert(health.json && (health.json.status === "ok" || health.json.success === true), "/api/health did not return an ok/success payload");
 
-  const features = await getJson("/api/mobile/features");
+  const features = await requestJson("/api/mobile/features");
   console.log(`features: ${features.status} ${features.elapsedMs}ms`);
   assert(features.ok, `/api/mobile/features failed with HTTP ${features.status}`);
   assert(features.json?.ok === true, "/api/mobile/features missing ok:true");
-  assert(features.json?.features?.creatorUpgrade === true, "creatorUpgrade flag missing");
-  assert(features.json?.features?.swappysStudio === true, "swappysStudio flag missing");
-  assert(features.json?.features?.watermarkControls === true, "watermarkControls flag missing");
-  assert(features.json?.features?.broadcastMode === true, "broadcastMode flag missing");
-  assert(features.json?.features?.rtmpBroadcast === true, "rtmpBroadcast flag missing");
-  assert(features.json?.features?.studioRenderQueue === true, "studioRenderQueue flag missing");
-  assert(features.json?.features?.byokVideoRequired === true, "byokVideoRequired flag missing");
-  assert(features.json?.costPolicy?.noPlatformFundedUserVideo === true, "noPlatformFundedUserVideo policy missing");
-  assert(Array.isArray(features.json?.byokProviders) && features.json.byokProviders.includes("runway"), "byokProviders missing runway");
-  assert(Array.isArray(features.json?.transformGoals) && features.json.transformGoals.includes("adult_to_child"), "transformGoals missing adult_to_child");
+  const flags = features.json?.flags || {};
+  assert(flags.creatorUpgrade === true, "creatorUpgrade flag missing");
+  assert(flags.swappysStudio === true, "swappysStudio flag missing");
+  assert(flags.watermarkControls === true, "watermarkControls flag missing");
+  assert(flags.byokVideoRequired === true, "byokVideoRequired flag missing");
 
-  console.log("PASS: Swappys Mobile can verify Virelle health, BYOK broadcast policy, and mobile feature manifest.");
+  const downloads = await requestJson("/api/mobile/downloads");
+  console.log(`downloads: ${downloads.status} ${downloads.elapsedMs}ms`);
+  assert(downloads.ok, `/api/mobile/downloads failed with HTTP ${downloads.status}`);
+  assert(typeof downloads.json?.ios?.available === "boolean", "iOS availability missing");
+  assert(typeof downloads.json?.android?.available === "boolean", "Android availability missing");
+  assert(typeof downloads.json?.desktop?.available === "boolean", "Desktop availability missing");
+
+  // Probe the tRPC route with deliberately invalid input. A validation response
+  // proves the route is mounted without spending generation credits or sending media.
+  const route = await requestJson("/api/trpc/vfxSfx.swappysMobileSwap", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Swappys-Client": "connection-check" },
+    body: JSON.stringify({ json: { consentConfirmed: false } }),
+  });
+  console.log(`swap route: ${route.status} ${route.elapsedMs}ms`);
+  assert(route.status >= 400 && route.status < 500, `Swappys route probe returned unexpected HTTP ${route.status}`);
+  assert(route.status !== 404, "Swappys tRPC route is not mounted");
+  assert(route.json || route.text, "Swappys route returned an empty validation response");
+
+  console.log("PASS: health, mobile flags, downloads, and the Swappys transformation route are reachable.");
   process.exit(0);
 } catch (error) {
   console.error("FAIL:", error?.message || error);

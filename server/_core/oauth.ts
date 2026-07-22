@@ -1,15 +1,22 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-import type { Express, Request, Response } from "express";
+import express, { type Express, type Request, type Response } from "express";
+import bcrypt from "bcryptjs";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
-import { sdk } from "./sdk";
 import { logger } from "./logger";
 import { ENV } from "./env";
 import crypto from "crypto";
+import { createSessionToken } from "./context";
+import { rateLimitPublicByIP } from "./rateLimit";
+import {
+  findAuthUserByEmail,
+  findSessionUserByOpenId,
+  markAuthLoginSuccessful,
+} from "./authDb";
 
 const STATE_COOKIE = "oauth_state";
 const PROVIDER_COOKIE = "oauth_provider";
-const STATE_MAX_AGE_MS = 10 * 60 * 1000; // 10 minutes -- just long enough to complete the login
+const STATE_MAX_AGE_MS = 10 * 60 * 1000;
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -17,21 +24,29 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 function getCallbackUrl(req: Request): string {
-  // Prefer the configured public URL (correct behind Render's proxy/gateway);
-  // fall back to request headers if it isn't set.
-  if (ENV.publicAppUrl) return `${ENV.publicAppUrl}/api/oauth/callback`;
-  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-  const host = req.headers["x-forwarded-host"] || req.headers.host;
-  return `${protocol}://${host}/api/oauth/callback`;
+  if (ENV.publicAppUrl) {
+    const base = new URL(ENV.publicAppUrl);
+    if (ENV.isProduction && base.protocol !== "https:") {
+      throw new Error("PUBLIC_APP_URL must use HTTPS in production");
+    }
+    if (base.username || base.password) throw new Error("PUBLIC_APP_URL must not contain credentials");
+    base.pathname = "/api/oauth/callback";
+    base.search = "";
+    base.hash = "";
+    return base.toString();
+  }
+  if (ENV.isProduction) throw new Error("PUBLIC_APP_URL must be configured for OAuth in production");
+  const host = req.headers.host;
+  if (!host) throw new Error("OAuth callback host is unavailable");
+  return new URL("/api/oauth/callback", `${req.protocol}://${host}`).toString();
 }
 
-/** Minimal manual cookie parse -- no cookie-parser middleware is installed on this app. */
 function readCookie(req: Request, name: string): string | undefined {
   const header = req.headers.cookie;
   if (!header) return undefined;
   for (const part of header.split(";")) {
-    const [k, ...rest] = part.trim().split("=");
-    if (k === name) return decodeURIComponent(rest.join("="));
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
   }
   return undefined;
 }
@@ -39,7 +54,7 @@ function readCookie(req: Request, name: string): string | undefined {
 function setShortLivedCookie(res: Response, name: string, value: string) {
   res.cookie(name, value, {
     httpOnly: true,
-    secure: true,
+    secure: ENV.isProduction,
     sameSite: "lax",
     maxAge: STATE_MAX_AGE_MS,
     path: "/",
@@ -47,42 +62,172 @@ function setShortLivedCookie(res: Response, name: string, value: string) {
 }
 
 function clearShortLivedCookie(res: Response, name: string) {
-  res.clearCookie(name, { path: "/" });
+  res.clearCookie(name, {
+    path: "/",
+    secure: ENV.isProduction,
+    sameSite: "lax",
+  });
 }
 
 async function completeLogin(
   req: Request,
   res: Response,
-  user: { openId: string; name: string | null; email: string | null; loginMethod: string }
+  identity: {
+    openId: string;
+    name: string | null;
+    email: string | null;
+    loginMethod: "google" | "github";
+  },
 ) {
-  await db.upsertUser({
-    openId: user.openId,
-    name: user.name,
-    email: user.email,
-    loginMethod: user.loginMethod,
-    lastSignedIn: new Date(),
-  });
+  const normalizedEmail = identity.email?.trim().toLowerCase() || null;
 
-  // Session issuance is local (self-signed JWT, ENV.cookieSecret) -- this part
-  // never depended on the broker and works exactly as it did before.
-  const sessionToken = await sdk.createSessionToken(user.openId, {
-    name: user.name || "",
-    expiresInMs: ONE_YEAR_MS,
-  });
+  // Direct OAuth must attach to the account that already owns this verified
+  // email. Creating a second user row loses the original projects, role,
+  // subscription and credits and was the main reason OAuth appeared to log in
+  // but immediately returned to the login page.
+  let account = normalizedEmail
+    ? await findAuthUserByEmail(normalizedEmail)
+    : null;
 
+  if (account) {
+    await db.upsertUser({
+      openId: account.openId,
+      name: identity.name ?? account.name,
+      email: normalizedEmail,
+      loginMethod: identity.loginMethod,
+      lastSignedIn: new Date(),
+    });
+  } else {
+    await db.upsertUser({
+      openId: identity.openId,
+      name: identity.name,
+      email: normalizedEmail,
+      loginMethod: identity.loginMethod,
+      lastSignedIn: new Date(),
+    });
+    account = await findSessionUserByOpenId(identity.openId);
+  }
+
+  if (!account) {
+    throw new Error("OAuth account could not be loaded after sign-in");
+  }
+
+  // OAuth and email/password now issue the same local numeric-user-id JWT.
+  // The previous OAuth path issued a legacy openId token and depended on the
+  // obsolete broker fallback during session restoration.
+  const sessionToken = await createSessionToken(
+    Number(account.id),
+    account.name || identity.name || "",
+  );
   const cookieOptions = getSessionCookieOptions(req);
-  res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+  res.cookie(COOKIE_NAME, sessionToken, {
+    ...cookieOptions,
+    maxAge: ONE_YEAR_MS,
+  });
+
+  await markAuthLoginSuccessful(Number(account.id)).catch(error => {
+    logger.warn("[OAuth] Could not update lastSignedIn", { error: String(error) });
+  });
+
   res.redirect(302, "/?opener=1");
 }
 
+function requestIp(req: Request): string {
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+async function allowPublicRequest(
+  req: Request,
+  res: Response,
+  action: string,
+  maxRequests: number,
+  windowMs: number,
+): Promise<boolean> {
+  try {
+    await rateLimitPublicByIP(requestIp(req), action, maxRequests, windowMs);
+    return true;
+  } catch {
+    res.status(429).json({ error: "Too many requests. Please try again later." });
+    return false;
+  }
+}
+
 export function registerOAuthRoutes(app: Express) {
-  // --- Google -----------------------------------------------------------------
-  app.get("/api/auth/google", (req: Request, res: Response) => {
-    if (!ENV.googleOAuthClientId) {
-      logger.error("[OAuth] GOOGLE_OAUTH_CLIENT_ID is not set");
+  /**
+   * Stable email/password login endpoint.
+   *
+   * This deliberately bypasses Drizzle's generated users SELECT. Older Virelle
+   * production databases may temporarily lack a newer optional users column;
+   * Drizzle then fails the entire login query before bcrypt can run. authDb uses
+   * raw SELECT * so authentication continues while migrations reconcile the
+   * optional application schema.
+   */
+  app.post(
+    "/api/auth/password",
+    express.json({ limit: "16kb" }),
+    async (req: Request, res: Response) => {
+      const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+      const password = typeof req.body?.password === "string" ? req.body.password : "";
+
+      if (!email || !/^\S+@\S+\.\S+$/.test(email) || !password || password.length > 128) {
+        res.status(400).json({ error: "Enter a valid email and password." });
+        return;
+      }
+
+      if (!(await allowPublicRequest(req, res, "password-login", 30, 15 * 60_000))) return;
+      const emailKey = crypto.createHash("sha256").update(email).digest("hex").slice(0, 20);
+      if (!(await allowPublicRequest(req, res, `password-login:${emailKey}`, 12, 15 * 60_000))) return;
+
+      try {
+        const user = await findAuthUserByEmail(email);
+        if (!user || !user.passwordHash) {
+          await new Promise(resolve => setTimeout(resolve, 250));
+          res.status(401).json({ error: "Invalid email or password." });
+          return;
+        }
+
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) {
+          await new Promise(resolve => setTimeout(resolve, 250));
+          res.status(401).json({ error: "Invalid email or password." });
+          return;
+        }
+
+        const token = await createSessionToken(Number(user.id), user.name || "");
+        const cookieOptions = getSessionCookieOptions(req);
+        res.cookie(COOKIE_NAME, token, {
+          ...cookieOptions,
+          maxAge: ONE_YEAR_MS,
+        });
+
+        await markAuthLoginSuccessful(Number(user.id)).catch(error => {
+          logger.warn("[Auth] Could not update lastSignedIn", { error: String(error) });
+        });
+
+        res.status(200).json({
+          success: true,
+          user: {
+            id: Number(user.id),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      } catch (error) {
+        logger.errorWithStack("[Auth] Password login failed", error);
+        res.status(503).json({ error: "Sign-in service is temporarily unavailable." });
+      }
+    },
+  );
+
+  app.get("/api/auth/google", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-google-start", 20, 15 * 60_000))) return;
+    if (!ENV.googleOAuthClientId || !ENV.googleOAuthClientSecret) {
+      logger.error("[OAuth] Google OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
       return;
     }
+
     const state = crypto.randomBytes(24).toString("hex");
     setShortLivedCookie(res, STATE_COOKIE, state);
     setShortLivedCookie(res, PROVIDER_COOKIE, "google");
@@ -97,13 +242,14 @@ export function registerOAuthRoutes(app: Express) {
     res.redirect(302, url.toString());
   });
 
-  // --- GitHub -------------------------------------------------------------------
-  app.get("/api/auth/github", (req: Request, res: Response) => {
-    if (!ENV.githubOAuthClientId) {
-      logger.error("[OAuth] GITHUB_OAUTH_CLIENT_ID is not set");
+  app.get("/api/auth/github", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-github-start", 20, 15 * 60_000))) return;
+    if (!ENV.githubOAuthClientId || !ENV.githubOAuthClientSecret) {
+      logger.error("[OAuth] GitHub OAuth credentials are not configured");
       res.redirect(302, "/login?error=oauth_not_configured");
       return;
     }
+
     const state = crypto.randomBytes(24).toString("hex");
     setShortLivedCookie(res, STATE_COOKIE, state);
     setShortLivedCookie(res, PROVIDER_COOKIE, "github");
@@ -116,8 +262,8 @@ export function registerOAuthRoutes(app: Express) {
     res.redirect(302, url.toString());
   });
 
-  // --- Shared callback ------------------------------------------------------------
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
+    if (!(await allowPublicRequest(req, res, "oauth-callback", 30, 15 * 60_000))) return;
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
     const expectedState = readCookie(req, STATE_COOKIE);
@@ -126,12 +272,12 @@ export function registerOAuthRoutes(app: Express) {
     clearShortLivedCookie(res, STATE_COOKIE);
     clearShortLivedCookie(res, PROVIDER_COOKIE);
 
-    if (!code || !state) {
-      res.status(400).json({ error: "code and state are required" });
+    if (!code || code.length > 2048 || !state || !/^[a-f0-9]{48}$/i.test(state)) {
+      res.redirect(302, "/login?error=oauth_failed");
       return;
     }
     if (!expectedState || state !== expectedState) {
-      logger.error("[OAuth] State mismatch -- possible CSRF attempt or expired login attempt");
+      logger.error("[OAuth] State mismatch or expired OAuth attempt");
       res.redirect(302, "/login?error=oauth_state_mismatch");
       return;
     }
@@ -144,7 +290,7 @@ export function registerOAuthRoutes(app: Express) {
       const redirectUri = getCallbackUrl(req);
 
       if (provider === "google") {
-        const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
@@ -154,84 +300,142 @@ export function registerOAuthRoutes(app: Express) {
             grant_type: "authorization_code",
             redirect_uri: redirectUri,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
-        if (!tokenRes.ok) {
-          logger.error("[OAuth] Google token exchange failed", { status: tokenRes.status, body: await tokenRes.text() });
-          res.redirect(302, "/login?error=oauth_failed");
-          return;
-        }
-        const tokenData = (await tokenRes.json()) as { access_token: string };
 
-        const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenData.access_token}` },
-        });
-        if (!userRes.ok) {
-          logger.error("[OAuth] Google userinfo fetch failed", { status: userRes.status });
+        if (!tokenResponse.ok) {
+          logger.error("[OAuth] Google token exchange failed", {
+            status: tokenResponse.status,
+            body: await tokenResponse.text(),
+          });
           res.redirect(302, "/login?error=oauth_failed");
           return;
         }
-        const profile = (await userRes.json()) as {
-          sub: string;
+
+        const tokenData = (await tokenResponse.json()) as { access_token?: string };
+        if (!tokenData.access_token) {
+          logger.error("[OAuth] Google token response did not include access_token");
+          res.redirect(302, "/login?error=oauth_failed");
+          return;
+        }
+
+        const userResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${tokenData.access_token}` },
+          signal: AbortSignal.timeout(10_000),
+        });
+
+        if (!userResponse.ok) {
+          logger.error("[OAuth] Google userinfo fetch failed", {
+            status: userResponse.status,
+          });
+          res.redirect(302, "/login?error=oauth_failed");
+          return;
+        }
+
+        const profile = (await userResponse.json()) as {
+          sub?: string;
           email?: string;
           email_verified?: boolean;
           name?: string;
         };
 
+        if (!profile.sub || !profile.email || profile.email_verified !== true) {
+          logger.error("[OAuth] Google returned an incomplete or unverified profile");
+          res.redirect(302, "/login?error=oauth_unverified_email");
+          return;
+        }
+
         await completeLogin(req, res, {
           openId: `google_${profile.sub}`,
           name: profile.name || null,
-          email: profile.email_verified ? profile.email ?? null : null,
+          email: profile.email,
           loginMethod: "google",
         });
         return;
       }
 
-      // provider === "github"
-      const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+      const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
         body: new URLSearchParams({
           client_id: ENV.githubOAuthClientId,
           client_secret: ENV.githubOAuthClientSecret,
           code,
           redirect_uri: redirectUri,
         }),
+        signal: AbortSignal.timeout(10_000),
       });
-      if (!tokenRes.ok) {
-        logger.error("[OAuth] GitHub token exchange failed", { status: tokenRes.status, body: await tokenRes.text() });
-        res.redirect(302, "/login?error=oauth_failed");
-        return;
-      }
-      const tokenData = (await tokenRes.json()) as { access_token?: string; error?: string };
-      if (!tokenData.access_token) {
-        logger.error("[OAuth] GitHub token exchange returned no access_token", { error: tokenData.error });
-        res.redirect(302, "/login?error=oauth_failed");
-        return;
-      }
 
-      const userRes = await fetch("https://api.github.com/user", {
-        headers: { Authorization: `Bearer ${tokenData.access_token}`, "User-Agent": "virelle-studios" },
-      });
-      if (!userRes.ok) {
-        logger.error("[OAuth] GitHub user fetch failed", { status: userRes.status });
-        res.redirect(302, "/login?error=oauth_failed");
-        return;
-      }
-      const profile = (await userRes.json()) as { id: number; login: string; name?: string; email?: string | null };
-
-      // GitHub only returns a public email if the user has one set; otherwise
-      // it's null and we need the emails endpoint to find their verified
-      // primary address (requires the user:email scope, already requested).
-      let email: string | null = profile.email ?? null;
-      if (!email) {
-        const emailsRes = await fetch("https://api.github.com/user/emails", {
-          headers: { Authorization: `Bearer ${tokenData.access_token}`, "User-Agent": "virelle-studios" },
+      if (!tokenResponse.ok) {
+        logger.error("[OAuth] GitHub token exchange failed", {
+          status: tokenResponse.status,
+          body: await tokenResponse.text(),
         });
-        if (emailsRes.ok) {
-          const emails = (await emailsRes.json()) as Array<{ email: string; primary: boolean; verified: boolean }>;
-          const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified);
-          email = primary?.email ?? null;
-        }
+        res.redirect(302, "/login?error=oauth_failed");
+        return;
+      }
+
+      const tokenData = (await tokenResponse.json()) as {
+        access_token?: string;
+        error?: string;
+      };
+      if (!tokenData.access_token) {
+        logger.error("[OAuth] GitHub token exchange returned no access_token", {
+          error: tokenData.error,
+        });
+        res.redirect(302, "/login?error=oauth_failed");
+        return;
+      }
+
+      const userResponse = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "virelle-studios",
+        },
+        signal: AbortSignal.timeout(10_000),
+      });
+
+      if (!userResponse.ok) {
+        logger.error("[OAuth] GitHub user fetch failed", {
+          status: userResponse.status,
+        });
+        res.redirect(302, "/login?error=oauth_failed");
+        return;
+      }
+
+      const profile = (await userResponse.json()) as {
+        id?: number;
+        login?: string;
+        name?: string;
+        email?: string | null;
+      };
+
+      const emailsResponse = await fetch("https://api.github.com/user/emails", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "virelle-studios",
+        },
+        signal: AbortSignal.timeout(10_000),
+      });
+      let email: string | null = null;
+      if (emailsResponse.ok) {
+        const emails = (await emailsResponse.json()) as Array<{
+          email: string;
+          primary: boolean;
+          verified: boolean;
+        }>;
+        const selected = emails.find(candidate => candidate.primary && candidate.verified)
+          || emails.find(candidate => candidate.verified);
+        email = selected?.email ?? null;
+      }
+
+      if (!profile.id || !email) {
+        logger.error("[OAuth] GitHub returned an incomplete or unverified profile");
+        res.redirect(302, "/login?error=oauth_unverified_email");
+        return;
       }
 
       await completeLogin(req, res, {
@@ -241,7 +445,7 @@ export function registerOAuthRoutes(app: Express) {
         loginMethod: "github",
       });
     } catch (error) {
-      logger.error("[OAuth] Callback failed", { error: String(error) });
+      logger.errorWithStack("[OAuth] Callback failed", error);
       res.redirect(302, "/login?error=oauth_failed");
     }
   });

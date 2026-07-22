@@ -1,0 +1,72 @@
+/* Explicit mobile sidebar contrast. This file loads after all shared theme CSS. */
+
+:root:not(.dark) [data-mobile="true"][data-slot="sidebar"] {
+  background: #09090b !important;
+  color: #fff1b8 !important;
+  opacity: 1 !important;
+}
+
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-menu-button"],
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-header"],
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-footer"],
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-content"] button,
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-content"] span {
+  color: #fff1b8 !important;
+  -webkit-text-fill-color: #fff1b8 !important;
+  opacity: 1 !important;
+}
+
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-menu-button"] svg,
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-header"] svg,
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-footer"] svg,
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-content"] button svg {
+  color: #f6c94c !important;
+  opacity: 1 !important;
+}
+
+:root:not(.dark) [data-mobile="true"] [data-slot="sidebar-menu-button"][data-active="true"] {
+  background: rgba(246, 201, 76, 0.16) !important;
+  color: #ffd866 !important;
+  -webkit-text-fill-color: #ffd866 !important;
+}
+
+.dark [data-mobile="true"][data-slot="sidebar"] {
+  background: #fffaf0 !important;
+  color: #151515 !important;
+  opacity: 1 !important;
+}
+
+.dark [data-mobile="true"] [data-slot="sidebar-menu-button"],
+.dark [data-mobile="true"] [data-slot="sidebar-header"],
+.dark [data-mobile="true"] [data-slot="sidebar-footer"],
+.dark [data-mobile="true"] [data-slot="sidebar-content"] button,
+.dark [data-mobile="true"] [data-slot="sidebar-content"] span {
+  color: #151515 !important;
+  -webkit-text-fill-color: #151515 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.dark [data-mobile="true"] [data-slot="sidebar-content"] button {
+  font-weight: 700 !important;
+}
+
+.dark [data-mobile="true"] [data-slot="sidebar-menu-button"] svg,
+.dark [data-mobile="true"] [data-slot="sidebar-header"] svg,
+.dark [data-mobile="true"] [data-slot="sidebar-footer"] svg,
+.dark [data-mobile="true"] [data-slot="sidebar-content"] button svg {
+  color: #7a5100 !important;
+  opacity: 1 !important;
+}
+
+.dark [data-mobile="true"] [data-slot="sidebar-menu-button"][data-active="true"] {
+  background: rgba(138, 87, 0, 0.14) !important;
+  color: #6f4500 !important;
+  -webkit-text-fill-color: #6f4500 !important;
+}
+
+.dark [data-mobile="true"] [data-slot="sidebar-menu-button"][data-active="true"] span,
+.dark [data-mobile="true"] [data-slot="sidebar-menu-button"][data-active="true"] svg {
+  color: #6f4500 !important;
+  -webkit-text-fill-color: #6f4500 !important;
+}

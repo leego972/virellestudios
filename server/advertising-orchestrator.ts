@@ -1162,18 +1162,10 @@ async function optimizeAffiliateNetwork(): Promise<AdvertisingAction> {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
-    // Get affiliate stats
-    // affiliatePartners table not in schema â return early
+    // Affiliate tables are not present in the active schema. Report a neutral
+    // status instead of retaining unreachable query code that can silently rot.
     const partners: unknown[] = [];
-    if (false) await (db as any).query.affiliatePartners?.findMany({
-      where: (affiliatePartners: any) => eq(affiliatePartners.status, "active"),
-    });
-
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const recentClicks: unknown[] = [];
-    if (false) await (db as any).query.affiliateClicks?.findMany({
-      where: (affiliateClicks: any) => gte(affiliateClicks.createdAt, thirtyDaysAgo),
-    });
 
     const activePartners = partners.length;
     const totalClicks = recentClicks.length;
