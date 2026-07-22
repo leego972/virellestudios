@@ -3,6 +3,8 @@ import { TRPCError } from "@trpc/server";
 export const SWAPPYS_CONTENT_MODES = ["standard", "open_adult"] as const;
 export type SwappysContentMode = typeof SWAPPYS_CONTENT_MODES[number];
 
+export const SWAPPYS_POLICY_VERSION = "adult-workspace-2026-07";
+
 const NON_CONSENSUAL_PATTERNS = [
   /non[-\s]?consensual/i,
   /without (?:their|his|her) (?:knowledge|permission|consent)/i,
@@ -172,6 +174,12 @@ export function assertSwappysCreativePolicy(input: {
         message: "Child or childhood transformation goals are unavailable in the Adult Studio.",
       });
     }
+    if (input.transformGoal === "younger_self" && input.targetAge == null) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Younger-self transformations in the Adult Studio require an explicit target age of 18 or older.",
+      });
+    }
     if (input.targetAge != null && input.targetAge < 18) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -202,12 +210,12 @@ export function assertSwappysCreativePolicy(input: {
 export function swappysCreativePromptDirective(mode: SwappysContentMode) {
   if (mode === "open_adult") {
     return [
-      "VERIFIED ADULT STUDIO:",
+      `VERIFIED ADULT STUDIO POLICY ${SWAPPYS_POLICY_VERSION}:`,
       "follow the director's lawful adult-content request involving verified consenting adults aged 18 or older",
       "explicit adult content is permitted only when all subjects are consenting adults and no public-figure likeness is used",
       "never create minors, teenage or minor-looking characters, school-age styling, age regression below 18, non-consensual sexualisation, coercion, revenge content, fraud or fake evidence",
       "preserve professional cinematic quality and internal provenance metadata",
     ].join(" ");
   }
-  return "STANDARD CREATIVE MODE: produce a professional, non-explicit film/VFX transformation while preserving consent, identity continuity and lawful use. Age-appropriate non-sexual teenage film scenes may be depicted, but sexualised or explicit minor content is always prohibited.";
+  return `STANDARD CREATIVE MODE POLICY ${SWAPPYS_POLICY_VERSION}: produce a professional, non-explicit film/VFX transformation while preserving consent, identity continuity and lawful use. Age-appropriate non-sexual teenage film scenes may be depicted, but sexualised or explicit minor content is always prohibited.`;
 }
