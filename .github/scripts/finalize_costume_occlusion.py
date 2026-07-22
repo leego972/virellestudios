@@ -126,19 +126,28 @@ replace_once(
 
 replace_once(
     "client/src/pages/DesignerWardrobePage.tsx",
-    '''                      <SelectItem value="auto">Automatic from costume face coverage</SelectItem>
+    '''                <div>
+                  <Label className="text-zinc-400">Face identity while costume is active</Label>
+                  <Select value={attachIdentityMode} onValueChange={(value) => setAttachIdentityMode(value as typeof attachIdentityMode)}>
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
+                      <SelectItem value="auto">Automatic from costume face coverage</SelectItem>
                       <SelectItem value="use_character_face">Use original character face</SelectItem>
-                      <SelectItem value="conceal_character_face">Full costume — suppress original face</SelectItem>''',
-    '''                      <SelectItem value="auto">Automatic from costume coverage</SelectItem>
-                      <SelectItem value="conceal_character_face">Conceal original face</SelectItem>''',
-)
-replace_once(
-    "client/src/pages/DesignerWardrobePage.tsx",
-    '''                  </Select>
+                      <SelectItem value="conceal_character_face">Full costume — suppress original face</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label className="text-zinc-400">Type</Label>''',
-    '''                  </Select>
+    '''                <div>
+                  <Label className="text-zinc-400">Face identity while costume is active</Label>
+                  <Select value={attachIdentityMode} onValueChange={(value) => setAttachIdentityMode(value as typeof attachIdentityMode)}>
+                    <SelectTrigger className="bg-zinc-950 border-amber-500/20 mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
+                      <SelectItem value="auto">Automatic from costume coverage</SelectItem>
+                      <SelectItem value="conceal_character_face">Conceal original face</SelectItem>
+                    </SelectContent>
+                  </Select>
                   {attachItem?.faceCoverage === "full" ? (
                     <div className="mt-1 text-xs text-violet-300">Full-face costume detected: the actor portrait is automatically excluded while this costume is active.</div>
                   ) : null}
