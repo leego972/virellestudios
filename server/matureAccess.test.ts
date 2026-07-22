@@ -100,7 +100,7 @@ describe("verified mature access", () => {
     })).toThrow(TRPCError);
   });
 
-  it("blocks every minor, teenage and age-regression request in Adult Studio", () => {
+  it("blocks every minor, teenage and ambiguous age-regression request in Adult Studio", () => {
     expect(classifyContentRequest({
       workspace: "adult",
       targetAge: 17,
@@ -116,6 +116,26 @@ describe("verified mature access", () => {
       targetAge: 16,
       targetPresentation: "younger character styling",
     })).toThrow(TRPCError);
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: true,
+      allSubjectsAdultsConfirmed: true,
+      transformGoal: "younger_self",
+      targetAge: null,
+      targetPresentation: "younger adult version",
+    })).toThrow(TRPCError);
+
+    expect(() => assertSwappysCreativePolicy({
+      user: { isAdultVerified: true },
+      contentMode: "open_adult",
+      consentConfirmed: true,
+      allSubjectsAdultsConfirmed: true,
+      transformGoal: "younger_self",
+      targetAge: 21,
+      targetPresentation: "21-year-old adult version",
+    })).not.toThrow();
   });
 
   it("blocks non-consensual adult content and public-figure adult likenesses", () => {
