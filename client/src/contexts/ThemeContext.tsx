@@ -49,15 +49,19 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = document.documentElement;
-    const isDayMode = theme === "dark";
+    const isNightMode = theme === "dark";
 
-    root.classList.toggle("dark", isDayMode);
-    root.style.colorScheme = isDayMode ? "light" : "dark";
+    /*
+     * Virelle's legacy stylesheet assigns the cream palette to `.dark` and the
+     * black palette to the root selector. Preserve those stable selectors while
+     * exposing correct user-facing semantics: light = day, dark = night.
+     */
+    root.classList.toggle("dark", !isNightMode);
+    root.dataset.theme = theme;
+    root.style.colorScheme = isNightMode ? "dark" : "light";
 
-    // Safari uses theme-color for the URL/status-bar chrome. Keep it aligned
-    // with the actual cream day surface or black night surface.
-    ensureMeta("theme-color").content = isDayMode ? "#f5efe2" : "#09090b";
-    ensureMeta("color-scheme").content = isDayMode ? "light" : "dark";
+    ensureMeta("theme-color").content = isNightMode ? "#09090b" : "#f5efe2";
+    ensureMeta("color-scheme").content = isNightMode ? "dark" : "light";
 
     if (switchable) {
       localStorage.setItem("theme", theme);

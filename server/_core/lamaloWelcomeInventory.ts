@@ -46,6 +46,7 @@ type WelcomeItemDefinition = {
   materials: string[];
   styleTags: string[];
   prompt: string;
+  imagePath: string;
 };
 
 const WELCOME_ITEMS: WelcomeItemDefinition[] = [
@@ -59,6 +60,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Supima cotton"],
     styleTags: ["essential", "minimal", "casual"],
     prompt: "premium black Supima cotton crew-neck t-shirt, relaxed fit",
+    imagePath: "/lamalo/welcome/premium-tee-black.svg",
   },
   {
     name: "Lamalo Bomber Jacket — Olive",
@@ -70,6 +72,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Satin nylon", "Ribbed knit"],
     styleTags: ["bomber", "streetwear", "minimal"],
     prompt: "olive satin bomber jacket, ribbed collar cuffs and hem",
+    imagePath: "/lamalo/welcome/bomber-jacket-olive.svg",
   },
   {
     name: "Lamalo Suit Jacket — Navy",
@@ -81,6 +84,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["tailored", "formal", "modern"],
     prompt: "navy tailored single-breasted suit jacket, modern clean cut",
+    imagePath: "/lamalo/welcome/suit-jacket-navy.svg",
   },
   {
     name: "Lamalo Straight Denim — Indigo",
@@ -92,6 +96,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Cotton denim"],
     styleTags: ["denim", "classic", "everyday"],
     prompt: "indigo straight-leg denim jeans, classic five-pocket construction",
+    imagePath: "/lamalo/welcome/straight-denim-indigo.svg",
   },
   {
     name: "Lamalo Classic Polo — White",
@@ -103,6 +108,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Cotton pique"],
     styleTags: ["polo", "smart-casual", "classic"],
     prompt: "white cotton pique polo shirt, structured collar, two-button placket",
+    imagePath: "/lamalo/welcome/classic-polo-white.svg",
   },
   {
     name: "Lamalo Structured Blazer — Black",
@@ -114,6 +120,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["blazer", "tailored", "editorial"],
     prompt: "black structured tailored blazer, defined shoulders, refined silhouette",
+    imagePath: "/lamalo/welcome/structured-blazer-black.svg",
   },
   {
     name: "Lamalo Pure Silk Blouse — White",
@@ -125,6 +132,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Pure silk"],
     styleTags: ["silk", "elegant", "minimal"],
     prompt: "white pure silk blouse, softly draped neckline, elegant fluid fabric",
+    imagePath: "/lamalo/welcome/silk-blouse-white.svg",
   },
   {
     name: "Lamalo Satin Slip Dress — Champagne",
@@ -136,6 +144,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Satin"],
     styleTags: ["slip-dress", "evening", "minimal"],
     prompt: "champagne satin slip dress, bias-cut silhouette, fine straps",
+    imagePath: "/lamalo/welcome/satin-slip-dress-champagne.svg",
   },
   {
     name: "Lamalo Wrap Midi Dress — Sage Green",
@@ -147,6 +156,7 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Viscose blend"],
     styleTags: ["wrap-dress", "midi", "soft-tailoring"],
     prompt: "sage green wrap midi dress, defined waist, fluid skirt",
+    imagePath: "/lamalo/welcome/wrap-midi-dress-sage.svg",
   },
   {
     name: "Lamalo Wide-Leg Formal Trouser — Camel",
@@ -158,34 +168,9 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["wide-leg", "formal", "tailored"],
     prompt: "camel wide-leg formal trousers, high waist, pressed crease",
+    imagePath: "/lamalo/welcome/wide-leg-trouser-camel.svg",
   },
 ];
-
-function stableSeed(value: string): number {
-  let hash = 2166136261;
-  for (let index = 0; index < value.length; index++) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return Math.abs(hash >>> 0) || 1;
-}
-
-function welcomeImageUrl(item: WelcomeItemDefinition): string {
-  const prompt = [
-    `Professional fashion catalogue photograph of ${item.name}`,
-    item.prompt,
-    "single complete garment fully visible",
-    "neutral warm-grey studio background",
-    "soft editorial lighting",
-    "realistic textile detail",
-    "no model",
-    "no mannequin",
-    "no text",
-    "no logo",
-    "no watermark",
-  ].join(", ");
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&enhance=true&model=flux&seed=${stableSeed(item.name)}`;
-}
 
 export type LamaloWelcomeChoice = {
   id: number;
@@ -199,11 +184,6 @@ export type LamaloWelcomeChoice = {
   primaryImageUrl: string;
 };
 
-/**
- * Stable presentation contract for the welcome picker. These ten choices are
- * deliberately independent of database readiness so the modal always renders.
- * The selected names are resolved to real wardrobe item IDs during claim.
- */
 export const LAMALO_WELCOME_CHOICES: LamaloWelcomeChoice[] = WELCOME_ITEMS.map(
   (item, index) => ({
     id: index + 1,
@@ -214,7 +194,7 @@ export const LAMALO_WELCOME_CHOICES: LamaloWelcomeChoice[] = WELCOME_ITEMS.map(
     genderFit: item.genderFit,
     colors: [item.color],
     referencePrompt: item.prompt,
-    primaryImageUrl: welcomeImageUrl(item),
+    primaryImageUrl: item.imagePath,
   }),
 );
 
@@ -358,38 +338,35 @@ export async function ensureLamaloWelcomeInventory(
 
   if (missing.length > 0) {
     await db.insert(wardrobeItems).values(
-      missing.map(item => {
-        const primaryImageUrl = welcomeImageUrl(item);
-        return {
-          collectionId,
-          userId: profile!.userId,
-          designerProfileId: profile!.id,
-          name: item.name,
-          description: item.description,
-          category: item.category,
-          subcategory: item.subcategory,
-          wardrobeType: "fashion",
-          genderFit: item.genderFit,
-          sizeRange: "XS-XXL",
-          era: "Contemporary 2026",
-          colors: [item.color],
-          materials: item.materials,
-          styleTags: item.styleTags,
-          imageUrls: [primaryImageUrl],
-          primaryImageUrl,
-          referencePrompt: item.prompt,
-          faceCoverage: "none",
-          brandPlacementAllowed: false,
-          shopfrontPlacementAllowed: true,
-          characterWardrobeAllowed: true,
-          costumeUseAllowed: true,
-          commercialUseAllowed: true,
-          licenseType: "full_license",
-          licenseNotes: "Free Virelle Studios welcome-gift virtual wardrobe licence.",
-          visibility: "public",
-          status: "active",
-        };
-      }),
+      missing.map(item => ({
+        collectionId,
+        userId: profile!.userId,
+        designerProfileId: profile!.id,
+        name: item.name,
+        description: item.description,
+        category: item.category,
+        subcategory: item.subcategory,
+        wardrobeType: "fashion",
+        genderFit: item.genderFit,
+        sizeRange: "XS-XXL",
+        era: "Contemporary 2026",
+        colors: [item.color],
+        materials: item.materials,
+        styleTags: item.styleTags,
+        imageUrls: [item.imagePath],
+        primaryImageUrl: item.imagePath,
+        referencePrompt: item.prompt,
+        faceCoverage: "none",
+        brandPlacementAllowed: false,
+        shopfrontPlacementAllowed: true,
+        characterWardrobeAllowed: true,
+        costumeUseAllowed: true,
+        commercialUseAllowed: true,
+        licenseType: "full_license",
+        licenseNotes: "Free Virelle Studios welcome-gift virtual wardrobe licence.",
+        visibility: "public",
+        status: "active",
+      })),
     );
   }
 
