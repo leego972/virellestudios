@@ -7,31 +7,16 @@ import {
   wardrobeItems,
   wardrobeLeases,
 } from "../drizzle/schema";
+import {
+  ensureLamaloWelcomeInventory,
+  findLamaloWelcomeProfile,
+  LAMALO_WELCOME_ITEM_NAMES,
+} from "./_core/lamaloWelcomeInventory";
 import { protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { runLamaloSeed } from "./lamalo-seed";
 
-const LAMALO_BRAND_NAME = "Lamalo Fashion";
-const LAMALO_BRAND_ALIASES = ["Lamalo Fashions", "Lamalo"] as const;
 const STARTER_OPTION_COUNT = 10;
-
-/**
- * Ten real, colour-qualified items from the Lamalo catalogue.
- * The seed expands every base garment into separate colour products, so these
- * names intentionally include the exact ` — Colour` suffix stored in MySQL.
- */
-const STARTER_PICKS = [
-  "Lamalo Premium Tee — Black",
-  "Lamalo Bomber Jacket — Olive",
-  "Lamalo Suit Jacket — Navy",
-  "Lamalo Straight Denim — Indigo",
-  "Lamalo Classic Polo — White",
-  "Lamalo Structured Blazer — Black",
-  "Lamalo Pure Silk Blouse — White",
-  "Lamalo Satin Slip Dress — Champagne",
-  "Lamalo Wrap Midi Dress — Sage Green",
-  "Lamalo Wide-Leg Formal Trouser — Camel",
-] as const;
+const STARTER_PICKS = LAMALO_WELCOME_ITEM_NAMES;
 
 const starterSelection = {
   id: wardrobeItems.id,
@@ -76,61 +61,20 @@ async function requireDatabase(): Promise<Database> {
 }
 
 async function findLamaloProfile(
-  db: Awaited<ReturnType<typeof getDb>>,
-): Promise<LamaloProfileRef | null> {
-  if (!db) return null;
-
-  const exact = await db
-    .select({ id: designerProfiles.id, userId: designerProfiles.userId })
-    .from(designerProfiles)
-    .where(eq(designerProfiles.brandName, LAMALO_BRAND_NAME))
-    .orderBy(asc(designerProfiles.id))
-    .limit(1);
-
-  if (exact[0]) return exact[0];
-
-  const aliases = await db
-    .select({ id: designerProfiles.id, userId: designerProfiles.userId })
-    .from(designerProfiles)
-    .where(inArray(designerProfiles.brandName, [...LAMALO_BRAND_ALIASES]))
-    .orderBy(asc(designerProfiles.id))
-    .limit(1);
-
-  return aliases[0] ?? null;
-}
-
-async function hasStarterInventory(
   db: Database,
-  profileId: number,
-): Promise<boolean> {
-  const rows = await db
-    .select({ name: wardrobeItems.name })
-    .from(wardrobeItems)
-    .where(
-      and(
-        eq(wardrobeItems.designerProfileId, profileId),
-        eq(wardrobeItems.visibility, "public"),
-        eq(wardrobeItems.status, "active"),
-      ),
-    )
-    .groupBy(wardrobeItems.name)
-    .limit(STARTER_OPTION_COUNT);
-
-  return rows.length >= STARTER_OPTION_COUNT;
+): Promise<LamaloProfileRef | null> {
+  return findLamaloWelcomeProfile(db);
 }
 
 /**
- * Production should already have Lamalo seeded. This self-heals both a missing
- * profile and an existing but empty catalogue. It uses the Lamalo profile owner
- * when available, otherwise the first administrator—never the new member.
+ * Prepare only the ten welcome choices needed by this flow. The previous
+ * implementation could run the complete 1,400+ item Lamalo seed inside a
+ * login-time request, which was slow enough to time out on production.
  */
 async function requireLamaloProfileId(db: Database): Promise<number> {
-  let profile = await findLamaloProfile(db);
-  if (profile && (await hasStarterInventory(db, profile.id))) {
-    return profile.id;
-  }
-
+  const profile = await findLamaloProfile(db);
   let ownerUserId = profile?.userId;
+
   if (!ownerUserId) {
     const admins = await db
       .select({ id: users.id })
@@ -145,22 +89,20 @@ async function requireLamaloProfileId(db: Database): Promise<number> {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
       message:
-        "The Lamalo catalogue has not been initialised and no administrator account is available to initialise it.",
+        "The Lamalo welcome collection has not been initialised and no administrator account is available to initialise it.",
     });
   }
 
-  await runLamaloSeed(ownerUserId);
-  profile = await findLamaloProfile(db);
-
-  if (!profile || !(await hasStarterInventory(db, profile.id))) {
+  try {
+    return await ensureLamaloWelcomeInventory(db, ownerUserId);
+  } catch (error) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message:
-        "The Lamalo catalogue could not be initialised with ten welcome-gift choices.",
+        "The welcome outfits could not be prepared. Please retry in a moment.",
+      cause: error,
     });
   }
-
-  return profile.id;
 }
 
 async function isDesignerAccount(db: Database, userId: number): Promise<boolean> {
