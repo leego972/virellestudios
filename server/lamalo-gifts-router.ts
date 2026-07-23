@@ -10,37 +10,12 @@ import {
 import {
   ensureLamaloWelcomeInventory,
   findLamaloWelcomeProfile,
-  LAMALO_WELCOME_ITEM_NAMES,
+  LAMALO_WELCOME_CHOICES,
 } from "./_core/lamaloWelcomeInventory";
 import { protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 
 const STARTER_OPTION_COUNT = 10;
-const STARTER_PICKS = LAMALO_WELCOME_ITEM_NAMES;
-
-const starterSelection = {
-  id: wardrobeItems.id,
-  name: wardrobeItems.name,
-  description: wardrobeItems.description,
-  category: wardrobeItems.category,
-  subcategory: wardrobeItems.subcategory,
-  genderFit: wardrobeItems.genderFit,
-  colors: wardrobeItems.colors,
-  referencePrompt: wardrobeItems.referencePrompt,
-  primaryImageUrl: wardrobeItems.primaryImageUrl,
-};
-
-type StarterOutfit = {
-  id: number;
-  name: string;
-  description: string | null;
-  category: string | null;
-  subcategory: string | null;
-  genderFit: string | null;
-  colors: unknown;
-  referencePrompt: string | null;
-  primaryImageUrl: string | null;
-};
 
 type LamaloProfileRef = {
   id: number;
@@ -67,9 +42,8 @@ async function findLamaloProfile(
 }
 
 /**
- * Prepare only the ten welcome choices needed by this flow. The previous
- * implementation could run the complete 1,400+ item Lamalo seed inside a
- * login-time request, which was slow enough to time out on production.
+ * Prepare only the ten items needed when a member actually claims the gift.
+ * Loading the picker itself never enters this database path.
  */
 async function requireLamaloProfileId(db: Database): Promise<number> {
   const profile = await findLamaloProfile(db);
@@ -98,8 +72,7 @@ async function requireLamaloProfileId(db: Database): Promise<number> {
   } catch (error) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message:
-        "The welcome outfits could not be prepared. Please retry in a moment.",
+      message: "The selected welcome outfits could not be saved. Please retry.",
       cause: error,
     });
   }
@@ -152,80 +125,13 @@ export const lamaloGiftsRouter = router({
     };
   }),
 
-  /** Return exactly ten curated, real Lamalo catalogue choices. */
-  getStarterOutfits: protectedProcedure.query(async ({ ctx }) => {
-    const db = await requireDatabase();
-
-    if (await isDesignerAccount(db, ctx.user.id)) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Designer accounts are not eligible for welcome gifts.",
-      });
-    }
-
-    const lamaloId = await requireLamaloProfileId(db);
-    const curated = await db
-      .select(starterSelection)
-      .from(wardrobeItems)
-      .where(
-        and(
-          eq(wardrobeItems.designerProfileId, lamaloId),
-          inArray(wardrobeItems.name, [...STARTER_PICKS]),
-          eq(wardrobeItems.visibility, "public"),
-          eq(wardrobeItems.status, "active"),
-        ),
-      );
-
-    const curatedByName = new Map(curated.map(item => [item.name, item]));
-    const ordered: StarterOutfit[] = [];
-
-    for (const name of STARTER_PICKS) {
-      const item = curatedByName.get(name);
-      if (item) ordered.push(item as StarterOutfit);
-    }
-
-    if (ordered.length < STARTER_OPTION_COUNT) {
-      const fallback = await db
-        .select(starterSelection)
-        .from(wardrobeItems)
-        .where(
-          and(
-            eq(wardrobeItems.designerProfileId, lamaloId),
-            eq(wardrobeItems.visibility, "public"),
-            eq(wardrobeItems.status, "active"),
-          ),
-        )
-        .orderBy(asc(wardrobeItems.id))
-        .limit(2000);
-
-      const existingIds = new Set(ordered.map(item => item.id));
-      const existingNames = new Set(ordered.map(item => item.name));
-
-      for (const item of fallback) {
-        if (
-          !item.name ||
-          existingIds.has(item.id) ||
-          existingNames.has(item.name)
-        ) {
-          continue;
-        }
-
-        ordered.push(item as StarterOutfit);
-        existingIds.add(item.id);
-        existingNames.add(item.name);
-
-        if (ordered.length === STARTER_OPTION_COUNT) break;
-      }
-    }
-
-    if (ordered.length < STARTER_OPTION_COUNT) {
-      throw new TRPCError({
-        code: "PRECONDITION_FAILED",
-        message: `Lamalo needs at least ${STARTER_OPTION_COUNT} active public wardrobe items before the welcome gift can be offered.`,
-      });
-    }
-
-    return ordered.slice(0, STARTER_OPTION_COUNT);
+  /**
+   * Return the ten curated choices from the application contract. This endpoint
+   * intentionally performs no catalogue query, migration or insert, so the
+   * picker cannot fail because the production database is behind a revision.
+   */
+  getStarterOutfits: protectedProcedure.query(() => {
+    return LAMALO_WELCOME_CHOICES;
   }),
 
   /** Claim two free welcome outfits. Regular studio users only. */
@@ -233,14 +139,26 @@ export const lamaloGiftsRouter = router({
     .input(
       z
         .object({
-          itemId1: z.number().int().positive(),
-          itemId2: z.number().int().positive(),
+          itemId1: z.number().int().min(1).max(STARTER_OPTION_COUNT),
+          itemId2: z.number().int().min(1).max(STARTER_OPTION_COUNT),
         })
         .refine(input => input.itemId1 !== input.itemId2, {
           message: "Choose two different outfits.",
         }),
     )
     .mutation(async ({ ctx, input }) => {
+      const selectedChoices = [input.itemId1, input.itemId2].map(id =>
+        LAMALO_WELCOME_CHOICES.find(choice => choice.id === id),
+      );
+
+      if (selectedChoices.some(choice => !choice)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid Lamalo outfits selected.",
+        });
+      }
+
+      const selectedNames = selectedChoices.map(choice => choice!.name);
       const db = await requireDatabase();
 
       if (await isDesignerAccount(db, ctx.user.id)) {
@@ -251,7 +169,6 @@ export const lamaloGiftsRouter = router({
       }
 
       const lamaloId = await requireLamaloProfileId(db);
-      const selectedIds = [input.itemId1, input.itemId2];
 
       const result = await db.transaction(async tx => {
         // Serialise claims for this member, including simultaneous browser tabs.
@@ -281,22 +198,32 @@ export const lamaloGiftsRouter = router({
           });
         }
 
-        const items = await tx
-          .select({ id: wardrobeItems.id })
+        const rows = await tx
+          .select({ id: wardrobeItems.id, name: wardrobeItems.name })
           .from(wardrobeItems)
           .where(
             and(
-              inArray(wardrobeItems.id, selectedIds),
+              inArray(wardrobeItems.name, selectedNames),
               eq(wardrobeItems.designerProfileId, lamaloId),
               eq(wardrobeItems.visibility, "public"),
               eq(wardrobeItems.status, "active"),
             ),
-          );
+          )
+          .orderBy(asc(wardrobeItems.id));
 
-        if (items.length !== 2) {
+        const itemIdByName = new Map<string, number>();
+        for (const row of rows) {
+          if (!itemIdByName.has(row.name)) itemIdByName.set(row.name, row.id);
+        }
+
+        const selectedIds = selectedNames
+          .map(name => itemIdByName.get(name))
+          .filter((id): id is number => typeof id === "number");
+
+        if (selectedIds.length !== 2) {
           throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Invalid Lamalo outfits selected.",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "The selected Lamalo outfits were not created correctly.",
           });
         }
 
@@ -313,25 +240,22 @@ export const lamaloGiftsRouter = router({
         if (itemIdsToInsert.length !== remainingSlots) {
           throw new TRPCError({
             code: "CONFLICT",
-            message:
-              "Choose outfits that are not already in your welcome gift.",
+            message: "Choose outfits that are not already in your welcome gift.",
           });
         }
 
-        if (itemIdsToInsert.length > 0) {
-          await tx.insert(wardrobeLeases).values(
-            itemIdsToInsert.map(wardrobeItemId => ({
-              userId: ctx.user.id,
-              designerProfileId: lamaloId,
-              wardrobeItemId,
-              leaseType: "item",
-              amountPaidAud: 0,
-              designerAmountAud: 0,
-              platformFeeAud: 0,
-              status: "active",
-            })),
-          );
-        }
+        await tx.insert(wardrobeLeases).values(
+          itemIdsToInsert.map(wardrobeItemId => ({
+            userId: ctx.user.id,
+            designerProfileId: lamaloId,
+            wardrobeItemId,
+            leaseType: "item",
+            amountPaidAud: 0,
+            designerAmountAud: 0,
+            platformFeeAud: 0,
+            status: "active",
+          })),
+        );
 
         return {
           added: itemIdsToInsert.length,

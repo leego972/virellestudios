@@ -187,6 +187,37 @@ function welcomeImageUrl(item: WelcomeItemDefinition): string {
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&enhance=true&model=flux&seed=${stableSeed(item.name)}`;
 }
 
+export type LamaloWelcomeChoice = {
+  id: number;
+  name: (typeof LAMALO_WELCOME_ITEM_NAMES)[number];
+  description: string;
+  category: string;
+  subcategory: string;
+  genderFit: string;
+  colors: string[];
+  referencePrompt: string;
+  primaryImageUrl: string;
+};
+
+/**
+ * Stable presentation contract for the welcome picker. These ten choices are
+ * deliberately independent of database readiness so the modal always renders.
+ * The selected names are resolved to real wardrobe item IDs during claim.
+ */
+export const LAMALO_WELCOME_CHOICES: LamaloWelcomeChoice[] = WELCOME_ITEMS.map(
+  (item, index) => ({
+    id: index + 1,
+    name: item.name,
+    description: item.description,
+    category: item.category,
+    subcategory: item.subcategory,
+    genderFit: item.genderFit,
+    colors: [item.color],
+    referencePrompt: item.prompt,
+    primaryImageUrl: welcomeImageUrl(item),
+  }),
+);
+
 async function activePublicItemCount(db: Database, profileId: number): Promise<number> {
   const rows = await db
     .select({ name: wardrobeItems.name })
