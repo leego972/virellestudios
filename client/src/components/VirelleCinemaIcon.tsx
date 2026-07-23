@@ -42,6 +42,7 @@ export function VirelleCinemaIcon({
 
   return (
     <span
+      data-virelle-cinema-icon={icon}
       role={alt ? "img" : undefined}
       aria-label={alt ? label : undefined}
       aria-hidden={alt ? undefined : true}
