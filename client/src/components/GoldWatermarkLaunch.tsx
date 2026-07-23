@@ -1,4 +1,47 @@
+import { useEffect } from "react";
+import "@/sitewide-visibility.css";
+
+let watermarkObserver: MutationObserver | null = null;
+let mountedWatermarkCount = 0;
+
+function synchroniseWatermarks() {
+  const watermarks = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-virelle-watermark]"),
+  );
+
+  watermarks.forEach((watermark, index) => {
+    if (index === 0) {
+      watermark.removeAttribute("data-virelle-watermark-duplicate");
+    } else {
+      watermark.setAttribute("data-virelle-watermark-duplicate", "true");
+    }
+  });
+}
+
 export default function GoldWatermarkLaunch({ className = "" }: { className?: string }) {
+  useEffect(() => {
+    mountedWatermarkCount += 1;
+    synchroniseWatermarks();
+
+    if (!watermarkObserver) {
+      watermarkObserver = new MutationObserver(synchroniseWatermarks);
+      watermarkObserver.observe(document.getElementById("root") ?? document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    return () => {
+      mountedWatermarkCount = Math.max(0, mountedWatermarkCount - 1);
+      window.requestAnimationFrame(synchroniseWatermarks);
+
+      if (mountedWatermarkCount === 0) {
+        watermarkObserver?.disconnect();
+        watermarkObserver = null;
+      }
+    };
+  }, []);
+
   return (
     <div
       data-virelle-watermark
