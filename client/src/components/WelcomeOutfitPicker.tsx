@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -11,15 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Gift,
-  Loader2,
-  PackageOpen,
-  RefreshCw,
-  Shirt,
-} from "lucide-react";
+import { CheckCircle2, Gift, Loader2, RefreshCw } from "lucide-react";
 
 function isStudioOpenerActive(): boolean {
   if (typeof window === "undefined" || typeof document === "undefined") return false;
@@ -35,30 +27,9 @@ function isStudioOpenerActive(): boolean {
   );
 }
 
-function OutfitImage({ src, alt }: { src?: string | null; alt: string }) {
-  const [failed, setFailed] = useState(false);
-
-  if (!src || failed) {
-    return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white/5 dark:bg-zinc-100">
-        <Shirt className="h-9 w-9 text-[#d8c98f] dark:text-zinc-500" />
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className="aspect-square w-full rounded-xl object-cover"
-      loading="eager"
-      onError={() => setFailed(true)}
-    />
-  );
-}
-
 export default function WelcomeOutfitPicker() {
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const { theme } = useTheme();
   const utils = trpc.useUtils();
   const [openerReady, setOpenerReady] = useState(() => !isStudioOpenerActive());
   const [selected, setSelected] = useState<number[]>([]);
@@ -108,8 +79,8 @@ export default function WelcomeOutfitPicker() {
         isAuthenticated && openerReady && gift?.eligible && !gift?.claimed,
       ),
       retry: 2,
-      retryDelay: (attempt: number) => Math.min(700 * 2 ** attempt, 3_000),
-      staleTime: 5 * 60_000,
+      retryDelay: (attempt: number) => Math.min(500 * 2 ** attempt, 2_000),
+      staleTime: 60 * 60_000,
     }) ?? {};
 
   const claimMut = (trpc as any).lamaloGifts?.claimGift?.useMutation?.({
@@ -152,75 +123,105 @@ export default function WelcomeOutfitPicker() {
     );
   };
 
-  const retry = () => {
-    setSelected([]);
-    void refetchOutfits?.();
-  };
-
   const busy = Boolean(outfitsLoading || outfitsFetching);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         data-lamalo-welcome-dialog
-        className="flex h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-4xl flex-col gap-0 overflow-hidden rounded-2xl border-amber-500/35 bg-[#0b0b0d] p-0 shadow-2xl shadow-black/60 dark:bg-[#fffaf0] dark:shadow-black/20 sm:h-auto sm:max-h-[88dvh] sm:w-[95vw]"
+        data-theme-mode={theme}
+        data-contrast-ignore="true"
+        className="flex h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-4xl flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-2xl sm:h-auto sm:max-h-[88dvh] sm:w-[95vw]"
       >
         <style>{`
-          :root:not(.dark) [data-lamalo-welcome-dialog] {
-            background: #0b0b0d !important;
-            color: #fff4c2 !important;
+          [data-lamalo-welcome-dialog] {
+            --lw-bg: #0b0b0d;
+            --lw-panel: #141417;
+            --lw-card: #18181b;
+            --lw-card-hover: #222226;
+            --lw-border: #d6a32d;
+            --lw-border-soft: rgba(214, 163, 45, 0.34);
+            --lw-title: #ffd76a;
+            --lw-text: #fff4c2;
+            --lw-muted: #d8c98f;
+            --lw-badge-bg: #302817;
+            --lw-badge-text: #f6d675;
+            --lw-shadow: rgba(0, 0, 0, 0.65);
+            background: var(--lw-bg) !important;
+            border-color: var(--lw-border-soft) !important;
+            color: var(--lw-text) !important;
+            box-shadow: 0 28px 80px var(--lw-shadow) !important;
           }
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-slot="dialog-title"] {
-            color: #ffd76a !important;
-            -webkit-text-fill-color: #ffd76a !important;
+          [data-lamalo-welcome-dialog][data-theme-mode="light"] {
+            --lw-bg: #fffaf0;
+            --lw-panel: #f4ead7;
+            --lw-card: #ffffff;
+            --lw-card-hover: #fff7e8;
+            --lw-border: #8a5700;
+            --lw-border-soft: rgba(138, 87, 0, 0.38);
+            --lw-title: #5f3700;
+            --lw-text: #251b10;
+            --lw-muted: #5d5143;
+            --lw-badge-bg: #ead9b6;
+            --lw-badge-text: #4a2c00;
+            --lw-shadow: rgba(66, 44, 15, 0.28);
           }
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-slot="dialog-description"],
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-copy],
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-selection] {
-            color: #fff4c2 !important;
-            -webkit-text-fill-color: #fff4c2 !important;
+          [data-lamalo-welcome-dialog] [data-lw-title] {
+            color: var(--lw-title) !important;
+            -webkit-text-fill-color: var(--lw-title) !important;
             opacity: 1 !important;
           }
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-secondary] {
-            color: #fff4c2 !important;
-            -webkit-text-fill-color: #fff4c2 !important;
-            border-color: #d9a62e !important;
-            background: #141417 !important;
+          [data-lamalo-welcome-dialog] [data-lw-text] {
+            color: var(--lw-text) !important;
+            -webkit-text-fill-color: var(--lw-text) !important;
             opacity: 1 !important;
           }
-          :root:not(.dark) [data-lamalo-welcome-dialog] [data-lamalo-primary] {
+          [data-lamalo-welcome-dialog] [data-lw-muted] {
+            color: var(--lw-muted) !important;
+            -webkit-text-fill-color: var(--lw-muted) !important;
+            opacity: 1 !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-panel] {
+            background: var(--lw-panel) !important;
+            border-color: var(--lw-border-soft) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-card] {
+            background: var(--lw-card) !important;
+            border-color: var(--lw-border-soft) !important;
+            color: var(--lw-text) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-card]:not(:disabled):hover {
+            background: var(--lw-card-hover) !important;
+            border-color: var(--lw-border) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-card][aria-pressed="true"] {
+            border-color: var(--lw-border) !important;
+            box-shadow: 0 0 0 2px var(--lw-border) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-badge] {
+            background: var(--lw-badge-bg) !important;
+            color: var(--lw-badge-text) !important;
+            -webkit-text-fill-color: var(--lw-badge-text) !important;
+            border-color: var(--lw-border-soft) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-secondary] {
+            background: transparent !important;
+            color: var(--lw-text) !important;
+            -webkit-text-fill-color: var(--lw-text) !important;
+            border-color: var(--lw-border) !important;
+          }
+          [data-lamalo-welcome-dialog] [data-lw-primary] {
+            background: #f4a62f !important;
             color: #111111 !important;
             -webkit-text-fill-color: #111111 !important;
-            background: #f6a533 !important;
-            opacity: 1 !important;
+            border-color: #f4a62f !important;
           }
-          .dark [data-lamalo-welcome-dialog] {
-            background: #fffaf0 !important;
-            color: #18181b !important;
+          [data-lamalo-welcome-dialog] [data-slot="dialog-close"] {
+            color: var(--lw-text) !important;
+            opacity: 0.85 !important;
           }
-          .dark [data-lamalo-welcome-dialog] [data-slot="dialog-title"] {
-            color: #7c4700 !important;
-            -webkit-text-fill-color: #7c4700 !important;
-          }
-          .dark [data-lamalo-welcome-dialog] [data-slot="dialog-description"],
-          .dark [data-lamalo-welcome-dialog] [data-lamalo-copy],
-          .dark [data-lamalo-welcome-dialog] [data-lamalo-selection] {
-            color: #3f3f46 !important;
-            -webkit-text-fill-color: #3f3f46 !important;
-            opacity: 1 !important;
-          }
-          .dark [data-lamalo-welcome-dialog] [data-lamalo-secondary] {
-            color: #18181b !important;
-            -webkit-text-fill-color: #18181b !important;
-            border-color: #9a6500 !important;
-            background: #fffaf0 !important;
-            opacity: 1 !important;
-          }
-          .dark [data-lamalo-welcome-dialog] [data-lamalo-primary] {
-            color: #111111 !important;
-            -webkit-text-fill-color: #111111 !important;
-            background: #f6a533 !important;
-            opacity: 1 !important;
+          [data-lamalo-welcome-dialog] img {
+            background: #d8c7a7 !important;
           }
           @supports (-webkit-touch-callout: none) {
             [data-lamalo-welcome-dialog] {
@@ -236,26 +237,30 @@ export default function WelcomeOutfitPicker() {
           }
         `}</style>
 
-        <DialogHeader className="shrink-0 border-b border-amber-500/25 px-4 pb-3 pt-4 pr-12 text-left sm:px-6 sm:pb-4 sm:pt-5">
+        <DialogHeader
+          data-lw-panel
+          className="shrink-0 border-b px-4 pb-3 pt-4 pr-12 text-left sm:px-6 sm:pb-4 sm:pt-5"
+        >
           <div className="flex min-w-0 items-center gap-3">
             <img
               src="/lamalo/lamalo-logo.png"
               alt="Lamalo Fashions"
-              className="h-11 w-11 shrink-0 rounded-xl border border-amber-500/35 object-cover sm:h-12 sm:w-12"
+              className="h-11 w-11 shrink-0 rounded-xl border object-cover sm:h-12 sm:w-12"
+              style={{ borderColor: "var(--lw-border-soft)" }}
             />
             <div className="min-w-0">
-              <div className="mb-1 flex items-center gap-2 text-amber-300 dark:text-amber-800">
+              <div data-lw-title className="mb-1 flex items-center gap-2">
                 <Gift className="h-4 w-4 shrink-0" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em]">
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.14em]">
                   Member welcome gift
                 </span>
               </div>
-              <DialogTitle className="text-lg font-bold leading-tight sm:text-xl">
+              <DialogTitle data-lw-title className="text-lg font-bold leading-tight sm:text-xl">
                 Choose 2 Free Lamalo Outfits
               </DialogTitle>
             </div>
           </div>
-          <DialogDescription className="pt-2 text-sm leading-5 sm:max-w-3xl">
+          <DialogDescription data-lw-text className="pt-2 text-sm font-medium leading-5 sm:max-w-3xl">
             Pick any two virtual collection pieces. They stay permanently in your
             Virelle wardrobe inventory at no cost.
           </DialogDescription>
@@ -267,48 +272,24 @@ export default function WelcomeOutfitPicker() {
         >
           {busy ? (
             <div className="flex min-h-52 flex-col items-center justify-center gap-3 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-amber-300 dark:text-amber-800" />
-              <p data-lamalo-copy className="text-sm font-medium">
-                Preparing your welcome collection…
+              <Loader2 data-lw-title className="h-8 w-8 animate-spin" />
+              <p data-lw-text className="text-sm font-semibold">
+                Loading your ten Lamalo outfits…
               </p>
             </div>
           ) : outfitsError ? (
-            <div className="flex min-h-52 flex-col items-center justify-center gap-3 px-3 text-center">
-              <AlertTriangle className="h-10 w-10 text-amber-400 dark:text-amber-700" />
-              <div>
-                <p data-lamalo-copy className="text-base font-semibold">
-                  The outfit choices did not load.
-                </p>
-                <p data-lamalo-copy className="mt-1 max-w-md text-sm leading-5 opacity-80">
-                  The gift remains saved to your account. Tap Retry to load the ten
-                  choices again.
-                </p>
-              </div>
-              <Button
-                data-lamalo-secondary
-                variant="outline"
-                className="min-h-11 px-5"
-                onClick={retry}
-              >
-                <RefreshCw className="h-4 w-4" />
-                Retry
-              </Button>
-            </div>
-          ) : outfits.length === 0 ? (
-            <div className="flex min-h-52 flex-col items-center justify-center gap-3 px-3 text-center">
-              <PackageOpen className="h-10 w-10 text-[#d8c98f] dark:text-zinc-600" />
-              <p data-lamalo-copy className="max-w-md text-sm font-medium leading-5">
-                The welcome collection is still being prepared. Retry now; the gift
-                remains available until two outfits are claimed.
+            <div className="flex min-h-52 flex-col items-center justify-center gap-4 text-center">
+              <p data-lw-text className="max-w-md text-sm font-semibold leading-5">
+                The server connection failed before the outfit list arrived.
               </p>
               <Button
-                data-lamalo-secondary
+                data-lw-secondary
                 variant="outline"
                 className="min-h-11 px-5"
-                onClick={retry}
+                onClick={() => void refetchOutfits?.()}
               >
                 <RefreshCw className="h-4 w-4" />
-                Retry
+                Retry connection
               </Button>
             </div>
           ) : (
@@ -319,35 +300,36 @@ export default function WelcomeOutfitPicker() {
 
                 return (
                   <button
+                    data-lw-card
                     key={item.id}
                     type="button"
                     disabled={disabled}
                     aria-pressed={isSelected}
                     onClick={() => toggle(item.id)}
-                    className={`relative min-w-0 rounded-2xl border p-2.5 text-left transition-all focus-visible:ring-2 focus-visible:ring-amber-400 dark:bg-white ${
-                      disabled
-                        ? "cursor-not-allowed border-amber-500/10 bg-[#141417] opacity-40"
-                        : "border-amber-500/25 bg-[#141417] hover:border-amber-400/60"
-                    } ${
-                      isSelected
-                        ? "border-amber-400 ring-2 ring-amber-400 shadow-lg shadow-amber-500/10"
-                        : ""
+                    className={`relative min-w-0 rounded-2xl border p-2.5 text-left transition-all focus-visible:outline-none ${
+                      disabled ? "cursor-not-allowed opacity-45" : ""
                     }`}
                   >
-                    <OutfitImage src={item.primaryImageUrl} alt={item.name} />
+                    <img
+                      src={item.primaryImageUrl}
+                      alt={item.name}
+                      className="aspect-square w-full rounded-xl object-contain"
+                      loading="eager"
+                      decoding="async"
+                    />
                     <div className="min-w-0 pt-2">
-                      <p className="line-clamp-2 min-h-8 text-xs font-semibold leading-4 text-[#f8e7a5] dark:text-zinc-950">
+                      <p data-lw-text className="line-clamp-2 min-h-8 text-xs font-bold leading-4">
                         {item.name}
                       </p>
-                      <Badge
-                        variant="secondary"
-                        className="mt-1 max-w-full text-[10px] capitalize"
+                      <span
+                        data-lw-badge
+                        className="mt-1 inline-flex max-w-full rounded-md border px-2 py-0.5 text-[10px] font-bold capitalize"
                       >
                         {item.category || "outfit"}
-                      </Badge>
+                      </span>
                     </div>
                     {isSelected && (
-                      <span className="absolute right-1.5 top-1.5 rounded-full bg-black/80 p-0.5 text-amber-300 dark:bg-white dark:text-amber-800">
+                      <span className="absolute right-1.5 top-1.5 rounded-full bg-black/85 p-0.5 text-amber-300">
                         <CheckCircle2 className="h-5 w-5" />
                       </span>
                     )}
@@ -358,15 +340,15 @@ export default function WelcomeOutfitPicker() {
           )}
         </div>
 
-        <div className="shrink-0 border-t border-amber-500/30 bg-[#0b0b0d] px-4 py-3 dark:bg-[#fffaf0] sm:px-6 sm:py-4">
+        <div data-lw-panel className="shrink-0 border-t px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center justify-between gap-3">
-            <p data-lamalo-selection className="min-w-0 text-sm font-semibold">
+            <p data-lw-text className="min-w-0 text-sm font-bold">
               {selected.length}/2 selected
               {outfits.length > 0 ? ` · ${outfits.length} available` : ""}
             </p>
             <div className="flex shrink-0 gap-2">
               <Button
-                data-lamalo-secondary
+                data-lw-secondary
                 variant="outline"
                 className="min-h-11 px-3 sm:px-4"
                 onClick={() => setOpen(false)}
@@ -374,8 +356,8 @@ export default function WelcomeOutfitPicker() {
                 Later
               </Button>
               <Button
-                data-lamalo-primary
-                className="min-h-11 px-4"
+                data-lw-primary
+                className="min-h-11 px-4 font-bold"
                 disabled={claimMut?.isPending || selected.length !== 2}
                 onClick={() => {
                   if (selected.length !== 2) return;
