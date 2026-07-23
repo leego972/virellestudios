@@ -1,0 +1,105 @@
+/*
+ * Site-wide visibility and stacking safeguards.
+ *
+ * The decorative Virelle watermark must always remain behind application
+ * content. These rules also prevent flex/grid children, form controls and long
+ * text from expanding beyond the viewport and being clipped on mobile.
+ */
+
+#root {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+[data-virelle-watermark] {
+  z-index: 0 !important;
+}
+
+[data-virelle-watermark][data-virelle-watermark-duplicate="true"] {
+  display: none !important;
+}
+
+/* React fragments render the watermark beside the page shell. Lift every
+   following application sibling above it, including full-screen routes and
+   DashboardLayout content. */
+[data-virelle-watermark] ~ * {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-virelle-watermark] ~ * :where(
+  main,
+  section,
+  article,
+  header,
+  footer,
+  nav,
+  form,
+  fieldset,
+  [data-slot="sidebar-inset"],
+  [data-slot="card"],
+  [data-slot="card-header"],
+  [data-slot="card-content"]
+) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* A flex/grid child defaults to min-width:auto, which is a common source of
+   cut text and controls. Allow content to shrink before the viewport clips. */
+[data-virelle-watermark] ~ * :where(.flex, .grid) > * {
+  min-width: 0;
+}
+
+[data-virelle-watermark] ~ * :where(
+  input,
+  textarea,
+  select,
+  button,
+  [role="button"],
+  [contenteditable="true"]
+) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-virelle-watermark] ~ * :where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  label,
+  button,
+  a,
+  [role="button"]
+) {
+  overflow-wrap: break-word;
+}
+
+[data-virelle-watermark] ~ * :where(img, video, canvas, iframe) {
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  [data-virelle-watermark] ~ * :where(
+    [data-slot="button"],
+    button,
+    a[role="button"]
+  ) {
+    max-width: 100%;
+  }
+
+  [data-virelle-watermark] ~ * :where(h1, h2, h3) {
+    text-wrap: pretty;
+  }
+}
