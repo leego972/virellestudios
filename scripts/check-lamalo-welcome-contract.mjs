@@ -47,17 +47,34 @@ for (const productionRiskColumn of [
 ]) {
   assert.ok(
     !welcomeInventory.includes(productionRiskColumn),
-    `login-time welcome repair must not require optional production column ${productionRiskColumn}`,
+    `welcome repair must not require optional production column ${productionRiskColumn}`,
   );
 }
 
+assert.ok(
+  squashedInventory.includes("exportconstLAMALO_WELCOME_CHOICES") &&
+    squashedInventory.includes("id:index+1"),
+  "welcome choices must have stable application IDs",
+);
+assert.ok(
+  squashedGifts.includes(
+    "getStarterOutfits:protectedProcedure.query(()=>{returnLAMALO_WELCOME_CHOICES;})",
+  ),
+  "the picker load endpoint must return static choices without database work",
+);
+assert.ok(
+  squashedGifts.includes("LAMALO_WELCOME_CHOICES.find(choice=>choice.id===id)"),
+  "claim must resolve stable choice IDs through the welcome contract",
+);
+assert.ok(
+  squashedGifts.includes("inArray(wardrobeItems.name,selectedNames)"),
+  "claim must resolve selected names to real wardrobe item IDs",
+);
 assert.ok(squashedGifts.includes("db.transaction"), "welcome claim must be transactional");
-assert.ok(squashedGifts.includes("ensureLamaloWelcomeInventory(db,ownerUserId)"), "welcome request must use the lightweight ten-item repair");
-assert.ok(!squashedGifts.includes("runLamaloSeed"), "login-time welcome requests must not run the full Lamalo seed");
+assert.ok(squashedGifts.includes("ensureLamaloWelcomeInventory(db,ownerUserId)"), "claim must use the lightweight ten-item repair");
+assert.ok(!squashedGifts.includes("runLamaloSeed"), "welcome requests must not run the full Lamalo seed");
 assert.ok(squashedInventory.includes('"LamaloFashion","LamaloFashions","Lamalo"'), "canonical Lamalo brand must precede legacy aliases");
 assert.ok(squashedInventory.includes(".groupBy(wardrobeItems.name)"), "starter readiness must count distinct catalogue names");
-assert.ok(squashedGifts.includes("existingNames.has(item.name)"), "fallback welcome choices must deduplicate catalogue names");
-assert.ok(squashedGifts.includes(".limit(2000)"), "fallback must scan at least one complete Lamalo catalogue");
 assert.match(gifts, /FOR\s+UPDATE/, "welcome claim must serialize concurrent requests");
 assert.ok(squashedGifts.includes('eq(wardrobeLeases.status,"active")'), "claim checks must ignore inactive leases");
 assert.ok(squashedPicker.includes("isStudioOpenerActive"), "picker must wait for the studio opener");
@@ -69,4 +86,4 @@ assert.ok(!squashedSeed.includes("INSERTIGNOREINTOwardrobeItems"), "Lamalo item 
 assert.ok(!/WHERE\s+collectionId\s+IS\s+NOT\s+NULL\s+AND\s*\(retailPriceAud/.test(seed), "price repair must not alter other designers' rows");
 assert.ok(squashedSeed.includes("WHEREdesignerProfileId=${designerProfileId}"), "catalogue repair SQL must be scoped to Lamalo");
 
-console.log("Lamalo welcome contract verified: ten production-safe items, gated mobile UI, atomic claim, scoped catalogue seed.");
+console.log("Lamalo welcome contract verified: database-independent loading, stable ten-item choices, atomic claim.");
