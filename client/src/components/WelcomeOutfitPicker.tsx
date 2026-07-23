@@ -34,6 +34,9 @@ export default function WelcomeOutfitPicker() {
   const [openerReady, setOpenerReady] = useState(() => !isStudioOpenerActive());
   const [selected, setSelected] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
+  const [imagesReady, setImagesReady] = useState(false);
+  const [imageAttempt, setImageAttempt] = useState(0);
+  const [imageAssetError, setImageAssetError] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -83,6 +86,58 @@ export default function WelcomeOutfitPicker() {
       staleTime: 60 * 60_000,
     }) ?? {};
 
+  const outfitImageKey = outfits
+    .map((item: any) => String(item.primaryImageUrl || ""))
+    .join("|");
+
+  useEffect(() => {
+    let cancelled = false;
+    let retryTimer: number | undefined;
+
+    setImagesReady(false);
+    setImageAssetError(false);
+
+    if (!outfitImageKey || outfits.length !== 10) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const preload = outfits.map(
+      (item: any) =>
+        new Promise<void>((resolve, reject) => {
+          const image = new Image();
+          image.decoding = "async";
+          image.onload = () => resolve();
+          image.onerror = () => reject(new Error(`Failed to load ${item.primaryImageUrl}`));
+          image.src = item.primaryImageUrl;
+
+          if (image.complete && image.naturalWidth > 0) resolve();
+        }),
+    );
+
+    void Promise.all(preload)
+      .then(() => {
+        if (!cancelled) setImagesReady(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        if (imageAttempt < 2) {
+          retryTimer = window.setTimeout(
+            () => setImageAttempt(attempt => attempt + 1),
+            300 * (imageAttempt + 1),
+          );
+          return;
+        }
+        setImageAssetError(true);
+      });
+
+    return () => {
+      cancelled = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
+    };
+  }, [imageAttempt, outfitImageKey, outfits]);
+
   const claimMut = (trpc as any).lamaloGifts?.claimGift?.useMutation?.({
     onSuccess: async () => {
       toast.success(
@@ -123,7 +178,18 @@ export default function WelcomeOutfitPicker() {
     );
   };
 
-  const busy = Boolean(outfitsLoading || outfitsFetching);
+  const retryAssets = () => {
+    setImageAttempt(0);
+    setImageAssetError(false);
+    setImagesReady(false);
+    void refetchOutfits?.();
+  };
+
+  const busy = Boolean(
+    outfitsLoading ||
+      outfitsFetching ||
+      (outfits.length === 10 && !imagesReady && !imageAssetError),
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -222,6 +288,7 @@ export default function WelcomeOutfitPicker() {
           }
           [data-lamalo-welcome-dialog] img {
             background: #d8c7a7 !important;
+            image-rendering: auto;
           }
           @supports (-webkit-touch-callout: none) {
             [data-lamalo-welcome-dialog] {
@@ -247,6 +314,9 @@ export default function WelcomeOutfitPicker() {
               alt="Lamalo Fashions"
               className="h-11 w-11 shrink-0 rounded-xl border object-cover sm:h-12 sm:w-12"
               style={{ borderColor: "var(--lw-border-soft)" }}
+              width={48}
+              height={48}
+              decoding="sync"
             />
             <div className="min-w-0">
               <div data-lw-title className="mb-1 flex items-center gap-2">
@@ -274,7 +344,7 @@ export default function WelcomeOutfitPicker() {
             <div className="flex min-h-52 flex-col items-center justify-center gap-3 text-center">
               <Loader2 data-lw-title className="h-8 w-8 animate-spin" />
               <p data-lw-text className="text-sm font-semibold">
-                Loading your ten Lamalo outfits…
+                Loading all ten high-quality Lamalo images…
               </p>
             </div>
           ) : outfitsError ? (
@@ -292,9 +362,24 @@ export default function WelcomeOutfitPicker() {
                 Retry connection
               </Button>
             </div>
+          ) : imageAssetError ? (
+            <div className="flex min-h-52 flex-col items-center justify-center gap-4 text-center">
+              <p data-lw-text className="max-w-md text-sm font-semibold leading-5">
+                The deployed build is missing one or more Lamalo image assets.
+              </p>
+              <Button
+                data-lw-secondary
+                variant="outline"
+                className="min-h-11 px-5"
+                onClick={retryAssets}
+              >
+                <RefreshCw className="h-4 w-4" />
+                Reload all images
+              </Button>
+            </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-              {outfits.map((item: any) => {
+              {outfits.map((item: any, index: number) => {
                 const isSelected = selected.includes(item.id);
                 const disabled = !isSelected && selected.length >= 2;
 
@@ -315,7 +400,11 @@ export default function WelcomeOutfitPicker() {
                       alt={item.name}
                       className="aspect-square w-full rounded-xl object-contain"
                       loading="eager"
-                      decoding="async"
+                      decoding="sync"
+                      fetchPriority={index < 4 ? "high" : "auto"}
+                      width={480}
+                      height={480}
+                      draggable={false}
                     />
                     <div className="min-w-0 pt-2">
                       <p data-lw-text className="line-clamp-2 min-h-8 text-xs font-bold leading-4">
