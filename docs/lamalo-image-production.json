@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-23T13:05:00Z",
+  "status": "in_progress",
+  "catalogue": {
+    "source": "server/lamalo-seed.ts",
+    "declaredCollections": 26,
+    "declaredItems": "1400+",
+    "countingRule": "Every colourway is a separate catalogue item.",
+    "scope": "All Lamalo catalogue colourways and all ten Welcome Gift items, without exclusions."
+  },
+  "productionSpec": {
+    "generator": "Adobe Firefly",
+    "outputFormat": "PNG",
+    "width": 2048,
+    "height": 2048,
+    "promptReasoner": "quality",
+    "composition": "One complete garment or accessory, centered, fully visible, slight three-quarter dimensional form, neutral warm-grey seamless studio background, softbox lighting, subtle grounded shadow.",
+    "pipelineUse": "High-fidelity catalogue and AI-video reference imagery.",
+    "qualityControl": [
+      "Correct item type and colourway",
+      "Complete silhouette with no cropped parts",
+      "Realistic material texture, seams, hardware and construction",
+      "No visible person, mannequin, hanger, rack or unrelated props",
+      "No malformed geometry or duplicate garment",
+      "Visual inspection before approval"
+    ]
+  },
+  "adobe": {
+    "folderName": "Lamalo Catalogue Masters",
+    "folderId": "urn:aaid:sc:AP:478ba8aa-e614-459b-85ee-346d9fa6a96b"
+  },
+  "progress": {
+    "completedItems": 10,
+    "completedBatches": 1,
+    "nextBatch": 2,
+    "lastCompletedAt": "2026-07-23T13:04:00Z"
+  },
+  "batches": [
+    {
+      "batch": 1,
+      "type": "welcome_gift",
+      "status": "approved_and_saved",
+      "items": [
+        {
+          "name": "Lamalo Premium Tee — Black",
+          "adobeAssetId": "urn:aaid:sc:AP:55f49aa4-00ca-5d91-b0b2-76f05db51926"
+        },
+        {
+          "name": "Lamalo Bomber Jacket — Olive",
+          "adobeAssetId": "urn:aaid:sc:AP:825026e2-8ca3-5f5c-af87-9bff2680987b"
+        },
+        {
+          "name": "Lamalo Suit Jacket — Navy",
+          "adobeAssetId": "urn:aaid:sc:AP:0b205704-af1d-5afd-b23c-ae467ded29dd"
+        },
+        {
+          "name": "Lamalo Straight Denim — Indigo",
+          "adobeAssetId": "urn:aaid:sc:AP:6c163aef-20d1-5cd6-baaf-95782f36cdc0"
+        },
+        {
+          "name": "Lamalo Classic Polo — White",
+          "adobeAssetId": "urn:aaid:sc:AP:3c0b6c5a-0573-5f1c-8dd7-2f39b9709388"
+        },
+        {
+          "name": "Lamalo Structured Blazer — Black",
+          "adobeAssetId": "urn:aaid:sc:AP:8aaf6601-4ded-53ac-b44d-f922d965eff8"
+        },
+        {
+          "name": "Lamalo Pure Silk Blouse — White",
+          "adobeAssetId": "urn:aaid:sc:AP:49d9440c-7d41-54af-b2c9-56c23ca06797"
+        },
+        {
+          "name": "Lamalo Satin Slip Dress — Champagne",
+          "adobeAssetId": "urn:aaid:sc:AP:4f7b0b42-ff99-5644-bdde-9eae4b7075b0"
+        },
+        {
+          "name": "Lamalo Wrap Midi Dress — Sage Green",
+          "adobeAssetId": "urn:aaid:sc:AP:5ecc0c52-df0d-5281-bdb5-c7172377ee89"
+        },
+        {
+          "name": "Lamalo Wide-Leg Formal Trouser — Camel",
+          "adobeAssetId": "urn:aaid:sc:AP:4b32c23f-fb53-5c87-ba40-1fad5f19b898"
+        }
+      ]
+    }
+  ],
+  "siteDelivery": {
+    "status": "pending",
+    "requirement": "Publish approved binary masters to a stable web-accessible image origin or CDN, then replace Pollinations URLs in the seed and existing Lamalo database records. Adobe internal asset URNs are not public website image URLs."
+  }
+}
