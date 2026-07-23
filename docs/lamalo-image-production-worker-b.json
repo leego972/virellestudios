@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "worker": "B",
+  "adobeAccount": "second_connected_account",
+  "assignment": {
+    "source": "server/lamalo-seed.ts",
+    "scope": "expanded catalogue colourways only",
+    "ordinalParity": "even",
+    "batchSize": 20,
+    "excludeWelcomeGiftBatch": true
+  },
+  "destination": {
+    "folderName": "Lamalo Catalogue Masters — Worker B",
+    "folderId": null
+  },
+  "status": "waiting_for_second_adobe_connection",
+  "completedOrdinals": [],
+  "batches": []
+}
