@@ -1,13 +1,11 @@
 /**
- * HollywoodIcon — renders a Virelle Hollywood branded tool icon (SVG).
- * HollywoodBadge — renders a Virelle Hollywood tier badge (SVG).
- *
- * Usage:
- *   <HollywoodIcon tool="script_writer" size={48} />
- *   <HollywoodBadge tier="indie" size={28} />
+ * HollywoodIcon — renders an original Virelle cinema tool icon.
+ * HollywoodBadge — renders a Virelle Hollywood tier badge.
  */
 
-import { TOOL_ICONS, TIER_BADGES, ToolIconKey, TierBadgeKey } from "@/constants/hollywoodIcons";
+import { VirelleCinemaIcon } from "@/components/VirelleCinemaIcon";
+import { TOOL_ICONS, TIER_BADGES, type ToolIconKey, type TierBadgeKey } from "@/constants/hollywoodIcons";
+import { TOOL_TO_VIRELLE_CINEMA_ICON } from "@/constants/virelleCinemaIconMap";
 
 interface HollywoodIconProps {
   tool: ToolIconKey;
@@ -18,6 +16,19 @@ interface HollywoodIconProps {
 }
 
 export function HollywoodIcon({ tool, size = 40, className = "", alt }: HollywoodIconProps) {
+  const cinemaIcon = TOOL_TO_VIRELLE_CINEMA_ICON[tool];
+
+  if (cinemaIcon) {
+    return (
+      <VirelleCinemaIcon
+        icon={cinemaIcon}
+        size={size}
+        className={className}
+        alt={alt}
+      />
+    );
+  }
+
   const src = TOOL_ICONS[tool];
   return (
     <img
@@ -52,9 +63,6 @@ export function HollywoodBadge({ tier, size = 28, className = "" }: HollywoodBad
   );
 }
 
-/**
- * Convenience wrappers for the three subscription tiers.
- */
 export function IndieBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="indie" size={size} className={className} />;
 }
