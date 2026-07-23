@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "worker": "B",
-  "adobeAccount": "second_connected_account",
+  "adobeAccount": "current_connected_account",
   "assignment": {
     "source": "server/lamalo-seed.ts",
     "scope": "expanded catalogue colourways only",
@@ -11,9 +11,39 @@
   },
   "destination": {
     "folderName": "Lamalo Catalogue Masters — Worker B",
-    "folderId": null
+    "folderId": "urn:aaid:sc:AP:c21ac0a4-24a4-47bc-a2b8-66212cc949f3"
   },
-  "status": "waiting_for_second_adobe_connection",
-  "completedOrdinals": [],
-  "batches": []
+  "status": "in_progress",
+  "completedOrdinals": [2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40],
+  "nextEvenOrdinal": 42,
+  "completedItems": 20,
+  "batches": [
+    {
+      "batch": 1,
+      "status": "approved_and_saved",
+      "completedAt": "2026-07-23T13:58:00Z",
+      "items": [
+        {"ordinal":2,"name":"Lamalo Premium Tee — Black","adobeAssetId":"urn:aaid:sc:AP:d37834bb-c074-5685-8f08-f68502a8b47a"},
+        {"ordinal":4,"name":"Lamalo Premium Tee — Charcoal Grey","adobeAssetId":"urn:aaid:sc:AP:a081a3b5-c38e-5ced-8656-e8cd0c19c98f"},
+        {"ordinal":6,"name":"Lamalo Linen Overshirt — White","adobeAssetId":"urn:aaid:sc:AP:c1be7d1b-8668-5b67-8306-75eeebf24a3a"},
+        {"ordinal":8,"name":"Lamalo Linen Overshirt — Navy","adobeAssetId":"urn:aaid:sc:AP:0ed9eb25-ba76-52b7-969d-c3514261022c"},
+        {"ordinal":10,"name":"Lamalo Linen Overshirt — Sage Green","adobeAssetId":"urn:aaid:sc:AP:f51f6274-ab27-5333-a7f5-201df66a2257"},
+        {"ordinal":12,"name":"Lamalo Classic Polo — Black","adobeAssetId":"urn:aaid:sc:AP:5ee16ee0-0d88-5a0a-ab2b-4b3c5a0f7cd0"},
+        {"ordinal":14,"name":"Lamalo Classic Polo — Cobalt Blue","adobeAssetId":"urn:aaid:sc:AP:71ad207f-3868-5fc3-b697-83558e650239"},
+        {"ordinal":16,"name":"Lamalo Cotton Henley — White","adobeAssetId":"urn:aaid:sc:AP:00c6ca72-80ca-5630-ae22-9a93d2994289"},
+        {"ordinal":18,"name":"Lamalo Cotton Henley — Navy","adobeAssetId":"urn:aaid:sc:AP:53d3eb23-44b8-53e4-95b1-b5c68106f60b"},
+        {"ordinal":20,"name":"Lamalo Cotton Henley — Sage Green","adobeAssetId":"urn:aaid:sc:AP:fdf02175-c230-560a-8380-82ab6bc13325"},
+        {"ordinal":22,"name":"Lamalo Slim Chino — Navy","adobeAssetId":"urn:aaid:sc:AP:0b721c33-071c-51f4-be34-ceec64e61c65"},
+        {"ordinal":24,"name":"Lamalo Slim Chino — Stone","adobeAssetId":"urn:aaid:sc:AP:86cdc118-11f1-5bb8-b301-7026454a1d81"},
+        {"ordinal":26,"name":"Lamalo Straight Denim — Indigo","adobeAssetId":"urn:aaid:sc:AP:627a320f-8925-5069-aef1-a66e7acdb91b"},
+        {"ordinal":28,"name":"Lamalo Straight Denim — Black","adobeAssetId":"urn:aaid:sc:AP:d83f9d5a-8b04-5f6a-bd86-f427e5b35b59"},
+        {"ordinal":30,"name":"Lamalo Straight Denim — Light Blue","adobeAssetId":"urn:aaid:sc:AP:3dd95aea-af59-59ba-a019-dfcaa8adb197"},
+        {"ordinal":32,"name":"Lamalo Linen Short — Navy","adobeAssetId":"urn:aaid:sc:AP:5e7f2339-555d-5cc3-b88c-50396f38e821"},
+        {"ordinal":34,"name":"Lamalo Linen Short — Olive","adobeAssetId":"urn:aaid:sc:AP:0ac1d414-3592-5d61-8419-3af557ff74a0"},
+        {"ordinal":36,"name":"Lamalo Woven Short — Black","adobeAssetId":"urn:aaid:sc:AP:c89af316-8a00-5550-a0ec-889b9fe09362"},
+        {"ordinal":38,"name":"Lamalo Woven Short — Khaki","adobeAssetId":"urn:aaid:sc:AP:49be30a6-051b-5ca4-96c2-36fd09691c06"},
+        {"ordinal":40,"name":"Lamalo Woven Short — Charcoal","adobeAssetId":"urn:aaid:sc:AP:721f15c7-0976-5b68-9206-586a0f5a5bc4"}
+      ]
+    }
+  ]
 }
