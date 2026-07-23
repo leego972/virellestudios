@@ -1,49 +1,30 @@
-import { useEffect } from "react";
-import "@/sitewide-visibility.css";
+import { useEffect, useRef } from "react";
 
-let watermarkObserver: MutationObserver | null = null;
-let mountedWatermarkCount = 0;
-
-function synchroniseWatermarks() {
+function suppressDuplicateWatermarks() {
   const watermarks = Array.from(
     document.querySelectorAll<HTMLElement>("[data-virelle-watermark]"),
   );
 
   watermarks.forEach((watermark, index) => {
-    if (index === 0) {
-      watermark.removeAttribute("data-virelle-watermark-duplicate");
-    } else {
-      watermark.setAttribute("data-virelle-watermark-duplicate", "true");
-    }
+    watermark.style.display = index === 0 ? "" : "none";
   });
 }
 
 export default function GoldWatermarkLaunch({ className = "" }: { className?: string }) {
-  useEffect(() => {
-    mountedWatermarkCount += 1;
-    synchroniseWatermarks();
+  const watermarkRef = useRef<HTMLDivElement>(null);
 
-    if (!watermarkObserver) {
-      watermarkObserver = new MutationObserver(synchroniseWatermarks);
-      watermarkObserver.observe(document.getElementById("root") ?? document.body, {
-        childList: true,
-        subtree: true,
-      });
-    }
+  useEffect(() => {
+    suppressDuplicateWatermarks();
 
     return () => {
-      mountedWatermarkCount = Math.max(0, mountedWatermarkCount - 1);
-      window.requestAnimationFrame(synchroniseWatermarks);
-
-      if (mountedWatermarkCount === 0) {
-        watermarkObserver?.disconnect();
-        watermarkObserver = null;
-      }
+      if (watermarkRef.current) watermarkRef.current.style.display = "";
+      window.requestAnimationFrame(suppressDuplicateWatermarks);
     };
   }, []);
 
   return (
     <div
+      ref={watermarkRef}
       data-virelle-watermark
       className={`fixed inset-0 pointer-events-none select-none overflow-hidden ${className}`}
       style={{ zIndex: 0 }}
