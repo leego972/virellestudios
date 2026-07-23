@@ -46,7 +46,6 @@ type WelcomeItemDefinition = {
   materials: string[];
   styleTags: string[];
   prompt: string;
-  price: number;
 };
 
 const WELCOME_ITEMS: WelcomeItemDefinition[] = [
@@ -60,7 +59,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Supima cotton"],
     styleTags: ["essential", "minimal", "casual"],
     prompt: "premium black Supima cotton crew-neck t-shirt, relaxed fit",
-    price: 100,
   },
   {
     name: "Lamalo Bomber Jacket — Olive",
@@ -72,7 +70,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Satin nylon", "Ribbed knit"],
     styleTags: ["bomber", "streetwear", "minimal"],
     prompt: "olive satin bomber jacket, ribbed collar cuffs and hem",
-    price: 350,
   },
   {
     name: "Lamalo Suit Jacket — Navy",
@@ -84,7 +81,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["tailored", "formal", "modern"],
     prompt: "navy tailored single-breasted suit jacket, modern clean cut",
-    price: 500,
   },
   {
     name: "Lamalo Straight Denim — Indigo",
@@ -96,7 +92,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Cotton denim"],
     styleTags: ["denim", "classic", "everyday"],
     prompt: "indigo straight-leg denim jeans, classic five-pocket construction",
-    price: 250,
   },
   {
     name: "Lamalo Classic Polo — White",
@@ -108,7 +103,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Cotton pique"],
     styleTags: ["polo", "smart-casual", "classic"],
     prompt: "white cotton pique polo shirt, structured collar, two-button placket",
-    price: 100,
   },
   {
     name: "Lamalo Structured Blazer — Black",
@@ -120,7 +114,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["blazer", "tailored", "editorial"],
     prompt: "black structured tailored blazer, defined shoulders, refined silhouette",
-    price: 500,
   },
   {
     name: "Lamalo Pure Silk Blouse — White",
@@ -132,7 +125,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Pure silk"],
     styleTags: ["silk", "elegant", "minimal"],
     prompt: "white pure silk blouse, softly draped neckline, elegant fluid fabric",
-    price: 100,
   },
   {
     name: "Lamalo Satin Slip Dress — Champagne",
@@ -144,7 +136,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Satin"],
     styleTags: ["slip-dress", "evening", "minimal"],
     prompt: "champagne satin slip dress, bias-cut silhouette, fine straps",
-    price: 200,
   },
   {
     name: "Lamalo Wrap Midi Dress — Sage Green",
@@ -156,7 +147,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Viscose blend"],
     styleTags: ["wrap-dress", "midi", "soft-tailoring"],
     prompt: "sage green wrap midi dress, defined waist, fluid skirt",
-    price: 200,
   },
   {
     name: "Lamalo Wide-Leg Formal Trouser — Camel",
@@ -168,7 +158,6 @@ const WELCOME_ITEMS: WelcomeItemDefinition[] = [
     materials: ["Wool blend"],
     styleTags: ["wide-leg", "formal", "tailored"],
     prompt: "camel wide-leg formal trousers, high waist, pressed crease",
-    price: 250,
   },
 ];
 
@@ -248,7 +237,6 @@ async function createProfile(db: Database, ownerUserId: number): Promise<LamaloW
     logoUrl: "/lamalo/lamalo-logo.png",
     verified: true,
     visibility: "public",
-    membershipStatus: "active",
   });
 
   const insertId = Number((result as { insertId?: number }).insertId ?? 0);
@@ -296,9 +284,6 @@ async function ensureWelcomeCollection(
     visibility: "public",
     licenseType: "full_license",
     licenseNotes: "Welcome gift items remain available in the member's Virelle wardrobe inventory.",
-    collectionPriceAud: 0,
-    published: true,
-    publishedAt: new Date(),
   });
 
   const insertId = Number((result as { insertId?: number }).insertId ?? 0);
@@ -372,11 +357,6 @@ export async function ensureLamaloWelcomeInventory(
           licenseNotes: "Free Virelle Studios welcome-gift virtual wardrobe licence.",
           visibility: "public",
           status: "active",
-          retailPriceAud: item.price,
-          leasePriceAud: null,
-          isVirtualOnly: true,
-          virtualPriceRule: "welcome_gift",
-          virtualBadgeText: "Free welcome outfit",
         };
       }),
     );
