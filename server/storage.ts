@@ -1,7 +1,7 @@
 /**
  * Storage helpers — AWS S3 / Cloudflare R2 / any S3-compatible backend.
  *
- * Set these in Railway → Variables:
+ * Set these in Render → Environment:
  *   AWS_ACCESS_KEY_ID       — S3 or R2 access key
  *   AWS_SECRET_ACCESS_KEY   — S3 or R2 secret key
  *   AWS_S3_BUCKET           — bucket name
@@ -12,21 +12,16 @@
  *                             e.g. "https://pub-xxx.r2.dev" or "https://cdn.virelle.life"
  *
  * Legacy Manus FORGE credentials (BUILT_IN_FORGE_API_URL + BUILT_IN_FORGE_API_KEY)
- * are also supported for backward-compat on the Manus platform.
+ * are also supported for backward compatibility on the Manus platform.
  *
- * When no credentials are configured, storagePut throws and callers fall back
- * to the raw provider URL.
+ * The Lamalo private-media path deliberately bypasses Forge and public bucket
+ * URLs. It writes to the configured S3/R2 bucket privately and serves bytes
+ * through same-origin Virelle routes.
  */
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // ─── Defensive object size cap ────────────────────────────────────────────────
-// Hard upper bound on any single object pushed through the storage layer.
-// Per-route Zod schemas already cap inbound request sizes (image 10MB, footage
-// 150MB, etc) and the global express.json() limit is 25MB; this cap is a
-// last-line defence against programming errors that would buffer something
-// huge into memory and then push it to the bucket. Override via env if a
-// future feature genuinely needs more (eg. multi-hour rendered films).
 const MAX_OBJECT_BYTES = (() => {
   const raw = Number(process.env.MAX_STORAGE_OBJECT_BYTES ?? "");
   if (Number.isFinite(raw) && raw > 0) return raw;
@@ -44,13 +39,24 @@ function assertSize(byteLen: number, key: string) {
 export interface StoragePutOptions {
   /**
    * When true (default) the uploaded object is marked public-read so the
-   * returned URL is directly fetchable. Set to false for user-private
-   * content; the object will inherit the bucket's default ACL and the
-   * caller is responsible for serving it through a signed/authorised
-   * route. Note: the legacy Manus FORGE backend always returns a public
-   * URL and does not honour this flag.
+   * returned URL is directly fetchable. Set to false for user-private content.
+   * The legacy Manus FORGE backend always returns a public URL.
    */
   public?: boolean;
+}
+
+export interface StoragePrivatePutOptions {
+  cacheControl?: string;
+}
+
+export interface StoragePrivateObject {
+  key: string;
+  body: unknown;
+  contentType: string;
+  contentLength?: number;
+  etag?: string;
+  cacheControl?: string;
+  lastModified?: Date;
 }
 
 // ─── Manus FORGE (legacy, Manus-platform only) ────────────────────────────────
@@ -126,8 +132,6 @@ async function s3Put(
       Key: key,
       Body: body,
       ContentType: contentType,
-      // Only mark public-read when the caller explicitly wants a directly
-      // fetchable URL. Private uploads inherit the bucket's default ACL.
       ...(isPublic ? { ACL: "public-read" as const } : {}),
     })
   );
@@ -143,41 +147,83 @@ async function s3Put(
   return { key, url };
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────────
+export function isS3StorageConfigured(): boolean {
+  return getS3Config() !== null;
+}
 
 /**
- * Upload a file to storage and return a URL.
- *
- * Defaults to a public-read object so the returned URL is directly fetchable
- * (preserves long-standing behaviour for image/video/audio assets that are
- * embedded in the UI). Pass `{ public: false }` for user-private content.
- *
- * Always enforces a defensive object size cap (MAX_STORAGE_OBJECT_BYTES env,
- * default 256 MB) — per-route Zod schemas remain the primary size guard.
- *
- * Priority:
- *   1. Manus FORGE proxy (BUILT_IN_FORGE_API_URL + BUILT_IN_FORGE_API_KEY)
- *      — legacy backend; always returns a public URL, ignores opts.public.
- *   2. AWS S3 / Cloudflare R2 (AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET)
- *   3. Throws — caller should catch and fall back to raw provider URL
+ * Store an object privately in the configured S3/R2 bucket.
+ * This deliberately bypasses Forge and never sends a public-read ACL.
  */
+export async function storagePutS3Private(
+  relKey: string,
+  data: Buffer | Uint8Array | string,
+  contentType = "application/octet-stream",
+  opts: StoragePrivatePutOptions = {}
+): Promise<{ key: string }> {
+  const cfg = getS3Config();
+  if (!cfg) {
+    throw new Error(
+      "Private S3/R2 storage is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_S3_BUCKET."
+    );
+  }
+  const key = relKey.replace(/^\/+/, "");
+  const body = typeof data === "string" ? Buffer.from(data) : Buffer.from(data as any);
+  assertSize(body.byteLength, key);
+  await cfg.client.send(
+    new PutObjectCommand({
+      Bucket: cfg.bucket,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+      ...(opts.cacheControl ? { CacheControl: opts.cacheControl } : {}),
+    })
+  );
+  return { key };
+}
+
+/** Read a private object directly from the configured S3/R2 bucket. */
+export async function storageReadS3Private(relKey: string): Promise<StoragePrivateObject> {
+  const cfg = getS3Config();
+  if (!cfg) {
+    throw new Error(
+      "Private S3/R2 storage is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_S3_BUCKET."
+    );
+  }
+  const key = relKey.replace(/^\/+/, "");
+  const output = await cfg.client.send(
+    new GetObjectCommand({
+      Bucket: cfg.bucket,
+      Key: key,
+    })
+  );
+  return {
+    key,
+    body: output.Body,
+    contentType: output.ContentType || "application/octet-stream",
+    contentLength: output.ContentLength,
+    etag: output.ETag,
+    cacheControl: output.CacheControl,
+    lastModified: output.LastModified,
+  };
+}
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 export async function storagePut(
   relKey: string,
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream",
   opts: StoragePutOptions = {}
 ): Promise<{ key: string; url: string }> {
-  // Validate size up-front so misconfigured callers fail fast regardless of
-  // which backend is selected. forgePut/s3Put repeat this check for safety.
   const byteLen =
     typeof data === "string" ? Buffer.byteLength(data) : (data as Uint8Array).byteLength;
   assertSize(byteLen, relKey);
-  const isPublic = opts.public !== false; // default true
+  const isPublic = opts.public !== false;
   if (getForgeConfig()) return forgePut(relKey, data, contentType);
   if (getS3Config()) return s3Put(relKey, data, contentType, isPublic);
   throw new Error(
     "No storage backend configured. " +
-    "Set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Railway Variables."
+      "Set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Render Environment."
   );
 }
 
