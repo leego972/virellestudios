@@ -34,6 +34,23 @@ for (const pick of picks) {
   assert.ok(welcomeInventory.includes(`name: "${pick}"`), `lightweight inventory is missing: ${pick}`);
 }
 
+for (const productionRiskColumn of [
+  "membershipStatus:",
+  "collectionPriceAud:",
+  "published:",
+  "publishedAt:",
+  "retailPriceAud:",
+  "leasePriceAud:",
+  "isVirtualOnly:",
+  "virtualPriceRule:",
+  "virtualBadgeText:",
+]) {
+  assert.ok(
+    !welcomeInventory.includes(productionRiskColumn),
+    `login-time welcome repair must not require optional production column ${productionRiskColumn}`,
+  );
+}
+
 assert.ok(squashedGifts.includes("db.transaction"), "welcome claim must be transactional");
 assert.ok(squashedGifts.includes("ensureLamaloWelcomeInventory(db,ownerUserId)"), "welcome request must use the lightweight ten-item repair");
 assert.ok(!squashedGifts.includes("runLamaloSeed"), "login-time welcome requests must not run the full Lamalo seed");
@@ -52,4 +69,4 @@ assert.ok(!squashedSeed.includes("INSERTIGNOREINTOwardrobeItems"), "Lamalo item 
 assert.ok(!/WHERE\s+collectionId\s+IS\s+NOT\s+NULL\s+AND\s*\(retailPriceAud/.test(seed), "price repair must not alter other designers' rows");
 assert.ok(squashedSeed.includes("WHEREdesignerProfileId=${designerProfileId}"), "catalogue repair SQL must be scoped to Lamalo");
 
-console.log("Lamalo welcome contract verified: lightweight 10-item repair, gated mobile UI, atomic claim, scoped catalogue seed.");
+console.log("Lamalo welcome contract verified: ten production-safe items, gated mobile UI, atomic claim, scoped catalogue seed.");
