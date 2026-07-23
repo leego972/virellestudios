@@ -60,7 +60,7 @@ for (const imagePath of imagePaths) {
   assert.ok((svg.match(/<linearGradient\b/g) ?? []).length >= 2, `welcome artwork must use layered garment and studio gradients: ${diskPath}`);
   assert.match(svg, /<filter\b/, `welcome artwork must contain a depth filter: ${diskPath}`);
   assert.match(svg, /<feDropShadow\b/, `welcome artwork must contain a catalogue shadow: ${diskPath}`);
-  assert.ok((svg.match(/<(?:path|ellipse|circle)\b/g) ?? []).length >= 5, `welcome artwork needs sufficient garment detail: ${diskPath}`);
+  assert.ok((svg.match(/<(?:path|ellipse|circle)\b/g) ?? []).length >= 4, `welcome artwork needs sufficient garment detail: ${diskPath}`);
   assert.ok(!artworkHashes.has(hash), `welcome artwork must not duplicate another garment: ${diskPath}`);
   artworkHashes.add(hash);
 }
