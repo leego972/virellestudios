@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "worker": "A",
+  "adobeAccount": "current_connected_account",
+  "assignment": {
+    "source": "server/lamalo-seed.ts",
+    "scope": "expanded catalogue colourways only",
+    "ordinalParity": "odd",
+    "batchSize": 20,
+    "excludeWelcomeGiftBatch": true
+  },
+  "destination": {
+    "folderName": "Lamalo Catalogue Masters",
+    "folderId": "urn:aaid:sc:AP:478ba8aa-e614-459b-85ee-346d9fa6a96b"
+  },
+  "status": "ready",
+  "completedOrdinals": [],
+  "batches": []
+}
