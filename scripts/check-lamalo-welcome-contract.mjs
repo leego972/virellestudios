@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 
 const gifts = fs.readFileSync("server/lamalo-gifts-router.ts", "utf8");
 const welcomeInventory = fs.readFileSync("server/_core/lamaloWelcomeInventory.ts", "utf8");
@@ -41,16 +42,38 @@ const imagePaths = [
 ].map(match => match[1]);
 assert.equal(imagePaths.length, 10, "every welcome choice must have one bundled SVG image");
 assert.equal(new Set(imagePaths).size, 10, "welcome images must be unique");
+
+const artworkHashes = new Set();
 for (const imagePath of imagePaths) {
   const diskPath = `client/public${imagePath}`;
   assert.ok(fs.existsSync(diskPath), `missing bundled welcome image: ${diskPath}`);
   const svg = fs.readFileSync(diskPath, "utf8");
-  assert.match(svg, /<svg\b/, `welcome image is not valid SVG: ${diskPath}`);
-  assert.match(svg, /<title\b/, `welcome image needs an accessible title: ${diskPath}`);
+  const hash = createHash("sha256").update(svg).digest("hex");
+
+  assert.ok(svg.length >= 1_000, `welcome artwork is too simple to qualify as catalogue art: ${diskPath}`);
+  assert.match(svg, /<svg\b[^>]*viewBox="0 0 480 480"/, `welcome artwork must use a precise square vector canvas: ${diskPath}`);
+  assert.match(svg, /role="img"/, `welcome artwork must expose an image role: ${diskPath}`);
+  assert.match(svg, /aria-labelledby="title desc"/, `welcome artwork must connect title and description: ${diskPath}`);
+  assert.match(svg, /<title\b/, `welcome artwork needs an accessible title: ${diskPath}`);
+  assert.match(svg, /<desc\b/, `welcome artwork needs an accessible description: ${diskPath}`);
+  assert.match(svg, /<defs\b/, `welcome artwork must contain reusable vector definitions: ${diskPath}`);
+  assert.ok((svg.match(/<linearGradient\b/g) ?? []).length >= 2, `welcome artwork must use layered garment and studio gradients: ${diskPath}`);
+  assert.match(svg, /<filter\b/, `welcome artwork must contain a depth filter: ${diskPath}`);
+  assert.match(svg, /<feDropShadow\b/, `welcome artwork must contain a catalogue shadow: ${diskPath}`);
+  assert.ok((svg.match(/<(?:path|ellipse|circle)\b/g) ?? []).length >= 5, `welcome artwork needs sufficient garment detail: ${diskPath}`);
+  assert.ok(!artworkHashes.has(hash), `welcome artwork must not duplicate another garment: ${diskPath}`);
+  artworkHashes.add(hash);
 }
+
 assert.ok(!welcomeInventory.includes("image.pollinations.ai"), "welcome images must not rely on a remote generator");
 assert.ok(squashedInventory.includes("primaryImageUrl:item.imagePath"), "picker and claimed inventory must use bundled image paths");
 assert.ok(squashedInventory.includes("imageUrls:[item.imagePath]"), "database rows must retain the bundled image path");
+assert.ok(squashedPicker.includes("Promise.all(preload)"), "all ten item images must preload before the grid is displayed");
+assert.ok(squashedPicker.includes("outfits.length!==10"), "preloading must require the complete ten-item set");
+assert.ok(squashedPicker.includes('fetchPriority={index<4?"high":"auto"}'), "above-the-fold garment images must receive high fetch priority");
+assert.ok(squashedPicker.includes("width={480}") && squashedPicker.includes("height={480}"), "item images must reserve a stable high-quality square canvas");
+assert.ok(squashedPicker.includes('decoding="sync"'), "bundled vectors must decode before reveal");
+assert.ok(!squashedPicker.includes("onError={() => setFailed"), "item artwork must not silently collapse into a placeholder");
 
 function rgb(hex) {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -133,4 +156,4 @@ assert.ok(!squashedSeed.includes("INSERTIGNOREINTOwardrobeItems"), "Lamalo seedi
 assert.ok(!/WHERE\s+collectionId\s+IS\s+NOT\s+NULL\s+AND\s*\(retailPriceAud/.test(seed), "price repair must not alter other designers' rows");
 assert.ok(squashedSeed.includes("WHEREdesignerProfileId=${designerProfileId}"), "catalogue repair SQL must be scoped to Lamalo");
 
-console.log("Lamalo welcome contract verified: correct day/night semantics, AA contrast, ten bundled images, atomic claim.");
+console.log("Lamalo welcome contract verified: correct day/night semantics, AA contrast, ten detailed preloaded vector images, atomic claim.");
