@@ -1,0 +1,32 @@
+name: Finalize Lamalo Master Variants
+
+on:
+  push:
+    branches:
+      - feature/lamalo-master-360-variants
+    paths:
+      - scripts/finalize-lamalo-master-variants.mjs
+      - .github/workflows/finalize-lamalo-master-variants.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/lamalo-master-360-variants
+          fetch-depth: 0
+      - name: Apply final cleanup
+        run: node scripts/finalize-lamalo-master-variants.mjs
+      - name: Commit source updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/pages/WardrobeMarketplacePage.tsx server/lamalo-seed.ts server/_core/wardrobeContinuity.ts
+          git commit -m "Finalize Lamalo colour SKU presentation"
+          git push origin HEAD:feature/lamalo-master-360-variants
