@@ -433,7 +433,7 @@ function swatchBackground(colour: string): string {
     black: "#111111", white: "#f7f7f2", navy: "#172554", charcoal: "#374151",
     "charcoal grey": "#374151", grey: "#9ca3af", "grey marle": "#9ca3af",
     olive: "#556b2f", "sage green": "#9caf88", burgundy: "#7f1d1d",
-    "cobalt blue": "#0047ab", teal: "#0f766e", white: "#f8fafc",
+    "cobalt blue": "#0047ab", teal: "#0f766e",
     "blush pink": "#efc3c7", "coral pink": "#f88379", "nude beige": "#d8b4a0",
     camel: "#c19a6b", cream: "#fffdd0", stone: "#b7b09c", red: "#b91c1c",
   };
