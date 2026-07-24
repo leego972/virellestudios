@@ -30,3 +30,5 @@ jobs:
           git add client/src/pages/WardrobeMarketplacePage.tsx server/lamalo-seed.ts server/_core/wardrobeContinuity.ts
           git commit -m "Finalize Lamalo colour SKU presentation"
           git push origin HEAD:feature/lamalo-master-360-variants
+
+# This workflow is temporary and is removed before merge.
