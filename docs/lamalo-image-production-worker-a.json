@@ -13,7 +13,9 @@
     "folderName": "Lamalo Catalogue Masters",
     "folderId": "urn:aaid:sc:AP:478ba8aa-e614-459b-85ee-346d9fa6a96b"
   },
-  "status": "ready",
+  "status": "legacy_per_colour_records_preserved",
   "completedOrdinals": [],
-  "batches": []
+  "batches": [],
+  "supersededBy": "docs/lamalo-master-reference-production.json",
+  "supersededReason": "Lamalo now produces one approved multi-angle master reference pack per base design while retaining every colour as a separate purchasable SKU."
 }

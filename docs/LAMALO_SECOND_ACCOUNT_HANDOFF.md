@@ -1,3 +1,5 @@
+> **WORKFLOW SUPERSEDED — 24 July 2026:** Do not continue generating one full image per colourway. Read `docs/lamalo-master-reference-production.json`. Generate one approved 12- or 24-angle master reference pack per base design. Every colour remains a separate purchasable SKU and uses the shared geometry pack with its own selected-colour hard lock. Existing verified Adobe assets and ordinal records remain preserved as legacy evidence.
+
 # Lamalo second Adobe account handoff
 
 ## Purpose

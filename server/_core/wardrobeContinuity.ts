@@ -1,3 +1,5 @@
+import { lamaloVariantMetadata, wardrobeReferenceImages } from "./lamaloMasterReferences";
+
 export interface WardrobeItemRecord {
   id: number;
   userId: number;
@@ -10,6 +12,8 @@ export interface WardrobeItemRecord {
   colors?: unknown;
   materials?: unknown;
   category?: string | null;
+  subcategory?: string | null;
+  styleTags?: unknown;
   status?: string | null;
   visibility?: string | null;
   characterWardrobeAllowed?: boolean | null;
@@ -115,18 +119,27 @@ function renderJsonList(value: unknown): string | undefined {
 export function buildWardrobePromptAnchor(item: WardrobeItemRecord, notes?: string | null): string {
   const colors = renderJsonList(item.colors);
   const materials = renderJsonList(item.materials);
+  const styleTags = Array.isArray(item.styleTags) ? item.styleTags.filter((tag): tag is string => typeof tag === "string") : [];
+  const isLamaloColourSku = styleTags.includes("lamalo-colour-sku");
+  const lamalo = isLamaloColourSku ? lamaloVariantMetadata(item) : undefined;
+  const referenceImages = wardrobeReferenceImages(item, 24);
   return [
     `WARDROBE ID ${item.id} — ${item.name}`,
     item.category && `category: ${item.category}`,
     colors && `exact colours: ${colors}`,
     materials && `exact materials: ${materials}`,
+    lamalo && `LAMALO MASTER DESIGN: ${lamalo.baseDesignName}; master reference key: ${lamalo.masterReferenceKey}`,
+    lamalo?.selectedColour && `SEPARATE PURCHASED COLOUR SKU: ${lamalo.selectedColour}; this exact colour is mandatory and must override any neutral colour visible in the shared geometry references`,
+    referenceImages.length > 1 && `MULTI-ANGLE CONSTRUCTION LOCK: ${referenceImages.length} approved reference views are attached; reconcile all views as one immutable garment identity`,
+    lamalo?.referencePackReady && `360 REFERENCE PACK VERIFIED: preserve construction and proportions from the full approved master pack`,
+    lamalo && !lamalo.referencePackReady && `360 REFERENCE PACK PENDING: use the current master view and hard-lock the selected colour; do not claim full multi-angle verification`,
     item.referencePrompt && `visual reference: ${item.referencePrompt.trim()}`,
     "COVERAGE HARD-LOCK: every garment physically replaces and occludes the body region it covers. Gloves cover hands and fingers; hats, hoods and helmets cover the hair they enclose; clothing and armour cover the torso and limbs beneath them; masks and cowls cover the face area shown in the reference. Never render covered skin, hair or anatomy through the costume.",
     item.faceCoverage === "full" && "FULL FACE COVERAGE: the costume mask/cowl/helmet completely replaces the visible actor face; no facial skin, hairline, eyes, mouth or uncovered identity may appear",
     item.faceCoverage === "partial" && "PARTIAL FACE COVERAGE: preserve the exact mask/helmet coverage shown in the costume reference",
-    item.primaryImageUrl && `reference image: ${item.primaryImageUrl}`,
+    item.primaryImageUrl && `primary reference image: ${item.primaryImageUrl}`,
     notes?.trim() && `placement and fit notes: ${notes.trim()}`,
-    "LOCK: preserve the same garment design, cut, colour, material, fit, logos, damage and accessories in every assigned scene until the assignment range ends.",
+    "LOCK: preserve the same garment design, cut, selected colour, material, fit, logos, damage and accessories in every assigned scene until the assignment range ends.",
   ].filter(Boolean).join("; ");
 }
 

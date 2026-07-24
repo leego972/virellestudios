@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-07-23T13:05:00Z",
-  "status": "in_progress",
+  "status": "legacy_per_colour_records_preserved",
   "catalogue": {
     "source": "server/lamalo-seed.ts",
     "declaredCollections": 26,
@@ -88,5 +88,7 @@
   "siteDelivery": {
     "status": "pending",
     "requirement": "Publish approved binary masters to a stable web-accessible image origin or CDN, then replace Pollinations URLs in the seed and existing Lamalo database records. Adobe internal asset URNs are not public website image URLs."
-  }
+  },
+  "supersededBy": "docs/lamalo-master-reference-production.json",
+  "supersededReason": "Lamalo now produces one approved multi-angle master reference pack per base design while retaining every colour as a separate purchasable SKU."
 }

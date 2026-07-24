@@ -3,6 +3,7 @@ import * as db from "../db";
 import { getDb } from "../db";
 import { projects, wardrobeAssignments, wardrobeItems } from "../../drizzle/schema";
 import { buildCharacterDNA } from "./characterConsistency";
+import { wardrobeReferenceImages } from "./lamaloMasterReferences";
 import {
   assertCanonicalSceneSpec,
   compileCanonicalSceneSpec,
@@ -29,6 +30,7 @@ export interface WardrobeCharacterBinding {
   promptAnchor?: string;
   characterReferenceImageUrl?: string;
   wardrobeReferenceImageUrl?: string;
+  wardrobeReferenceImageUrls?: string[];
   faceCoverage: "none" | "partial" | "full";
   identityMode: "auto" | "use_character_face" | "conceal_character_face";
   suppressCharacterFaceReference: boolean;
@@ -67,14 +69,8 @@ function parseJsonValue<T>(value: unknown, fallback: T): T {
   }
 }
 
-function imageFromItem(item: any): string | undefined {
-  if (typeof item?.primaryImageUrl === "string" && item.primaryImageUrl.trim()) return item.primaryImageUrl.trim();
-  const images = parseJsonValue<unknown[]>(item?.imageUrls, []);
-  if (Array.isArray(images)) {
-    const first = images.find((value: unknown) => typeof value === "string" && value.trim());
-    if (typeof first === "string") return first.trim();
-  }
-  return undefined;
+function imagesFromItem(item: any): string[] {
+  return wardrobeReferenceImages(item, 24);
 }
 
 function characterImage(character: any): string | undefined {
@@ -262,6 +258,7 @@ export async function loadSceneGenerationContext(
     }
     let wardrobeAnchor: string | undefined;
     let wardrobeReferenceImageUrl: string | undefined;
+    let wardrobeReferenceImageUrls: string[] = [];
 
     if (selectedItem) {
       const itemErrors = validateWardrobeItemForInventory(selectedItem);
@@ -273,9 +270,10 @@ export async function loadSceneGenerationContext(
       if (selected.carriedForward) {
         wardrobeAnchor += "; CONTINUITY CARRY-FORWARD: no replacement outfit was specified, therefore this exact costume remains mandatory in this scene.";
       }
-      wardrobeReferenceImageUrl = imageFromItem(selectedItem);
+      wardrobeReferenceImageUrls = imagesFromItem(selectedItem);
+      wardrobeReferenceImageUrl = wardrobeReferenceImageUrls[0];
       wardrobeLines.push(`CHARACTER ${character.id} — ${character.name} MUST WEAR ONLY: ${wardrobeAnchor}`);
-      if (wardrobeReferenceImageUrl) wardrobeImages.push(wardrobeReferenceImageUrl);
+      wardrobeImages.push(...wardrobeReferenceImageUrls);
     }
 
     if (inline) {
@@ -306,6 +304,7 @@ export async function loadSceneGenerationContext(
       promptAnchor: wardrobeAnchor,
       characterReferenceImageUrl: identityImageUrl,
       wardrobeReferenceImageUrl,
+      wardrobeReferenceImageUrls,
       faceCoverage,
       identityMode,
       suppressCharacterFaceReference,
@@ -344,8 +343,8 @@ export async function loadSceneGenerationContext(
       throw new Error(`Scene wardrobe reference ${item.id} (${item.name}) is not generation-ready: ${itemErrors.join(" ")}`);
     }
     wardrobeLines.push(`Scene/set reference: ${buildWardrobePromptAnchor(item, row.assignment.placementNotes)}`);
-    const image = imageFromItem(item);
-    if (image) wardrobeImages.push(image);
+    const images = imagesFromItem(item);
+    wardrobeImages.push(...images);
   }
 
   const mergedScene = {
@@ -369,7 +368,7 @@ export async function loadSceneGenerationContext(
   }
   canonicalSpec.referenceImages = uniqueUrls([
     ...canonicalSpec.referenceImages,
-    ...wardrobeBindings.flatMap((binding) => [binding.characterReferenceImageUrl, binding.wardrobeReferenceImageUrl]),
+    ...wardrobeBindings.flatMap((binding) => [binding.characterReferenceImageUrl, binding.wardrobeReferenceImageUrl, ...(binding.wardrobeReferenceImageUrls || [])]),
     ...wardrobeImages,
   ]);
   canonicalSpec.validationWarnings.push(...warnings);

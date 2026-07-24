@@ -83,8 +83,8 @@ function ValueProps() {
     },
     {
       icon: Film,
-      title: "Zero colour drift — each shade is a separate item",
-      body: "Generic AI treats \"red jacket\" as open to interpretation — and it drifts. Every Lamalo colour variant is a distinct catalogue entry with its own locked reference prompt, so the model renders exactly what you chose.",
+      title: "Shared 360° master — every colour remains a separate item",
+      body: "Each design uses one approved multi-angle construction reference pack, while every colour is still its own catalogue SKU, checkout and permanent inventory item. The chosen colour is hard-locked for every scene.",
       border: "border-purple-500/20",
       iconBg: "bg-purple-500/10 text-purple-400",
     },
@@ -427,69 +427,93 @@ function CustomOrderModal({
 
 // ─── Single item card ─────────────────────────────────────────────────────────
 
+function swatchBackground(colour: string): string {
+  const key = colour.toLowerCase();
+  const map: Record<string, string> = {
+    black: "#111111", white: "#f7f7f2", navy: "#172554", charcoal: "#374151",
+    "charcoal grey": "#374151", grey: "#9ca3af", "grey marle": "#9ca3af",
+    olive: "#556b2f", "sage green": "#9caf88", burgundy: "#7f1d1d",
+    "cobalt blue": "#0047ab", teal: "#0f766e",
+    "blush pink": "#efc3c7", "coral pink": "#f88379", "nude beige": "#d8b4a0",
+    camel: "#c19a6b", cream: "#fffdd0", stone: "#b7b09c", red: "#b91c1c",
+  };
+  if (map[key]) return map[key];
+  if (key.includes("/") || key.includes("floral") || key.includes("check") || key.includes("stripe")) {
+    return "linear-gradient(135deg,#111 0 25%,#d4af37 25% 50%,#f5f5f5 50% 75%,#6b7280 75%)";
+  }
+  return "linear-gradient(135deg,#d4af37,#6b7280)";
+}
+
 function ItemCard({
-  item,
+  variants,
   onBuy,
   isBuying,
 }: {
-  item: any;
-  onBuy: () => void;
-  isBuying: boolean;
+  variants: any[];
+  onBuy: (itemId: number) => void;
+  isBuying: (itemId: number) => boolean;
 }) {
   const [imgErr, setImgErr] = useState(false);
-  const color = item.colors?.[0] ?? "";
+  const [selectedId, setSelectedId] = useState<number>(() => variants[0]?.id);
+  useEffect(() => {
+    if (!variants.some((variant) => variant.id === selectedId)) setSelectedId(variants[0]?.id);
+  }, [variants, selectedId]);
+  const item = variants.find((variant) => variant.id === selectedId) ?? variants[0];
+  if (!item) return null;
+  const color = item.colors?.[0] ?? item.name?.split(" — ").pop() ?? "";
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
+  const referencePackReady = Array.isArray(item.styleTags) && item.styleTags.includes("reference-pack:360-ready");
 
   return (
-    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20 transition-shadow">
+    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
         {item.primaryImageUrl && !imgErr ? (
-          <img
-            src={item.primaryImageUrl}
-            alt={item.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={() => setImgErr(true)}
-          />
+          <img src={item.primaryImageUrl} alt={baseName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={() => setImgErr(true)} />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Shirt className="h-10 w-10 text-white/10" />
-          </div>
+          <div className="w-full h-full flex items-center justify-center"><Shirt className="h-10 w-10 text-white/10" /></div>
         )}
-        {color && (
-          <div className="absolute top-2 right-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-sm border border-amber-500/20 text-white/70 rounded-full px-2 py-0.5">
-              {color}
-            </span>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute top-2 right-2">
+          <span className="text-[9px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-sm border border-amber-500/20 text-white/80 rounded-full px-2 py-0.5">{color}</span>
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
       </div>
 
       <div className="p-3 flex flex-col gap-2 flex-1">
         <div>
-          <p className="text-xs font-bold text-white leading-tight line-clamp-1">{baseName}</p>
+          <p className="text-xs font-bold text-white leading-tight line-clamp-2">{baseName}</p>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-            {color && <p className="text-[10px] text-amber-400/70">{color}</p>}
             <Badge className="bg-purple-500/15 text-purple-200 border border-purple-400/30 text-[9px] px-1.5 py-0">Virtual item</Badge>
-            {!Boolean(item.isVirtualOnly) && Number(item.physicalRetailPriceAud ?? 0) > 0 && (
-              <Badge className="bg-emerald-500/15 text-emerald-200 border border-emerald-400/30 text-[9px] px-1.5 py-0">Physical available</Badge>
-            )}
+            <Badge className="bg-amber-500/10 text-amber-300 border border-amber-500/25 text-[9px] px-1.5 py-0">{referencePackReady ? "360° master ready" : "360° master queued"}</Badge>
           </div>
         </div>
+
+        <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={`Choose colour for ${baseName}`}>
+          {variants.map((variant) => {
+            const variantColour = variant.colors?.[0] ?? variant.name?.split(" — ").pop() ?? "Colour";
+            const selected = variant.id === item.id;
+            return (
+              <button
+                key={variant.id}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={variantColour}
+                title={variantColour}
+                onClick={() => { setSelectedId(variant.id); setImgErr(false); }}
+                className={`h-6 w-6 rounded-full border-2 transition-transform hover:scale-110 ${selected ? "border-amber-400 ring-2 ring-amber-400/30" : "border-white/25"}`}
+                style={{ background: swatchBackground(variantColour) }}
+              />
+            );
+          })}
+        </div>
+        <p className="text-[10px] text-white/35"><span className="text-amber-400/80">{color}</span> is a separate purchasable item and permanent inventory entry.</p>
+
         <div className="flex items-center justify-between mt-auto pt-1">
-          <div className="flex items-center gap-1 text-amber-400">
-            <Tag className="h-3 w-3" />
-            <span className="text-xs font-black">{priceLabel}</span>
-          </div>
-          <Button
-            size="sm"
-            onClick={onBuy}
-            disabled={isBuying}
-            className="h-7 px-3 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-black rounded-lg"
-          >
-            {isBuying ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : "Buy"}
+          <div className="flex items-center gap-1 text-amber-400"><Tag className="h-3 w-3" /><span className="text-xs font-black">{priceLabel}</span></div>
+          <Button size="sm" onClick={() => onBuy(item.id)} disabled={isBuying(item.id)} className="h-7 px-3 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-black rounded-lg">
+            {isBuying(item.id) ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : `Buy ${color}`}
           </Button>
         </div>
       </div>
@@ -513,6 +537,15 @@ function CollectionBlock({
   const [expanded, setExpanded] = useState(false);
   const items: any[] = col.items ?? [];
   const itemCount = items.length;
+  const groupedVariants = new Map<string, any[]>();
+  for (const item of items) {
+    const baseName = item.name?.split(" — ")[0] ?? item.name;
+    const variants = groupedVariants.get(baseName) ?? [];
+    variants.push(item);
+    groupedVariants.set(baseName, variants);
+  }
+  const variantGroups = Array.from(groupedVariants.values());
+  const designCount = variantGroups.length;
   const itemSum = items.reduce((s: number, i: any) => s + (i.retailPriceAud ?? 100), 0);
   const bundleCents = itemSum > 0 ? Math.floor(itemSum * 0.90) : (col.collectionPriceAud ?? 100);
   const minItemCents = itemCount > 0 ? Math.min(...items.map((i: any) => i.retailPriceAud ?? 100)) : 100;
@@ -535,7 +568,7 @@ function CollectionBlock({
             <p className="text-xs text-white/45 line-clamp-2 leading-relaxed">{col.description}</p>
           )}
           <p className="text-[11px] text-white/30 mt-2">
-            {itemCount} items · From A${(minItemCents / 100).toFixed(2)} each · Bundle saves 10%
+            {designCount} designs · {itemCount} separate colour SKUs · From A${(minItemCents / 100).toFixed(2)} each
           </p>
         </div>
 
@@ -549,14 +582,14 @@ function CollectionBlock({
             {isBuyingCol ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
             ) : (
-              `Buy all ${itemCount} — ${bundleLabel}`
+              `Buy all ${itemCount} colour SKUs — ${bundleLabel}`
             )}
           </Button>
           <button
             onClick={() => setExpanded((e) => !e)}
             className="h-9 px-3 rounded-lg border border-amber-500/20 text-white/50 hover:text-white hover:border-white/30 text-xs font-semibold transition-all"
           >
-            {expanded ? "Hide items" : `Browse ${itemCount} items`}
+            {expanded ? "Hide items" : `Browse ${designCount} designs`}
           </button>
         </div>
       </div>
@@ -567,12 +600,12 @@ function CollectionBlock({
             <p className="text-xs text-white/30 text-center py-6">No items in this collection yet.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-              {items.map((item: any) => (
+              {variantGroups.map((variants: any[]) => (
                 <ItemCard
-                  key={item.id}
-                  item={item}
-                  onBuy={() => onBuyItem(item.id)}
-                  isBuying={leasingId === `item-${item.id}`}
+                  key={variants[0]?.name?.split(" — ")[0] ?? variants[0]?.id}
+                  variants={variants}
+                  onBuy={onBuyItem}
+                  isBuying={(itemId) => leasingId === `item-${itemId}`}
                 />
               ))}
             </div>

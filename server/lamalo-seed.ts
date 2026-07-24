@@ -1,10 +1,10 @@
 /**
  * lamalo-seed.ts  — Lamalo Fashion · Virelle Studios in-house brand
- * 26 collections · 1 400+ items
+ * 28 collections · separate colour SKUs with shared master reference geometry
  *
  * Rules:
  *  - Every color variant = a separate purchasable item (white tee ≠ black tee)
- *  - Every base item has ≥ 7 color options
+ *  - Every colour choice remains a separate purchasable SKU and permanent inventory item
  *  - Price ≈ 10% of Kmart AUD retail prices (per-category, auto-calculated)
  *  - Collection bundle = sum of item prices × 0.90  (10 % discount, auto-calculated)
  *  - No lease price — one purchase, use forever across all projects/scenes
@@ -15,6 +15,7 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { designerProfiles, designerCollections, wardrobeItems, wardrobeLeases } from "../drizzle/schema";
 import { logger } from "./_core/logger";
+import { buildLamaloVariantTags } from "./_core/lamaloMasterReferences";
 
 const log = logger.child({ module: "lamalo-seed" });
 
@@ -63,6 +64,7 @@ interface SeedItem {
   retailPriceAud: number;
   referencePrompt: string;
   primaryImageUrl?: string | null;
+  imageUrls?: string[];
   sizeRange?: string;
 }
 
@@ -90,30 +92,48 @@ interface SeedCollection {
   items: SeedItem[];
 }
 
-// ─── Helper: expand one base item into one item per color ────────────────────
-// Auto-prices by category. Hard-capped at 5 colours per item.
+// ─── Helper: expand one base item into separately purchasable colour SKUs ───
+// Every SKU shares one master geometry reference. The selected colour remains
+// locked in its own database row, checkout, inventory snapshot and scene prompt.
 
 function pollinationsUrl(prompt: string): string {
-    const encoded = prompt
-      .replace(/ /g, "%20").replace(/,/g, "%2C").replace(/\//g, "%2F")
-      .replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/&/g, "%26");
-    return `https://image.pollinations.ai/prompt/${encoded}%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux`;
-  }
+  const encoded = prompt
+    .replace(/ /g, "%20").replace(/,/g, "%2C").replace(/\//g, "%2F")
+    .replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/&/g, "%26");
+  return `https://image.pollinations.ai/prompt/${encoded}%2C%20product%20photo%2C%20plain%20white%20background%2C%20studio%20lighting%2C%20fashion%20photography?width=512&height=512&nologo=true&model=flux`;
+}
 
-  function cc(base: BaseItem, colors: string[]): SeedItem[] {
-    const price = itemPrice(base.category);
-    return colors.slice(0, 5).map(color => {
-      const prompt = `${base.referencePrompt}, ${color.toLowerCase()} colorway`;
-      return {
-        ...base,
-        name: `${base.name} — ${color}`,
-        colors: [color],
-        retailPriceAud: price,
-        referencePrompt: prompt,
-        primaryImageUrl: pollinationsUrl(prompt),
-      };
-    });
-  }
+function cc(base: BaseItem, colors: string[]): SeedItem[] {
+  const price = itemPrice(base.category);
+  const uniqueColours = Array.from(new Set(colors.map((colour) => colour.trim()).filter(Boolean)));
+  const masterPrompt = `${base.referencePrompt}, neutral mid-grey master garment reference, front three-quarter product view, exact construction and proportions, isolated complete item, no person, no mannequin, no text, no logo`;
+  const sharedMasterThumbnail = pollinationsUrl(masterPrompt);
+  return uniqueColours.map((color) => {
+    const prompt = [
+      base.referencePrompt,
+      `SELECTED COLOUR HARD-LOCK: ${color}`,
+      "Use the shared Lamalo master reference geometry for exact cut, construction, seams, proportions, hardware, fabric behaviour and silhouette",
+      "Never copy the neutral master colour into the final scene; render only the selected colour SKU",
+    ].join("; ");
+    return {
+      ...base,
+      name: `${base.name} — ${color}`,
+      colors: [color],
+      styleTags: buildLamaloVariantTags({
+        baseDesignName: base.name,
+        selectedColour: color,
+        category: base.category,
+        subcategory: base.subcategory,
+        existingTags: base.styleTags,
+        referencePackReady: false,
+      }),
+      retailPriceAud: price,
+      referencePrompt: prompt,
+      primaryImageUrl: sharedMasterThumbnail,
+      imageUrls: [sharedMasterThumbnail],
+    };
+  });
+}
 
 // ─── Standard colour palettes ─────────────────────────────────────────────────
 
@@ -135,6 +155,8 @@ const EYEWEAR  = ["Black Frame","Tortoiseshell","Clear Frame","Brown Frame","Gol
 const WATCH_M  = ["Silver/White Dial","Gold/Black Dial","All Black","Silver/Blue Dial","Rose Gold/White Dial","Gunmetal/Green Dial","Bronze/Brown Dial"];
 const WATCH_F  = ["Silver/White Dial","Gold/White Dial","Rose Gold/Pink Dial","All Black","Gold/Champagne Dial","Silver/Blue Dial","Two-Tone/Pearlescent Dial"];
 const SHORTS   = ["Black","Navy","Khaki","Olive","Charcoal","Cobalt Blue","Forest Green","Burgundy"];
+const LINGERIE_F = ["Black","White","Nude Beige","Blush Pink","Burgundy","Navy","Sage Green","Cobalt Blue"];
+const UNDERWEAR_M = ["Black","White","Navy","Charcoal","Grey Marle","Olive","Burgundy","Cobalt Blue"];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // COLLECTION 1 — Men's Everyday
@@ -325,6 +347,12 @@ const womensSwimwearItems: SeedItem[] = [
   ...cc({ name:"Lamalo Sporty Bikini Set", description:"Cross-back sporty bikini top with full-coverage brief for active beach days.", category:"swimwear", subcategory:"bikinis", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["bikini","sporty","active","cross-back"], referencePrompt:"Women's sporty cross-back bikini full-coverage brief active", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
   ...cc({ name:"Lamalo Swimwear Cover-Up", description:"Lightweight linen-blend beach cover-up with side splits and drop hem.", category:"swimwear", subcategory:"cover-ups", genderFit:"female", materials:["55% Linen","45% Cotton"], styleTags:["cover-up","beach","casual","resort"], referencePrompt:"Women's linen beach cover-up side splits drop hem resort", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, DRESS),
   ...cc({ name:"Lamalo Long-Sleeve Swimsuit", description:"Long-sleeve modest swimsuit with UPF50+ fabrication and full-length coverage.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["Recycled Nylon","Elastane"], styleTags:["modest","UPF50+","long-sleeve","beach"], referencePrompt:"Women's long-sleeve UPF50+ modest swimsuit full coverage", primaryImageUrl:"/lamalo/swimwear-kids-rashguard-set.jpg" }, ["Navy","Black","Cobalt Blue","Forest Green","Burgundy","Teal","White","Sage Green"]),
+  ...cc({ name:"Lamalo Triangle Bikini Top", description:"Adjustable triangle bikini top sold separately for mix-and-match styling.", category:"swimwear", subcategory:"bikini-tops", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","triangle","separate","mix-and-match"], referencePrompt:"Women's adjustable triangle bikini top, clean luxury swimwear construction", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Classic Bikini Bottom", description:"Classic bikini bottom sold separately with moderate coverage and a clean leg line.", category:"swimwear", subcategory:"bikini-bottoms", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","bottom","separate","mix-and-match"], referencePrompt:"Women's classic bikini bottom, moderate coverage, clean luxury swimwear construction", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Bandeau Bikini Top", description:"Structured bandeau bikini top sold separately with removable straps.", category:"swimwear", subcategory:"bikini-tops", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","bandeau","separate","structured"], referencePrompt:"Women's structured bandeau bikini top with removable straps, luxury swimwear", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo High-Waist Bikini Bottom", description:"High-waist bikini bottom sold separately with sculpted coverage.", category:"swimwear", subcategory:"bikini-bottoms", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","high-waist","separate","sculpted"], referencePrompt:"Women's high-waist bikini bottom, sculpted coverage, luxury swimwear", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Halter Bikini Top", description:"Supportive halter bikini top sold separately with adjustable neck and back ties.", category:"swimwear", subcategory:"bikini-tops", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","halter","separate","supportive"], referencePrompt:"Women's supportive halter bikini top with adjustable neck and back ties", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Cheeky Bikini Bottom", description:"Cheeky-cut bikini bottom sold separately with a smooth seamless edge.", category:"swimwear", subcategory:"bikini-bottoms", genderFit:"female", materials:["82% Nylon","18% Elastane","Swim Lining"], styleTags:["bikini","cheeky","separate","seamless"], referencePrompt:"Women's cheeky-cut bikini bottom with smooth seamless edge, luxury swimwear", primaryImageUrl:"/lamalo/swimwear-women-onepiece.jpg" }, SWIM_F),
 ];
 
 const womensSwimwear: SeedCollection = { name:"Lamalo Women's Swimwear", description:"Beach-confident swimwear for every shape and preference.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["swim","beach","bikini","one-piece","resort","UPF50+"], collectionPriceAud:cp(womensSwimwearItems), items:womensSwimwearItems };
@@ -603,6 +631,36 @@ const comfortSwim: SeedCollection = { name:"Lamalo Comfort Swimwear", descriptio
   const professional: SeedCollection = { name:"Lamalo Professional Uniforms", description:"Profession-ready costume and workwear — police, nurses, paramedics, firefighters, security and chefs.", collectionType:"uniform", season:"All-Season", year:2026, styleTags:["uniform","professional","costume","police","nurse","paramedic","firefighter"], collectionPriceAud:cp(professionalItems), items:professionalItems };
 
   
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 27 — Women's Lingerie Essentials
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensLingerieItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Classic Brief", description:"Soft everyday panty brief with smooth waistband and balanced coverage.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["92% Modal","8% Elastane"], styleTags:["panties","brief","everyday","soft"], referencePrompt:"Women's classic everyday panty brief, smooth waistband, accurate garment-only construction", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo Bikini Brief", description:"Low-rise bikini brief with soft stretch fabric and clean bonded edges.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["90% Nylon","10% Elastane"], styleTags:["panties","bikini-brief","low-rise"], referencePrompt:"Women's low-rise bikini brief panty, clean bonded edges, accurate garment-only construction", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo High-Waist Brief", description:"High-waist panty brief with smooth supportive fit and full coverage.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["88% Nylon","12% Elastane"], styleTags:["panties","high-waist","supportive"], referencePrompt:"Women's high-waist panty brief, smooth supportive fit, full coverage, garment only", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo Seamless Brief", description:"Laser-cut seamless panty brief designed for invisible wear under costumes.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["Polyamide Microfibre","Elastane"], styleTags:["panties","seamless","invisible"], referencePrompt:"Women's laser-cut seamless panty brief, invisible bonded edges, garment only", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo Thong", description:"Minimal thong panty in ultra-soft stretch fabric with a clean waistband.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["90% Nylon","10% Elastane"], styleTags:["panties","thong","minimal"], referencePrompt:"Women's minimal thong panty, clean waistband, accurate garment-only construction", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo Boyshort Panty", description:"Comfortable boyshort panty with fuller coverage and a smooth leg line.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["92% Modal","8% Elastane"], styleTags:["panties","boyshort","comfort"], referencePrompt:"Women's boyshort panty, fuller coverage, smooth leg line, garment only", primaryImageUrl:null }, LINGERIE_F),
+  ...cc({ name:"Lamalo Lace Brief", description:"Soft lace panty brief with lined front panel and scalloped edge.", category:"lingerie", subcategory:"panties", genderFit:"female", materials:["Stretch Lace","Cotton Gusset"], styleTags:["panties","lace","scalloped"], referencePrompt:"Women's soft lace panty brief with lined front panel and scalloped edge, garment only", primaryImageUrl:null }, LINGERIE_F),
+];
+
+const womensLingerie: SeedCollection = { name:"Lamalo Women's Lingerie Essentials", description:"Separately purchasable panty styles for wardrobe continuity, from seamless briefs to lace and high-waist cuts.", collectionType:"lingerie", season:"All-Season", year:2026, styleTags:["lingerie","panties","underwear","women"], collectionPriceAud:cp(womensLingerieItems), items:womensLingerieItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 28 — Men's Underwear Essentials
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensUnderwearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Woven Boxer Short", description:"Classic woven boxer short with relaxed fit and covered elastic waistband.", category:"lingerie", subcategory:"boxer-shorts", genderFit:"male", materials:["100% Cotton Poplin"], styleTags:["boxer-shorts","woven","relaxed"], referencePrompt:"Men's classic woven boxer shorts, relaxed fit, covered elastic waistband, garment only", primaryImageUrl:null }, UNDERWEAR_M),
+  ...cc({ name:"Lamalo Boxer Brief", description:"Supportive boxer brief with longer leg and soft stretch recovery.", category:"lingerie", subcategory:"boxer-briefs", genderFit:"male", materials:["95% Cotton","5% Elastane"], styleTags:["boxer-briefs","supportive","everyday"], referencePrompt:"Men's supportive boxer brief, longer leg, soft stretch recovery, garment only", primaryImageUrl:null }, UNDERWEAR_M),
+  ...cc({ name:"Lamalo Trunk", description:"Short-leg trunk underwear with a modern close fit and clean waistband.", category:"lingerie", subcategory:"trunks", genderFit:"male", materials:["95% Cotton","5% Elastane"], styleTags:["trunks","underwear","modern"], referencePrompt:"Men's short-leg trunk underwear, modern close fit, clean waistband, garment only", primaryImageUrl:null }, UNDERWEAR_M),
+  ...cc({ name:"Lamalo Lounge Boxer", description:"Comfort-first lounge boxer in breathable cotton jersey.", category:"lingerie", subcategory:"boxer-shorts", genderFit:"male", materials:["100% Cotton Jersey"], styleTags:["boxer-shorts","lounge","comfort"], referencePrompt:"Men's lounge boxer shorts, breathable cotton jersey, relaxed garment-only construction", primaryImageUrl:null }, UNDERWEAR_M),
+  ...cc({ name:"Lamalo Long-Leg Boxer Brief", description:"Long-leg boxer brief designed to remain stable under fitted costumes.", category:"lingerie", subcategory:"boxer-briefs", genderFit:"male", materials:["88% Modal","12% Elastane"], styleTags:["boxer-briefs","long-leg","costume-base"], referencePrompt:"Men's long-leg boxer brief, stable close fit for costumes, garment only", primaryImageUrl:null }, UNDERWEAR_M),
+];
+
+const mensUnderwear: SeedCollection = { name:"Lamalo Men's Underwear Essentials", description:"Separately purchasable boxer shorts, boxer briefs and trunks for exact costume and scene continuity.", collectionType:"lingerie", season:"All-Season", year:2026, styleTags:["underwear","boxer-shorts","boxer-briefs","men"], collectionPriceAud:cp(mensUnderwearItems), items:mensUnderwearItems };
+
 // ALL COLLECTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -613,12 +671,14 @@ const ALL_COLLECTIONS: SeedCollection[] = [
   mensLuxury,
   mensSwimsear,
   mensComfort,
+  mensUnderwear,
   womensEveryday,
   womensActive,
   womensOriginals,
   womensLuxury,
   womensSwimwear,
   womensComfort,
+  womensLingerie,
   kidsEveryday,
   kidsActive,
   kidsSwimwear,
@@ -767,7 +827,7 @@ export async function runLamaloSeed(
          membershipCurrentPeriodEnd)
       VALUES
         (${userId}, 'Lamalo Fashion', 'Lamalo', 'brand',
-         'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
+         'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-eight curated collections spanning menswear, womenswear, kids, seniors, lingerie, underwear, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
          'https://virelle.life/wardrobe-marketplace', '@lamalofashion', 'wardrobe@virelle.life',
          'https://image.pollinations.ai/prompt/Lamalo%20Fashion%20luxury%20gold%20black%20couture%20brand%20logo%2C%20minimalist%20letter%20L%2C%20fashion%20editorial?width=512&height=256&nologo=true&seed=99&model=flux',
          TRUE, 'public', NULL, 'none', 'active', NULL, '2099-12-31 00:00:00')
@@ -850,7 +910,7 @@ export async function runLamaloSeed(
       const imgUrl = (item.primaryImageUrl && !item.primaryImageUrl.startsWith('/lamalo/'))
         ? item.primaryImageUrl
         : pollinationsUrl(item.referencePrompt ?? `${item.name} ${item.category} fashion item`);
-      const imgUrlsJson = JSON.stringify([imgUrl]);
+      const imgUrlsJson = JSON.stringify(item.imageUrls?.length ? item.imageUrls : [imgUrl]);
       const colorsJson = item.colors ? JSON.stringify(item.colors) : null;
       const materialsJson = item.materials ? JSON.stringify(item.materials) : null;
       const styleTagsJson = item.styleTags ? JSON.stringify(item.styleTags) : null;
