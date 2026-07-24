@@ -1,8 +1,8 @@
 # Privacy Policy for Virelle Studios
 
-**Last Updated: July 17, 2026**
+**Last Updated: July 24, 2026**
 
-This Privacy Policy describes how Virelle, Inc. ("Virelle", "we", "us", or "our") collects, uses, and shares information about you when you use our Services. 
+This Privacy Policy describes how Virelle, Inc. ("Virelle", "we", "us", or "our") collects, uses, and shares information about you when you use our Services.
 
 ## 1. Information We Collect
 
@@ -56,11 +56,13 @@ We take reasonable measures to help protect information about you from loss, the
 
 ## 5. Your Choices
 
-You may update, correct, or delete your account information at any time by logging into your account. 
+You may update, correct, or delete your account information at any time by logging into your account.
 
 ## 6. Data Retention
 
 We retain account and User Content data for as long as your account is active, or as needed to provide the Services, comply with legal obligations, and resolve disputes. You can request deletion of your account and associated data by contacting us below.
+
+**Swappys results are private and are never posted to social media by Swappys or Virelle.** A secure server copy of each Swappys output is normally retained for 30 days and then automatically deleted. An authorised administrator may mark a specific result **Keep** when it is reasonably required for support, safety review, dispute resolution, or lawful preservation. The Keep decision records the administrator, time, and reason and can later be removed to restore normal expiry.
 
 ## 7. Children's Privacy
 
