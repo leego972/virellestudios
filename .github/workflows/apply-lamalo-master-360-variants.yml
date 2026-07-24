@@ -1,0 +1,61 @@
+name: Apply Lamalo Master 360 Variants
+
+on:
+  push:
+    branches:
+      - feature/lamalo-master-360-variants
+    paths:
+      - scripts/apply-lamalo-master-360-variants.mjs
+      - .github/workflows/apply-lamalo-master-360-variants.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/lamalo-master-360-variants
+          fetch-depth: 0
+
+      - name: Apply source transformation
+        run: node scripts/apply-lamalo-master-360-variants.mjs
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript check
+        run: pnpm check
+
+      - name: Unit and integration tests
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          VITE_APP_ID: ci-stub
+          VITE_SENTRY_DSN: ""
+
+      - name: Commit generated implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "Implement Lamalo master 360 colour variants"
+          git push origin HEAD:feature/lamalo-master-360-variants
