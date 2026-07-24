@@ -463,7 +463,7 @@ function ItemCard({
   const color = item.colors?.[0] ?? item.name?.split(" — ").pop() ?? "";
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
-  const priceLabel = `A${(cents / 100).toFixed(2)}`;
+  const priceLabel = `A$${(cents / 100).toFixed(2)}`;
   const referencePackReady = Array.isArray(item.styleTags) && item.styleTags.includes("reference-pack:360-ready");
 
   return (
