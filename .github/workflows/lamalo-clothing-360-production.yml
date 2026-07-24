@@ -1,0 +1,171 @@
+name: Lamalo Clothing True 360 Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      parity:
+        description: Base-design ordinals to process
+        required: true
+        default: all
+        type: choice
+        options: [all, odd, even]
+      count:
+        description: Maximum base designs in this run
+        required: true
+        default: "1"
+        type: string
+      start:
+        description: First eligible base-design ordinal
+        required: true
+        default: "1"
+        type: string
+      retry_failed:
+        description: Retry previously failed base designs
+        required: true
+        default: true
+        type: boolean
+      force:
+        description: Regenerate approved intermediate assets
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "17 */4 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: lamalo-clothing-true-360-production
+  cancel-in-progress: false
+
+jobs:
+  produce:
+    if: github.event_name == 'workflow_dispatch' || vars.LAMALO360_ENABLED == 'true'
+    runs-on: [self-hosted, linux, x64, gpu, lamalo360]
+    timeout-minutes: 720
+    environment: lamalo360-production
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MESHY_API_KEY: ${{ secrets.MESHY_API_KEY }}
+      MESHY_IMAGE_TO_3D_MODEL: meshy-6
+      LAMALO_SOURCE_IMAGE_MODEL: gpt-image-1.5
+      LAMALO_TEXTURE_IMAGE_MODEL: gpt-image-1.5
+      LAMALO_VISION_MODEL: gpt-5.1
+      BLENDER_BIN: ${{ vars.BLENDER_BIN || '/opt/blender/blender' }}
+      LAMALO360_WORK_ROOT: ${{ vars.LAMALO360_WORK_ROOT || '/var/lib/lamalo360' }}
+      LAMALO360_CYCLES_SAMPLES: ${{ vars.LAMALO360_CYCLES_SAMPLES || '256' }}
+      LAMALO360_TARGET_POLYCOUNT: ${{ vars.LAMALO360_TARGET_POLYCOUNT || '100000' }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_S3_PUBLIC_URL: ${{ secrets.AWS_S3_PUBLIC_URL }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout current production code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify private worker configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(OPENAI_API_KEY MESHY_API_KEY DATABASE_URL AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_S3_BUCKET AWS_S3_ENDPOINT AWS_S3_PUBLIC_URL)
+          for name in "${required[@]}"; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required production secret: ${name}" >&2
+              exit 1
+            fi
+          done
+          test -x "$BLENDER_BIN"
+          "$BLENDER_BIN" --version | head -n 2
+          nvidia-smi
+          mkdir -p "$LAMALO360_WORK_ROOT"
+          test -w "$LAMALO360_WORK_ROOT"
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify catalogue and code
+        run: |
+          node scripts/lamalo360/catalogue.mjs --check
+          pnpm check
+
+      - name: Create production-state branch
+        id: branch
+        shell: bash
+        run: |
+          branch="production/lamalo360-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$branch"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: Produce approved 3D masters and colour turntables
+        shell: bash
+        run: |
+          set -euo pipefail
+          parity="${{ inputs.parity || 'all' }}"
+          count="${{ inputs.count || '1' }}"
+          start="${{ inputs.start || '1' }}"
+          args=(--parity "$parity" --count "$count" --start "$start")
+          if [ "${{ inputs.retry_failed || github.event_name == 'schedule' }}" = "true" ]; then args+=(--retry-failed); fi
+          if [ "${{ inputs.force || false }}" = "true" ]; then args+=(--force); fi
+          node scripts/lamalo360/run-batch.mjs "${args[@]}"
+
+      - name: Revalidate manifest after publication
+        run: |
+          node scripts/lamalo360/catalogue.mjs --check
+          pnpm check
+
+      - name: Commit verified production state
+        id: state
+        shell: bash
+        run: |
+          git config user.name "lamalo360-production[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/lamalo-clothing-360-production.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Record approved Lamalo true 360 production assets"
+          git push origin HEAD:"${{ steps.branch.outputs.name }}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Merge production-state manifest
+        if: steps.state.outputs.changed == 'true'
+        shell: bash
+        run: |
+          pr_url=$(gh pr create \
+            --base main \
+            --head "${{ steps.branch.outputs.name }}" \
+            --title "Record approved Lamalo true 360 assets" \
+            --body "Automated production-state update. Every recorded item passed source-reference review, 36-frame deterministic Blender rendering, glTF validation, turntable visual QA, public storage upload and database publication.")
+          gh pr merge "$pr_url" --squash --delete-branch --admin
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lamalo360-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.LAMALO360_WORK_ROOT }}/**/state.json
+            ${{ env.LAMALO360_WORK_ROOT }}/**/source-reference.json
+            ${{ env.LAMALO360_WORK_ROOT }}/**/geometry.json
+            ${{ env.LAMALO360_WORK_ROOT }}/**/quality-report.json
+            ${{ env.LAMALO360_WORK_ROOT }}/**/visual-approval.json
+          if-no-files-found: ignore
+          retention-days: 14
