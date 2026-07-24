@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("--resolution", type=int, default=2048)
     parser.add_argument("--samples", type=int, default=256)
     parser.add_argument("--colour", default=None, help="Optional #RRGGBB material tint")
+    parser.add_argument("--texture", default=None, help="Optional seamless albedo texture")
     parser.add_argument("--colour-name", default=None)
     parser.add_argument("--engine", choices=["CYCLES", "BLENDER_EEVEE_NEXT"], default="CYCLES")
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1 :])
@@ -139,6 +140,38 @@ def tint_materials(meshes, colour):
             roughness = principled.inputs.get("Roughness")
             if roughness and not roughness.is_linked:
                 roughness.default_value = max(0.32, min(0.82, roughness.default_value))
+
+
+def apply_texture_materials(meshes, texture_path):
+    image = bpy.data.images.load(str(texture_path), check_existing=True)
+    for obj in meshes:
+        for material in obj.data.materials:
+            if not material:
+                continue
+            material.use_nodes = True
+            nodes = material.node_tree.nodes
+            links = material.node_tree.links
+            principled = next((node for node in nodes if node.type == "BSDF_PRINCIPLED"), None)
+            if principled is None:
+                principled = nodes.new("ShaderNodeBsdfPrincipled")
+                output = next((node for node in nodes if node.type == "OUTPUT_MATERIAL"), None) or nodes.new("ShaderNodeOutputMaterial")
+                links.new(principled.outputs["BSDF"], output.inputs["Surface"])
+            texture = nodes.new("ShaderNodeTexImage")
+            texture.image = image
+            texture.interpolation = "Linear"
+            texture.extension = "REPEAT"
+            mapping = nodes.new("ShaderNodeMapping")
+            texcoord = nodes.new("ShaderNodeTexCoord")
+            mapping.inputs["Scale"].default_value = (3.0, 3.0, 3.0)
+            links.new(texcoord.outputs["UV"], mapping.inputs["Vector"])
+            links.new(mapping.outputs["Vector"], texture.inputs["Vector"])
+            base = principled.inputs.get("Base Color")
+            if base.is_linked:
+                links.remove(base.links[0])
+            links.new(texture.outputs["Color"], base)
+            roughness = principled.inputs.get("Roughness")
+            if roughness and not roughness.is_linked:
+                roughness.default_value = 0.58
 
 
 def create_material(name, colour, roughness=0.65):
@@ -296,7 +329,9 @@ def main():
     clear_scene()
     meshes = import_glb(input_path)
     root, bounds = normalize_geometry(meshes)
-    if args.colour:
+    if args.texture:
+        apply_texture_materials(meshes, Path(args.texture).resolve())
+    elif args.colour:
         tint_materials(meshes, args.colour)
     create_studio()
     create_camera(bounds, args.resolution)
@@ -312,6 +347,7 @@ def main():
         "baseName": args.name,
         "colour": args.colour_name,
         "colourHex": args.colour,
+        "texture": str(Path(args.texture).resolve()) if args.texture else None,
         "sourceGlb": str(input_path),
         "cleanGlb": clean_glb.name,
         "cleanGlbSha256": sha256(clean_glb),

@@ -1939,6 +1939,17 @@ export const wardrobeItems = mysqlTable("wardrobeItems", {
   imageUrls: json("imageUrls"),
   primaryImageUrl: text("primaryImageUrl"),
   referencePrompt: text("referencePrompt"),
+  // Lamalo production-grade 3D master and deterministic turntable assets.
+  masterReferenceKey: varchar("masterReferenceKey", { length: 255 }),
+  model3dUrl: text("model3dUrl"),
+  turntableFrameUrls: json("turntableFrameUrls"),
+  turntableFrameCount: int("turntableFrameCount").default(0).notNull(),
+  // pending | processing | machine_validated | ready | failed
+  turntableStatus: varchar("turntableStatus", { length: 32 }).default("pending").notNull(),
+  turntableUpdatedAt: timestamp("turntableUpdatedAt"),
+  renderPipelineVersion: int("renderPipelineVersion").default(0).notNull(),
+  selectedColourKey: varchar("selectedColourKey", { length: 160 }),
+  solidColourHex: varchar("solidColourHex", { length: 16 }),
   // none | partial | full. Full coverage suppresses the actor face reference while assigned.
   faceCoverage: varchar("faceCoverage", { length: 16 }).default("none").notNull(),
   brandPlacementAllowed: boolean("brandPlacementAllowed").default(false).notNull(),

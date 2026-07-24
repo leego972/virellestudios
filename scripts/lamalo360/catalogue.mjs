@@ -273,7 +273,7 @@ export function compileLamaloClothingCatalogue(seedSource = fs.readFileSync(SEED
     scope: "current Lamalo clothing only; missing designs and non-clothing assets are deferred",
     pipeline: {
       sourceReference: "approved high-resolution isolated garment image",
-      geometry: "Hunyuan3D 2.1 image-to-shape or an approved artist-authored replacement mesh",
+      geometry: "Meshy 6 commercial image-to-3D PBR generation or an approved artist-authored replacement mesh",
       material: "PBR material generation with physically based maps",
       cleanupAndRender: "Blender 4.5 LTS deterministic GPU turntable",
       interchange: "validated glTF 2.0 binary (.glb)",

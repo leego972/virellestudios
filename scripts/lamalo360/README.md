@@ -13,7 +13,7 @@ This pipeline replaces the old Adobe/per-angle image workflow. A Lamalo clothing
 ## Asset outputs per base design
 
 - One approved high-resolution source reference.
-- One Hunyuan3D 2.1 textured GLB generation.
+- One paid Meshy 6 PBR GLB generation with commercial output ownership, or an approved artist-authored replacement mesh.
 - One cleaned, normalized glTF 2.0 binary master.
 - Thirty-six 10-degree turntable frames for every separate colour SKU.
 - Twelve canonical 2048px continuity references for simple garments or twenty-four for complex garments and uniforms.
@@ -49,7 +49,7 @@ node scripts/lamalo360/run-batch.mjs --parity even --count 2
 ## Private GPU worker requirements
 
 - Linux with NVIDIA CUDA.
-- Hunyuan3D 2.1 API server available at `HUNYUAN3D_URL` and healthy at `/health`.
+- Paid Meshy API access through `MESHY_API_KEY`; generated assets are downloaded immediately and stored in Virelle-owned object storage.
 - Blender 4.5 LTS available as `BLENDER_BIN`.
 - Node 22 and pnpm 10.
 - OpenAI API key stored only as a worker secret for high-quality source references and automated visual QA.
@@ -60,7 +60,8 @@ node scripts/lamalo360/run-batch.mjs --parity even --count 2
 
 ```bash
 OPENAI_API_KEY=...
-HUNYUAN3D_URL=http://127.0.0.1:8081
+MESHY_API_KEY=...
+MESHY_IMAGE_TO_3D_MODEL=meshy-6
 BLENDER_BIN=/opt/blender/blender
 LAMALO360_WORK_ROOT=/mnt/lamalo360-work
 AWS_ACCESS_KEY_ID=...

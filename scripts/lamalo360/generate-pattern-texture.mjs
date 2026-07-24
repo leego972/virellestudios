@@ -44,7 +44,7 @@ async function main() {
     return;
   }
 
-  const model = process.env.LAMALO_TEXTURE_IMAGE_MODEL ?? "gpt-image-1";
+  const model = process.env.LAMALO_TEXTURE_IMAGE_MODEL ?? "gpt-image-1.5";
   const prompt = patternPrompt(args.colour, master);
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await client.images.generate({

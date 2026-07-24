@@ -64,7 +64,7 @@ async function main() {
 
   if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is required on the private GPU worker.");
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.LAMALO_SOURCE_IMAGE_MODEL ?? "gpt-image-1";
+  const model = process.env.LAMALO_SOURCE_IMAGE_MODEL ?? "gpt-image-1.5";
   const prompt = buildPrompt(master);
   const response = await client.images.generate({
     model,

@@ -335,6 +335,9 @@ importers:
       esbuild:
         specifier: '>=0.28.1'
         version: 0.28.1
+      gltf-validator:
+        specifier: 2.0.0-dev.3.10
+        version: 2.0.0-dev.3.10
       postcss:
         specifier: ^8.5.12
         version: 8.5.12
@@ -3427,6 +3430,9 @@ packages:
   globals@15.15.0:
     resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
     engines: {node: '>=18'}
+
+  gltf-validator@2.0.0-dev.3.10:
+    resolution: {integrity: sha512-odJ4k0tRkGXiDGn78yDBg+fBbAIvBnXxh3RwAta0emSxGtyagFE8B4xELB1oYe3S5RD8Ci3uZAsZaascH2LAEQ==}
 
   google-auth-library@10.6.2:
     resolution: {integrity: sha512-e27Z6EThmVNNvtYASwQxose/G57rkRuaRbQyxM2bvYLLX/GqWZ5chWq2EBoUchJbCc57eC9ArzO5wMsEmWftCw==}
@@ -8170,6 +8176,8 @@ snapshots:
       resolve-pkg-maps: 1.0.0
 
   globals@15.15.0: {}
+
+  gltf-validator@2.0.0-dev.3.10: {}
 
   google-auth-library@10.6.2:
     dependencies:
