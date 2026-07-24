@@ -6,15 +6,15 @@ import process from "node:process";
 const ROOT = process.cwd();
 const MANIFEST_PATH = path.join(ROOT, "docs/lamalo-clothing-360-production.json");
 const WORK_ROOT = path.resolve(process.env.LAMALO360_WORK_ROOT ?? path.join(ROOT, ".lamalo360"));
-const ENDPOINT = String(process.env.HUNYUAN3D_URL ?? "http://127.0.0.1:8081").replace(/\/$/, "");
+const API_ROOT = String(process.env.MESHY_API_URL ?? "https://api.meshy.ai/openapi/v1").replace(/\/$/, "");
 
 function parseArgs(argv) {
-  const args = { ordinal: undefined, key: undefined, force: false, retries: 3 };
+  const args = { ordinal: undefined, key: undefined, force: false, timeoutMinutes: 45 };
   for (let i = 2; i < argv.length; i += 1) {
     if (argv[i] === "--ordinal") args.ordinal = Number(argv[++i]);
     else if (argv[i] === "--key") args.key = argv[++i];
     else if (argv[i] === "--force") args.force = true;
-    else if (argv[i] === "--retries") args.retries = Math.max(1, Number(argv[++i]));
+    else if (argv[i] === "--timeout-minutes") args.timeoutMinutes = Math.max(5, Number(argv[++i]));
     else throw new Error(`Unknown argument: ${argv[i]}`);
   }
   if (!args.ordinal && !args.key) throw new Error("Provide --ordinal or --key.");
@@ -37,40 +37,81 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function generate(endpoint, image, seed, retries) {
-  let lastError;
-  for (let attempt = 1; attempt <= retries; attempt += 1) {
-    try {
-      const response = await fetch(`${endpoint}/generate`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          image: image.toString("base64"),
-          texture: true,
-          seed,
-          type: "glb",
-        }),
-        signal: AbortSignal.timeout(45 * 60 * 1000),
-      });
-      if (!response.ok) {
-        const body = await response.text().catch(() => "");
-        throw new Error(`Hunyuan3D ${response.status}: ${body.slice(0, 500)}`);
-      }
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!contentType.includes("model/gltf-binary") && !contentType.includes("application/octet-stream")) {
-        const bytes = Buffer.from(await response.arrayBuffer());
-        if (bytes.subarray(0, 4).toString("ascii") !== "glTF") {
-          throw new Error(`Hunyuan3D returned unexpected content type ${contentType || "unknown"}.`);
-        }
-        return bytes;
-      }
-      return Buffer.from(await response.arrayBuffer());
-    } catch (error) {
-      lastError = error;
-      if (attempt < retries) await delay(2 ** attempt * 5_000);
-    }
+async function apiRequest(pathname, options = {}) {
+  if (!process.env.MESHY_API_KEY) throw new Error("MESHY_API_KEY is required on the private production worker.");
+  const response = await fetch(`${API_ROOT}${pathname}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${process.env.MESHY_API_KEY}`,
+      ...(options.body ? { "content-type": "application/json" } : {}),
+      ...(options.headers ?? {}),
+    },
+    signal: AbortSignal.timeout(120_000),
+  });
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Meshy ${response.status}: ${body.slice(0, 1_000)}`);
   }
-  throw lastError;
+  return response.json();
+}
+
+async function createTask(image, master) {
+  const model = process.env.MESHY_IMAGE_TO_3D_MODEL ?? "meshy-6";
+  const targetPolycount = Number(process.env.LAMALO360_TARGET_POLYCOUNT ?? 100_000);
+  const payload = {
+    image_url: `data:image/png;base64,${image.toString("base64")}`,
+    ai_model: model,
+    model_type: "standard",
+    enable_pbr: true,
+    should_texture: true,
+    should_remesh: true,
+    topology: "triangle",
+    target_polycount: targetPolycount,
+    target_formats: ["glb"],
+    texture_prompt: [
+      `Neutral medium-grey physically based material for ${master.baseName}.`,
+      `Preserve the construction and material character of ${(master.materials ?? []).join(", ") || "the garment"}.`,
+      "No logo, text, print, branding, dirt, damage or decorative pattern.",
+      "Clean high-end product asset with realistic roughness and fabric microdetail.",
+    ].join(" ").slice(0, 600),
+  };
+  const created = await apiRequest("/image-to-3d", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  const taskId = created.result ?? created.id;
+  if (!taskId) throw new Error("Meshy did not return an image-to-3D task ID.");
+  return { taskId, model, targetPolycount };
+}
+
+async function waitForTask(taskId, timeoutMinutes) {
+  const deadline = Date.now() + timeoutMinutes * 60_000;
+  let lastProgress = -1;
+  while (Date.now() < deadline) {
+    const task = await apiRequest(`/image-to-3d/${encodeURIComponent(taskId)}`);
+    const status = String(task.status ?? "").toUpperCase();
+    const progress = Number(task.progress ?? 0);
+    if (progress !== lastProgress) {
+      console.log(`Meshy task ${taskId}: ${status || "PENDING"} ${progress}%`);
+      lastProgress = progress;
+    }
+    if (status === "SUCCEEDED") {
+      const glbUrl = task.model_urls?.glb;
+      if (!glbUrl) throw new Error("Meshy task succeeded without a GLB URL.");
+      return { task, glbUrl };
+    }
+    if (["FAILED", "CANCELED", "CANCELLED", "EXPIRED"].includes(status)) {
+      throw new Error(`Meshy task ${taskId} ${status}: ${task.task_error?.message ?? "unknown error"}`);
+    }
+    await delay(10_000);
+  }
+  throw new Error(`Meshy task ${taskId} exceeded ${timeoutMinutes} minutes.`);
+}
+
+async function downloadGlb(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(10 * 60_000) });
+  if (!response.ok) throw new Error(`Could not download Meshy GLB (${response.status}).`);
+  return Buffer.from(await response.arrayBuffer());
 }
 
 async function main() {
@@ -88,32 +129,51 @@ async function main() {
     throw new Error(`Missing approved source reference for ${master.baseName}. Run lamalo360:source first.`);
   }
   const sourceMetadata = JSON.parse(fs.readFileSync(sourceMetadataPath, "utf8"));
-  if (sourceMetadata.status !== "approved") {
-    throw new Error(`Source reference for ${master.baseName} is not approved.`);
-  }
+  if (sourceMetadata.status !== "approved") throw new Error(`Source reference for ${master.baseName} is not approved.`);
   if (!args.force && fs.existsSync(modelPath) && fs.existsSync(metadataPath)) {
-    console.log(modelPath);
-    return;
+    const existing = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+    if (["awaiting_cleanup_and_validation", "approved"].includes(existing.status)) {
+      console.log(modelPath);
+      return;
+    }
   }
 
   const image = fs.readFileSync(sourcePath);
-  const seed = Number.parseInt(sha256(Buffer.from(master.masterKey)).slice(0, 8), 16) >>> 0;
-  const model = await generate(ENDPOINT, image, seed, args.retries);
-  if (model.length < 10_000 || model.subarray(0, 4).toString("ascii") !== "glTF") {
-    throw new Error("Generated geometry is not a valid non-empty GLB payload.");
-  }
-  fs.writeFileSync(modelPath, model);
+  const createdAt = new Date().toISOString();
+  const { taskId, model, targetPolycount } = await createTask(image, master);
   fs.writeFileSync(metadataPath, `${JSON.stringify({
     masterKey: master.masterKey,
     ordinal: master.ordinal,
     baseName: master.baseName,
-    endpoint: ENDPOINT,
-    provider: "Tencent Hunyuan3D 2.1",
-    seed,
+    provider: "Meshy",
+    model,
+    targetPolycount,
+    taskId,
     sourceReferenceSha256: sha256(image),
-    glbSha256: sha256(model),
-    glbBytes: model.length,
-    createdAt: new Date().toISOString(),
+    createdAt,
+    status: "processing",
+  }, null, 2)}\n`);
+
+  const { task, glbUrl } = await waitForTask(taskId, args.timeoutMinutes);
+  const glb = await downloadGlb(glbUrl);
+  if (glb.length < 10_000 || glb.subarray(0, 4).toString("ascii") !== "glTF") {
+    throw new Error("Generated geometry is not a valid non-empty GLB payload.");
+  }
+  fs.writeFileSync(modelPath, glb);
+  fs.writeFileSync(metadataPath, `${JSON.stringify({
+    masterKey: master.masterKey,
+    ordinal: master.ordinal,
+    baseName: master.baseName,
+    provider: "Meshy",
+    model,
+    targetPolycount,
+    taskId,
+    sourceReferenceSha256: sha256(image),
+    glbSha256: sha256(glb),
+    glbBytes: glb.length,
+    thumbnailUrl: task.thumbnail_url ?? null,
+    createdAt,
+    completedAt: new Date().toISOString(),
     status: "awaiting_cleanup_and_validation",
   }, null, 2)}\n`);
   console.log(modelPath);
