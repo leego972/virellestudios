@@ -1,4 +1,4 @@
-import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure, adminProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { sql } from "drizzle-orm";
@@ -8,6 +8,13 @@ import { generateImage } from "./_core/imageGeneration";
 import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
 import { buildVfxPromptInjection, buildSfxPromptInjection } from "./_core/vfxPromptEngine";
+import {
+  cleanupExpiredSwappysOutputs,
+  listSwappysRetainedOutputs,
+  retainSwappysOutput,
+  setSwappysOutputKeep,
+  SWAPPYS_RETENTION_DAYS,
+} from "./_core/swappysRetention";
 import {
   assertDigitalLikenessConsent,
   buildVfxAuditMetadata,
@@ -129,57 +136,75 @@ function buildStudioPrompt(input: { operations: string[]; intensity: number; sce
 }
 
 const createStudioVfxJobInput = z.object({
-      projectId: z.number(), sceneId: z.number(), operations: z.array(z.string().min(2).max(80)).min(1).max(32), intensity: z.number().min(1).max(100).default(75),
-      sourcePlateUrl: z.string().url().optional().nullable(), actorReferenceUrl: z.string().url().optional().nullable(),
-      sourceImageUrls: z.array(z.string().url()).max(20).optional().default([]), referenceImageUrls: z.array(z.string().url()).max(20).optional().default([]),
-      sourceVideoUrl: z.string().url().optional().nullable(), referenceVideoUrl: z.string().url().optional().nullable(),
-      transformGoal: z.enum(TRANSFORM_GOALS).optional().default("appearance_reference"), targetAge: z.number().min(1).max(120).optional().nullable(), targetPresentation: z.string().max(400).optional().nullable(),
-      consentConfirmed: z.boolean().optional().default(false), consentNotes: z.string().max(2000).optional().nullable(), hideVisibleWatermark: z.boolean().optional().default(false),
-      exportQuality: z.enum(["preview", "final", "master"]).default("preview"), directorNotes: z.string().max(4000).optional().nullable(), runImagePass: z.boolean().optional().default(true),
-    });
+  projectId: z.number(), sceneId: z.number(), operations: z.array(z.string().min(2).max(80)).min(1).max(32), intensity: z.number().min(1).max(100).default(75),
+  sourcePlateUrl: z.string().url().optional().nullable(), actorReferenceUrl: z.string().url().optional().nullable(),
+  sourceImageUrls: z.array(z.string().url()).max(20).optional().default([]), referenceImageUrls: z.array(z.string().url()).max(20).optional().default([]),
+  sourceVideoUrl: z.string().url().optional().nullable(), referenceVideoUrl: z.string().url().optional().nullable(),
+  transformGoal: z.enum(TRANSFORM_GOALS).optional().default("appearance_reference"), targetAge: z.number().min(1).max(120).optional().nullable(), targetPresentation: z.string().max(400).optional().nullable(),
+  consentConfirmed: z.boolean().optional().default(false), consentNotes: z.string().max(2000).optional().nullable(), hideVisibleWatermark: z.boolean().optional().default(false),
+  exportQuality: z.enum(["preview", "final", "master"]).default("preview"), directorNotes: z.string().max(4000).optional().nullable(), runImagePass: z.boolean().optional().default(true),
+});
 type CreateStudioVfxJobInput = z.infer<typeof createStudioVfxJobInput>;
 
 async function executeStudioVfxJob(ctx: any, input: CreateStudioVfxJobInput) {
-      const scene = await db.getSceneById(input.sceneId);
-      if (!scene || (scene as any).projectId !== input.projectId) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found for this project." });
-      const project = await db.getProjectById(input.projectId, ctx.user.id); if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project access denied." });
-      const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await ensureTables(dbConn);
+  const scene = await db.getSceneById(input.sceneId);
+  if (!scene || (scene as any).projectId !== input.projectId) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found for this project." });
+  const project = await db.getProjectById(input.projectId, ctx.user.id);
+  if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project access denied." });
+  const dbConn = await db.getDb();
+  if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+  await ensureTables(dbConn);
 
-      const jobKind = inferJobKind(input.operations, input.transformGoal);
-      const hasSwappys = input.operations.some((op) => SWAPPYS_OPERATIONS.has(op)) || input.transformGoal !== "appearance_reference";
-      if (hasSwappys) requireVfxStudioTier(ctx.user as any, "amateur", "Swappys Digital Double Studio");
-      assertDigitalLikenessConsent({ jobKind, consentConfirmed: input.consentConfirmed });
-      const watermarkMode = getSwappysWatermarkMode({ product: "virelle_studio", user: ctx.user as any, hideVisibleWatermark: hasSwappys ? input.hideVisibleWatermark : false, standalonePaid: false });
-      const mediaCount = input.sourceImageUrls.length + input.referenceImageUrls.length + (input.sourceVideoUrl ? 1 : 0) + (input.referenceVideoUrl ? 1 : 0);
-      const creditCost = getVfxCreditCost({ jobKind, quality: input.exportQuality, operationCount: input.operations.length + Math.ceil(mediaCount / 3) });
+  const jobKind = inferJobKind(input.operations, input.transformGoal);
+  const hasSwappys = input.operations.some((op) => SWAPPYS_OPERATIONS.has(op)) || input.transformGoal !== "appearance_reference";
+  if (hasSwappys) requireVfxStudioTier(ctx.user as any, "amateur", "Swappys Digital Double Studio");
+  assertDigitalLikenessConsent({ jobKind, consentConfirmed: input.consentConfirmed });
+  const watermarkMode = getSwappysWatermarkMode({ product: "virelle_studio", user: ctx.user as any, hideVisibleWatermark: hasSwappys ? input.hideVisibleWatermark : false, standalonePaid: false });
+  const mediaCount = input.sourceImageUrls.length + input.referenceImageUrls.length + (input.sourceVideoUrl ? 1 : 0) + (input.referenceVideoUrl ? 1 : 0);
+  const creditCost = getVfxCreditCost({ jobKind, quality: input.exportQuality, operationCount: input.operations.length + Math.ceil(mediaCount / 3) });
 
-      let balanceAfter: number | null = null;
-      if ((ctx.user as any).role !== "admin") {
-        try { balanceAfter = await db.deductCredits(ctx.user.id, creditCost, "vfx_studio_render", `VFX Studio ${jobKind} ${input.transformGoal} render for scene ${input.sceneId}`); }
-        catch (err: any) { throw new TRPCError({ code: "PAYMENT_REQUIRED", message: err?.message || "Insufficient credits for VFX Studio render." }); }
-      }
+  let balanceAfter: number | null = null;
+  if ((ctx.user as any).role !== "admin") {
+    try {
+      balanceAfter = await db.deductCredits(ctx.user.id, creditCost, "vfx_studio_render", `VFX Studio ${jobKind} ${input.transformGoal} render for scene ${input.sceneId}`);
+    } catch (err: any) {
+      throw new TRPCError({ code: "PAYMENT_REQUIRED", message: err?.message || "Insufficient credits for VFX Studio render." });
+    }
+  }
 
-      const prompt = buildStudioPrompt({ operations: input.operations, intensity: input.intensity, scene, actorReferenceUrl: input.actorReferenceUrl, sourcePlateUrl: input.sourcePlateUrl, sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl, referenceVideoUrl: input.referenceVideoUrl, transformGoal: input.transformGoal, targetAge: input.targetAge, targetPresentation: input.targetPresentation, hideVisibleWatermark: input.hideVisibleWatermark, exportQuality: input.exportQuality, directorNotes: input.directorNotes });
-      const metadata: any = { ...buildVfxAuditMetadata({ product: "virelle_studio", jobKind, quality: input.exportQuality, operations: input.operations, watermarkMode, consentConfirmed: input.consentConfirmed, consentNotes: input.consentNotes || null, sourcePlateUrl: input.sourcePlateUrl || null, actorReferenceUrl: input.actorReferenceUrl || null, estimatedCredits: creditCost }), transform: { goal: input.transformGoal, targetAge: input.targetAge || null, targetPresentation: input.targetPresentation || null }, media: { sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl || null, referenceVideoUrl: input.referenceVideoUrl || null } };
+  const prompt = buildStudioPrompt({ operations: input.operations, intensity: input.intensity, scene, actorReferenceUrl: input.actorReferenceUrl, sourcePlateUrl: input.sourcePlateUrl, sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl, referenceVideoUrl: input.referenceVideoUrl, transformGoal: input.transformGoal, targetAge: input.targetAge, targetPresentation: input.targetPresentation, hideVisibleWatermark: input.hideVisibleWatermark, exportQuality: input.exportQuality, directorNotes: input.directorNotes });
+  const metadata: any = { ...buildVfxAuditMetadata({ product: "virelle_studio", jobKind, quality: input.exportQuality, operations: input.operations, watermarkMode, consentConfirmed: input.consentConfirmed, consentNotes: input.consentNotes || null, sourcePlateUrl: input.sourcePlateUrl || null, actorReferenceUrl: input.actorReferenceUrl || null, estimatedCredits: creditCost }), transform: { goal: input.transformGoal, targetAge: input.targetAge || null, targetPresentation: input.targetPresentation || null }, media: { sourceImageUrls: input.sourceImageUrls, referenceImageUrls: input.referenceImageUrls, sourceVideoUrl: input.sourceVideoUrl || null, referenceVideoUrl: input.referenceVideoUrl || null } };
 
-      let enhancedImageUrl: string | null = null;
-      if (input.runImagePass) {
-        const userKeys = await db.getUserApiKeys(ctx.user.id);
-        const imageUrls = [...input.sourceImageUrls.slice(0, 2), ...input.referenceImageUrls.slice(0, 2)];
-        const originalImages = imageUrls.length ? imageUrls.map((url) => ({ url, mimeType: "image/jpeg" })) : input.sourcePlateUrl ? [{ url: input.sourcePlateUrl, mimeType: "image/jpeg" }] : (scene as any).thumbnailUrl ? [{ url: (scene as any).thumbnailUrl, mimeType: "image/jpeg" }] : undefined;
-        const result = await generateImage({ prompt, originalImages, userOpenAiKey: (userKeys as any).openaiKey || undefined });
-        enhancedImageUrl = result?.url || null;
-      }
+  let enhancedImageUrl: string | null = null;
+  if (input.runImagePass) {
+    const userKeys = await db.getUserApiKeys(ctx.user.id);
+    const imageUrls = [...input.sourceImageUrls.slice(0, 2), ...input.referenceImageUrls.slice(0, 2)];
+    const originalImages = imageUrls.length ? imageUrls.map((url) => ({ url, mimeType: "image/jpeg" })) : input.sourcePlateUrl ? [{ url: input.sourcePlateUrl, mimeType: "image/jpeg" }] : (scene as any).thumbnailUrl ? [{ url: (scene as any).thumbnailUrl, mimeType: "image/jpeg" }] : undefined;
+    const result = await generateImage({ prompt, originalImages, userOpenAiKey: (userKeys as any).openaiKey || undefined });
+    enhancedImageUrl = result?.url || null;
+    if (hasSwappys && enhancedImageUrl) {
+      const retained = await retainSwappysOutput({
+        dbConn,
+        sourceUrl: enhancedImageUrl,
+        ownerUserId: ctx.user.id,
+        requestSubject: `user:${ctx.user.id}:project:${input.projectId}:scene:${input.sceneId}`,
+        product: "virelle_swappys_studio",
+        metadata: { projectId: input.projectId, sceneId: input.sceneId, jobKind, quality: input.exportQuality },
+      });
+      metadata.retention = { outputId: retained.id, expiresAt: retained.expiresAt.toISOString(), days: SWAPPYS_RETENTION_DAYS };
+      void cleanupExpiredSwappysOutputs(dbConn).catch((error: any) => logger.warn(`[SwappysRetention] background cleanup failed: ${error?.message || error}`));
+    }
+  }
 
-      await db.updateScene(input.sceneId, { vfxNotes: prompt, retakeInstructions: prompt, status: "draft" } as any);
-      await dbConn.execute(sql`INSERT INTO scene_vfx_data (sceneId, userId, vfxPackIds, enhancedImageUrl, sfxPrompt, metadata) VALUES (${input.sceneId}, ${ctx.user.id}, ${JSON.stringify(hasSwappys ? [9001] : [])}, ${enhancedImageUrl}, ${prompt}, ${JSON.stringify(metadata)}) ON DUPLICATE KEY UPDATE vfxPackIds = ${JSON.stringify(hasSwappys ? [9001] : [])}, enhancedImageUrl = COALESCE(${enhancedImageUrl}, enhancedImageUrl), sfxPrompt = ${prompt}, metadata = ${JSON.stringify(metadata)}, appliedAt = NOW()`);
-      let swappysJobId: number | null = null;
-      if (hasSwappys) {
-        const insertResult: any = await dbConn.execute(sql`INSERT INTO scene_swappys_exports (sceneId, projectId, userId, sourcePlateUrl, actorReferenceUrl, mode, quality, visibleWatermarkMode, consentConfirmed, consentNotes, creditCost, status, metadata) VALUES (${input.sceneId}, ${input.projectId}, ${ctx.user.id}, ${input.sourcePlateUrl || input.sourceImageUrls[0] || input.sourceVideoUrl || null}, ${input.actorReferenceUrl || input.referenceImageUrls[0] || input.referenceVideoUrl || null}, ${jobKind}, ${input.exportQuality}, ${watermarkMode}, ${input.consentConfirmed ? 1 : 0}, ${input.consentNotes || null}, ${creditCost}, 'queued', ${JSON.stringify(metadata)})`);
-        swappysJobId = insertResult?.[0]?.insertId ?? insertResult?.insertId ?? null;
-      }
-      logger.info(`[VFX Studio] scene=${input.sceneId} kind=${jobKind} goal=${input.transformGoal} media=${mediaCount} credits=${creditCost} watermark=${watermarkMode}`);
-      return { ok: true, jobKind, swappysJobId, enhancedImageUrl, prompt, watermarkMode, creditCost, balanceAfter, metadata };
+  await db.updateScene(input.sceneId, { vfxNotes: prompt, retakeInstructions: prompt, status: "draft" } as any);
+  await dbConn.execute(sql`INSERT INTO scene_vfx_data (sceneId, userId, vfxPackIds, enhancedImageUrl, sfxPrompt, metadata) VALUES (${input.sceneId}, ${ctx.user.id}, ${JSON.stringify(hasSwappys ? [9001] : [])}, ${enhancedImageUrl}, ${prompt}, ${JSON.stringify(metadata)}) ON DUPLICATE KEY UPDATE vfxPackIds = ${JSON.stringify(hasSwappys ? [9001] : [])}, enhancedImageUrl = COALESCE(${enhancedImageUrl}, enhancedImageUrl), sfxPrompt = ${prompt}, metadata = ${JSON.stringify(metadata)}, appliedAt = NOW()`);
+  let swappysJobId: number | null = null;
+  if (hasSwappys) {
+    const insertResult: any = await dbConn.execute(sql`INSERT INTO scene_swappys_exports (sceneId, projectId, userId, sourcePlateUrl, actorReferenceUrl, mode, quality, visibleWatermarkMode, consentConfirmed, consentNotes, creditCost, status, metadata) VALUES (${input.sceneId}, ${input.projectId}, ${ctx.user.id}, ${input.sourcePlateUrl || input.sourceImageUrls[0] || input.sourceVideoUrl || null}, ${input.actorReferenceUrl || input.referenceImageUrls[0] || input.referenceVideoUrl || null}, ${jobKind}, ${input.exportQuality}, ${watermarkMode}, ${input.consentConfirmed ? 1 : 0}, ${input.consentNotes || null}, ${creditCost}, 'queued', ${JSON.stringify(metadata)})`);
+    swappysJobId = insertResult?.[0]?.insertId ?? insertResult?.insertId ?? null;
+  }
+  logger.info(`[VFX Studio] scene=${input.sceneId} kind=${jobKind} goal=${input.transformGoal} media=${mediaCount} credits=${creditCost} watermark=${watermarkMode}`);
+  return { ok: true, jobKind, swappysJobId, enhancedImageUrl, prompt, watermarkMode, creditCost, balanceAfter, metadata };
 }
 
 export const vfxSfxRouter = router({
@@ -208,9 +233,7 @@ export const vfxSfxRouter = router({
   setPackActive: protectedProcedure.input(z.object({ packId: z.number(), packType: z.enum(["vfx", "sfx"]), active: z.boolean() })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await dbConn.execute(sql`UPDATE user_vfx_library SET isActive = ${input.active ? 1 : 0} WHERE userId = ${ctx.user.id} AND packId = ${input.packId} AND packType = ${input.packType}`); return { ok: true }; }),
   getSceneVfxData: protectedProcedure.input(z.object({ sceneId: z.number() })).query(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) return null; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT * FROM scene_vfx_data WHERE sceneId = ${input.sceneId} AND userId = ${ctx.user.id} LIMIT 1`); const data = Array.isArray(rows[0]) ? rows[0] : []; return data[0] || null; }),
 
-  createStudioVfxJob: protectedProcedure
-    .input(createStudioVfxJobInput)
-    .mutation(({ ctx, input }) => executeStudioVfxJob(ctx, input)),
+  createStudioVfxJob: protectedProcedure.input(createStudioVfxJobInput).mutation(({ ctx, input }) => executeStudioVfxJob(ctx, input)),
 
   createSwappysDigitalDoubleJob: protectedProcedure
     .input(z.object({ projectId: z.number(), sceneId: z.number(), sourcePlateUrl: z.string().url().optional().nullable(), actorReferenceUrl: z.string().url().optional().nullable(), sourceImageUrls: z.array(z.string().url()).max(20).optional().default([]), referenceImageUrls: z.array(z.string().url()).max(20).optional().default([]), sourceVideoUrl: z.string().url().optional().nullable(), referenceVideoUrl: z.string().url().optional().nullable(), transformGoal: z.enum(TRANSFORM_GOALS).optional().default("appearance_reference"), targetAge: z.number().min(1).max(120).optional().nullable(), targetPresentation: z.string().max(400).optional().nullable(), consentConfirmed: z.boolean(), consentNotes: z.string().max(2000).optional().nullable(), hideVisibleWatermark: z.boolean().optional().default(false), quality: z.enum(["preview", "final", "master"]).default("preview"), mode: z.enum(["digital_double", "stunt_face_replacement", "actor_continuity_match", "pickup_scene_match", "ai_stunt_insert"]).default("digital_double"), instructions: z.string().max(4000).optional().nullable() }))
@@ -229,10 +252,31 @@ export const vfxSfxRouter = router({
   setProjectVfxTheme: protectedProcedure.input(z.object({ projectId: z.number(), vfxPackIds: z.array(z.number()), sfxPackIds: z.array(z.number()), themeName: z.string().max(120).optional() })).mutation(async ({ ctx, input }) => { const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" }); await ensureTables(dbConn); await dbConn.execute(sql`INSERT INTO project_vfx_theme (projectId, userId, vfxPackIds, sfxPackIds, themeName) VALUES (${input.projectId}, ${ctx.user.id}, ${JSON.stringify(input.vfxPackIds)}, ${JSON.stringify(input.sfxPackIds)}, ${input.themeName || null}) ON DUPLICATE KEY UPDATE vfxPackIds = ${JSON.stringify(input.vfxPackIds)}, sfxPackIds = ${JSON.stringify(input.sfxPackIds)}, themeName = ${input.themeName || null}, setAt = NOW()`); return { ok: true }; }),
   getActivePipelineContext: protectedProcedure.query(async ({ ctx }) => { const dbConn = await db.getDb(); if (!dbConn) return { vfxPrompt: "", sfxPrompt: "", activeCount: 0 }; await ensureTables(dbConn); const rows: any = await dbConn.execute(sql`SELECT packId, packType FROM user_vfx_library WHERE userId = ${ctx.user.id} AND isActive = 1`); const data: any[] = Array.isArray(rows[0]) ? rows[0] : []; const vfxIds = data.filter(r => r.packType === "vfx").map(r => Number(r.packId)); const sfxIds = data.filter(r => r.packType === "sfx").map(r => Number(r.packId)); return { vfxPrompt: buildVfxPromptInjection(vfxIds), sfxPrompt: buildSfxPromptInjection(sfxIds), activeCount: data.length, vfxPackNames: VFX_PACKS.filter(p => vfxIds.includes(p.id)).map(p => p.name), sfxPackNames: SFX_PACKS.filter(p => sfxIds.includes(p.id)).map(p => p.name) }; }),
 
-  // v7.3 — Swappys Mobile funnel endpoint.
-  // Public so the free mobile app works without an account; anonymous and free-tier
-  // results always carry the visible "SWAPPYS PREVIEW" watermark. Creator+ logged-in
-  // users get the clean, full-quality output — this IS the upgrade funnel.
+  adminListSwappysRetainedOutputs: adminProcedure
+    .input(z.object({ limit: z.number().int().min(1).max(200).default(100), keptOnly: z.boolean().default(false) }))
+    .query(async ({ input }) => {
+      const dbConn = await db.getDb();
+      if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      return listSwappysRetainedOutputs({ dbConn, limit: input.limit, keptOnly: input.keptOnly });
+    }),
+
+  adminSetSwappysOutputKeep: adminProcedure
+    .input(z.object({ outputId: z.number().int().positive(), keep: z.boolean(), reason: z.string().max(500).optional().nullable() }))
+    .mutation(async ({ ctx, input }) => {
+      const dbConn = await db.getDb();
+      if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      await setSwappysOutputKeep({ dbConn, outputId: input.outputId, keep: input.keep, adminUserId: ctx.user.id, reason: input.reason });
+      return { ok: true, outputId: input.outputId, keep: input.keep };
+    }),
+
+  adminCleanupSwappysExpiredOutputs: adminProcedure.mutation(async () => {
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    return cleanupExpiredSwappysOutputs(dbConn);
+  }),
+
+  // Standalone Swappys results remain private and are never published by Virelle.
+  // A private server copy is retained for 30 days unless an administrator marks it Keep.
   swappysMobileSwap: publicProcedure
     .input(z.object({
       sourceImageBase64: z.string().min(50).max(15_000_000),
@@ -248,15 +292,40 @@ export const vfxSfxRouter = router({
         const result = await generateImage({
           prompt: hasWatermark
             ? "Perform a photorealistic face swap: place the face from the first reference image naturally onto the person in the second reference image, matching skin tone, lighting and angle. Family-friendly output. Add a large semi-transparent diagonal watermark reading 'SWAPPYS PREVIEW · virelle.life' repeated across the image."
-            : "Perform a photorealistic, high-fidelity face swap: place the face from the first reference image naturally onto the person in the second reference image, seamlessly matching skin tone, lighting, grain and angle. Professional studio quality, no watermark.",
+            : "Perform a photorealistic, high-fidelity face swap: place the face from the first reference image naturally onto the person in the second reference image, seamlessly matching skin tone, lighting, grain and angle. Professional studio quality, no watermark. Family-friendly and non-explicit output only.",
           originalImages: [
             { b64Json: input.sourceImageBase64.replace(/^data:image\/[a-z]+;base64,/, "") },
             { b64Json: input.targetImageBase64.replace(/^data:image\/[a-z]+;base64,/, "") },
           ],
         });
         if (!result?.url) throw new Error("no output");
-        logger.info(`[SwappysMobile] swap ok user=${user?.id || "anon"} tier=${tier} watermark=${hasWatermark}`);
-        return { imageUrl: result.url, hasWatermark, tier, upgradeUrl: "https://virelle.life/pricing" };
+
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new Error("output retention database unavailable");
+        const requestSubject = [
+          user?.id ? `user:${user.id}` : "anonymous",
+          String((ctx as any).req?.ip || "unknown-ip"),
+          String((ctx as any).req?.headers?.["user-agent"] || "unknown-agent"),
+        ].join(":");
+        const retained = await retainSwappysOutput({
+          dbConn,
+          sourceUrl: result.url,
+          ownerUserId: user?.id || null,
+          requestSubject,
+          product: "swappys_mobile",
+          metadata: { tier, hasWatermark, client: String((ctx as any).req?.headers?.["x-swappys-client"] || "unknown") },
+        });
+        void cleanupExpiredSwappysOutputs(dbConn).catch((error: any) => logger.warn(`[SwappysRetention] background cleanup failed: ${error?.message || error}`));
+
+        logger.info(`[SwappysMobile] swap ok user=${user?.id || "anon"} tier=${tier} watermark=${hasWatermark} retained=${retained.id || "unknown"}`);
+        return {
+          imageUrl: result.url,
+          hasWatermark,
+          tier,
+          upgradeUrl: "https://virelle.life/pricing",
+          retentionDays: SWAPPYS_RETENTION_DAYS,
+          retainedUntil: retained.expiresAt.toISOString(),
+        };
       } catch (e: any) {
         logger.warn(`[SwappysMobile] swap failed: ${e?.message}`);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Swap failed — try clearer, well-lit photos." });
