@@ -65,10 +65,28 @@ patch("client/src/pages/WardrobeMarketplacePage.tsx", [
     before: '    const baseName = item.name?.split(" — ")[0] ?? item.name;\n    const variants = groupedVariants.get(baseName) ?? [];\n    variants.push(item);\n    groupedVariants.set(baseName, variants);\n',
     after: '    const baseName = item.name?.split(" — ")[0] ?? item.name;\n    const groupKey = item.masterReferenceKey || `${baseName}:${item.genderFit || "unisex"}:${item.category || "garment"}:${item.subcategory || "default"}`;\n    const variants = groupedVariants.get(groupKey) ?? [];\n    variants.push(item);\n    groupedVariants.set(groupKey, variants);\n',
   },
+]);
+
+patch("scripts/lamalo360/blender/render_turntable.py", [
   {
-    label: "Australian price label",
-    before: '{designCount} designs · {itemCount} separate colour SKUs · From A${(minItemCents / 100).toFixed(2)} each',
-    after: '{designCount} designs · {itemCount} separate colour SKUs · From A${(minItemCents / 100).toFixed(2)} each',
+    label: "texture argument",
+    before: '    parser.add_argument("--colour", default=None, help="Optional #RRGGBB material tint")\n',
+    after: '    parser.add_argument("--colour", default=None, help="Optional #RRGGBB material tint")\n    parser.add_argument("--texture", default=None, help="Optional seamless albedo texture")\n',
+  },
+  {
+    label: "texture material function",
+    before: '\ndef create_material(name, colour, roughness=0.65):\n',
+    after: '\ndef apply_texture_materials(meshes, texture_path):\n    image = bpy.data.images.load(str(texture_path), check_existing=True)\n    for obj in meshes:\n        for material in obj.data.materials:\n            if not material:\n                continue\n            material.use_nodes = True\n            nodes = material.node_tree.nodes\n            links = material.node_tree.links\n            principled = next((node for node in nodes if node.type == "BSDF_PRINCIPLED"), None)\n            if principled is None:\n                principled = nodes.new("ShaderNodeBsdfPrincipled")\n                output = next((node for node in nodes if node.type == "OUTPUT_MATERIAL"), None) or nodes.new("ShaderNodeOutputMaterial")\n                links.new(principled.outputs["BSDF"], output.inputs["Surface"])\n            texture = nodes.new("ShaderNodeTexImage")\n            texture.image = image\n            texture.interpolation = "Linear"\n            texture.extension = "REPEAT"\n            mapping = nodes.new("ShaderNodeMapping")\n            texcoord = nodes.new("ShaderNodeTexCoord")\n            mapping.inputs["Scale"].default_value = (3.0, 3.0, 3.0)\n            links.new(texcoord.outputs["UV"], mapping.inputs["Vector"])\n            links.new(mapping.outputs["Vector"], texture.inputs["Vector"])\n            base = principled.inputs.get("Base Color")\n            if base.is_linked:\n                links.remove(base.links[0])\n            links.new(texture.outputs["Color"], base)\n            roughness = principled.inputs.get("Roughness")\n            if roughness and not roughness.is_linked:\n                roughness.default_value = 0.58\n\n\ndef create_material(name, colour, roughness=0.65):\n',
+  },
+  {
+    label: "texture application",
+    before: '    if args.colour:\n        tint_materials(meshes, args.colour)\n',
+    after: '    if args.texture:\n        apply_texture_materials(meshes, Path(args.texture).resolve())\n    elif args.colour:\n        tint_materials(meshes, args.colour)\n',
+  },
+  {
+    label: "texture metadata",
+    before: '        "colourHex": args.colour,\n',
+    after: '        "colourHex": args.colour,\n        "texture": str(Path(args.texture).resolve()) if args.texture else None,\n',
   },
 ]);
 
