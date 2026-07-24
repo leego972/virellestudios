@@ -18,7 +18,6 @@ on:
       - "client/src/components/WelcomeOutfitPicker.tsx"
       - "client/src/pages/Home.tsx"
       - "scripts/check-lamalo-welcome-contract.mjs"
-      - "scripts/finalize-lamalo-master-variants.mjs"
       - "server/wardrobePurchaseFulfillment.test.ts"
       - "server/wardrobeContinuity.test.ts"
       - "server/sceneWardrobeContinuity.test.ts"
@@ -46,7 +45,7 @@ on:
       - ".github/workflows/lamalo-wardrobe-integrity.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   verify:
@@ -54,20 +53,6 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: feature/lamalo-master-360-variants
-          fetch-depth: 0
-      - name: Apply pending Lamalo source cleanup
-        if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
-        run: |
-          node scripts/finalize-lamalo-master-variants.mjs
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add client/src/pages/WardrobeMarketplacePage.tsx server/lamalo-seed.ts server/_core/wardrobeContinuity.ts
-          if ! git diff --cached --quiet; then
-            git commit -m "Finalize Lamalo colour SKU presentation"
-            git push origin HEAD:refs/heads/feature/lamalo-master-360-variants
-          fi
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
