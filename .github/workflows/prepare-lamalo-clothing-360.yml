@@ -10,6 +10,15 @@ on:
       - "server/_core/lamaloMasterReferences.ts"
       - "client/src/components/Lamalo360Viewer.tsx"
       - "drizzle/0044_lamalo_true_360_assets.sql"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "scripts/lamalo360/**"
+      - ".github/workflows/prepare-lamalo-clothing-360.yml"
+      - "server/_core/lamaloMasterReferences.ts"
+      - "client/src/components/Lamalo360Viewer.tsx"
+      - "drizzle/0044_lamalo_true_360_assets.sql"
 
 permissions:
   contents: write
@@ -39,7 +48,7 @@ jobs:
         run: node scripts/lamalo360/apply-codebase-integration.mjs
 
       - name: Add official glTF validator
-        run: pnpm add --save-dev gltf-validator@2.0.0-dev.3.10
+        run: pnpm add --save-dev gltf-validator
 
       - name: Compile clothing-only production manifest
         run: node scripts/lamalo360/catalogue.mjs
