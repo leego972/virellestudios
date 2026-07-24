@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import SwappysRetentionAdminPanel from "@/components/SwappysRetentionAdminPanel";
 import {
   Archive,
   Ban,
@@ -13,18 +14,16 @@ import {
   Loader2,
   RefreshCcw,
   ShieldCheck,
-  XCircle,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 
-type VaultTab = "archive" | "review" | "blacklist" | "access";
+type VaultTab = "archive" | "swappys" | "review" | "blacklist" | "access";
 
 function formatDate(value: unknown): string {
   if (!value) return "—";
   const date = new Date(String(value));
-  return Number.isNaN(date.getTime())
-    ? String(value)
-    : date.toLocaleString("en-AU");
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString("en-AU");
 }
 
 function badgeVariant(status: string) {
@@ -109,9 +108,7 @@ export default function ComplianceAdminVault() {
   };
 
   const dismiss = async (incidentId: number) => {
-    const notes = window.prompt(
-      "Record why this request is lawful or was misclassified:",
-    );
+    const notes = window.prompt("Record why this request is lawful or was misclassified:");
     if (!notes || notes.trim().length < 3) return;
     try {
       await dismissIncident.mutateAsync({ incidentId, notes: notes.trim() });
@@ -128,9 +125,7 @@ export default function ComplianceAdminVault() {
       "Describe the reviewed evidence proving the serious violation. A prompt alone is not sufficient:",
     );
     if (!notes || notes.trim().length < 10) return;
-    const phrase = window.prompt(
-      'Type exactly: CONFIRM PERMANENT DEACTIVATION',
-    );
+    const phrase = window.prompt('Type exactly: CONFIRM PERMANENT DEACTIVATION');
     if (phrase !== "CONFIRM PERMANENT DEACTIVATION") {
       toast.error("Confirmation did not match. No account action was taken.");
       return;
@@ -141,9 +136,7 @@ export default function ComplianceAdminVault() {
         notes: notes.trim(),
         confirmation: "CONFIRM PERMANENT DEACTIVATION",
       });
-      toast.success(
-        "Violation confirmed. Account deactivated and related evidence placed on legal hold.",
-      );
+      toast.success("Violation confirmed. Account deactivated and related evidence placed on legal hold.");
       refresh();
     } catch (error: any) {
       toast.error(error?.message || "Could not confirm the violation.");
@@ -186,6 +179,7 @@ export default function ComplianceAdminVault() {
 
   const tabs: Array<{ key: VaultTab; label: string; icon: typeof Archive }> = [
     { key: "archive", label: "Retention Archive", icon: Archive },
+    { key: "swappys", label: "Swappys Results", icon: Sparkles },
     { key: "review", label: "Review Queue", icon: FileWarning },
     { key: "blacklist", label: "Blacklisted Users", icon: Ban },
     { key: "access", label: "Access Audit", icon: Gavel },
@@ -255,6 +249,8 @@ export default function ComplianceAdminVault() {
           ))}
         </nav>
 
+        {tab === "swappys" && <SwappysRetentionAdminPanel />}
+
         {tab === "archive" && (
           <Card className="border-white/10 bg-white/[0.025] text-white">
             <CardHeader>
@@ -265,15 +261,10 @@ export default function ComplianceAdminVault() {
             </CardHeader>
             <CardContent className="space-y-3">
               {(archive.data || []).map((record: any) => (
-                <article
-                  key={record.id}
-                  className="rounded-xl border border-white/10 bg-black/20 p-4"
-                >
+                <article key={record.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <h3 className="font-medium">
-                        Archive #{record.id} · {record.accountName}
-                      </h3>
+                      <h3 className="font-medium">Archive #{record.id} · {record.accountName}</h3>
                       <p className="mt-1 text-xs text-white/45">
                         Account #{record.userId} · {record.email} · {record.workspace} workspace · {record.mediaKind}
                       </p>
@@ -287,12 +278,8 @@ export default function ComplianceAdminVault() {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant={badgeVariant(record.archiveStatus)}>
-                        {record.archiveStatus}
-                      </Badge>
-                      {record.legalHold && (
-                        <Badge variant="destructive">Legal hold</Badge>
-                      )}
+                      <Badge variant={badgeVariant(record.archiveStatus)}>{record.archiveStatus}</Badge>
+                      {record.legalHold && <Badge variant="destructive">Legal hold</Badge>}
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -338,22 +325,15 @@ export default function ComplianceAdminVault() {
                 A blocked request does not deactivate an account. Permanent action requires reviewed evidence proving a serious violation; a prompt or classifier result alone is insufficient.
               </div>
               {(incidents.data || []).map((incident: any) => (
-                <article
-                  key={incident.id}
-                  className="rounded-xl border border-white/10 bg-black/20 p-4"
-                >
+                <article key={incident.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h3 className="font-medium">
-                        Incident #{incident.id} · {String(incident.category).replaceAll("_", " ")}
-                      </h3>
+                      <h3 className="font-medium">Incident #{incident.id} · {String(incident.category).replaceAll("_", " ")}</h3>
                       <p className="mt-1 text-xs text-white/45">
                         {incident.accountName || incident.email} · Account #{incident.userId} · {incident.workspace} workspace · {formatDate(incident.createdAt)}
                       </p>
                     </div>
-                    <Badge variant={badgeVariant(incident.status)}>
-                      {String(incident.status).replaceAll("_", " ")}
-                    </Badge>
+                    <Badge variant={badgeVariant(incident.status)}>{String(incident.status).replaceAll("_", " ")}</Badge>
                   </div>
                   {incident.requestSummary && (
                     <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-lg border border-white/10 bg-black/30 p-3 font-sans text-xs leading-relaxed text-white/65">
@@ -367,22 +347,11 @@ export default function ComplianceAdminVault() {
                   )}
                   {incident.status === "blocked_pending_review" && (
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-white/15 bg-white/[0.03]"
-                        onClick={() => dismiss(Number(incident.id))}
-                      >
-                        <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Dismiss / allow
+                      <Button size="sm" variant="outline" className="border-white/15 bg-white/[0.03]" onClick={() => dismiss(Number(incident.id))}>
+                        <CheckCircle2 className="mr-2 h-4 w-4" /> Dismiss / allow
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => confirm(Number(incident.id))}
-                      >
-                        <Ban className="mr-2 h-4 w-4" />
-                        Confirm serious violation
+                      <Button size="sm" variant="destructive" onClick={() => confirm(Number(incident.id))}>
+                        <Ban className="mr-2 h-4 w-4" /> Confirm serious violation
                       </Button>
                     </div>
                   )}
@@ -405,15 +374,10 @@ export default function ComplianceAdminVault() {
             </CardHeader>
             <CardContent className="space-y-3">
               {(blacklist.data || []).map((record: any) => (
-                <article
-                  key={record.id}
-                  className="rounded-xl border border-red-500/15 bg-black/20 p-4"
-                >
+                <article key={record.id} className="rounded-xl border border-red-500/15 bg-black/20 p-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h3 className="font-medium">
-                        {record.verifiedLegalName || record.accountName || record.email}
-                      </h3>
+                      <h3 className="font-medium">{record.verifiedLegalName || record.accountName || record.email}</h3>
                       <p className="mt-1 text-xs text-white/45">
                         Account #{record.userId} · {record.email} · {record.verifiedPhone || record.phone || "phone unavailable"}
                       </p>
@@ -429,20 +393,10 @@ export default function ComplianceAdminVault() {
                     <span>Evidence source: {record.sourceType} #{record.sourceId || "—"}</span>
                     <span>Blacklisted: {formatDate(record.blacklistedAt)}</span>
                   </div>
-                  {record.reviewNotes && (
-                    <p className="mt-3 text-sm leading-relaxed text-white/65">
-                      {record.reviewNotes}
-                    </p>
-                  )}
+                  {record.reviewNotes && <p className="mt-3 text-sm leading-relaxed text-white/65">{record.reviewNotes}</p>}
                   {record.archiveId && (
-                    <Button
-                      className="mt-4"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => openArchive(Number(record.archiveId))}
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Open retained evidence
+                    <Button className="mt-4" size="sm" variant="outline" onClick={() => openArchive(Number(record.archiveId))}>
+                      <Download className="mr-2 h-4 w-4" /> Open retained evidence
                     </Button>
                   )}
                 </article>
@@ -464,13 +418,8 @@ export default function ComplianceAdminVault() {
             </CardHeader>
             <CardContent className="space-y-2">
               {(accessLog.data || []).map((entry: any) => (
-                <div
-                  key={entry.id}
-                  className="rounded-lg border border-white/10 bg-black/20 p-3"
-                >
-                  <div className="font-medium">
-                    {String(entry.action).replaceAll("_", " ")}
-                  </div>
+                <div key={entry.id} className="rounded-lg border border-white/10 bg-black/20 p-3">
+                  <div className="font-medium">{String(entry.action).replaceAll("_", " ")}</div>
                   <p className="mt-1 text-xs text-white/45">
                     {entry.adminEmail || entry.adminName} · {formatDate(entry.createdAt)} · archive {entry.archiveId || "—"} · incident {entry.incidentId || "—"} · target account {entry.targetUserId || "—"}
                   </p>
