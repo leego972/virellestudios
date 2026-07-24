@@ -93,8 +93,11 @@ export function buildLamaloVariantTags(input: {
   subcategory?: string | null;
   existingTags?: unknown;
   turntableReady?: boolean;
+  /** Compatibility alias for seed rows that are still queued. */
+  referencePackReady?: boolean;
 }): string[] {
   const angleTarget = lamaloReferenceAngleTarget(input.category, input.subcategory);
+  const turntableReady = input.turntableReady ?? input.referencePackReady ?? false;
   const managedPrefixes = [
     "lamalo-master:",
     "lamalo-clothing:",
@@ -117,8 +120,8 @@ export function buildLamaloVariantTags(input: {
     `selected-colour:${lamaloSlug(input.selectedColour)}`,
     `reference-angle-target:${angleTarget}`,
     `render-pipeline:${LAMALO_RENDER_PIPELINE_VERSION}`,
-    input.turntableReady ? "reference-pack:360-ready" : "reference-pack:pending",
-    input.turntableReady ? `turntable:${LAMALO_TURNTABLE_FRAMES}-ready` : "turntable:pending",
+    turntableReady ? "reference-pack:360-ready" : "reference-pack:pending",
+    turntableReady ? `turntable:${LAMALO_TURNTABLE_FRAMES}-ready` : "turntable:pending",
   ]));
 }
 
