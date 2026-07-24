@@ -464,6 +464,7 @@ function ItemCard({
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
   const priceLabel = `A${(cents / 100).toFixed(2)}`;
+  const referencePackReady = Array.isArray(item.styleTags) && item.styleTags.includes("reference-pack:360-ready");
 
   return (
     <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20">
@@ -484,7 +485,7 @@ function ItemCard({
           <p className="text-xs font-bold text-white leading-tight line-clamp-2">{baseName}</p>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             <Badge className="bg-purple-500/15 text-purple-200 border border-purple-400/30 text-[9px] px-1.5 py-0">Virtual item</Badge>
-            <Badge className="bg-amber-500/10 text-amber-300 border border-amber-500/25 text-[9px] px-1.5 py-0">Shared 360° master</Badge>
+            <Badge className="bg-amber-500/10 text-amber-300 border border-amber-500/25 text-[9px] px-1.5 py-0">{referencePackReady ? "360° master ready" : "360° master queued"}</Badge>
           </div>
         </div>
 

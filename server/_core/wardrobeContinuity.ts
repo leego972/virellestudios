@@ -140,7 +140,7 @@ export function buildWardrobePromptAnchor(item: WardrobeItemRecord, notes?: stri
     item.primaryImageUrl && `primary reference image: ${item.primaryImageUrl}`,
     notes?.trim() && `placement and fit notes: ${notes.trim()}`,
     "LOCK: preserve the same garment design, cut, selected colour, material, fit, logos, damage and accessories in every assigned scene until the assignment range ends.",
-  ].filter(Boolean).join(";  ").replace(/;  /g, ";  ");
+  ].filter(Boolean).join("; ");
 }
 
 export function resolveWardrobeForScene(

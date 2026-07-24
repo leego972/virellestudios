@@ -114,7 +114,7 @@ function cc(base: BaseItem, colors: string[]): SeedItem[] {
       `SELECTED COLOUR HARD-LOCK: ${color}`,
       "Use the shared Lamalo master reference geometry for exact cut, construction, seams, proportions, hardware, fabric behaviour and silhouette",
       "Never copy the neutral master colour into the final scene; render only the selected colour SKU",
-    ].join(";  ").replace(";   ", ";  ");
+    ].join("; ");
     return {
       ...base,
       name: `${base.name} — ${color}`,
