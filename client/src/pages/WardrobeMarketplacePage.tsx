@@ -454,7 +454,6 @@ function ItemCard({
   onBuy: (itemId: number) => void;
   isBuying: (itemId: number) => boolean;
 }) {
-  const [imgErr, setImgErr] = useState(false);
   const [selectedId, setSelectedId] = useState<number>(() => variants[0]?.id);
   useEffect(() => {
     if (!variants.some((variant) => variant.id === selectedId)) setSelectedId(variants[0]?.id);

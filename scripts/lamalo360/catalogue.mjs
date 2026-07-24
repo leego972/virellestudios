@@ -304,6 +304,39 @@ export function compileLamaloClothingCatalogue(seedSource = fs.readFileSync(SEED
   };
 }
 
+const PRODUCTION_STATE_FIELDS = [
+  "status",
+  "sourceReferenceStatus",
+  "geometryStatus",
+  "pbrStatus",
+  "turntableStatus",
+  "qualityStatus",
+  "publishedAt",
+  "model3dUrl",
+  "publishedColourSkus",
+  "updatedVariants",
+  "failedAt",
+  "lastError",
+];
+
+function mergeProductionState(next, existing) {
+  const previousByKey = new Map((existing?.masters ?? []).map((master) => [master.masterKey, master]));
+  next.generatedAt = existing?.generatedAt || next.generatedAt;
+  if (existing?.updatedAt) next.updatedAt = existing.updatedAt;
+  next.masters = next.masters.map((master) => {
+    const previous = previousByKey.get(master.masterKey);
+    if (!previous) return master;
+    const state = {};
+    for (const field of PRODUCTION_STATE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(previous, field)) state[field] = previous[field];
+    }
+    return { ...master, ...state };
+  });
+  next.summary.completedBaseDesigns = next.masters.filter((master) => master.status === "published").length;
+  next.summary.failedBaseDesigns = next.masters.filter((master) => master.status === "failed").length;
+  return next;
+}
+
 function parseArgs(argv) {
   const args = { output: DEFAULT_OUTPUT, check: false };
   for (let i = 2; i < argv.length; i += 1) {
@@ -316,13 +349,12 @@ function parseArgs(argv) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = parseArgs(process.argv);
-  const catalogue = compileLamaloClothingCatalogue();
+  const current = fs.existsSync(args.output) ? JSON.parse(fs.readFileSync(args.output, "utf8")) : null;
+  const catalogue = mergeProductionState(compileLamaloClothingCatalogue(), current);
   const serialized = `${JSON.stringify(catalogue, null, 2)}\n`;
   if (args.check) {
-    if (!fs.existsSync(args.output)) throw new Error(`Missing generated manifest: ${args.output}`);
-    const current = JSON.parse(fs.readFileSync(args.output, "utf8"));
-    const comparable = { ...catalogue, generatedAt: current.generatedAt };
-    if (`${JSON.stringify(comparable, null, 2)}\n` !== `${JSON.stringify(current, null, 2)}\n`) {
+    if (!current) throw new Error(`Missing generated manifest: ${args.output}`);
+    if (serialized !== `${JSON.stringify(current, null, 2)}\n`) {
       throw new Error("Lamalo clothing manifest is stale. Run pnpm lamalo360:catalogue.");
     }
     console.log(`Lamalo clothing manifest is current: ${catalogue.summary.clothingBaseDesigns} masters, ${catalogue.summary.separateColourSkus} colour SKUs.`);
