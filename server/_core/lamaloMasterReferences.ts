@@ -1,18 +1,28 @@
-import { and, asc, eq, like } from "drizzle-orm";
+import { and, asc, eq, like, type SQL } from "drizzle-orm";
 import { getDb } from "../db";
 import { designerProfiles, wardrobeItems } from "../../drizzle/schema";
 
 export const LAMALO_BRAND_NAME = "Lamalo Fashion";
-export const LAMALO_MINIMUM_360_ANGLES = 6;
-export const LAMALO_STANDARD_360_ANGLES = 12;
-export const LAMALO_COMPLEX_360_ANGLES = 24;
+export const LAMALO_TURNTABLE_FRAMES = 36;
+export const LAMALO_STANDARD_REFERENCE_ANGLES = 12;
+export const LAMALO_COMPLEX_REFERENCE_ANGLES = 24;
+export const LAMALO_RENDER_PIPELINE_VERSION = 2;
 
 export interface LamaloVariantMetadata {
   baseDesignName: string;
   selectedColour?: string;
   masterReferenceKey: string;
-  angleTarget: number;
-  referencePackReady: boolean;
+  continuityAngleTarget: number;
+  turntableFrameCount: number;
+  model3dUrl?: string;
+  turntableReady: boolean;
+}
+
+export interface LamaloPublishedColourVariant {
+  turntableFrameUrls: string[];
+  continuityImageUrls: string[];
+  primaryImageUrl?: string;
+  solidColourHex?: string;
 }
 
 function jsonStrings(value: unknown): string[] {
@@ -31,6 +41,12 @@ function jsonStrings(value: unknown): string[] {
   return [];
 }
 
+function validUrls(value: unknown, max = Number.POSITIVE_INFINITY): string[] {
+  return Array.from(new Set(jsonStrings(value)
+    .filter((url) => /^https:\/\//i.test(url))))
+    .slice(0, max);
+}
+
 export function lamaloBaseDesignName(itemName: string): string {
   return String(itemName || "").split(" — ")[0]?.trim() || String(itemName || "").trim();
 }
@@ -42,59 +58,83 @@ export function lamaloSlug(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 120);
+    .slice(0, 160);
 }
 
-export function lamaloMasterReferenceKey(baseDesignName: string): string {
-  return `lamalo-master:${lamaloSlug(lamaloBaseDesignName(baseDesignName))}`;
+export function lamaloMasterReferenceKey(input: string | {
+  baseDesignName: string;
+  genderFit?: string | null;
+  category?: string | null;
+  subcategory?: string | null;
+}): string {
+  if (typeof input === "string") return `lamalo-clothing:${lamaloSlug(lamaloBaseDesignName(input))}`;
+  return [
+    "lamalo-clothing",
+    lamaloSlug(lamaloBaseDesignName(input.baseDesignName)),
+    lamaloSlug(input.genderFit || "unisex"),
+    lamaloSlug(input.category || "garment"),
+    lamaloSlug(input.subcategory || "default"),
+  ].join(":");
 }
 
 export function lamaloReferenceAngleTarget(category?: string | null, subcategory?: string | null): number {
   const combined = `${category || ""} ${subcategory || ""}`.toLowerCase();
-  if (/outerwear|coat|jacket|blazer|suit|dress|jumpsuit|footwear|shoe|boot|bag|handbag|uniform|armour|costume/.test(combined)) {
-    return LAMALO_COMPLEX_360_ANGLES;
+  if (/outerwear|coat|jacket|blazer|suit|dress|jumpsuit|uniform|armour|costume|tracksuit|pyjama/.test(combined)) {
+    return LAMALO_COMPLEX_REFERENCE_ANGLES;
   }
-  return LAMALO_STANDARD_360_ANGLES;
+  return LAMALO_STANDARD_REFERENCE_ANGLES;
 }
 
 export function buildLamaloVariantTags(input: {
   baseDesignName: string;
   selectedColour: string;
+  masterReferenceKey?: string;
   category?: string | null;
   subcategory?: string | null;
   existingTags?: unknown;
-  referencePackReady?: boolean;
+  turntableReady?: boolean;
 }): string[] {
   const angleTarget = lamaloReferenceAngleTarget(input.category, input.subcategory);
   const managedPrefixes = [
     "lamalo-master:",
+    "lamalo-clothing:",
     "selected-colour:",
     "reference-angle-target:",
     "reference-pack:",
+    "turntable:",
+    "render-pipeline:",
   ];
   const existing = jsonStrings(input.existingTags).filter(
     (tag) => !managedPrefixes.some((prefix) => tag.startsWith(prefix)),
   );
+  const masterReferenceKey = input.masterReferenceKey || lamaloMasterReferenceKey(input.baseDesignName);
   return Array.from(new Set([
     ...existing,
     "lamalo-colour-sku",
     "separate-purchase",
-    "shared-master-geometry",
-    lamaloMasterReferenceKey(input.baseDesignName),
+    "shared-3d-master-geometry",
+    masterReferenceKey,
     `selected-colour:${lamaloSlug(input.selectedColour)}`,
     `reference-angle-target:${angleTarget}`,
-    input.referencePackReady ? "reference-pack:360-ready" : "reference-pack:pending",
+    `render-pipeline:${LAMALO_RENDER_PIPELINE_VERSION}`,
+    input.turntableReady ? "reference-pack:360-ready" : "reference-pack:pending",
+    input.turntableReady ? `turntable:${LAMALO_TURNTABLE_FRAMES}-ready` : "turntable:pending",
   ]));
 }
 
+/** Canonical 12/24 still references supplied to scene-generation providers. */
 export function wardrobeReferenceImages(item: {
   primaryImageUrl?: string | null;
   imageUrls?: unknown;
-}, max = LAMALO_STANDARD_360_ANGLES): string[] {
-  const values = [item.primaryImageUrl, ...jsonStrings(item.imageUrls)]
-    .filter((value): value is string => typeof value === "string" && /^https?:\/\//i.test(value.trim()))
-    .map((value) => value.trim());
-  return Array.from(new Set(values)).slice(0, Math.max(1, max));
+}, max = LAMALO_STANDARD_REFERENCE_ANGLES): string[] {
+  return validUrls([item.primaryImageUrl, ...jsonStrings(item.imageUrls)], Math.max(1, max));
+}
+
+/** All 36 deterministic frames used only by the interactive shop turntable. */
+export function wardrobeTurntableFrames(item: {
+  turntableFrameUrls?: unknown;
+}): string[] {
+  return validUrls(item.turntableFrameUrls, LAMALO_TURNTABLE_FRAMES);
 }
 
 export function lamaloVariantMetadata(item: {
@@ -102,43 +142,72 @@ export function lamaloVariantMetadata(item: {
   colors?: unknown;
   category?: string | null;
   subcategory?: string | null;
+  genderFit?: string | null;
   styleTags?: unknown;
   imageUrls?: unknown;
   primaryImageUrl?: string | null;
+  masterReferenceKey?: string | null;
+  model3dUrl?: string | null;
+  turntableFrameUrls?: unknown;
+  turntableFrameCount?: number | null;
+  turntableStatus?: string | null;
 }): LamaloVariantMetadata {
   const baseDesignName = lamaloBaseDesignName(item.name);
-  const tags = jsonStrings(item.styleTags);
   const colours = jsonStrings(item.colors);
-  const targetTag = tags.find((tag) => tag.startsWith("reference-angle-target:"));
-  const parsedTarget = Number(targetTag?.split(":").pop());
-  const angleTarget = Number.isInteger(parsedTarget) && parsedTarget >= LAMALO_MINIMUM_360_ANGLES
-    ? parsedTarget
-    : lamaloReferenceAngleTarget(item.category, item.subcategory);
-  const images = wardrobeReferenceImages(item, LAMALO_COMPLEX_360_ANGLES);
+  const frames = wardrobeTurntableFrames(item);
+  const frameCount = Number(item.turntableFrameCount || frames.length || 0);
+  const model3dUrl = /^https:\/\//i.test(item.model3dUrl || "") ? item.model3dUrl! : undefined;
   return {
     baseDesignName,
     selectedColour: colours[0],
-    masterReferenceKey: tags.find((tag) => tag.startsWith("lamalo-master:")) || lamaloMasterReferenceKey(baseDesignName),
-    angleTarget,
-    referencePackReady: tags.includes("reference-pack:360-ready") && images.length >= LAMALO_MINIMUM_360_ANGLES,
+    masterReferenceKey: item.masterReferenceKey || lamaloMasterReferenceKey({
+      baseDesignName,
+      genderFit: item.genderFit,
+      category: item.category,
+      subcategory: item.subcategory,
+    }),
+    continuityAngleTarget: lamaloReferenceAngleTarget(item.category, item.subcategory),
+    turntableFrameCount: frameCount,
+    model3dUrl,
+    turntableReady: item.turntableStatus === "ready"
+      && frameCount === LAMALO_TURNTABLE_FRAMES
+      && frames.length === LAMALO_TURNTABLE_FRAMES
+      && Boolean(model3dUrl),
   };
 }
 
+function assertPublishedVariant(variant: LamaloPublishedColourVariant, colour: string): void {
+  const frames = validUrls(variant.turntableFrameUrls);
+  if (frames.length !== LAMALO_TURNTABLE_FRAMES) {
+    throw new Error(`${colour} requires exactly ${LAMALO_TURNTABLE_FRAMES} HTTPS turntable frames.`);
+  }
+  const references = validUrls(variant.continuityImageUrls);
+  if (![LAMALO_STANDARD_REFERENCE_ANGLES, LAMALO_COMPLEX_REFERENCE_ANGLES].includes(references.length)) {
+    throw new Error(`${colour} requires exactly 12 or 24 HTTPS continuity reference images.`);
+  }
+}
+
 /**
- * Attaches one approved multi-angle master reference pack to every separately
- * purchasable colour SKU for a Lamalo base design. The colour remains locked by
- * each variant's own colors/referencePrompt fields; only the garment geometry
- * and construction reference set is shared.
+ * Publishes one immutable GLB geometry master plus colour-specific renders to
+ * every separately purchasable Lamalo colour SKU. Geometry is shared; product,
+ * checkout, selected colour, turntable frames and inventory snapshots remain
+ * separate per SKU.
  */
 export async function applyLamaloMasterReferencePack(input: {
   baseDesignName: string;
-  imageUrls: string[];
-  primaryImageUrl?: string;
-}): Promise<{ updatedVariants: number; referenceImageCount: number }> {
-  const imageUrls = Array.from(new Set(input.imageUrls.map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url))));
-  if (imageUrls.length < LAMALO_MINIMUM_360_ANGLES) {
-    throw new Error(`A Lamalo master reference pack requires at least ${LAMALO_MINIMUM_360_ANGLES} approved angle images.`);
-  }
+  masterReferenceKey: string;
+  model3dUrl: string;
+  variantsByColourKey: Record<string, LamaloPublishedColourVariant>;
+  genderFit?: string | null;
+  category?: string | null;
+  subcategory?: string | null;
+}): Promise<{ updatedVariants: number; masterReferenceKey: string }> {
+  if (!/^https:\/\//i.test(input.model3dUrl)) throw new Error("A public HTTPS GLB URL is required.");
+  if (!input.masterReferenceKey.startsWith("lamalo-clothing:")) throw new Error("Invalid Lamalo clothing master reference key.");
+  const variantEntries = Object.entries(input.variantsByColourKey);
+  if (!variantEntries.length) throw new Error("No colour render variants were supplied.");
+  for (const [colourKey, variant] of variantEntries) assertPublishedVariant(variant, colourKey);
+
   const db = await getDb();
   if (!db) throw new Error("Database is unavailable.");
   const [profile] = await db
@@ -150,35 +219,57 @@ export async function applyLamaloMasterReferencePack(input: {
   if (!profile) throw new Error("Lamalo Fashion profile was not found.");
 
   const baseDesignName = lamaloBaseDesignName(input.baseDesignName);
-  const variants = await db
-    .select()
-    .from(wardrobeItems)
-    .where(and(
-      eq(wardrobeItems.designerProfileId, profile.id),
-      like(wardrobeItems.name, `${baseDesignName} — %`),
-    ));
-  if (!variants.length) throw new Error(`No Lamalo colour SKUs were found for ${baseDesignName}.`);
+  const conditions: SQL[] = [
+    eq(wardrobeItems.designerProfileId, profile.id),
+    like(wardrobeItems.name, `${baseDesignName} — %`),
+  ];
+  if (input.genderFit) conditions.push(eq(wardrobeItems.genderFit, input.genderFit));
+  if (input.category) conditions.push(eq(wardrobeItems.category, input.category));
+  if (input.subcategory) conditions.push(eq(wardrobeItems.subcategory, input.subcategory));
 
-  const primaryImageUrl = input.primaryImageUrl?.trim() || imageUrls[0];
+  const variants = await db.select().from(wardrobeItems).where(and(...conditions));
+  if (!variants.length) throw new Error(`No Lamalo colour SKUs were found for ${input.masterReferenceKey}.`);
+
+  let updatedVariants = 0;
   for (const variant of variants) {
     const selectedColour = jsonStrings(variant.colors)[0] || variant.name.split(" — ").pop() || "unspecified";
+    const selectedColourKey = lamaloSlug(selectedColour);
+    const published = input.variantsByColourKey[selectedColourKey];
+    if (!published) throw new Error(`Published render variant is missing for ${selectedColour}.`);
+    const turntableFrameUrls = validUrls(published.turntableFrameUrls);
+    const imageUrls = validUrls(published.continuityImageUrls);
+    const primaryImageUrl = published.primaryImageUrl || turntableFrameUrls[0];
     const styleTags = buildLamaloVariantTags({
       baseDesignName,
       selectedColour,
+      masterReferenceKey: input.masterReferenceKey,
       category: variant.category,
       subcategory: variant.subcategory,
       existingTags: variant.styleTags,
-      referencePackReady: true,
+      turntableReady: true,
     });
-    const basePrompt = String(variant.referencePrompt || "").replace(/; MASTER 360 REFERENCE PACK:[\s\S]*$/i, "").trim();
-    const referencePrompt = `${basePrompt}; MASTER 360 REFERENCE PACK: preserve the exact construction, cut, proportions, seams, hardware, material behaviour and silhouette shown across the attached approved angle images; SELECTED COLOUR HARD-LOCK: ${selectedColour}; never transfer a different colour from the shared master reference pack.`;
+    const basePrompt = String(variant.referencePrompt || "")
+      .replace(/; TRUE 3D MASTER:[\s\S]*$/i, "")
+      .replace(/; MASTER 360 REFERENCE PACK:[\s\S]*$/i, "")
+      .trim();
+    const referencePrompt = `${basePrompt}; TRUE 3D MASTER: preserve the immutable cut, construction, proportions, seams, hardware, closures, material behaviour and silhouette from GLB ${input.model3dUrl}; SELECTED COLOUR HARD-LOCK: ${selectedColour}; use only the colour-specific reference frames attached to this purchased SKU; never substitute another colour.`;
     await db.update(wardrobeItems).set({
       primaryImageUrl,
       imageUrls,
       styleTags,
       referencePrompt,
+      masterReferenceKey: input.masterReferenceKey,
+      model3dUrl: input.model3dUrl,
+      turntableFrameUrls,
+      turntableFrameCount: LAMALO_TURNTABLE_FRAMES,
+      turntableStatus: "ready",
+      turntableUpdatedAt: new Date(),
+      renderPipelineVersion: LAMALO_RENDER_PIPELINE_VERSION,
+      selectedColourKey,
+      solidColourHex: published.solidColourHex || null,
     }).where(eq(wardrobeItems.id, variant.id));
+    updatedVariants += 1;
   }
 
-  return { updatedVariants: variants.length, referenceImageCount: imageUrls.length };
+  return { updatedVariants, masterReferenceKey: input.masterReferenceKey };
 }
