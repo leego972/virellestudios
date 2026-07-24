@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-07-24T17:15:30.533Z",
+  "generatedAt": "2026-07-24T17:18:41.934Z",
   "sourceOfTruth": "server/lamalo-seed.ts",
   "scope": "current Lamalo clothing only; missing designs and non-clothing assets are deferred",
   "pipeline": {
