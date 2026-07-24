@@ -4,8 +4,11 @@ function patch(path, replacements) {
   let source = fs.readFileSync(path, "utf8");
   for (const replacement of replacements) {
     const { before, after, label } = replacement;
-    if (source.includes(after)) continue;
-    if (!source.includes(before)) throw new Error(`Could not find ${label} in ${path}`);
+    if (after && source.includes(after)) continue;
+    if (!source.includes(before)) {
+      if (!after) continue;
+      throw new Error(`Could not find ${label} in ${path}`);
+    }
     source = source.replace(before, after);
   }
   fs.writeFileSync(path, source);
@@ -90,11 +93,23 @@ patch("scripts/lamalo360/blender/render_turntable.py", [
   },
 ]);
 
-patch("scripts/lamalo360/catalogue.mjs", [{
-  label: "commercial geometry provider",
-  before: '      geometry: "Hunyuan3D 2.1 image-to-shape or an approved artist-authored replacement mesh",\n',
-  after: '      geometry: "Meshy 6 commercial image-to-3D PBR generation or an approved artist-authored replacement mesh",\n',
-}]);
+patch("scripts/lamalo360/catalogue.mjs", [
+  {
+    label: "commercial geometry provider",
+    before: '      geometry: "Hunyuan3D 2.1 image-to-shape or an approved artist-authored replacement mesh",\n',
+    after: '      geometry: "Meshy 6 commercial image-to-3D PBR generation or an approved artist-authored replacement mesh",\n',
+  },
+  {
+    label: "resumable manifest merge",
+    before: 'function parseArgs(argv) {\n',
+    after: 'const PRODUCTION_STATE_FIELDS = [\n  "status",\n  "sourceReferenceStatus",\n  "geometryStatus",\n  "pbrStatus",\n  "turntableStatus",\n  "qualityStatus",\n  "publishedAt",\n  "model3dUrl",\n  "publishedColourSkus",\n  "updatedVariants",\n  "failedAt",\n  "lastError",\n];\n\nfunction mergeProductionState(next, existing) {\n  const previousByKey = new Map((existing?.masters ?? []).map((master) => [master.masterKey, master]));\n  next.generatedAt = existing?.generatedAt || next.generatedAt;\n  if (existing?.updatedAt) next.updatedAt = existing.updatedAt;\n  next.masters = next.masters.map((master) => {\n    const previous = previousByKey.get(master.masterKey);\n    if (!previous) return master;\n    const state = {};\n    for (const field of PRODUCTION_STATE_FIELDS) {\n      if (Object.prototype.hasOwnProperty.call(previous, field)) state[field] = previous[field];\n    }\n    return { ...master, ...state };\n  });\n  next.summary.completedBaseDesigns = next.masters.filter((master) => master.status === "published").length;\n  next.summary.failedBaseDesigns = next.masters.filter((master) => master.status === "failed").length;\n  return next;\n}\n\nfunction parseArgs(argv) {\n',
+  },
+  {
+    label: "state-preserving catalogue CLI",
+    before: '  const args = parseArgs(process.argv);\n  const catalogue = compileLamaloClothingCatalogue();\n  const serialized = `${JSON.stringify(catalogue, null, 2)}\\n`;\n  if (args.check) {\n    if (!fs.existsSync(args.output)) throw new Error(`Missing generated manifest: ${args.output}`);\n    const current = JSON.parse(fs.readFileSync(args.output, "utf8"));\n    const comparable = { ...catalogue, generatedAt: current.generatedAt };\n    if (`${JSON.stringify(comparable, null, 2)}\\n` !== `${JSON.stringify(current, null, 2)}\\n`) {\n      throw new Error("Lamalo clothing manifest is stale. Run pnpm lamalo360:catalogue.");\n    }\n    console.log(`Lamalo clothing manifest is current: ${catalogue.summary.clothingBaseDesigns} masters, ${catalogue.summary.separateColourSkus} colour SKUs.`);\n  } else {\n    fs.mkdirSync(path.dirname(args.output), { recursive: true });\n    fs.writeFileSync(args.output, serialized);\n    console.log(`Wrote ${args.output}: ${catalogue.summary.clothingBaseDesigns} masters, ${catalogue.summary.separateColourSkus} colour SKUs.`);\n  }\n',
+    after: '  const args = parseArgs(process.argv);\n  const current = fs.existsSync(args.output) ? JSON.parse(fs.readFileSync(args.output, "utf8")) : null;\n  const catalogue = mergeProductionState(compileLamaloClothingCatalogue(), current);\n  const serialized = `${JSON.stringify(catalogue, null, 2)}\\n`;\n  if (args.check) {\n    if (!current) throw new Error(`Missing generated manifest: ${args.output}`);\n    if (serialized !== `${JSON.stringify(current, null, 2)}\\n`) {\n      throw new Error("Lamalo clothing manifest is stale. Run pnpm lamalo360:catalogue.");\n    }\n    console.log(`Lamalo clothing manifest is current: ${catalogue.summary.clothingBaseDesigns} masters, ${catalogue.summary.separateColourSkus} colour SKUs.`);\n  } else {\n    fs.mkdirSync(path.dirname(args.output), { recursive: true });\n    fs.writeFileSync(args.output, serialized);\n    console.log(`Wrote ${args.output}: ${catalogue.summary.clothingBaseDesigns} masters, ${catalogue.summary.separateColourSkus} colour SKUs.`);\n  }\n',
+  },
+]);
 
 patch("scripts/lamalo360/generate-source-reference.mjs", [{
   label: "highest quality GPT image default",
