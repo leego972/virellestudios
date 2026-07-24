@@ -22,6 +22,7 @@ import {
   ImagePlus, ClipboardList, Clock, CheckCheck, AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Lamalo360Viewer } from "@/components/Lamalo360Viewer";
 
 const LOGO_URL =
   "/virelle-logo-square.png";
@@ -453,7 +454,6 @@ function ItemCard({
   onBuy: (itemId: number) => void;
   isBuying: (itemId: number) => boolean;
 }) {
-  const [imgErr, setImgErr] = useState(false);
   const [selectedId, setSelectedId] = useState<number>(() => variants[0]?.id);
   useEffect(() => {
     if (!variants.some((variant) => variant.id === selectedId)) setSelectedId(variants[0]?.id);
@@ -464,16 +464,18 @@ function ItemCard({
   const baseName = item.name?.split(" — ")[0] ?? item.name;
   const cents = item.retailPriceAud ?? 100;
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
-  const referencePackReady = Array.isArray(item.styleTags) && item.styleTags.includes("reference-pack:360-ready");
+  const referencePackReady = item.turntableStatus === "ready" && Number(item.turntableFrameCount) === 36 && Array.isArray(item.turntableFrameUrls) && item.turntableFrameUrls.length === 36;
 
   return (
     <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
-        {item.primaryImageUrl && !imgErr ? (
-          <img src={item.primaryImageUrl} alt={baseName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={() => setImgErr(true)} />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center"><Shirt className="h-10 w-10 text-white/10" /></div>
-        )}
+        <Lamalo360Viewer
+          frames={item.turntableFrameUrls}
+          fallback={item.primaryImageUrl}
+          alt={`${baseName} — ${color}`}
+          ready={referencePackReady}
+          className="h-full w-full"
+        />
         <div className="absolute top-2 right-2">
           <span className="text-[9px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-sm border border-amber-500/20 text-white/80 rounded-full px-2 py-0.5">{color}</span>
         </div>
@@ -485,7 +487,7 @@ function ItemCard({
           <p className="text-xs font-bold text-white leading-tight line-clamp-2">{baseName}</p>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             <Badge className="bg-purple-500/15 text-purple-200 border border-purple-400/30 text-[9px] px-1.5 py-0">Virtual item</Badge>
-            <Badge className="bg-amber-500/10 text-amber-300 border border-amber-500/25 text-[9px] px-1.5 py-0">{referencePackReady ? "360° master ready" : "360° master queued"}</Badge>
+            <Badge className="bg-amber-500/10 text-amber-300 border border-amber-500/25 text-[9px] px-1.5 py-0">{referencePackReady ? "True 360° ready" : "True 360° queued"}</Badge>
           </div>
         </div>
 
@@ -501,7 +503,7 @@ function ItemCard({
                 aria-checked={selected}
                 aria-label={variantColour}
                 title={variantColour}
-                onClick={() => { setSelectedId(variant.id); setImgErr(false); }}
+                onClick={() => setSelectedId(variant.id)}
                 className={`h-6 w-6 rounded-full border-2 transition-transform hover:scale-110 ${selected ? "border-amber-400 ring-2 ring-amber-400/30" : "border-white/25"}`}
                 style={{ background: swatchBackground(variantColour) }}
               />
@@ -540,9 +542,10 @@ function CollectionBlock({
   const groupedVariants = new Map<string, any[]>();
   for (const item of items) {
     const baseName = item.name?.split(" — ")[0] ?? item.name;
-    const variants = groupedVariants.get(baseName) ?? [];
+    const groupKey = item.masterReferenceKey || `${baseName}:${item.genderFit || "unisex"}:${item.category || "garment"}:${item.subcategory || "default"}`;
+    const variants = groupedVariants.get(groupKey) ?? [];
     variants.push(item);
-    groupedVariants.set(baseName, variants);
+    groupedVariants.set(groupKey, variants);
   }
   const variantGroups = Array.from(groupedVariants.values());
   const designCount = variantGroups.length;
