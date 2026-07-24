@@ -13,10 +13,16 @@ export interface WardrobeItemRecord {
   materials?: unknown;
   category?: string | null;
   subcategory?: string | null;
+  genderFit?: string | null;
   styleTags?: unknown;
   status?: string | null;
   visibility?: string | null;
   characterWardrobeAllowed?: boolean | null;
+  masterReferenceKey?: string | null;
+  model3dUrl?: string | null;
+  turntableFrameUrls?: unknown;
+  turntableFrameCount?: number | null;
+  turntableStatus?: string | null;
 }
 
 export interface WardrobeLeaseRecord {
@@ -128,11 +134,12 @@ export function buildWardrobePromptAnchor(item: WardrobeItemRecord, notes?: stri
     item.category && `category: ${item.category}`,
     colors && `exact colours: ${colors}`,
     materials && `exact materials: ${materials}`,
-    lamalo && `LAMALO MASTER DESIGN: ${lamalo.baseDesignName}; master reference key: ${lamalo.masterReferenceKey}`,
-    lamalo?.selectedColour && `SEPARATE PURCHASED COLOUR SKU: ${lamalo.selectedColour}; this exact colour is mandatory and must override any neutral colour visible in the shared geometry references`,
-    referenceImages.length > 1 && `MULTI-ANGLE CONSTRUCTION LOCK: ${referenceImages.length} approved reference views are attached; reconcile all views as one immutable garment identity`,
-    lamalo?.referencePackReady && `360 REFERENCE PACK VERIFIED: preserve construction and proportions from the full approved master pack`,
-    lamalo && !lamalo.referencePackReady && `360 REFERENCE PACK PENDING: use the current master view and hard-lock the selected colour; do not claim full multi-angle verification`,
+    lamalo && `LAMALO TRUE 3D MASTER: ${lamalo.baseDesignName}; master reference key: ${lamalo.masterReferenceKey}`,
+    lamalo?.model3dUrl && `immutable GLB geometry reference: ${lamalo.model3dUrl}`,
+    lamalo?.selectedColour && `SEPARATE PURCHASED COLOUR SKU: ${lamalo.selectedColour}; this exact colour is mandatory and must override any neutral colour visible in shared geometry references`,
+    referenceImages.length > 1 && `MULTI-ANGLE CONSTRUCTION LOCK: ${referenceImages.length} colour-specific approved reference views are attached; reconcile every view as one immutable garment identity`,
+    lamalo?.turntableReady && `TRUE 360 TURNTABLE VERIFIED: all ${lamalo.turntableFrameCount} deterministic frames derive from one validated GLB; preserve its construction and proportions exactly`,
+    lamalo && !lamalo.turntableReady && `TRUE 360 MASTER PENDING: use the current approved reference and hard-lock the selected colour; do not claim completed 3D verification`,
     item.referencePrompt && `visual reference: ${item.referencePrompt.trim()}`,
     "COVERAGE HARD-LOCK: every garment physically replaces and occludes the body region it covers. Gloves cover hands and fingers; hats, hoods and helmets cover the hair they enclose; clothing and armour cover the torso and limbs beneath them; masks and cowls cover the face area shown in the reference. Never render covered skin, hair or anatomy through the costume.",
     item.faceCoverage === "full" && "FULL FACE COVERAGE: the costume mask/cowl/helmet completely replaces the visible actor face; no facial skin, hairline, eyes, mouth or uncovered identity may appear",
