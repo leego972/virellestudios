@@ -874,7 +874,6 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
 // ─── Designer grid card ───────────────────────────────────────────────────────
 
 function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void }) {
-  const [imgErr, setImgErr] = useState(false);
   const isLamalo = profile.brandName === "Lamalo Fashion";
   return (
     <button
