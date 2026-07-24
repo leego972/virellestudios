@@ -11,7 +11,7 @@ import { runLamaloSeed } from "../lamalo-seed";
 import { validateWardrobeItemForInventory, type WardrobeItemRecord } from "./wardrobeContinuity";
 
 export const LAMALO_BRAND_NAME = "Lamalo Fashion";
-export const EXPECTED_LAMALO_COLLECTION_COUNT = 26;
+export const EXPECTED_LAMALO_COLLECTION_COUNT = 28;
 
 export interface LamaloCollectionAudit {
   id: number;
@@ -269,7 +269,7 @@ async function repairLamaloRows(profileId: number): Promise<void> {
       await dbConn.update(wardrobeItems).set({
         referencePrompt,
         primaryImageUrl,
-        imageUrls: [primaryImageUrl, ...existingImages].slice(0, 4),
+        imageUrls: [primaryImageUrl, ...existingImages].slice(0, 24),
         retailPriceAud: Number(item.retailPriceAud) > 0 ? item.retailPriceAud : categoryPrice(item.category),
         designerProfileId: profileId,
         collectionId: collection.id,
