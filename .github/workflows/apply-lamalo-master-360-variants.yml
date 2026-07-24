@@ -7,13 +7,22 @@ on:
     paths:
       - scripts/apply-lamalo-master-360-variants.mjs
       - .github/workflows/apply-lamalo-master-360-variants.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - scripts/apply-lamalo-master-360-variants.mjs
+      - .github/workflows/apply-lamalo-master-360-variants.yml
+      - server/_core/lamaloMasterReferences.ts
+      - docs/lamalo-master-reference-production.json
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   apply-and-verify:
-    if: github.actor != 'github-actions[bot]'
+    if: github.event_name == 'pull_request' || github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
