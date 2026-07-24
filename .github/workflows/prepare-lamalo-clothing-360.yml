@@ -66,8 +66,33 @@ jobs:
           node --check scripts/lamalo360/run-batch.mjs
           python3 -m py_compile scripts/lamalo360/blender/render_turntable.py
 
+      - name: Commit generated integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Integrate Lamalo clothing true 360 pipeline"
+            git push origin HEAD:lamalo-clothing-pipeline
+          fi
+
       - name: TypeScript check
-        run: pnpm check
+        id: typecheck
+        continue-on-error: true
+        run: pnpm check 2>&1 | tee /tmp/lamalo-typecheck.log
+
+      - name: Upload TypeScript diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lamalo-360-typecheck
+          path: /tmp/lamalo-typecheck.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Fail on TypeScript errors
+        if: steps.typecheck.outcome == 'failure'
+        run: exit 1
 
       - name: Unit and integration tests
         run: pnpm test
@@ -78,12 +103,3 @@ jobs:
           NODE_ENV: production
           VITE_APP_ID: ci-stub
           VITE_SENTRY_DSN: ""
-
-      - name: Commit generated integration
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git diff --cached --quiet && exit 0
-          git commit -m "Integrate Lamalo clothing true 360 pipeline"
-          git push origin HEAD:lamalo-clothing-pipeline
