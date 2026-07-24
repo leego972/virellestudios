@@ -34,12 +34,13 @@ export default function SwappysRetentionAdminPanel() {
       ? window.prompt("Reason for keeping this result:", "Support, safety review or authorised preservation")
       : null;
     if (applying && !reason?.trim()) return;
+    const keepReason = applying ? reason?.trim() || null : null;
 
     try {
       await setKeep.mutateAsync({
         outputId: Number(record.id),
         keep: applying,
-        reason: applying ? reason.trim() : null,
+        reason: keepReason,
       });
       toast.success(applying ? "Result marked Keep." : "Keep removed. Normal expiry restored.");
       outputs.refetch();
