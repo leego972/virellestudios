@@ -90,4 +90,40 @@ patch("scripts/lamalo360/blender/render_turntable.py", [
   },
 ]);
 
+patch("scripts/lamalo360/catalogue.mjs", [{
+  label: "commercial geometry provider",
+  before: '      geometry: "Hunyuan3D 2.1 image-to-shape or an approved artist-authored replacement mesh",\n',
+  after: '      geometry: "Meshy 6 commercial image-to-3D PBR generation or an approved artist-authored replacement mesh",\n',
+}]);
+
+patch("scripts/lamalo360/generate-source-reference.mjs", [{
+  label: "highest quality GPT image default",
+  before: '  const model = process.env.LAMALO_SOURCE_IMAGE_MODEL ?? "gpt-image-1";\n',
+  after: '  const model = process.env.LAMALO_SOURCE_IMAGE_MODEL ?? "gpt-image-1.5";\n',
+}]);
+
+patch("scripts/lamalo360/generate-pattern-texture.mjs", [{
+  label: "highest quality texture image default",
+  before: '  const model = process.env.LAMALO_TEXTURE_IMAGE_MODEL ?? "gpt-image-1";\n',
+  after: '  const model = process.env.LAMALO_TEXTURE_IMAGE_MODEL ?? "gpt-image-1.5";\n',
+}]);
+
+patch("scripts/lamalo360/README.md", [
+  {
+    label: "commercial Meshy geometry description",
+    before: '- One Hunyuan3D 2.1 textured GLB generation.\n',
+    after: '- One paid Meshy 6 PBR GLB generation with commercial output ownership, or an approved artist-authored replacement mesh.\n',
+  },
+  {
+    label: "worker Meshy requirement",
+    before: '- Hunyuan3D 2.1 API server available at `HUNYUAN3D_URL` and healthy at `/health`.\n',
+    after: '- Paid Meshy API access through `MESHY_API_KEY`; generated assets are downloaded immediately and stored in Virelle-owned object storage.\n',
+  },
+  {
+    label: "environment Meshy key",
+    before: 'HUNYUAN3D_URL=http://127.0.0.1:8081\n',
+    after: 'MESHY_API_KEY=...\nMESHY_IMAGE_TO_3D_MODEL=meshy-6\n',
+  },
+]);
+
 console.log("Lamalo true 360 codebase integration applied.");
