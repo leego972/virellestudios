@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "status": "ready",
+  "createdAt": "2026-07-24",
+  "strategy": "one approved multi-angle master reference pack per base design; every colour remains a separate purchasable SKU",
+  "sourceOfTruth": "server/lamalo-seed.ts",
+  "catalogueOrder": "Traverse ALL_COLLECTIONS in exact seed order, then traverse each collection's base designs in declaration order. Deduplicate colour variants by the item name before the em dash.",
+  "purchaseContract": {
+    "separateColourSku": true,
+    "separateStripePurchase": true,
+    "separatePermanentInventoryCopy": true,
+    "selectedColourHardLocked": true,
+    "sharedGeometryReferencesOnly": true
+  },
+  "referencePolicy": {
+    "simpleDesignAngleTarget": 12,
+    "complexDesignAngleTarget": 24,
+    "minimumApprovedAngles": 6,
+    "canonicalFirstFourAngles": [
+      "front three-quarter",
+      "front",
+      "back",
+      "side"
+    ],
+    "requiredConsistency": [
+      "same cut and silhouette",
+      "same seams and construction",
+      "same hardware and closures",
+      "same material behaviour",
+      "same proportions",
+      "neutral master colour that does not override the purchased colour SKU"
+    ],
+    "output": "2048x2048 PNG",
+    "background": "neutral warm-grey seamless studio",
+    "subject": "one complete garment only; no person, mannequin, hanger, rack, logo, text or unrelated prop"
+  },
+  "workerAssignment": {
+    "workerA": "odd 1-based base-design ordinals",
+    "workerB": "even 1-based base-design ordinals",
+    "batchSize": 10,
+    "noRepeats": true,
+    "doNotProcessColourOrdinals": true
+  },
+  "adobeDestinationFolderUrn": "urn:aaid:sc:AP:c21ac0a4-24a4-47bc-a2b8-66212cc949f3",
+  "completedMasterReferenceKeys": [],
+  "notes": [
+    "The earlier per-colour image manifests remain preserved as legacy production evidence.",
+    "A master reference pack is not marked complete unless real Adobe asset IDs exist and every angle has been visually inspected.",
+    "When a pack is approved, apply it to every colour SKU using applyLamaloMasterReferencePack in server/_core/lamaloMasterReferences.ts.",
+    "Colour variants are never merged into one product row. Only their geometry reference pack is shared."
+  ]
+}
