@@ -1,0 +1,32 @@
+name: Restore Lamalo Marketplace Final
+
+on:
+  push:
+    branches:
+      - lamalo-clothing-pipeline
+    paths:
+      - "scripts/lamalo360/restore-marketplace-final.mjs"
+      - ".github/workflows/restore-lamalo-marketplace-final.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: lamalo-clothing-pipeline
+          fetch-depth: 0
+      - name: Restore validated marketplace and apply isolated fix
+        run: node scripts/lamalo360/restore-marketplace-final.mjs
+      - name: Commit restored marketplace
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/pages/WardrobeMarketplacePage.tsx
+          git commit -m "Restore validated Lamalo marketplace integration"
+          git push origin HEAD:lamalo-clothing-pipeline
