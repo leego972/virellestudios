@@ -3,6 +3,7 @@
  * HollywoodBadge — renders a Virelle Hollywood tier badge.
  */
 
+import "@/hollywood-system.css";
 import { VirelleCinemaIcon } from "@/components/VirelleCinemaIcon";
 import { TOOL_ICONS, TIER_BADGES, type ToolIconKey, type TierBadgeKey } from "@/constants/hollywoodIcons";
 import { TOOL_TO_VIRELLE_CINEMA_ICON } from "@/constants/virelleCinemaIconMap";
