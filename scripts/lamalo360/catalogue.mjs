@@ -283,6 +283,7 @@ export function compileLamaloClothingCatalogue(seedSource = fs.readFileSync(SEED
       viewerRenderResolution: 1024,
       colourPolicy: "solid colours are deterministic material variants; patterns and multi-tone options require dedicated texture variants",
       purchasePolicy: "every colour remains a separate SKU and permanent inventory item",
+      generationCostPolicy: "no paid generation API; assets are generated once and retained permanently",
     },
     qualityGate: {
       minimumFrames: 36,
