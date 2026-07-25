@@ -267,14 +267,14 @@ export function compileLamaloClothingCatalogue(seedSource = fs.readFileSync(SEED
   }
 
   return {
-    version: 2,
+    version: 3,
     generatedAt: new Date().toISOString(),
     sourceOfTruth: "server/lamalo-seed.ts",
     scope: "current Lamalo clothing only; missing designs and non-clothing assets are deferred",
     pipeline: {
-      sourceReference: "approved high-resolution isolated garment image",
-      geometry: "Meshy 6 commercial image-to-3D PBR generation or an approved artist-authored replacement mesh",
-      material: "PBR material generation with physically based maps",
+      sourceReference: "local FLUX.1-schnell isolated garment image approved by local Qwen3-VL",
+      geometry: "local Microsoft TRELLIS image-to-3D generation with TripoSR fallback or an approved artist-authored replacement mesh",
+      material: "deterministic Blender PBR materials; local FLUX textures only for patterned or multi-tone SKUs",
       cleanupAndRender: "Blender 4.5 LTS deterministic GPU turntable",
       interchange: "validated glTF 2.0 binary (.glb)",
       turntableFrames: 36,
@@ -283,6 +283,7 @@ export function compileLamaloClothingCatalogue(seedSource = fs.readFileSync(SEED
       viewerRenderResolution: 1024,
       colourPolicy: "solid colours are deterministic material variants; patterns and multi-tone options require dedicated texture variants",
       purchasePolicy: "every colour remains a separate SKU and permanent inventory item",
+      generationCostPolicy: "no paid generation API; assets are generated once and retained permanently",
     },
     qualityGate: {
       minimumFrames: 36,

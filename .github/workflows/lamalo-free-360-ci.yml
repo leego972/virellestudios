@@ -1,0 +1,68 @@
+name: Lamalo Free 360 CI
+
+on:
+  pull_request:
+    paths:
+      - "scripts/lamalo360/**"
+      - "notebooks/lamalo-free-360-kaggle.ipynb"
+      - "docs/lamalo-clothing-360-production.json"
+      - "server/lamalo360FreePipeline.test.ts"
+      - ".github/workflows/lamalo-free-360-ci.yml"
+      - ".github/workflows/lamalo-clothing-360-production.yml"
+  push:
+    branches:
+      - lamalo-free-360-pipeline
+    paths:
+      - "scripts/lamalo360/**"
+      - "notebooks/lamalo-free-360-kaggle.ipynb"
+      - "docs/lamalo-clothing-360-production.json"
+      - "server/lamalo360FreePipeline.test.ts"
+      - ".github/workflows/lamalo-free-360-ci.yml"
+      - ".github/workflows/lamalo-clothing-360-production.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate Python and shell entrypoints
+        run: |
+          python -m py_compile \
+            scripts/lamalo360/free/flux_generate.py \
+            scripts/lamalo360/free/local_visual_review.py \
+            scripts/lamalo360/free/generate_geometry.py
+          bash -n scripts/lamalo360/free/bootstrap_kaggle.sh
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          notebook = json.loads(Path('notebooks/lamalo-free-360-kaggle.ipynb').read_text())
+          assert notebook['nbformat'] == 4
+          assert notebook['cells']
+          print('Kaggle notebook JSON is valid')
+          PY
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify catalogue and zero-paid-API contract
+        run: |
+          node scripts/lamalo360/catalogue.mjs --check
+          node scripts/lamalo360/free/check-free-contract.mjs
+          pnpm vitest run server/lamalo360FreePipeline.test.ts server/lamalo360Catalogue.test.ts server/lamaloMasterReferences.test.ts
+          pnpm check
