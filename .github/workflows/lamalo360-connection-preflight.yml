@@ -7,6 +7,12 @@ on:
     paths:
       - "scripts/lamalo360/connection-preflight.mjs"
       - ".github/workflows/lamalo360-connection-preflight.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "scripts/lamalo360/connection-preflight.mjs"
+      - ".github/workflows/lamalo360-connection-preflight.yml"
   workflow_dispatch:
 
 permissions:
@@ -57,7 +63,6 @@ jobs:
         run: |
           echo "## Lamalo 360 production connection" >> "$GITHUB_STEP_SUMMARY"
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          cat /tmp/lamalo360-preflight.json 2>/dev/null || echo '{"ok":false,"fatal":"preflight did not produce a report"}'
           cat /tmp/lamalo360-preflight.json 2>/dev/null >> "$GITHUB_STEP_SUMMARY" || echo '{"ok":false,"fatal":"preflight did not produce a report"}' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
