@@ -48,6 +48,7 @@ jobs:
               'if (!content.includes(before)) { console.warn(`Optional pattern not found: ${label}`); return content; }',
           )
           text = text.replace('${activeGroupLabel} workspace', '\\${activeGroupLabel} workspace')
+          text = text.replace('${pageBrandGroup} workspace', '\\${pageBrandGroup} workspace')
           path.write_text(text)
           PY
           set +e
