@@ -8,7 +8,6 @@ export type SiteBrandRule = {
 
 export const SITE_BRAND_ROUTE_RULES: SiteBrandRule[] = [
   { test: /^\/(?:$|dashboard|home)/i, icon: "dashboard", group: "Workspace" },
-  { test: /^\/(?:projects?|new-project|project-command-center)/i, icon: "projects", group: "Projects" },
   { test: /(?:script|screenplay|series-bible|coverage|table-read|dialogue)/i, icon: "scripts", group: "Writing" },
   { test: /(?:character|casting|talent|signature-cast|cast-board)/i, icon: "casting", group: "Casting" },
   { test: /(?:wardrobe|garment|outfit|designer|costume)/i, icon: "wardrobe", group: "Wardrobe" },
@@ -28,6 +27,7 @@ export const SITE_BRAND_ROUTE_RULES: SiteBrandRule[] = [
   { test: /(?:security|support|faq|contact|acceptable-use|privacy|terms|policy|dmca)/i, icon: "support", group: "Support" },
   { test: /(?:settings|admin|seo|growth|outreach|activity|schedule|call-sheet|daily-report|approval|calendar)/i, icon: "dashboard", group: "Operations" },
   { test: /(?:blog|press|changelog|about|solutions|how-it-works|download|welcome|login|register|reset-password|forgot-password)/i, icon: "studio", group: "Virelle Studios" },
+  { test: /^\/(?:projects?|new-project|project-command-center)/i, icon: "projects", group: "Projects" },
 ];
 
 const LABEL_RULES: SiteBrandRule[] = [
