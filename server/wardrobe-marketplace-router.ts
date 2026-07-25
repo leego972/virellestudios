@@ -5,12 +5,19 @@ import { designerGarmentIngestionRouter } from "./designer-garment-ingestion-rou
 import { mergeRouters, router } from "./_core/trpc";
 import { wardrobeMarketplaceRouter as legacyWardrobeMarketplaceRouter } from "./wardrobe-marketplace-router-legacy";
 
+const commerceWithGarmentIngestion = router({
+  ...designerCommerceRouter._def.record,
+  designer: mergeRouters(
+    designerCommerceRouter._def.record.designer,
+    router({ garmentIngestion: designerGarmentIngestionRouter }),
+  ),
+});
+
 export const wardrobeMarketplaceRouter = mergeRouters(
   legacyWardrobeMarketplaceRouter,
   router({
     designerAuth: designerAuthRouter,
-    commerce: designerCommerceRouter,
+    commerce: commerceWithGarmentIngestion,
     commercePurchase: designerCommerceCheckoutRouter,
-    garmentIngestion: designerGarmentIngestionRouter,
   }),
 );
