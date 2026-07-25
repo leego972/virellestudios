@@ -180,6 +180,7 @@ export function isDesignerAllowedProtectedPath(path: string): boolean {
     "wardrobeMarket.catalog.",
     "wardrobeMarket.commerce.portal.",
     "wardrobeMarket.commerce.designer.",
+    "wardrobeMarket.commerce.garmentIngestion.",
     "wardrobeMarket.commerce.orders.",
     "notification.",
     "notifications.",
@@ -198,6 +199,7 @@ export function isStudioForbiddenDesignerPath(path: string): boolean {
     "wardrobeMarket.collection.",
     "wardrobeMarket.item.",
     "wardrobeMarket.commerce.designer.",
+    "wardrobeMarket.commerce.garmentIngestion.",
     "wardrobeMarket.commerce.orders.",
   ].some((prefix) => path.startsWith(prefix));
 }
