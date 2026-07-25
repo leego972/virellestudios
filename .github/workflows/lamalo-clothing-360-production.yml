@@ -1,4 +1,4 @@
-name: Lamalo Clothing True 360 Production
+name: Lamalo Clothing Free True 360 Production
 
 on:
   workflow_dispatch:
@@ -38,26 +38,28 @@ permissions:
   checks: read
 
 concurrency:
-  group: lamalo-clothing-true-360-production
+  group: lamalo-clothing-free-true-360-production
   cancel-in-progress: false
 
 jobs:
   produce:
     if: github.event_name == 'workflow_dispatch' || vars.LAMALO360_ENABLED == 'true'
-    runs-on: [self-hosted, linux, x64, gpu, lamalo360]
+    runs-on: [self-hosted, linux, x64, gpu, lamalo360-free]
     timeout-minutes: 720
     environment: lamalo360-production
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      MESHY_API_KEY: ${{ secrets.MESHY_API_KEY }}
-      MESHY_IMAGE_TO_3D_MODEL: meshy-6
-      LAMALO_SOURCE_IMAGE_MODEL: gpt-image-1.5
-      LAMALO_TEXTURE_IMAGE_MODEL: gpt-image-1.5
-      LAMALO_VISION_MODEL: gpt-5.1
-      BLENDER_BIN: ${{ vars.BLENDER_BIN || '/opt/blender/blender' }}
+      # HF_TOKEN is optional and free; it is used only when a model repository
+      # requires accepted Hugging Face terms. No paid inference API is called.
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      LAMALO_FREE_IMAGE_MODEL: black-forest-labs/FLUX.1-schnell
+      LAMALO_FREE_VISION_MODEL: Qwen/Qwen3-VL-4B-Instruct
+      LAMALO_FREE_3D_ENGINE: ${{ vars.LAMALO_FREE_3D_ENGINE || 'auto' }}
+      TRELLIS_HOME: ${{ vars.TRELLIS_HOME || '/opt/lamalo-models/TRELLIS' }}
+      TRIPOSR_HOME: ${{ vars.TRIPOSR_HOME || '/opt/lamalo-models/TripoSR' }}
+      BLENDER_BIN: ${{ vars.BLENDER_BIN || '/usr/bin/blender' }}
+      LAMALO_PYTHON_BIN: ${{ vars.LAMALO_PYTHON_BIN || 'python' }}
       LAMALO360_WORK_ROOT: ${{ vars.LAMALO360_WORK_ROOT || '/var/lib/lamalo360' }}
       LAMALO360_CYCLES_SAMPLES: ${{ vars.LAMALO360_CYCLES_SAMPLES || '256' }}
-      LAMALO360_TARGET_POLYCOUNT: ${{ vars.LAMALO360_TARGET_POLYCOUNT || '100000' }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -74,20 +76,27 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Verify private worker configuration
+      - name: Verify free GPU worker
         shell: bash
         run: |
           set -euo pipefail
-          required=(OPENAI_API_KEY MESHY_API_KEY DATABASE_URL AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_S3_BUCKET AWS_S3_ENDPOINT AWS_S3_PUBLIC_URL)
+          required=(DATABASE_URL AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_S3_BUCKET AWS_S3_ENDPOINT AWS_S3_PUBLIC_URL)
           for name in "${required[@]}"; do
             if [ -z "${!name:-}" ]; then
-              echo "Missing required production secret: ${name}" >&2
+              echo "Missing existing production connection: ${name}" >&2
               exit 1
             fi
           done
+          command -v nvidia-smi
+          nvidia-smi
           test -x "$BLENDER_BIN"
           "$BLENDER_BIN" --version | head -n 2
-          nvidia-smi
+          "$LAMALO_PYTHON_BIN" - <<'PY'
+          import torch
+          assert torch.cuda.is_available(), "CUDA GPU is unavailable"
+          print(f"CUDA={torch.version.cuda} GPU={torch.cuda.get_device_name(0)} VRAM={torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f}GB")
+          PY
+          test -f "$TRIPOSR_HOME/run.py" || test -d "$TRELLIS_HOME/trellis"
           mkdir -p "$LAMALO360_WORK_ROOT"
           test -w "$LAMALO360_WORK_ROOT"
 
@@ -98,23 +107,24 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Install locked dependencies
+      - name: Install locked application dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Verify catalogue and code
+      - name: Verify catalogue and free provider contract
         run: |
           node scripts/lamalo360/catalogue.mjs --check
+          node scripts/lamalo360/free/check-free-contract.mjs
           pnpm check
 
       - name: Create production-state branch
         id: branch
         shell: bash
         run: |
-          branch="production/lamalo360-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          branch="production/lamalo360-free-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           git switch -c "$branch"
           echo "name=$branch" >> "$GITHUB_OUTPUT"
 
-      - name: Produce approved 3D masters and colour turntables
+      - name: Produce permanent 3D masters and colour turntables
         shell: bash
         run: |
           set -euo pipefail
@@ -129,6 +139,7 @@ jobs:
       - name: Revalidate manifest after publication
         run: |
           node scripts/lamalo360/catalogue.mjs --check
+          node scripts/lamalo360/free/check-free-contract.mjs
           pnpm check
 
       - name: Commit verified production state
@@ -142,7 +153,7 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Record approved Lamalo true 360 production assets"
+          git commit -m "Record approved Lamalo free true 360 assets"
           git push origin HEAD:"${{ steps.branch.outputs.name }}"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
@@ -154,8 +165,8 @@ jobs:
           pr_url=$(gh pr create \
             --base main \
             --head "${{ steps.branch.outputs.name }}" \
-            --title "Record approved Lamalo true 360 assets" \
-            --body "Automated production-state update. Every recorded item passed source-reference review, 36-frame deterministic Blender rendering, glTF validation, turntable visual QA, public storage upload and database publication.")
+            --title "Record approved Lamalo free true 360 assets" \
+            --body "Automated permanent-asset update. Every recorded item passed local FLUX generation, local Qwen3-VL review, TRELLIS/TripoSR geometry creation, deterministic Blender rendering, glTF validation, storage upload and database publication without paid generation APIs.")
           gh pr checks "$pr_url" --watch --interval 15
           gh pr merge "$pr_url" --squash --delete-branch
 
@@ -163,7 +174,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: lamalo360-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          name: lamalo360-free-failure-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ env.LAMALO360_WORK_ROOT }}/**/state.json
             ${{ env.LAMALO360_WORK_ROOT }}/**/source-reference.json
