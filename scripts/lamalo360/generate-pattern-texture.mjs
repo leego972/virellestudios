@@ -1,9 +1,8 @@
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import OpenAI from "openai";
-import { colourKey, patternPrompt } from "./colours.mjs";
+import { spawnSync } from "node:child_process";
+import { colourKey } from "./colours.mjs";
 
 const ROOT = process.cwd();
 const MANIFEST_PATH = path.join(ROOT, "docs/lamalo-clothing-360-production.json");
@@ -21,13 +20,8 @@ function parseArgs(argv) {
   return args;
 }
 
-function sha256(buffer) {
-  return crypto.createHash("sha256").update(buffer).digest("hex");
-}
-
-async function main() {
+function main() {
   const args = parseArgs(process.argv);
-  if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is required on the private render worker.");
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
   const master = manifest.masters.find((entry) => entry.ordinal === args.ordinal);
   if (!master) throw new Error(`Master ordinal ${args.ordinal} was not found.`);
@@ -39,43 +33,25 @@ async function main() {
   const imagePath = path.join(outputDir, `${key}.png`);
   const metadataPath = path.join(outputDir, `${key}.json`);
   fs.mkdirSync(outputDir, { recursive: true });
-  if (!args.force && fs.existsSync(imagePath) && fs.existsSync(metadataPath)) {
-    console.log(imagePath);
-    return;
-  }
 
-  const model = process.env.LAMALO_TEXTURE_IMAGE_MODEL ?? "gpt-image-1.5";
-  const prompt = patternPrompt(args.colour, master);
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const response = await client.images.generate({
-    model,
-    prompt,
-    size: "1024x1024",
-    quality: "high",
-    background: "opaque",
-    output_format: "png",
-    n: 1,
-  });
-  const encoded = response.data?.[0]?.b64_json;
-  if (!encoded) throw new Error("Texture generator returned no image.");
-  const image = Buffer.from(encoded, "base64");
-  fs.writeFileSync(imagePath, image);
-  fs.writeFileSync(metadataPath, `${JSON.stringify({
-    masterKey: master.masterKey,
-    baseName: master.baseName,
-    colour: args.colour,
-    colourKey: key,
-    provider: "openai",
-    model,
-    prompt,
-    sha256: sha256(image),
-    createdAt: new Date().toISOString(),
-    status: "generated",
-  }, null, 2)}\n`);
+  const python = process.env.LAMALO_PYTHON_BIN || "python";
+  const result = spawnSync(python, [
+    "scripts/lamalo360/free/flux_generate.py",
+    "--mode", "texture",
+    "--ordinal", String(master.ordinal),
+    "--colour", args.colour,
+    "--output", imagePath,
+    "--metadata", metadataPath,
+    ...(args.force ? ["--force"] : []),
+  ], { cwd: ROOT, env: process.env, stdio: "inherit" });
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(`Local FLUX texture generation exited with ${result.status}.`);
   console.log(imagePath);
 }
 
-main().catch((error) => {
+try {
+  main();
+} catch (error) {
   console.error(error instanceof Error ? error.stack ?? error.message : error);
   process.exitCode = 1;
-});
+}
