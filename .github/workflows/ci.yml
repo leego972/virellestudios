@@ -89,10 +89,9 @@ jobs:
           VITE_SENTRY_DSN: ""
 
   e2e:
-    name: E2E Smoke Tests
+    name: Responsive UI and E2E Audit
     runs-on: ubuntu-latest
     needs: build
-    if: vars.E2E_BASE_URL != ''
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -101,16 +100,45 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Install Playwright browsers
+      - name: Install Playwright browser
         run: pnpm exec playwright install chromium --with-deps
-      - name: Run E2E smoke tests
-        run: pnpm exec playwright test
+      - name: Build local production UI
+        if: vars.E2E_BASE_URL == ''
+        run: pnpm build
         env:
-          E2E_BASE_URL: ${{ vars.E2E_BASE_URL }}
-      - name: Upload test results on failure
+          NODE_ENV: production
+          VITE_APP_ID: ci-layout-audit
+          VITE_SENTRY_DSN: ""
+      - name: Start local production preview
+        if: vars.E2E_BASE_URL == ''
+        shell: bash
+        run: |
+          pnpm exec vite preview --host 127.0.0.1 --port 4173 > /tmp/virelle-preview.log 2>&1 &
+          for attempt in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:4173/welcome > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/virelle-preview.log
+          exit 1
+      - name: Run responsive layout and smoke tests
+        shell: bash
+        run: |
+          export E2E_BASE_URL="${E2E_BASE_URL_OVERRIDE:-http://127.0.0.1:4173}"
+          pnpm exec playwright test e2e/layout-integrity.spec.ts e2e/smoke.spec.ts
+        env:
+          E2E_BASE_URL_OVERRIDE: ${{ vars.E2E_BASE_URL }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - name: Upload visual audit results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: responsive-ui-audit
+          path: |
+            playwright-report/
+            test-results/
+            /tmp/virelle-preview.log
+          if-no-files-found: ignore
           retention-days: 7
