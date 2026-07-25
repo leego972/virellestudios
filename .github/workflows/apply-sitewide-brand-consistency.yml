@@ -7,6 +7,16 @@ on:
     paths:
       - scripts/apply-sitewide-brand-consistency.mjs
       - .github/workflows/apply-sitewide-brand-consistency.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - scripts/apply-sitewide-brand-consistency.mjs
+      - .github/workflows/apply-sitewide-brand-consistency.yml
+      - client/src/constants/siteBranding.ts
+      - client/src/constants/siteBranding.test.ts
+      - e2e/layout-integrity.spec.ts
+  workflow_dispatch:
 
 permissions:
   contents: write
