@@ -1,0 +1,66 @@
+name: Lamalo 360 Connection Preflight
+
+on:
+  push:
+    branches:
+      - connect-lamalo360-production
+    paths:
+      - "scripts/lamalo360/connection-preflight.mjs"
+      - ".github/workflows/lamalo360-connection-preflight.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  external-services:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: lamalo360-production
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MESHY_API_KEY: ${{ secrets.MESHY_API_KEY }}
+      MESHY_API_URL: ${{ vars.MESHY_API_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_S3_PUBLIC_URL: ${{ secrets.AWS_S3_PUBLIC_URL }}
+      LAMALO360_ENABLED: ${{ vars.LAMALO360_ENABLED }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test production connections without exposing credentials
+        id: preflight
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/lamalo360/connection-preflight.mjs | tee /tmp/lamalo360-preflight.json
+
+      - name: Publish redacted connection report
+        if: always()
+        shell: bash
+        run: |
+          echo "## Lamalo 360 production connection" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/lamalo360-preflight.json 2>/dev/null || echo '{"ok":false,"fatal":"preflight did not produce a report"}'
+          cat /tmp/lamalo360-preflight.json 2>/dev/null >> "$GITHUB_STEP_SUMMARY" || echo '{"ok":false,"fatal":"preflight did not produce a report"}' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail when production is not connected
+        if: steps.preflight.outcome == 'failure'
+        run: exit 1
