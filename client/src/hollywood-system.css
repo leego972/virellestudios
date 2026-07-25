@@ -1,0 +1,123 @@
+/*
+ * Virelle Hollywood presentation layer.
+ * This file standardises typography, surfaces, controls and focus treatment.
+ * It intentionally does not alter, filter, replace or recolour any logo/image asset.
+ */
+
+:root {
+  --virelle-gold: #d6a93a;
+  --virelle-gold-soft: rgba(214, 169, 58, 0.22);
+  --virelle-gold-faint: rgba(214, 169, 58, 0.09);
+  --virelle-black: #070707;
+  --virelle-surface: rgba(15, 15, 15, 0.88);
+  --virelle-surface-raised: rgba(22, 22, 22, 0.94);
+}
+
+:root:not(.dark) body {
+  background-color: var(--virelle-black);
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(214, 169, 58, 0.10), transparent 34rem),
+    radial-gradient(circle at 88% 18%, rgba(121, 78, 24, 0.09), transparent 30rem),
+    linear-gradient(180deg, #090909 0%, #050505 100%);
+  background-attachment: fixed;
+}
+
+:root:not(.dark) h1,
+:root:not(.dark) h2,
+:root:not(.dark) h3,
+:root:not(.dark) [data-hollywood-title="true"] {
+  font-family: var(--font-serif);
+  font-feature-settings: "liga", "dlig", "kern";
+  letter-spacing: -0.01em;
+}
+
+:root:not(.dark) [data-slot="card"],
+:root:not(.dark) .glass-card,
+:root:not(.dark) .glass-dark,
+:root:not(.dark) [role="dialog"] {
+  border-color: var(--virelle-gold-soft);
+  background-color: var(--virelle-surface);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(18px);
+}
+
+:root:not(.dark) input:not([type="checkbox"]):not([type="radio"]),
+:root:not(.dark) textarea,
+:root:not(.dark) select,
+:root:not(.dark) [data-slot="select-trigger"] {
+  border-color: rgba(214, 169, 58, 0.24);
+  background-color: rgba(0, 0, 0, 0.48);
+  color: rgba(255, 246, 220, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+:root:not(.dark) input:not([type="checkbox"]):not([type="radio"]):focus,
+:root:not(.dark) textarea:focus,
+:root:not(.dark) select:focus,
+:root:not(.dark) [data-slot="select-trigger"]:focus {
+  border-color: rgba(214, 169, 58, 0.72);
+  box-shadow: 0 0 0 3px rgba(214, 169, 58, 0.10);
+}
+
+:root:not(.dark) [data-slot="button"] {
+  border-radius: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.005em;
+}
+
+:root:not(.dark) [data-slot="button"]:not(.bg-amber-500):not(.bg-amber-400):not(.bg-destructive) {
+  border-color: rgba(214, 169, 58, 0.22);
+}
+
+:root:not(.dark) [data-slot="badge"] {
+  border-color: rgba(214, 169, 58, 0.24);
+  letter-spacing: 0.025em;
+}
+
+:root:not(.dark) table,
+:root:not(.dark) [role="table"] {
+  border-color: rgba(214, 169, 58, 0.18);
+}
+
+:root:not(.dark) thead,
+:root:not(.dark) [role="rowgroup"]:first-child {
+  background: rgba(214, 169, 58, 0.055);
+}
+
+/* Preserve all supplied logos and artwork exactly. */
+img[src*="virelle-logo"],
+img[src*="lamalo-logo"],
+img[alt*="Virelle"],
+img[alt*="Lamalo"] {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1;
+}
+
+/* White/night presentation keeps the same geometry and gold accents. */
+.dark body {
+  background-image:
+    radial-gradient(circle at 14% 0%, rgba(176, 126, 24, 0.09), transparent 34rem),
+    linear-gradient(180deg, #fffdf8 0%, #f5f0e6 100%);
+  background-attachment: fixed;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark [data-hollywood-title="true"] {
+  font-family: var(--font-serif);
+  font-feature-settings: "liga", "dlig", "kern";
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

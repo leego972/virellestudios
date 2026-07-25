@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Rotate3D } from "lucide-react";
+import { useMemo, useState } from "react";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
 
 export interface Lamalo360ViewerProps {
   frames?: unknown;
@@ -9,85 +9,34 @@ export interface Lamalo360ViewerProps {
   className?: string;
 }
 
-function stringList(value: unknown): string[] {
+function firstFrame(value: unknown): string | undefined {
   if (Array.isArray(value)) {
-    return value.filter((entry): entry is string => typeof entry === "string" && /^https?:\/\//i.test(entry));
+    return value.find((entry): entry is string => typeof entry === "string" && /^https?:\/\//i.test(entry));
   }
   if (typeof value === "string" && value.trim()) {
     try {
-      return stringList(JSON.parse(value));
+      return firstFrame(JSON.parse(value));
     } catch {
-      return /^https?:\/\//i.test(value) ? [value] : [];
+      return /^https?:\/\//i.test(value) ? value : undefined;
     }
   }
-  return [];
+  return undefined;
 }
 
-export function Lamalo360Viewer({ frames, fallback, alt, ready = false, className = "" }: Lamalo360ViewerProps) {
-  const urls = useMemo(() => {
-    const values = stringList(frames);
-    if (values.length >= 12) return values;
-    return fallback ? [fallback] : [];
-  }, [frames, fallback]);
-  const [index, setIndex] = useState(0);
+/**
+ * Customer-facing Lamalo image surface.
+ *
+ * The marketplace intentionally displays one clean product image. The GLB,
+ * continuity references and 36 verification views stay hidden in the backend
+ * and are consumed by the AI video-generation pipeline only.
+ */
+export function Lamalo360Viewer({ frames, fallback, alt, className = "" }: Lamalo360ViewerProps) {
+  const source = useMemo(() => fallback || firstFrame(frames), [fallback, frames]);
   const [failed, setFailed] = useState(false);
-  const drag = useRef<{ x: number; index: number } | null>(null);
-  const canRotate = ready && urls.length >= 12;
-
-  useEffect(() => {
-    setIndex(0);
-    setFailed(false);
-    if (!canRotate) return;
-    for (const url of urls.slice(0, 8)) {
-      const image = new Image();
-      image.decoding = "async";
-      image.src = url;
-    }
-  }, [canRotate, urls]);
-
-  function rotate(delta: number) {
-    if (!canRotate) return;
-    setIndex((current) => (current + delta + urls.length) % urls.length);
-  }
-
-  function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    if (!canRotate) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { x: event.clientX, index };
-  }
-
-  function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (!drag.current || !canRotate) return;
-    const frameDelta = Math.round((event.clientX - drag.current.x) / 9);
-    setIndex((drag.current.index - frameDelta + urls.length * 10) % urls.length);
-  }
-
-  function onPointerUp(event: React.PointerEvent<HTMLDivElement>) {
-    drag.current = null;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-  }
-
-  const source = !failed ? urls[index] : fallback ?? undefined;
 
   return (
-    <div
-      className={`relative select-none touch-pan-y overflow-hidden ${canRotate ? "cursor-ew-resize" : ""} ${className}`}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-      onKeyDown={(event) => {
-        if (event.key === "ArrowLeft") rotate(-1);
-        if (event.key === "ArrowRight") rotate(1);
-      }}
-      tabIndex={canRotate ? 0 : -1}
-      role={canRotate ? "slider" : "img"}
-      aria-label={canRotate ? `${alt} 360 degree turntable. Drag or use arrow keys to rotate.` : alt}
-      aria-valuemin={canRotate ? 1 : undefined}
-      aria-valuemax={canRotate ? urls.length : undefined}
-      aria-valuenow={canRotate ? index + 1 : undefined}
-    >
-      {source ? (
+    <div className={`relative overflow-hidden ${className}`} role="img" aria-label={alt}>
+      {source && !failed ? (
         <img
           src={source}
           alt={alt}
@@ -97,13 +46,8 @@ export function Lamalo360Viewer({ frames, fallback, alt, ready = false, classNam
           onError={() => setFailed(true)}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-white/20">
-          <Rotate3D className="h-10 w-10" />
-        </div>
-      )}
-      {canRotate && (
-        <div className="pointer-events-none absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-black/70 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-white/75 backdrop-blur-sm">
-          <Rotate3D className="h-3 w-3" /> Drag to rotate · {index + 1}/{urls.length}
+        <div className="flex h-full w-full items-center justify-center bg-black/35">
+          <HollywoodIcon tool="asset_marketplace" size={52} className="opacity-45" alt="Garment image unavailable" />
         </div>
       )}
     </div>
