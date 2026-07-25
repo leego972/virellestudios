@@ -7,13 +7,21 @@ const ROOT = process.cwd();
 const MANIFEST_PATH = path.join(ROOT, "docs/lamalo-clothing-360-production.json");
 
 function parseArgs(argv) {
-  const args = { parity: "all", count: 1, start: 1, force: false, retryFailed: false };
+  const args = {
+    parity: "all",
+    count: 1,
+    start: 1,
+    force: false,
+    retryFailed: false,
+    skipPublish: false,
+  };
   for (let i = 2; i < argv.length; i += 1) {
     if (argv[i] === "--parity") args.parity = argv[++i];
     else if (argv[i] === "--count") args.count = Math.max(1, Number(argv[++i]));
     else if (argv[i] === "--start") args.start = Math.max(1, Number(argv[++i]));
     else if (argv[i] === "--force") args.force = true;
     else if (argv[i] === "--retry-failed") args.retryFailed = true;
+    else if (argv[i] === "--skip-publish") args.skipPublish = true;
     else throw new Error(`Unknown argument: ${argv[i]}`);
   }
   if (!["odd", "even", "all"].includes(args.parity)) throw new Error("--parity must be odd, even or all.");
@@ -42,7 +50,7 @@ async function main() {
   const selected = initial.masters
     .filter((master) => master.ordinal >= args.start)
     .filter((master) => args.parity === "all" || (args.parity === "odd" ? master.ordinal % 2 === 1 : master.ordinal % 2 === 0))
-    .filter((master) => master.status === "queued" || (args.retryFailed && master.status === "failed"))
+    .filter((master) => master.status === "queued" || master.status === "approved_not_published" || (args.retryFailed && master.status === "failed"))
     .slice(0, args.count);
 
   if (!selected.length) {
@@ -57,8 +65,13 @@ async function main() {
         "scripts/lamalo360/run-master.mjs",
         "--ordinal", String(master.ordinal),
         ...(args.force ? ["--force"] : []),
+        ...(args.skipPublish ? ["--skip-publish"] : []),
       ]);
-      results.push({ ordinal: master.ordinal, masterKey: master.masterKey, status: "published" });
+      results.push({
+        ordinal: master.ordinal,
+        masterKey: master.masterKey,
+        status: args.skipPublish ? "approved_not_published" : "published",
+      });
     } catch (error) {
       const manifest = readManifest();
       const current = manifest.masters.find((entry) => entry.ordinal === master.ordinal);
@@ -75,7 +88,14 @@ async function main() {
   }
 
   const failed = results.filter((result) => result.status === "failed");
-  console.log(JSON.stringify({ selected: selected.length, published: results.length - failed.length, failed: failed.length, results }, null, 2));
+  console.log(JSON.stringify({
+    selected: selected.length,
+    completed: results.length - failed.length,
+    published: args.skipPublish ? 0 : results.length - failed.length,
+    approvedNotPublished: args.skipPublish ? results.length - failed.length : 0,
+    failed: failed.length,
+    results,
+  }, null, 2));
   if (failed.length) process.exitCode = 1;
 }
 
