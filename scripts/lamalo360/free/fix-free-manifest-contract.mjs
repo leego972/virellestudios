@@ -1,5 +1,6 @@
 import fs from "node:fs";
 
+// One-time branch migration; removed after the compiler is aligned.
 const file = "scripts/lamalo360/catalogue.mjs";
 let source = fs.readFileSync(file, "utf8");
 const marker = '      purchasePolicy: "every colour remains a separate SKU and permanent inventory item",\n';
