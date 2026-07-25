@@ -76,6 +76,7 @@ async function ensureIngestionSchema(): Promise<void> {
       await addColumn("wardrobeItems", "sourceAssetUrls", "JSON NULL");
       await addColumn("wardrobeItems", "generationRequestedPublish", "TINYINT(1) NOT NULL DEFAULT 0");
       await addColumn("wardrobeItems", "backendManifestUrl", "TEXT NULL");
+      await addColumn("wardrobeItems", "continuityImageUrls", "JSON NULL");
       await addColumn("wardrobeItems", "generationQualityScore", "INT NULL");
     })().catch((error) => {
       schemaReady = undefined;
@@ -251,6 +252,7 @@ export const designerGarmentIngestionRouter = router({
           primaryImageUrl = ${input.coverImageUrl}, imageUrls = CAST(${JSON.stringify([input.coverImageUrl])} AS JSON),
           sourceCaptureMode = ${input.captureMode}, sourceAssetUrls = CAST(${JSON.stringify(sourceAssets)} AS JSON),
           generationRequestedPublish = ${input.requestedPublish ? 1 : 0}, generationReadinessStatus = 'queued',
+          continuityImageUrls = NULL, backendManifestUrl = NULL, generationQualityScore = NULL,
           styleTags = CAST(${JSON.stringify(nextTags)} AS JSON), status = 'processing', visibility = 'private',
           characterWardrobeAllowed = 0, turntableStatus = 'queued', turntableFrameCount = 0,
           renderPipelineVersion = ${PIPELINE_VERSION}
@@ -334,13 +336,13 @@ export const designerGarmentIngestionRouter = router({
       ]));
       const basePrompt = String(job.referencePrompt || `${job.name}.`).trim();
       const referencePrompt = `${basePrompt}; VERIFIED DESIGNER GARMENT PACK: preserve the exact silhouette, cut, seams, panels, closures, pockets, materials, colour placement and coverage from the attached hidden continuity references and immutable GLB; do not redesign or simplify the garment.`;
-      const imageUrls = Array.from(new Set([input.shopImageUrl, ...input.continuityImageUrls]));
       const masterKey = `designer-garment:${job.designerProfileId}:${job.wardrobeItemId}`;
 
       await db.execute(sql`
         UPDATE wardrobeItems SET
-          primaryImageUrl = ${input.shopImageUrl}, imageUrls = CAST(${JSON.stringify(imageUrls)} AS JSON),
+          primaryImageUrl = ${input.shopImageUrl}, imageUrls = CAST(${JSON.stringify([input.shopImageUrl])} AS JSON),
           referencePrompt = ${referencePrompt}, masterReferenceKey = ${masterKey}, model3dUrl = ${input.model3dUrl},
+          continuityImageUrls = CAST(${JSON.stringify(input.continuityImageUrls)} AS JSON),
           turntableFrameUrls = CAST(${JSON.stringify(input.verificationFrameUrls)} AS JSON), turntableFrameCount = 36,
           turntableStatus = 'ready', turntableUpdatedAt = CURRENT_TIMESTAMP, renderPipelineVersion = ${PIPELINE_VERSION},
           generationReadinessStatus = 'ready', backendManifestUrl = ${input.backendManifestUrl},
