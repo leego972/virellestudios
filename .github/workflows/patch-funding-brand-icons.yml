@@ -1,0 +1,44 @@
+name: Patch Remaining Funding Brand Icons
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/patch-funding-brand-icons.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/sitewide-brand-icon-consistency-v4
+      - name: Replace remaining module icons
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('client/src/pages/FundingCommandCentre.tsx')
+          text = path.read_text()
+          replacements = {
+            '<Calculator className="h-4 w-4 text-amber-400" />Qualified-spend incentive calculator': '<HollywoodIcon tool="reports" size={20} />Qualified-spend incentive calculator',
+            '<Calculator className="mr-1.5 h-3.5 w-3.5" />Tax incentives': '<HollywoodIcon tool="reports" size={17} className="mr-1.5" />Tax incentives',
+            '<Globe className="mr-1.5 h-3.5 w-3.5" />Directory': '<HollywoodIcon tool="distribution" size={17} className="mr-1.5" />Directory',
+          }
+          for before, after in replacements.items():
+              if before not in text:
+                  raise SystemExit(f'Missing expected funding icon pattern: {before}')
+              text = text.replace(before, after)
+          path.write_text(text)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/pages/FundingCommandCentre.tsx
+          git commit -m "Replace remaining funding module icons with Virelle branding"
+          git push origin HEAD:feature/sitewide-brand-icon-consistency-v4
