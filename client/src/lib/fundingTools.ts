@@ -297,7 +297,8 @@ export function createFundingDocx(profile: FundingProfile, source: any): Blob {
     { name: "word/document.xml", content: documentXml },
     { name: "word/styles.xml", content: stylesXml },
   ]);
-  return new Blob([zip], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+  const bytes = zip.buffer.slice(zip.byteOffset, zip.byteOffset + zip.byteLength) as ArrayBuffer;
+  return new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
 }
 
 function pdfEscape(value: string): string {
