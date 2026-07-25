@@ -36,6 +36,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Apply deterministic source migration
+        id: migration
         shell: bash
         run: |
           python - <<'PY'
@@ -48,7 +49,22 @@ jobs:
           )
           path.write_text(text)
           PY
-          node scripts/apply-sitewide-brand-consistency.mjs
+          set +e
+          node scripts/apply-sitewide-brand-consistency.mjs > migration-diagnostics.txt 2>&1
+          code=$?
+          cat migration-diagnostics.txt
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload migration diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitewide-brand-migration-diagnostics
+          path: migration-diagnostics.txt
+          retention-days: 3
+      - name: Stop on migration failure
+        if: steps.migration.outputs.exit_code != '0'
+        run: exit 1
       - name: Resolve Playwright dependency and lockfile
         run: pnpm install --no-frozen-lockfile
       - name: Commit generated changes
