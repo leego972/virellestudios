@@ -1080,3 +1080,47 @@
     -webkit-text-fill-color: transparent;
   }
   
+
+/* Virelle site-wide responsive layout integrity guards */
+[data-virelle-page-shell] {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+[data-virelle-page-shell] :where(.flex, .grid) > * {
+  min-width: 0;
+}
+
+[data-virelle-page-shell] :where(h1, h2, h3, p, label, button, a, [role="tab"]) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+[data-virelle-page-shell] :where(button, a, [role="button"], [role="tab"]) {
+  max-width: 100%;
+}
+
+[data-virelle-page-shell] :where(img, video, canvas) {
+  max-width: 100%;
+}
+
+[data-virelle-page-shell] [role="tablist"] {
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+[data-virelle-page-shell] [role="dialog"] {
+  max-width: calc(100vw - 1rem);
+  max-height: calc(100dvh - 1rem);
+  overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+  [data-virelle-page-shell] :where(.sm\:flex-row, .md\:flex-row, .lg\:flex-row) {
+    min-width: 0;
+  }
+
+  [data-virelle-page-shell] :where(button, a[role="button"]) {
+    white-space: normal;
+  }
+}

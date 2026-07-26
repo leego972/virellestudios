@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ToolIconKey } from "@/constants/hollywoodIcons";
+import { brandGroupForRoute, brandIconForRoute } from "@/constants/siteBranding";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useIsMobile } from "@/hooks/useMobile";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -414,6 +415,15 @@ function DashboardLayoutContent({
     );
   }, [location]);
 
+  const pageBrandIcon = useMemo(
+    () => brandIconForRoute(location, pageTitle),
+    [location, pageTitle],
+  );
+  const pageBrandGroup = useMemo(
+    () => brandGroupForRoute(location, pageTitle),
+    [location, pageTitle],
+  );
+
   useEffect(() => {
     const lang = SUPPORTED_LANGUAGES.find(item => item.code === uiLang);
     document.documentElement.dir = lang?.dir || "ltr";
@@ -537,17 +547,12 @@ function DashboardLayoutContent({
             tooltip={item.label}
             className="h-9 rounded-lg font-normal transition-colors"
           >
-            {item.hollywoodKey ? (
-              <HollywoodIcon
-                tool={item.hollywoodKey}
-                size={18}
-                className={`shrink-0 ${active ? "opacity-100" : "opacity-65"}`}
-              />
-            ) : (
-              <item.icon
-                className={`h-4 w-4 ${active ? "text-amber-400" : ""}`}
-              />
-            )}
+            <HollywoodIcon
+              tool={item.hollywoodKey ?? brandIconForRoute(item.path, item.label)}
+              size={18}
+              className={`shrink-0 ${active ? "opacity-100" : "opacity-65"}`}
+              alt={item.label}
+            />
             <span className="truncate">{item.label}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -654,8 +659,12 @@ function DashboardLayoutContent({
                           onClick={() => navigate(item.path)}
                           className="cursor-pointer gap-2"
                         >
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.label}</span>
+                          <HollywoodIcon
+                            tool={item.hollywoodKey ?? brandIconForRoute(item.path, item.label)}
+                            size={18}
+                            alt={item.label}
+                          />
+                          <span className="min-w-0 truncate">{item.label}</span>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -852,10 +861,11 @@ function DashboardLayoutContent({
             }}
           >
             <SidebarTrigger className="h-10 w-10 shrink-0 rounded-lg" />
+            <HollywoodIcon tool={pageBrandIcon} size={28} className="shrink-0" alt={pageTitle} />
             <div className="min-w-0 flex-1 px-2">
               <p className="truncate text-sm font-semibold">{pageTitle}</p>
               <p className="truncate text-[10px] text-muted-foreground">
-                {activeGroupLabel || "Virelle Studios"}
+                {pageBrandGroup}
               </p>
             </div>
             <NotificationBell />
@@ -869,19 +879,18 @@ function DashboardLayoutContent({
               aria-label="Open Director's Assistant"
               title="Director's Assistant"
             >
-              <Sparkles className="h-5 w-5 text-amber-400" />
+              <HollywoodIcon tool="ai_tools" size={24} alt="Director's Assistant" />
             </button>
           </header>
         ) : (
           <header className="sticky top-0 z-40 flex h-14 items-center border-b border-border/50 bg-background/90 px-3 backdrop-blur-xl sm:px-4">
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <SidebarTrigger className="h-9 w-9 rounded-lg" />
+              <HollywoodIcon tool={pageBrandIcon} size={28} className="shrink-0" alt={pageTitle} />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{pageTitle}</p>
                 <p className="hidden truncate text-[10px] text-muted-foreground lg:block">
-                  {activeGroupLabel
-                    ? `${activeGroupLabel} workspace`
-                    : "Production workspace"}
+                  {`${pageBrandGroup} workspace`}
                 </p>
               </div>
             </div>
@@ -919,21 +928,23 @@ function DashboardLayoutContent({
                 aria-label="Open Director's Assistant"
                 title="Director's Assistant"
               >
-                <Sparkles className="h-4 w-4 text-amber-400" />
+                <HollywoodIcon tool="ai_tools" size={20} alt="Director's Assistant" />
               </button>
             </div>
           </header>
         )}
 
         <main
-          className={`relative z-10 flex min-h-0 flex-1 flex-col overscroll-contain p-3 sm:p-5 lg:p-6 ${location === "/assistant" ? "overflow-hidden" : ""}`}
+          data-virelle-page-shell
+          data-virelle-page-icon={pageBrandIcon}
+          className={`relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overscroll-contain p-3 sm:p-5 lg:p-6 ${location === "/assistant" ? "overflow-hidden" : ""}`}
           style={{
             paddingBottom:
               "max(4rem, calc(env(safe-area-inset-bottom) + 2rem))",
           }}
         >
           <div
-            className={`relative z-10 flex-1 ${location === "/assistant" ? "w-full" : "mx-auto w-full max-w-[1600px]"}`}
+            className={`relative z-10 min-w-0 flex-1 ${location === "/assistant" ? "w-full" : "mx-auto w-full max-w-[1600px]"}`}
           >
             {children}
           </div>

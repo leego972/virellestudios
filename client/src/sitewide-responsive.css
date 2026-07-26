@@ -1,0 +1,70 @@
+/*
+ * Site-wide responsive integrity rules.
+ * These rules are intentionally limited to public navigation and public filter strips.
+ * Dashboard/product layout remains governed by DashboardLayout and component-level styles.
+ */
+
+/* Keep public marketing navigation inside tablet and phone viewports. */
+@media (max-width: 1023px) {
+  nav.fixed > div,
+  nav.sticky > div {
+    min-width: 0;
+    gap: 0.75rem;
+  }
+
+  /* Landing has a centre navigation group plus account controls. The mobile menu
+     already exposes these destinations, so the centre group is not duplicated on tablet. */
+  nav.fixed > div > div:nth-child(2):not(:last-child) {
+    display: none !important;
+  }
+
+  /* Secondary public-page headers do not yet use the landing menu component.
+     Preserve the primary CTA and remove intermediate links when horizontal room is limited. */
+  nav.sticky > div > div:last-child {
+    min-width: 0;
+    margin-left: auto;
+  }
+
+  nav.sticky > div > div:last-child > :not(:last-child) {
+    display: none !important;
+  }
+
+  nav.sticky > div > div:last-child > :last-child,
+  nav.fixed > div > div:last-child > :last-child {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  /* The logo remains visible; hiding only the repeated wordmark gives the CTA
+     enough room on narrow phones without shrinking either tap target. */
+  nav.sticky > div > button:first-child > span,
+  nav.fixed > div > button:first-child > span {
+    display: none !important;
+  }
+}
+
+/* Blog category controls: show every category without a hidden horizontal strip. */
+.max-w-6xl.mx-auto.px-4.sm\:px-6.mb-8 > .flex.overflow-x-auto {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  justify-content: center;
+}
+
+/* Showcase discovery controls: wrap the four surfaces on phones. This selector is
+   scoped to the public discovery section and does not alter scene-selector carousels. */
+section.relative.z-10.max-w-7xl.mx-auto.px-4.pb-16 .flex.items-center.gap-2.overflow-x-auto {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  justify-content: center;
+}
+
+/* Defensive sizing for public headers and filter buttons. */
+nav.fixed button,
+nav.sticky button,
+header.sticky button,
+.max-w-6xl.mx-auto.px-4.sm\:px-6.mb-8 button,
+section.relative.z-10.max-w-7xl.mx-auto.px-4.pb-16 button {
+  max-width: 100%;
+}

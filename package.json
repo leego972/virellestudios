@@ -14,7 +14,8 @@
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "sync-mobile": "tsx scripts/sync-mobile-constants.ts",
     "check:swappys-mobile": "node scripts/check-swappys-mobile-connection.mjs",
-    "check:byok-policy": "node --input-type=module < scripts/check-byok-policy.mjs"
+    "check:byok-policy": "node --input-type=module < scripts/check-byok-policy.mjs",
+    "test:layout": "playwright test e2e/layout-integrity.spec.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
@@ -105,6 +106,7 @@
   },
   "devDependencies": {
     "@builder.io/vite-plugin-jsx-loc": "^0.1.1",
+    "@playwright/test": "latest",
     "@stripe/react-stripe-js": "^2.0.0",
     "@stripe/stripe-js": "^4.0.0",
     "@tailwindcss/typography": "^0.5.15",
