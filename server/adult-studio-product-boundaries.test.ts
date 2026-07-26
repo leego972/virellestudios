@@ -64,4 +64,35 @@ describe("Adult Studio product boundary", () => {
     expect(button).toContain('setLocation("/adult-studio")');
     expect(button).toContain("object-contain");
   });
+
+  it("separates video readiness from unrelated saved keys", () => {
+    const settings = source("client/src/pages/Settings.tsx");
+    expect(settings).toContain("VIDEO_PROVIDER_IDS");
+    expect(settings).toContain("hasAnyVideoKey");
+    expect(settings).not.toContain("const hasAnyKey = Object.values(configuredKeys).some(Boolean)");
+  });
+
+  it("shows every audio provider used by render completion", () => {
+    const settings = source("client/src/pages/Settings.tsx");
+    for (const provider of ["ElevenLabs", "Suno", "Replicate / MusicGen", "OpenAI voice"]) {
+      expect(settings).toContain(provider);
+    }
+    expect(settings).toContain("Audio completion readiness");
+    expect(settings).toContain("Existing video audio is always preserved");
+  });
+
+  it("uses labelled secure responsive media-key inputs", () => {
+    const settings = source("client/src/pages/Settings.tsx");
+    expect(settings).toContain('htmlFor={`media-key-${provider.id}`}');
+    expect(settings).toContain('id={`media-key-${provider.id}`}');
+    expect(settings).toContain('type="password"');
+    expect(settings).toContain('autoComplete="off"');
+    expect(settings).toContain('className="flex flex-col gap-2 sm:flex-row"');
+  });
+
+  it("removes the obsolete profile self-attestation unlock", () => {
+    const settings = source("client/src/pages/Settings.tsx");
+    expect(settings).not.toContain("I confirm I am 18 or older");
+    expect(settings).toContain("Open Adult Studio verification");
+  });
 });
