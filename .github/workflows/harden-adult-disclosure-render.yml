@@ -1,0 +1,30 @@
+name: Harden Adult Studio Disclosure Render
+
+on:
+  push:
+    branches:
+      - feature/adult-entry-and-landing-overhaul
+    paths:
+      - .github/workflows/harden-adult-disclosure-render.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/adult-entry-and-landing-overhaul
+          fetch-depth: 0
+      - run: python scripts/harden-adult-disclosure-render.py
+      - run: |
+          git rm scripts/harden-adult-disclosure-render.py
+          git rm .github/workflows/harden-adult-disclosure-render.yml
+      - run: |
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Harden Adult Studio legal disclosure rendering"
+          git push origin HEAD:feature/adult-entry-and-landing-overhaul
