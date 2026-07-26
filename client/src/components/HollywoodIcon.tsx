@@ -30,7 +30,10 @@ const HOLLYWOOD_ICON_ALIASES: Record<HollywoodIconAlias, VirelleCinemaIconKey> =
 };
 
 interface HollywoodIconProps {
-  tool: HollywoodIconKey;
+  /** Existing prop used throughout authenticated Virelle surfaces. */
+  tool?: HollywoodIconKey;
+  /** Semantic alias for public cinema-brand surfaces. */
+  icon?: HollywoodIconKey;
   /** Pixel size — applied to both width and height. Defaults to 40. */
   size?: number;
   className?: string;
@@ -47,13 +50,15 @@ function isHollywoodAlias(tool: HollywoodIconKey): tool is HollywoodIconAlias {
 
 export function HollywoodIcon({
   tool,
+  icon,
   size = 40,
   className = "",
   alt,
 }: HollywoodIconProps) {
-  const resolvedTool: ToolIconKey | VirelleCinemaIconKey = isHollywoodAlias(tool)
-    ? HOLLYWOOD_ICON_ALIASES[tool]
-    : tool;
+  const requestedIcon: HollywoodIconKey = tool ?? icon ?? "studio";
+  const resolvedTool: ToolIconKey | VirelleCinemaIconKey = isHollywoodAlias(requestedIcon)
+    ? HOLLYWOOD_ICON_ALIASES[requestedIcon]
+    : requestedIcon;
   const cinemaIcon = isToolIconKey(resolvedTool)
     ? TOOL_TO_VIRELLE_CINEMA_ICON[resolvedTool]
     : resolvedTool;
@@ -107,63 +112,27 @@ export function HollywoodBadge({
   );
 }
 
-export function IndieBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function IndieBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="indie" size={size} className={className} />;
 }
 
-export function CreatorBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function CreatorBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="creator" size={size} className={className} />;
 }
 
-export function IndustryBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function IndustryBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="industry" size={size} className={className} />;
 }
 
-export function FeaturedBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function FeaturedBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="featured" size={size} className={className} />;
 }
 
-export function NewBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function NewBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="new" size={size} className={className} />;
 }
 
-export function CinematicBadgeImg({
-  size = 28,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function CinematicBadgeImg({ size = 28, className = "" }: { size?: number; className?: string }) {
   return <HollywoodBadge tier="cinematic" size={size} className={className} />;
 }
 
