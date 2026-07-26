@@ -1,0 +1,34 @@
+name: Add Character Wardrobe Fit Controls
+
+on:
+  push:
+    branches:
+      - feature/adult-entry-and-landing-overhaul
+    paths:
+      - scripts/add-character-wardrobe-fit-controls.py
+      - .github/workflows/add-character-wardrobe-fit-controls.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/adult-entry-and-landing-overhaul
+          fetch-depth: 0
+      - name: Apply structured character fit controls
+        run: python scripts/add-character-wardrobe-fit-controls.py
+      - name: Remove one-time patch files
+        run: |
+          git rm scripts/add-character-wardrobe-fit-controls.py
+          git rm .github/workflows/add-character-wardrobe-fit-controls.yml
+      - name: Commit implementation
+        run: |
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Add character-specific wardrobe fit controls"
+          git push origin HEAD:feature/adult-entry-and-landing-overhaul
