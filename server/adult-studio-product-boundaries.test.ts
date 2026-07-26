@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 
+// Keep the product-boundary contract executable so stale standard broadcast UI cannot return.
 const root = path.resolve(import.meta.dirname, "..");
 const source = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
