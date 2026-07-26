@@ -25,7 +25,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ToolIconKey } from "@/constants/hollywoodIcons";
+import type { ToolIconKey } from "@/constants/hollywoodIcons";
 import { brandGroupForRoute, brandIconForRoute } from "@/constants/siteBranding";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -35,36 +35,23 @@ import {
   Camera,
   ChevronDown,
   Clapperboard,
-  Coins,
-  DollarSign,
   Film,
   Globe,
-  Headphones,
-  Languages,
   LogOut,
   Mail,
-  Megaphone,
   MessageSquare,
   Moon,
   MoreHorizontal,
   PanelLeft,
-  PlaySquare,
-  RadioTower,
   Search,
   Settings,
   Settings2,
   Shield,
   ShieldAlert,
-  ShoppingBag,
-  Sparkles,
-  MapPin,
-  Captions,
   Star,
   Sun,
   TrendingUp,
   Users,
-  Users2,
-  Wand2,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -86,97 +73,88 @@ type MenuItem = {
 };
 
 type MenuGroup = {
-  label: string;
+  label: "Pre-Production" | "Production" | "Post-Production" | "Funding";
   items: MenuItem[];
 };
 
+const primaryMenuItems: MenuItem[] = [
+  { icon: Film, label: "Dashboard", path: "/" },
+  { icon: Clapperboard, label: "Projects", path: "/projects" },
+  {
+    icon: MessageSquare,
+    label: "Director's AI",
+    path: "/assistant",
+    hollywoodKey: "director_chat",
+  },
+];
+
 const menuGroups: MenuGroup[] = [
   {
-    label: "Make",
+    label: "Pre-Production",
     items: [
-      { icon: Film, label: "Projects", path: "/projects" },
-      {
-        icon: MessageSquare,
-        label: "Director's AI",
-        path: "/assistant",
-        hollywoodKey: "director_chat",
-      },
       {
         icon: Users,
         label: "Characters",
         path: "/characters",
         hollywoodKey: "characters",
       },
-      { icon: Zap, label: "VFX & Sound", path: "/vfx-studio" },
-      {
-        icon: RadioTower,
-        label: "Swappys & Broadcast",
-        path: "/virelle-broadcast-render",
-      },
+      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
+      { icon: Clapperboard, label: "Project Samples", path: "/samples" },
+      { icon: Film, label: "Location Studio", path: "/location-studio" },
     ],
   },
   {
-    label: "Finish",
+    label: "Production",
     items: [
       {
-        icon: Megaphone,
+        icon: Zap,
+        label: "Swappys & Broadcast",
+        path: "/virelle-broadcast-render",
+      },
+      { icon: Film, label: "Designer Wardrobe", path: "/designer-wardrobe" },
+      { icon: Film, label: "Wardrobe Inventory", path: "/wardrobe-inventory" },
+      { icon: Film, label: "My Movies", path: "/movies" },
+    ],
+  },
+  {
+    label: "Post-Production",
+    items: [
+      { icon: Zap, label: "VFX & Sound", path: "/vfx-studio" },
+      {
+        icon: Film,
         label: "Poster Maker",
         path: "/poster-maker",
         hollywoodKey: "poster_maker",
       },
-      { icon: MapPin, label: "Location Studio", path: "/location-studio" },
-      { icon: Captions, label: "Accessibility Studio", path: "/accessibility-studio" },
-      { icon: Headphones, label: "Music Studio", path: "/music-studio" },
-      {
-        icon: Languages,
-        label: "Dubbing Studio",
-        path: "/dubbing-studio",
-      },
+      { icon: Film, label: "Music Studio", path: "/music-studio" },
+      { icon: Film, label: "Dubbing Studio", path: "/dubbing-studio" },
+      { icon: Film, label: "Accessibility Studio", path: "/accessibility-studio" },
+      { icon: Film, label: "Campaigns", path: "/campaigns" },
       { icon: Globe, label: "Film Showcase", path: "/showcase" },
     ],
   },
   {
-    label: "Business",
+    label: "Funding",
     items: [
-      { icon: DollarSign, label: "Funding", path: "/funding" },
+      { icon: Film, label: "Funding Command Centre", path: "/funding" },
+      { icon: Film, label: "Crowdfunding", path: "/crowdfunding" },
+      { icon: Film, label: "Tax Incentives", path: "/tax-incentives" },
+      { icon: Film, label: "Legal Documents", path: "/legal-docs" },
       {
-        icon: ShoppingBag,
+        icon: Film,
         label: "Marketplace",
         path: "/marketplace",
         hollywoodKey: "asset_marketplace",
       },
     ],
   },
-  {
-    label: "Account",
-    items: [
-      {
-        icon: Coins,
-        label: "Credits",
-        path: "/credits",
-        hollywoodKey: "credits",
-      },
-      {
-        icon: Settings,
-        label: "Settings",
-        path: "/settings",
-        hollywoodKey: "settings",
-      },
-    ],
-  },
 ];
 
-const moreTools: MenuItem[] = [
-  { icon: Star, label: "Signature Cast", path: "/signature-cast" },
-  {
-    icon: Megaphone,
-    label: "Poster Maker",
-    path: "/poster-maker",
-    hollywoodKey: "poster_maker",
-  },
-  { icon: Clapperboard, label: "Project Samples", path: "/samples" },
-  { icon: Wand2, label: "Campaigns", path: "/campaigns" },
-  { icon: Users2, label: "Community", path: "/community" },
+const utilityMenuItems: MenuItem[] = [
+  { icon: Users, label: "Community", path: "/community" },
+  { icon: Star, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" },
+  { icon: Film, label: "Credits", path: "/credits", hollywoodKey: "credits" },
+  { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" },
 ];
 
 const adminMenuItems: MenuItem[] = [
@@ -191,9 +169,10 @@ const adminMenuItems: MenuItem[] = [
   { icon: Star, label: "Signature Cast", path: "/admin/signature-cast" },
 ];
 
-const menuItems = [
-  ...menuGroups.flatMap(group => group.items),
-  ...moreTools,
+const allMenuItems = [
+  ...primaryMenuItems,
+  ...menuGroups.flatMap((group) => group.items),
+  ...utilityMenuItems,
 ];
 
 const SUPPORTED_LANGUAGES = [
@@ -281,35 +260,28 @@ const PUBLIC_ROUTES = [
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 224;
-const MIN_WIDTH = 208;
+const OPEN_GROUPS_KEY = "virelle-sidebar-open-groups-v2";
+const DEFAULT_WIDTH = 232;
+const MIN_WIDTH = 216;
 const MAX_WIDTH = 320;
 
 function isPublicPath(path: string) {
   return PUBLIC_ROUTES.some(
-    route => path === route || path.startsWith(`${route}/`),
+    (route) => path === route || path.startsWith(`${route}/`),
   );
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     if (typeof window === "undefined") return DEFAULT_WIDTH;
-    const saved = Number.parseInt(
-      localStorage.getItem(SIDEBAR_WIDTH_KEY) || "",
-      10,
-    );
+    const saved = Number.parseInt(localStorage.getItem(SIDEBAR_WIDTH_KEY) || "", 10);
     return Number.isFinite(saved)
       ? Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, saved))
       : DEFAULT_WIDTH;
   });
   const { loading, user } = useAuth();
   const [currentPath] = useLocation();
-  const actualPath =
-    typeof window !== "undefined" ? window.location.pathname : currentPath;
+  const actualPath = typeof window !== "undefined" ? window.location.pathname : currentPath;
   const publicRoute = isPublicPath(actualPath);
 
   useEffect(() => {
@@ -317,35 +289,22 @@ export default function DashboardLayout({
   }, [sidebarWidth]);
 
   useEffect(() => {
-    const path = window.location.pathname;
-    if (!loading && !user && !isPublicPath(path)) {
+    if (!loading && !user && !isPublicPath(window.location.pathname)) {
       window.location.href = "/welcome";
     }
   }, [loading, user]);
 
-  if (loading || (!user && !publicRoute)) {
-    return <DashboardLayoutSkeleton />;
-  }
+  if (loading || (!user && !publicRoute)) return <DashboardLayoutSkeleton />;
+  if (!user && publicRoute) return <>{children}</>;
 
-  if (!user && publicRoute) {
-    return <>{children}</>;
-  }
-
-  if (
-    actualPath.startsWith("/admin") &&
-    (user as any)?.role !== "admin"
-  ) {
+  if (actualPath.startsWith("/admin") && (user as any)?.role !== "admin") {
     window.location.href = "/";
     return <DashboardLayoutSkeleton />;
   }
 
   return (
     <SidebarProvider
-      style={
-        {
-          "--sidebar-width": `${sidebarWidth}px`,
-        } as CSSProperties
-      }
+      style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
     >
       <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
         {children}
@@ -354,15 +313,13 @@ export default function DashboardLayout({
   );
 }
 
-type DashboardLayoutContentProps = {
-  children: React.ReactNode;
-  setSidebarWidth: (width: number) => void;
-};
-
 function DashboardLayoutContent({
   children,
   setSidebarWidth,
-}: DashboardLayoutContentProps) {
+}: {
+  children: React.ReactNode;
+  setSidebarWidth: (width: number) => void;
+}) {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar, setOpenMobile } = useSidebar();
@@ -375,42 +332,38 @@ function DashboardLayoutContent({
   const [isResizing, setIsResizing] = useState(false);
   const [localAvatar, setLocalAvatar] = useState<string>();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [uiLang, setUiLang] = useState(() => {
-    if (typeof window === "undefined") return "en";
-    return localStorage.getItem("virelle_ui_lang") || "en";
-  });
-  const [openGroups, setOpenGroups] = useState<Set<string>>(
-    () => new Set(["Make"]),
+  const [uiLang, setUiLang] = useState(() =>
+    typeof window === "undefined"
+      ? "en"
+      : localStorage.getItem("virelle_ui_lang") || "en",
   );
-
-  const avatarSrc =
-    localAvatar ??
-    ((user as any)?.role === "admin"
-      ? "/leego-logo.png"
-      : (user as any)?.avatarUrl) ??
-    undefined;
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set(["Pre-Production"]);
+    try {
+      const saved = JSON.parse(localStorage.getItem(OPEN_GROUPS_KEY) || "[]");
+      return Array.isArray(saved) && saved.length
+        ? new Set(saved)
+        : new Set(["Pre-Production"]);
+    } catch {
+      return new Set(["Pre-Production"]);
+    }
+  });
 
   const activeGroupLabel = useMemo(
     () =>
-      menuGroups.find(group =>
-        group.items.some(item =>
-          item.path === "/"
-            ? location === "/"
-            : location.startsWith(item.path),
-        ),
+      menuGroups.find((group) =>
+        group.items.some((item) => location.startsWith(item.path)),
       )?.label,
     [location],
   );
 
   const pageTitle = useMemo(() => {
-    const items = [...menuItems, ...adminMenuItems].sort(
+    const items = [...allMenuItems, ...adminMenuItems].sort(
       (a, b) => b.path.length - a.path.length,
     );
     return (
-      items.find(item =>
-        item.path === "/"
-          ? location === "/"
-          : location.startsWith(item.path),
+      items.find((item) =>
+        item.path === "/" ? location === "/" : location.startsWith(item.path),
       )?.label || "Production Workspace"
     );
   }, [location]);
@@ -424,22 +377,38 @@ function DashboardLayoutContent({
     [location, pageTitle],
   );
 
+  const avatarSrc =
+    localAvatar ??
+    ((user as any)?.role === "admin"
+      ? "/leego-logo.png"
+      : (user as any)?.avatarUrl) ??
+    undefined;
+
   useEffect(() => {
-    const lang = SUPPORTED_LANGUAGES.find(item => item.code === uiLang);
-    document.documentElement.dir = lang?.dir || "ltr";
-    document.documentElement.lang = uiLang;
-    localStorage.setItem("virelle_ui_lang", uiLang);
-  }, [uiLang]);
+    localStorage.setItem(OPEN_GROUPS_KEY, JSON.stringify([...openGroups]));
+  }, [openGroups]);
 
   useEffect(() => {
     if (!activeGroupLabel) return;
-    setOpenGroups(new Set([activeGroupLabel]));
+    setOpenGroups((current) => {
+      if (current.has(activeGroupLabel)) return current;
+      const next = new Set(current);
+      next.add(activeGroupLabel);
+      return next;
+    });
   }, [activeGroupLabel]);
 
   useEffect(() => {
     if (!location.startsWith("/admin")) return;
-    setOpenGroups(new Set(["Admin"]));
+    setOpenGroups((current) => new Set(current).add("Admin"));
   }, [location]);
+
+  useEffect(() => {
+    const language = SUPPORTED_LANGUAGES.find((item) => item.code === uiLang);
+    document.documentElement.dir = language?.dir || "ltr";
+    document.documentElement.lang = uiLang;
+    localStorage.setItem("virelle_ui_lang", uiLang);
+  }, [uiLang]);
 
   useEffect(() => {
     if (isCollapsed) setIsResizing(false);
@@ -450,9 +419,7 @@ function DashboardLayoutContent({
       if (!isResizing) return;
       const left = sidebarRef.current?.getBoundingClientRect().left ?? 0;
       const width = event.clientX - left;
-      if (width >= MIN_WIDTH && width <= MAX_WIDTH) {
-        setSidebarWidth(width);
-      }
+      if (width >= MIN_WIDTH && width <= MAX_WIDTH) setSidebarWidth(width);
     };
     const handleMouseUp = () => setIsResizing(false);
 
@@ -462,7 +429,6 @@ function DashboardLayoutContent({
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
     }
-
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -484,34 +450,31 @@ function DashboardLayoutContent({
   };
 
   const toggleGroup = (label: string) => {
-    setOpenGroups(current =>
-      current.has(label) ? new Set() : new Set([label]),
-    );
+    setOpenGroups((current) => {
+      const next = new Set(current);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
   };
 
   const handleAvatarClick = () => fileInputRef.current?.click();
-
-  const handleAvatarFile = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleAvatarFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     const canvas = document.createElement("canvas");
     const image = new Image();
     image.onload = () => {
       const size = Math.min(400, image.width, image.height);
+      const crop = Math.min(image.width, image.height);
       canvas.width = size;
       canvas.height = size;
       const context = canvas.getContext("2d");
       if (!context) return;
-      const crop = Math.min(image.width, image.height);
-      const sourceX = (image.width - crop) / 2;
-      const sourceY = (image.height - crop) / 2;
       context.drawImage(
         image,
-        sourceX,
-        sourceY,
+        (image.width - crop) / 2,
+        (image.height - crop) / 2,
         crop,
         crop,
         0,
@@ -526,8 +489,8 @@ function DashboardLayoutContent({
         credentials: "include",
         body: JSON.stringify({ imageDataUrl }),
       })
-        .then(response => (response.ok ? response.json() : null))
-        .then(data => {
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data) => {
           if (data?.avatarUrl) setLocalAvatar(data.avatarUrl);
         })
         .catch(() => undefined);
@@ -537,7 +500,7 @@ function DashboardLayoutContent({
   };
 
   const renderMenuItems = (items: MenuItem[]) =>
-    items.map(item => {
+    items.map((item) => {
       const active = isActive(item.path);
       return (
         <SidebarMenuItem key={`${item.label}-${item.path}`}>
@@ -563,9 +526,7 @@ function DashboardLayoutContent({
   const profileBadge =
     (user as any)?.role === "admin"
       ? "Admin"
-      : ["industry", "independent", "creator", "studio"].includes(
-            normalizedTier,
-          )
+      : ["industry", "independent", "creator", "studio"].includes(normalizedTier)
         ? "Industry"
         : normalizedTier === "amateur"
           ? "Creator"
@@ -573,12 +534,11 @@ function DashboardLayoutContent({
             ? "Indie"
             : "Subscribe";
 
-  const secondaryActive = moreTools.some(item => isActive(item.path));
+  const utilityActive = utilityMenuItems.some((item) => isActive(item.path));
 
   return (
     <>
       <GoldWatermarkLaunch />
-
       <div ref={sidebarRef} className="relative">
         <Sidebar
           collapsible="icon"
@@ -613,19 +573,23 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-1 px-2 py-2">
-            {menuGroups.map(group => {
+            <SidebarMenu className="gap-0.5 border-b border-border/40 pb-2">
+              {renderMenuItems(primaryMenuItems)}
+            </SidebarMenu>
+
+            {menuGroups.map((group) => {
               const expanded = isCollapsed || openGroups.has(group.label);
               return (
-                <div key={group.label}>
+                <div key={group.label} className="pt-1">
                   {!isCollapsed && (
                     <button
                       onClick={() => toggleGroup(group.label)}
-                      className="flex h-8 w-full items-center justify-between rounded-md px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/65 transition-colors hover:bg-accent/50 hover:text-foreground"
+                      className="flex min-h-9 w-full items-center justify-between rounded-md px-2 py-1 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70 transition-colors hover:bg-accent/50 hover:text-foreground"
                       aria-expanded={expanded}
                     >
-                      <span>{group.label}</span>
+                      <span className="truncate">{group.label}</span>
                       <ChevronDown
-                        className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`}
+                        className={`h-3.5 w-3.5 shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
                       />
                     </button>
                   )}
@@ -644,16 +608,16 @@ function DashboardLayoutContent({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <SidebarMenuButton
-                        isActive={secondaryActive}
-                        tooltip="More tools"
+                        isActive={utilityActive}
+                        tooltip="Account & resources"
                         className="h-9 rounded-lg font-normal"
                       >
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="truncate">More tools</span>
+                        <span className="truncate">Account & resources</span>
                       </SidebarMenuButton>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent side="right" align="start" className="w-56">
-                      {moreTools.map(item => (
+                    <DropdownMenuContent side="right" align="start" className="w-60">
+                      {utilityMenuItems.map((item) => (
                         <DropdownMenuItem
                           key={item.path}
                           onClick={() => navigate(item.path)}
@@ -701,11 +665,6 @@ function DashboardLayoutContent({
               <button
                 onClick={() => navigate("/credits")}
                 className="flex w-full items-center gap-2 rounded-lg border border-border/50 bg-muted/20 p-2 text-left transition-colors hover:bg-accent/50 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent"
-                title={
-                  (user as any).isAdmin
-                    ? "Admin — Unlimited credits"
-                    : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining`
-                }
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-amber-500/40 bg-background">
                   <HollywoodIcon tool="credits" size={19} className="opacity-90" />
@@ -717,9 +676,7 @@ function DashboardLayoutContent({
                       : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
                   </p>
                   <p className="truncate text-[10px] text-muted-foreground">
-                    {(user as any).isAdmin
-                      ? "Administrator access"
-                      : "View balance and top up"}
+                    {(user as any).isAdmin ? "Administrator access" : "View balance and top up"}
                   </p>
                 </div>
               </button>
@@ -741,12 +698,9 @@ function DashboardLayoutContent({
                     side="top"
                     align="start"
                     className="z-[9999] w-64 overflow-y-auto"
-                    style={{
-                      maxHeight: "min(70vh, 400px)",
-                      WebkitOverflowScrolling: "touch",
-                    }}
+                    style={{ maxHeight: "min(70vh, 400px)", WebkitOverflowScrolling: "touch" }}
                   >
-                    {SUPPORTED_LANGUAGES.map(language => (
+                    {SUPPORTED_LANGUAGES.map((language) => (
                       <DropdownMenuItem
                         key={language.code}
                         onSelect={() => {
@@ -796,25 +750,14 @@ function DashboardLayoutContent({
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
-                  <DropdownMenuItem
-                    onClick={() => navigate("/settings")}
-                    className="cursor-pointer"
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" /> Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleAvatarClick}
-                    className="cursor-pointer"
-                  >
-                    <Camera className="mr-2 h-4 w-4" />
-                    Change photo
+                  <DropdownMenuItem onClick={handleAvatarClick} className="cursor-pointer">
+                    <Camera className="mr-2 h-4 w-4" /> Change photo
                   </DropdownMenuItem>
                   {switchable && (
-                    <DropdownMenuItem
-                      onClick={toggleTheme}
-                      className="cursor-pointer"
-                    >
+                    <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
                       {theme === "dark" ? (
                         <Sun className="mr-2 h-4 w-4" />
                       ) : (
@@ -827,8 +770,7 @@ function DashboardLayoutContent({
                     onClick={logout}
                     className="cursor-pointer text-destructive focus:text-destructive"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
+                    <LogOut className="mr-2 h-4 w-4" /> Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -864,20 +806,15 @@ function DashboardLayoutContent({
             <HollywoodIcon tool={pageBrandIcon} size={28} className="shrink-0" alt={pageTitle} />
             <div className="min-w-0 flex-1 px-2">
               <p className="truncate text-sm font-semibold">{pageTitle}</p>
-              <p className="truncate text-[10px] text-muted-foreground">
-                {pageBrandGroup}
-              </p>
+              <p className="truncate text-[10px] text-muted-foreground">{pageBrandGroup}</p>
             </div>
             <NotificationBell />
             <button
               onClick={() =>
-                window.dispatchEvent(
-                  new CustomEvent("virelle-open-director-chat"),
-                )
+                window.dispatchEvent(new CustomEvent("virelle-open-director-chat"))
               }
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-accent active:bg-accent/70"
               aria-label="Open Director's Assistant"
-              title="Director's Assistant"
             >
               <HollywoodIcon tool="ai_tools" size={24} alt="Director's Assistant" />
             </button>
@@ -890,11 +827,10 @@ function DashboardLayoutContent({
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{pageTitle}</p>
                 <p className="hidden truncate text-[10px] text-muted-foreground lg:block">
-                  {`${pageBrandGroup} workspace`}
+                  {pageBrandGroup} workspace
                 </p>
               </div>
             </div>
-
             <div className="flex items-center gap-1">
               <button
                 onClick={() =>
@@ -908,25 +844,19 @@ function DashboardLayoutContent({
                 }
                 className="hidden h-9 items-center gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:flex"
                 aria-label="Open command palette"
-                title="Quick navigation (⌘K)"
               >
                 <Search className="h-3.5 w-3.5" />
                 <span className="hidden xl:inline">Search tools</span>
-                <kbd className="hidden rounded border border-border/50 bg-background px-1.5 py-0.5 font-mono text-[10px] xl:inline">
-                  ⌘K
-                </kbd>
+                <kbd className="hidden rounded border border-border/50 bg-background px-1.5 py-0.5 font-mono text-[10px] xl:inline">⌘K</kbd>
               </button>
               <RenderQueueTray />
               <NotificationBell />
               <button
                 onClick={() =>
-                  window.dispatchEvent(
-                    new CustomEvent("virelle-open-director-chat"),
-                  )
+                  window.dispatchEvent(new CustomEvent("virelle-open-director-chat"))
                 }
                 className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent"
                 aria-label="Open Director's Assistant"
-                title="Director's Assistant"
               >
                 <HollywoodIcon tool="ai_tools" size={20} alt="Director's Assistant" />
               </button>
@@ -939,8 +869,7 @@ function DashboardLayoutContent({
           data-virelle-page-icon={pageBrandIcon}
           className={`relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overscroll-contain p-3 sm:p-5 lg:p-6 ${location === "/assistant" ? "overflow-hidden" : ""}`}
           style={{
-            paddingBottom:
-              "max(4rem, calc(env(safe-area-inset-bottom) + 2rem))",
+            paddingBottom: "max(4rem, calc(env(safe-area-inset-bottom) + 2rem))",
           }}
         >
           <div
