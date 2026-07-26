@@ -1,5 +1,5 @@
 export type JourneyStageMeta = {
-  key: string;
+  key: "preproduction" | "production" | "postproduction" | "funding";
   number: number;
   title: string;
   blurb: string;
@@ -8,83 +8,67 @@ export type JourneyStageMeta = {
 
 export const JOURNEY_STAGES: JourneyStageMeta[] = [
   {
-    key: "idea",
+    key: "preproduction",
     number: 1,
-    title: "Idea & Pitch",
-    blurb: "Logline, treatment, lookbook, pitch deck",
-    hrefFor: (id) => `/projects/${id}/pitch-lab`,
-  },
-  {
-    key: "characters",
-    number: 2,
-    title: "Casting Studio",
-    blurb: "Photo or description → consistent screen-ready actor",
-    hrefFor: (id) => `/projects/${id}/casting-board`,
-  },
-  {
-    key: "script",
-    number: 3,
-    title: "Writer's Room",
-    blurb: "Script, scene cards, dialogue, beat sheet",
-    hrefFor: (id) => `/projects/${id}/script`,
-  },
-  {
-    key: "preprod",
-    number: 4,
-    title: "Production Office",
-    blurb: "Breakdown, schedule, budget, locations, call sheet",
-    hrefFor: (id) => `/projects/${id}/production-office`,
-  },
-  {
-    key: "funding",
-    number: 5,
-    title: "Funding Office",
-    blurb: "Apply to 130+ funders worldwide, track decisions",
-    hrefFor: (id) => `/projects/${id}/crowdfunding`,
+    title: "Pre-Production",
+    blurb: "Concept, script, casting, locations, budget, schedule and production planning",
+    hrefFor: (id) => `/projects/${id}/pre-production`,
   },
   {
     key: "production",
-    number: 6,
-    title: "Soundstage",
-    blurb: "Generate scenes with continuity locked across shots",
+    number: 2,
+    title: "Production",
+    blurb: "Generate, review and lock scenes, performances, sound and continuity",
     hrefFor: (id) => `/projects/${id}/multi-shot`,
   },
   {
-    key: "post",
-    number: 7,
-    title: "Cutting Room",
-    blurb: "Edit, color, sound, captions, master export",
+    key: "postproduction",
+    number: 3,
+    title: "Post-Production",
+    blurb: "Edit, VFX, colour, sound, dubbing, accessibility, masters and promotion",
     hrefFor: (id) => `/projects/${id}/cutting-room`,
   },
   {
-    key: "release",
-    number: 8,
-    title: "Release & Promote",
-    blurb: "Trailer, social cuts, festivals, paid campaigns",
-    hrefFor: (id) => `/projects/${id}/press-kit`,
+    key: "funding",
+    number: 4,
+    title: "Funding",
+    blurb: "Funding matches, applications, pitch materials, crowdfunding and incentives",
+    hrefFor: () => "/funding",
   },
 ];
 
 export function getStage(n: number): JourneyStageMeta | undefined {
-  return JOURNEY_STAGES.find((s) => s.number === n);
+  return JOURNEY_STAGES.find((stage) => stage.number === n);
 }
 
 export function getNextStage(n: number): JourneyStageMeta | undefined {
-  return JOURNEY_STAGES.find((s) => s.number === n + 1);
+  return JOURNEY_STAGES.find((stage) => stage.number === n + 1);
 }
 
 /**
- * Heuristic current-stage detector based on lightweight project signals.
- * Used in dashboard tiles where we don't want to fetch full per-project
- * signals (characters list, scene list, etc.) just to render a badge.
+ * Maps legacy eight-stage page markers into the four-stage production model.
+ * Existing feature pages can continue passing their old stage number while the
+ * user-facing journey remains Pre-Production, Production, Post-Production and Funding.
  */
-export function computeProjectStage(p: {
+export function normaliseLegacyJourneyStage(n: number): number {
+  if (n >= 1 && n <= 4) return 1;
+  if (n === 5) return 4;
+  if (n === 6) return 2;
+  if (n === 7 || n === 8) return 3;
+  return Math.min(4, Math.max(1, n));
+}
+
+/**
+ * Lightweight project-stage detector for project cards. Funding completion is
+ * not available in the project-list payload, so completed projects stop at
+ * Post-Production rather than falsely claiming that funding is complete.
+ */
+export function computeProjectStage(project: {
   status?: string | null;
   logline?: string | null;
 }): number {
-  if (!p) return 1;
-  if (p.status === "completed") return 8;
-  if (p.status === "generating") return 6;
-  if ((p.logline ?? "").toString().trim()) return 2;
+  if (!project) return 1;
+  if (project.status === "completed") return 3;
+  if (project.status === "generating") return 2;
   return 1;
 }
