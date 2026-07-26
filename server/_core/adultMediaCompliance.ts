@@ -180,11 +180,13 @@ export async function applyAdultOpeningDisclosure(opts: {
   jobId: number;
   userId: number;
   transformGoal?: string | null;
-}): Promise<{ url: string; provenance: ReturnType<typeof buildAdultProvenance> }> {
+  createFallbackAudio?: (durationSeconds: number) => Promise<{ url: string; provider: string } | null>;
+}): Promise<{ url: string; provenance: ReturnType<typeof buildAdultProvenance>; audioCompletion: { generated: boolean; provider: string | null } }> {
   const provenance = buildAdultProvenance(opts.jobId, opts.userId, opts.transformGoal);
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "virelle-adult-disclosure-"));
   const sourcePath = path.join(tempDir, "source.mp4");
   const normalisedPath = path.join(tempDir, "source-normalised.mp4");
+  const fallbackAudioPath = path.join(tempDir, "fallback-audio.mp3");
   const cardPath = path.join(tempDir, "notice.mp4");
   const outputPath = path.join(tempDir, "output.mp4");
   const listPath = path.join(tempDir, "concat.txt");
@@ -203,12 +205,47 @@ export async function applyAdultOpeningDisclosure(opts: {
       "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
       "-c:a", "aac", "-ar", "48000", "-ac", "2", "-shortest", cardPath,
     ], { maxBuffer: 8 * 1024 * 1024 });
-    await execFileAsync("ffmpeg", [
-      "-y", "-i", sourcePath,
-      "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,fps=30",
-      "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-      "-c:a", "aac", "-ar", "48000", "-ac", "2", normalisedPath,
-    ], { maxBuffer: 8 * 1024 * 1024 });
+    const { stdout: probeOutput } = await execFileAsync("ffprobe", [
+      "-v", "error", "-print_format", "json", "-show_streams", "-show_format", sourcePath,
+    ], { maxBuffer: 4 * 1024 * 1024 });
+    const probe = JSON.parse(probeOutput || "{}");
+    const hasAudio = Array.isArray(probe.streams) && probe.streams.some((stream: any) => stream.codec_type === "audio");
+    const durationSeconds = Math.max(1, Number(probe.format?.duration) || 5);
+    let fallback: { url: string; provider: string } | null = null;
+    if (!hasAudio && opts.createFallbackAudio) {
+      fallback = await opts.createFallbackAudio(durationSeconds);
+    }
+
+    if (hasAudio) {
+      await execFileAsync("ffmpeg", [
+        "-y", "-i", sourcePath,
+        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,fps=30",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "48000", "-ac", "2", normalisedPath,
+      ], { maxBuffer: 8 * 1024 * 1024 });
+    } else if (fallback) {
+      const audioResponse = await fetch(fallback.url);
+      if (!audioResponse.ok) throw new Error(`Could not download generated soundtrack (${audioResponse.status}).`);
+      await writeFile(fallbackAudioPath, Buffer.from(await audioResponse.arrayBuffer()));
+      await execFileAsync("ffmpeg", [
+        "-y", "-i", sourcePath, "-stream_loop", "-1", "-i", fallbackAudioPath,
+        "-map", "0:v:0", "-map", "1:a:0",
+        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,fps=30",
+        "-t", String(durationSeconds),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "48000", "-ac", "2", "-b:a", "192k", "-shortest", normalisedPath,
+      ], { maxBuffer: 8 * 1024 * 1024 });
+    } else {
+      await execFileAsync("ffmpeg", [
+        "-y", "-i", sourcePath,
+        "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+        "-map", "0:v:0", "-map", "1:a:0",
+        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,fps=30",
+        "-t", String(durationSeconds),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "48000", "-ac", "2", "-shortest", normalisedPath,
+      ], { maxBuffer: 8 * 1024 * 1024 });
+    }
     await writeFile(listPath, `file '${cardPath.replace(/'/g, "'\\''")}'\nfile '${normalisedPath.replace(/'/g, "'\\''")}'\n`);
     await execFileAsync("ffmpeg", [
       "-y", "-f", "concat", "-safe", "0", "-i", listPath,
@@ -223,7 +260,11 @@ export async function applyAdultOpeningDisclosure(opts: {
       "video/mp4",
       { public: true },
     );
-    return { url: uploaded.url, provenance };
+    return {
+      url: uploaded.url,
+      provenance,
+      audioCompletion: { generated: Boolean(fallback), provider: fallback?.provider || null },
+    };
   } finally {
     await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
   }

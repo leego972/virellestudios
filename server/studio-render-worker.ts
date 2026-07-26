@@ -19,6 +19,7 @@ import {
 } from "./_core/swappysPolicy";
 import { startComplianceArchiveWorker } from "./compliance-archive-worker";
 import { applyAdultOpeningDisclosure, assessAdultMediaRisk, recordAdultModerationReview } from "./_core/adultMediaCompliance";
+import { createAdultFallbackAudio } from "./_core/adultAudioCompletion";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -210,9 +211,18 @@ async function processStudioRenderJob(dbConn: any, job: any): Promise<void> {
         jobId,
         userId,
         transformGoal: job.transformGoal,
+        createFallbackAudio: (durationSeconds) => createAdultFallbackAudio({
+          userId,
+          jobId,
+          durationSeconds,
+          transformGoal: job.transformGoal,
+          targetPresentation: job.targetPresentation,
+          directorNotes: job.directorNotes,
+        }),
       });
       finalVideoUrl = compliant.url;
       metadata.provenance = compliant.provenance;
+      metadata.audioCompletion = compliant.audioCompletion;
       metadata.openingDisclosure = {
         required: true,
         durationSeconds: 5,
