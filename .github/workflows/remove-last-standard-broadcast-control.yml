@@ -1,0 +1,30 @@
+name: Remove Last Standard Broadcast Control
+
+on:
+  push:
+    branches:
+      - feature/adult-entry-and-landing-overhaul
+    paths:
+      - .github/workflows/remove-last-standard-broadcast-control.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/adult-entry-and-landing-overhaul
+          fetch-depth: 0
+      - run: python scripts/remove_last_standard_broadcast_control.py
+      - run: |
+          git rm scripts/remove_last_standard_broadcast_control.py
+          git rm .github/workflows/remove-last-standard-broadcast-control.yml
+      - run: |
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Remove final standard broadcast control"
+          git push origin HEAD:feature/adult-entry-and-landing-overhaul
