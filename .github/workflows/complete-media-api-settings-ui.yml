@@ -1,0 +1,30 @@
+name: Complete Media API Settings UI
+
+on:
+  push:
+    branches:
+      - feature/adult-entry-and-landing-overhaul
+    paths:
+      - .github/workflows/complete-media-api-settings-ui.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/adult-entry-and-landing-overhaul
+          fetch-depth: 0
+      - run: python scripts/complete_media_api_settings_ui.py
+      - run: |
+          git rm scripts/complete_media_api_settings_ui.py
+          git rm .github/workflows/complete-media-api-settings-ui.yml
+      - run: |
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Complete sound and video API settings UI"
+          git push origin HEAD:feature/adult-entry-and-landing-overhaul
