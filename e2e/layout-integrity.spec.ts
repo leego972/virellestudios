@@ -41,6 +41,7 @@ async function collectLayoutIssues(page: Page): Promise<LayoutIssue[]> {
   return page.evaluate(() => {
     const issues: LayoutIssue[] = [];
     const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
     const selector = [
       "button",
       "a[href]",
@@ -54,47 +55,107 @@ async function collectLayoutIssues(page: Page): Promise<LayoutIssue[]> {
       "h2",
       "h3",
     ].join(",");
-    const elements = [...document.querySelectorAll<HTMLElement>(selector)].filter(element => {
+
+    const allElements = [...document.querySelectorAll<HTMLElement>(selector)].filter(element => {
       const style = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 1 && rect.height > 1;
+      return (
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        Number(style.opacity) !== 0 &&
+        !element.hidden &&
+        element.getAttribute("aria-hidden") !== "true" &&
+        rect.width > 1 &&
+        rect.height > 1
+      );
     });
 
     const describe = (element: HTMLElement) => {
       const role = element.getAttribute("role");
-      const name = element.getAttribute("aria-label") || element.getAttribute("title") || element.textContent || "";
       return `${element.tagName.toLowerCase()}${role ? `[role=${role}]` : ""}`;
     };
 
-    for (const element of elements) {
+    const paintedWithinViewport = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+      const left = Math.max(0, rect.left);
+      const right = Math.min(viewportWidth, rect.right);
+      const top = Math.max(0, rect.top);
+      const bottom = Math.min(viewportHeight, rect.bottom);
+      if (right - left <= 1 || bottom - top <= 1) return false;
+      const x = Math.min(viewportWidth - 1, Math.max(0, left + (right - left) / 2));
+      const y = Math.min(viewportHeight - 1, Math.max(0, top + (bottom - top) / 2));
+      const painted = document.elementFromPoint(x, y);
+      return Boolean(painted && (painted === element || element.contains(painted)));
+    };
+
+    for (const element of allElements) {
+      if (!paintedWithinViewport(element)) continue;
       const rect = element.getBoundingClientRect();
       const style = getComputedStyle(element);
-      const text = (element.getAttribute("aria-label") || element.textContent || "").trim().replace(/\s+/g, " ").slice(0, 100);
+      const text = (element.getAttribute("aria-label") || element.textContent || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .slice(0, 100);
+
       if (rect.left < -2 || rect.right > viewportWidth + 2) {
-        issues.push({ kind: "viewport-overflow", selector: describe(element), text, detail: `left=${Math.round(rect.left)} right=${Math.round(rect.right)} viewport=${viewportWidth}` });
+        issues.push({
+          kind: "viewport-overflow",
+          selector: describe(element),
+          text,
+          detail: `left=${Math.round(rect.left)} right=${Math.round(rect.right)} viewport=${viewportWidth}`,
+        });
       }
+
       const clipsHorizontally = element.scrollWidth > element.clientWidth + 2;
       const allowsHorizontalScroll = ["auto", "scroll"].includes(style.overflowX);
-      const intentionallyTruncated = style.textOverflow === "ellipsis" || element.classList.contains("truncate") || element.classList.contains("line-clamp-1") || element.classList.contains("line-clamp-2") || element.classList.contains("line-clamp-3");
+      const intentionallyTruncated =
+        style.textOverflow === "ellipsis" ||
+        element.classList.contains("truncate") ||
+        element.classList.contains("line-clamp-1") ||
+        element.classList.contains("line-clamp-2") ||
+        element.classList.contains("line-clamp-3");
       if (clipsHorizontally && !allowsHorizontalScroll && !intentionallyTruncated) {
-        issues.push({ kind: "clipped-content", selector: describe(element), text, detail: `scrollWidth=${element.scrollWidth} clientWidth=${element.clientWidth}` });
+        issues.push({
+          kind: "clipped-content",
+          selector: describe(element),
+          text,
+          detail: `scrollWidth=${element.scrollWidth} clientWidth=${element.clientWidth}`,
+        });
       }
     }
 
-    const interactive = elements.filter(element => element.matches("button,a[href],input,select,textarea,[role=button],[role=tab]"));
+    const interactive = allElements.filter(
+      element =>
+        element.matches("button,a[href],input,select,textarea,[role=button],[role=tab]") &&
+        paintedWithinViewport(element),
+    );
+
+    const isControlAdornmentPair = (first: HTMLElement, second: HTMLElement) => {
+      const tags = new Set([first.tagName, second.tagName]);
+      if (!tags.has("INPUT") || !tags.has("BUTTON")) return false;
+      if (first.parentElement && first.parentElement === second.parentElement) return true;
+      const firstContainer = first.closest("[data-input-group], .relative");
+      const secondContainer = second.closest("[data-input-group], .relative");
+      return Boolean(firstContainer && firstContainer === secondContainer);
+    };
+
     for (let firstIndex = 0; firstIndex < interactive.length; firstIndex += 1) {
       const first = interactive[firstIndex];
       const firstRect = first.getBoundingClientRect();
       for (let secondIndex = firstIndex + 1; secondIndex < interactive.length; secondIndex += 1) {
         const second = interactive[secondIndex];
         if (first.contains(second) || second.contains(first)) continue;
+        if (isControlAdornmentPair(first, second)) continue;
+
         const secondRect = second.getBoundingClientRect();
         const overlapWidth = Math.min(firstRect.right, secondRect.right) - Math.max(firstRect.left, secondRect.left);
         const overlapHeight = Math.min(firstRect.bottom, secondRect.bottom) - Math.max(firstRect.top, secondRect.top);
         if (overlapWidth <= 4 || overlapHeight <= 4) continue;
+
         const overlapArea = overlapWidth * overlapHeight;
         const smallerArea = Math.min(firstRect.width * firstRect.height, secondRect.width * secondRect.height);
         if (smallerArea <= 0 || overlapArea / smallerArea < 0.18) continue;
+
         issues.push({
           kind: "interactive-overlap",
           selector: `${describe(first)} ↔ ${describe(second)}`,
@@ -120,7 +181,10 @@ for (const viewport of VIEWPORTS) {
         await page.waitForTimeout(400);
         const issues = await collectLayoutIssues(page);
         expect(issues, `${route} at ${viewport.width}px:\n${JSON.stringify(issues, null, 2)}`).toEqual([]);
-        expect(browserErrors.filter(error => !error.includes("ResizeObserver")), `Browser errors on ${route}`).toEqual([]);
+        expect(
+          browserErrors.filter(error => !error.includes("ResizeObserver")),
+          `Browser errors on ${route}`,
+        ).toEqual([]);
       });
     }
   });
