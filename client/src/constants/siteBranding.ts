@@ -6,8 +6,14 @@ export type SiteBrandRule = {
   group: string;
 };
 
+/**
+ * Ordered from specific feature families to broad route fallbacks.
+ * This order is intentional: a nested route such as /projects/12/budget
+ * must resolve to Business rather than the generic Projects family.
+ */
 export const SITE_BRAND_ROUTE_RULES: SiteBrandRule[] = [
-  { test: /^\/(?:$|dashboard|home)/i, icon: "dashboard", group: "Workspace" },
+  { test: /^\/(?:$|dashboard|home)(?:\/|$)/i, icon: "dashboard", group: "Workspace" },
+  { test: /(?:funding|tax-incentives|budget|finance|pitch-deck|pitch-lab|film-comps|legal-docs|reports?)/i, icon: "reports", group: "Business" },
   { test: /(?:script|screenplay|series-bible|coverage|table-read|dialogue)/i, icon: "scripts", group: "Writing" },
   { test: /(?:character|casting|talent|signature-cast|cast-board)/i, icon: "casting", group: "Casting" },
   { test: /(?:wardrobe|garment|outfit|designer|costume)/i, icon: "wardrobe", group: "Wardrobe" },
@@ -20,14 +26,13 @@ export const SITE_BRAND_ROUTE_RULES: SiteBrandRule[] = [
   { test: /(?:sound|voice|dubbing|audio-mixer|table-read)/i, icon: "sound", group: "Audio" },
   { test: /(?:music|score)/i, icon: "music", group: "Music" },
   { test: /(?:edit|cutting-room|subtitles|accessibility|nle-export|credits-editor|opening-sequence)/i, icon: "editing", group: "Post-production" },
-  { test: /(?:showcase|distribute|distribution|festival|press-kit|campaign|advertising|content-creator|social-cuts|crowdfund|creator-profile|films)/i, icon: "distribution", group: "Distribution" },
-  { test: /(?:funding|tax-incentives|budget|finance|pitch-deck|pitch-lab|film-comps|legal-docs|reports?)/i, icon: "reports", group: "Business" },
+  { test: /(?:showcase|distribute|distribution|festival|press-kit|campaign|advertising|content-creator|social-cuts|crowdfund|films)/i, icon: "distribution", group: "Distribution" },
   { test: /(?:pricing|subscription|billing|credits|referrals)/i, icon: "billing", group: "Account" },
-  { test: /(?:collaboration|collaborators|team|community|contacts|users|creator)/i, icon: "team", group: "People" },
+  { test: /(?:collaboration|collaborators|team|community|contacts|users|creators?)/i, icon: "team", group: "People" },
   { test: /(?:security|support|faq|contact|acceptable-use|privacy|terms|policy|dmca)/i, icon: "support", group: "Support" },
   { test: /(?:settings|admin|seo|growth|outreach|activity|schedule|call-sheet|daily-report|approval|calendar)/i, icon: "dashboard", group: "Operations" },
-  { test: /(?:blog|press|changelog|about|solutions|how-it-works|download|welcome|login|register|reset-password|forgot-password)/i, icon: "studio", group: "Virelle Studios" },
-  { test: /^\/(?:projects?|new-project|project-command-center)/i, icon: "projects", group: "Projects" },
+  { test: /(?:blog|press|changelog|about|solutions|how-it-works|download|welcome|login|register|reset-password|forgot-password|opener-preview)/i, icon: "studio", group: "Virelle Studios" },
+  { test: /^\/(?:projects?|new-project|project-command-center)(?:\/|$)/i, icon: "projects", group: "Projects" },
 ];
 
 const LABEL_RULES: SiteBrandRule[] = [
