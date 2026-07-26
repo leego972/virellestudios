@@ -18,6 +18,7 @@ import {
   swappysCreativePromptDirective,
 } from "./_core/swappysPolicy";
 import { startComplianceArchiveWorker } from "./compliance-archive-worker";
+import { applyAdultOpeningDisclosure, assessAdultMediaRisk, recordAdultModerationReview } from "./_core/adultMediaCompliance";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -111,6 +112,44 @@ async function processStudioRenderJob(dbConn: any, job: any): Promise<void> {
       aiGeneratedCharactersOnly: Boolean(job.aiGeneratedCharactersOnly),
     });
 
+    if (workspace === "adult") {
+      const assessment = await assessAdultMediaRisk({
+        userId,
+        jobId,
+        transformGoal: job.transformGoal,
+        targetAge: job.targetAge == null ? null : Number(job.targetAge),
+        targetPresentation: job.targetPresentation,
+        directorNotes: job.directorNotes,
+        publicFigureLikeness: Boolean(job.publicFigureLikeness),
+        aiGeneratedCharactersOnly: Boolean(job.aiGeneratedCharactersOnly),
+        consentConfirmed: Boolean(job.consentConfirmed),
+        allSubjectsAdultsConfirmed: Boolean(job.allSubjectsAdultsConfirmed),
+      });
+      metadata.moderation = assessment;
+      if (assessment.decision !== "allow") {
+        await recordAdultModerationReview(dbConn, {
+          userId,
+          jobId,
+          transformGoal: job.transformGoal,
+          targetAge: job.targetAge == null ? null : Number(job.targetAge),
+          targetPresentation: job.targetPresentation,
+          directorNotes: job.directorNotes,
+          publicFigureLikeness: Boolean(job.publicFigureLikeness),
+          aiGeneratedCharactersOnly: Boolean(job.aiGeneratedCharactersOnly),
+          consentConfirmed: Boolean(job.consentConfirmed),
+          allSubjectsAdultsConfirmed: Boolean(job.allSubjectsAdultsConfirmed),
+        }, assessment);
+        await dbConn.execute(sql`
+          UPDATE virelle_video_transform_jobs
+          SET status=${assessment.decision === "block" ? "failed" : "moderation_review"},
+              errorMessage=${assessment.decision === "block" ? "Blocked by Adult Studio safety review." : "Held for administrator moderation review."},
+              metadata=${JSON.stringify(metadata)}, updatedAt=NOW()
+          WHERE id=${jobId}
+        `);
+        return;
+      }
+    }
+
     const apiKey = await resolveByokKey(userId, String(job.provider));
     if (!apiKey) {
       await dbConn.execute(sql`
@@ -164,9 +203,26 @@ async function processStudioRenderJob(dbConn: any, job: any): Promise<void> {
 
     if (!result?.videoUrl) throw new Error("Provider returned no video URL");
 
+    let finalVideoUrl = result.videoUrl;
+    if (workspace === "adult") {
+      const compliant = await applyAdultOpeningDisclosure({
+        sourceUrl: result.videoUrl,
+        jobId,
+        userId,
+        transformGoal: job.transformGoal,
+      });
+      finalVideoUrl = compliant.url;
+      metadata.provenance = compliant.provenance;
+      metadata.openingDisclosure = {
+        required: true,
+        durationSeconds: 5,
+        applied: true,
+        version: "adult-ai-disclosure-2026-07",
+      };
+    }
     await dbConn.execute(sql`
       UPDATE virelle_video_transform_jobs
-      SET status='completed', outputVideoUrl=${result.videoUrl}, updatedAt=NOW()
+      SET status='completed', outputVideoUrl=${finalVideoUrl}, metadata=${JSON.stringify(metadata)}, updatedAt=NOW()
       WHERE id=${jobId}
     `);
     logger.info(

@@ -53,6 +53,7 @@ import {
   setArchiveLegalHold,
 } from "./_core/contentCompliance";
 import { runComplianceArchiveCycle } from "./compliance-archive-worker";
+import { ADULT_AI_DISCLOSURE_TEXT } from "./_core/adultMediaCompliance";
 
 const STRICT_BYOK_PROVIDERS = [
   "runway",
@@ -1300,6 +1301,23 @@ export const virelleBroadcastRenderRouter = router({
           allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
           aiGeneratedCharactersOnly: resolved.aiGeneratedCharactersOnly,
         },
+        openingDisclosure: resolved.contentMode === "open_adult" ? {
+          required: true,
+          durationSeconds: 5,
+          version: "adult-ai-disclosure-2026-07",
+          text: ADULT_AI_DISCLOSURE_TEXT,
+          releaseBlockedUntilApplied: true,
+        } : null,
+        moderation: resolved.contentMode === "open_adult" ? {
+          aiReviewRequired: true,
+          adminQueueOnRisk: true,
+          releaseBlockedOnReview: true,
+        } : null,
+        invisibleProvenance: resolved.contentMode === "open_adult" ? {
+          required: true,
+          version: "virelle-adult-provenance-v1",
+          visibleToViewer: false,
+        } : null,
         complianceArchive: {
           required: true,
           minimumRetentionDays: 90,
