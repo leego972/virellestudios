@@ -29,8 +29,8 @@ describe("Adult Studio visibility and verification gate", () => {
 
   it("requires every verification control before access is granted", () => {
     const mature = source("server/_core/matureAccess.ts");
+    expect(mature).toContain("const accessGranted = paidMembership");
     for (const required of [
-      "paidMembership",
       "profileComplete",
       "adultAgeConfirmed",
       "adultAttestationAccepted",
