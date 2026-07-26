@@ -21,6 +21,7 @@ import superjson from "superjson";
 import { toast } from "sonner";
 import App from "./App";
 import "./index.css";
+import "./sitewide-responsive.css";
 import "./mobile-safari.css";
 import "./mobile-sidebar-contrast.css";
 import "./white-surface-text.css";
