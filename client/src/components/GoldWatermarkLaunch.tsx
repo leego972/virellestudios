@@ -9,6 +9,7 @@ import { NAV_LABEL_TO_VIRELLE_CINEMA_ICON } from "@/constants/virelleCinemaIconM
 import { useEffect, useRef } from "react";
 
 const NAV_ICON_SIZE = 18;
+const ADULT_ACCESS_HREF = "/virelle-broadcast-render?adult=1";
 const ORDERED_NAV_LABELS = Object.keys(NAV_LABEL_TO_VIRELLE_CINEMA_ICON).sort(
   (left, right) => right.length - left.length,
 );
@@ -52,7 +53,68 @@ function applySpriteFrame(element: HTMLElement, icon: VirelleCinemaIconKey) {
   element.style.boxShadow = "0 0 10px rgba(212,175,55,0.16)";
 }
 
+function adultStudioActive(): boolean {
+  return window.location.pathname.startsWith("/virelle-broadcast-render")
+    && new URLSearchParams(window.location.search).get("adult") === "1";
+}
+
+function ensureAdultAccessShortcut() {
+  const sidebarContent = document.querySelector<HTMLElement>('[data-sidebar="content"]');
+  if (!sidebarContent) return;
+
+  let wrapper = sidebarContent.querySelector<HTMLElement>("[data-virelle-adult-access]");
+  if (!wrapper) {
+    wrapper = document.createElement("section");
+    wrapper.dataset.virelleAdultAccess = "true";
+    wrapper.className = "mx-1 mt-1 border-t border-red-500/20 pt-1";
+
+    const heading = document.createElement("div");
+    heading.className = "px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-red-300/75 group-data-[collapsible=icon]:hidden";
+    heading.textContent = "Adult · verified 18+";
+
+    const link = document.createElement("a");
+    link.href = ADULT_ACCESS_HREF;
+    link.dataset.sidebar = "menu-button";
+    link.dataset.virelleAdultAccessLink = "true";
+    link.title = "Adult Studio — verification required";
+    link.className = "flex h-9 w-full min-w-0 items-center gap-2 overflow-hidden rounded-lg px-2 text-sm font-normal text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
+    link.setAttribute("aria-label", "Open Adult Studio verification");
+
+    const icon = document.createElement("img");
+    icon.src = "/icons/tools/video_generation.svg";
+    icon.alt = "";
+    icon.setAttribute("aria-hidden", "true");
+    icon.className = "h-[18px] w-[18px] shrink-0 object-contain opacity-75";
+
+    const text = document.createElement("span");
+    text.className = "min-w-0 truncate";
+    text.textContent = "Adult Studio · 18+";
+
+    const status = document.createElement("span");
+    status.className = "ml-auto shrink-0 rounded border border-red-400/20 px-1 py-0.5 text-[8px] font-semibold uppercase text-red-300 group-data-[collapsible=icon]:hidden";
+    status.textContent = "Verify";
+
+    link.append(icon, text, status);
+
+    const description = document.createElement("p");
+    description.className = "px-2 pb-1 pt-0.5 text-[9px] leading-snug text-muted-foreground/65 group-data-[collapsible=icon]:hidden";
+    description.textContent = "Age, phone, government ID and cardholder checks are required before entry.";
+
+    wrapper.append(heading, link, description);
+    sidebarContent.append(wrapper);
+  }
+
+  const link = wrapper.querySelector<HTMLElement>("[data-virelle-adult-access-link]");
+  if (!link) return;
+  const active = adultStudioActive();
+  link.dataset.active = active ? "true" : "false";
+  link.setAttribute("aria-current", active ? "page" : "false");
+  link.classList.toggle("bg-sidebar-accent", active);
+  link.classList.toggle("text-sidebar-accent-foreground", active);
+}
+
 function enhanceNavigationIcons() {
+  ensureAdultAccessShortcut();
   const candidates = document.querySelectorAll<HTMLElement>(
     '[data-sidebar="menu-button"], [role="menuitem"]',
   );
@@ -98,6 +160,9 @@ function restoreNavigationIcons() {
       icon.style.display = "";
       delete icon.dataset.virelleGenericIcon;
     });
+  document
+    .querySelectorAll<HTMLElement>("[data-virelle-adult-access]")
+    .forEach(shortcut => shortcut.remove());
 }
 
 export default function GoldWatermarkLaunch({ className = "" }: { className?: string }) {
@@ -119,8 +184,12 @@ export default function GoldWatermarkLaunch({ className = "" }: { className?: st
       attributeFilter: ["data-active"],
     });
 
+    const handleNavigation = () => enhanceNavigationIcons();
+    window.addEventListener("popstate", handleNavigation);
+
     return () => {
       observer.disconnect();
+      window.removeEventListener("popstate", handleNavigation);
       window.cancelAnimationFrame(scheduled);
       restoreNavigationIcons();
       if (watermarkRef.current) watermarkRef.current.style.display = "";
