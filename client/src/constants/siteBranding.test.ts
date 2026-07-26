@@ -6,6 +6,7 @@ import { resolveSiteBrand } from "./siteBranding";
 
 const appPath = fileURLToPath(new URL("../App.tsx", import.meta.url));
 const layoutPath = fileURLToPath(new URL("../components/DashboardLayout.tsx", import.meta.url));
+const fundingPath = fileURLToPath(new URL("../pages/FundingCommandCentre.tsx", import.meta.url));
 
 function routePaths(source: string): string[] {
   return [...source.matchAll(/<Route\s+path=["']([^"']+)["']/g)].map(match => match[1]);
@@ -35,16 +36,42 @@ describe("site-wide Virelle brand icon coverage", () => {
     }
   });
 
-  it("maps the funding family consistently", () => {
-    for (const route of ["/funding", "/funding-pro", "/tax-incentives", "/projects/12/pitch-deck", "/projects/12/budget"]) {
-      expect(resolveSiteBrand(route).icon).toBe("reports");
+  it("gives nested project tools their feature brand rather than the generic project icon", () => {
+    const expected: Record<string, string> = {
+      "/projects/12/pitch-deck": "reports",
+      "/projects/12/budget": "reports",
+      "/projects/12/wardrobe": "wardrobe",
+      "/projects/12/storyboard": "storyboards",
+      "/projects/12/crowdfunding": "distribution",
+      "/projects/12/voice-studio": "sound",
+      "/projects/12/vfx-suite": "vfx",
+      "/projects/12": "projects",
+    };
+    for (const [route, icon] of Object.entries(expected)) {
+      expect(resolveSiteBrand(route).icon).toBe(icon);
     }
   });
 
-  it("keeps action controls separate from product branding", () => {
-    const funding = readFileSync(fileURLToPath(new URL("../pages/FundingCommandCentre.tsx", import.meta.url)), "utf8");
+  it("maps public, legal and account routes to a consistent brand family", () => {
+    expect(resolveSiteBrand("/welcome").icon).toBe("studio");
+    expect(resolveSiteBrand("/about").icon).toBe("studio");
+    expect(resolveSiteBrand("/privacy").icon).toBe("support");
+    expect(resolveSiteBrand("/pricing").icon).toBe("billing");
+    expect(resolveSiteBrand("/showcase").icon).toBe("distribution");
+  });
+
+  it("uses Hollywood icons for product surfaces while retaining action controls", () => {
+    const layout = readFileSync(layoutPath, "utf8");
+    const funding = readFileSync(fundingPath, "utf8");
+
+    expect(layout).toContain("brandIconForRoute");
+    expect(layout).toContain("data-virelle-page-icon");
+    expect(layout).not.toContain("<item.icon className");
+
     expect(funding).toContain("HollywoodIcon");
+    expect(funding).toContain('tool="reports"');
     expect(funding).toContain("Save");
     expect(funding).toContain("Download");
+    expect(funding).toContain("Bookmark");
   });
 });
