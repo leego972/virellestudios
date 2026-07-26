@@ -12,8 +12,18 @@ import { storagePut } from "../storage";
 const execFileAsync = promisify(execFile);
 
 export const ADULT_AI_DISCLOSURE_TITLE = "NOTICE — AI-ASSISTED SYNTHETIC MEDIA";
-export const ADULT_AI_DISCLOSURE_TEXT =
-  "This production contains or may contain artificial-intelligence-assisted facial replacement, body transformation, age progression or regression, voice synthesis, compositing, or other synthetic-media techniques. The creator represents and warrants that all required rights, permissions, releases, and legally valid consents have been obtained for every identifiable person's likeness, voice, image, and personal attributes. The creator is solely responsible for the submitted media and resulting content. Virelle Studios supplies production technology and does not create, direct, sponsor, approve, or endorse user-generated content. Virelle Studios applies automated safety screening, provenance controls, audit logging, and human review where content is flagged. Unauthorised impersonation, non-consensual intimate imagery, exploitation of minors, deceptive identity misuse, and other unlawful use are prohibited.";
+export const ADULT_AI_DISCLOSURE_LINES = [
+  "This production contains or may contain AI-assisted facial replacement, body transformation,",
+  "age progression or regression, voice synthesis, compositing, or other synthetic-media techniques.",
+  "The creator represents and warrants that all required rights, permissions, releases, and legally",
+  "valid consents have been obtained for every identifiable person's likeness, voice, image, and attributes.",
+  "The creator is solely responsible for submitted media and resulting content. Virelle Studios supplies",
+  "production technology and does not create, direct, sponsor, approve, or endorse user-generated content.",
+  "Automated safety screening, provenance controls, audit logging, and human review apply where flagged.",
+  "Unauthorised impersonation, non-consensual intimate imagery, exploitation of minors, deceptive identity",
+  "misuse, and other unlawful use are strictly prohibited.",
+] as const;
+export const ADULT_AI_DISCLOSURE_TEXT = ADULT_AI_DISCLOSURE_LINES.join(" ");
 
 export type AdultRiskDecision = "allow" | "review" | "block";
 export type AdultRiskAssessment = {
@@ -174,6 +184,7 @@ export async function applyAdultOpeningDisclosure(opts: {
   const provenance = buildAdultProvenance(opts.jobId, opts.userId, opts.transformGoal);
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "virelle-adult-disclosure-"));
   const sourcePath = path.join(tempDir, "source.mp4");
+  const normalisedPath = path.join(tempDir, "source-normalised.mp4");
   const cardPath = path.join(tempDir, "notice.mp4");
   const outputPath = path.join(tempDir, "output.mp4");
   const listPath = path.join(tempDir, "concat.txt");
@@ -201,7 +212,7 @@ export async function applyAdultOpeningDisclosure(opts: {
       `adult-studio/compliant/${opts.userId}/${opts.jobId}-${provenance.markerId}.mp4`,
       data,
       "video/mp4",
-      { public: false },
+      { public: true },
     );
     return { url: uploaded.url, provenance };
   } finally {
