@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 
+// Guard the rule that Adult Studio preserves existing audio and only generates missing soundtracks.
 const root = path.resolve(import.meta.dirname, "..");
 const source = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
