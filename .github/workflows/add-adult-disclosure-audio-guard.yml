@@ -18,7 +18,8 @@ jobs:
         with:
           ref: feature/adult-entry-and-landing-overhaul
           fetch-depth: 0
-      - run: python scripts/add-adult-disclosure-audio-guard.py
+      - name: Apply silent-output compatibility guard
+        run: python scripts/add-adult-disclosure-audio-guard.py
       - run: |
           git rm scripts/add-adult-disclosure-audio-guard.py
           git rm .github/workflows/add-adult-disclosure-audio-guard.yml
