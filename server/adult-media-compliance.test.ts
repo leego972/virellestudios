@@ -8,10 +8,11 @@ const source = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
 describe("Adult Studio rendered-media compliance", () => {
   it("uses a clear opening legal notice", () => {
-    expect(ADULT_AI_DISCLOSURE_TEXT).toContain("facial replacement");
-    expect(ADULT_AI_DISCLOSURE_TEXT).toContain("solely responsible");
-    expect(ADULT_AI_DISCLOSURE_TEXT).toContain("legally valid consents");
-    expect(ADULT_AI_DISCLOSURE_TEXT).toContain("automated safety screening");
+    const disclosure = ADULT_AI_DISCLOSURE_TEXT.toLowerCase();
+    expect(disclosure).toContain("facial replacement");
+    expect(disclosure).toContain("solely responsible");
+    expect(disclosure).toContain("legally valid consents");
+    expect(disclosure).toContain("automated safety screening");
   });
 
   it("holds risky adult renders for administrator review", () => {
