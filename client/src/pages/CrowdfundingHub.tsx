@@ -1,1048 +1,665 @@
-import { useMemo, useState } from "react";
-import { Link, useParams, useLocation } from "wouter";
-import { NextStageCTA } from "@/components/NextStageCTA";
-import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useParams } from "wouter";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Sparkles,
-  Loader2,
-  Copy,
-  Rocket,
-  Gift,
-  Plus,
-  Film,
-  Target,
-  Zap,
-  Users,
-  CalendarDays,
-  CreditCard,
-  CheckCircle2,
   AlertCircle,
-  Video,
+  ArrowLeft,
+  CalendarDays,
+  CheckCircle2,
+  Copy,
+  CreditCard,
+  Download,
+  ExternalLink,
+  Gift,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Rocket,
+  Save,
+  Search,
   Settings,
   Trash2,
+  Users,
+  Video,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  campaignReadiness,
+  createCampaignPack,
+  createRewardTemplates,
+  crowdfundingEconomics,
+  isCrowdfundingPlatform,
+  parseAmount,
+  type CrowdfundingBrief,
+} from "@/lib/crowdfundingTools";
+import { trpc } from "@/lib/trpc";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const formatAud = (cents: number) =>
+  new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format((cents || 0) / 100);
 
-function isCrowdfundingSource(src: any) {
-  const type = (src.type || "").toLowerCase();
-  const org = (src.organization || "").toLowerCase();
+const statusClasses: Record<string, string> = {
+  draft: "bg-zinc-500/20 text-zinc-300",
+  active: "bg-blue-500/20 text-blue-300",
+  funded: "bg-amber-500/20 text-amber-300",
+  failed: "bg-red-500/20 text-red-300",
+  paid_out: "bg-emerald-500/20 text-emerald-300",
+  cancelled: "bg-zinc-500/20 text-zinc-500",
+};
+
+type CampaignForm = {
+  title: string;
+  tagline: string;
+  description: string;
+  goalAud: string;
+  fundingModel: "all_or_nothing" | "keep_it_all";
+  format: "Feature" | "Short" | "Series" | "Documentary" | "Other";
+  genre: string;
+};
+
+type RewardDraft = {
+  title: string;
+  description: string;
+  amountAud: string;
+  estimatedDelivery: string;
+  limitCount: string;
+};
+
+function downloadText(name: string, content: string) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = name;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   return (
-    type.includes("crowd") ||
-    type.includes("community") ||
-    org.includes("kickstarter") ||
-    org.includes("indiegogo") ||
-    org.includes("seed&spark") ||
-    org.includes("seed & spark") ||
-    org.includes("pozible") ||
-    org.includes("backit") ||
-    org.includes("fundrazr") ||
-    type.includes("platform") ||
-    (src.supports || "").toLowerCase().includes("crowd")
+    <Button
+      size="sm"
+      variant="outline"
+      className="gap-1.5"
+      onClick={async () => {
+        await navigator.clipboard.writeText(text);
+        toast.success("Copied");
+      }}
+    >
+      <Copy className="h-3.5 w-3.5" /> {label}
+    </Button>
   );
 }
 
-type Kind = "campaign" | "rewards" | "videoScript";
-
-const PROMPTS: Record<Kind, (b: BriefState, title: string) => string> = {
-  campaign: (b, t) =>
-    `Write a compelling crowdfunding campaign pitch page for the film "${t}".
-Format: ${b.format}. Genre: ${b.genre}. Target audience: ${b.audience}. Tone: ${b.tone}.
-Premise: ${b.premise}
-Funding goal: ${b.goal} ${b.currency}. Campaign length: ${b.duration} days.
-Include: hook paragraph, story summary (3-4 sentences), director statement, how funds will be used (3-4 bullet points), and a CTA.`,
-  rewards: (b, t) =>
-    `Design 5-7 reward tiers for the crowdfunding campaign "${t}".
-Format: ${b.format}. Genre: ${b.genre}. Goal: ${b.goal} ${b.currency}.
-Tiers should escalate from $5 to $5,000+. For each tier: name, dollar amount, 1-line description, estimated delivery.`,
-  videoScript: (b, t) =>
-    `Write a 90-second pitch-video script for the "${t}" crowdfunding campaign.
-Format: ${b.format}. Genre: ${b.genre}. Tone: ${b.tone}. Premise: ${b.premise}
-Goal: ${b.goal} ${b.currency}.
-Two columns: VISUAL | AUDIO. Open with a 5-second hook. Include filmmaker on-camera moment, story tease, ask, and a URL CTA.`,
-};
-
-interface BriefState {
-  format: string;
-  genre: string;
-  audience: string;
-  tone: string;
-  premise: string;
-  goal: string;
-  currency: string;
-  duration: string;
+function ReadinessCard({ readiness }: { readiness: ReturnType<typeof campaignReadiness> }) {
+  return (
+    <Card className="border-amber-500/20">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base gradient-text-gold">
+          <HollywoodIcon tool="reports" size={24} alt="Campaign readiness" />
+          Launch readiness
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-end justify-between gap-3">
+          <span className="text-sm text-muted-foreground">Campaign completeness</span>
+          <strong className="text-2xl text-amber-400">{readiness.score}%</strong>
+        </div>
+        <Progress value={readiness.score} className="h-2 [&>div]:bg-amber-500" />
+        <div className="space-y-1.5">
+          {readiness.checks.map((check) => (
+            <div key={check.key} className="flex items-center gap-2 text-xs">
+              {check.complete ? (
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+              ) : (
+                <AlertCircle className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+              )}
+              <span className={check.complete ? "text-muted-foreground" : "text-foreground"}>
+                {check.label}
+              </span>
+              <span className="ml-auto text-[10px] text-muted-foreground">{check.points} pts</span>
+            </div>
+          ))}
+        </div>
+        {readiness.warnings.map((warning) => (
+          <p key={warning} className="rounded-md border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-amber-200">
+            {warning}
+          </p>
+        ))}
+      </CardContent>
+    </Card>
+  );
 }
-
-interface NewCampaignState {
-  title: string;
-  tagline: string;
-  goalAud: string;
-  fundingModel: "all_or_nothing" | "keep_it_all";
-  format: string;
-  genre: string;
-}
-
-const FMT_AUD = (cents: number) =>
-  new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", minimumFractionDigits: 0 }).format(cents / 100);
 
 function CrowdfundingHubInner() {
   const params = useParams<{ projectId?: string }>();
   const [, navigate] = useLocation();
-  const projectId = parseInt(params.projectId || "0");
-  const hasProject = !!projectId;
+  const projectId = Number(params.projectId || 0);
+  const hasProject = projectId > 0;
+  const utils = trpc.useUtils();
 
-  const { data: sources } = trpc.funding.list.useQuery({});
-  const { data: project } = trpc.project.get.useQuery(
+  const projectQuery = trpc.project.get.useQuery(
     { id: projectId },
-    { enabled: hasProject }
+    { enabled: hasProject },
   );
+  const fundingSourcesQuery = trpc.funding.list.useQuery({});
+  const campaignsQuery = trpc.crowdfund.campaign.listMine.useQuery();
 
-  const { data: myCampaigns, isLoading: myCampaignsLoading, refetch: refetchCampaigns } =
-    trpc.crowdfund.campaign.listMine.useQuery();
+  const [tab, setTab] = useState("campaigns");
+  const [platformSearch, setPlatformSearch] = useState("");
+  const [platformCountry, setPlatformCountry] = useState("all");
+  const [showCreate, setShowCreate] = useState(false);
+  const [showLaunch, setShowLaunch] = useState(false);
+  const [launchingId, setLaunchingId] = useState<number | null>(null);
+  const [deadlineDays, setDeadlineDays] = useState(30);
+  const [manageCampaignId, setManageCampaignId] = useState<number | null>(null);
+  const [launchAcknowledged, setLaunchAcknowledged] = useState(false);
 
-  // ── Campaign mutations ────────────────────────────────────────────────────
-  const createCampaignMutation = trpc.crowdfund.campaign.create.useMutation({
-    onSuccess: ({ slug }) => {
-      toast.success("Campaign created! Next: set up your payouts.");
-      setShowCreateModal(false);
-      setCreating(false);
-      void refetchCampaigns();
-      navigate(`/crowdfund/c/${slug}`);
-    },
-    onError: (err) => {
-      toast.error(err.message);
-      setCreating(false);
-    },
-  });
-
-  const createConnectAccountMutation = trpc.crowdfund.connect.createAccount.useMutation();
-  const getOnboardingUrlMutation = trpc.crowdfund.connect.getOnboardingUrl.useMutation();
-
-  const launchMutation = trpc.crowdfund.campaign.launch.useMutation({
-    onSuccess: () => {
-      toast.success("Campaign is now live!");
-      setShowLaunchModal(false);
-      setLaunchingId(null);
-      void refetchCampaigns();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  // ── Platforms ─────────────────────────────────────────────────────────────
-  const platforms = useMemo(
-    () => (sources ?? []).filter(isCrowdfundingSource),
-    [sources]
-  );
-
-  const [search, setSearch] = useState("");
-  const filtered = useMemo(() => {
-    const s = search.trim().toLowerCase();
-    if (!s) return platforms;
-    return platforms.filter(
-      (p: any) =>
-        (p.organization || "").toLowerCase().includes(s) ||
-        (p.country || "").toLowerCase().includes(s) ||
-        (p.supports || "").toLowerCase().includes(s)
-    );
-  }, [platforms, search]);
-
-  // ── AI Campaign Builder state ─────────────────────────────────────────────
-  const [brief, setBrief] = useState<BriefState>({
+  const [brief, setBrief] = useState<CrowdfundingBrief>({
     format: "Feature",
     genre: "",
     audience: "",
-    tone: "Warm, urgent",
+    tone: "Warm, direct and credible",
     premise: "",
     goal: "25000",
-    currency: "USD",
+    currency: "AUD",
     duration: "30",
+    useOfFunds: "",
+    filmmakerStory: "",
   });
-  const [generating, setGenerating] = useState<Kind | null>(null);
-
-  // ── Create modal state ────────────────────────────────────────────────────
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [newCampaign, setNewCampaign] = useState<NewCampaignState>({
+  const [generatedPack, setGeneratedPack] = useState<ReturnType<typeof createCampaignPack> | null>(null);
+  const [newCampaign, setNewCampaign] = useState<CampaignForm>({
     title: "",
     tagline: "",
-    goalAud: "",
+    description: "",
+    goalAud: "25000",
     fundingModel: "all_or_nothing",
     format: "Feature",
     genre: "",
   });
 
-  // ── Launch modal state ────────────────────────────────────────────────────
-  const [showLaunchModal, setShowLaunchModal] = useState(false);
-  const [launchingId, setLaunchingId] = useState<number | null>(null);
-  const [deadlineDays, setDeadlineDays] = useState(30);
-  const [settingUpPayoutsId, setSettingUpPayoutsId] = useState<number | null>(null);
-  const [manageCampaignId, setManageCampaignId] = useState<number | null>(null);
-  const { data: manageData, refetch: refetchManage } = trpc.crowdfund.campaign.getById.useQuery(
-    { id: manageCampaignId ?? 0 },
-    { enabled: !!manageCampaignId }
+  const manageQuery = trpc.crowdfund.campaign.getById.useQuery(
+    { id: manageCampaignId || 0 },
+    { enabled: Boolean(manageCampaignId) },
+  );
+  const payoutStatusQuery = trpc.crowdfund.connect.getStatus.useQuery(
+    { campaignId: manageCampaignId || 0 },
+    { enabled: Boolean(manageCampaignId) },
   );
 
-  const updateCampaignMutation = trpc.crowdfund.campaign.update.useMutation({
-    onSuccess: () => {
-      toast.success("Campaign updated");
-      refetchManage();
-      refetchCampaigns();
-    },
-    onError: (e) => toast.error(e.message),
+  const [manageDraft, setManageDraft] = useState({
+    title: "",
+    tagline: "",
+    description: "",
+    posterUrl: "",
+    videoUrl: "",
+    goalAud: "",
   });
+  const [rewardDrafts, setRewardDrafts] = useState<Record<number, RewardDraft>>({});
 
-  const deleteCampaignMutation = trpc.crowdfund.campaign.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Campaign cancelled");
-      setManageCampaignId(null);
-      refetchCampaigns();
-    },
-    onError: (e) => toast.error(e.message),
-  });
+  useEffect(() => {
+    if (!hasProject || !projectQuery.data) return;
+    const project = projectQuery.data as any;
+    setBrief((current) => ({
+      ...current,
+      format: project.format || project.type || current.format,
+      genre: project.genre || current.genre,
+      audience: project.targetAudience || current.audience,
+      premise: project.plotSummary || project.description || project.mainPlot || current.premise,
+    }));
+    setNewCampaign((current) => ({
+      ...current,
+      title: current.title || project.title || "",
+      genre: current.genre || project.genre || "",
+      format: (project.format || project.type || current.format) as CampaignForm["format"],
+    }));
+  }, [hasProject, projectQuery.data]);
 
-  const createRewardMutation = trpc.crowdfund.reward.create.useMutation({
-    onSuccess: () => {
-      toast.success("Reward created");
-      refetchManage();
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const updateRewardMutation = trpc.crowdfund.reward.update.useMutation({
-    onSuccess: () => {
-      toast.success("Reward updated");
-      refetchManage();
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const deleteRewardMutation = trpc.crowdfund.reward.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Reward removed");
-      refetchManage();
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  // ── Director AI ───────────────────────────────────────────────────────────
-  const sendMessage = trpc.directorChat.send.useMutation();
-  const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
-    { projectId },
-    { enabled: hasProject, refetchInterval: 4000 }
-  );
-
-  const lastByKind = useMemo(() => {
-    const out: Record<string, string> = {};
-    for (const m of history ?? []) {
-      const tag = (m as any).metadata?.crowdfundingKind as string | undefined;
-      if (tag && (m as any).role === "assistant") {
-        out[tag] = (m as any).content as string;
-      }
-    }
-    return out;
-  }, [history]);
-
-  // ── Handlers ──────────────────────────────────────────────────────────────
-  async function generate(kind: Kind) {
-    if (!hasProject) {
-      toast.error("Open this from a project to generate AI copy.");
-      return;
-    }
-    if (!brief.premise.trim()) {
-      toast.error("Add a premise before generating.");
-      return;
-    }
-    setGenerating(kind);
+  useEffect(() => {
+    const key = `virelle:crowdfunding-brief:${projectId || "global"}`;
     try {
-      await sendMessage.mutateAsync({
-        projectId,
-        message: `[CrowdfundingHub:${kind}]\n\n${PROMPTS[kind](brief, project?.title || "Untitled")}`,
-      });
-      await refetchHistory();
-      toast.success(`${kind} drafted.`);
-    } catch (e: any) {
-      toast.error(e?.message || "Generation failed.");
-    } finally {
-      setGenerating(null);
+      const stored = JSON.parse(localStorage.getItem(key) || "{}");
+      setBrief((current) => ({ ...current, ...stored }));
+    } catch {
+      // Ignore malformed local drafts.
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    const key = `virelle:crowdfunding-brief:${projectId || "global"}`;
+    const timer = window.setTimeout(() => {
+      localStorage.setItem(key, JSON.stringify(brief));
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [brief, projectId]);
+
+  useEffect(() => {
+    const data = manageQuery.data as any;
+    if (!data?.campaign) return;
+    setManageDraft({
+      title: data.campaign.title || "",
+      tagline: data.campaign.tagline || "",
+      description: data.campaign.description || "",
+      posterUrl: data.campaign.posterUrl || "",
+      videoUrl: data.campaign.videoUrl || "",
+      goalAud: String((data.campaign.goalAmountCents || 0) / 100),
+    });
+    const drafts: Record<number, RewardDraft> = {};
+    for (const reward of data.rewards || []) {
+      drafts[reward.id] = {
+        title: reward.title || "",
+        description: reward.description || "",
+        amountAud: String((reward.amountCents || 0) / 100),
+        estimatedDelivery: reward.estimatedDelivery || "",
+        limitCount: reward.limitCount ? String(reward.limitCount) : "",
+      };
+    }
+    setRewardDrafts(drafts);
+  }, [manageQuery.data]);
+
+  const campaigns = (campaignsQuery.data || []) as any[];
+  const platformSources = useMemo(
+    () => (fundingSourcesQuery.data || []).filter(isCrowdfundingPlatform) as any[],
+    [fundingSourcesQuery.data],
+  );
+  const platformCountries = useMemo(
+    () => [...new Set(platformSources.map((source) => String(source.country || "Global")))].sort(),
+    [platformSources],
+  );
+  const filteredPlatforms = useMemo(() => {
+    const query = platformSearch.trim().toLowerCase();
+    return platformSources.filter((source) => {
+      if (platformCountry !== "all" && String(source.country || "Global") !== platformCountry) return false;
+      if (!query) return true;
+      return [source.organization, source.country, source.type, source.supports, source.eligibility]
+        .some((value) => String(value || "").toLowerCase().includes(query));
+    });
+  }, [platformCountry, platformSearch, platformSources]);
+
+  const campaignTotals = useMemo(
+    () => campaigns.reduce(
+      (totals, campaign) => ({
+        raised: totals.raised + Number(campaign.raisedAmountCents || 0),
+        backers: totals.backers + Number(campaign.backerCount || 0),
+        active: totals.active + (campaign.status === "active" ? 1 : 0),
+      }),
+      { raised: 0, backers: 0, active: 0 },
+    ),
+    [campaigns],
+  );
+
+  const builderGoalCents = Math.round(parseAmount(brief.goal) * 100);
+  const builderEconomics = crowdfundingEconomics(builderGoalCents);
+  const manageData = manageQuery.data as any;
+  const manageCampaign = manageData?.campaign;
+  const manageRewards = (manageData?.rewards || []) as any[];
+  const manageReadiness = campaignReadiness(
+    {
+      ...(manageCampaign || {}),
+      ...manageDraft,
+      goalAmountCents: Math.round(parseAmount(manageDraft.goalAud) * 100),
+      stripeConnectOnboarded:
+        payoutStatusQuery.data?.onboarded ?? manageCampaign?.stripeConnectOnboarded,
+    },
+    manageRewards.map((reward) => rewardDrafts[reward.id] || reward),
+  );
+
+  const createCampaign = trpc.crowdfund.campaign.create.useMutation({
+    onSuccess: ({ slug }) => {
+      toast.success("Campaign created as a draft");
+      setShowCreate(false);
+      campaignsQuery.refetch();
+      navigate(`/crowdfund/c/${slug}`);
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const updateCampaign = trpc.crowdfund.campaign.update.useMutation({
+    onSuccess: () => {
+      toast.success("Campaign details saved");
+      manageQuery.refetch();
+      campaignsQuery.refetch();
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const deleteCampaign = trpc.crowdfund.campaign.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Draft campaign cancelled");
+      setManageCampaignId(null);
+      campaignsQuery.refetch();
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const launchCampaign = trpc.crowdfund.campaign.launch.useMutation({
+    onSuccess: () => {
+      toast.success("Campaign is live");
+      setShowLaunch(false);
+      setLaunchingId(null);
+      setLaunchAcknowledged(false);
+      campaignsQuery.refetch();
+      manageQuery.refetch();
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const createConnectAccount = trpc.crowdfund.connect.createAccount.useMutation();
+  const getOnboardingUrl = trpc.crowdfund.connect.getOnboardingUrl.useMutation();
+  const createReward = trpc.crowdfund.reward.create.useMutation();
+  const updateReward = trpc.crowdfund.reward.update.useMutation();
+  const deleteReward = trpc.crowdfund.reward.delete.useMutation();
+
+  async function setupPayouts(campaignId: number) {
+    try {
+      await createConnectAccount.mutateAsync({ campaignId });
+      const returnUrl = `${window.location.origin}${hasProject ? `/projects/${projectId}/crowdfunding` : "/crowdfunding"}`;
+      const result = await getOnboardingUrl.mutateAsync({ campaignId, returnUrl });
+      window.location.href = result.url;
+    } catch (error: any) {
+      toast.error(error?.message || "Payout setup could not be started");
     }
   }
 
-  function copy(text: string) {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied.");
+  function buildFreePack() {
+    const title = String((projectQuery.data as any)?.title || newCampaign.title || "Untitled Film");
+    if (!brief.premise.trim()) {
+      toast.error("Add the film premise first");
+      return;
+    }
+    const pack = createCampaignPack(brief, title);
+    setGeneratedPack(pack);
+    setNewCampaign((current) => ({
+      ...current,
+      title: current.title || title,
+      genre: current.genre || brief.genre,
+      format: (brief.format || current.format) as CampaignForm["format"],
+      goalAud: brief.goal || current.goalAud,
+      description: pack.pitch,
+      tagline: current.tagline || brief.premise.split(/[.!?]/)[0].slice(0, 180),
+    }));
+    toast.success("Free campaign pack created locally");
   }
 
-  function handleCreateCampaign() {
-    const goalCents = Math.round(parseFloat(newCampaign.goalAud || "0") * 100);
-    if (!newCampaign.title.trim()) { toast.error("Campaign title required"); return; }
-    if (goalCents < 100) { toast.error("Minimum goal is A$1"); return; }
-    setCreating(true);
-    createCampaignMutation.mutate({
+  function submitNewCampaign() {
+    const goalAmountCents = Math.round(parseAmount(newCampaign.goalAud) * 100);
+    if (newCampaign.title.trim().length < 3) {
+      toast.error("Campaign title must contain at least three characters");
+      return;
+    }
+    if (goalAmountCents < 100) {
+      toast.error("Funding goal must be at least A$1");
+      return;
+    }
+    createCampaign.mutate({
       title: newCampaign.title.trim(),
       tagline: newCampaign.tagline.trim() || undefined,
-      goalAmountCents: goalCents,
+      description: newCampaign.description.trim() || undefined,
+      goalAmountCents,
       fundingModel: newCampaign.fundingModel,
-      format: newCampaign.format as any,
+      format: newCampaign.format,
       genre: newCampaign.genre.trim() || undefined,
       projectId: hasProject ? projectId : undefined,
     });
   }
 
-  async function handleSetupPayouts(campaign: { id: number; stripeConnectAccountId: string | null }) {
-    setSettingUpPayoutsId(campaign.id);
+  async function addRecommendedRewards() {
+    if (!manageCampaign) return;
+    if (manageRewards.length > 0 && !window.confirm("Add another set of recommended reward tiers?")) return;
+    const templates = createRewardTemplates(Number(manageCampaign.goalAmountCents || 0) / 100);
     try {
-      // Step 1: create or retrieve Connect account
-      const { accountId } = await createConnectAccountMutation.mutateAsync({ campaignId: campaign.id });
-      // Step 2: get onboarding URL and redirect
-      const returnUrl = `${window.location.origin}/crowdfunding`;
-      const { url } = await getOnboardingUrlMutation.mutateAsync({ campaignId: campaign.id, returnUrl });
-      window.location.href = url;
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to start payout setup.");
-    } finally {
-      setSettingUpPayoutsId(null);
+      for (let index = 0; index < templates.length; index += 1) {
+        const reward = templates[index];
+        await createReward.mutateAsync({
+          campaignId: manageCampaign.id,
+          title: reward.title,
+          description: reward.description,
+          amountCents: reward.amountCents,
+          estimatedDelivery: reward.estimatedDelivery,
+          limitCount: reward.limitCount,
+          sortOrder: manageRewards.length + index,
+        });
+      }
+      toast.success("Recommended reward tiers added");
+      manageQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Rewards could not be added");
     }
   }
 
-  function openLaunchModal(id: number) {
-    setLaunchingId(id);
-    setDeadlineDays(30);
-    setShowLaunchModal(true);
+  async function saveReward(rewardId: number) {
+    const draft = rewardDrafts[rewardId];
+    if (!draft) return;
+    try {
+      await updateReward.mutateAsync({
+        id: rewardId,
+        title: draft.title,
+        description: draft.description,
+        amountCents: Math.max(100, Math.round(parseAmount(draft.amountAud) * 100)),
+        estimatedDelivery: draft.estimatedDelivery,
+        limitCount: draft.limitCount ? Math.max(1, Number(draft.limitCount)) : null,
+      });
+      toast.success("Reward saved");
+      manageQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Reward could not be saved");
+    }
   }
 
-  function confirmLaunch() {
-    if (!launchingId) return;
-    launchMutation.mutate({ id: launchingId, deadlineDays });
-  }
-
-  const statusColors: Record<string, string> = {
-    draft: "bg-zinc-500/20 text-zinc-400",
-    active: "bg-blue-500/20 text-blue-400",
-    funded: "bg-amber-500/20 text-amber-400",
-    failed: "bg-red-500/20 text-red-400",
-    paid_out: "bg-emerald-500/20 text-emerald-400",
-    cancelled: "bg-zinc-500/20 text-zinc-500",
-  };
+  const generatedExport = generatedPack
+    ? `CROWDFUNDING CAMPAIGN PACK\n\nPITCH\n${generatedPack.pitch}\n\nPITCH VIDEO\n${generatedPack.videoScript}\n\nREWARD TIERS\n${generatedPack.rewards.map((reward) => `${formatAud(reward.amountCents)} — ${reward.title}\n${reward.description}\nDelivery: ${reward.estimatedDelivery}`).join("\n\n")}`
+    : "";
 
   return (
-    <div className="container max-w-6xl py-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="container max-w-7xl space-y-6 py-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link href={hasProject ? `/projects/${projectId}` : "/funding"}>
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Back
           </Button>
         </Link>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Rocket className="h-4 w-4" /> Crowdfunding Hub
-        </div>
+        <Badge variant="outline" className="gap-1.5 border-amber-500/30 text-amber-300">
+          <HollywoodIcon tool="reports" size={18} alt="Funding" /> Funding · Crowdfunding
+        </Badge>
       </div>
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Crowdfunding Hub</h1>
-        <p className="text-muted-foreground mt-1">
-          {platforms.length} platforms · launch-ready campaign copy, reward tiers, and pitch-video scripts.
-        </p>
-      </div>
-
-      {/* ── My Campaigns ────────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
-                <Film className="h-4 w-4 text-amber-400" /> My Campaigns
-              </CardTitle>
-              <CardDescription>Your crowdfunding campaigns launched on Virelle.</CardDescription>
+      <Card className="overflow-hidden border-amber-500/20 bg-gradient-to-br from-amber-500/8 via-background to-background">
+        <CardContent className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+          <div className="flex min-w-0 items-start gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10">
+              <HollywoodIcon tool="reports" size={46} alt="Crowdfunding" />
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate("/crowdfund/browse")}>
-                Browse All
-              </Button>
-              <Button
-                size="sm"
-                className="bg-amber-500 hover:bg-amber-400 text-black font-semibold gap-1.5"
-                onClick={() => setShowCreateModal(true)}
-              >
-                <Plus className="h-3.5 w-3.5" /> New Campaign
-              </Button>
+            <div className="min-w-0">
+              <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Crowdfunding</h1>
+              <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                Plan the campaign, calculate the funding target, create rewards, compare external platforms, configure payouts and track Virelle campaigns from one Funding workspace.
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          {myCampaignsLoading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-amber-400" /> Loading campaigns…
-            </div>
-          ) : !myCampaigns || myCampaigns.length === 0 ? (
-            <div className="text-center py-8 space-y-3">
-              <Film className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-              <p className="text-sm text-muted-foreground">No campaigns yet. Launch your first one and fund your film through your audience.</p>
-              <Button size="sm" variant="outline" onClick={() => setShowCreateModal(true)}>
-                <Plus className="h-3.5 w-3.5 mr-1.5" /> Create your first campaign
-              </Button>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {myCampaigns.map((campaign) => {
-                const progress = Math.min(100, Math.round((campaign.raisedAmountCents / campaign.goalAmountCents) * 100));
-                const days = campaign.deadline
-                  ? Math.max(0, Math.ceil((new Date(campaign.deadline).getTime() - Date.now()) / 86400000))
-                  : null;
-                const isSettingUp = settingUpPayoutsId === campaign.id;
-                return (
-                  <Card
-                    key={campaign.id}
-                    className="overflow-hidden hover:border-amber-500/40 transition-colors group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
-                  >
-                    {campaign.posterUrl ? (
-                      <div
-                        className="h-32 overflow-hidden cursor-pointer"
-                        onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
-                      >
-                        <img
-                          src={campaign.posterUrl}
-                          alt={campaign.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className="h-20 bg-gradient-to-br from-amber-900/20 to-black/40 flex items-center justify-center cursor-pointer"
-                        onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
-                      >
-                        <Film className="w-8 h-8 text-amber-500/30" />
-                      </div>
-                    )}
-                    <CardContent className="p-3 space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-                      <div
-                        className="flex items-start justify-between gap-2 cursor-pointer"
-                        onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
-                      >
-                        <p className="font-semibold text-sm line-clamp-1 flex-1">{campaign.title}</p>
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded font-medium capitalize ${statusColors[campaign.status] ?? ""}`}
-                        >
-                          {campaign.status.replace("_", " ")}
-                        </span>
-                      </div>
-                      <Progress value={progress} className="h-1.5 rounded-full [&>div]:bg-amber-500" />
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground">{FMT_AUD(campaign.raisedAmountCents)}</span>
-                        <span>{progress}% of {FMT_AUD(campaign.goalAmountCents)}</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />{campaign.backerCount}
-                        </span>
-                        {days !== null && campaign.status === "active" && (
-                          <span className="flex items-center gap-1">
-                            <CalendarDays className="w-3 h-3" />{days}d left
-                          </span>
-                        )}
-                        <Badge variant="outline" className="text-[10px] h-4 px-1 ml-auto">
-                          {campaign.fundingModel === "all_or_nothing" ? "All-or-Nothing" : "Keep-it-All"}
-                        </Badge>
-                      </div>
-
-                      {/* ── Draft actions ──────────────────────────────────── */}
-                      {campaign.status === "draft" && (
-                        <div className="flex flex-col gap-1.5 pt-1">
-                          {!campaign.stripeConnectOnboarded ? (
-                            <>
-                              <div className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 rounded px-2 py-1">
-                                <AlertCircle className="w-3 h-3 shrink-0" />
-                                Payout setup required before launch
-                              </div>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="w-full h-7 text-xs gap-1.5 border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
-                                disabled={isSettingUp}
-                                onClick={(e) => { e.stopPropagation(); void handleSetupPayouts(campaign); }}
-                              >
-                                {isSettingUp
-                                  ? <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
-                                  : <Settings className="w-3 h-3" />
-                                }
-                                {isSettingUp ? "Redirecting…" : "Set up payouts"}
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
-                                <CheckCircle2 className="w-3 h-3 shrink-0" />
-                                Payouts configured · ready to launch
-                              </div>
-                              <Button
-                                size="sm"
-                                className="w-full h-7 text-xs gap-1.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
-                                onClick={(e) => { e.stopPropagation(); openLaunchModal(campaign.id); }}
-                              >
-                                <Rocket className="w-3 h-3" />
-                                Launch Campaign
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      )}
-
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="w-full h-7 text-xs gap-1.5"
-                        onClick={(e) => { e.stopPropagation(); setManageCampaignId(campaign.id); }}
-                      >
-                        <Settings className="w-3 h-3" />
-                        Manage Campaign
-                      </Button>
-                    </CardContent>
-                  </Card>
-              );
-            })}
-            </div>
-          )}
+          <Button
+            className="min-h-11 shrink-0 gap-2 bg-amber-500 font-semibold text-black hover:bg-amber-400"
+            onClick={() => setShowCreate(true)}
+          >
+            <Plus className="h-4 w-4" /> New campaign
+          </Button>
         </CardContent>
       </Card>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Platforms list */}
-        <Card className="lg:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Platforms</CardTitle>
-            <CardDescription>Curated from the Funding Directory.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-            <Input
-              placeholder="Search platforms…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
-              {filtered.map((p: any) => (
-                <a
-                  key={p.id}
-                  href={p.website || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-3 rounded-lg border hover:border-amber-400/40 hover:bg-accent/40 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="font-medium text-sm truncate">{p.organization}</div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {p.country}{p.type ? ` · ${p.type}` : ""}
-                      </div>
-                    </div>
-                    <ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground mt-0.5" />
-                  </div>
-                  {p.supports && (
-                    <div className="text-xs text-muted-foreground mt-1.5 line-clamp-2">
-                      {p.supports}
-                    </div>
-                  )}
-                </a>
-              ))}
-              {filtered.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-6">
-                  No platforms match.
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+        <TabsList className="h-auto w-full flex-wrap justify-start">
+          <TabsTrigger value="campaigns">My campaigns</TabsTrigger>
+          <TabsTrigger value="builder">Campaign builder</TabsTrigger>
+          <TabsTrigger value="platforms">External platforms</TabsTrigger>
+          <TabsTrigger value="guidance">Launch guidance</TabsTrigger>
+        </TabsList>
 
-        {/* AI campaign builder */}
-        <Card className="lg:col-span-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-              <Sparkles className="h-4 w-4" /> AI Campaign Builder
-            </CardTitle>
-            <CardDescription>
-              {hasProject
-                ? `Draft pitch, rewards, and a 90-second video script for "${project?.title || "your project"}".`
-                : "Open from a project to generate AI copy."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-            <div className="grid md:grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs">Format</Label>
-                <Select value={brief.format} onValueChange={(v) => setBrief({ ...brief, format: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Feature">Feature</SelectItem>
-                    <SelectItem value="Short">Short</SelectItem>
-                    <SelectItem value="Series">Series</SelectItem>
-                    <SelectItem value="Documentary">Documentary</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs">Genre</Label>
-                <Input value={brief.genre} onChange={(e) => setBrief({ ...brief, genre: e.target.value })} placeholder="Drama, Sci-Fi, Horror…" />
-              </div>
-              <div>
-                <Label className="text-xs">Audience</Label>
-                <Input value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} placeholder="e.g. 25–45 indie film fans" />
-              </div>
-              <div>
-                <Label className="text-xs">Tone</Label>
-                <Input value={brief.tone} onChange={(e) => setBrief({ ...brief, tone: e.target.value })} />
-              </div>
-              <div>
-                <Label className="text-xs">Goal</Label>
-                <Input value={brief.goal} onChange={(e) => setBrief({ ...brief, goal: e.target.value })} />
-              </div>
-              <div>
-                <Label className="text-xs">Currency</Label>
-                <Select value={brief.currency} onValueChange={(v) => setBrief({ ...brief, currency: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="EUR">EUR</SelectItem>
-                    <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="CAD">CAD</SelectItem>
-                    <SelectItem value="AUD">AUD</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs">Campaign Duration</Label>
-                <Select value={brief.duration} onValueChange={(v) => setBrief({ ...brief, duration: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="15">15 days — Sprint</SelectItem>
-                    <SelectItem value="21">21 days — Short</SelectItem>
-                    <SelectItem value="30">30 days — Standard</SelectItem>
-                    <SelectItem value="45">45 days — Extended</SelectItem>
-                    <SelectItem value="60">60 days — Long</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-2">
-                <Label className="text-xs">Premise (1–3 sentences)</Label>
-                <Textarea
-                  rows={3}
-                  value={brief.premise}
-                  onChange={(e) => setBrief({ ...brief, premise: e.target.value })}
-                  placeholder="A one-paragraph premise the AI can build from."
-                />
-              </div>
-            </div>
-
-            {brief.goal && (
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <Rocket className="h-4 w-4 text-amber-400 shrink-0" />
-                <div className="flex flex-wrap gap-x-4 gap-y-1">
-                  <span><span className="text-muted-foreground">Goal</span> <span className="font-medium">{brief.goal} {brief.currency}</span></span>
-                  <span><span className="text-muted-foreground">Duration</span> <span className="font-medium">{brief.duration} days</span></span>
-                  <span><span className="text-muted-foreground">Format</span> <span className="font-medium">{brief.format}</span></span>
-                  {brief.genre && <span><span className="text-muted-foreground">Genre</span> <span className="font-medium">{brief.genre}</span></span>}
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-3 gap-2">
-              <Button onClick={() => generate("campaign")} disabled={!!generating || !hasProject} className="gap-2" size="sm">
-                {generating === "campaign" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Rocket className="h-3 w-3" />}
-                Pitch
-              </Button>
-              <Button onClick={() => generate("rewards")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
-                {generating === "rewards" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Gift className="h-3 w-3" />}
-                Rewards
-              </Button>
-              <Button onClick={() => generate("videoScript")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
-                {generating === "videoScript" ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Video className="h-3 w-3" />}
-                Video
-              </Button>
-            </div>
-
-            {(["campaign", "rewards", "videoScript"] as Kind[]).map((k) =>
-              lastByKind[k] ? (
-                <div key={k} className="border rounded-lg p-3 bg-muted/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="text-[10px] uppercase">{k}</Badge>
-                    <Button size="sm" variant="ghost" onClick={() => copy(lastByKind[k])} className="h-6 gap-1 text-xs">
-                      <Copy className="h-3 w-3" /> Copy
-                    </Button>
-                  </div>
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{lastByKind[k]}</pre>
-                </div>
-              ) : null
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ── Create Campaign Modal ────────────────────────────────────────── */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-lg glass-dark">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
-              <Film className="w-5 h-5 text-amber-400" /> New Crowdfunding Campaign
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <Label className="text-xs">Campaign Title *</Label>
-              <Input
-                placeholder="e.g. The Last Sundowner"
-                value={newCampaign.title}
-                onChange={e => setNewCampaign(p => ({ ...p, title: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label className="text-xs">Tagline</Label>
-              <Input
-                placeholder="One sentence that hooks backers"
-                value={newCampaign.tagline}
-                onChange={e => setNewCampaign(p => ({ ...p, tagline: e.target.value }))}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs">Funding Goal (AUD) *</Label>
-                <Input
-                  type="number"
-                  min="100"
-                  placeholder="25000"
-                  value={newCampaign.goalAud}
-                  onChange={e => setNewCampaign(p => ({ ...p, goalAud: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label className="text-xs">Funding Model *</Label>
-                <Select
-                  value={newCampaign.fundingModel}
-                  onValueChange={v => setNewCampaign(p => ({ ...p, fundingModel: v as "all_or_nothing" | "keep_it_all" }))}
-                >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_or_nothing">All-or-Nothing</SelectItem>
-                    <SelectItem value="keep_it_all">Keep-it-All</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs">Format</Label>
-                <Select value={newCampaign.format} onValueChange={v => setNewCampaign(p => ({ ...p, format: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Feature">Feature</SelectItem>
-                    <SelectItem value="Short">Short</SelectItem>
-                    <SelectItem value="Series">Series</SelectItem>
-                    <SelectItem value="Documentary">Documentary</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs">Genre</Label>
-                <Input placeholder="Drama, Sci-Fi…" value={newCampaign.genre} onChange={e => setNewCampaign(p => ({ ...p, genre: e.target.value }))} />
-              </div>
-            </div>
-            <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-3 text-xs text-muted-foreground space-y-1">
-              <p className="font-medium text-amber-400 flex items-center gap-1.5">
-                <CreditCard className="w-3 h-3" />7% Platform Fee
-              </p>
-              <p>Virelle charges a 7% fee on all funds raised. You receive payouts via Stripe Connect after campaign closes.</p>
-              {newCampaign.fundingModel === "all_or_nothing" && (
-                <p className="text-amber-300/80">
-                  <Target className="w-3 h-3 inline mr-1" />
-                  All-or-Nothing: backers are only charged if the full goal is met by the deadline.
-                </p>
-              )}
-              {newCampaign.fundingModel === "keep_it_all" && (
-                <p className="text-emerald-300/80">
-                  <Zap className="w-3 h-3 inline mr-1" />
-                  Keep-it-All: you receive all funds raised, whether or not the goal is reached.
-                </p>
-              )}
-            </div>
+        <TabsContent value="campaigns" className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Card><CardContent className="pt-5"><p className="text-xs text-muted-foreground">Campaigns</p><p className="text-3xl font-bold">{campaigns.length}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-muted-foreground">Active</p><p className="text-3xl font-bold text-blue-300">{campaignTotals.active}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-muted-foreground">Raised</p><p className="text-3xl font-bold text-amber-300">{formatAud(campaignTotals.raised)}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-muted-foreground">Backers</p><p className="text-3xl font-bold text-emerald-300">{campaignTotals.backers}</p></CardContent></Card>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateModal(false)}>Cancel</Button>
-            <Button
-              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold"
-              disabled={creating || !newCampaign.title.trim() || !newCampaign.goalAud}
-              onClick={handleCreateCampaign}
-            >
-              {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2 text-amber-400" /> : <Plus className="w-4 h-4 mr-2" />}
-              Create Campaign
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
-      {/* ── Launch Campaign Modal ────────────────────────────────────────── */}
-      <Dialog open={showLaunchModal} onOpenChange={(open) => { if (!open) { setShowLaunchModal(false); setLaunchingId(null); } }}>
-        <DialogContent className="max-w-sm glass-dark">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
-              <Rocket className="w-5 h-5 text-amber-400" /> Launch Campaign
-            </DialogTitle>
-            <DialogDescription>
-              Choose a deadline. Once live, backers can discover and fund your campaign.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <Label className="text-xs">Campaign Duration</Label>
-              <Select value={String(deadlineDays)} onValueChange={(v) => setDeadlineDays(parseInt(v))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="15">15 days — Sprint</SelectItem>
-                  <SelectItem value="21">21 days — Short</SelectItem>
-                  <SelectItem value="30">30 days — Standard</SelectItem>
-                  <SelectItem value="45">45 days — Extended</SelectItem>
-                  <SelectItem value="60">60 days — Long</SelectItem>
-                  <SelectItem value="90">90 days — Maximum</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="rounded-lg bg-zinc-500/5 border border-amber-500/20/20 p-3 text-xs text-muted-foreground">
-              <CalendarDays className="w-3 h-3 inline mr-1" />
-              Deadline: <span className="text-foreground font-medium">
-                {new Date(Date.now() + deadlineDays * 86400000).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
-              </span>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowLaunchModal(false); setLaunchingId(null); }}>Cancel</Button>
-            <Button
-              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold gap-2"
-              disabled={launchMutation.isPending}
-              onClick={confirmLaunch}
-            >
-              {launchMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : <Rocket className="w-4 h-4" />}
-              Go Live
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Manage Campaign Modal ────────────────────────────────────────── */}
-      <Dialog open={!!manageCampaignId} onOpenChange={(open) => !open && setManageCampaignId(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass-dark">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
-              <Settings className="w-5 h-5 text-amber-400" /> Manage Campaign
-            </DialogTitle>
-            <DialogDescription>
-              Edit details, manage reward tiers, and view contributions.
-            </DialogDescription>
-          </DialogHeader>
-
-          {!manageData ? (
-            <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>
+          {campaignsQuery.isLoading ? (
+            <Card><CardContent className="flex items-center justify-center gap-2 py-14 text-sm text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin text-amber-400" />Loading campaigns</CardContent></Card>
+          ) : campaigns.length === 0 ? (
+            <Card><CardContent className="space-y-4 py-14 text-center"><HollywoodIcon tool="reports" size={52} className="mx-auto opacity-60" alt="Crowdfunding" /><div><p className="font-semibold">No campaigns yet</p><p className="mt-1 text-sm text-muted-foreground">Build a campaign pack first, then create a Virelle campaign or compare external platforms.</p></div><div className="flex justify-center gap-2"><Button variant="outline" onClick={() => setTab("builder")}>Open builder</Button><Button onClick={() => setShowCreate(true)} className="bg-amber-500 text-black hover:bg-amber-400">Create campaign</Button></div></CardContent></Card>
           ) : (
-            <div className="space-y-6 py-2">
-              {/* Basic Details */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <Label className="text-xs text-muted-foreground uppercase">Title</Label>
-                  <Input
-                    value={manageData.campaign.title}
-                    onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, title: e.target.value })}
-                  />
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {campaigns.map((campaign) => {
+                const progress = campaign.goalAmountCents > 0
+                  ? Math.min(100, Math.round((campaign.raisedAmountCents / campaign.goalAmountCents) * 100))
+                  : 0;
+                const daysLeft = campaign.deadline
+                  ? Math.max(0, Math.ceil((new Date(campaign.deadline).getTime() - Date.now()) / 86_400_000))
+                  : null;
+                const economics = crowdfundingEconomics(campaign.goalAmountCents, campaign.platformFeeBps);
+                const readiness = campaignReadiness(campaign, []);
+                return (
+                  <Card key={campaign.id} className="overflow-hidden transition-colors hover:border-amber-500/40">
+                    {campaign.posterUrl ? (
+                      <button className="block h-36 w-full overflow-hidden" onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}>
+                        <img src={campaign.posterUrl} alt={campaign.title} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                      </button>
+                    ) : (
+                      <button className="flex h-24 w-full items-center justify-center bg-gradient-to-br from-amber-900/20 to-black/40" onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}>
+                        <HollywoodIcon tool="reports" size={42} className="opacity-50" alt="Crowdfunding" />
+                      </button>
+                    )}
+                    <CardContent className="space-y-3 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0"><h3 className="truncate font-semibold">{campaign.title}</h3><p className="line-clamp-2 text-xs text-muted-foreground">{campaign.tagline || "Add a clear audience-facing tagline."}</p></div>
+                        <Badge className={`shrink-0 capitalize ${statusClasses[campaign.status] || ""}`}>{String(campaign.status).replace(/_/g, " ")}</Badge>
+                      </div>
+                      <div className="space-y-1"><div className="flex justify-between text-xs"><span>{formatAud(campaign.raisedAmountCents)} raised</span><span>{progress}%</span></div><Progress value={progress} className="h-2 [&>div]:bg-amber-500" /></div>
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground"><span className="flex items-center gap-1"><Users className="h-3 w-3" />{campaign.backerCount} backers</span><span className="flex items-center justify-end gap-1"><CalendarDays className="h-3 w-3" />{daysLeft === null ? "Not launched" : `${daysLeft} days left`}</span><span>Goal: {formatAud(campaign.goalAmountCents)}</span><span className="text-right">Net before processing: {formatAud(economics.netBeforePaymentProcessingCents)}</span></div>
+                      {campaign.status === "draft" && <div className="flex items-center justify-between rounded-md border border-amber-500/20 bg-amber-500/5 px-2 py-1.5 text-[11px]"><span>Basic readiness</span><strong className="text-amber-300">{readiness.score}%</strong></div>}
+                      <div className="flex gap-2"><Button size="sm" variant="outline" className="flex-1" onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}>Preview</Button><Button size="sm" className="flex-1 gap-1.5" onClick={() => setManageCampaignId(campaign.id)}><Settings className="h-3.5 w-3.5" />Manage</Button></div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="builder" className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+            <Card>
+              <CardHeader><CardTitle className="gradient-text-gold">Free campaign builder</CardTitle><CardDescription>Creates campaign copy, a pitch-video structure and reward tiers locally. No paid API or AI credit is required.</CardDescription></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5"><Label>Format</Label><Select value={brief.format} onValueChange={(value) => setBrief((current) => ({ ...current, format: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Feature", "Short", "Series", "Documentary", "Other"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+                  <div className="space-y-1.5"><Label>Genre</Label><Input value={brief.genre} onChange={(event) => setBrief((current) => ({ ...current, genre: event.target.value }))} placeholder="Drama, documentary, horror…" /></div>
+                  <div className="space-y-1.5"><Label>Audience</Label><Input value={brief.audience} onChange={(event) => setBrief((current) => ({ ...current, audience: event.target.value }))} placeholder="Who will back and watch this film?" /></div>
+                  <div className="space-y-1.5"><Label>Tone</Label><Input value={brief.tone} onChange={(event) => setBrief((current) => ({ ...current, tone: event.target.value }))} /></div>
+                  <div className="space-y-1.5"><Label>Funding goal</Label><Input inputMode="decimal" value={brief.goal} onChange={(event) => setBrief((current) => ({ ...current, goal: event.target.value }))} /></div>
+                  <div className="space-y-1.5"><Label>Campaign duration</Label><Select value={brief.duration} onValueChange={(value) => setBrief((current) => ({ ...current, duration: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[15, 21, 30, 45, 60].map((value) => <SelectItem key={value} value={String(value)}>{value} days</SelectItem>)}</SelectContent></Select></div>
                 </div>
-                <div className="col-span-2">
-                  <Label className="text-xs text-muted-foreground uppercase">Tagline</Label>
-                  <Input
-                    value={manageData.campaign.tagline || ""}
-                    onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, tagline: e.target.value })}
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Label className="text-xs text-muted-foreground uppercase">Description (HTML supported)</Label>
-                  <Textarea
-                    rows={4}
-                    value={manageData.campaign.description || ""}
-                    onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, description: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground uppercase">Poster URL</Label>
-                  <Input
-                    value={manageData.campaign.posterUrl || ""}
-                    onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, posterUrl: e.target.value })}
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground uppercase">Pitch Video URL (Embed)</Label>
-                  <Input
-                    value={manageData.campaign.videoUrl || ""}
-                    onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, videoUrl: e.target.value })}
-                    placeholder="https://youtube.com/embed/..."
-                  />
-                </div>
+                <div className="space-y-1.5"><Label>Premise</Label><Textarea rows={4} value={brief.premise} onChange={(event) => setBrief((current) => ({ ...current, premise: event.target.value }))} placeholder="Describe the film in one to three clear sentences." /></div>
+                <div className="space-y-1.5"><Label>Why you are making it</Label><Textarea rows={3} value={brief.filmmakerStory || ""} onChange={(event) => setBrief((current) => ({ ...current, filmmakerStory: event.target.value }))} placeholder="Why this story, why now, and why your team?" /></div>
+                <div className="space-y-1.5"><Label>Use of funds</Label><Textarea rows={3} value={brief.useOfFunds || ""} onChange={(event) => setBrief((current) => ({ ...current, useOfFunds: event.target.value }))} placeholder="Production, post, music, accessibility, marketing…" /></div>
+                <Button onClick={buildFreePack} className="min-h-11 gap-2 bg-amber-500 font-semibold text-black hover:bg-amber-400"><Rocket className="h-4 w-4" />Build campaign pack</Button>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+              <Card><CardHeader className="pb-2"><CardTitle className="text-base gradient-text-gold">Funding target</CardTitle></CardHeader><CardContent className="space-y-2 text-sm"><div className="flex justify-between"><span>Gross campaign goal</span><strong>{formatAud(builderEconomics.grossGoalCents)}</strong></div><div className="flex justify-between"><span>Virelle platform fee (7%)</span><strong>-{formatAud(builderEconomics.platformFeeCents)}</strong></div><Separator /><div className="flex justify-between"><span>Net before payment processing</span><strong className="text-emerald-300">{formatAud(builderEconomics.netBeforePaymentProcessingCents)}</strong></div><p className="text-[10px] leading-relaxed text-muted-foreground">Stripe payment-processing charges, taxes, refunds and reward fulfilment costs are separate and may reduce the final amount received.</p></CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="text-base gradient-text-gold">Goal planning</CardTitle></CardHeader><CardContent className="space-y-2 text-xs text-muted-foreground"><p>To retain approximately {formatAud(builderEconomics.grossGoalCents)} before payment-processing costs, set the gross campaign target near <strong className="text-foreground">{formatAud(builderEconomics.grossRequiredForNetCents)}</strong>.</p><p>Do not describe rewards as investments, equity, profit sharing or guaranteed financial returns unless a properly regulated offering has been established.</p></CardContent></Card>
+            </div>
+          </div>
+
+          {generatedPack && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card><CardHeader className="pb-2"><div className="flex items-center justify-between gap-2"><CardTitle className="text-base gradient-text-gold">Campaign pitch</CardTitle><CopyButton text={generatedPack.pitch} /></div></CardHeader><CardContent><pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{generatedPack.pitch}</pre></CardContent></Card>
+              <Card><CardHeader className="pb-2"><div className="flex items-center justify-between gap-2"><CardTitle className="flex items-center gap-2 text-base gradient-text-gold"><Video className="h-4 w-4" />Pitch-video outline</CardTitle><CopyButton text={generatedPack.videoScript} /></div></CardHeader><CardContent><pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{generatedPack.videoScript}</pre></CardContent></Card>
+              <Card className="lg:col-span-2"><CardHeader className="pb-2"><div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="flex items-center gap-2 text-base gradient-text-gold"><Gift className="h-4 w-4" />Recommended reward ladder</CardTitle><div className="flex gap-2"><Button size="sm" variant="outline" className="gap-1.5" onClick={() => downloadText("crowdfunding-campaign-pack.txt", generatedExport)}><Download className="h-3.5 w-3.5" />Download pack</Button><Button size="sm" onClick={() => setShowCreate(true)} className="bg-amber-500 text-black hover:bg-amber-400">Create Virelle campaign</Button></div></div></CardHeader><CardContent><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{generatedPack.rewards.map((reward) => <div key={reward.title} className="rounded-lg border border-border/60 bg-muted/10 p-3"><div className="text-lg font-bold text-amber-300">{formatAud(reward.amountCents)}</div><div className="font-semibold">{reward.title}</div><p className="mt-1 text-xs text-muted-foreground">{reward.description}</p><p className="mt-2 text-[10px] text-muted-foreground">Delivery: {reward.estimatedDelivery}</p></div>)}</div></CardContent></Card>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="platforms" className="space-y-4">
+          <Card><CardHeader><CardTitle className="gradient-text-gold">External crowdfunding platforms</CardTitle><CardDescription>Compare external options separately from Virelle-hosted campaigns. Always confirm current fees, country support and project eligibility on the official platform.</CardDescription></CardHeader><CardContent className="flex flex-col gap-3 sm:flex-row"><div className="relative min-w-0 flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input className="pl-9" value={platformSearch} onChange={(event) => setPlatformSearch(event.target.value)} placeholder="Search platforms, countries or eligibility…" /></div><Select value={platformCountry} onValueChange={setPlatformCountry}><SelectTrigger className="w-full sm:w-56"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All countries</SelectItem>{platformCountries.map((country) => <SelectItem key={country} value={country}>{country}</SelectItem>)}</SelectContent></Select></CardContent></Card>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{filteredPlatforms.map((source) => { const officialUrl = source.officialGuidelinesUrl || source.officialSite; return <Card key={source.id}><CardHeader className="pb-2"><CardTitle className="text-base gradient-text-gold">{source.organization}</CardTitle><div className="flex flex-wrap gap-1.5"><Badge variant="outline">{source.country || "Global"}</Badge>{source.type && <Badge variant="outline">{source.type}</Badge>}{source.verificationStatus && <Badge variant="outline" className="capitalize">{String(source.verificationStatus).replace(/_/g, " ")}</Badge>}</div></CardHeader><CardContent className="space-y-3"><p className="text-xs leading-relaxed text-muted-foreground">{source.supports || source.eligibility || "Review the official platform for current campaign requirements."}</p>{source.eligibility && <div className="rounded-md border border-border/50 bg-muted/10 p-2 text-[11px]"><strong>Eligibility:</strong> {source.eligibility}</div>}{officialUrl ? <a href={officialUrl} target="_blank" rel="noopener noreferrer"><Button size="sm" variant="outline" className="w-full gap-1.5">Open official platform <ExternalLink className="h-3.5 w-3.5" /></Button></a> : <p className="text-[11px] text-amber-300">No verified official URL is stored. Search and verify the platform independently.</p>}</CardContent></Card>; })}</div>
+          {!filteredPlatforms.length && <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">No crowdfunding platforms match those filters.</CardContent></Card>}
+        </TabsContent>
+
+        <TabsContent value="guidance">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[{ title: "Build the audience first", icon: "community" as const, text: "Identify likely backers, collect permission-based contacts and plan launch-day outreach before the campaign opens." }, { title: "Show where the money goes", icon: "reports" as const, text: "Use a simple budget breakdown and explain the exact production milestone each funding level unlocks." }, { title: "Price rewards honestly", icon: "wardrobe" as const, text: "Include manufacturing, postage, tax, support time and delivery risk before promising physical or experiential rewards." }, { title: "Publish regular updates", icon: "distribution" as const, text: "Report progress, schedule changes, risks and delivery status. Do not wait for problems to become public complaints." }].map((item) => <Card key={item.title}><CardContent className="space-y-3 pt-5"><HollywoodIcon tool={item.icon} size={34} alt={item.title} /><h3 className="font-semibold gradient-text-gold">{item.title}</h3><p className="text-xs leading-relaxed text-muted-foreground">{item.text}</p></CardContent></Card>)}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+        <DialogContent className="max-h-[92vh] max-w-2xl overflow-y-auto glass-dark">
+          <DialogHeader><DialogTitle className="flex items-center gap-2 gradient-text-gold"><HollywoodIcon tool="reports" size={28} alt="Crowdfunding" />Create Virelle campaign</DialogTitle><DialogDescription>Create a private draft first. You can complete rewards, media and payout setup before launch.</DialogDescription></DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="grid gap-3 sm:grid-cols-2"><div className="space-y-1.5 sm:col-span-2"><Label>Campaign title</Label><Input value={newCampaign.title} onChange={(event) => setNewCampaign((current) => ({ ...current, title: event.target.value }))} /></div><div className="space-y-1.5 sm:col-span-2"><Label>Tagline</Label><Input value={newCampaign.tagline} onChange={(event) => setNewCampaign((current) => ({ ...current, tagline: event.target.value }))} placeholder="One clear sentence for potential backers" /></div><div className="space-y-1.5 sm:col-span-2"><Label>Campaign story</Label><Textarea rows={7} value={newCampaign.description} onChange={(event) => setNewCampaign((current) => ({ ...current, description: event.target.value }))} /></div><div className="space-y-1.5"><Label>Funding goal (AUD)</Label><Input inputMode="decimal" value={newCampaign.goalAud} onChange={(event) => setNewCampaign((current) => ({ ...current, goalAud: event.target.value }))} /></div><div className="space-y-1.5"><Label>Funding model</Label><Select value={newCampaign.fundingModel} onValueChange={(value) => setNewCampaign((current) => ({ ...current, fundingModel: value as CampaignForm["fundingModel"] }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all_or_nothing">All-or-Nothing</SelectItem><SelectItem value="keep_it_all">Keep-it-All</SelectItem></SelectContent></Select></div><div className="space-y-1.5"><Label>Format</Label><Select value={newCampaign.format} onValueChange={(value) => setNewCampaign((current) => ({ ...current, format: value as CampaignForm["format"] }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Feature", "Short", "Series", "Documentary", "Other"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div><div className="space-y-1.5"><Label>Genre</Label><Input value={newCampaign.genre} onChange={(event) => setNewCampaign((current) => ({ ...current, genre: event.target.value }))} /></div></div>
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs"><div className="flex justify-between"><span>Goal</span><strong>{formatAud(Math.round(parseAmount(newCampaign.goalAud) * 100))}</strong></div><div className="mt-1 flex justify-between"><span>Estimated Virelle fee</span><strong>-{formatAud(crowdfundingEconomics(Math.round(parseAmount(newCampaign.goalAud) * 100)).platformFeeCents)}</strong></div><div className="mt-1 flex justify-between text-emerald-300"><span>Net before payment processing</span><strong>{formatAud(crowdfundingEconomics(Math.round(parseAmount(newCampaign.goalAud) * 100)).netBeforePaymentProcessingCents)}</strong></div></div>
+          </div>
+          <DialogFooter><Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button><Button disabled={createCampaign.isPending} onClick={submitNewCampaign} className="gap-2 bg-amber-500 font-semibold text-black hover:bg-amber-400">{createCampaign.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}Create draft</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(manageCampaignId)} onOpenChange={(open) => { if (!open) setManageCampaignId(null); }}>
+        <DialogContent className="max-h-[94vh] max-w-5xl overflow-y-auto glass-dark">
+          <DialogHeader><DialogTitle className="flex items-center gap-2 gradient-text-gold"><Settings className="h-5 w-5" />Manage campaign</DialogTitle><DialogDescription>Complete the campaign, rewards and payout checklist before launch.</DialogDescription></DialogHeader>
+          {!manageCampaign ? <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-amber-400" /></div> : (
+            <div className="grid gap-5 lg:grid-cols-[1fr_330px]">
+              <div className="space-y-5">
+                <Card><CardHeader><CardTitle className="text-base gradient-text-gold">Campaign details</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid gap-3 sm:grid-cols-2"><div className="space-y-1.5 sm:col-span-2"><Label>Title</Label><Input disabled={manageCampaign.status !== "draft"} value={manageDraft.title} onChange={(event) => setManageDraft((current) => ({ ...current, title: event.target.value }))} /></div><div className="space-y-1.5 sm:col-span-2"><Label>Tagline</Label><Input disabled={manageCampaign.status !== "draft"} value={manageDraft.tagline} onChange={(event) => setManageDraft((current) => ({ ...current, tagline: event.target.value }))} /></div><div className="space-y-1.5 sm:col-span-2"><Label>Campaign story</Label><Textarea disabled={manageCampaign.status !== "draft"} rows={7} value={manageDraft.description} onChange={(event) => setManageDraft((current) => ({ ...current, description: event.target.value }))} /></div><div className="space-y-1.5"><Label>Poster URL</Label><Input disabled={manageCampaign.status !== "draft"} value={manageDraft.posterUrl} onChange={(event) => setManageDraft((current) => ({ ...current, posterUrl: event.target.value }))} placeholder="https://…" /></div><div className="space-y-1.5"><Label>Pitch-video URL</Label><Input disabled={manageCampaign.status !== "draft"} value={manageDraft.videoUrl} onChange={(event) => setManageDraft((current) => ({ ...current, videoUrl: event.target.value }))} placeholder="https://…" /></div><div className="space-y-1.5"><Label>Goal (AUD)</Label><Input disabled={manageCampaign.status !== "draft"} inputMode="decimal" value={manageDraft.goalAud} onChange={(event) => setManageDraft((current) => ({ ...current, goalAud: event.target.value }))} /></div></div>{manageCampaign.status === "draft" && <Button className="gap-2" disabled={updateCampaign.isPending} onClick={() => updateCampaign.mutate({ id: manageCampaign.id, title: manageDraft.title, tagline: manageDraft.tagline, description: manageDraft.description, posterUrl: manageDraft.posterUrl, videoUrl: manageDraft.videoUrl, goalAmountCents: Math.max(100, Math.round(parseAmount(manageDraft.goalAud) * 100)) })}><Save className="h-4 w-4" />Save details</Button>}</CardContent></Card>
+
+                <Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-2"><div><CardTitle className="flex items-center gap-2 text-base gradient-text-gold"><Gift className="h-4 w-4" />Reward tiers</CardTitle><CardDescription>Keep the choice set clear and include realistic delivery dates.</CardDescription></div>{manageCampaign.status === "draft" && <div className="flex gap-2"><Button size="sm" variant="outline" onClick={addRecommendedRewards}>Recommended tiers</Button><Button size="sm" onClick={() => createReward.mutate({ campaignId: manageCampaign.id, title: "New Reward", description: "Describe the reward and what is not included.", amountCents: 1000, estimatedDelivery: "At release", sortOrder: manageRewards.length }, { onSuccess: () => manageQuery.refetch() })}><Plus className="mr-1 h-3.5 w-3.5" />Add tier</Button></div>}</div></CardHeader><CardContent className="space-y-3">{manageRewards.map((reward) => { const draft = rewardDrafts[reward.id] || { title: reward.title, description: reward.description || "", amountAud: String(reward.amountCents / 100), estimatedDelivery: reward.estimatedDelivery || "", limitCount: reward.limitCount ? String(reward.limitCount) : "" }; return <div key={reward.id} className="space-y-3 rounded-lg border border-border/60 bg-muted/10 p-3"><div className="grid gap-2 sm:grid-cols-4"><div className="space-y-1 sm:col-span-2"><Label className="text-[10px] uppercase text-muted-foreground">Title</Label><Input disabled={manageCampaign.status !== "draft"} value={draft.title} onChange={(event) => setRewardDrafts((current) => ({ ...current, [reward.id]: { ...draft, title: event.target.value } }))} /></div><div className="space-y-1"><Label className="text-[10px] uppercase text-muted-foreground">Amount</Label><Input disabled={manageCampaign.status !== "draft"} inputMode="decimal" value={draft.amountAud} onChange={(event) => setRewardDrafts((current) => ({ ...current, [reward.id]: { ...draft, amountAud: event.target.value } }))} /></div><div className="space-y-1"><Label className="text-[10px] uppercase text-muted-foreground">Limit</Label><Input disabled={manageCampaign.status !== "draft"} inputMode="numeric" value={draft.limitCount} onChange={(event) => setRewardDrafts((current) => ({ ...current, [reward.id]: { ...draft, limitCount: event.target.value } }))} /></div></div><div className="space-y-1"><Label className="text-[10px] uppercase text-muted-foreground">Description</Label><Textarea disabled={manageCampaign.status !== "draft"} rows={2} value={draft.description} onChange={(event) => setRewardDrafts((current) => ({ ...current, [reward.id]: { ...draft, description: event.target.value } }))} /></div><div className="space-y-1"><Label className="text-[10px] uppercase text-muted-foreground">Estimated delivery</Label><Input disabled={manageCampaign.status !== "draft"} value={draft.estimatedDelivery} onChange={(event) => setRewardDrafts((current) => ({ ...current, [reward.id]: { ...draft, estimatedDelivery: event.target.value } }))} /></div>{manageCampaign.status === "draft" && <div className="flex justify-end gap-2"><Button size="sm" variant="ghost" className="text-red-300" onClick={() => deleteReward.mutate({ id: reward.id }, { onSuccess: () => manageQuery.refetch() })}><Trash2 className="mr-1 h-3.5 w-3.5" />Remove</Button><Button size="sm" onClick={() => saveReward(reward.id)}><Save className="mr-1 h-3.5 w-3.5" />Save tier</Button></div>}</div>; })}{manageRewards.length === 0 && <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">No reward tiers yet.</div>}</CardContent></Card>
+
+                <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base gradient-text-gold"><Users className="h-4 w-4" />Contributions</CardTitle></CardHeader><CardContent className="space-y-2">{(manageData.contributions || []).map((contribution: any) => <div key={contribution.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 p-2 text-xs"><div><strong>{formatAud(contribution.amountCents)}</strong><p className="text-muted-foreground">{contribution.isAnonymous ? "Anonymous backer" : contribution.backerName || contribution.backerEmail || "Backer"}</p></div><Badge variant="outline" className="capitalize">{contribution.status}</Badge></div>)}{!manageData.contributions?.length && <p className="py-6 text-center text-sm text-muted-foreground">No contributions yet.</p>}</CardContent></Card>
               </div>
 
-              <Separator />
-
-              {/* Reward Tiers */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-sm flex items-center gap-2 gradient-text-gold">
-                    <Gift className="w-4 h-4 text-amber-400" /> Reward Tiers
-                  </h4>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400"
-                    onClick={() => createRewardMutation.mutate({
-                      campaignId: manageData.campaign.id,
-                      title: "New Reward",
-                      amountCents: 1000,
-                      description: "Description of the reward...",
-                    })}
-                  >
-                    <Plus className="w-3 h-3 mr-1" /> Add Tier
-                  </Button>
-                </div>
-
-                <div className="space-y-3">
-                  {manageData.rewards.map(reward => (
-                    <div key={reward.id} className="p-3 border rounded-lg bg-zinc-500/5 space-y-3">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 grid grid-cols-4 gap-2">
-                          <div className="col-span-2">
-                            <Label className="text-[10px] text-muted-foreground uppercase">Tier Title</Label>
-                            <Input
-                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
-                              value={reward.title}
-                              onChange={e => updateRewardMutation.mutate({ id: reward.id, title: e.target.value })}
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-[10px] text-muted-foreground uppercase">Amount (AUD)</Label>
-                            <Input
-                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
-                              type="number"
-                              value={reward.amountCents / 100}
-                              onChange={e => updateRewardMutation.mutate({ id: reward.id, amountCents: Math.round(parseFloat(e.target.value) * 100) })}
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-[10px] text-muted-foreground uppercase">Limit (Optional)</Label>
-                            <Input
-                              className="h-8 text-sm focus:ring-amber-500/30 focus:border-amber-500/50"
-                              type="number"
-                              value={reward.limitCount || ""}
-                              onChange={e => updateRewardMutation.mutate({ id: reward.id, limitCount: e.target.value ? parseInt(e.target.value) : null })}
-                            />
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-red-400"
-                          onClick={() => deleteRewardMutation.mutate({ id: reward.id })}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <div>
-                        <Label className="text-[10px] text-muted-foreground uppercase">Description</Label>
-                        <Textarea
-                          className="text-xs focus:ring-amber-500/30 focus:border-amber-500/50"
-                          rows={2}
-                          value={reward.description || ""}
-                          onChange={e => updateRewardMutation.mutate({ id: reward.id, description: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                  {manageData.rewards.length === 0 && (
-                    <div className="text-center py-6 border border-dashed rounded-lg text-sm text-muted-foreground">
-                      No reward tiers created yet.
-                    </div>
-                  )}
-                </div>
+                <ReadinessCard readiness={manageReadiness} />
+                <Card><CardHeader className="pb-2"><CardTitle className="text-base gradient-text-gold">Payouts and launch</CardTitle></CardHeader><CardContent className="space-y-3"><div className={`rounded-md border p-3 text-xs ${payoutStatusQuery.data?.onboarded || manageCampaign.stripeConnectOnboarded ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-200" : "border-amber-500/30 bg-amber-500/5 text-amber-200"}`}>{payoutStatusQuery.data?.onboarded || manageCampaign.stripeConnectOnboarded ? "Payout account is configured." : "Complete Stripe Connect verification before launch."}</div><div className="flex gap-2"><Button variant="outline" className="flex-1 gap-1.5" onClick={() => setupPayouts(manageCampaign.id)}><CreditCard className="h-3.5 w-3.5" />Set up payouts</Button><Button variant="outline" size="icon" title="Refresh payout status" onClick={() => payoutStatusQuery.refetch()}><RefreshCw className="h-4 w-4" /></Button></div>{manageCampaign.status === "draft" && <Button className="w-full gap-2 bg-amber-500 font-semibold text-black hover:bg-amber-400" disabled={manageReadiness.score < 70 || !(payoutStatusQuery.data?.onboarded || manageCampaign.stripeConnectOnboarded)} onClick={() => { setLaunchingId(manageCampaign.id); setDeadlineDays(30); setLaunchAcknowledged(false); setShowLaunch(true); }}><Rocket className="h-4 w-4" />Launch campaign</Button>}<p className="text-[10px] leading-relaxed text-muted-foreground">The readiness score is guidance, not a guarantee of campaign performance. Verify legal, tax, consumer-law and reward-delivery obligations before launch.</p></CardContent></Card>
+                {manageCampaign.status === "draft" && <Button variant="ghost" className="w-full gap-2 text-red-300 hover:bg-red-500/10 hover:text-red-200" onClick={() => { if (window.confirm("Cancel this draft campaign?")) deleteCampaign.mutate({ id: manageCampaign.id }); }}><Trash2 className="h-4 w-4" />Cancel draft campaign</Button>}
               </div>
-
-              <Separator />
-
-              {/* Contributions */}
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm flex items-center gap-2 gradient-text-gold">
-                  <Users className="w-4 h-4 text-amber-400" /> Recent Contributions
-                </h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {manageData.contributions.map(c => (
-                    <div key={c.id} className="flex items-center justify-between p-2 border rounded text-xs">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{FMT_AUD(c.amountCents)}</span>
-                        <span className="text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</span>
-                      </div>
-                      <Badge variant="outline" className="capitalize">{c.status}</Badge>
-                    </div>
-                  ))}
-                  {manageData.contributions.length === 0 && (
-                    <div className="text-center py-4 text-xs text-muted-foreground">No contributions yet.</div>
-                  )}
-                </div>
-              </div>
-
-              {manageData.campaign.status === "draft" && (
-                <div className="pt-4 border-t">
-                  <Button
-                    variant="ghost"
-                    className="w-full text-red-400 hover:text-red-300 hover:bg-red-400/10 gap-2"
-                    onClick={() => {
-                      if (confirm("Are you sure you want to cancel this draft campaign?")) {
-                        deleteCampaignMutation.mutate({ id: manageData.campaign.id });
-                      }
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" /> Cancel Campaign
-                  </Button>
-                </div>
-              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {!!projectId && <NextStageCTA projectId={projectId} currentStage={5} />}
+      <Dialog open={showLaunch} onOpenChange={(open) => { setShowLaunch(open); if (!open) { setLaunchingId(null); setLaunchAcknowledged(false); } }}>
+        <DialogContent className="max-w-md glass-dark"><DialogHeader><DialogTitle className="flex items-center gap-2 gradient-text-gold"><Rocket className="h-5 w-5" />Launch campaign</DialogTitle><DialogDescription>Choose the campaign duration and confirm that the public information is accurate.</DialogDescription></DialogHeader><div className="space-y-4 py-2"><div className="space-y-1.5"><Label>Campaign duration</Label><Select value={String(deadlineDays)} onValueChange={(value) => setDeadlineDays(Number(value))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[15, 21, 30, 45, 60, 90].map((days) => <SelectItem key={days} value={String(days)}>{days} days</SelectItem>)}</SelectContent></Select></div><div className="rounded-md border border-amber-500/20 bg-amber-500/5 p-3 text-xs">Expected deadline: <strong>{new Date(Date.now() + deadlineDays * 86_400_000).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}</strong></div><label className="flex cursor-pointer items-start gap-2 rounded-md border border-border/60 p-3 text-xs"><input type="checkbox" className="mt-0.5" checked={launchAcknowledged} onChange={(event) => setLaunchAcknowledged(event.target.checked)} /><span>I have reviewed the campaign claims, funding model, reward costs, delivery estimates, payout details and public links.</span></label></div><DialogFooter><Button variant="outline" onClick={() => setShowLaunch(false)}>Cancel</Button><Button className="gap-2 bg-amber-500 font-semibold text-black hover:bg-amber-400" disabled={!launchAcknowledged || launchCampaign.isPending || !launchingId} onClick={() => launchingId && launchCampaign.mutate({ id: launchingId, deadlineDays })}>{launchCampaign.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}Go live</Button></DialogFooter></DialogContent>
+      </Dialog>
+
+      {hasProject && <NextStageCTA projectId={projectId} currentStage={5} />}
     </div>
   );
 }
 
 export default function CrowdfundingHub() {
   return (
-    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-    <SubscriptionGate
-      feature="Crowdfunding Hub"
-      featureKey="canUseCrowdfunding"
-      requiredTier="indie"
-    >
-      <CrowdfundingHubInner />
-    </SubscriptionGate>
-  </div>
+    <div className="min-h-screen bg-[linear-gradient(135deg,#07070e_0%,#0c0b18_60%,#07070a_100%)]">
+      <SubscriptionGate
+        feature="Crowdfunding"
+        featureKey="canUseCrowdfunding"
+        requiredTier="indie"
+      >
+        <CrowdfundingHubInner />
+      </SubscriptionGate>
+    </div>
   );
 }
