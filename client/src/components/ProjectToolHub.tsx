@@ -231,12 +231,6 @@ export default function ProjectToolHub({
               Every existing project tool remains available. Choose the production stage you are working on instead of scanning one long catalogue.
             </p>
           </div>
-          <Link href="/virelle-broadcast-render">
-            <Button variant="outline" className="whitespace-nowrap border-amber-500/30 hover:bg-amber-500/10">
-              <RadioTower className="mr-2 h-4 w-4" />
-              Swappys & Broadcast
-            </Button>
-          </Link>
         </div>
 
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
