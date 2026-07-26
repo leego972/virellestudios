@@ -1,37 +1,12 @@
 import { useMemo } from "react";
 import { Link } from "wouter";
+import { ArrowRight, CheckCircle2, Circle } from "lucide-react";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import ProjectToolHub from "./ProjectToolHub";
-import {
-  Lightbulb,
-  Users,
-  ScrollText,
-  ClipboardList,
-  Wallet,
-  Clapperboard,
-  Scissors,
-  Megaphone,
-  ArrowRight,
-  CheckCircle2,
-  Circle,
-} from "lucide-react";
-
-type StageStatus = "done" | "active" | "todo";
-
-type Stage = {
-  key: string;
-  number: number;
-  title: string;
-  blurb: string;
-  icon: React.ComponentType<{ className?: string }>;
-  hrefFor: (projectId: number | string) => string;
-  isDone: (signals: ProjectSignals) => boolean;
-  ctaLabel: string;
-  surfaces: string[];
-};
 
 export type ProjectSignals = {
   hasLogline: boolean;
@@ -46,94 +21,100 @@ export type ProjectSignals = {
   hasCampaign: boolean;
 };
 
-const STAGES: Stage[] = [
+type StageStatus = "done" | "active" | "todo";
+
+type Stage = {
+  key: "preproduction" | "production" | "postproduction" | "funding";
+  number: number;
+  title: string;
+  blurb: string;
+  icon: "preproduction" | "production" | "post" | "reports";
+  hrefFor: (projectId: number | string) => string;
+  isDone: (signals: ProjectSignals) => boolean;
+  ctaLabel: string;
+  surfaces: string[];
+};
+
+export const PROJECT_JOURNEY_STAGES: Stage[] = [
   {
-    key: "idea",
+    key: "preproduction",
     number: 1,
-    title: "Idea & Pitch",
-    blurb: "Logline, treatment, lookbook, pitch deck",
-    icon: Lightbulb,
-    hrefFor: (id) => `/projects/${id}/pitch-lab`,
-    isDone: (s) => s.hasLogline,
-    ctaLabel: "Open Pitch Lab",
-    surfaces: ["Pitch Lab", "Mood Board"],
-  },
-  {
-    key: "characters",
-    number: 2,
-    title: "Casting Studio",
-    blurb: "Photo or description → consistent screen-ready actor",
-    icon: Users,
-    hrefFor: (id) => `/projects/${id}/casting-board`,
-    isDone: (s) => s.characterCount >= 1,
-    ctaLabel: "Cast your first actor",
-    surfaces: ["Characters", "Talent Search", "Signature Cast"],
-  },
-  {
-    key: "script",
-    number: 3,
-    title: "Writer's Room",
-    blurb: "Script, scene cards, dialogue, beat sheet",
-    icon: ScrollText,
-    hrefFor: (id) => `/projects/${id}/script`,
-    isDone: (s) => s.hasScript || s.sceneCount >= 1,
-    ctaLabel: "Open the script",
-    surfaces: ["Script Writer", "Dialogue Editor", "Scene Editor"],
-  },
-  {
-    key: "preprod",
-    number: 4,
-    title: "Production Office",
-    blurb: "Breakdown, schedule, budget, locations, call sheet",
-    icon: ClipboardList,
-    hrefFor: (id) => `/projects/${id}/production-office`,
-    isDone: (s) => s.hasBudget,
-    ctaLabel: "Plan the shoot",
-    surfaces: ["Budget Estimator", "Location Scout", "Pre-Production Panel"],
-  },
-  {
-    key: "funding",
-    number: 5,
-    title: "Funding Office",
-    blurb: "Apply to 130+ funders worldwide, track decisions",
-    icon: Wallet,
-    hrefFor: (id) => `/projects/${id}/crowdfunding`,
-    isDone: (s) => s.hasFundingApplication,
-    ctaLabel: "Find your funders",
-    surfaces: ["Funding Directory", "Pitch Deck", "Crowdfunding"],
+    title: "Pre-Production",
+    blurb: "Develop the concept, script, cast, visual plan, locations, budget and schedule.",
+    icon: "preproduction",
+    hrefFor: (id) => `/projects/${id}/pre-production`,
+    isDone: (signals) =>
+      signals.hasLogline &&
+      (signals.hasScript || signals.sceneCount > 0) &&
+      signals.characterCount > 0,
+    ctaLabel: "Open Pre-Production",
+    surfaces: [
+      "Pitch Lab",
+      "Script",
+      "Casting",
+      "Storyboards",
+      "Locations",
+      "Wardrobe",
+      "Budget",
+      "Schedule",
+    ],
   },
   {
     key: "production",
-    number: 6,
-    title: "Soundstage",
-    blurb: "Generate scenes with continuity locked across shots",
-    icon: Clapperboard,
+    number: 2,
+    title: "Production",
+    blurb: "Generate, review and lock shots, performances, sound and scene continuity.",
+    icon: "production",
     hrefFor: (id) => `/projects/${id}/multi-shot`,
-    isDone: (s) => s.hasShotsGenerated,
-    ctaLabel: "Roll camera",
-    surfaces: ["Multi-Shot Sequencer", "Scene Editor", "Continuity Check"],
+    isDone: (signals) => signals.hasShotsGenerated || signals.hasLockedShots,
+    ctaLabel: "Open Production",
+    surfaces: [
+      "Scene Editor",
+      "Multi-Shot Sequencer",
+      "Voice Studio",
+      "Continuity",
+      "Daily Reports",
+      "Broadcast Render",
+    ],
   },
   {
-    key: "post",
-    number: 7,
+    key: "postproduction",
+    number: 3,
     title: "Post-Production",
-    blurb: "Edit, VFX, color, sound, captions, credits, and master export",
-    icon: Scissors,
+    blurb: "Edit, finish picture and sound, add accessibility, export and prepare promotion.",
+    icon: "post",
     hrefFor: (id) => `/projects/${id}/cutting-room`,
-    isDone: (s) => s.hasExport,
+    isDone: (signals) => signals.hasExport,
     ctaLabel: "Open Post-Production",
-    surfaces: ["Cutting Room", "VFX", "Color", "Sound", "Export"],
+    surfaces: [
+      "Cutting Room",
+      "VFX",
+      "Colour",
+      "Sound",
+      "Dubbing",
+      "Subtitles",
+      "Trailer",
+      "Press Kit",
+      "Export",
+    ],
   },
   {
-    key: "release",
-    number: 8,
-    title: "Release & Promote",
-    blurb: "Trailer, social cuts, festivals, paid campaigns",
-    icon: Megaphone,
-    hrefFor: (id) => `/projects/${id}/press-kit`,
-    isDone: (s) => s.hasCampaign,
-    ctaLabel: "Build Press Kit",
-    surfaces: ["Press Kit", "Festival Tracker", "Distribute", "Trailer Studio", "Campaign Manager"],
+    key: "funding",
+    number: 4,
+    title: "Funding",
+    blurb: "Prepare the finance case, find funders, apply, crowdfund and track results.",
+    icon: "reports",
+    hrefFor: () => "/funding",
+    isDone: (signals) => signals.hasFundingApplication || signals.hasCampaign,
+    ctaLabel: "Open Funding",
+    surfaces: [
+      "Funding Command Centre",
+      "Pitch Deck",
+      "Crowdfunding",
+      "Tax Incentives",
+      "Legal Documents",
+      "Campaign Tracking",
+    ],
   },
 ];
 
@@ -149,12 +130,12 @@ export function ProjectJourneyNav({
     let foundCurrent = false;
     let done = 0;
 
-    for (const stage of STAGES) {
-      const isDone = stage.isDone(signals);
+    for (const stage of PROJECT_JOURNEY_STAGES) {
+      const completed = stage.isDone(signals);
       let status: StageStatus;
-      if (isDone) {
+      if (completed) {
         status = "done";
-        done++;
+        done += 1;
       } else if (!foundCurrent) {
         status = "active";
         foundCurrent = true;
@@ -164,41 +145,56 @@ export function ProjectJourneyNav({
       enriched.push({ ...stage, status });
     }
 
-    const current = enriched.find((s) => s.status === "active") ?? enriched[enriched.length - 1];
+    const current =
+      enriched.find((stage) => stage.status === "active") ??
+      enriched[enriched.length - 1];
+
     return {
       stagesWithStatus: enriched,
       currentStage: current,
       completedCount: done,
-      percent: Math.round((done / STAGES.length) * 100),
+      percent: Math.round((done / PROJECT_JOURNEY_STAGES.length) * 100),
     };
   }, [signals]);
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-lg glass-card" style={{ border:"1px solid rgba(212,175,55,0.2)", background:"linear-gradient(135deg,rgba(212,175,55,0.04) 0%,rgba(255,255,255,0.015) 100%)" }}>
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <div>
-              <div className="text-xs uppercase tracking-widest text-amber-500/80 mb-1">
-                The Filmmaker's Journey
+      <Card
+        className="glass-card shadow-lg"
+        style={{
+          border: "1px solid rgba(212,175,55,0.2)",
+          background:
+            "linear-gradient(135deg,rgba(212,175,55,0.04) 0%,rgba(255,255,255,0.015) 100%)",
+        }}
+      >
+        <CardContent className="p-4 sm:p-6">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <div className="mb-1 text-xs uppercase tracking-widest text-amber-500/80">
+                The Filmmaker&apos;s Journey
               </div>
               <h3 className="font-serif text-2xl gradient-text-gold">
                 {currentStage.status === "active" ? "Next: " : "Complete: "}
                 <span className="text-amber-400">{currentStage.title}</span>
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">{currentStage.blurb}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {currentStage.blurb}
+              </p>
             </div>
             <Link href={currentStage.hrefFor(projectId)}>
-              <Button size="lg" className="bg-amber-600 hover:bg-amber-500 text-black font-medium whitespace-nowrap">
+              <Button
+                size="lg"
+                className="min-h-11 whitespace-nowrap bg-amber-600 font-medium text-black hover:bg-amber-500"
+              >
                 {currentStage.ctaLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
               <span>
-                Stage {currentStage.number} of {STAGES.length} · {completedCount} complete
+                Stage {currentStage.number} of {PROJECT_JOURNEY_STAGES.length} · {completedCount} complete
               </span>
               <span>{percent}%</span>
             </div>
@@ -207,53 +203,77 @@ export function ProjectJourneyNav({
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stagesWithStatus.map((stage) => {
-          const Icon = stage.icon;
-          const isActive = stage.status === "active";
-          const isDone = stage.status === "done";
+          const active = stage.status === "active";
+          const done = stage.status === "done";
           return (
             <Link key={stage.key} href={stage.hrefFor(projectId)}>
               <Card
                 className={[
-                  "cursor-pointer transition-all duration-200 hover:border-amber-500/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] min-h-[44px]",
-                  isActive
+                  "min-h-[196px] cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/40 hover:shadow-md active:translate-y-0 active:scale-[0.99]",
+                  active
                     ? "border-amber-500/60 bg-amber-500/5 shadow-[0_0_0_1px_rgba(245,158,11,0.3)]"
-                    : isDone
+                    : done
                       ? "border-emerald-500/30 bg-emerald-500/5"
                       : "border-border/40 bg-card/30",
                 ].join(" ")}
               >
-                <CardContent className="p-4 space-y-2">
-                  <div className="flex items-start justify-between">
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div
                       className={[
-                        "h-9 w-9 rounded-md flex items-center justify-center",
-                        isActive
-                          ? "bg-amber-500/20 text-amber-400"
-                          : isDone
-                            ? "bg-emerald-500/15 text-emerald-400"
-                            : "bg-muted text-muted-foreground",
+                        "flex h-12 w-12 items-center justify-center rounded-xl",
+                        active
+                          ? "bg-amber-500/15"
+                          : done
+                            ? "bg-emerald-500/10"
+                            : "bg-muted/40",
                       ].join(" ")}
                     >
-                      <Icon className="h-4 w-4" />
+                      <HollywoodIcon
+                        tool={stage.icon}
+                        size={34}
+                        className={active || done ? "opacity-100" : "opacity-60"}
+                        alt={stage.title}
+                      />
                     </div>
-                    {isDone ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400" aria-label="Complete" />
-                    ) : isActive ? (
-                      <Badge className="bg-amber-500/20 text-amber-400 hover:bg-amber-500/20 text-[10px]">
+                    {done ? (
+                      <CheckCircle2
+                        className="h-4 w-4 text-emerald-400"
+                        aria-label="Complete"
+                      />
+                    ) : active ? (
+                      <Badge className="bg-amber-500/20 text-[10px] text-amber-400 hover:bg-amber-500/20">
                         Now
                       </Badge>
                     ) : (
-                      <Circle className="h-4 w-4 text-muted-foreground/40" aria-label="Upcoming" />
+                      <Circle
+                        className="h-4 w-4 text-muted-foreground/40"
+                        aria-label="Upcoming"
+                      />
                     )}
                   </div>
-                  <div className="space-y-0.5">
+                  <div className="space-y-1">
                     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                       Stage {stage.number}
                     </div>
-                    <div className="font-medium text-sm leading-tight">{stage.title}</div>
-                    <div className="text-xs text-muted-foreground line-clamp-2">{stage.blurb}</div>
+                    <div className="text-base font-semibold leading-tight">
+                      {stage.title}
+                    </div>
+                    <div className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+                      {stage.blurb}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {stage.surfaces.slice(0, 4).map((surface) => (
+                      <span
+                        key={surface}
+                        className="rounded-full border border-border/50 bg-background/30 px-2 py-0.5 text-[9px] text-muted-foreground"
+                      >
+                        {surface}
+                      </span>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
