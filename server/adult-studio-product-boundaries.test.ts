@@ -6,8 +6,11 @@ const root = path.resolve(import.meta.dirname, "..");
 const source = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
 describe("Adult Studio product boundary", () => {
-  it("keeps broadcast promotion off the public landing page", () => {
-    expect(source("client/src/pages/Landing.tsx")).not.toMatch(/broadcast/i);
+  it("keeps broadcast promotion and broadcast routes off the public landing page", () => {
+    const landing = source("client/src/pages/Landing.tsx");
+    expect(landing).not.toContain("Open Broadcast");
+    expect(landing).not.toContain("Broadcast setup");
+    expect(landing).not.toContain("/virelle-broadcast-render");
   });
 
   it("removes standard broadcast navigation and exposes only the Adult Studio route", () => {
@@ -33,7 +36,7 @@ describe("Adult Studio product boundary", () => {
     const router = source("server/virelle-broadcast-render-router.ts");
     expect(router).toContain('resolved.contentMode !== "open_adult"');
     expect(router).toContain("Broadcasting is available only inside the verified Adult Studio portal.");
-    expect(router).toContain("Adult Studio broadcasts must use the managed recording route.");
+    expect(router).toContain("Adult Studio broadcasts must use managed relay so the required recording and compliance copy can be retained.");
   });
 
   it("provides simultaneous outlet screen and chat tiles", () => {

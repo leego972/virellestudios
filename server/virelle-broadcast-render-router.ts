@@ -1460,14 +1460,6 @@ export const virelleBroadcastRenderRouter = router({
         message: "Adult-platform broadcast destinations are available only inside the verified Adult Studio.",
       });
     }
-
-    if (input.serviceMode === "direct") {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Adult Studio broadcasts must use the managed recording route.",
-      });
-    }
-
     const provider = aiAssisted
       ? await requireStrictByokProvider(ctx.user.id, resolved.requestedProvider)
       : "relay";
