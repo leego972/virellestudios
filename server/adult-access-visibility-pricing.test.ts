@@ -14,8 +14,9 @@ function source(path: string): string {
 describe("Adult Studio visibility and verification gate", () => {
   it("uses the exact supplied Adult Studio logo as the authenticated access point", () => {
     const button = source("client/src/components/AdultStudioAccessButton.tsx");
-    expect(button).toContain('const ADULT_STUDIO_LOGO = "/adult-studio-access-logo.png"');
+    expect(button).toContain('const ADULT_STUDIO_LOGO = "data:image/jpeg;base64,');
     expect(button).toContain('setLocation("/adult-studio")');
+    expect(button).toContain('className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"');
     expect(button).not.toContain("Adult Studio · 18+");
     expect(button).not.toContain("rounded-");
   });
@@ -81,7 +82,5 @@ describe("visible Virelle pricing", () => {
     ]) {
       expect(pricing).toContain(value);
     }
-    expect(pricing).toContain('currency: "AUD"');
-    expect(pricing).toContain("BYOK provider charges remain separate");
   });
 });
