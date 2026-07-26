@@ -13,8 +13,6 @@ import {
   Film,
   KeyRound,
   Loader2,
-  LockKeyhole,
-  RadioTower,
   Shield,
   Sparkles,
 } from "lucide-react";
@@ -38,8 +36,7 @@ const MEMBERSHIPS = [
       "Director AI assistant",
       "720p export",
       "BYOK provider support",
-      "Adult Studio access after verification",
-      "60 managed broadcast minutes/month",
+      "Adult Studio eligibility after verification and one-time activation",
     ],
   },
   {
@@ -57,8 +54,7 @@ const MEMBERSHIPS = [
       "Character DNA continuity",
       "1080p export",
       "Premium Signature Cast access",
-      "Adult Studio access after verification",
-      "180 managed broadcast minutes/month",
+      "Adult Studio eligibility after verification and one-time activation",
     ],
   },
   {
@@ -77,7 +73,6 @@ const MEMBERSHIPS = [
       "4K and ProRes export",
       "5 team members",
       "Full Signature Cast commercial access",
-      "600 managed broadcast minutes/month",
     ],
   },
 ] as const;
@@ -91,12 +86,6 @@ const CREDIT_PACKS = [
   { id: "topup_1000", label: "Mogul", credits: 22000, price: 799, popular: false },
 ] as const;
 
-const BROADCAST_PACKS = [
-  { id: "relay_120", label: "Live Starter", minutes: 120, price: 9, rate: "A$4.50/hour", popular: false },
-  { id: "relay_600", label: "Live Creator", minutes: 600, price: 29, rate: "A$2.90/hour", popular: true },
-  { id: "relay_1500", label: "Live Producer", minutes: 1500, price: 59, rate: "A$2.36/hour", popular: false },
-  { id: "relay_3600", label: "Live Studio", minutes: 3600, price: 119, rate: "A$1.98/hour", popular: false },
-] as const;
 
 const FILM_PACKAGES = [
   { name: "Short Film Package", duration: "Up to 30 minutes", launch: 400, standard: 800 },
@@ -107,7 +96,7 @@ const OTHER_PRICING = [
   { name: "Designer marketplace membership", price: "A$299/year", note: "Founding price may be A$150 for the first year while available." },
   { name: "Lamalo virtual wardrobe", price: "From A$0.30/item", note: "Each colour variant is a separate production asset." },
   { name: "Signature Cast", price: "Actor and licence dependent", note: "The final price is shown before checkout." },
-  { name: "Direct OBS broadcast", price: "A$0/minute", note: "No Virelle relay, no BYOK and no AI generation." },
+  { name: "Adult Studio activation", price: "A$99 one-time", note: "Separate from membership and available only after individual verification." },
 ] as const;
 
 function formatAUD(value: number) {
@@ -210,7 +199,7 @@ export default function Pricing() {
     >
       <SiteHead
         title="Plans & Pricing"
-        description="Current Virelle Studios membership, credits, film package, Adult Studio and broadcast pricing in Australian dollars."
+        description="Current Virelle Studios membership, credits, film package, designer and Adult Studio activation pricing in Australian dollars."
       />
       <GoldWatermarkLaunch />
 
@@ -223,7 +212,7 @@ export default function Pricing() {
           <Badge variant="outline" className="mb-4 border-amber-500/40 text-amber-300">All prices in AUD</Badge>
           <h1 className="mb-5 text-4xl font-black tracking-tight sm:text-6xl">One clear production price list.</h1>
           <p className="text-lg leading-relaxed text-white/55">
-            Membership unlocks the platform. Credits pay for Virelle generative and orchestration actions. BYOK provider charges are paid directly to the selected AI provider. Plain broadcasting does not require BYOK.
+            Membership unlocks the platform. Credits pay for Virelle generative and orchestration actions. BYOK provider charges are paid directly to the selected AI provider. Adult Studio requires separate verification and activation.
           </p>
         </header>
 
@@ -284,60 +273,6 @@ export default function Pricing() {
               );
             })}
           </div>
-        </section>
-
-        <section id="broadcast" className="mb-20 scroll-mt-20">
-          <div className="mb-9 text-center">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-red-200">
-              <LockKeyhole className="h-3.5 w-3.5" /> Adult Studio and broadcast
-            </div>
-            <h2 className="mb-4 text-3xl font-bold">Broadcast charges depend on the route selected</h2>
-            <p className="mx-auto max-w-3xl text-sm leading-relaxed text-white/50">
-              Direct OBS broadcasting is included with membership and does not use BYOK. Managed relay is billed in output minutes: a 60-minute broadcast to three destinations uses 180 minutes. Those minutes cover Virelle routing, recording and compliance retention. AI-assisted broadcast additionally requires a funded provider key selected during setup.
-            </p>
-          </div>
-
-          <div className="mb-6 grid gap-5 md:grid-cols-3">
-            {[
-              { icon: RadioTower, title: "Direct broadcast", price: "A$0/min", text: "OBS connects directly to the destination. No Virelle relay, no AI processing and no BYOK." },
-              { icon: Clapperboard, title: "Managed relay", price: "Per output minute", text: "Each destination consumes one wallet minute per live minute. Virelle handles routing, recording and the retained compliance copy." },
-              { icon: Sparkles, title: "AI-assisted live", price: "Minutes + BYOK", text: "Swappys or another AI transformation is enabled. Provider usage is charged by the provider through the user's key." },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Card key={item.title} className="border-white/10 bg-white/[0.025] text-white">
-                  <CardContent className="p-6">
-                    <Icon className="mb-4 h-6 w-6 text-amber-400" />
-                    <h3 className="font-bold">{item.title}</h3>
-                    <p className="mt-1 text-lg font-black text-amber-300">{item.price}</p>
-                    <p className="mt-3 text-sm leading-relaxed text-white/50">{item.text}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {BROADCAST_PACKS.map((pack) => (
-              <Card key={pack.id} className={`border-amber-500/20 bg-black/25 text-white ${pack.popular ? "ring-1 ring-amber-400/60" : ""}`}>
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{pack.label}</CardTitle>
-                    {pack.popular && <Badge className="bg-amber-600">Best value</Badge>}
-                  </div>
-                  <p className="text-3xl font-black text-amber-300">{formatAUD(pack.price)}</p>
-                  <p className="text-sm text-white/55">{pack.minutes.toLocaleString()} managed minutes</p>
-                  <p className="text-xs text-white/35">{pack.rate}</p>
-                </CardHeader>
-                <CardFooter>
-                  <Button className="w-full" variant="outline" onClick={() => setLocation(`/virelle-broadcast-render?adult=1&pack=${pack.id}`)}>
-                    Buy in Adult Studio <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-          <p className="mt-5 text-center text-xs text-white/35">Managed output-minute balances do not expire. One 60-minute stream to two destinations consumes 120 minutes. Admin accounts have unrestricted internal access.</p>
         </section>
 
         <section id="credits" className="mb-20 scroll-mt-20">
@@ -415,9 +350,9 @@ export default function Pricing() {
           <KeyRound className="mx-auto mb-4 h-7 w-7 text-amber-400" />
           <h2 className="mb-4 text-3xl font-bold">The BYOK rule is function-specific.</h2>
           <p className="mx-auto mb-7 max-w-3xl text-sm leading-relaxed text-white/55">
-            A provider key is required for video generation, Studio Render and any AI-assisted broadcast transformation. A normal direct broadcast does not generate video and therefore does not require BYOK. Managed relay can operate without AI, using only the member's broadcast-minute balance.
+            A provider key is required only for the generation or processing feature that uses it. Virelle membership and production-management tools remain separate from third-party provider usage.
           </p>
-          <Button className="bg-amber-500 font-bold text-black hover:bg-amber-400" onClick={() => setLocation("/virelle-broadcast-render")}>Open Broadcast setup <ArrowRight className="ml-2 h-4 w-4" /></Button>
+          <Button className="bg-amber-500 font-bold text-black hover:bg-amber-400" onClick={() => setLocation("/settings?tab=api-keys")}>Manage provider keys <ArrowRight className="ml-2 h-4 w-4" /></Button>
         </section>
       </main>
 

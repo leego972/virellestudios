@@ -21,6 +21,8 @@ import {
   reserveBroadcastMinutes,
 } from "./_core/broadcastMinutes";
 import {
+  ADULT_STUDIO_ACTIVATION_FEE_AUD,
+  ADULT_STUDIO_ACTIVATION_FEE_CENTS,
   calculateAge,
   getMatureAccessProfile,
   getMatureAccessStatus,
@@ -29,6 +31,8 @@ import {
   recordCardSession,
   recordIdentitySession,
   recordIdentityVerified,
+  recordMatureActivationPaid,
+  recordMatureActivationSession,
   recordPhoneVerified,
   upsertMatureAccessProfile,
 } from "./_core/matureAccess";
@@ -1018,6 +1022,84 @@ export const virelleBroadcastRenderRouter = router({
     return getMatureAccessStatus(dbConn, ctx.user as any);
   }),
 
+
+  createMatureActivationCheckout: protectedProcedure.input(z.object({
+    returnUrl: z.string().url().max(1000),
+  })).mutation(async ({ ctx, input }) => {
+    if (!stripe) {
+      throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    }
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    const verificationComplete = status.paidMembership
+      && status.profileComplete
+      && status.adultAgeConfirmed
+      && status.adultAttestationAccepted
+      && status.phoneVerified
+      && status.identityVerified
+      && status.cardNameMatched
+      && status.responsibilityAccepted
+      && status.consentPolicyAccepted
+      && status.archiveRetentionAccepted;
+    if (!verificationComplete) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Complete Adult Studio identity, age, phone, card-name and consent verification before activation." });
+    }
+    if (status.activationPaid) {
+      return { alreadyPaid: true, url: null, activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD };
+    }
+    let customerId = String((ctx.user as any).stripeCustomerId || "");
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: String(ctx.user.email || ""),
+        name: String(status.profile?.fullName || ctx.user.name || ""),
+        metadata: { userId: String(ctx.user.id) },
+      });
+      customerId = customer.id;
+      await db.updateUser(ctx.user.id, { stripeCustomerId: customerId } as any);
+    }
+    const returnUrl = safeReturnUrl(input.returnUrl);
+    const separator = returnUrl.includes("?") ? "&" : "?";
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer: customerId,
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: "aud",
+          unit_amount: ADULT_STUDIO_ACTIVATION_FEE_CENTS,
+          product_data: { name: "Virelle Adult Studio one-time activation" },
+        },
+      }],
+      success_url: `${returnUrl}${separator}adult_activation_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnUrl}${separator}adult_activation_cancelled=1`,
+      metadata: { userId: String(ctx.user.id), type: "adult_studio_activation" },
+    });
+    await recordMatureActivationSession(dbConn, ctx.user.id, session.id);
+    return { alreadyPaid: false, url: session.url, activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD };
+  }),
+
+  verifyMatureActivationSession: protectedProcedure.input(z.object({
+    sessionId: z.string().min(8).max(255),
+  })).mutation(async ({ ctx, input }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile || String(profile.activationStripeSessionId || "") !== input.sessionId) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Adult Studio activation session does not belong to this account." });
+    }
+    const session = await stripe.checkout.sessions.retrieve(input.sessionId);
+    if (session.payment_status !== "paid") {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Adult Studio activation payment is not complete." });
+    }
+    if (session.metadata?.userId && Number(session.metadata.userId) !== ctx.user.id) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Adult Studio activation ownership mismatch." });
+    }
+    await recordMatureActivationPaid(dbConn, ctx.user.id, session.id, Number(session.amount_total || ADULT_STUDIO_ACTIVATION_FEE_CENTS));
+    return getMatureAccessStatus(dbConn, ctx.user as any);
+  }),
+
   getByokStatus: protectedProcedure.query(async ({ ctx }) => {
     requireVfxStudioTier(
       ctx.user as any,
@@ -1294,6 +1376,9 @@ export const virelleBroadcastRenderRouter = router({
     await ensureBroadcastRenderTables(dbConn);
     const resolved = await resolveJobInput(dbConn, ctx.user.id, input);
     const aiAssisted = input.serviceMode === "ai_assisted";
+    if (resolved.contentMode !== "open_adult") {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Broadcasting is available only inside the verified Adult Studio portal." });
+    }
     const matureStatus = await validateResolvedJob(
       dbConn,
       ctx,

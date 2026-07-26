@@ -39,6 +39,7 @@ import { registerSeoV4Routes } from "../seo-engine-v4";
 import { seedAdminUsers } from "./admin-seed";
 import { fulfillWardrobePurchaseSession } from "./wardrobePurchaseFulfillment";
 import { creditBroadcastMinutePurchase } from "./broadcastMinutes";
+import { recordMatureActivationPaid } from "./matureAccess";
 
 // Validate production environment on startup
 validateProductionEnv();
@@ -282,6 +283,19 @@ async function startServer() {
                 `signature_cast_unlock fulfillment (event ${event.id}, session ${session.id})`,
                 err.message).catch(() => {});
             }
+            break;
+          }
+
+          if (session.metadata?.type === "adult_studio_activation" && userId) {
+            const dbConn = await db.getDb();
+            if (!dbConn) throw new Error("Database unavailable during Adult Studio activation fulfilment.");
+            await recordMatureActivationPaid(
+              dbConn,
+              userId,
+              String(session.id),
+              Number(session.amount_total || 0),
+            );
+            logger.info(`[AdultStudio] Activation paid: user=${userId} session=${session.id}`);
             break;
           }
 

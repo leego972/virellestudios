@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { trpc } from "@/lib/trpc";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,8 @@ import {
   KeyRound,
   Loader2,
   LockKeyhole,
+  MessagesSquare,
+  Monitor,
   Phone,
   Radio,
   RadioTower,
@@ -73,6 +76,8 @@ type BroadcastChannel = {
   destination: BroadcastDestination;
   ingestUrl: string;
   streamKey: string;
+  previewUrl: string;
+  chatUrl: string;
 };
 
 type Workspace = "standard" | "adult";
@@ -240,6 +245,8 @@ function MatureAccessPanel({
   const refreshIdentity = (trpc as any).virelleBroadcastRender.refreshMatureIdentityStatus.useMutation();
   const createCard = (trpc as any).virelleBroadcastRender.createMatureCardVerification.useMutation();
   const verifyCard = (trpc as any).virelleBroadcastRender.verifyMatureCardSession.useMutation();
+  const createActivation = (trpc as any).virelleBroadcastRender.createMatureActivationCheckout.useMutation();
+  const verifyActivation = (trpc as any).virelleBroadcastRender.verifyMatureActivationSession.useMutation();
 
   useEffect(() => {
     if (!profile) return;
@@ -277,6 +284,25 @@ function MatureAccessPanel({
         toast.error(error?.message || "Cardholder verification failed.");
       });
   // Run only when a returned Stripe session appears in the URL.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const activationSession = params.get("adult_activation_session");
+    if (!activationSession || verifyActivation.isPending) return;
+    verifyActivation.mutateAsync({ sessionId: activationSession })
+      .then(() => {
+        toast.success("Adult Studio activated.");
+        params.delete("adult_activation_session");
+        params.delete("adult_activation_cancelled");
+        const query = params.toString();
+        window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+        statusQuery.refetch();
+      })
+      .catch((error: any) => toast.error(error?.message || "Adult Studio activation could not be verified."));
+  // Process only the returned Stripe activation session.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -357,6 +383,22 @@ function MatureAccessPanel({
     }
   };
 
+
+  const beginActivation = async () => {
+    try {
+      const result = await createActivation.mutateAsync({ returnUrl: window.location.href });
+      if (result.alreadyPaid) {
+        toast.success("Adult Studio is already activated.");
+        statusQuery.refetch();
+        return;
+      }
+      if (!result.url) throw new Error("Stripe did not return an activation checkout URL.");
+      window.location.assign(result.url);
+    } catch (error: any) {
+      toast.error(error?.message || "Could not open Adult Studio activation checkout.");
+    }
+  };
+
   const declarationsAccepted = adultAttestationAccepted
     && responsibilityAccepted
     && consentPolicyAccepted
@@ -400,6 +442,7 @@ function MatureAccessPanel({
             <VerificationItem complete={Boolean(status?.responsibilityAccepted)} label="Account responsibility" />
             <VerificationItem complete={Boolean(status?.consentPolicyAccepted)} label="Likeness and consent policy" />
             <VerificationItem complete={Boolean(status?.archiveRetentionAccepted)} label="Private retention acknowledgement" />
+            <VerificationItem complete={Boolean(status?.activationPaid)} label="One-time Adult Studio activation" />
           </div>
           {status?.missing?.length > 0 && (
             <p className="mt-4 rounded-lg border border-amber-300/15 bg-amber-300/[0.035] p-3 text-sm text-white/60">
@@ -572,9 +615,91 @@ function MatureAccessPanel({
               </Button>
             </CardContent>
           </Card>
+
+          <Card className="border-white/10 bg-white/[0.025] text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldCheck className="h-5 w-5 text-amber-300/80" />
+                Adult Studio activation
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm leading-relaxed text-white/55">
+                After verification, pay the separate one-time activation fee of A${Number(status?.activationFeeAud || 99).toFixed(0)}. Membership and usage purchases remain separate.
+              </p>
+              <Button
+                className="w-full bg-amber-300 text-black hover:bg-amber-200"
+                disabled={!status?.cardNameMatched || !status?.identityVerified || !status?.phoneVerified || status?.activationPaid || createActivation.isPending}
+                onClick={beginActivation}
+              >
+                {status?.activationPaid ? "Adult Studio activated" : `Pay A$${Number(status?.activationFeeAud || 99).toFixed(0)} activation`}
+              </Button>
+            </CardContent>
+          </Card>
+
         </div>
       </div>
     </div>
+  );
+}
+
+
+function safeControlRoomUrl(value: string): string | null {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:" ? parsed.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+function BroadcastControlRoom({ channels, sourceVideoUrl }: { channels: BroadcastChannel[]; sourceVideoUrl: string }) {
+  return (
+    <Card className="border-amber-400/20 bg-[#08090c]/95 text-white shadow-2xl">
+      <CardHeader>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <HollywoodIcon tool="studio" size={42} alt="Adult Studio control room" />
+            <div>
+              <CardTitle className="text-xl">Adult Studio Control Room</CardTitle>
+              <p className="mt-1 text-sm text-white/50">Monitor every connected screen and supported written chat in one split-screen workspace.</p>
+            </div>
+          </div>
+          <Badge variant="outline">{channels.length} connected outlet{channels.length === 1 ? "" : "s"}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="grid gap-5 xl:grid-cols-2">
+          {channels.map((channel, index) => {
+            const preview = safeControlRoomUrl(channel.previewUrl);
+            const chat = safeControlRoomUrl(channel.chatUrl);
+            return (
+              <section key={`${channel.destination}-control-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-black/35">
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                  <div><p className="font-semibold">{destinationLabel(channel.destination)}</p><p className="text-xs text-white/40">Outlet {index + 1}</p></div>
+                  <Badge variant="outline">Live workspace</Badge>
+                </div>
+                <div className="grid min-h-[420px] md:grid-cols-2">
+                  <div className="flex min-h-[210px] flex-col border-b border-white/10 md:border-b-0 md:border-r">
+                    <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/60"><span className="flex items-center gap-2"><Monitor className="h-4 w-4 text-amber-300" />Screen</span>{preview && <a href={preview} target="_blank" rel="noreferrer" className="text-amber-300 hover:text-amber-200">Open</a>}</div>
+                    <div className="flex flex-1 items-center justify-center bg-black">
+                      {preview ? <iframe title={`${destinationLabel(channel.destination)} live screen`} src={preview} className="h-full min-h-[330px] w-full border-0" allow="autoplay; fullscreen" referrerPolicy="no-referrer" /> : sourceVideoUrl ? <video src={sourceVideoUrl} controls muted className="max-h-[330px] w-full bg-black object-contain" /> : <p className="px-5 text-center text-xs leading-relaxed text-white/35">Paste the outlet's secure dashboard or preview URL above. The source video appears here when available.</p>}
+                    </div>
+                  </div>
+                  <div className="flex min-h-[210px] flex-col">
+                    <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/60"><span className="flex items-center gap-2"><MessagesSquare className="h-4 w-4 text-amber-300" />Chat</span>{chat && <a href={chat} target="_blank" rel="noreferrer" className="text-amber-300 hover:text-amber-200">Companion window</a>}</div>
+                    <div className="flex flex-1 items-center justify-center bg-black/70">
+                      {chat ? <iframe title={`${destinationLabel(channel.destination)} chat`} src={chat} className="h-full min-h-[330px] w-full border-0" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" referrerPolicy="no-referrer" /> : <p className="px-5 text-center text-xs leading-relaxed text-white/35">Paste the authenticated channel-chat URL above. When a platform blocks embedding, use the companion-window link without leaving the control room.</p>}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            );
+          })}
+        </div>
+        <p className="text-xs leading-relaxed text-white/40">Platform authentication remains with the outlet. Virelle embeds a secure page when the outlet permits it and always provides a companion-window fallback when framing is blocked.</p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -646,7 +771,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
   const [serviceMode, setServiceMode] = useState<BroadcastServiceMode>("managed");
   const [durationMinutes, setDurationMinutes] = useState<30 | 60 | 120>(60);
   const [channels, setChannels] = useState<BroadcastChannel[]>([
-    { destination: "rtmp", ingestUrl: "", streamKey: "" },
+    { destination: "rtmp", ingestUrl: "", streamKey: "", previewUrl: "", chatUrl: "" },
   ]);
 
   useEffect(() => {
@@ -1490,11 +1615,13 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
                   </div>
                   <div><Label>Ingest URL</Label><Input value={channel.ingestUrl} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, ingestUrl: event.target.value } : item))} /></div>
                   <div><Label>Stream key</Label><Input type="password" autoComplete="off" value={channel.streamKey} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, streamKey: event.target.value } : item))} /></div>
+                   <div><Label>Live screen / dashboard URL (optional)</Label><Input type="url" placeholder="https://..." value={channel.previewUrl} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, previewUrl: event.target.value } : item))} /></div>
+                   <div><Label>Channel chat URL (optional)</Label><Input type="url" placeholder="https://..." value={channel.chatUrl} onChange={(event) => setChannels((previous) => previous.map((item, itemIndex) => itemIndex === index ? { ...item, chatUrl: event.target.value } : item))} /></div>
                 </div>
               ))}
 
               {channels.length < 5 && (
-                <Button size="sm" variant="outline" className="w-full" onClick={() => setChannels((previous) => [...previous, { destination: "rtmp", ingestUrl: "", streamKey: "" }])}>Add output</Button>
+                <Button size="sm" variant="outline" className="w-full" onClick={() => setChannels((previous) => [...previous, { destination: "rtmp", ingestUrl: "", streamKey: "", previewUrl: "", chatUrl: "" }])}>Add output</Button>
               )}
 
               <Button
@@ -1513,10 +1640,12 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
         </div>
 
 
+        <BroadcastControlRoom channels={channels} sourceVideoUrl={sourceVideoUrl} />
+
         <Card className={subtleCard}>
           <CardHeader>
             <CardTitle className="text-base">
-              Recent {isAdult ? "Adult Studio" : "Standard Studio"} jobs
+              Recent Adult Studio jobs
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -1633,11 +1762,7 @@ function StudioWorkspace({ workspace }: { workspace: Workspace }) {
 }
 
 function StudioPage() {
-  const params = new URLSearchParams(window.location.search);
-  const workspace: Workspace = params.get("adult") === "1"
-    ? "adult"
-    : "standard";
-  return <StudioWorkspace workspace={workspace} />;
+  return <StudioWorkspace workspace="adult" />;
 }
 
 export default function VirelleBroadcastRender() {
@@ -1648,7 +1773,7 @@ export default function VirelleBroadcastRender() {
 
   return (
     <SubscriptionGate
-      feature="Virelle Broadcast & Studio Render"
+      feature="Adult Studio"
       requiredTier="indie"
     >
       <StudioPage />
