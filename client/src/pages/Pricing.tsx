@@ -14,7 +14,6 @@ import {
   KeyRound,
   Loader2,
   Shield,
-  Sparkles,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";

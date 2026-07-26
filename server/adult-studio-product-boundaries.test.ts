@@ -15,6 +15,8 @@ describe("Adult Studio product boundary", () => {
     const app = source("client/src/App.tsx");
     expect(layout).not.toContain("Swappys & Broadcast");
     expect(layout).not.toContain('/virelle-broadcast-render');
+    expect(source("client/src/components/ProjectToolHub.tsx")).not.toContain("Swappys & Broadcast");
+    expect(source("client/src/pages/VFXSuite.tsx")).not.toContain("Standard Broadcast");
     expect(app).toContain('path="/adult-studio"');
   });
 
@@ -36,6 +38,16 @@ describe("Adult Studio product boundary", () => {
     expect(page).toContain("Channel chat URL");
     expect(page).toContain("Live screen / dashboard URL");
     expect(page).toContain("Companion window");
+  });
+
+  it("keeps free Swappys short-form, watermarked and without broadcasting", () => {
+    const landing = source("client/src/pages/Landing.tsx");
+    const mobile = source("server/_core/securityHeaders.ts");
+    expect(landing).toContain("Free Swappys app");
+    expect(landing).toContain("visibly watermarked and censored");
+    expect(landing).toContain("no broadcasting controls");
+    expect(mobile).toContain("broadcastMode: false");
+    expect(mobile).toContain("rtmpBroadcast: false");
   });
 
   it("leaves only the supplied Adult Studio logo asset pending", () => {

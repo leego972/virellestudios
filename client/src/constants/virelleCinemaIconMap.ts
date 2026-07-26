@@ -40,7 +40,6 @@ export const NAV_LABEL_TO_VIRELLE_CINEMA_ICON: Record<string, VirelleCinemaIconK
   "Director's AI": "ai_tools",
   Characters: "casting",
   "VFX & Sound": "vfx",
-  "Swappys & Broadcast": "distribution",
   "Poster Maker": "reports",
   "Location Studio": "scenes",
   "Accessibility Studio": "editing",

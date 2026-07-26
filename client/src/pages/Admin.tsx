@@ -135,7 +135,7 @@ export default function Admin() {
                 className="bg-amber-300 text-black hover:bg-amber-200"
                 onClick={() => {
                   window.location.href =
-                    "/virelle-broadcast-render?adminVault=1";
+                    "/adult-studio?adminVault=1";
                 }}
               >
                 <Shield className="mr-2 h-4 w-4" />
@@ -146,7 +146,7 @@ export default function Admin() {
                 className="border-white/15 bg-white/[0.03]"
                 onClick={() => {
                   window.location.href =
-                    "/virelle-broadcast-render?adminVault=1";
+                    "/adult-studio?adminVault=1";
                 }}
               >
                 <Ban className="mr-2 h-4 w-4" />

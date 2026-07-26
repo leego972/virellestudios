@@ -1104,7 +1104,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const keys = await db.getUserApiKeys(ctx.user.id);
     const status = maskedProviderStatus(keys);
@@ -1119,7 +1119,7 @@ export const virelleBroadcastRenderRouter = router({
         90,
         Number(process.env.COMPLIANCE_RETENTION_DAYS || 90),
       ),
-      policy: "Plain direct or managed broadcasting does not require BYOK. Studio Render and AI-assisted live transformations use the user's funded provider key.",
+      policy: "Adult Studio managed relay does not require BYOK unless an AI-assisted live transformation is selected. Video generation and AI-assisted processing use the user's funded provider key.",
       providers: status,
       hasAnyProvider: Object.values(status).some(Boolean),
       supportedProviders: STRICT_BYOK_PROVIDERS,
@@ -1129,10 +1129,17 @@ export const virelleBroadcastRenderRouter = router({
   }),
 
   getBroadcastMinuteWallet: protectedProcedure.query(async ({ ctx }) => {
-    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    requireVfxStudioTier(ctx.user as any, "indie", "Adult Studio broadcast");
     const dbConn = await db.getDb();
     if (!dbConn) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    const matureStatus = await getMatureAccessStatus(dbConn, ctx.user as any);
+    if (!matureStatus.accessGranted) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Verified and activated Adult Studio access is required.",
+      });
     }
     return getBroadcastMinuteWallet(dbConn, ctx.user as any);
   }),
@@ -1364,7 +1371,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast Mode",
+      "Adult Studio Broadcast",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {
@@ -1707,7 +1714,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) return [];
@@ -1751,7 +1758,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {
@@ -1796,7 +1803,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {

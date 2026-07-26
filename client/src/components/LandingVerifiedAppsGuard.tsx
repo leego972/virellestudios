@@ -70,14 +70,14 @@ function VerifiedAppsSection() {
               </div>
             </div>
             <p className="mb-5 text-sm leading-relaxed text-white/50">
-              Create a visibly marked high-quality preview, then move the approved result into Virelle for project continuity, final or master quality, studio provenance and secured broadcast outputs.
+              Create a visibly marked high-quality preview, then move the approved result into Virelle for project continuity, final or master quality, studio provenance and professional project outputs.
             </p>
             <Button
               type="button"
-              onClick={() => window.location.assign("/swappys-broadcast")}
+              onClick={() => window.location.assign("/download")}
               className="w-full bg-amber-500 font-bold text-black hover:bg-amber-400"
             >
-              Open Swappys &amp; Broadcast <ArrowRight className="ml-2 h-4 w-4" />
+              Download Swappys Free <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
 

@@ -5,15 +5,15 @@ import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { ToolIconKey } from "@/constants/hollywoodIcons";
 import { ArrowRight, Check, Menu, ShieldCheck, Sparkles, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type ComponentProps, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
 const LOGO_URL = "/virelle-logo-square.png";
+type BrandIconKey = ComponentProps<typeof HollywoodIcon>["tool"];
 
 const PRODUCT_PILLARS: Array<{
-  icon: ToolIconKey;
+  icon: BrandIconKey;
   eyebrow: string;
   title: string;
   description: string;
@@ -37,7 +37,7 @@ const PRODUCT_PILLARS: Array<{
     href: "/register",
   },
   {
-    icon: "funding",
+    icon: "budget_estimator",
     eyebrow: "Funding",
     title: "Turn a project into a fundable package",
     description: "Use the Funding Command Centre to build a master profile, match opportunities, prepare applications, calculate incentives and manage crowdfunding as part of the production workflow.",
@@ -160,7 +160,7 @@ export default function Landing() {
               {PRODUCT_PILLARS.map((pillar) => (
                 <Card key={pillar.title} className="overflow-hidden border-amber-400/22 bg-[#09090c]/92 text-white shadow-2xl backdrop-blur-xl">
                   <CardContent className="p-7 sm:p-8">
-                    <div className="flex items-start gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-amber-400/25 bg-amber-400/8"><HollywoodIcon tool={pillar.icon} size={42} alt={pillar.title} /></div><div><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-300">{pillar.eyebrow}</p><h3 className="mt-2 text-2xl font-black">{pillar.title}</h3></div></div>
+                    <div className="flex items-start gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-amber-400/25 bg-amber-400/[0.08]"><HollywoodIcon tool={pillar.icon} size={42} alt={pillar.title} /></div><div><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-300">{pillar.eyebrow}</p><h3 className="mt-2 text-2xl font-black">{pillar.title}</h3></div></div>
                     <p className="mt-5 text-sm leading-7 text-white/75">{pillar.description}</p>
                     <div className="mt-6 grid gap-2 sm:grid-cols-3">{pillar.outcomes.map((outcome) => <div key={outcome} className="flex items-start gap-2 rounded-xl border border-white/8 bg-white/[.035] p-3 text-xs leading-relaxed text-white/72"><Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />{outcome}</div>)}</div>
                     <button className="mt-6 inline-flex items-center gap-2 text-sm font-black text-amber-300 hover:text-amber-200" onClick={() => navigate(pillar.href)}>Explore this value <ArrowRight className="h-4 w-4" /></button>
@@ -181,7 +181,24 @@ export default function Landing() {
         <section id="designers" className="scroll-mt-24 border-y border-white/10 bg-black/58 px-4 py-24 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-center">
             <div><p className="text-xs font-bold uppercase tracking-[.2em] text-amber-300">Designer Wardrobe</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Production wardrobe that creates value for filmmakers and designers.</h2><p className="mt-5 text-base leading-7 text-white/72">Filmmakers get continuity-ready wardrobe assets for scenes and characters. Designers get a dedicated studio to publish garments, manage commercial listings and earn when their work is selected for productions.</p><div className="mt-7 flex flex-wrap gap-3"><Button className="bg-amber-400 font-black text-black hover:bg-amber-300" onClick={() => navigate("/designer-register")}>Join as a designer</Button><Button variant="outline" className="border-white/20 bg-black/60 text-white" onClick={() => navigate("/pricing")}>View designer pricing</Button></div></div>
-            <div className="grid grid-cols-2 gap-4">{[["wardrobe","Wardrobe library"],["marketplace","Commercial marketplace"],["characters","Character continuity"],["reports","Designer management"]].map(([icon,label]) => <div key={label} className="rounded-2xl border border-amber-400/18 bg-[#09090c]/92 p-5 text-center shadow-xl"><HollywoodIcon tool={icon as ToolIconKey} size={68} className="mx-auto" alt={label} /><p className="mt-3 text-sm font-bold text-white/82">{label}</p></div>)}</div>
+            <div className="grid grid-cols-2 gap-4">{[["wardrobe","Wardrobe library"],["marketplace","Commercial marketplace"],["characters","Character continuity"],["reports","Designer management"]].map(([icon,label]) => <div key={label} className="rounded-2xl border border-amber-400/18 bg-[#09090c]/92 p-5 text-center shadow-xl"><HollywoodIcon tool={icon as BrandIconKey} size={68} className="mx-auto" alt={label} /><p className="mt-3 text-sm font-bold text-white/82">{label}</p></div>)}</div>
+          </div>
+        </section>
+
+
+        <section className="px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-3xl border border-violet-300/15 bg-[#09090d]/94 p-7 shadow-2xl backdrop-blur-xl lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:p-10">
+            <div className="flex items-center justify-center">
+              <HollywoodIcon tool="video_generation" size={190} className="max-w-full" alt="Swappys free short-video app" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.2em] text-amber-300">Free Swappys app</p>
+              <h2 className="mt-3 text-3xl font-black sm:text-4xl">Fast transformations for short video clips.</h2>
+              <p className="mt-5 text-sm leading-7 text-white/72">
+                Download Swappys for quick short-form clip creation. Free-app outputs remain visibly watermarked and censored, and the app contains no broadcasting controls. Professional advertising and film workflows remain inside Virelle Studios.
+              </p>
+              <Button className="mt-6 bg-amber-400 font-black text-black hover:bg-amber-300" onClick={() => navigate("/download")}>Download Swappys free <ArrowRight className="ml-2 h-4 w-4" /></Button>
+            </div>
           </div>
         </section>
 

@@ -11,10 +11,10 @@ const MOBILE_FEATURE_FLAGS = {
   sourceVideoUpload: true,
   referenceVideoUpload: true,
   studioRenderQueue: true,
-  broadcastMode: true,
-  rtmpBroadcast: true,
-  webRtcBroadcast: true,
-  obsBridge: true,
+  broadcastMode: false,
+  rtmpBroadcast: false,
+  webRtcBroadcast: false,
+  obsBridge: false,
   byokVideoRequired: true,
   credits: true,
   watermarkControls: true,
@@ -46,7 +46,7 @@ export function securityHeaders() {
     `script-src ${scriptSources}`,
     "worker-src 'self' blob:",
     "connect-src 'self' https: wss: blob:",
-    "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com",
+    "frame-src 'self' https:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self' https://checkout.stripe.com",
@@ -84,7 +84,7 @@ export function securityHeaders() {
           ok: true,
           product: "Virelle Studios",
           service: "virelle-studios-mobile-manifest",
-          version: "2026.07.swappys-byok-broadcast-v2",
+          version: "2026.07.swappys-short-clips-no-broadcast-v3",
           generatedAt: new Date().toISOString(),
           links: {
             baseUrl: "https://virelle.life",
@@ -99,14 +99,14 @@ export function securityHeaders() {
           upgrade: {
             name: "Virelle Studios Creator",
             publicLabel: "Full Virelle Studios Creator Access",
-            description: "Professional video transforms, BYOK broadcast sessions, studio rendering, project workflows, credit-based orchestration and advanced watermark controls.",
+            description: "Professional video transforms, studio rendering, project workflows, credit-based orchestration and advanced watermark controls.",
             recommendedPlan: "creator",
             sourceProduct: "swappys-mobile",
           },
           costPolicy: {
             byokRequiredForPremiumVideo: true,
             membershipPaysFor: "access, orchestration, project tools, audit/provenance, workflow management",
-            userProviderPaysFor: "video generation, transformation, provider rendering and broadcast transform compute",
+            userProviderPaysFor: "video generation, transformation and provider rendering",
             noPlatformFundedUserVideo: true,
           },
           // `features` is the original rich manifest key. `flags` is retained as
@@ -133,7 +133,7 @@ export function securityHeaders() {
             },
             virelleCreator: {
               visibleWatermarkControl: true,
-              intendedUse: "byok_broadcast_and_professional_studio_render",
+              intendedUse: "professional_studio_render",
             },
           },
         });

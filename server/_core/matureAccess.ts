@@ -13,7 +13,10 @@ export const PAID_MATURE_ACCESS_TIERS = [
 ] as const;
 
 export const MATURE_ACCESS_TERMS_VERSION = "adult-workspace-2026-07";
-export const ADULT_STUDIO_ACTIVATION_FEE_AUD = Math.max(1, Number(process.env.ADULT_STUDIO_ACTIVATION_FEE_AUD || "99"));
+const configuredAdultStudioActivationFee = Number(process.env.ADULT_STUDIO_ACTIVATION_FEE_AUD || "99");
+export const ADULT_STUDIO_ACTIVATION_FEE_AUD = Number.isFinite(configuredAdultStudioActivationFee) && configuredAdultStudioActivationFee > 0
+  ? configuredAdultStudioActivationFee
+  : 99;
 export const ADULT_STUDIO_ACTIVATION_FEE_CENTS = Math.round(ADULT_STUDIO_ACTIVATION_FEE_AUD * 100);
 
 export type MatureAccessProfileInput = {
