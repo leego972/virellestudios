@@ -1,7 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { sql } from "drizzle-orm";
-import { storagePut } from "../storage";
+import { storageDelete, storagePut } from "../storage";
 import { logger } from "./logger";
 
 export const SWAPPYS_RETENTION_DAYS = 30;
@@ -9,7 +8,6 @@ export const SWAPPYS_RETENTION_POLICY_VERSION = "private-output-30d-2026-07";
 
 const MAX_RETAINED_OUTPUT_BYTES = 25 * 1024 * 1024;
 const CLEANUP_BATCH_SIZE = 100;
-let cleanupS3Client: S3Client | null = null;
 
 export type SwappysOutputProduct = "swappys_mobile" | "virelle_swappys_studio";
 
@@ -61,21 +59,9 @@ async function deleteRetainedObject(storageKey: string): Promise<void> {
     return;
   }
 
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
-  const bucket = process.env.AWS_S3_BUCKET?.trim();
-  if (!accessKeyId || !secretAccessKey || !bucket) {
-    throw new Error("No retained-output storage backend is configured for deletion.");
-  }
-  if (!cleanupS3Client) {
-    const endpoint = process.env.AWS_S3_ENDPOINT?.trim();
-    cleanupS3Client = new S3Client({
-      region: process.env.AWS_REGION?.trim() || "us-east-1",
-      credentials: { accessKeyId, secretAccessKey },
-      ...(endpoint ? { endpoint, forcePathStyle: true } : {}),
-    });
-  }
-  await cleanupS3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+  // Swappys retained outputs are user-generated project media, so the
+  // 30-day cleanup always targets the "media" bucket (never "asset").
+  await storageDelete(key, { category: "media" });
 }
 
 export async function ensureSwappysRetentionTable(dbConn: any): Promise<void> {
@@ -145,7 +131,7 @@ export async function retainSwappysOutput(input: {
   const expiresAt = swappysExpiryFrom(createdAt);
   const datePath = createdAt.toISOString().slice(0, 7).replace("-", "/");
   const storageKey = `swappys/retained/${datePath}/${randomUUID()}.${extensionForMimeType(mimeType)}`;
-  const stored = await storagePut(storageKey, bytes, mimeType, { public: false });
+  const stored = await storagePut(storageKey, bytes, mimeType, { public: false, category: "media" });
   const providerUrlHash = createHash("sha256").update(parsed.toString()).digest("hex");
 
   const insertResult: any = await input.dbConn.execute(sql`

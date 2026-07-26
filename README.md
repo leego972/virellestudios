@@ -68,7 +68,7 @@ docs/                  Current technical documentation and archived reports
 - **Backend:** Express 5 and tRPC
 - **Database:** MySQL 8 via Drizzle ORM
 - **Cache/queues:** Redis
-- **Storage:** S3-compatible object storage
+- **Storage:** Cloudflare R2 (S3-compatible), two buckets — user/project media and permanent platform assets
 - **Billing:** Stripe subscriptions, credit packs, Connect and broadcast-minute purchases
 - **Deployment:** Render Docker service
 - **AI providers:** User BYOK and configured platform integrations

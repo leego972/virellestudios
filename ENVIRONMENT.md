@@ -74,14 +74,27 @@ Configure at least one intentional delivery path in production.
 
 ## Storage
 
-Application storage:
+Application storage (Cloudflare R2, two buckets):
 
-- `AWS_REGION`
+- `AWS_REGION` — `auto` for Cloudflare R2
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
-- `AWS_S3_BUCKET`
-- `AWS_S3_ENDPOINT`
-- `AWS_S3_PUBLIC_URL`
+- `AWS_S3_ENDPOINT` — Cloudflare R2 account endpoint
+- `AWS_S3_PUBLIC_URL` — optional CDN/public base URL
+- `AWS_S3_MEDIA_BUCKET` — user/project media: uploads, generated images,
+  video, audio, documents, project files & attachments, renders, exports,
+  temp files, preview renders. Subject to the 30-day user-content retention
+  job.
+- `AWS_S3_ASSETS_BUCKET` — permanent platform assets: marketplace items &
+  previews, templates, reusable production/stock assets, admin-uploaded
+  assets, item thumbnails & source files. Never subject to the 30-day
+  retention job.
+- `AWS_S3_BUCKET` — legacy single-bucket variable, kept only as a temporary
+  backward-compatible fallback for either bucket above when its dedicated
+  variable is unset. The two variables above always take priority over this
+  when set. All storage routing lives in one place (`server/storage.ts`);
+  callers request a `"media"` or `"asset"` category and never choose a
+  bucket name directly.
 
 Compliance archive:
 

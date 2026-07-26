@@ -47,7 +47,7 @@ async function storeLogo(userId: number, raw: string): Promise<string> {
   }
   const extension = match[1] === "image/jpeg" ? "jpg" : match[1].split("/")[1];
   try {
-    return (await storagePut(`designer-commerce/user-${userId}/logo-${Date.now()}.${extension}`, buffer, match[1])).url;
+    return (await storagePut(`designer-commerce/user-${userId}/logo-${Date.now()}.${extension}`, buffer, match[1], { category: "asset" })).url;
   } catch {
     return raw;
   }

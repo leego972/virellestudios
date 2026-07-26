@@ -91,13 +91,18 @@ Configure at least one supported transactional email path:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
-- `AWS_S3_BUCKET`
-- `AWS_S3_ENDPOINT`
-- `AWS_REGION`
+- `AWS_S3_ENDPOINT` (Cloudflare R2 account endpoint)
+- `AWS_REGION` (`auto` for Cloudflare R2)
+- `AWS_S3_MEDIA_BUCKET` — user/project media, subject to the 30-day retention job
+- `AWS_S3_ASSETS_BUCKET` — permanent marketplace/template/platform assets, never
+  subject to the 30-day retention job
+- `AWS_S3_BUCKET` — legacy fallback only; the two variables above take priority
 - `COMPLIANCE_ARCHIVE_BUCKET`
 - compliance retention and signed-URL settings from `.env.example`
 
 The compliance archive bucket must be private and encrypted with no public-read policy.
+Storage bucket selection is centralized in `server/storage.ts` — routes never choose a
+bucket name directly, only a `"media"` or `"asset"` category.
 
 ### Authentication and administration
 

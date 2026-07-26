@@ -37,11 +37,21 @@ export function validateProductionEnv(): void {
   const aiProviders = [process.env.OPENAI_API_KEY, process.env.GOOGLE_API_KEY, process.env.HUGGING_FACE_API_KEY];
   if (!aiProviders.some(Boolean)) warnings.push("No server AI keys set — AI features limited to user BYOK keys");
 
+  const hasS3Credentials = Boolean(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+  const hasAnyBucket = Boolean(
+    process.env.AWS_S3_MEDIA_BUCKET || process.env.AWS_S3_ASSETS_BUCKET || process.env.AWS_S3_BUCKET,
+  );
   const hasStorage = Boolean(
-    (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_S3_BUCKET) ||
+    (hasS3Credentials && hasAnyBucket) ||
     (process.env.BUILT_IN_FORGE_API_URL && process.env.BUILT_IN_FORGE_API_KEY),
   );
   if (!hasStorage) warnings.push("No storage backend — generated media may use expiring provider URLs");
+  if (hasS3Credentials && hasAnyBucket && !process.env.AWS_S3_ASSETS_BUCKET && !process.env.AWS_S3_BUCKET) {
+    warnings.push("AWS_S3_ASSETS_BUCKET not set — marketplace/asset uploads will fail (no fallback bucket configured)");
+  }
+  if (hasS3Credentials && hasAnyBucket && !process.env.AWS_S3_MEDIA_BUCKET && !process.env.AWS_S3_BUCKET) {
+    warnings.push("AWS_S3_MEDIA_BUCKET not set — user/project uploads will fail (no fallback bucket configured)");
+  }
 
   if (warnings.length > 0) {
     logger.warn("Production configuration warnings:");

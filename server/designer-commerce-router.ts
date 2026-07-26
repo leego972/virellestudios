@@ -101,7 +101,7 @@ async function uploadImage(userId: number, purpose: "logo" | "item", imageDataUr
   const extension = contentType === "image/jpeg" ? "jpg" : contentType.split("/")[1];
   const key = `designer-commerce/user-${userId}/${purpose}-${Date.now()}.${extension}`;
   try {
-    return (await storagePut(key, buffer, contentType)).url;
+    return (await storagePut(key, buffer, contentType, { category: "asset" })).url;
   } catch {
     // Backward-compatible fallback for environments where object storage has not
     // yet been configured. The normal Render production path stores in S3/R2.
