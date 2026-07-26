@@ -427,7 +427,7 @@ function MatureAccessPanel({
               </p>
             </div>
             <Badge variant={status?.accessGranted ? "default" : "outline"}>
-              {status?.accessGranted ? "Verified" : "Verification required"}
+              {status?.accessGranted ? "Access active" : status?.activationPaid ? "Verification required" : "Verification and activation required"}
             </Badge>
           </div>
         </CardHeader>
@@ -629,7 +629,7 @@ function MatureAccessPanel({
               </p>
               <Button
                 className="w-full bg-amber-300 text-black hover:bg-amber-200"
-                disabled={!status?.cardNameMatched || !status?.identityVerified || !status?.phoneVerified || status?.activationPaid || createActivation.isPending}
+                disabled={!status?.paidMembership || !status?.profileComplete || !status?.adultAgeConfirmed || !status?.adultAttestationAccepted || !status?.phoneVerified || !status?.identityVerified || !status?.cardNameMatched || !status?.responsibilityAccepted || !status?.consentPolicyAccepted || !status?.archiveRetentionAccepted || status?.activationPaid || createActivation.isPending}
                 onClick={beginActivation}
               >
                 {status?.activationPaid ? "Adult Studio activated" : `Pay A$${Number(status?.activationFeeAud || 99).toFixed(0)} activation`}

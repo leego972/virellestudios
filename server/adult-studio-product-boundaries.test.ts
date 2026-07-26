@@ -17,6 +17,9 @@ describe("Adult Studio product boundary", () => {
     expect(layout).not.toContain('/virelle-broadcast-render');
     expect(source("client/src/components/ProjectToolHub.tsx")).not.toContain("Swappys & Broadcast");
     expect(source("client/src/pages/VFXSuite.tsx")).not.toContain("Standard Broadcast");
+    expect(source("client/src/components/NotificationBell.tsx")).not.toContain("18+ Studio");
+    expect(source("client/src/components/GoldWatermarkLaunch.tsx")).not.toContain("data-virelle-adult-access");
+    expect(fs.existsSync(path.join(root, "client/src/pages/SwappysBroadcastHub.tsx"))).toBe(false);
     expect(app).toContain('path="/adult-studio"');
   });
 
@@ -30,6 +33,7 @@ describe("Adult Studio product boundary", () => {
     const router = source("server/virelle-broadcast-render-router.ts");
     expect(router).toContain('resolved.contentMode !== "open_adult"');
     expect(router).toContain("Broadcasting is available only inside the verified Adult Studio portal.");
+    expect(router).toContain("Adult Studio broadcasts must use the managed recording route.");
   });
 
   it("provides simultaneous outlet screen and chat tiles", () => {

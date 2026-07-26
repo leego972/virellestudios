@@ -1106,6 +1106,17 @@ export const virelleBroadcastRenderRouter = router({
       "indie",
       "Adult Studio / Studio Render",
     );
+    const statusDb = await db.getDb();
+    if (!statusDb) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    const matureStatus = await getMatureAccessStatus(statusDb, ctx.user as any);
+    if (!matureStatus.accessGranted) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Verified and activated Adult Studio access is required.",
+      });
+    }
     const keys = await db.getUserApiKeys(ctx.user.id);
     const status = maskedProviderStatus(keys);
     return {
@@ -1148,7 +1159,7 @@ export const virelleBroadcastRenderRouter = router({
     packId: z.enum(["relay_120", "relay_600", "relay_1500", "relay_3600"]),
     returnUrl: z.string().url().max(1000),
   })).mutation(async ({ ctx, input }) => {
-    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    requireVfxStudioTier(ctx.user as any, "indie", "Adult Studio broadcast");
     const statusDb = await db.getDb();
     if (!statusDb) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
@@ -1451,65 +1462,10 @@ export const virelleBroadcastRenderRouter = router({
     }
 
     if (input.serviceMode === "direct") {
-      const redacted = redactChannels(normalizedChannels);
-      const metadata = {
-        byok: false,
-        serviceMode: "direct",
-        costPolicy: "direct_obs_no_virelle_media_charge",
-        durationMinutes: 0,
-        channels: redacted,
-        contentMode: resolved.contentMode,
-        recording: { required: false, managedByVirelle: false },
-        instructions: [
-          "Open OBS Settings, then Stream.",
-          "Choose Custom service and paste the destination ingest URL.",
-          "Paste the destination stream key directly into OBS.",
-          "Start Streaming. Virelle does not receive the stream or charge minutes.",
-        ],
-      };
-      const primary = normalizedChannels[0];
-      const result: any = await dbConn.execute(sql`
-        INSERT INTO virelle_video_transform_jobs
-          (userId, projectId, sceneId, sourceSwappysJobId, mode, status,
-           provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls,
-           referenceImageUrls, transformGoal, targetAge, targetPresentation,
-           contentMode, allSubjectsAdultsConfirmed, publicFigureLikeness,
-           aiGeneratedCharactersOnly, broadcastDestination, ingestUrl,
-           streamKeyMasked, broadcastChannelsEncrypted, recordingRequired,
-           directorNotes, consentConfirmed, consentAttestationVersion,
-           visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
-        VALUES
-          (${ctx.user.id}, ${resolved.projectId}, ${resolved.sceneId},
-           ${resolved.sourceSwappysJobId}, 'broadcast', 'direct_ready', 'direct_obs',
-           ${resolved.sourceVideoUrl}, ${resolved.referenceVideoUrl},
-           ${JSON.stringify(resolved.sourceImageUrls)},
-           ${JSON.stringify(resolved.referenceImageUrls)},
-           ${resolved.transformGoal}, ${resolved.targetAge},
-           ${resolved.targetPresentation}, ${resolved.contentMode},
-           ${resolved.allSubjectsAdultsConfirmed ? 1 : 0},
-           ${resolved.publicFigureLikeness ? 1 : 0},
-           ${resolved.aiGeneratedCharactersOnly ? 1 : 0},
-           ${primary.destination}, ${primary.ingestUrl},
-           ${maskStreamKey(primary.streamKey)}, NULL, 0,
-           ${resolved.directorNotes}, ${resolved.consentConfirmed ? 1 : 0},
-           ${CONSENT_ATTESTATION_VERSION}, 'none', 0, 0,
-           ${JSON.stringify(metadata)})
-      `);
-      const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
-      return {
-        ok: true,
-        sessionId,
-        status: "direct_ready",
-        mode: "broadcast",
-        serviceMode: "direct",
-        provider: "direct_obs",
-        channels: redacted,
-        bridgeConfigured: false,
-        recordingRequired: false,
-        byokRequired: false,
-        managedMinutesReserved: 0,
-        directInstructions: metadata.instructions,
-      };
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Adult Studio broadcasts must use the managed recording route.",
+      });
     }
 
     const provider = aiAssisted
