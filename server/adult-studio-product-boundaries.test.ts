@@ -58,9 +58,10 @@ describe("Adult Studio product boundary", () => {
     expect(mobile).toContain("rtmpBroadcast: false");
   });
 
-  it("leaves only the supplied Adult Studio logo asset pending", () => {
+  it("installs the supplied Adult Studio logo as the portal button", () => {
     const button = source("client/src/components/AdultStudioAccessButton.tsx");
-    expect(button).toContain('/adult-studio-access-logo.png');
+    expect(button).toContain('data:image/jpeg;base64,');
     expect(button).toContain('setLocation("/adult-studio")');
+    expect(button).toContain("object-contain");
   });
 });
