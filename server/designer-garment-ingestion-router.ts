@@ -165,7 +165,7 @@ export const designerGarmentIngestionRouter = router({
       const random = crypto.randomUUID();
       const key = `designer-garment-captures/user-${ctx.user.id}/${Date.now()}-${random}-${input.role}.${parsed.extension}`;
       try {
-        const stored = await storagePut(key, parsed.buffer, parsed.contentType, { public: true });
+        const stored = await storagePut(key, parsed.buffer, parsed.contentType, { public: true, category: "asset" });
         return { url: stored.url, kind: parsed.kind, bytes: parsed.buffer.length };
       } catch (error) {
         throw new TRPCError({

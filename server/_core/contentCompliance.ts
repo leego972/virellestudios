@@ -16,6 +16,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
 import { sql } from "drizzle-orm";
 import * as db from "../db";
+import { getStorageBucket } from "../storage";
 import { logger } from "./logger";
 
 export type ComplianceWorkspace = "standard" | "adult";
@@ -266,7 +267,15 @@ function storageConfig(): {
 } | null {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID || "";
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || "";
-  const sourceBucket = process.env.AWS_S3_BUCKET || "";
+  // Compliance archive candidates are always rendered video/broadcast output
+  // — user/project media — so the "own storage" source bucket to detect is
+  // the media bucket (falls back to the legacy AWS_S3_BUCKET automatically).
+  let sourceBucket = "";
+  try {
+    sourceBucket = getStorageBucket("media");
+  } catch {
+    sourceBucket = "";
+  }
   const bucket = process.env.COMPLIANCE_ARCHIVE_BUCKET || sourceBucket;
   if (!accessKeyId || !secretAccessKey || !bucket) return null;
   const region = process.env.AWS_REGION || "us-east-1";
