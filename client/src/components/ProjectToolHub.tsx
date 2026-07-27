@@ -18,7 +18,6 @@ import {
   Mic2,
   Music,
   Palette,
-  RadioTower,
   ScrollText,
   Scissors,
   ShieldCheck,
@@ -167,12 +166,11 @@ export default function ProjectToolHub({
       title: "4. Finish and Output",
       shortTitle: "Finish",
       description:
-        "Edit, transform, mix, dub, grade, caption and prepare the final master or broadcast output.",
+        "Edit, transform, mix, dub, grade, caption and prepare the final professional master and delivery package.",
       icon: Scissors,
       primaryCount: 6,
       tools: [
         { title: "Cutting Room", description: "Edit, assemble and review the final cut.", href: `/projects/${projectId}/cutting-room`, icon: Scissors, badge: "Post" },
-        { title: "Swappys & Broadcast", description: "Load approved Swappys output, use Open Adult Creative mode where eligible, and route it to Studio Render or broadcast destinations.", href: "/virelle-broadcast-render", icon: RadioTower, badge: "Output" },
         { title: "Visual Effects", description: "Shot-level VFX generation and repair.", href: `/projects/${projectId}/visual-effects`, icon: Sparkles, badge: "VFX" },
         { title: "Audio Mixer", description: "Per-scene volume, pan, fades and mix presets.", href: `/projects/${projectId}/audio-mixer`, icon: SlidersHorizontal, badge: "Mix" },
         { title: "Color Grading", description: "Look, tone, palette and cinematic grade.", href: `/projects/${projectId}/color-grading`, icon: Palette, badge: "Grade" },
@@ -233,12 +231,6 @@ export default function ProjectToolHub({
               Every existing project tool remains available. Choose the production stage you are working on instead of scanning one long catalogue.
             </p>
           </div>
-          <Link href="/virelle-broadcast-render">
-            <Button variant="outline" className="whitespace-nowrap border-amber-500/30 hover:bg-amber-500/10">
-              <RadioTower className="mr-2 h-4 w-4" />
-              Swappys & Broadcast
-            </Button>
-          </Link>
         </div>
 
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">

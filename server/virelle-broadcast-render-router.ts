@@ -21,6 +21,8 @@ import {
   reserveBroadcastMinutes,
 } from "./_core/broadcastMinutes";
 import {
+  ADULT_STUDIO_ACTIVATION_FEE_AUD,
+  ADULT_STUDIO_ACTIVATION_FEE_CENTS,
   calculateAge,
   getMatureAccessProfile,
   getMatureAccessStatus,
@@ -29,6 +31,8 @@ import {
   recordCardSession,
   recordIdentitySession,
   recordIdentityVerified,
+  recordMatureActivationPaid,
+  recordMatureActivationSession,
   recordPhoneVerified,
   upsertMatureAccessProfile,
 } from "./_core/matureAccess";
@@ -49,6 +53,7 @@ import {
   setArchiveLegalHold,
 } from "./_core/contentCompliance";
 import { runComplianceArchiveCycle } from "./compliance-archive-worker";
+import { ADULT_AI_DISCLOSURE_TEXT } from "./_core/adultMediaCompliance";
 
 const STRICT_BYOK_PROVIDERS = [
   "runway",
@@ -1018,12 +1023,101 @@ export const virelleBroadcastRenderRouter = router({
     return getMatureAccessStatus(dbConn, ctx.user as any);
   }),
 
+
+  createMatureActivationCheckout: protectedProcedure.input(z.object({
+    returnUrl: z.string().url().max(1000),
+  })).mutation(async ({ ctx, input }) => {
+    if (!stripe) {
+      throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    }
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const status = await getMatureAccessStatus(dbConn, ctx.user as any);
+    const verificationComplete = status.paidMembership
+      && status.profileComplete
+      && status.adultAgeConfirmed
+      && status.adultAttestationAccepted
+      && status.phoneVerified
+      && status.identityVerified
+      && status.cardNameMatched
+      && status.responsibilityAccepted
+      && status.consentPolicyAccepted
+      && status.archiveRetentionAccepted;
+    if (!verificationComplete) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Complete Adult Studio identity, age, phone, card-name and consent verification before activation." });
+    }
+    if (status.activationPaid) {
+      return { alreadyPaid: true, url: null, activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD };
+    }
+    let customerId = String((ctx.user as any).stripeCustomerId || "");
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: String(ctx.user.email || ""),
+        name: String(status.profile?.fullName || ctx.user.name || ""),
+        metadata: { userId: String(ctx.user.id) },
+      });
+      customerId = customer.id;
+      await db.updateUser(ctx.user.id, { stripeCustomerId: customerId } as any);
+    }
+    const returnUrl = safeReturnUrl(input.returnUrl);
+    const separator = returnUrl.includes("?") ? "&" : "?";
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer: customerId,
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: "aud",
+          unit_amount: ADULT_STUDIO_ACTIVATION_FEE_CENTS,
+          product_data: { name: "Virelle Adult Studio one-time activation" },
+        },
+      }],
+      success_url: `${returnUrl}${separator}adult_activation_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnUrl}${separator}adult_activation_cancelled=1`,
+      metadata: { userId: String(ctx.user.id), type: "adult_studio_activation" },
+    });
+    await recordMatureActivationSession(dbConn, ctx.user.id, session.id);
+    return { alreadyPaid: false, url: session.url, activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD };
+  }),
+
+  verifyMatureActivationSession: protectedProcedure.input(z.object({
+    sessionId: z.string().min(8).max(255),
+  })).mutation(async ({ ctx, input }) => {
+    if (!stripe) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured." });
+    const dbConn = await db.getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    const profile = await getMatureAccessProfile(dbConn, ctx.user.id);
+    if (!profile || String(profile.activationStripeSessionId || "") !== input.sessionId) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Adult Studio activation session does not belong to this account." });
+    }
+    const session = await stripe.checkout.sessions.retrieve(input.sessionId);
+    if (session.payment_status !== "paid") {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Adult Studio activation payment is not complete." });
+    }
+    if (session.metadata?.userId && Number(session.metadata.userId) !== ctx.user.id) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Adult Studio activation ownership mismatch." });
+    }
+    await recordMatureActivationPaid(dbConn, ctx.user.id, session.id, Number(session.amount_total || ADULT_STUDIO_ACTIVATION_FEE_CENTS));
+    return getMatureAccessStatus(dbConn, ctx.user as any);
+  }),
+
   getByokStatus: protectedProcedure.query(async ({ ctx }) => {
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
+    const statusDb = await db.getDb();
+    if (!statusDb) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    const matureStatus = await getMatureAccessStatus(statusDb, ctx.user as any);
+    if (!matureStatus.accessGranted) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Verified and activated Adult Studio access is required.",
+      });
+    }
     const keys = await db.getUserApiKeys(ctx.user.id);
     const status = maskedProviderStatus(keys);
     return {
@@ -1037,7 +1131,7 @@ export const virelleBroadcastRenderRouter = router({
         90,
         Number(process.env.COMPLIANCE_RETENTION_DAYS || 90),
       ),
-      policy: "Plain direct or managed broadcasting does not require BYOK. Studio Render and AI-assisted live transformations use the user's funded provider key.",
+      policy: "Adult Studio managed relay does not require BYOK unless an AI-assisted live transformation is selected. Video generation and AI-assisted processing use the user's funded provider key.",
       providers: status,
       hasAnyProvider: Object.values(status).some(Boolean),
       supportedProviders: STRICT_BYOK_PROVIDERS,
@@ -1047,10 +1141,17 @@ export const virelleBroadcastRenderRouter = router({
   }),
 
   getBroadcastMinuteWallet: protectedProcedure.query(async ({ ctx }) => {
-    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    requireVfxStudioTier(ctx.user as any, "indie", "Adult Studio broadcast");
     const dbConn = await db.getDb();
     if (!dbConn) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+    }
+    const matureStatus = await getMatureAccessStatus(dbConn, ctx.user as any);
+    if (!matureStatus.accessGranted) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Verified and activated Adult Studio access is required.",
+      });
     }
     return getBroadcastMinuteWallet(dbConn, ctx.user as any);
   }),
@@ -1059,7 +1160,7 @@ export const virelleBroadcastRenderRouter = router({
     packId: z.enum(["relay_120", "relay_600", "relay_1500", "relay_3600"]),
     returnUrl: z.string().url().max(1000),
   })).mutation(async ({ ctx, input }) => {
-    requireVfxStudioTier(ctx.user as any, "indie", "Virelle Broadcast");
+    requireVfxStudioTier(ctx.user as any, "indie", "Adult Studio broadcast");
     const statusDb = await db.getDb();
     if (!statusDb) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
@@ -1200,6 +1301,23 @@ export const virelleBroadcastRenderRouter = router({
           allSubjectsAdultsConfirmed: resolved.allSubjectsAdultsConfirmed,
           aiGeneratedCharactersOnly: resolved.aiGeneratedCharactersOnly,
         },
+        openingDisclosure: resolved.contentMode === "open_adult" ? {
+          required: true,
+          durationSeconds: 5,
+          version: "adult-ai-disclosure-2026-07",
+          text: ADULT_AI_DISCLOSURE_TEXT,
+          releaseBlockedUntilApplied: true,
+        } : null,
+        moderation: resolved.contentMode === "open_adult" ? {
+          aiReviewRequired: true,
+          adminQueueOnRisk: true,
+          releaseBlockedOnReview: true,
+        } : null,
+        invisibleProvenance: resolved.contentMode === "open_adult" ? {
+          required: true,
+          version: "virelle-adult-provenance-v1",
+          visibleToViewer: false,
+        } : null,
         complianceArchive: {
           required: true,
           minimumRetentionDays: 90,
@@ -1282,7 +1400,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast Mode",
+      "Adult Studio Broadcast",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {
@@ -1294,6 +1412,9 @@ export const virelleBroadcastRenderRouter = router({
     await ensureBroadcastRenderTables(dbConn);
     const resolved = await resolveJobInput(dbConn, ctx.user.id, input);
     const aiAssisted = input.serviceMode === "ai_assisted";
+    if (resolved.contentMode !== "open_adult") {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Broadcasting is available only inside the verified Adult Studio portal." });
+    }
     const matureStatus = await validateResolvedJob(
       dbConn,
       ctx,
@@ -1357,69 +1478,6 @@ export const virelleBroadcastRenderRouter = router({
         message: "Adult-platform broadcast destinations are available only inside the verified Adult Studio.",
       });
     }
-
-    if (input.serviceMode === "direct") {
-      const redacted = redactChannels(normalizedChannels);
-      const metadata = {
-        byok: false,
-        serviceMode: "direct",
-        costPolicy: "direct_obs_no_virelle_media_charge",
-        durationMinutes: 0,
-        channels: redacted,
-        contentMode: resolved.contentMode,
-        recording: { required: false, managedByVirelle: false },
-        instructions: [
-          "Open OBS Settings, then Stream.",
-          "Choose Custom service and paste the destination ingest URL.",
-          "Paste the destination stream key directly into OBS.",
-          "Start Streaming. Virelle does not receive the stream or charge minutes.",
-        ],
-      };
-      const primary = normalizedChannels[0];
-      const result: any = await dbConn.execute(sql`
-        INSERT INTO virelle_video_transform_jobs
-          (userId, projectId, sceneId, sourceSwappysJobId, mode, status,
-           provider, sourceVideoUrl, referenceVideoUrl, sourceImageUrls,
-           referenceImageUrls, transformGoal, targetAge, targetPresentation,
-           contentMode, allSubjectsAdultsConfirmed, publicFigureLikeness,
-           aiGeneratedCharactersOnly, broadcastDestination, ingestUrl,
-           streamKeyMasked, broadcastChannelsEncrypted, recordingRequired,
-           directorNotes, consentConfirmed, consentAttestationVersion,
-           visibleWatermarkMode, byokRequired, orchestrationCredits, metadata)
-        VALUES
-          (${ctx.user.id}, ${resolved.projectId}, ${resolved.sceneId},
-           ${resolved.sourceSwappysJobId}, 'broadcast', 'direct_ready', 'direct_obs',
-           ${resolved.sourceVideoUrl}, ${resolved.referenceVideoUrl},
-           ${JSON.stringify(resolved.sourceImageUrls)},
-           ${JSON.stringify(resolved.referenceImageUrls)},
-           ${resolved.transformGoal}, ${resolved.targetAge},
-           ${resolved.targetPresentation}, ${resolved.contentMode},
-           ${resolved.allSubjectsAdultsConfirmed ? 1 : 0},
-           ${resolved.publicFigureLikeness ? 1 : 0},
-           ${resolved.aiGeneratedCharactersOnly ? 1 : 0},
-           ${primary.destination}, ${primary.ingestUrl},
-           ${maskStreamKey(primary.streamKey)}, NULL, 0,
-           ${resolved.directorNotes}, ${resolved.consentConfirmed ? 1 : 0},
-           ${CONSENT_ATTESTATION_VERSION}, 'none', 0, 0,
-           ${JSON.stringify(metadata)})
-      `);
-      const sessionId = result?.[0]?.insertId ?? result?.insertId ?? null;
-      return {
-        ok: true,
-        sessionId,
-        status: "direct_ready",
-        mode: "broadcast",
-        serviceMode: "direct",
-        provider: "direct_obs",
-        channels: redacted,
-        bridgeConfigured: false,
-        recordingRequired: false,
-        byokRequired: false,
-        managedMinutesReserved: 0,
-        directInstructions: metadata.instructions,
-      };
-    }
-
     const provider = aiAssisted
       ? await requireStrictByokProvider(ctx.user.id, resolved.requestedProvider)
       : "relay";
@@ -1622,7 +1680,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) return [];
@@ -1666,7 +1724,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {
@@ -1711,7 +1769,7 @@ export const virelleBroadcastRenderRouter = router({
     requireVfxStudioTier(
       ctx.user as any,
       "indie",
-      "Virelle Broadcast / Studio Render",
+      "Adult Studio / Studio Render",
     );
     const dbConn = await db.getDb();
     if (!dbConn) {

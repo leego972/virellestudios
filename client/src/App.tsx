@@ -320,7 +320,11 @@ function Router() {
       <Route path="/projects/:projectId/nle-export" component={GatedNLEExport} />
       <Route path="/projects/:projectId/vfx-suite/:sceneId" component={GatedVFXSuite} />
       <Route path="/projects/:projectId/vfx-suite" component={GatedVFXSuite} />
-      <Route path="/virelle-broadcast-render" component={VirelleBroadcastRender} />
+      <Route path="/adult-studio" component={VirelleBroadcastRender} />
+      <Route path="/virelle-broadcast-render">{() => {
+        window.location.replace("/adult-studio");
+        return <PageLoader />;
+      }}</Route>
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
       <Route path="/projects/:projectId/director-cut" component={GatedDirectorCut} />

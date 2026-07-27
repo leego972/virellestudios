@@ -5,7 +5,6 @@ import {
   Check,
   CheckCheck,
   ExternalLink,
-  ShieldCheck,
   Trash2,
   X,
 } from "lucide-react";
@@ -77,15 +76,6 @@ export default function NotificationBell() {
 
   return (
     <div className="relative flex items-center gap-1" ref={panelRef}>
-      <a
-        href="/virelle-broadcast-render?adult=1"
-        className="flex h-9 items-center gap-1.5 rounded-md border border-amber-300/20 bg-white/[0.035] px-2.5 text-xs font-medium tracking-wide text-white/75 transition-colors hover:border-amber-300/35 hover:bg-white/[0.07] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
-        title="Verified Adult Studio"
-        aria-label="Open verified Adult Studio"
-      >
-        <ShieldCheck className="h-4 w-4 text-amber-300/80" />
-        <span className="hidden xl:inline">18+ Studio</span>
-      </a>
 
       <button
         onClick={() => setOpen(!open)}

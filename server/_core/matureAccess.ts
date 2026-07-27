@@ -13,6 +13,11 @@ export const PAID_MATURE_ACCESS_TIERS = [
 ] as const;
 
 export const MATURE_ACCESS_TERMS_VERSION = "adult-workspace-2026-07";
+const configuredAdultStudioActivationFee = Number(process.env.ADULT_STUDIO_ACTIVATION_FEE_AUD || "99");
+export const ADULT_STUDIO_ACTIVATION_FEE_AUD = Number.isFinite(configuredAdultStudioActivationFee) && configuredAdultStudioActivationFee > 0
+  ? configuredAdultStudioActivationFee
+  : 99;
+export const ADULT_STUDIO_ACTIVATION_FEE_CENTS = Math.round(ADULT_STUDIO_ACTIVATION_FEE_AUD * 100);
 
 export type MatureAccessProfileInput = {
   fullName: string;
@@ -42,6 +47,8 @@ export type MatureAccessStatus = {
   responsibilityAccepted: boolean;
   consentPolicyAccepted: boolean;
   archiveRetentionAccepted: boolean;
+  activationPaid: boolean;
+  activationFeeAud: number;
   accessGranted: boolean;
   missing: string[];
   termsVersion: string;
@@ -140,6 +147,9 @@ export async function ensureMatureAccessTable(dbConn: any): Promise<void> {
       cardVerificationSessionId VARCHAR(255) NULL,
       cardholderName VARCHAR(255) NULL,
       cardNameMatchedAt DATETIME NULL,
+      activationStripeSessionId VARCHAR(255) NULL,
+      activationPaidAt DATETIME NULL,
+      activationAmountCents INT NULL,
       accessStatus VARCHAR(32) NOT NULL DEFAULT 'pending',
       rejectionReason TEXT NULL,
       createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -152,6 +162,9 @@ export async function ensureMatureAccessTable(dbConn: any): Promise<void> {
     sql`ALTER TABLE mature_access_profiles ADD COLUMN adultAttestationAcceptedAt DATETIME NULL`,
     sql`ALTER TABLE mature_access_profiles ADD COLUMN archiveRetentionAcceptedAt DATETIME NULL`,
     sql`ALTER TABLE mature_access_profiles ADD COLUMN termsVersion VARCHAR(64) NOT NULL DEFAULT 'adult-workspace-2026-07'`,
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN activationStripeSessionId VARCHAR(255) NULL`,
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN activationPaidAt DATETIME NULL`,
+    sql`ALTER TABLE mature_access_profiles ADD COLUMN activationAmountCents INT NULL`,
   ];
   for (const alteration of alterations) {
     try { await dbConn.execute(alteration); } catch { /* already applied */ }
@@ -297,6 +310,34 @@ export async function recordCardNameResult(
   `);
 }
 
+export async function recordMatureActivationSession(
+  dbConn: any,
+  userId: number,
+  sessionId: string,
+): Promise<void> {
+  await ensureMatureAccessTable(dbConn);
+  await dbConn.execute(sql`
+    UPDATE mature_access_profiles
+    SET activationStripeSessionId=${sessionId}, updatedAt=NOW()
+    WHERE userId=${userId}
+  `);
+}
+
+export async function recordMatureActivationPaid(
+  dbConn: any,
+  userId: number,
+  sessionId: string,
+  amountCents: number,
+): Promise<void> {
+  await ensureMatureAccessTable(dbConn);
+  await dbConn.execute(sql`
+    UPDATE mature_access_profiles
+    SET activationStripeSessionId=${sessionId}, activationPaidAt=NOW(),
+        activationAmountCents=${amountCents}, updatedAt=NOW()
+    WHERE userId=${userId}
+  `);
+}
+
 export async function getMatureAccessStatus(
   dbConn: any,
   user: Pick<User, "id" | "role" | "subscriptionTier" | "subscriptionStatus">,
@@ -314,6 +355,8 @@ export async function getMatureAccessStatus(
       responsibilityAccepted: true,
       consentPolicyAccepted: true,
       archiveRetentionAccepted: true,
+      activationPaid: true,
+      activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD,
       accessGranted: true,
       missing: [],
       termsVersion: MATURE_ACCESS_TERMS_VERSION,
@@ -346,6 +389,7 @@ export async function getMatureAccessStatus(
   const responsibilityAccepted = Boolean(profile?.responsibilityAcceptedAt);
   const consentPolicyAccepted = Boolean(profile?.consentPolicyAcceptedAt);
   const archiveRetentionAccepted = Boolean(profile?.archiveRetentionAcceptedAt);
+  const activationPaid = Boolean(profile?.activationPaidAt);
   const accessGranted = paidMembership
     && profileComplete
     && adultAgeConfirmed
@@ -356,6 +400,7 @@ export async function getMatureAccessStatus(
     && responsibilityAccepted
     && consentPolicyAccepted
     && archiveRetentionAccepted
+    && activationPaid
     && profile?.accessStatus !== "revoked";
 
   const missing: string[] = [];
@@ -369,6 +414,7 @@ export async function getMatureAccessStatus(
   if (!responsibilityAccepted) missing.push("account responsibility declaration");
   if (!consentPolicyAccepted) missing.push("likeness and consent policy acceptance");
   if (!archiveRetentionAccepted) missing.push("90-day private archive acknowledgement");
+  if (!activationPaid) missing.push("one-time Adult Studio activation fee");
 
   if (profile) {
     await dbConn.execute(sql`
@@ -395,6 +441,8 @@ export async function getMatureAccessStatus(
     responsibilityAccepted,
     consentPolicyAccepted,
     archiveRetentionAccepted,
+    activationPaid,
+    activationFeeAud: ADULT_STUDIO_ACTIVATION_FEE_AUD,
     accessGranted,
     missing,
     termsVersion: String(profile?.termsVersion || MATURE_ACCESS_TERMS_VERSION),

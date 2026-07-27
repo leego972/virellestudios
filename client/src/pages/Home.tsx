@@ -5,6 +5,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
   import WhatsNewPanel from "@/components/WhatsNewPanel";
   import SiteHead from "@/components/SiteHead";
   import StudioOpener from "@/components/StudioOpener";
+  import AdultStudioAccessButton from "@/components/AdultStudioAccessButton";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent } from "@/components/ui/card";
   import { Skeleton } from "@/components/ui/skeleton";
@@ -559,6 +560,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
       <div className="max-w-7xl mx-auto space-y-8 pb-12">
         <SiteHead title="Dashboard" description="Your AI film production studio dashboard." />
         <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
+        <AdultStudioAccessButton />
 
           {/* Film Production Stepper */}
           <FilmProductionStepper

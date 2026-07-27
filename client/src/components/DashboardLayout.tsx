@@ -106,11 +106,6 @@ const menuGroups: MenuGroup[] = [
   {
     label: "Production",
     items: [
-      {
-        icon: Zap,
-        label: "Swappys & Broadcast",
-        path: "/virelle-broadcast-render",
-      },
       { icon: Film, label: "Designer Wardrobe", path: "/designer-wardrobe" },
       { icon: Film, label: "Wardrobe Inventory", path: "/wardrobe-inventory" },
       { icon: Film, label: "My Movies", path: "/movies" },

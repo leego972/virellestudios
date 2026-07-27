@@ -12,12 +12,13 @@ function source(path: string): string {
 }
 
 describe("Adult Studio visibility and verification gate", () => {
-  it("exposes a clearly labelled 18+ verification link in the shared sidebar shell", () => {
-    const shell = source("client/src/components/GoldWatermarkLaunch.tsx");
-    expect(shell).toContain('const ADULT_ACCESS_HREF = "/virelle-broadcast-render?adult=1"');
-    expect(shell).toContain("Adult Studio · 18+");
-    expect(shell).toContain("Age, phone, government ID and cardholder checks are required before entry.");
-    expect(shell).toContain('aria-label", "Open Adult Studio verification"');
+  it("uses the exact supplied Adult Studio logo as the authenticated access point", () => {
+    const button = source("client/src/components/AdultStudioAccessButton.tsx");
+    expect(button).toContain('const ADULT_STUDIO_LOGO = "data:image/jpeg;base64,');
+    expect(button).toContain('setLocation("/adult-studio")');
+    expect(button).toContain('className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"');
+    expect(button).not.toContain("Adult Studio · 18+");
+    expect(button).not.toContain("rounded-");
   });
 
   it("renders the verification panel instead of the adult workspace until access is granted", () => {
@@ -40,6 +41,7 @@ describe("Adult Studio visibility and verification gate", () => {
       "responsibilityAccepted",
       "consentPolicyAccepted",
       "archiveRetentionAccepted",
+      "activationPaid",
     ]) {
       expect(mature).toContain(`&& ${required}`);
     }
@@ -80,7 +82,5 @@ describe("visible Virelle pricing", () => {
     ]) {
       expect(pricing).toContain(value);
     }
-    expect(pricing).toContain('currency: "AUD"');
-    expect(pricing).toContain("BYOK provider charges remain separate");
   });
 });

@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  AlertTriangle,
   ArrowLeft,
   BadgeCheck,
   Camera,
@@ -21,10 +20,8 @@ import {
   Film,
   Layers,
   Loader2,
-  LockKeyhole,
   Maximize2,
   Palette,
-  RadioTower,
   ScanFace,
   ShieldCheck,
   Sparkles,
@@ -365,7 +362,7 @@ function VFXSuiteInner() {
             <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="h-4 w-4" /></Button>
             <div>
               <h1 className="flex items-center gap-2 text-lg font-semibold text-gold-shimmer"><Wand2 className="h-5 w-5 text-amber-400" />VFX Suite<Badge className="border border-amber-500/30 bg-amber-500/15 text-amber-300">Standard Studio</Badge></h1>
-              <p className="text-xs text-muted-foreground">Rating-aware Swappys, digital doubles, compositing, restoration, finishing and standard broadcast handoff.</p>
+              <p className="text-xs text-muted-foreground">Professional Swappys, digital doubles, compositing, restoration and finishing for film and advertising projects.</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -439,31 +436,22 @@ function VFXSuiteInner() {
         </div>
 
         <div className="space-y-4">
-          <Card className="border-fuchsia-500/25 bg-fuchsia-500/5">
-            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm text-fuchsia-200"><LockKeyhole className="h-4 w-4" />Verified 18+ Studio</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-[11px] leading-relaxed text-muted-foreground">Mature styling and adult-platform broadcast are kept outside the main VFX Suite. Paid identity, phone and matching-card verification is required before entry.</p>
-              <Button variant="outline" className="w-full border-fuchsia-500/30 text-fuchsia-200 hover:bg-fuchsia-500/10" onClick={() => navigate("/virelle-broadcast-render?adult=1")}><ShieldCheck className="mr-2 h-4 w-4" />Open 18+ registration</Button>
-              <div className="flex gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-[11px] text-muted-foreground"><AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" /><span>Minors, CSAM, youth-coded subjects, explicit sex acts, genital-focused output and non-consensual use remain prohibited.</span></div>
-            </CardContent>
-          </Card>
-
           <Card className="border-amber-500/20 glass-card gold-glow">
             <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div><div className="mb-1 flex justify-between"><Label className="text-xs text-muted-foreground">Effect Intensity</Label><span className="text-xs text-amber-400">{intensity}%</span></div><Slider value={[intensity]} onValueChange={([value]) => setIntensity(value)} min={10} max={100} step={5} /></div>
               <Separator />
               <div className="space-y-2"><Label className="text-xs text-muted-foreground">Export Quality</Label><div className="grid grid-cols-3 gap-2">{(["preview", "final", "master"] as const).map((quality) => <button key={quality} onClick={() => setExportQuality(quality)} className={`rounded-md border px-2 py-2 text-xs ${exportQuality === quality ? "border-amber-500 bg-amber-500/10 text-amber-300" : "border-border/40 text-muted-foreground"}`}>{quality}</button>)}</div><p className="text-[11px] text-muted-foreground">Estimated: {estimatedCredits} credits · {mediaCount} media input(s)</p></div>
-              {selectedSwappys && <div className="space-y-3 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3"><div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(value) => setConsentConfirmed(Boolean(value))} /><div><Label className="text-xs text-amber-200">I confirm likeness, media and distribution rights.</Label><p className="mt-1 text-[11px] text-muted-foreground">Required for digital-double, age, presentation, stunt, pickup, render and broadcast usage.</p></div></div><div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Internal provenance remains.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div></div>}
+              {selectedSwappys && <div className="space-y-3 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3"><div className="flex items-start gap-2"><Checkbox checked={consentConfirmed} onCheckedChange={(value) => setConsentConfirmed(Boolean(value))} /><div><Label className="text-xs text-amber-200">I confirm likeness, media and distribution rights.</Label><p className="mt-1 text-[11px] text-muted-foreground">Required for digital-double, age, presentation, stunt, pickup and professional render usage.</p></div></div><div className="flex items-center justify-between gap-3"><div><Label className="text-xs text-amber-200">Hide visible watermark</Label><p className="text-[11px] text-muted-foreground">Internal provenance remains.</p></div><Switch checked={hideVisibleWatermark} disabled={!isCreator} onCheckedChange={setHideVisibleWatermark} /></div></div>}
               <Separator />
-              <div><Label className="mb-1 block text-xs text-muted-foreground">Director / VFX Notes</Label><Textarea value={directorNotes} onChange={(event) => setDirectorNotes(event.target.value)} placeholder="Describe the exact lawful transformation, continuity target and broadcast intent." className="min-h-[130px] resize-none text-xs" /></div>
+              <div><Label className="mb-1 block text-xs text-muted-foreground">Director / VFX Notes</Label><Textarea value={directorNotes} onChange={(event) => setDirectorNotes(event.target.value)} placeholder="Describe the exact lawful transformation, continuity target and production intent." className="min-h-[130px] resize-none text-xs" /></div>
             </CardContent>
           </Card>
 
           <Card className="border-amber-500/20 glass-card">
             <CardHeader className="pb-2"><CardTitle className="text-sm gradient-text-gold">Output & Handoff</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              {lastJob ? <><div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Job #{lastJob.swappysJobId || "VFX"} · {lastJob.creditCost} credits · {lastJob.watermarkMode || "default"}</div>{lastJob.enhancedImageUrl && <img src={lastJob.enhancedImageUrl} alt="Swappys output" className="w-full rounded-lg border border-border/50" />}<Button className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={!lastJob.swappysJobId} onClick={() => navigate(`/virelle-broadcast-render?swappysJobId=${lastJob.swappysJobId}`)}><RadioTower className="mr-2 h-4 w-4" />Send Exact Job to Standard Broadcast</Button></> : <p className="text-xs text-muted-foreground">Create a Swappys job to unlock exact Studio Render and standard Broadcast handoff.</p>}
+              {lastJob ? <><div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2 text-[11px] text-muted-foreground">Job #{lastJob.swappysJobId || "VFX"} · {lastJob.creditCost} credits · {lastJob.watermarkMode || "default"}</div>{lastJob.enhancedImageUrl && <img src={lastJob.enhancedImageUrl} alt="Swappys output" className="w-full rounded-lg border border-border/50" />}</> : <p className="text-xs text-muted-foreground">Create a Swappys or VFX job to produce a professional project output.</p>}
               {isIndustry && <Badge className="border border-purple-400/30 bg-purple-500/15 text-purple-200">Industry access active</Badge>}
             </CardContent>
           </Card>
