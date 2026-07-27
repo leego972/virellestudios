@@ -46,7 +46,7 @@ export function securityHeaders() {
     `script-src ${scriptSources}`,
     "worker-src 'self' blob:",
     "connect-src 'self' https: wss: blob:",
-    "frame-src 'self' https:",
+    "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self' https://checkout.stripe.com",
