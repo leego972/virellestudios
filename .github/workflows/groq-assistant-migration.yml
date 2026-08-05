@@ -1,0 +1,40 @@
+name: Groq assistant migration
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/groq-assistant-migration.yml
+permissions:
+  contents: write
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply Groq-only assistant routing
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('server/_core/llm.ts')
+          s = p.read_text()
+          marker = '    // BYOK priority chain:'
+          block = '''  // Virelle assistant and text intelligence use Groq exclusively.\n  if (!ENV.groqApiKey) {\n    throw new Error("GROQ_API_KEY is required for Virelle assistant");\n  }\n  return invokeLLMWithProvider(params, {\n    url: "https://api.groq.com/openai/v1/chat/completions",\n    apiKey: ENV.groqApiKey,\n    model: "llama-3.3-70b-versatile",\n  });\n\n'''
+          if 'Virelle assistant and text intelligence use Groq exclusively' not in s:
+              if marker not in s: raise SystemExit('LLM marker missing')
+              p.write_text(s.replace(marker, block + marker, 1))
+
+          p = Path('server/_core/voiceTranscription.ts')
+          s = p.read_text()
+          s = re.sub(r'    // Step 1: Validate environment configuration\n.*?\n    // Step 2:', '''    // Step 1: Validate Groq configuration\n    if (!ENV.groqApiKey) {\n      return { error: "Voice transcription service is not configured", code: "SERVICE_ERROR", details: "GROQ_API_KEY is not set" };\n    }\n\n    // Step 2:''', s, count=1, flags=re.S)
+          s = s.replace('formData.append("model", "whisper-1");', 'formData.append("model", "whisper-large-v3-turbo");')
+          s = re.sub(r'    // Step 4: Call the transcription service\n.*?    logger\.info\(`\[Transcription\] Using: .*?;\n', '''    // Step 4: Call Groq Speech-to-Text exclusively\n    const transcriptionUrl = "https://api.groq.com/openai/v1/audio/transcriptions";\n    const transcriptionKey = ENV.groqApiKey;\n    logger.info("[Transcription] Using Groq Speech-to-Text");\n''', s, count=1, flags=re.S)
+          s = re.sub(r'\n    // Fallback: if OpenAI fails.*?\n    if \(!response\.ok\) \{', '\n\n    if (!response.ok) {', s, count=1, flags=re.S)
+          p.write_text(s)
+          PY
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/_core/llm.ts server/_core/voiceTranscription.ts
+          git commit -m "Use Groq for assistant and voice transcription"
+          git push
