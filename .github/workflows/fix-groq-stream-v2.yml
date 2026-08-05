@@ -1,8 +1,7 @@
 name: Groq stream repair v2
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - .github/workflows/fix-groq-stream-v2.yml
 permissions:
@@ -13,30 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Patch streaming provider
-        shell: bash
         run: |
-          python3 <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
-          p = Path("server/_core/llm.ts")
+          p = Path('server/_core/llm.ts')
           text = p.read_text()
-          marker = "export async function invokeLLMStream"
+          marker = 'export async function invokeLLMStream'
           start = text.index(marker)
           before = text[:start]
           section = text[start:]
-          target = "  const provider = resolveProvider();"
-          replacement = '''  if (!ENV.groqApiKey) {
-    onError(new Error("GROQ_API_KEY is required for Virelle Assistant"));
-    return;
-  }
-  const provider = {
-    url: "https://api.groq.com/openai/v1/chat/completions",
-    apiKey: ENV.groqApiKey,
-    model: "llama-3.3-70b-versatile",
-  };'''
+          target = '  const provider = resolveProvider();'
+          replacement = '  if (!ENV.groqApiKey) {\n    onError(new Error("GROQ_API_KEY is required for Virelle Assistant"));\n    return;\n  }\n  const provider = {\n    url: "https://api.groq.com/openai/v1/chat/completions",\n    apiKey: ENV.groqApiKey,\n    model: "llama-3.3-70b-versatile",\n  };'
           if target not in section:
-              raise SystemExit("stream provider target missing")
-          section = section.replace(target, replacement, 1)
-          p.write_text(before + section)
+              raise SystemExit('stream provider target missing')
+          p.write_text(before + section.replace(target, replacement, 1))
           PY
           git config user.name "Virelle Automation"
           git config user.email "actions@users.noreply.github.com"
