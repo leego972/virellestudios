@@ -10,9 +10,14 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { logger } from "./_core/logger";
 import { ensurePortalCommerceSchema, getUserPortal, saveDeliveryAddress, setUserPortal } from "./_core/portalAccess";
 import { checkRegistrationFraud, logAuditEvent } from "./_core/securityEngine";
+import { stripe } from "./_core/subscription";
 import { publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { storagePut } from "./storage";
+
+const DESIGNER_YEARLY_CENTS = 29900;
+const FOUNDING_DESIGNER_YEARLY_CENTS = 15000;
+const FOUNDING_MEMBER_LIMIT = 50;
 
 const designerRegistrationSchema = z.object({
   email: z.string().email().max(320).trim(),
@@ -51,6 +56,56 @@ async function storeLogo(userId: number, raw: string): Promise<string> {
   } catch {
     return raw;
   }
+}
+
+async function createRequiredDesignerCheckout(userId: number, email: string, dbConn: any) {
+  if (!stripe) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "Designer registration payment is temporarily unavailable. No account access has been activated.",
+    });
+  }
+
+  const countResult: any = await dbConn.execute(sql`
+    SELECT COUNT(*) AS payingCount
+    FROM designerProfiles
+    WHERE membershipStatus = 'active' AND membershipSubscriptionId IS NOT NULL
+  `);
+  const rows = Array.isArray(countResult?.[0]) ? countResult[0] : countResult;
+  const payingCount = Number(rows?.[0]?.payingCount ?? 0);
+  const isFounding = payingCount < FOUNDING_MEMBER_LIMIT;
+  const unitAmount = isFounding ? FOUNDING_DESIGNER_YEARLY_CENTS : DESIGNER_YEARLY_CENTS;
+  const publicUrl = (process.env.PUBLIC_APP_URL || "https://virelle.life").replace(/\/$/, "");
+
+  return stripe.checkout.sessions.create({
+    mode: "subscription",
+    payment_method_types: ["card"],
+    customer_email: email,
+    line_items: [{
+      price_data: {
+        currency: "aud",
+        unit_amount: unitAmount,
+        recurring: { interval: "year" },
+        product_data: {
+          name: isFounding
+            ? "Virelle Studios — Founding Designer Partner Membership"
+            : "Virelle Studios — Designer Marketplace Membership",
+          description: isFounding
+            ? `Founding Designer Partner membership, position ${payingCount + 1} of ${FOUNDING_MEMBER_LIMIT}.`
+            : "Required annual Designer Marketplace membership.",
+          metadata: { type: "designer_membership" },
+        },
+      },
+      quantity: 1,
+    }],
+    success_url: `${publicUrl}/designer-register?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${publicUrl}/designer-register?checkout=cancelled`,
+    metadata: {
+      userId: String(userId),
+      type: "designer_membership",
+      registrationCheckout: "required",
+    },
+  });
 }
 
 export const designerAuthRouter = router({
@@ -94,57 +149,64 @@ export const designerAuthRouter = router({
       });
       if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create designer account." });
 
-      const logoUrl = await storeLogo(user.id, input.logoDataUrl);
-      await setUserPortal(user.id, "designer");
-      await saveDeliveryAddress(user.id, {
-        label: "Business address",
-        recipientName: input.fullName,
-        phone: input.phone || null,
-        addressLine1: input.businessAddressLine1,
-        addressLine2: input.businessAddressLine2 || null,
-        city: input.businessCity,
-        stateRegion: input.businessStateRegion,
-        postalCode: input.businessPostalCode,
-        country: input.businessCountry,
-        isDefault: true,
-      });
-      await dbConn.execute(sql`
-        INSERT INTO designerProfiles
-          (userId, brandName, displayName, username, abn, profileType, bio, website, instagram, contactEmail, logoUrl,
-           businessAddressLine1, businessAddressLine2, businessCity, businessStateRegion, businessPostalCode, businessCountry,
-           registrationCompleted, verified, visibility, membershipStatus, stripeAccountStatus)
-        VALUES
-          (${user.id}, ${input.brandName}, ${input.username}, ${input.username.toLowerCase()}, ${input.abn}, ${input.profileType},
-           ${input.bio || null}, ${input.website || null}, ${input.instagram || null}, ${input.contactEmail.toLowerCase()}, ${logoUrl},
-           ${input.businessAddressLine1}, ${input.businessAddressLine2 || null}, ${input.businessCity}, ${input.businessStateRegion},
-           ${input.businessPostalCode}, ${input.businessCountry}, 1, 0, 'public', 'none', 'none')
-      `);
-
-      const token = await createSessionToken(user.id, user.name ?? "");
-      ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
-      logAuditEvent(user.id, "designer_register_success", clientIp, true, {
-        email,
-        brandName: input.brandName,
-        username: input.username,
-      });
-
       try {
-        await db.createNotification({
-          userId: user.id,
-          type: "welcome",
-          title: "Designer portal ready",
-          message: "Complete membership and Stripe payout onboarding, then publish your first collection.",
-          link: "/designer-register",
+        const logoUrl = await storeLogo(user.id, input.logoDataUrl);
+        await setUserPortal(user.id, "designer");
+        await saveDeliveryAddress(user.id, {
+          label: "Business address",
+          recipientName: input.fullName,
+          phone: input.phone || null,
+          addressLine1: input.businessAddressLine1,
+          addressLine2: input.businessAddressLine2 || null,
+          city: input.businessCity,
+          stateRegion: input.businessStateRegion,
+          postalCode: input.businessPostalCode,
+          country: input.businessCountry,
+          isDefault: true,
         });
-      } catch {
-        // Non-critical.
-      }
+        await dbConn.execute(sql`
+          INSERT INTO designerProfiles
+            (userId, brandName, displayName, username, abn, profileType, bio, website, instagram, contactEmail, logoUrl,
+             businessAddressLine1, businessAddressLine2, businessCity, businessStateRegion, businessPostalCode, businessCountry,
+             registrationCompleted, verified, visibility, membershipStatus, stripeAccountStatus)
+          VALUES
+            (${user.id}, ${input.brandName}, ${input.username}, ${input.username.toLowerCase()}, ${input.abn}, ${input.profileType},
+             ${input.bio || null}, ${input.website || null}, ${input.instagram || null}, ${input.contactEmail.toLowerCase()}, ${logoUrl},
+             ${input.businessAddressLine1}, ${input.businessAddressLine2 || null}, ${input.businessCity}, ${input.businessStateRegion},
+             ${input.businessPostalCode}, ${input.businessCountry}, 1, 0, 'private', 'pending_payment', 'none')
+        `);
 
-      return {
-        success: true,
-        user: { id: user.id, email, name: user.name },
-        redirect: "/designer-register?account=created",
-      };
+        const checkout = await createRequiredDesignerCheckout(user.id, email, dbConn);
+        if (!checkout.url) throw new Error("Stripe did not return a checkout URL.");
+
+        const token = await createSessionToken(user.id, user.name ?? "");
+        ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+        logAuditEvent(user.id, "designer_register_payment_required", clientIp, true, {
+          email,
+          brandName: input.brandName,
+          username: input.username,
+          checkoutSessionId: checkout.id,
+        });
+
+        return {
+          success: true,
+          paymentRequired: true,
+          user: { id: user.id, email, name: user.name },
+          redirect: checkout.url,
+          checkoutUrl: checkout.url,
+        };
+      } catch (error) {
+        logger.errorWithStack("[DesignerAuth] Registration checkout failed", error);
+        await dbConn.execute(sql`DELETE FROM designerProfiles WHERE userId = ${user.id}`).catch(() => undefined);
+        await dbConn.execute(sql`DELETE FROM savedDeliveryAddresses WHERE userId = ${user.id}`).catch(() => undefined);
+        await dbConn.execute(sql`DELETE FROM userPortalAccounts WHERE userId = ${user.id}`).catch(() => undefined);
+        await dbConn.execute(sql`DELETE FROM users WHERE id = ${user.id}`).catch(() => undefined);
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Designer registration could not start the required payment. No account was created.",
+        });
+      }
     }),
 
   login: publicProcedure
@@ -166,6 +228,23 @@ export const designerAuthRouter = router({
             code: "FORBIDDEN",
             message: "This is a Virelle production account. Use the standard sign-in page.",
           });
+        }
+        if (portal === "designer") {
+          const dbConn = await getDb();
+          if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is unavailable." });
+          const result: any = await dbConn.execute(sql`
+            SELECT membershipStatus, membershipCurrentPeriodEnd
+            FROM designerProfiles WHERE userId = ${Number(user.id)} LIMIT 1
+          `);
+          const rows = Array.isArray(result?.[0]) ? result[0] : result;
+          const profile = rows?.[0];
+          const expiresAt = profile?.membershipCurrentPeriodEnd ? new Date(profile.membershipCurrentPeriodEnd) : null;
+          if (profile?.membershipStatus !== "active" || (expiresAt && expiresAt.getTime() <= Date.now())) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "An active paid Designer Marketplace membership is required. Complete payment from designer registration.",
+            });
+          }
         }
         const token = await createSessionToken(Number(user.id), user.name || "");
         ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
