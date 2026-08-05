@@ -36,16 +36,30 @@ const buttonVariants = cva(
   }
 );
 
+function containsRemovedShowrunnerLabel(node: React.ReactNode): boolean {
+  return React.Children.toArray(node).some((child) => {
+    if (typeof child === "string") return child.trim() === "Watch the Showrunner";
+    if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
+      return containsRemovedShowrunnerLabel(child.props.children);
+    }
+    return false;
+  });
+}
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
+  // The legacy dashboard Showrunner CTA has been retired.
+  if (containsRemovedShowrunnerLabel(children)) return null;
+
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -53,7 +67,9 @@ function Button({
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {children}
+    </Comp>
   );
 }
 
