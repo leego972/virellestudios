@@ -1673,7 +1673,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       <div
         ref={chatPanelRef}
         className={cn(
-          "fixed z-50 flex flex-col border border-border shadow-2xl transition-all duration-300 ease-out",
+          "fixed z-50 flex min-w-0 max-w-full flex-col overflow-hidden border border-border shadow-2xl transition-all duration-300 ease-out",
           // Background: transparent in pageEmbed empty state so VirelleFace mask shows through
           pageEmbed && displayMessages.length === 0 ? "bg-transparent sm:bg-[#07070e]" : "bg-[#07070e]",
           // Mobile layout: bottom-sheet when pageEmbed+empty (mask visible above), full-screen otherwise
@@ -1691,16 +1691,19 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
           WebkitOverflowScrolling: "touch" as any,
           overscrollBehavior: "contain",
-          // Desktop: use drag position if set, otherwise default bottom-right
-          ...(dragPos
-            ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
-            : { bottom: 24, right: 24, height: 580 }
-          ),
+// Embedded assistant must occupy the available mobile viewport without
+// inheriting desktop offsets that push controls beyond the right edge.
+...(pageEmbed
+  ? { left: 0, right: 0, top: 0, bottom: 0, width: "100%", maxWidth: "100vw", height: "100dvh" }
+  : dragPos
+    ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
+    : { bottom: 24, right: 24, height: 580 }
+),
         }}
       >
         {/* Header — draggable on desktop */}
         <div
-          className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0 sm:cursor-grab sm:active:cursor-grabbing select-none"
+          className="flex min-w-0 items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0 sm:cursor-grab sm:active:cursor-grabbing select-none"
           onMouseDown={(e) => { if (e.button === 0) startDrag(e.clientX, e.clientY); }}
           onTouchStart={(e) => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }}
         >
