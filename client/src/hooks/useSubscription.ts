@@ -18,18 +18,27 @@ const TIER_ORDER: Record<string, number> = {
 };
 
 export function useSubscription() {
-  const { data, isLoading, error } = trpc.subscription.status.useQuery(undefined, {
+  const { data, isLoading: subscriptionLoading, error } = trpc.subscription.status.useQuery(undefined, {
     retry: false,
     staleTime: 30_000, // Cache for 30 seconds
   });
+  const me = trpc.auth.me.useQuery(undefined, {
+    retry: false,
+    staleTime: 30_000,
+  });
 
-  // Default to "none" (no access) until server confirms a paid tier
-  const tier = (data?.tier as SubscriptionTier) || "none";
-  const isAdmin = data?.isAdmin || false;
+  // Resolve admin authority from both authenticated identity and subscription
+  // status. This prevents a stale or incomplete subscription payload from
+  // displaying paid-feature locks to an administrator.
+  const isAdmin = data?.isAdmin === true || me.data?.role === "admin";
+  const tier = isAdmin
+    ? "industry"
+    : ((data?.tier as SubscriptionTier) || "none");
+  const isLoading = subscriptionLoading || me.isLoading;
 
   /**
    * Returns true if the user's current tier meets or exceeds the required tier.
-   * Admins always have full access.
+   * Administrators always have full access.
    */
   const hasAccess = (requiredTier: SubscriptionTier): boolean => {
     if (isAdmin) return true;
@@ -38,7 +47,7 @@ export function useSubscription() {
 
   /**
    * Returns true if the user's limits object has the given feature enabled.
-   * Uses the server-returned limits so it stays in sync with subscription.ts.
+   * Administrators bypass every commercial feature limit.
    */
   const canUseFeature = (feature: string): boolean => {
     if (isAdmin) return true;
@@ -56,10 +65,10 @@ export function useSubscription() {
     isAdmin,
     isLoading,
     error,
-    status: data?.status || "none",
-    generationsUsed: data?.generationsUsed || 0,
-    generationsLimit: data?.generationsLimit || 0,
-    limits: data?.limits || null,
+    status: isAdmin ? "active" : (data?.status || "none"),
+    generationsUsed: isAdmin ? 0 : (data?.generationsUsed || 0),
+    generationsLimit: isAdmin ? Number.MAX_SAFE_INTEGER : (data?.generationsLimit || 0),
+    limits: isAdmin ? { ...(data?.limits || {}), adminUnlimited: true } : (data?.limits || null),
     currentPeriodEnd: data?.currentPeriodEnd,
     hasAccess,
     canUseFeature,
