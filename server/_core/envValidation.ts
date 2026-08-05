@@ -2,11 +2,43 @@ import { TRPCError } from "@trpc/server";
 import { logger } from "./logger";
 
 /**
+ * mysql2 does not accept provider-specific URL options such as `ssl-mode`.
+ * Virelle configures TLS explicitly in its MySQL pool options, so remove these
+ * query parameters before any lazy database pool reads DATABASE_URL.
+ */
+function normalizeMysqlDatabaseUrl(): void {
+  const raw = process.env.DATABASE_URL;
+  if (!raw || !/^mysql(\+[^:]*)?:\/\//i.test(raw)) return;
+
+  try {
+    const parsed = new URL(raw);
+    const unsupportedParams = ["ssl-mode", "sslmode", "ssl_mode"];
+    let changed = false;
+
+    for (const name of unsupportedParams) {
+      if (parsed.searchParams.has(name)) {
+        parsed.searchParams.delete(name);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      process.env.DATABASE_URL = parsed.toString();
+      logger.info("Removed unsupported MySQL SSL URL option; TLS remains configured through the database pool");
+    }
+  } catch {
+    // Leave malformed URLs untouched so the existing validation reports them.
+  }
+}
+
+/**
  * Production environment validation.
  * Logs missing optional configuration as warnings. Critical database protocol
  * mismatches are reported explicitly because this application is MySQL-native.
  */
 export function validateProductionEnv(): void {
+  normalizeMysqlDatabaseUrl();
+
   if (process.env.NODE_ENV !== "production") return;
 
   const warnings: string[] = [];
