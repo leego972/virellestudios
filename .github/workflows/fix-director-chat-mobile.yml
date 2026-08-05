@@ -1,0 +1,46 @@
+name: Fix Director chat mobile layout
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fix-director-chat-mobile.yml
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair embedded mobile chat layout
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('client/src/components/DirectorChat.tsx')
+          s = p.read_text()
+          old = '''          // Desktop: use drag position if set, otherwise default bottom-right
+          ...(dragPos
+            ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
+            : { bottom: 24, right: 24, height: 580 }
+          ),'''
+          new = '''          // Embedded assistant must occupy the available mobile viewport without
+          // inheriting desktop offsets that push controls beyond the right edge.
+          ...(pageEmbed
+            ? { left: 0, right: 0, top: 0, bottom: 0, width: "100%", maxWidth: "100vw", height: "100dvh" }
+            : dragPos
+              ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
+              : { bottom: 24, right: 24, height: 580 }
+          ),'''
+          if old not in s:
+              raise SystemExit('Expected chat panel style block not found')
+          s = s.replace(old, new, 1)
+          # Strengthen the panel and its header/input children against mobile overflow.
+          s = s.replace('"fixed z-50 flex flex-col border border-border shadow-2xl transition-all duration-300 ease-out",', '"fixed z-50 flex min-w-0 max-w-full flex-col overflow-hidden border border-border shadow-2xl transition-all duration-300 ease-out",', 1)
+          s = s.replace('className="flex items-center justify-between px-4 py-3 border-b', 'className="flex min-w-0 items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b', 1)
+          p.write_text(s)
+          PY
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add client/src/components/DirectorChat.tsx
+          git commit -m "Fix Director chat mobile viewport layout"
+          git push
