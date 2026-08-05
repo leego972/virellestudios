@@ -15,12 +15,20 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const designerMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("designer") === "1";
+  // Standard sign-in is always the default. Designer mode is activated only
+  // when the user explicitly presses the designer sign-in control below.
+  const [designerMode, setDesignerMode] = useState(false);
 
   const designerLogin = trpc.wardrobeMarket.designerAuth.login.useMutation();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    // Legacy designer query links must not force the login page into designer mode.
+    if (params.has("designer")) {
+      params.delete("designer");
+      const query = params.toString();
+      window.history.replaceState({}, "", `/login${query ? `?${query}` : ""}`);
+    }
     const error = params.get("error");
     if (error === "oauth_failed") {
       toast.error("OAuth sign-in failed. Please try again or use email/password.");
@@ -250,9 +258,16 @@ export default function Login() {
                   </div>
                 </div>
 
-                <Link href={designerMode ? "/login" : "/login?designer=1"} className="text-xs text-muted-foreground hover:text-amber-400">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDesignerMode((current) => !current);
+                    setPassword("");
+                  }}
+                  className="text-xs text-muted-foreground hover:text-amber-400"
+                >
                   {designerMode ? "Use standard Virelle sign in" : "Designer? Open designer sign in"}
-                </Link>
+                </button>
               </CardFooter>
             </form>
           </Card>
