@@ -658,7 +658,15 @@ export async function invokeLLMStream(
   onDone: (fullText: string) => void,
   onError: (err: Error) => void
 ): Promise<void> {
-  const provider = resolveProvider();
+  if (!ENV.groqApiKey) {
+    onError(new Error("GROQ_API_KEY is required for Virelle Assistant"));
+    return;
+  }
+  const provider = {
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    apiKey: ENV.groqApiKey,
+    model: "llama-3.3-70b-versatile",
+  };
   const payload = {
     model: provider.model,
     messages: params.messages,
