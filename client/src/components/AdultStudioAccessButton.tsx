@@ -1,6 +1,7 @@
+import { ShieldCheck } from "lucide-react";
 import { useLocation } from "wouter";
 
-const ADULT_STUDIO_LOGO = "data:image/jpeg;base64,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[...truncated...]";
+const ADULT_STUDIO_ICON = "/icons/tools/visual_effects.svg";
 
 export default function AdultStudioAccessButton() {
   const [, setLocation] = useLocation();
@@ -9,15 +10,37 @@ export default function AdultStudioAccessButton() {
     <button
       type="button"
       onClick={() => setLocation("/adult-studio")}
-      aria-label="Open Adult Studio access and verification"
-      className="mx-auto flex items-center justify-center bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+      aria-label="Begin Adult Studio verification"
+      className="group w-full rounded-2xl border border-amber-500/15 bg-black/20 p-4 text-left transition-all hover:border-amber-500/30 hover:bg-amber-500/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
     >
-      <img
-        src={ADULT_STUDIO_LOGO}
-        alt="Adult Studio"
-        className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"
-        draggable={false}
-      />
+      <div className="flex items-center gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-black/40">
+          <img
+            src={ADULT_STUDIO_ICON}
+            alt=""
+            className="h-7 w-7 object-contain opacity-80"
+            draggable={false}
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-foreground">Adult Studio</span>
+            <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+              18+ verified access
+            </span>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            Complete age, identity, eligibility, terms and membership verification before access is activated.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-amber-400 transition-colors group-hover:text-amber-300">
+          <ShieldCheck className="h-4 w-4" />
+          Begin verification
+        </div>
+      </div>
     </button>
   );
 }
