@@ -1,0 +1,115 @@
+name: Fix assistant Groq stream
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fix-assistant-groq-stream.yml
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Route assistant streaming to Groq and expose request failures
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          # The chat uses invokeLLMStream, which still resolved Venice/OpenAI first.
+          p = Path('server/_core/llm.ts')
+          s = p.read_text()
+          old = '''  const provider = resolveProvider();
+  const payload = {
+    model: provider.model,'''
+          new = '''  if (!ENV.groqApiKey) {
+    onError(new Error("GROQ_API_KEY is required for Virelle Assistant"));
+    return;
+  }
+  const provider = {
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    apiKey: ENV.groqApiKey,
+    model: "llama-3.3-70b-versatile",
+  };
+  const payload = {
+    model: provider.model,'''
+          # Replace only the occurrence inside invokeLLMStream (last occurrence).
+          pos = s.find('export async function invokeLLMStream')
+          if pos < 0:
+              raise SystemExit('invokeLLMStream not found')
+          head, tail = s[:pos], s[pos:]
+          if old not in tail:
+              raise SystemExit('stream provider block not found')
+          tail = tail.replace(old, new, 1)
+          p.write_text(head + tail)
+
+          # Make the browser surface POST failures instead of silently waiting forever.
+          p = Path('client/src/components/DirectorChat.tsx')
+          s = p.read_text()
+          old = '''    setTimeout(() => {
+      fetch("/api/director-chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          sessionId: sseSessionId,
+          projectId: projectId ?? 0,
+          message,
+          attachments,
+          pageContext: window.location.pathname,
+          customInstructions: instructionsText || undefined,
+        }),
+      }).catch((err) => {
+        console.error("Failed to send director message:", err);
+        setIsSending(false);
+        sse.close();
+      });
+    }, 100);'''
+          new = '''    setTimeout(async () => {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 45000);
+      try {
+        const response = await fetch("/api/director-chat/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          signal: controller.signal,
+          body: JSON.stringify({
+            sessionId: sseSessionId,
+            projectId: projectId ?? 0,
+            message,
+            attachments,
+            pageContext: window.location.pathname,
+            customInstructions: instructionsText || undefined,
+          }),
+        });
+        if (!response.ok) {
+          const body = await response.json().catch(() => null);
+          throw new Error(body?.error || body?.message || `Assistant request failed (${response.status})`);
+        }
+      } catch (err: any) {
+        console.error("Failed to send director message:", err);
+        setIsSending(false);
+        setStreamingText(null);
+        sse.close();
+        sseRef.current = null;
+        const message = err?.name === "AbortError"
+          ? "The assistant timed out. Please try again."
+          : (err?.message || "The assistant could not respond. Please try again.");
+        setLocalMessages((prev) => [...prev, { role: "assistant", content: message }]);
+        toast.error(message);
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    }, 100);'''
+          if old not in s:
+              raise SystemExit('client POST block not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          git config user.name "Virelle Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/_core/llm.ts client/src/components/DirectorChat.tsx
+          git commit -m "Fix Groq streaming assistant responses"
+          git push
