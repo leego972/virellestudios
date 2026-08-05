@@ -386,6 +386,16 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     }
   }
 
+  // Virelle assistant and text intelligence use Groq exclusively.
+  if (!ENV.groqApiKey) {
+    throw new Error("GROQ_API_KEY is required for Virelle assistant");
+  }
+  return invokeLLMWithProvider(params, {
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    apiKey: ENV.groqApiKey,
+    model: "llama-3.3-70b-versatile",
+  });
+
     // BYOK priority chain: TitanAI (above) â Venice â OpenAI â platform Forge fallback.
   // Venice and OpenAI keys come from either explicit params.userApiKey OR the request-
   // scoped withUserLlmKey() context (set once at the top of background pipelines).

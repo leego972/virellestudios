@@ -76,20 +76,9 @@ export async function transcribeAudio(
   options: TranscribeOptions
 ): Promise<TranscriptionResponse | TranscriptionError> {
   try {
-    // Step 1: Validate environment configuration
-    if (!ENV.openaiApiKey && !ENV.forgeApiUrl) {
-      return {
-        error: "Voice transcription service is not configured",
-        code: "SERVICE_ERROR",
-        details: "Neither OPENAI_API_KEY nor BUILT_IN_FORGE_API_URL is set"
-      };
-    }
-    if (!ENV.openaiApiKey && !ENV.forgeApiKey) {
-      return {
-        error: "Voice transcription service authentication is missing",
-        code: "SERVICE_ERROR",
-        details: "Neither OPENAI_API_KEY nor BUILT_IN_FORGE_API_KEY is set"
-      };
+    // Step 1: Validate Groq configuration
+    if (!ENV.groqApiKey) {
+      return { error: "Voice transcription service is not configured", code: "SERVICE_ERROR", details: "GROQ_API_KEY is not set" };
     }
 
     // Step 2: Download audio from URL
@@ -120,7 +109,7 @@ export async function transcribeAudio(
     const audioBlob = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
     formData.append("file", audioBlob, filename);
     
-    formData.append("model", "whisper-1");
+    formData.append("model", "whisper-large-v3-turbo");
     formData.append("response_format", "verbose_json");
     
     // Add prompt - use custom prompt if provided, otherwise generate based on language
@@ -131,29 +120,10 @@ export async function transcribeAudio(
     );
     formData.append("prompt", prompt);
 
-    // Step 4: Call the transcription service
-    // Priority: OpenAI Whisper API > Forge API
-    let transcriptionUrl: string;
-    let transcriptionKey: string;
-
-    if (ENV.openaiApiKey) {
-      transcriptionUrl = "https://api.openai.com/v1/audio/transcriptions";
-      transcriptionKey = ENV.openaiApiKey;
-    } else if (ENV.forgeApiUrl && ENV.forgeApiKey) {
-      const baseUrl = ENV.forgeApiUrl.endsWith("/")
-        ? ENV.forgeApiUrl
-        : `${ENV.forgeApiUrl}/`;
-      transcriptionUrl = new URL("v1/audio/transcriptions", baseUrl).toString();
-      transcriptionKey = ENV.forgeApiKey;
-    } else {
-      return {
-        error: "No transcription service configured",
-        code: "SERVICE_ERROR" as const,
-        details: "Neither OPENAI_API_KEY nor BUILT_IN_FORGE_API_KEY is set"
-      };
-    }
-
-    logger.info(`[Transcription] Using: ${transcriptionUrl.substring(0, 40)}...`);
+    // Step 4: Call Groq Speech-to-Text exclusively
+    const transcriptionUrl = "https://api.groq.com/openai/v1/audio/transcriptions";
+    const transcriptionKey = ENV.groqApiKey;
+    logger.info("[Transcription] Using Groq Speech-to-Text");
 
     let response = await fetch(transcriptionUrl, {
       method: "POST",
@@ -164,45 +134,6 @@ export async function transcribeAudio(
       body: formData,
     });
 
-    // Fallback: if OpenAI fails and Forge is available, try Forge
-    if (!response.ok && hasExactHttpsHostname(transcriptionUrl, ["api.openai.com"]) && ENV.forgeApiUrl && ENV.forgeApiKey) {
-      logger.warn(`[Transcription] OpenAI failed (${response.status}), trying Forge fallback...`);
-      const forgeBase = ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`;
-      const forgeUrl = new URL("v1/audio/transcriptions", forgeBase).toString();
-      const forgeFormData = new FormData();
-      const audioBlob2 = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
-      forgeFormData.append("file", audioBlob2, filename);
-      forgeFormData.append("model", "whisper-1");
-      forgeFormData.append("response_format", "verbose_json");
-      forgeFormData.append("prompt", prompt);
-      response = await fetch(forgeUrl, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${ENV.forgeApiKey}`,
-          "Accept-Encoding": "identity",
-        },
-        body: forgeFormData,
-      });
-    }
-
-    // Fallback: if Forge fails and OpenAI is available, try OpenAI
-    if (!response.ok && !hasExactHttpsHostname(transcriptionUrl, ["api.openai.com"]) && ENV.openaiApiKey) {
-      logger.warn(`[Transcription] Forge failed (${response.status}), trying OpenAI fallback...`);
-      const oaiFormData = new FormData();
-      const audioBlob3 = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
-      oaiFormData.append("file", audioBlob3, filename);
-      oaiFormData.append("model", "whisper-1");
-      oaiFormData.append("response_format", "verbose_json");
-      oaiFormData.append("prompt", prompt);
-      response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${ENV.openaiApiKey}`,
-          "Accept-Encoding": "identity",
-        },
-        body: oaiFormData,
-      });
-    }
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => "");
