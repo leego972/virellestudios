@@ -253,6 +253,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
   const vadAnalyserRef = useRef<AnalyserNode | null>(null);
   const vadRafRef = useRef<number | null>(null);
   const vadSilenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vadHardStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vadHasSpokenRef = useRef(false);
   const [vmRecordingDuration, setVmRecordingDuration] = useState(0);
   const vmRecordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -764,6 +765,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
       if (vmRecordingTimerRef.current) clearInterval(vmRecordingTimerRef.current);
       if (vadRafRef.current) cancelAnimationFrame(vadRafRef.current);
       if (vadSilenceTimerRef.current) clearTimeout(vadSilenceTimerRef.current);
+      if (vadHardStopTimerRef.current) clearTimeout(vadHardStopTimerRef.current);
       if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
       if (voiceModeStreamRef.current) voiceModeStreamRef.current.getTracks().forEach((t) => t.stop());
       if (audioSourceRef.current) { try { audioSourceRef.current.stop(); } catch (_) {} }
@@ -931,6 +933,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           vadAnalyserRef.current = null;
           if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
           if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+          if (vadHardStopTimerRef.current) { clearTimeout(vadHardStopTimerRef.current); vadHardStopTimerRef.current = null; }
           if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
           setVmRecordingDuration(0);
           stream.getTracks().forEach((t) => t.stop());
@@ -1013,6 +1016,18 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
         };
 
         recorder.start(250);
+        // Never leave voice mode listening forever. This also guarantees a
+        // Whisper fallback on browsers where Web Speech or VAD is unreliable.
+        if (vadHardStopTimerRef.current) clearTimeout(vadHardStopTimerRef.current);
+        vadHardStopTimerRef.current = setTimeout(() => {
+          const activeRecorder = voiceModeRecorderRef.current;
+          if (voiceModeRef.current && activeRecorder && activeRecorder.state !== "inactive") {
+            setVoiceModeState("thinking");
+            voiceModeStateRef.current = "thinking";
+            try { activeRecorder.requestData(); } catch {}
+            try { activeRecorder.stop(); } catch {}
+          }
+        }, 20000);
         setVoiceModeState("listening");
         voiceModeStateRef.current = "listening";
         setVmRecordingDuration(0);
@@ -1040,6 +1055,18 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
               }
               if (text.trim()) {
                 webSpeechTextRef.current = (webSpeechTextRef.current + " " + text).trim();
+                // iOS Web Speech can produce a final transcript even when analyser-based
+                // silence detection is unreliable. Submit shortly after the final phrase.
+                if (vadSilenceTimerRef.current) clearTimeout(vadSilenceTimerRef.current);
+                vadSilenceTimerRef.current = setTimeout(() => {
+                  const activeRecorder = voiceModeRecorderRef.current;
+                  if (voiceModeRef.current && activeRecorder && activeRecorder.state !== "inactive") {
+                    setVoiceModeState("thinking");
+                    voiceModeStateRef.current = "thinking";
+                    try { activeRecorder.requestData(); } catch {}
+                    try { activeRecorder.stop(); } catch {}
+                  }
+                }, 900);
               }
             };
             recog.onerror = (e: any) => {
@@ -1070,8 +1097,8 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
           src.connect(analyser);
           vadAnalyserRef.current = analyser;
           const dataArray = new Uint8Array(analyser.frequencyBinCount);
-          const SILENCE_THRESHOLD = 12;  // RMS below this = silence
-          const SILENCE_DURATION = 1500; // ms of silence before auto-stop
+          const SILENCE_THRESHOLD = 2.2; // mobile microphones commonly report low RMS
+          const SILENCE_DURATION = 1100; // ms of silence before auto-stop
           const MIN_SPEECH_MS = 400;     // must have spoken for at least this long
           let speechStartTime = 0;
           const checkVad = () => {
@@ -1127,6 +1154,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     vadAnalyserRef.current = null;
     if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
     if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+    if (vadHardStopTimerRef.current) { clearTimeout(vadHardStopTimerRef.current); vadHardStopTimerRef.current = null; }
     if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
     setVmRecordingDuration(0);
     if (voiceModeRef.current) { setVoiceModeState("thinking"); voiceModeStateRef.current = "thinking"; }
@@ -1159,6 +1187,7 @@ export default function DirectorChat({ projectId, defaultOpen = false, hideVoice
     vadAnalyserRef.current = null;
     if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
     if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+    if (vadHardStopTimerRef.current) { clearTimeout(vadHardStopTimerRef.current); vadHardStopTimerRef.current = null; }
     if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
     // Stop Web Speech API recognizer if running
     if (webSpeechRef.current) {
