@@ -29,6 +29,15 @@ const HOLLYWOOD_ICON_ALIASES: Record<HollywoodIconAlias, VirelleCinemaIconKey> =
   community: "team",
 };
 
+/**
+ * Some highly visible surfaces need a dedicated standalone asset rather than
+ * a sprite frame. The wardrobe frame currently renders as a black square on
+ * mobile Safari, so use the existing Virelle marketplace artwork directly.
+ */
+const STANDALONE_ICON_OVERRIDES: Partial<Record<HollywoodIconKey, string>> = {
+  wardrobe: "/icons/tools/asset_marketplace.svg",
+};
+
 interface HollywoodIconProps {
   tool: HollywoodIconKey;
   /** Pixel size — applied to both width and height. Defaults to 40. */
@@ -51,6 +60,20 @@ export function HollywoodIcon({
   className = "",
   alt,
 }: HollywoodIconProps) {
+  const standaloneSrc = STANDALONE_ICON_OVERRIDES[tool];
+  if (standaloneSrc) {
+    return (
+      <img
+        src={standaloneSrc}
+        alt={alt ?? String(tool).replace(/_/g, " ")}
+        width={size}
+        height={size}
+        className={`object-contain ${className}`}
+        draggable={false}
+      />
+    );
+  }
+
   const resolvedTool: ToolIconKey | VirelleCinemaIconKey = isHollywoodAlias(tool)
     ? HOLLYWOOD_ICON_ALIASES[tool]
     : tool;
